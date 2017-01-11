@@ -18,7 +18,8 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
     private final String applicationId;
     private final String secretkey;
 
-    public StormpathAuthenticationHandler(final String apiKey, final String applicationId, final String secretkey) {
+    public StormpathAuthenticationHandler(final String name, final String apiKey, final String applicationId, final String secretkey) {
+        super(name);
         this.apiKey = apiKey;
         this.applicationId = applicationId;
         this.secretkey = secretkey;

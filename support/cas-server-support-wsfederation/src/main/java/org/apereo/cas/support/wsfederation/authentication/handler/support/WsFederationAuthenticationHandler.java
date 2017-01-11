@@ -21,6 +21,13 @@ import java.util.Map;
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /**
+     * {@inheritDoc}
+     */
+    public WsFederationAuthenticationHandler(final String name) {
+        super(name);
+    }
+
+    /**
      * Determines if this handler can support the credentials provided.
      *
      * @param credentials the credentials to test

@@ -55,14 +55,13 @@ public class StormpathAuthenticationConfiguration {
     public AuthenticationHandler stormpathAuthenticationHandler() {
         final StormpathProperties stormpath = casProperties.getAuthn().getStormpath();
 
-        final StormpathAuthenticationHandler handler =
-                new StormpathAuthenticationHandler(stormpath.getApiKey(), stormpath.getApplicationId(), stormpath.getSecretkey());
+        final StormpathAuthenticationHandler handler = new StormpathAuthenticationHandler(stormpath.getName(), stormpath.getApiKey(),
+                stormpath.getApplicationId(), stormpath.getSecretkey());
 
         handler.setPasswordEncoder(Beans.newPasswordEncoder(stormpath.getPasswordEncoder()));
         handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(stormpath.getPrincipalTransformation()));
         handler.setPrincipalFactory(stormpathPrincipalFactory());
         handler.setServicesManager(servicesManager);
-        handler.setName(stormpath.getName());
         return handler;
     }
 

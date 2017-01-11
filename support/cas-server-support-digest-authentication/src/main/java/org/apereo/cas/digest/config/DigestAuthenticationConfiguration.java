@@ -110,10 +110,9 @@ public class DigestAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler digestAuthenticationHandler() {
         final DigestProperties digest = casProperties.getAuthn().getDigest();
-        final DigestAuthenticationHandler r = new DigestAuthenticationHandler();
+        final DigestAuthenticationHandler r = new DigestAuthenticationHandler(digest.getName());
         r.setPrincipalFactory(digestAuthenticationPrincipalFactory());
         r.setServicesManager(servicesManager);
-        r.setName(digest.getName());
         return r;
     }
 

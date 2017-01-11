@@ -29,7 +29,8 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      */
     private final Set<String> users;
 
-    public RejectUsersAuthenticationHandler(final Set<String> rejectedUsers) {
+    public RejectUsersAuthenticationHandler(final String name, final Set<String> rejectedUsers) {
+        super(name);
         this.users = rejectedUsers;
     }
 

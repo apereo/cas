@@ -86,14 +86,13 @@ public class SpnegoConfiguration {
     @RefreshScope
     public AuthenticationHandler spnegoHandler() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        final JcifsSpnegoAuthenticationHandler h = new JcifsSpnegoAuthenticationHandler(spnegoAuthentication(), spnegoProperties.isPrincipalWithDomainName(),
-                spnegoProperties.isNtlmAllowed());
+        final JcifsSpnegoAuthenticationHandler h = new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), spnegoAuthentication(),
+                spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
         h.setPrincipalFactory(spnegoPrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setAuthentication(spnegoAuthentication());
         h.setPrincipalWithDomainName(spnegoProperties.isPrincipalWithDomainName());
         h.setNTLMallowed(spnegoProperties.isNtlmAllowed());
-        h.setName(spnegoProperties.getName());
         return h;
     }
 
@@ -101,11 +100,10 @@ public class SpnegoConfiguration {
     @RefreshScope
     public AuthenticationHandler ntlmAuthenticationHandler() {
         final NtlmProperties ntlmProperties = casProperties.getAuthn().getNtlm();
-        final NtlmAuthenticationHandler ntlm = new NtlmAuthenticationHandler(ntlmProperties.isLoadBalance(), ntlmProperties.getDomainController(),
+        final NtlmAuthenticationHandler ntlm = new NtlmAuthenticationHandler("", ntlmProperties.isLoadBalance(), ntlmProperties.getDomainController(),
                 ntlmProperties.getIncludePattern());
         ntlm.setPrincipalFactory(ntlmPrincipalFactory());
         ntlm.setServicesManager(servicesManager);
-        ntlm.setName(ntlmProperties.getName());
         return ntlm;
     }
 

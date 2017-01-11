@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
-import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.apereo.cas.authentication.Credential;
@@ -100,10 +99,11 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      *                                      for backward compatibility with previous versions that do not perform revocation
      *                                      checking.
      */
-    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
+    public X509CredentialsAuthenticationHandler(final String name, final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
                                                 final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage,
                                                 final boolean requireKeyUsage, final Pattern regExSubjectDnPattern,
                                                 final RevocationChecker revocationChecker) {
+        super(name);
         this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
         this.maxPathLength = maxPathLength;
         this.maxPathLengthAllowUnspecified = maxPathLengthAllowUnspecified;
@@ -114,33 +114,6 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             throw new IllegalArgumentException("Revocation checker is not configured");
         }
         this.revocationChecker = revocationChecker;
-    }
-
-    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern) {
-        this(regExTrustedIssuerDnPattern, new NoOpRevocationChecker());
-    }
-
-    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
-                                                final boolean maxPathLengthAllowUnspecified,
-                                                final Pattern regExSubjectDnPattern) {
-        this(regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
-                false, regExSubjectDnPattern,
-                new NoOpRevocationChecker());
-    }
-
-    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
-                                                final boolean maxPathLengthAllowUnspecified,
-                                                final boolean checkKeyUsage,
-                                                final boolean requireKeyUsage) {
-        this(regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
-                checkKeyUsage, requireKeyUsage, null,
-                new NoOpRevocationChecker());
-    }
-
-    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern, final RevocationChecker revocationChecker) {
-        this(regExTrustedIssuerDnPattern, Integer.MAX_VALUE, false,
-                false, false, null,
-                revocationChecker);
     }
 
     @Override

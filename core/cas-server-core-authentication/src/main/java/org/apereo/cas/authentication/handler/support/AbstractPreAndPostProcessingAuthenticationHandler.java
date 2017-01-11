@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
@@ -23,6 +24,17 @@ import java.util.List;
  * @since 3.1
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler {
+
+    /**
+     * Instantiates a new Abstract authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
+     */
+    public AbstractPreAndPostProcessingAuthenticationHandler(final String name) {
+        super(name);
+    }
 
     /**
      * Template method to perform arbitrary pre-authentication actions.

@@ -40,10 +40,10 @@ public class UsernamePasswordWrapperAuthenticationHandler
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
     /**
-     * Default constructor.
+     * {@inheritDoc}
      */
-    public UsernamePasswordWrapperAuthenticationHandler() {
-
+    public UsernamePasswordWrapperAuthenticationHandler(final String name) {
+        super(name);
     }
 
     @Override

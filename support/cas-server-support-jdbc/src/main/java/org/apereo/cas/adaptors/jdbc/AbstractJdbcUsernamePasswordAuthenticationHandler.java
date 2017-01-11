@@ -11,12 +11,18 @@ import javax.sql.DataSource;
  * @author Scott Battaglia
  * @since 3.0.0.3
  */
-public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
-        AbstractUsernamePasswordAuthenticationHandler {
+public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private JdbcTemplate jdbcTemplate;
 
     private DataSource dataSource;
+
+    /**
+     * {@inheritDoc}
+     */
+    public AbstractJdbcUsernamePasswordAuthenticationHandler(final String name) {
+        super(name);
+    }
 
     /**
      * Method to set the datasource and generate a JdbcTemplate.

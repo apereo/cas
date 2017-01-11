@@ -42,7 +42,8 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     private final Set<String> requiredRoles;
     private final Set<String> requiredPermissions;
 
-    public ShiroAuthenticationHandler(final Set<String> requiredRoles, final Set<String> requiredPermissions) {
+    public ShiroAuthenticationHandler(final String name, final Set<String> requiredRoles, final Set<String> requiredPermissions) {
+        super(name);
         this.requiredRoles = requiredRoles;
         this.requiredPermissions = requiredPermissions;
     }

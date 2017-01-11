@@ -38,7 +38,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /** The filename to read the list of usernames from. */
     private final Resource fileName;
 
-    public FileAuthenticationHandler(final Resource fileName, final String separator) {
+    public FileAuthenticationHandler(final String name, final Resource fileName, final String separator) {
+        super(name);
         this.fileName = fileName;
         this.separator = separator;
     }

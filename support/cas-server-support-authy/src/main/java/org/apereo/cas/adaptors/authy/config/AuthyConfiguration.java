@@ -123,11 +123,11 @@ public class AuthyConfiguration {
     @Bean
     public AuthenticationHandler authyAuthenticationHandler() {
         try {
-            final boolean forceVerification = casProperties.getAuthn().getMfa().getAuthy().isForceVerification();
-            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authyClientInstance(), forceVerification);
+            final MultifactorAuthenticationProperties.Authy authy = casProperties.getAuthn().getMfa().getAuthy();
+            final boolean forceVerification = authy.isForceVerification();
+            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authy.getName(), authyClientInstance(), forceVerification);
             h.setServicesManager(servicesManager);
             h.setPrincipalFactory(authyPrincipalFactory());
-            h.setName(casProperties.getAuthn().getMfa().getAuthy().getName());
             return h;
         } catch (final Exception e) {
             throw Throwables.propagate(e);

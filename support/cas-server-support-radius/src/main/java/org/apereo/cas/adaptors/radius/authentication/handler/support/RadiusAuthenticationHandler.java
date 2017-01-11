@@ -45,8 +45,8 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      * @param failoverOnException boolean on whether to failover or not.
      * @param failoverOnAuthenticationFailure boolean on whether to failover or not.
      */
-    public RadiusAuthenticationHandler(final List<RadiusServer> servers, final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
-        super();
+    public RadiusAuthenticationHandler(final String name, final List<RadiusServer> servers, final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
+        super(name);
         logger.debug("Using {}", getClass().getSimpleName());
 
         this.servers = servers;

@@ -57,12 +57,11 @@ public class CasMongoAuthenticationConfiguration {
     public AuthenticationHandler mongoAuthenticationHandler() {
         final MongoAuthenticationProperties mongo = casProperties.getAuthn().getMongo();
         final SpringSecurityPasswordEncoder mongoPasswordEncoder = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder()));
-        final MongoAuthenticationHandler handler = new MongoAuthenticationHandler(mongo.getCollectionName(), mongo.getMongoHostUri(), mongo.getAttributes(),
+        final MongoAuthenticationHandler handler = new MongoAuthenticationHandler(mongo.getName(), mongo.getCollectionName(), mongo.getMongoHostUri(), mongo.getAttributes(),
                 mongo.getUsernameAttribute(), mongo.getPasswordAttribute(), mongoPasswordEncoder);
         handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
         handler.setPrincipalFactory(mongoPrincipalFactory());
         handler.setServicesManager(servicesManager);
-        handler.setName(mongo.getName());
 
         return handler;
     }

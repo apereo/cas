@@ -20,7 +20,14 @@ import java.security.GeneralSecurityException;
 public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private boolean isTypedIdUsed;
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public AbstractPac4jAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     /**
      * Build the handler result.
      *

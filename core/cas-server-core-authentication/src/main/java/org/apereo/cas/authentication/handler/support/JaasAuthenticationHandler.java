@@ -85,7 +85,8 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Instantiates a new Jaas authentication handler,
      * and attempts to load/verify the configuration.
      */
-    public JaasAuthenticationHandler() {
+    public JaasAuthenticationHandler(final String name) {
+        super(name);
         Assert.notNull(Configuration.getConfiguration(),
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }

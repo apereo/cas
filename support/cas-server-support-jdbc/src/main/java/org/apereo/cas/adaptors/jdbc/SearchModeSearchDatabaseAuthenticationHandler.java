@@ -26,7 +26,8 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     private final String fieldPassword;
     private final String tableUsers;
 
-    public SearchModeSearchDatabaseAuthenticationHandler(final String fieldUser, final String fieldPassword, final String tableUsers) {
+    public SearchModeSearchDatabaseAuthenticationHandler(final String name, final String fieldUser, final String fieldPassword, final String tableUsers) {
+        super(name);
         this.fieldUser = fieldUser;
         this.fieldPassword = fieldPassword;
         this.tableUsers = tableUsers;

@@ -27,7 +27,8 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     private VariegatedMultifactorAuthenticationProvider provider;
 
-    public DuoAuthenticationHandler(final VariegatedMultifactorAuthenticationProvider provider) {
+    public DuoAuthenticationHandler(final String name, final VariegatedMultifactorAuthenticationProvider provider) {
+        super(name);
         this.provider = provider;
     }
 

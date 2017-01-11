@@ -142,7 +142,7 @@ public class YubiKeyConfiguration {
         if (yubi.getClientId() <= 0) {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getClientId(), 
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getName(), yubi.getClientId(),
                 yubi.getSecretKey(), this.registry);
 
         handler.setPrincipalFactory(yubikeyPrincipalFactory());
@@ -152,7 +152,6 @@ public class YubiKeyConfiguration {
             final String[] urls = casProperties.getAuthn().getMfa().getYubikey().getApiUrls().toArray(new String[]{});
             handler.getClient().setWsapiUrls(urls);
         }
-        handler.setName(yubi.getName());
         return handler;
     }
 

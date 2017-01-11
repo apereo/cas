@@ -44,7 +44,8 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
      * @param secretKey the secret key
      * @param registry  the account registry which holds registrations.
      */
-    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey, final YubiKeyAccountRegistry registry) {
+    public YubiKeyAuthenticationHandler(final String name, final Integer clientId, final String secretKey, final YubiKeyAccountRegistry registry) {
+        super(name);
         this.registry = registry;
         this.client = YubicoClient.getClient(clientId, secretKey);
 
@@ -55,10 +56,6 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
         }
     }
 
-    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey) {
-        this(clientId, secretKey, null);
-    }   
-    
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final YubiKeyCredential yubiKeyCredential = (YubiKeyCredential) credential;

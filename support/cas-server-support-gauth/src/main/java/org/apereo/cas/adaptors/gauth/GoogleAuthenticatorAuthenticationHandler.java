@@ -26,7 +26,8 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     
     private IGoogleAuthenticator googleAuthenticatorInstance;
 
-    public GoogleAuthenticatorAuthenticationHandler(final IGoogleAuthenticator googleAuthenticatorInstance) {
+    public GoogleAuthenticatorAuthenticationHandler(final String name, final IGoogleAuthenticator googleAuthenticatorInstance) {
+        super(name);
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
 

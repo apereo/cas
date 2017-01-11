@@ -47,7 +47,8 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
     private final String includePattern;
 
-    public NtlmAuthenticationHandler(final boolean loadBalance, final String domainController, final String includePattern) {
+    public NtlmAuthenticationHandler(final String name, final boolean loadBalance, final String domainController, final String includePattern) {
+        super(name);
         this.loadBalance = loadBalance;
         if (StringUtils.isBlank(domainController)) {
             this.domainController = DEFAULT_DOMAIN_CONTROLLER;

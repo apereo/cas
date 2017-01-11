@@ -30,7 +30,8 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
     private final Clients clients;
 
-    public ClientAuthenticationHandler(final Clients clients) {
+    public ClientAuthenticationHandler(final String name, final Clients clients) {
+        super(name);
         this.clients = clients;
     }
 

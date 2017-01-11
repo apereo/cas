@@ -24,6 +24,10 @@ public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAu
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public PrincipalBearingCredentialsAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         logger.debug("Trusting credential for: {}", credential);

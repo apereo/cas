@@ -32,9 +32,10 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     private boolean failoverOnException;
     private boolean failoverOnAuthenticationFailure;
 
-    public RadiusTokenAuthenticationHandler(final List<RadiusServer> servers, 
+    public RadiusTokenAuthenticationHandler(final String name, final List<RadiusServer> servers,
                                             final boolean failoverOnException, 
                                             final boolean failoverOnAuthenticationFailure) {
+        super(name);
         this.servers = servers;
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;

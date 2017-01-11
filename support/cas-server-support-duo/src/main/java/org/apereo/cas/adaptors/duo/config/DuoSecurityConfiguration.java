@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
@@ -114,14 +115,14 @@ public class DuoSecurityConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
-        final DuoAuthenticationHandler h = new DuoAuthenticationHandler(duoMultifactorAuthenticationProvider());
+        final List<MultifactorAuthenticationProperties.Duo> duo = casProperties.getAuthn().getMfa().getDuo();
+        final String name = duo.stream().findFirst().get().getName();
+        final DuoAuthenticationHandler h = new DuoAuthenticationHandler(name, duoMultifactorAuthenticationProvider());
         h.setPrincipalFactory(duoPrincipalFactory());
         h.setServicesManager(servicesManager);
-        final String name = casProperties.getAuthn().getMfa().getDuo().stream().findFirst().get().getName();
-        if (casProperties.getAuthn().getMfa().getDuo().size() > 1) {
+        if (duo.size() > 1) {
             LOGGER.debug("Multiple Duo Security providers are available; Authentication handler is named after {}", name);
         }
-        h.setName(name);
 
         return h;
     }

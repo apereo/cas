@@ -94,7 +94,7 @@ public class RadiusConfiguration {
     @Bean
     public AuthenticationHandler radiusAuthenticationHandler() {
         final RadiusProperties radius = casProperties.getAuthn().getRadius();
-        final RadiusAuthenticationHandler h = new RadiusAuthenticationHandler(radiusServers(), radius.isFailoverOnException(),
+        final RadiusAuthenticationHandler h = new RadiusAuthenticationHandler(radius.getName(), radiusServers(), radius.isFailoverOnException(),
                 radius.isFailoverOnAuthenticationFailure());
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(radius.getPasswordEncoder()));
@@ -106,7 +106,6 @@ public class RadiusConfiguration {
 
         h.setPrincipalFactory(radiusPrincipalFactory());
         h.setServicesManager(servicesManager);
-        h.setName(radius.getName());
         return h;
     }
 

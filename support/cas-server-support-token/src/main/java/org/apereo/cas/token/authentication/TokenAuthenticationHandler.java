@@ -31,6 +31,14 @@ import java.util.Set;
  * @since 4.2.0
  */
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
+
+    /**
+     * {@inheritDoc}
+     */
+    public TokenAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     @Override
     protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
         final TokenCredential tokenCredential = (TokenCredential) credential;

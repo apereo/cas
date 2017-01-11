@@ -35,6 +35,11 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      */
     private InetAddress inetNetwork;
 
+    public RemoteAddressAuthenticationHandler(final String name, final String ipAddressRange) {
+        super(name);
+        setIpNetworkRange(ipAddressRange);
+    }
+
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final RemoteAddressCredential c = (RemoteAddressCredential) credential;
@@ -96,10 +101,8 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      *
      * @param ipAddressRange the IP address range that should be allowed trusted logins
      */
-    public void setIpNetworkRange(final String ipAddressRange) {
-
+    private void setIpNetworkRange(final String ipAddressRange) {
         if (StringUtils.isNotBlank(ipAddressRange)) {
-
             final String[] splitAddress = ipAddressRange.split("/");
 
             if (splitAddress.length == 2) {

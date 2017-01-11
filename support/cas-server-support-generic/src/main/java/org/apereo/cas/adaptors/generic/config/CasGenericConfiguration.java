@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
@@ -88,26 +89,25 @@ public class CasGenericConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
-        final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler();
-        bean.setIpNetworkRange(casProperties.getAuthn().getRemoteAddress().getIpAddressRange());
+        final RemoteAddressAuthenticationProperties remoteAddress = casProperties.getAuthn().getRemoteAddress();
+        final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(), remoteAddress.getIpAddressRange());
         bean.setPrincipalFactory(remoteAddressPrincipalFactory());
         bean.setServicesManager(servicesManager);
-        bean.setName(casProperties.getAuthn().getRemoteAddress().getName());
         return bean;
     }
 
     @Bean
     public Action remoteAddressCheck() {
         return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver, 
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy);
+                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
     }
 
     @RefreshScope
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
         final FileAuthenticationProperties fileProperties = casProperties.getAuthn().getFile();
-        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getFilename(), fileProperties.getSeparator());
+        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getName(), fileProperties.getFilename(),
+                fileProperties.getSeparator());
         h.setPrincipalFactory(filePrincipalFactory());
         h.setServicesManager(servicesManager);
 
@@ -116,7 +116,6 @@ public class CasGenericConfiguration {
             h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
-        h.setName(fileProperties.getName());
 
         return h;
     }
@@ -144,7 +143,7 @@ public class CasGenericConfiguration {
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
         final RejectAuthenticationProperties rejectProperties = casProperties.getAuthn().getReject();
         final Set<String> users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
-        final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(users);
+        final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), users);
         h.setPrincipalFactory(rejectUsersPrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setPasswordEncoder(Beans.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
@@ -152,7 +151,6 @@ public class CasGenericConfiguration {
             h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(rejectProperties.getPrincipalTransformation()));
-        h.setName(rejectProperties.getName());
         return h;
     }
 
@@ -160,7 +158,7 @@ public class CasGenericConfiguration {
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
         final ShiroAuthenticationProperties shiro = casProperties.getAuthn().getShiro();
-        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getRequiredRoles(), shiro.getRequiredPermissions());
+        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getName(), shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
         h.setPrincipalFactory(shiroPrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -170,7 +168,6 @@ public class CasGenericConfiguration {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(shiro.getPrincipalTransformation()));
-        h.setName(shiro.getName());
         return h;
     }
 

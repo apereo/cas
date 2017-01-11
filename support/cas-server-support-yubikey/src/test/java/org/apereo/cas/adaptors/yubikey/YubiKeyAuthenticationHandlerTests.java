@@ -26,6 +26,7 @@ public class YubiKeyAuthenticationHandlerTests {
     private static final Integer CLIENT_ID = 18421;
     private static final String SECRET_KEY = "iBIehjui12aK8x82oe5qzGeb0As=";
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
+    private static final String HANDLER_NAME = "handlerName";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -40,13 +41,13 @@ public class YubiKeyAuthenticationHandlerTests {
     
     @Test
     public void checkDefaultAccountRegistry() {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, CLIENT_ID, SECRET_KEY, null);
         assertNull(handler.getRegistry());
     }
 
     @Test
     public void checkReplayedAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, CLIENT_ID, SECRET_KEY, null);
 
         this.thrown.expect(FailedLoginException.class);
         this.thrown.expectMessage("Authentication failed with status: REPLAYED_OTP");
@@ -56,7 +57,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkBadConfigAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(123456, "123456");
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, 123456, "123456", null);
 
         this.thrown.expect(AccountNotFoundException.class);
         this.thrown.expectMessage("OTP format is invalid");
@@ -66,7 +67,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkAccountNotFound() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY, (uid, yubikeyPublicId) -> false);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, CLIENT_ID, SECRET_KEY, (uid, yubikeyPublicId) -> false);
         this.thrown.expect(AccountNotFoundException.class);
         handler.authenticate(new YubiKeyCredential(OTP));
     }

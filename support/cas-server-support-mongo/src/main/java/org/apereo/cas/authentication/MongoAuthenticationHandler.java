@@ -28,8 +28,9 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     
     private PasswordEncoder mongoPasswordEncoder = new NoOpPasswordEncoder();
 
-    public MongoAuthenticationHandler(final String collectionName, final String mongoHostUri, final String attributes, final String usernameAttribute,
-                                      final String passwordAttribute, final PasswordEncoder mongoPasswordEncoder) {
+    public MongoAuthenticationHandler(final String name, final String collectionName, final String mongoHostUri, final String attributes,
+                                      final String usernameAttribute, final String passwordAttribute, final PasswordEncoder mongoPasswordEncoder) {
+        super(name);
         this.collectionName = collectionName;
         this.mongoHostUri = mongoHostUri;
         this.attributes = attributes;

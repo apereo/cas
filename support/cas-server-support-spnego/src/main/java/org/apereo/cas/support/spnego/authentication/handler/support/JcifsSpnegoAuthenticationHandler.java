@@ -30,7 +30,8 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     private boolean principalWithDomainName;
     private boolean isNTLMallowed;
 
-    public JcifsSpnegoAuthenticationHandler(final Authentication authentication, final boolean principalWithDomainName, final boolean isNTLMallowed) {
+    public JcifsSpnegoAuthenticationHandler(final String name, final Authentication authentication, final boolean principalWithDomainName, final boolean isNTLMallowed) {
+        super(name);
         this.authentication = authentication;
         this.principalWithDomainName = principalWithDomainName;
         this.isNTLMallowed = isNTLMallowed;

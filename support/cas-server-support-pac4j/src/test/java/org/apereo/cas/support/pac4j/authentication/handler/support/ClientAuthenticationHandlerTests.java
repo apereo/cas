@@ -50,7 +50,7 @@ public class ClientAuthenticationHandlerTests {
     public void setUp() {
         this.fbClient = new MockFacebookClient();
         final Clients clients = new Clients(CALLBACK_URL, fbClient);
-        this.handler = new ClientAuthenticationHandler(clients);
+        this.handler = new ClientAuthenticationHandler("handlerName", clients);
         this.handler.setServicesManager(mock(ServicesManager.class));
         this.handler.setTypedIdUsed(true);
 

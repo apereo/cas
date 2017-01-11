@@ -52,8 +52,7 @@ public class AuthenticationExceptionHandler {
     /**
      * Default list of errors this class knows how to handle.
      */
-    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST =
-            new HashSet<>();
+    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new HashSet<>();
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -83,7 +82,6 @@ public class AuthenticationExceptionHandler {
     /**
      * Ordered list of error classes that this class knows how to handle.
      */
-
     private Set<Class<? extends Exception>> errors = DEFAULT_ERROR_LIST;
 
     /**
@@ -94,15 +92,11 @@ public class AuthenticationExceptionHandler {
     /**
      * Sets the list of custom exceptions that this class knows how to handle.
      *
-     * <p>This implementation adds the provided list of exceptions to the default list
-     * or just returns if the provided list is empty.
-     *
      * <p>This implementation relies on Spring's property source configurer, SpEL, and conversion service
      * infrastructure facilities to convert and inject the collection from cas properties.
      *
      * <p>This method is thread-safe. It should only be called by the Spring container during
-     * application context bootstrap
-     * or unit tests.
+     * application context bootstrap or unit tests.
      *
      * @param errors List of errors in order of descending precedence.
      */
@@ -188,8 +182,7 @@ public class AuthenticationExceptionHandler {
      * @param messageContext the spring message context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
-    protected String handleAuthenticationException(final AuthenticationException e,
-                                                   final MessageContext messageContext) {
+    protected String handleAuthenticationException(final AuthenticationException e, final MessageContext messageContext) {
         // find the first error in the error list that matches the handlerErrors
         final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
                 .map(Class::getSimpleName).findFirst().orElseGet(() -> {

@@ -85,9 +85,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      */
     protected String staticSalt;
 
-    public QueryAndEncodeDatabaseAuthenticationHandler(final String algorithmName, final String sql, final String passwordFieldName,
+    public QueryAndEncodeDatabaseAuthenticationHandler(final String name, final String algorithmName, final String sql, final String passwordFieldName,
                                                        final String saltFieldName, final String numberOfIterationsFieldName, final long numberOfIterations,
                                                        final String staticSalt) {
+        super(name);
         this.algorithmName = algorithmName;
         this.sql = sql;
         this.passwordFieldName = passwordFieldName;

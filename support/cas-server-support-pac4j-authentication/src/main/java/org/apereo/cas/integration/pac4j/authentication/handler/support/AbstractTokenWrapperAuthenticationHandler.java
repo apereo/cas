@@ -24,10 +24,10 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
     /**
-     * Default constructor.
+     * {@inheritDoc}
      */
-    public AbstractTokenWrapperAuthenticationHandler() {
-
+    public AbstractTokenWrapperAuthenticationHandler(final String name) {
+        super(name);
     }
 
     @Override

@@ -42,6 +42,7 @@ import static org.junit.Assert.*;
 public class QueryDatabaseAuthenticationHandlerTests {
 
     private static final String SQL = "SELECT password FROM casusers where username=?";
+    private static final String HANDLER_NAME = "handlerName";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -92,7 +93,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL);
         q.setDataSource(this.dataSource);
 
         this.thrown.expect(AccountNotFoundException.class);
@@ -104,7 +105,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyPasswordInvalid() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL);
         q.setDataSource(this.dataSource);
 
         this.thrown.expect(FailedLoginException.class);
@@ -116,7 +117,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyMultipleRecords() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL);
         q.setDataSource(this.dataSource);
 
         this.thrown.expect(FailedLoginException.class);
@@ -128,7 +129,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyBadQuery() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL.replace("password", "*"));
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL.replace("password", "*"));
         q.setDataSource(this.dataSource);
 
         this.thrown.expect(PreventedException.class);
@@ -139,7 +140,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     public void verifySuccess() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL);
         q.setDataSource(this.dataSource);
         assertNotNull(q.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3")));
@@ -154,7 +155,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     public void verifyBCryptFail() throws Exception {
         final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
         final String sql = SQL.replace("password", "'" + encoder.encode("pswbc1") + "' password");
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(sql);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, sql);
         q.setDataSource(this.dataSource);
         q.setPasswordEncoder(encoder);
 
@@ -171,7 +172,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     public void verifyBCryptSuccess() throws Exception {
         final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, new SecureRandom("secret2".getBytes(StandardCharsets.UTF_8)));
         final String sql = SQL.replace("password", "'" + encoder.encode("pswbc2") + "' password");
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(sql);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, sql);
         q.setDataSource(this.dataSource);
 
         q.setPasswordEncoder(encoder);

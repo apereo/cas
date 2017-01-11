@@ -37,6 +37,13 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      */
     protected ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
+    /**
+     * {@inheritDoc}
+     */
+    public AbstractWrapperAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     @Override
     public boolean supports(final Credential credential) {
         return credential != null && getCasCredentialsType().isAssignableFrom(credential.getClass());
