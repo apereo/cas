@@ -18,7 +18,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 /**
- * Test cases for {@link JpaGoogleAuthenticatorAccountRegistry}.
+ * Test cases for {@link JpaGoogleAuthenticatorCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0

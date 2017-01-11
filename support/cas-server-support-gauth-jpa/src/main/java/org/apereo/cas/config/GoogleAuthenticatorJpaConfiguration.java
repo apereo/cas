@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import com.warrenstrange.googleauth.ICredentialRepository;
-import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorAccountRegistry;
+import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorCredentialRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
@@ -79,6 +79,6 @@ public class GoogleAuthenticatorJpaConfiguration {
 
     @Bean
     public ICredentialRepository googleAuthenticatorAccountRegistry() {
-        return new JpaGoogleAuthenticatorAccountRegistry();
+        return new JpaGoogleAuthenticatorCredentialRepository();
     }
 }

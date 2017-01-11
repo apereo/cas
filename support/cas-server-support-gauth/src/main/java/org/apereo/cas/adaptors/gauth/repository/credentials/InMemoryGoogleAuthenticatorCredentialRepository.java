@@ -1,23 +1,23 @@
-package org.apereo.cas.adaptors.gauth;
+package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This is {@link InMemoryGoogleAuthenticatorAccountRegistry}.
+ * This is {@link InMemoryGoogleAuthenticatorCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class InMemoryGoogleAuthenticatorAccountRegistry extends BaseGoogleAuthenticatorCredentialRepository {
+public class InMemoryGoogleAuthenticatorCredentialRepository extends BaseGoogleAuthenticatorCredentialRepository {
 
     private Map<String, GoogleAuthenticatorAccount> accounts;
 
     /**
      * Instantiates a new In memory google authenticator account registry.
      */
-    public InMemoryGoogleAuthenticatorAccountRegistry() {
+    public InMemoryGoogleAuthenticatorCredentialRepository() {
         this.accounts = new ConcurrentHashMap<>();
     }
 
@@ -33,10 +33,7 @@ public class InMemoryGoogleAuthenticatorAccountRegistry extends BaseGoogleAuthen
     public void saveUserCredentials(final String userName, final String secretKey,
                                     final int validationCode,
                                     final List<Integer> scratchCodes) {
-        final GoogleAuthenticatorAccount account = new GoogleAuthenticatorAccount();
-        account.setScratchCodes(scratchCodes);
-        account.setValidationCode(validationCode);
-        account.setSecretKey(secretKey);
+        final GoogleAuthenticatorAccount account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
         this.accounts.put(userName, account);
     }
 

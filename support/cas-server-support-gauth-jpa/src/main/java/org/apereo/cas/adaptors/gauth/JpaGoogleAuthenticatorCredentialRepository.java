@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.gauth;
 
+import org.apereo.cas.adaptors.gauth.repository.credentials.BaseGoogleAuthenticatorCredentialRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -11,15 +12,15 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
- * This is {@link JpaGoogleAuthenticatorAccountRegistry} that stores gauth data into a RDBMS database.
+ * This is {@link JpaGoogleAuthenticatorCredentialRepository} that stores gauth data into a RDBMS database.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerGoogleAuthenticator")
-public class JpaGoogleAuthenticatorAccountRegistry extends BaseGoogleAuthenticatorCredentialRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorAccountRegistry.class);
+public class JpaGoogleAuthenticatorCredentialRepository extends BaseGoogleAuthenticatorCredentialRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorCredentialRepository.class);
     
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;

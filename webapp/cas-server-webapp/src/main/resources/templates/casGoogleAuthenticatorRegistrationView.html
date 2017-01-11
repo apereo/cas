@@ -17,13 +17,17 @@
                 <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}"></p>
 
                 <p>Scratch Codes:
-                    <ul>
-                        <li th:each="code : ${key.getScratchCodes()}" th:text="${code}"/>
-                    </ul>
+                <ul>
+                    <li th:each="code : ${key.getScratchCodes()}" th:text="${code}"/>
+                </ul>
                 </p>
                 <input type="hidden" name="_eventId" value="submit"/>
                 <input class="btn-submit" name="submit" accesskey="l"
                        th:value="#{screen.welcome.button.register}" tabindex="4" type="submit"/>
+                <input class="btn-info" name="print" accesskey="p"
+                       th:value="#{screen.welcome.button.print}"
+                       tabindex="5" type="button"
+                       onclick="window.print();"/>
             </div>
             <div class="row btn-row">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
