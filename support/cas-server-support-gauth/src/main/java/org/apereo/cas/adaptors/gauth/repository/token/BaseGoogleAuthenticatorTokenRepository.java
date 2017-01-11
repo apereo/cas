@@ -24,8 +24,7 @@ public abstract class BaseGoogleAuthenticatorTokenRepository implements GoogleAu
     /**
      * Clean internal.
      */
-    protected void cleanInternal() {
-    }
+    protected abstract void cleanInternal();
 
     @Override
     public String toString() {

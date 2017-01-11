@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
@@ -881,8 +880,19 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
         
         public static class Mongodb extends AbstractMongoClientProperties {
+            private String tokenCollection;
+            
             public Mongodb() {
                 setCollection("MongoDbGoogleAuthenticatorRepository");
+                setTokenCollection("MongoDbGoogleAuthenticatorTokenRepository");
+            }
+
+            public String getTokenCollection() {
+                return tokenCollection;
+            }
+
+            public void setTokenCollection(final String tokenCollection) {
+                this.tokenCollection = tokenCollection;
             }
         }
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
 import org.apereo.cas.adaptors.gauth.repository.credentials.BaseGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -39,7 +40,6 @@ public class MongoDbGoogleAuthenticatorCredentialRepository extends BaseGoogleAu
             LOGGER.debug("Creating database collection: {}", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
-
     }
 
     @Override
@@ -51,10 +51,9 @@ public class MongoDbGoogleAuthenticatorCredentialRepository extends BaseGoogleAu
     public String getSecretKey(final String username) {
         try {
             final Query query = new Query();
-            query.addCriteria(Criteria.where("userName").is(username));
-            final MongoDbGoogleAuthenticatorRecord r = 
-                    this.mongoTemplate.findOne(query, MongoDbGoogleAuthenticatorRecord.class, this.collectionName);
-            
+            query.addCriteria(Criteria.where("username").is(username));
+            final GoogleAuthenticatorAccount r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
+
             if (r != null) {
                 return r.getSecretKey();
             }
@@ -66,11 +65,7 @@ public class MongoDbGoogleAuthenticatorCredentialRepository extends BaseGoogleAu
 
     @Override
     public void saveUserCredentials(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        final MongoDbGoogleAuthenticatorRecord r = new MongoDbGoogleAuthenticatorRecord();
-        r.setScratchCodes(scratchCodes);
-        r.setSecretKey(secretKey);
-        r.setUserName(userName);
-        r.setValidationCode(validationCode);
-        this.mongoTemplate.save(r, this.collectionName);
+        final GoogleAuthenticatorAccount account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
+        this.mongoTemplate.save(account, this.collectionName);
     }
 }
