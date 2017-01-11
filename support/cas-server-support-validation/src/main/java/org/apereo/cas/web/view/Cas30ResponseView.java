@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -18,7 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -52,7 +50,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         final Map<String, Object> attributes = new HashMap<>();
-        
+
         final Map<String, Object> principalAttributes = getCasPrincipalAttributes(model, registeredService);
         attributes.putAll(principalAttributes);
 
@@ -90,9 +88,9 @@ public class Cas30ResponseView extends Cas20ResponseView {
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 Collections.singleton(isRememberMeAuthentication(model)));
 
-        final Optional<MultifactorAuthenticationProvider> contextProvider = getSatisfiedMultifactorAuthenticationProvider(model);
-        if (contextProvider.isPresent() && StringUtils.isNotBlank(authenticationContextAttribute)) {
-            filteredAuthenticationAttributes.put(this.authenticationContextAttribute, Collections.singleton(contextProvider.get().getId()));
+        final String contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
+        if (StringUtils.isNotBlank(authenticationContextAttribute)) {
+            filteredAuthenticationAttributes.put(this.authenticationContextAttribute, Collections.singleton(contextProvider));
         }
 
         return filteredAuthenticationAttributes;
@@ -136,7 +134,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
                 builder.append("<cas:".concat(k).concat(">"));
                 builder.append(StringEscapeUtils.escapeXml10(value.toString().trim()));
                 builder.append("</cas:".concat(k).concat(">"));
-                
+
                 final String fmt = builder.toString();
                 logger.debug("Formatted attribute for the response: {}", fmt);
                 formattedAttributes.add(fmt);
