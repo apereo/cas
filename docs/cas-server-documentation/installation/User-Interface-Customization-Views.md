@@ -41,7 +41,7 @@ and will not generate the TGC that is designed to do so.
 ...
 ```
 
-## Default service
+## Default Service
 
 In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
