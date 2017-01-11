@@ -45,6 +45,9 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     /**
      * Instantiates a new inspektr throttled submission by ip address and username handler interceptor adapter.
      *
+     * @param failureThreshold          the failure threshold
+     * @param failureRangeInSeconds     the failure range in seconds
+     * @param usernameParameter         the username parameter
      * @param auditTrailManager         the audit trail manager
      * @param dataSource                the data source
      * @param appCode                   the app code
