@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.gauth.repository.token;
 
 import com.google.common.cache.LoadingCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +14,8 @@ import java.util.Collection;
  * @since 5.1.0
  */
 public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthenticatorTokenRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CachingGoogleAuthenticatorTokenRepository.class);
+    
     private final LoadingCache<String, Collection<GoogleAuthenticatorToken>> storage;
 
     public CachingGoogleAuthenticatorTokenRepository(final LoadingCache<String, Collection<GoogleAuthenticatorToken>> storage) {
@@ -20,9 +24,9 @@ public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
 
     @Override
     public void cleanInternal() {
-        logger.debug("Beginning to clean up the cache storage to remove expiring tokens");
+        LOGGER.debug("Beginning to clean up the cache storage to remove expiring tokens");
         this.storage.cleanUp();
-        logger.debug("Total of {} token(s) remain in the cache and may be removed in future iterations", this.storage.size());
+        LOGGER.debug("Total of {} token(s) remain in the cache and may be removed in future iterations", this.storage.size());
     }
 
     @Override
@@ -32,16 +36,16 @@ public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
                 final Collection<GoogleAuthenticatorToken> tokens = this.storage.get(token.getUserId());
                 tokens.add(token);
 
-                logger.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
+                LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
                 this.storage.put(token.getUserId(), tokens);
             } catch (final Exception e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         } else {
             final Collection<GoogleAuthenticatorToken> tokens = new ArrayList<>();
             tokens.add(token);
 
-            logger.debug("Storing previously used token [{}] for user [{}]", token, token.getUserId());
+            LOGGER.debug("Storing previously used token [{}] for user [{}]", token, token.getUserId());
             this.storage.put(token.getUserId(), tokens);
         }
     }
@@ -50,10 +54,10 @@ public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
     public boolean exists(final String uid, final Integer otp) {
         try {
             final Collection<GoogleAuthenticatorToken> tokens = this.storage.getIfPresent(uid);
-            logger.debug("Found used tokens {}", tokens);
+            LOGGER.debug("Found used tokens {}", tokens);
             return tokens != null && tokens.stream().anyMatch(t -> t.getToken().equals(otp));
         } catch (final Exception e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
         return false;
     }

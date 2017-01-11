@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.time.ZonedDateTime;
+
 /**
  * This is {@link GoogleAuthenticatorTokenRepositoryCleaner}.
  *
@@ -14,7 +16,8 @@ public class GoogleAuthenticatorTokenRepositoryCleaner {
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorTokenRepositoryCleaner.class);
 
     private final GoogleAuthenticatorTokenRepository tokenRepository;
-
+    private final Object lock = new Object();
+    
     public GoogleAuthenticatorTokenRepositoryCleaner(final GoogleAuthenticatorTokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
     }
@@ -24,8 +27,10 @@ public class GoogleAuthenticatorTokenRepositoryCleaner {
      */
     @Scheduled(initialDelayString = "20000", fixedDelayString = "15000")
     public void clean() {
-        LOGGER.debug("Starting to clean expiring and previously used google authenticator tokens from {}", this.tokenRepository);
-        tokenRepository.clean();
-        LOGGER.info("Finished cleaning google authenticator tokens");
+        LOGGER.debug("Starting to clean previously used google authenticator tokens from {} at {}", this.tokenRepository, ZonedDateTime.now());
+        synchronized (this.lock) {
+            tokenRepository.clean();
+        }
+        LOGGER.info("Finished cleaning google authenticator tokens at {}", ZonedDateTime.now());
     }
 }
