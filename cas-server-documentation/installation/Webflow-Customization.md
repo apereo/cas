@@ -36,7 +36,8 @@ The flow in CAS is given a unique id that is registered inside a `flowRegistry` 
 
 {% endhighlight %}
 
-###login-flow.xml Overview
+### login-flow.xml Overview
+
 The login flow is at a high level composed of the following phases:
 
 - Initialization of the flow
@@ -58,7 +59,6 @@ Acceptance of user credentials and invoking the authentication handler component
 <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:warnCookieGenerator-ref="warnCookieGenerator"/>
-
 {% endhighlight %}
 
 Handling authentication failures, mapping the result of which event to a new state is carried out by:
