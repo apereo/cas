@@ -1,9 +1,11 @@
 package org.apereo.cas;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -12,7 +14,8 @@ import java.time.LocalDateTime;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class GoogleAuthenticatorToken {
+public class GoogleAuthenticatorToken implements Serializable, Comparable<GoogleAuthenticatorToken> {
+    private static final long serialVersionUID = -1329938047176583075L;
     private final Integer token;
     private final String userId;
     private final LocalDateTime issuedDateTime = LocalDateTime.now();
@@ -69,5 +72,14 @@ public class GoogleAuthenticatorToken {
                 .append(userId)
                 .append(issuedDateTime)
                 .toHashCode();
+    }
+
+    @Override
+    public int compareTo(final GoogleAuthenticatorToken o) {
+        return new CompareToBuilder()
+                .append(token, o.getToken())
+                .append(userId, o.getUserId())
+                .append(issuedDateTime, o.getIssuedDateTime())
+                .build();
     }
 }
