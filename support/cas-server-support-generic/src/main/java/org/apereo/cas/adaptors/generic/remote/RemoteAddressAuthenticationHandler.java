@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +36,8 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      */
     private InetAddress inetNetwork;
 
-    public RemoteAddressAuthenticationHandler(final String name, final String ipAddressRange) {
-        super(name);
+    public RemoteAddressAuthenticationHandler(final String name, final ServicesManager servicesManager, final String ipAddressRange) {
+        super(name, servicesManager);
         setIpNetworkRange(ipAddressRange);
     }
 

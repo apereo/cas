@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -30,8 +31,8 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
     private final Clients clients;
 
-    public ClientAuthenticationHandler(final String name, final Clients clients) {
-        super(name);
+    public ClientAuthenticationHandler(final String name, final ServicesManager servicesManager, final Clients clients) {
+        super(name, servicesManager);
         this.clients = clients;
     }
 

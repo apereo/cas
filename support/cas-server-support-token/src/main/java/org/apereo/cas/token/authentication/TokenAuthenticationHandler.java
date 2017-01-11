@@ -5,12 +5,14 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractTokenWrapperAuthenticationHandler;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.token.TokenConstants;
 import org.pac4j.core.credentials.TokenCredentials;
@@ -33,10 +35,14 @@ import java.util.Set;
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
 
     /**
-     * {@inheritDoc}
+     * Instantiates a new Token authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
      */
-    public TokenAuthenticationHandler(final String name) {
-        super(name);
+    public TokenAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override

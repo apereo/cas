@@ -90,9 +90,9 @@ public class CasGenericConfiguration {
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
         final RemoteAddressAuthenticationProperties remoteAddress = casProperties.getAuthn().getRemoteAddress();
-        final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(), remoteAddress.getIpAddressRange());
+        final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(), servicesManager,
+                remoteAddress.getIpAddressRange());
         bean.setPrincipalFactory(remoteAddressPrincipalFactory());
-        bean.setServicesManager(servicesManager);
         return bean;
     }
 
@@ -106,10 +106,9 @@ public class CasGenericConfiguration {
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
         final FileAuthenticationProperties fileProperties = casProperties.getAuthn().getFile();
-        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getName(), fileProperties.getFilename(),
+        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, fileProperties.getFilename(),
                 fileProperties.getSeparator());
         h.setPrincipalFactory(filePrincipalFactory());
-        h.setServicesManager(servicesManager);
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(fileProperties.getPasswordEncoder()));
         if (filePasswordPolicyConfiguration != null) {
@@ -143,9 +142,8 @@ public class CasGenericConfiguration {
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
         final RejectAuthenticationProperties rejectProperties = casProperties.getAuthn().getReject();
         final Set<String> users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
-        final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), users);
+        final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager, users);
         h.setPrincipalFactory(rejectUsersPrincipalFactory());
-        h.setServicesManager(servicesManager);
         h.setPasswordEncoder(Beans.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
         if (rejectPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);
@@ -158,10 +156,10 @@ public class CasGenericConfiguration {
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
         final ShiroAuthenticationProperties shiro = casProperties.getAuthn().getShiro();
-        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getName(), shiro.getRequiredRoles(), shiro.getRequiredPermissions());
+        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiro.getRequiredRoles(),
+                shiro.getRequiredPermissions());
 
         h.setPrincipalFactory(shiroPrincipalFactory());
-        h.setServicesManager(servicesManager);
         h.loadShiroConfiguration(shiro.getConfig().getLocation());
         h.setPasswordEncoder(Beans.newPasswordEncoder(shiro.getPasswordEncoder()));
         if (shiroPasswordPolicyConfiguration != null) {

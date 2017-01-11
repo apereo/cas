@@ -94,10 +94,11 @@
             subtreeSearch="${ldap.subtree.search:true}"
             useSSL="${ldap.use.ssl:false}" />
 
-    <bean id="ldapAuthenticationHandler"
-          class="org.apereo.cas.authentication.LdapAuthenticationHandler"
+    <bean id="ldapAuthenticationHandler" class="org.apereo.cas.authentication.LdapAuthenticationHandler"
+          c:name=""
           p:principalIdAttribute-ref="usernameAttribute"
           c:authenticator-ref="authenticator">
+        <constructor-arg name="servicesManager"><null/></constructor-arg>
         <property name="principalAttributeList">
             <list>
                 <value>displayName</value>

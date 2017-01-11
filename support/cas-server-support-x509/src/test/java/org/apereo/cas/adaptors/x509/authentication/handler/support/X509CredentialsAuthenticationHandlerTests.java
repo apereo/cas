@@ -98,18 +98,18 @@ public class X509CredentialsAuthenticationHandlerTests {
         X509CertificateCredential credential;
 
         // Test case #1: Unsupported credential type
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, false, false, null, new NoOpRevocationChecker());
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, false, false, null, new NoOpRevocationChecker());
         params.add(new Object[]{handler, new UsernamePasswordCredential(), false, null});
 
         // Test case #2:Valid certificate
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, false, false, null, new NoOpRevocationChecker());
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, false, false, null, new NoOpRevocationChecker());
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
         params.add(new Object[]{handler, credential, true, new DefaultHandlerResult(handler, credential,
                 new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #3: Expired certificate
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, false, false, null, new NoOpRevocationChecker());
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, false, false, null, new NoOpRevocationChecker());
         params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-expired.crt")),
@@ -118,14 +118,14 @@ public class X509CredentialsAuthenticationHandlerTests {
         });
 
         // Test case #4: Untrusted issuer
-        handler = new X509CredentialsAuthenticationHandler("handlerName", RegexUtils.createPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US"),
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, RegexUtils.createPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US"),
                 Integer.MAX_VALUE, true, false, false, null, new NoOpRevocationChecker());
         params.add(new Object[]{handler, new X509CertificateCredential(createCertificates("snake-oil.crt")),
                 true, new FailedLoginException(),
         });
 
         // Test case #5: Disallowed subject
-        handler = new X509CredentialsAuthenticationHandler("", PATTERN, Integer.MAX_VALUE, true, false,
+        handler = new X509CredentialsAuthenticationHandler("", null, PATTERN, Integer.MAX_VALUE, true, false,
                 false, RegexUtils.createPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US"), new NoOpRevocationChecker());
         params.add(new Object[]{
                 handler,
@@ -135,7 +135,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         });
 
         // Test case #6: Check key usage on a cert without keyUsage extension
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, true, true, null, new NoOpRevocationChecker());
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, true, true, null, new NoOpRevocationChecker());
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
         params.add(new Object[]{
                 handler,
@@ -145,7 +145,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         });
 
         // Test case #7: Require key usage on a cert without keyUsage extension
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, true, true, null, new NoOpRevocationChecker());
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, true, true, null, new NoOpRevocationChecker());
         params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),
@@ -153,7 +153,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         });
 
         // Test case #8: Require key usage on a cert with acceptable keyUsage extension values
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, true, true, null, new NoOpRevocationChecker());
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, true, true, null, new NoOpRevocationChecker());
         credential = new X509CertificateCredential(createCertificates("user-valid-keyUsage.crt"));
         params.add(new Object[]{
                 handler,
@@ -163,7 +163,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         });
 
         // Test case #9: Require key usage on a cert with unacceptable keyUsage extension values
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, true, true, null, new NoOpRevocationChecker());
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, true, true, null, new NoOpRevocationChecker());
         params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-invalid-keyUsage.crt")),
@@ -180,7 +180,7 @@ public class X509CredentialsAuthenticationHandlerTests {
 
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
         checker.init();
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, false, false, null, checker);
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, false, false, null, checker);
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
         params.add(new Object[]{
                 handler,
@@ -192,7 +192,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         // Test case #11: Revoked end user certificate
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
         checker.init();
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, false, false, null, checker);
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, false, false, null, checker);
         params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-revoked.crt")),
@@ -204,7 +204,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         final ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-expired.crl"), null, zeroThresholdPolicy);
         checker.init();
-        handler = new X509CredentialsAuthenticationHandler("handlerName", PATTERN, Integer.MAX_VALUE, false, false, false, null, checker);
+        handler = new X509CredentialsAuthenticationHandler("handlerName", null, PATTERN, Integer.MAX_VALUE, false, false, false, null, checker);
         params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),

@@ -196,9 +196,9 @@ public class OpenIdConfiguration {
 
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
-        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler(casProperties.getAuthn().getOpenid().getName(), ticketRegistry);
+        final String name = casProperties.getAuthn().getOpenid().getName();
+        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler(name, servicesManager, ticketRegistry);
         h.setPrincipalFactory(openidPrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 

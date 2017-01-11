@@ -140,14 +140,13 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final AcceptAuthenticationProperties accept = casProperties.getAuthn().getAccept();
-        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(accept.getName(), getParsedUsers());
+        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(accept.getName(), servicesManager, getParsedUsers());
         h.setPasswordEncoder(Beans.newPasswordEncoder(accept.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(accept.getPrincipalTransformation()));
         h.setPrincipalFactory(acceptUsersPrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 
@@ -275,7 +274,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
         final JaasAuthenticationProperties jaas = casProperties.getAuthn().getJaas();
-        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName());
+        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(), servicesManager);
 
         h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
         h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
@@ -288,17 +287,15 @@ public class CasCoreAuthenticationConfiguration {
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
 
         h.setPrincipalFactory(jaasPrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 
     @Bean
     @Autowired
     public AuthenticationHandler proxyAuthenticationHandler(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) {
-        final HttpBasedServiceCredentialsAuthenticationHandler h = new HttpBasedServiceCredentialsAuthenticationHandler();
+        final HttpBasedServiceCredentialsAuthenticationHandler h = new HttpBasedServiceCredentialsAuthenticationHandler(servicesManager);
         h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
         h.setPrincipalFactory(proxyPrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +35,8 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     /** Instance of Apache Commons HttpClient. */
     private HttpClient httpClient;
 
-    public HttpBasedServiceCredentialsAuthenticationHandler() {
-        super("HttpBasedServiceCredentialsAuthenticationHandler");
+    public HttpBasedServiceCredentialsAuthenticationHandler(final ServicesManager servicesManager) {
+        super("HttpBasedServiceCredentialsAuthenticationHandler", servicesManager);
     }
 
     @Override

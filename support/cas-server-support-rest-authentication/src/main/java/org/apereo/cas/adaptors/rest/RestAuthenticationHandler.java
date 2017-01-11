@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.rest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AccountDisabledException;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -28,10 +29,14 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private final RestAuthenticationApi api;
 
     /**
-     * {@inheritDoc}
+     * Instantiates a new Rest authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
      */
     public RestAuthenticationHandler(final String name, final RestAuthenticationApi api) {
-        super(name);
+        super(name, null);
         this.api = api;
     }
 

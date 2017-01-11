@@ -30,7 +30,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     /**
      * The services manager instance, as the entry point to the registry.
      **/
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
     /**
      * Configurable handler name.
@@ -46,7 +46,8 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * {@link AuthenticationManager}, and particular implementations
      * may require uniqueness. Uniqueness is a best practice generally.
      */
-    public AbstractAuthenticationHandler(final String name) {
+    public AbstractAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
         if (StringUtils.isNotBlank(name)) {
             this.name = name;
         } else {
@@ -68,10 +69,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
         this.principalFactory = principalFactory;
     }
 
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-    
     @Override
     public int compareTo(final AuthenticationHandler o) {
         final int res = this.order.compareTo(o.getOrder());

@@ -92,7 +92,7 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Bind b) {
-        final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler(b.getName());
+        final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager);
         h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
@@ -104,7 +104,6 @@ public class CasJdbcAuthenticationConfiguration {
         
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
         h.setPrincipalFactory(jdbcPrincipalFactory());
-        h.setServicesManager(servicesManager);
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
@@ -116,8 +115,9 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Encode b) {
-        final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getName(), b.getAlgorithmName(), b.getSql(),
-                b.getPasswordFieldName(), b.getSaltFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(), b.getStaticSalt());
+        final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getName(), servicesManager,
+                b.getAlgorithmName(), b.getSql(), b.getPasswordFieldName(), b.getSaltFieldName(), b.getNumberOfIterationsFieldName(),
+                b.getNumberOfIterations(), b.getStaticSalt());
 
         h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
@@ -132,7 +132,6 @@ public class CasJdbcAuthenticationConfiguration {
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         h.setPrincipalFactory(jdbcPrincipalFactory());
-        h.setServicesManager(servicesManager);
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
@@ -144,7 +143,7 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
-        final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getName(), b.getSql());
+        final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager, b.getSql());
         h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
@@ -156,7 +155,6 @@ public class CasJdbcAuthenticationConfiguration {
 
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
         h.setPrincipalFactory(jdbcPrincipalFactory());
-        h.setServicesManager(servicesManager);
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
@@ -168,8 +166,8 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Search b) {
-        final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), b.getFieldUser(),
-                b.getFieldPassword(), b.getTableUsers());
+        final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
+                b.getFieldUser(), b.getFieldPassword(), b.getTableUsers());
 
         h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
@@ -183,7 +181,6 @@ public class CasJdbcAuthenticationConfiguration {
         }
 
         h.setPrincipalFactory(jdbcPrincipalFactory());
-        h.setServicesManager(servicesManager);
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();

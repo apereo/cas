@@ -93,7 +93,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, null, SQL);
         q.setDataSource(this.dataSource);
 
         this.thrown.expect(AccountNotFoundException.class);
@@ -105,7 +105,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyPasswordInvalid() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, null, SQL);
         q.setDataSource(this.dataSource);
 
         this.thrown.expect(FailedLoginException.class);
@@ -117,7 +117,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyMultipleRecords() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, null, SQL);
         q.setDataSource(this.dataSource);
 
         this.thrown.expect(FailedLoginException.class);
@@ -129,7 +129,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyBadQuery() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL.replace("password", "*"));
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, null, SQL.replace("password", "*"));
         q.setDataSource(this.dataSource);
 
         this.thrown.expect(PreventedException.class);
@@ -140,7 +140,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     public void verifySuccess() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, SQL);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, null, SQL);
         q.setDataSource(this.dataSource);
         assertNotNull(q.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3")));
@@ -155,7 +155,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     public void verifyBCryptFail() throws Exception {
         final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
         final String sql = SQL.replace("password", "'" + encoder.encode("pswbc1") + "' password");
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, sql);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, null, sql);
         q.setDataSource(this.dataSource);
         q.setPasswordEncoder(encoder);
 
@@ -172,7 +172,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     public void verifyBCryptSuccess() throws Exception {
         final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, new SecureRandom("secret2".getBytes(StandardCharsets.UTF_8)));
         final String sql = SQL.replace("password", "'" + encoder.encode("pswbc2") + "' password");
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, sql);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(HANDLER_NAME, null, sql);
         q.setDataSource(this.dataSource);
 
         q.setPasswordEncoder(encoder);

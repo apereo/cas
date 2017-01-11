@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -41,8 +42,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * {@link AuthenticationManager}, and particular implementations
      * may require uniqueness. Uniqueness is a best practice generally.
      */
-    public AbstractUsernamePasswordAuthenticationHandler(final String name) {
-        super(name);
+    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override

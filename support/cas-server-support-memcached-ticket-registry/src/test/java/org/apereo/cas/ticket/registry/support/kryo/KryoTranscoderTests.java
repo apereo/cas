@@ -85,7 +85,7 @@ public class KryoTranscoderTests {
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", AccountNotFoundException.class);
         bldr.addSuccess("authn", new DefaultHandlerResult(
-                new AcceptUsersAuthenticationHandler("handlerName", new HashMap<>()),
+                new AcceptUsersAuthenticationHandler("handlerName", null, new HashMap<>()),
                 new BasicCredentialMetaData(userPassCredential)));
 
         final TicketGrantingTicket expectedTGT =

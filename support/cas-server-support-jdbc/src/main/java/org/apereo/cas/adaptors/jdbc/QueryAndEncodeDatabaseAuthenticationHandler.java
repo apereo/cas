@@ -9,6 +9,7 @@ import org.apache.shiro.crypto.hash.ConfigurableHashService;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
@@ -85,10 +86,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      */
     protected String staticSalt;
 
-    public QueryAndEncodeDatabaseAuthenticationHandler(final String name, final String algorithmName, final String sql, final String passwordFieldName,
-                                                       final String saltFieldName, final String numberOfIterationsFieldName, final long numberOfIterations,
-                                                       final String staticSalt) {
-        super(name);
+    public QueryAndEncodeDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final String algorithmName, final String sql,
+                                                       final String passwordFieldName, final String saltFieldName, final String numberOfIterationsFieldName,
+                                                       final long numberOfIterations, final String staticSalt) {
+        super(name, servicesManager);
         this.algorithmName = algorithmName;
         this.sql = sql;
         this.passwordFieldName = passwordFieldName;

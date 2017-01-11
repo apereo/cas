@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -38,8 +39,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /** The filename to read the list of usernames from. */
     private final Resource fileName;
 
-    public FileAuthenticationHandler(final String name, final Resource fileName, final String separator) {
-        super(name);
+    public FileAuthenticationHandler(final String name, final ServicesManager servicesManager, final Resource fileName, final String separator) {
+        super(name, servicesManager);
         this.fileName = fileName;
         this.separator = separator;
     }

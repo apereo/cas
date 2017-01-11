@@ -21,6 +21,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.ResourceUtils;
 import org.springframework.core.io.Resource;
 
@@ -42,8 +43,9 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     private final Set<String> requiredRoles;
     private final Set<String> requiredPermissions;
 
-    public ShiroAuthenticationHandler(final String name, final Set<String> requiredRoles, final Set<String> requiredPermissions) {
-        super(name);
+    public ShiroAuthenticationHandler(final String name, final ServicesManager servicesManager, final Set<String> requiredRoles,
+                                      final Set<String> requiredPermissions) {
+        super(name, servicesManager);
         this.requiredRoles = requiredRoles;
         this.requiredPermissions = requiredPermissions;
     }

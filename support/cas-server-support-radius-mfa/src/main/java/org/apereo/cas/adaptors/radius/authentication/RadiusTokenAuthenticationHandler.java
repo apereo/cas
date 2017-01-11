@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -32,10 +33,10 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     private boolean failoverOnException;
     private boolean failoverOnAuthenticationFailure;
 
-    public RadiusTokenAuthenticationHandler(final String name, final List<RadiusServer> servers,
-                                            final boolean failoverOnException, 
+    public RadiusTokenAuthenticationHandler(final String name, final ServicesManager servicesManager, final List<RadiusServer> servers,
+                                            final boolean failoverOnException,
                                             final boolean failoverOnAuthenticationFailure) {
-        super(name);
+        super(name, servicesManager);
         this.servers = servers;
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;

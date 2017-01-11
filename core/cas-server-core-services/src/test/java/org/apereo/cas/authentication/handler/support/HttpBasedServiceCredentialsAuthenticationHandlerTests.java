@@ -25,7 +25,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
+        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler(null);
         this.authenticationHandler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
     }
 

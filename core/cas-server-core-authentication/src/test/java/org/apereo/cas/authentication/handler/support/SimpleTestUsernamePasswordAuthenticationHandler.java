@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
@@ -54,7 +53,6 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
      */
     private Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
 
-
     static {
         DEFAULT_USERNAME_ERROR_MAP.put("accountDisabled", new AccountDisabledException("Account disabled"));
         DEFAULT_USERNAME_ERROR_MAP.put("accountLocked", new AccountLockedException("Account locked"));
@@ -64,18 +62,13 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
     }
 
     public SimpleTestUsernamePasswordAuthenticationHandler() {
-        super("SimpleTestUsernamePasswordAuthenticationHandler");
+        super("SimpleTestUsernamePasswordAuthenticationHandler", null);
+
+        logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.", this.getClass().getName());
     }
 
-    @PostConstruct
-    private void init() {
-        logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",
-                this.getClass().getName());
-    }
-    
     @Override
-    public HandlerResult authenticate(final Credential credential)
-            throws GeneralSecurityException, PreventedException {
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
 
         final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
         final String username = usernamePasswordCredential.getUsername();

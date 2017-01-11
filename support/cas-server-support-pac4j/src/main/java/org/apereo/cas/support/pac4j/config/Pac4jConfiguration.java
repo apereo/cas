@@ -97,9 +97,8 @@ public class Pac4jConfiguration {
     @Bean
     public AuthenticationHandler clientAuthenticationHandler() {
         final Pac4jProperties pac4j = casProperties.getAuthn().getPac4j();
-        final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), builtClients());
+        final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager, builtClients());
         h.setPrincipalFactory(clientPrincipalFactory());
-        h.setServicesManager(servicesManager);
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         return h;
     }

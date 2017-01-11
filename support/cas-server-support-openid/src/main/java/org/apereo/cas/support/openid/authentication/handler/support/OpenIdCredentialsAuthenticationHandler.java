@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -24,8 +25,8 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
     
     private final TicketRegistry ticketRegistry;
 
-    public OpenIdCredentialsAuthenticationHandler(final String name, final TicketRegistry ticketRegistry) {
-        super(name);
+    public OpenIdCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final TicketRegistry ticketRegistry) {
+        super(name, servicesManager);
         this.ticketRegistry = ticketRegistry;
     }
 

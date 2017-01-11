@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.dao.DataAccessException;
 
 import javax.security.auth.login.FailedLoginException;
@@ -26,8 +27,9 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     private final String fieldPassword;
     private final String tableUsers;
 
-    public SearchModeSearchDatabaseAuthenticationHandler(final String name, final String fieldUser, final String fieldPassword, final String tableUsers) {
-        super(name);
+    public SearchModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final String fieldUser,
+                                                         final String fieldPassword, final String tableUsers) {
+        super(name, servicesManager);
         this.fieldUser = fieldUser;
         this.fieldPassword = fieldPassword;
         this.tableUsers = tableUsers;

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
@@ -26,8 +27,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     
     private final String sql;
 
-    public QueryDatabaseAuthenticationHandler(final String name, final String sql) {
-        super(name);
+    public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final String sql) {
+        super(name, servicesManager);
         this.sql = sql;
     }
 

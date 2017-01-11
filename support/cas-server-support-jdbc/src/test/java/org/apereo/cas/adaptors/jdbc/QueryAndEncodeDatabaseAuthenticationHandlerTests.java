@@ -94,8 +94,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", "ops", 0, "");
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, null, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", "ops", 0, "");
         q.setDataSource(dataSource);
 
         this.thrown.expect(AccountNotFoundException.class);
@@ -106,8 +106,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationInvalidSql() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, ALG_NAME, buildSql("makesNoSenseInSql"),
-                PASSWORD_FIELD_NAME, "salt", "ops", 0, "");
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, null, ALG_NAME,
+                buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", "ops", 0, "");
         q.setDataSource(dataSource);
 
         this.thrown.expect(PreventedException.class);
@@ -118,8 +118,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationMultipleAccounts() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", "ops", 0, "");
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, null, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", "ops", 0, "");
         q.setDataSource(dataSource);
 
         this.thrown.expect(FailedLoginException.class);
@@ -130,8 +130,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessful() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", "numIterations", 0, STATIC_SALT);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, null, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", "numIterations", 0, STATIC_SALT);
         q.setDataSource(dataSource);
 
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
@@ -143,8 +143,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", "numIterations", 0, STATIC_SALT);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(HANDLER_NAME, null, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", "numIterations", 0, STATIC_SALT);
         q.setDataSource(dataSource);
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override

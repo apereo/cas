@@ -1,10 +1,12 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
@@ -38,10 +40,14 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     protected ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
     /**
-     * {@inheritDoc}
+     * Instantiates a new AbstractWrapper authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
      */
-    public AbstractWrapperAuthenticationHandler(final String name) {
-        super(name);
+    public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override

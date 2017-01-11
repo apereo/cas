@@ -112,9 +112,8 @@ public class WsFederationAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler adfsAuthNHandler() {
         final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
-        final WsFederationAuthenticationHandler h = new WsFederationAuthenticationHandler(wsfed.getName());
+        final WsFederationAuthenticationHandler h = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager);
         h.setPrincipalFactory(adfsPrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 

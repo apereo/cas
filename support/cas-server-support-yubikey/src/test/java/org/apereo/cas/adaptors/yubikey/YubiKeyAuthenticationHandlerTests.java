@@ -41,13 +41,13 @@ public class YubiKeyAuthenticationHandlerTests {
     
     @Test
     public void checkDefaultAccountRegistry() {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, CLIENT_ID, SECRET_KEY, null);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, null, CLIENT_ID, SECRET_KEY, null);
         assertNull(handler.getRegistry());
     }
 
     @Test
     public void checkReplayedAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, CLIENT_ID, SECRET_KEY, null);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, null, CLIENT_ID, SECRET_KEY, null);
 
         this.thrown.expect(FailedLoginException.class);
         this.thrown.expectMessage("Authentication failed with status: REPLAYED_OTP");
@@ -57,7 +57,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkBadConfigAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, 123456, "123456", null);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, null, 123456, "123456", null);
 
         this.thrown.expect(AccountNotFoundException.class);
         this.thrown.expectMessage("OTP format is invalid");
@@ -67,7 +67,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkAccountNotFound() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, CLIENT_ID, SECRET_KEY, (uid, yubikeyPublicId) -> false);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(HANDLER_NAME, null, CLIENT_ID, SECRET_KEY, (uid, yubikeyPublicId) -> false);
         this.thrown.expect(AccountNotFoundException.class);
         handler.authenticate(new YubiKeyCredential(OTP));
     }

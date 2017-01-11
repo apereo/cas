@@ -89,7 +89,7 @@ public class MultifactorAuthenticationTests {
         users.put("alice", "alice");
         users.put("bob", "bob");
         users.put("mallory", "mallory");
-        authenticationHandlersResolvers.put(new AcceptUsersAuthenticationHandler(null, users), null);
+        authenticationHandlersResolvers.put(new AcceptUsersAuthenticationHandler(null, null, users), null);
 
         final HashMap<String, String> credentials = new HashMap<>();
         credentials.put("alice", "31415");

@@ -117,9 +117,8 @@ public class DuoSecurityConfiguration {
     public AuthenticationHandler duoAuthenticationHandler() {
         final List<MultifactorAuthenticationProperties.Duo> duo = casProperties.getAuthn().getMfa().getDuo();
         final String name = duo.stream().findFirst().get().getName();
-        final DuoAuthenticationHandler h = new DuoAuthenticationHandler(name, duoMultifactorAuthenticationProvider());
+        final DuoAuthenticationHandler h = new DuoAuthenticationHandler(name, servicesManager, duoMultifactorAuthenticationProvider());
         h.setPrincipalFactory(duoPrincipalFactory());
-        h.setServicesManager(servicesManager);
         if (duo.size() > 1) {
             LOGGER.debug("Multiple Duo Security providers are available; Authentication handler is named after {}", name);
         }

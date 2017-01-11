@@ -1,8 +1,10 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.security.auth.login.FailedLoginException;
@@ -25,10 +27,14 @@ import java.sql.SQLException;
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     /**
-     * {@inheritDoc}
+     * Instantiates a new Abstract authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
      */
-    public BindModeSearchDatabaseAuthenticationHandler(final String name) {
-        super(name);
+    public BindModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override

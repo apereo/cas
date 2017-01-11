@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -26,14 +27,14 @@ import java.util.List;
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler {
 
     /**
-     * Instantiates a new Abstract authentication handler.
+     * Instantiates a new AbstractPreAndPostProcessing authentication handler.
      *
      * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
      * {@link AuthenticationManager}, and particular implementations
      * may require uniqueness. Uniqueness is a best practice generally.
      */
-    public AbstractPreAndPostProcessingAuthenticationHandler(final String name) {
-        super(name);
+    public AbstractPreAndPostProcessingAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     /**

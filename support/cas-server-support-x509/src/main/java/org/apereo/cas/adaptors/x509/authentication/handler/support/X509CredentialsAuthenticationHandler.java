@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,11 +100,11 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      *                                      for backward compatibility with previous versions that do not perform revocation
      *                                      checking.
      */
-    public X509CredentialsAuthenticationHandler(final String name, final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
-                                                final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage,
+    public X509CredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final Pattern regExTrustedIssuerDnPattern,
+                                                final int maxPathLength, final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage,
                                                 final boolean requireKeyUsage, final Pattern regExSubjectDnPattern,
                                                 final RevocationChecker revocationChecker) {
-        super(name);
+        super(name, servicesManager);
         this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
         this.maxPathLength = maxPathLength;
         this.maxPathLengthAllowUnspecified = maxPathLengthAllowUnspecified;
