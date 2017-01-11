@@ -5,6 +5,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -14,11 +20,26 @@ import java.time.LocalDateTime;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Entity
+@Table(name = "GoogleAuthenticatorToken")
 public class GoogleAuthenticatorToken implements Serializable, Comparable<GoogleAuthenticatorToken> {
     private static final long serialVersionUID = -1329938047176583075L;
-    private final Integer token;
-    private final String userId;
-    private final LocalDateTime issuedDateTime = LocalDateTime.now();
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id = Integer.MAX_VALUE;
+
+    @Column(nullable = false)
+    private Integer token;
+
+    @Column(nullable = false)
+    private String userId;
+
+    @Column(nullable = false)
+    private LocalDateTime issuedDateTime = LocalDateTime.now();
+
+    public GoogleAuthenticatorToken() {
+    }
 
     public GoogleAuthenticatorToken(final Integer token, final String userId) {
         this.token = token;
@@ -36,7 +57,23 @@ public class GoogleAuthenticatorToken implements Serializable, Comparable<Google
     public LocalDateTime getIssuedDateTime() {
         return issuedDateTime;
     }
-    
+
+    public void setId(final long id) {
+        this.id = id;
+    }
+
+    public void setToken(final Integer token) {
+        this.token = token;
+    }
+
+    public void setUserId(final String userId) {
+        this.userId = userId;
+    }
+
+    public void setIssuedDateTime(final LocalDateTime issuedDateTime) {
+        this.issuedDateTime = issuedDateTime;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
