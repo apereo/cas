@@ -1,9 +1,20 @@
 package org.apereo.cas.config;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorTokenRepository;
+import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
+import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.repository.token.CachingGoogleAuthenticatorTokenRepository;
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +31,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link GoogleAuthenticatorJpaConfiguration}.
@@ -37,19 +50,19 @@ public class GoogleAuthenticatorJpaConfiguration {
     
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
+    public HibernateJpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter() {
         return Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
     
     @RefreshScope
     @Bean
-    public DataSource dataSourceEvent() {
+    public DataSource dataSourceGoogleAuthenticator() {
         return Beans.newHickariDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
     }
     
     @Bean
-    public String[] jpaEventPackagesToScan() {
-        return new String[]{"org.apereo.cas.adaptors.gauth"};
+    public String[] jpaPackagesToScanGoogleAuthenticator() {
+        return new String[]{GoogleAuthenticatorAccount.class.getPackage().getName()};
     }
     
     @Lazy
@@ -58,10 +71,10 @@ public class GoogleAuthenticatorJpaConfiguration {
         final LocalContainerEntityManagerFactoryBean bean =
                 Beans.newEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
-                                jpaEventVendorAdapter(),
+                                jpaGoogleAuthenticatorVendorAdapter(),
                                 "jpaGoogleAuthenticatorContext",
-                                jpaEventPackagesToScan(),
-                                dataSourceEvent()),
+                                jpaPackagesToScanGoogleAuthenticator(),
+                                dataSourceGoogleAuthenticator()),
                         casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
 
         bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
@@ -81,4 +94,10 @@ public class GoogleAuthenticatorJpaConfiguration {
     public ICredentialRepository googleAuthenticatorAccountRegistry() {
         return new JpaGoogleAuthenticatorCredentialRepository();
     }
+
+    @Bean
+    public GoogleAuthenticatorTokenRepository googleAuthenticatorTokenRepository() {
+        return new JpaGoogleAuthenticatorTokenRepository();
+    }
+    
 }

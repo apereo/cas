@@ -49,7 +49,7 @@ public class JpaEventsConfiguration {
     }
     
     public String[] jpaEventPackagesToScan() {
-        return new String[]{"org.apereo.cas.support.events.dao"};
+        return new String[]{JpaCasEventRepository.class.getPackage().getName()};
     }
     
     @Lazy
