@@ -35,13 +35,13 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
     @JsonIgnore
     @Override
     public Long getTimeToLive() {
-        return Long.MAX_VALUE;
+        return (long) Integer.MAX_VALUE;
     }
 
     @JsonIgnore
     @Override
     public Long getTimeToIdle() {
-        return Long.MAX_VALUE;
+        return (long) Integer.MAX_VALUE;
     }
     
     @Override

@@ -97,8 +97,6 @@ public class LdapAuthenticationConfiguration {
                 .stream()
                 .filter(ldapInstanceConfigurationPredicate())
                 .forEach(l -> {
-
-
                     final Map<String, String> attributes = buildPrincipalAttributeMap(l);
                     LOGGER.debug("Creating ldap authenticator for {} and baseDn {}", l.getLdapUrl(), l.getBaseDn());
                     final Authenticator authenticator = getAuthenticator(l);

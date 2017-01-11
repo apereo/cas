@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link RiskBasedAuthenticationProperties}.
  *
@@ -136,13 +139,15 @@ public class RiskBasedAuthenticationProperties {
         private String riskyAuthenticationAttribute = "triggeredRiskBasedAuthentication";
 
         private Mail mail = new Mail();
-        private Sms sms = new Sms();
 
-        public Sms getSms() {
+        @NestedConfigurationProperty
+        private SmsProperties sms = new SmsProperties();
+        
+        public SmsProperties getSms() {
             return sms;
         }
 
-        public void setSms(final Sms sms) {
+        public void setSms(final SmsProperties sms) {
             this.sms = sms;
         }
 
@@ -232,66 +237,6 @@ public class RiskBasedAuthenticationProperties {
 
             public void setCc(final String cc) {
                 this.cc = cc;
-            }
-        }
-        
-        public static class Sms {
-            private String text;
-            private String from;
-            private String attributeName = "phone";
-            private Twilio twilio = new Twilio();
-
-            public String getAttributeName() {
-                return attributeName;
-            }
-
-            public void setAttributeName(final String attributeName) {
-                this.attributeName = attributeName;
-            }
-
-            public String getFrom() {
-                return from;
-            }
-
-            public void setFrom(final String from) {
-                this.from = from;
-            }
-
-            public String getText() {
-                return text;
-            }
-
-            public void setText(final String text) {
-                this.text = text;
-            }
-
-            public Twilio getTwilio() {
-                return twilio;
-            }
-
-            public void setTwilio(final Twilio twilio) {
-                this.twilio = twilio;
-            }
-
-            public static class Twilio {
-                private String accountId;
-                private String token;
-
-                public String getAccountId() {
-                    return accountId;
-                }
-
-                public void setAccountId(final String accountId) {
-                    this.accountId = accountId;
-                }
-
-                public String getToken() {
-                    return token;
-                }
-
-                public void setToken(final String token) {
-                    this.token = token;
-                }
             }
         }
     }

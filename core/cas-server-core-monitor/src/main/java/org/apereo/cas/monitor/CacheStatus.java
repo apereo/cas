@@ -13,13 +13,13 @@ import java.util.stream.Stream;
 public class CacheStatus extends Status {
 
     private final CacheStatistics[] statistics;
-    
+
     /**
      * Creates a new instance describing cache status.
      *
-     * @param code Status code.
+     * @param code        Status code.
      * @param description Optional status description.
-     * @param statistics One or more sets of cache statistics.
+     * @param statistics  One or more sets of cache statistics.
      */
     public CacheStatus(final StatusCode code, final String description, final CacheStatistics... statistics) {
         super(code, buildDescription(description, statistics));
@@ -49,7 +49,7 @@ public class CacheStatus extends Status {
     /**
      * Builds the description string for the retrieved statistics.
      *
-     * @param desc the desc
+     * @param desc       the desc
      * @param statistics the statistics
      * @return the string
      */
@@ -65,7 +65,13 @@ public class CacheStatus extends Status {
             }
             sb.append(' ');
         }
-        return Stream.of(statistics).map(Object::toString)
-                    .collect(Collectors.joining("|", sb.toString() + "Cache statistics: [", "]"));
+        return Stream.of(statistics)
+                .filter(s -> s != null)
+                .map(s -> {
+                    s.toString(sb);
+                    return sb.toString();
+                })
+                .collect(Collectors.joining("|",
+                        sb.toString() + "Cache statistics: [", "]"));
     }
 }

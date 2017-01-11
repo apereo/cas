@@ -7,6 +7,15 @@ ext {
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
+
+    /*
+    Open the Git repository in the current directory.
+    Get commit id of HEAD.
+     */
+    git = org.ajoberstar.grgit.Grgit.open(file('.'))
+    def gitHead = git.head()
+    currentRevision = gitHead.id
+    currentAbbreviatedRevision = gitHead.abbreviatedId
 }
 
 def isArtifactSigningRequired = {
@@ -43,6 +52,7 @@ buildscript {
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.gradle:build-scan-plugin:1.0"
+        classpath "org.ajoberstar:grgit:1.1.0"
     }
 }
 
@@ -201,6 +211,7 @@ subprojects {
             attributes("Implementation-Title": project.name,
                        "Implementation-Vendor": project.group,
                        "Created-By": project.group,
+                       "Specification-Version": rootProject.currentRevision,
                        "Implementation-Version": project.version)
         }
     }

@@ -76,7 +76,7 @@
           c:mongoTemplate-ref="mongoTemplate" />
 
     <bean id="validationAnnotationBeanPostProcessor" 
-          class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+          class="org.apereo.cas.util.spring.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <!-- Fake in-memory mongo instance -->

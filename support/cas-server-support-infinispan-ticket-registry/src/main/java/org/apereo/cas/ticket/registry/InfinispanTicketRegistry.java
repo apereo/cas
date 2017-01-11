@@ -21,6 +21,8 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     /**
      * Instantiates a new Infinispan ticket registry.
+     *
+     * @param cache the cache
      */
     public InfinispanTicketRegistry(final Cache<String, Ticket> cache) {
         this.cache = cache;

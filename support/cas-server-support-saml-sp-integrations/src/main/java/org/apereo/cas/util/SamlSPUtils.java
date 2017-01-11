@@ -65,6 +65,9 @@ public final class SamlSPUtils {
                 attributesToRelease.add(sp.getNameIdAttribute());
                 service.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider(sp.getNameIdAttribute()));
             }
+            if (StringUtils.isNotBlank(sp.getNameIdFormat())) {
+                service.setRequiredNameIdFormat(sp.getNameIdFormat());
+            }            
             service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(attributesToRelease));
             service.setMetadataCriteriaRoles(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart());
             service.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);

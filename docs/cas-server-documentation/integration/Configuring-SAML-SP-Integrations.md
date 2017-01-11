@@ -12,7 +12,7 @@ a recipe (that is documented by the SP publicly) to configure attribute release 
 you can review the registration record inside the CAS service registry to adjust options.
 
 **NOTE:** In the event that special attributes and/or name ids are required for the integration, you are required
-to ensure all such [attributes are properly resolved](Attribute-Resolution.html) and are available to the CAS principal. 
+to ensure all such [attributes are properly resolved](Attribute-Resolution.html) and are available to the CAS principal.
 
 Support is enabled by including the following module in the Overlay:
 
@@ -37,6 +37,11 @@ The following SAML SP integrations are provided by CAS:
 * [Webex](https://help.webex.com/docs/DOC-1067)
 * [PowerFAIDS Net Partner](https://www.collegeboard.org/powerfaids/net-partner)
 * [Office365](https://msdn.microsoft.com/en-us/library/azure/dn641269.aspx)
+* [Zoom](https://support.zoom.us/hc/en-us/articles/201363003-Getting-Started-with-SSO)
+* [Evernote](https://help.evernote.com/hc/en-us/articles/209005217-How-to-configure-SSO-for-your-business)
+* [Asana](https://asana.com/guide/help/premium/authentication#gl-saml)
+
+
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 

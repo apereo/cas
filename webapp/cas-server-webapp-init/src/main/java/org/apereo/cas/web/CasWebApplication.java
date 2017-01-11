@@ -2,13 +2,14 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.config.CasEmbeddedContainerConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.CasBanner;
+import org.apereo.cas.util.spring.boot.CasBanner;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
@@ -49,6 +50,7 @@ import java.util.Collections;
                 CassandraAutoConfiguration.class,
                 DataSourceTransactionManagerAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
+                RedisRepositoriesAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
 @EnableConfigServer
 @EnableAsync

@@ -8,9 +8,14 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.MapKeyColumn;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The {@link SamlRegisteredService} is responsible for managing the SAML metadata for a given SP.
@@ -24,7 +29,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
 
     private String metadataLocation;
-    
+
     /**
      * Defines a filter that requires the presence of a validUntil
      * attribute on the root element of the metadata document.
@@ -42,7 +47,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaPattern;
-    
+
     @Column(length = 255, updatable = true, insertable = true)
     private String requiredNameIdFormat;
 
@@ -66,7 +71,13 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
-        
+    
+    @ElementCollection
+    @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
+    @MapKeyColumn(name = "key")
+    @Column(name = "value")
+    private Map<String, String> attributeNameFormats = new TreeMap<>();
+
     /**
      * Instantiates a new Saml registered service.
      */
@@ -145,7 +156,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     public void setMetadataCriteriaPattern(final String metadataCriteriaPattern) {
         this.metadataCriteriaPattern = metadataCriteriaPattern;
     }
-    
+
     public String getRequiredNameIdFormat() {
         return requiredNameIdFormat;
     }
@@ -178,6 +189,14 @@ public class SamlRegisteredService extends RegexRegisteredService {
         this.metadataCriteriaRemoveRolelessEntityDescriptors = metadataCriteriaRemoveRolelessEntityDescriptors;
     }
 
+    public Map<String, String> getAttributeNameFormats() {
+        return attributeNameFormats;
+    }
+
+    public void setAttributeNameFormats(final Map<String, String> attributeNameFormats) {
+        this.attributeNameFormats = attributeNameFormats;
+    }
+
     @Override
     protected AbstractRegisteredService newInstance() {
         return new SamlRegisteredService();
@@ -203,12 +222,13 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setMetadataCriteriaRemoveEmptyEntitiesDescriptors(samlRegisteredService.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             setMetadataCriteriaRemoveRolelessEntityDescriptors(samlRegisteredService.isMetadataCriteriaRemoveRolelessEntityDescriptors());
             setMetadataCriteriaRoles(samlRegisteredService.getMetadataCriteriaRoles());
-            
+            setAttributeNameFormats(samlRegisteredService.getAttributeNameFormats());
+
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -236,6 +256,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors, rhs.metadataCriteriaRemoveEmptyEntitiesDescriptors)
                 .append(this.metadataCriteriaRemoveRolelessEntityDescriptors, rhs.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append(this.metadataCriteriaRoles, rhs.metadataCriteriaRoles)
+                .append(this.attributeNameFormats, rhs.attributeNameFormats)
                 .isEquals();
     }
 
@@ -256,6 +277,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors)
                 .append(this.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append(this.metadataCriteriaRoles)
+                .append(this.attributeNameFormats)
                 .toHashCode();
     }
 
@@ -276,6 +298,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("metadataCriteriaRemoveEmptyEntitiesDescriptors", this.metadataCriteriaRemoveEmptyEntitiesDescriptors)
                 .append("metadataCriteriaRemoveRolelessEntityDescriptors", this.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append("metadataCriteriaRoles", this.metadataCriteriaRoles)
+                .append("attributeNameFormats", this.attributeNameFormats)
                 .toString();
     }
 }
