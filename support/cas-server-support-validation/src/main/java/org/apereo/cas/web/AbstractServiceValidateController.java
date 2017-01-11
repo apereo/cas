@@ -243,7 +243,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, new Object[]{serviceCredential.getId()}, request, service);
             }
         } else {
-            logger.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", this.proxyHandler);
+            logger.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", 
+                    this.proxyHandler.getClass().getSimpleName());
         }
 
         onSuccessfulValidation(serviceTicketId, assertion);
@@ -347,12 +348,15 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
-        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
+        
+        if (StringUtils.hasText(proxyIou)) {
+            modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
+        }
         if (proxyGrantingTicket != null) {
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
         }
 
-        contextProvider.ifPresent(provider -> modelAndView.addObject(this.authnContextAttribute, provider));
+        contextProvider.ifPresent(provider -> modelAndView.addObject(this.authnContextAttribute, provider.getId()));
 
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
