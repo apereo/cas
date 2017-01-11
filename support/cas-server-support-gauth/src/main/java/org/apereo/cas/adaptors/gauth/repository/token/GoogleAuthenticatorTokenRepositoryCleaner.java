@@ -23,9 +23,10 @@ public class GoogleAuthenticatorTokenRepositoryCleaner {
     }
 
     /**
-     * Clean.
+     * Clean the repository.
      */
-    @Scheduled(initialDelayString = "20000", fixedDelayString = "15000")
+    @Scheduled(initialDelayString = "${cas.authn.mfa.gauth.cleaner.startDelay:20000}",
+            fixedDelayString = "${cas.authn.mfa.gauth.cleaner.repeatInterval:60000}")
     public void clean() {
         LOGGER.debug("Starting to clean previously used google authenticator tokens from {} at {}", this.tokenRepository, ZonedDateTime.now());
         synchronized (this.lock) {
