@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -34,6 +35,7 @@ import javax.sql.DataSource;
 @Configuration("googleAuthentiacatorJpaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@EnableScheduling
 public class GoogleAuthenticatorJpaConfiguration {
 
     @Autowired
@@ -89,7 +91,9 @@ public class GoogleAuthenticatorJpaConfiguration {
 
     @Bean
     public GoogleAuthenticatorTokenRepository googleAuthenticatorTokenRepository() {
-        return new JpaGoogleAuthenticatorTokenRepository();
+        return new JpaGoogleAuthenticatorTokenRepository(
+                casProperties.getAuthn().getMfa().getGauth().getTimeStepSize()
+        );
     }
 
 }

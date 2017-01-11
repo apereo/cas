@@ -10,13 +10,14 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
-import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorCredentialRepository;
-import org.apereo.cas.adaptors.gauth.repository.token.CachingGoogleAuthenticatorTokenRepository;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.repository.token.CachingGoogleAuthenticatorTokenRepository;
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepository;
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepositoryCleaner;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationWebflowAction;
@@ -56,6 +57,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -76,6 +78,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("googleAuthenticatorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableScheduling
 public class GoogleAuthenticatorConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorConfiguration.class);
 
@@ -288,6 +291,11 @@ public class GoogleAuthenticatorConfiguration {
                     }
                 });
         return new CachingGoogleAuthenticatorTokenRepository(storage);
+    }
+
+    @Bean
+    public GoogleAuthenticatorTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner() {
+        return new GoogleAuthenticatorTokenRepositoryCleaner(googleAuthenticatorTokenRepository);
     }
 
     /**

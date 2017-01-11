@@ -19,7 +19,7 @@ public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
     }
 
     @Override
-    public void clean() {
+    public void cleanInternal() {
         logger.debug("Beginning to clean up the cache storage to remove expiring tokens");
         this.storage.cleanUp();
         logger.debug("Total of {} token(s) remain in the cache and may be removed in future iterations", this.storage.size());
