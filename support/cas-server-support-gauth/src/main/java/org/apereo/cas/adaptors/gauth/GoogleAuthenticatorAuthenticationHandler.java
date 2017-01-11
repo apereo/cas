@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.gauth;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apereo.cas.GoogleAuthenticatorToken;
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
 import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepository;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
