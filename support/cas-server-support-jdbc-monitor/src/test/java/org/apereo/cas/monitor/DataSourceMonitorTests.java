@@ -27,9 +27,7 @@ public class DataSourceMonitorTests {
 
     @Test
     public void verifyObserve() throws Exception {
-        final JdbcDataSourceMonitor monitor = new JdbcDataSourceMonitor(this.dataSource, "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
-        monitor.setMaxWait(5000);
-        monitor.setExecutor(Executors.newSingleThreadExecutor());
+        final JdbcDataSourceMonitor monitor = new JdbcDataSourceMonitor(Executors.newSingleThreadExecutor(), 5000, this.dataSource, "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
         final PoolStatus status = monitor.observe();
         assertEquals(StatusCode.OK, status.getCode());
     }
