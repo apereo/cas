@@ -23,6 +23,8 @@ Post to this list if you have a question about installing, configuring, or troub
 
 [Old archives](https://groups.google.com/forum/#!forum/jasig-cas-user)
 
+<div class="alert alert-info"><strong>List Etiquette</strong><p>If your question does not contain enough data and is described in vague terms, it will likely be ignored. Please try to be as precise as possible.</p></div>
+
 ### Data, Data, Data
 
 Always ensure you have enough diagnostics data in your report:
@@ -35,8 +37,6 @@ Always ensure you have enough diagnostics data in your report:
 - Have you prepared an overlay project that might allow the project to duplicate the issue? 
 
 Put another way; readers of your case aren’t necessarily housed in your head! They don’t know what you know. Help them out. Would you want to respond to your own report?
-
-<div class="alert alert-info"><strong>List Etiquette</strong><p>If your question does not contain enough data and is described in vague terms, it will likely be ignored. Please try to be as precise as possible.</p></div>
 
 ### Be Patient
 
