@@ -84,8 +84,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     }
 
     @Override
-    protected void renderMergedOutputModel(
-            final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected void renderMergedOutputModel(final Map<String, Object> model, 
+                                           final HttpServletRequest request, 
+                                           final HttpServletResponse response) throws Exception {
 
         String serviceId = null;
         try {
@@ -105,8 +106,11 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             final Response samlResponse = this.samlObjectBuilder.newResponse(
                     this.samlObjectBuilder.generateSecureRandomId(),
                     ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
-
+            logger.debug("Created SAML response for service {}", serviceId);
+            
             prepareResponse(samlResponse, model);
+
+            logger.debug("Starting to encode SAML response for service {}", serviceId);
             this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
             logger.error("Error generating SAML response for service {}.", serviceId, e);
