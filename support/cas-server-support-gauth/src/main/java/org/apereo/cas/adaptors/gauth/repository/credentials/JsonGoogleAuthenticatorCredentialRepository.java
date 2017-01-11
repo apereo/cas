@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.springframework.core.io.Resource;
@@ -37,7 +38,7 @@ public class JsonGoogleAuthenticatorCredentialRepository extends BaseGoogleAuthe
 
             final Collection<GoogleAuthenticatorAccount> c = this.serializer.from(this.location.getFile());
             return c.stream()
-                    .filter(a -> a.getUsername().equals(username))
+                    .filter(a -> StringUtils.isNotBlank(a.getUsername()) && a.getUsername().equals(username))
                     .map(a -> a.getSecretKey())
                     .findAny()
                     .orElse(null);
