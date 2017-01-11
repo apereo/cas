@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.adaptors.gauth.repository.token;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
