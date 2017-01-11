@@ -293,6 +293,7 @@ public class GoogleAuthenticatorConfiguration {
         return new CachingGoogleAuthenticatorTokenRepository(storage);
     }
 
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public GoogleAuthenticatorTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner() {
         return new GoogleAuthenticatorTokenRepositoryCleaner(googleAuthenticatorTokenRepository);

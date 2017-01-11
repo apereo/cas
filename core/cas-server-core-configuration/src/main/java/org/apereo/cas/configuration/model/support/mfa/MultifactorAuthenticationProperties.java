@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
@@ -798,9 +799,18 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private Mongodb mongodb = new Mongodb();
         private Jpa jpa = new Jpa();
         private Json json = new Json();
-
+        private Cleaner cleaner = new Cleaner();
+        
         public GAuth() {
             setId("mfa-gauth");
+        }
+
+        public Cleaner getCleaner() {
+            return cleaner;
+        }
+
+        public void setCleaner(final Cleaner cleaner) {
+            this.cleaner = cleaner;
         }
 
         public Json getJson() {
@@ -891,6 +901,36 @@ public class MultifactorAuthenticationProperties implements Serializable {
                 public Database() {
                     super.setUrl("jdbc:hsqldb:mem:cas-gauth");
                 }
+            }
+        }
+
+        public static class Cleaner {
+            private boolean enabled = true;
+            private String startDelay = "PT1M";
+            private String repeatInterval = "PT1M";
+
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            public void setEnabled(final boolean enabled) {
+                this.enabled = enabled;
+            }
+
+            public String getStartDelay() {
+                return startDelay;
+            }
+
+            public void setStartDelay(final String startDelay) {
+                this.startDelay = startDelay;
+            }
+
+            public String getRepeatInterval() {
+                return repeatInterval;
+            }
+
+            public void setRepeatInterval(final String repeatInterval) {
+                this.repeatInterval = repeatInterval;
             }
         }
     }
