@@ -37,19 +37,38 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     /**
      * Instantiates a new cookie retrieving cookie generator
      * with a default cipher of {@link NoOpCookieValueManager}.
+     * @param name cookie name
+     * @param path cookie path
+     * @param maxAge cookie max age
+     * @param secure if cookie is only for HTTPS
+     * @param domain cookie domain
      */
-    public CookieRetrievingCookieGenerator() {
-        this(new NoOpCookieValueManager());
+    public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge, final boolean secure, final String domain) {
+        this(name, path, maxAge, secure, domain, new NoOpCookieValueManager(), DEFAULT_REMEMBER_ME_MAX_AGE);
     }
 
     /**
      * Instantiates a new Cookie retrieving cookie generator.
+     * @param name cookie name
+     * @param path cookie path
+     * @param maxAge cookie max age
+     * @param secure if cookie is only for HTTPS
+     * @param domain cookie domain
      * @param casCookieValueManager the cookie manager
+     * @param rememberMeMaxAge cookie rememberMe max age
      */
-    public CookieRetrievingCookieGenerator(final CookieValueManager casCookieValueManager) {
+    public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge, final boolean secure, final String domain,
+                                           final CookieValueManager casCookieValueManager, final int rememberMeMaxAge) {
         super();
+        super.setCookieName(name);
+        super.setCookiePath(path);
+        super.setCookieDomain(domain);
+        super.setCookieMaxAge(maxAge);
+        super.setCookieSecure(secure);
         this.casCookieValueManager = casCookieValueManager;
+        this.rememberMeMaxAge = rememberMeMaxAge;
     }
+
     /**
      * Adds the cookie, taking into account {@link RememberMeCredential#REQUEST_PARAMETER_REMEMBER_ME}
      * in the request.
@@ -97,13 +116,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         return null;
     }
 
-    public void setRememberMeMaxAge(final int maxAge) {
-        this.rememberMeMaxAge = maxAge;
-    }
-
     @Override
     public void setCookieDomain(final String cookieDomain) {
-        
         super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
     }
 }
