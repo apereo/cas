@@ -5,37 +5,22 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
-import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -48,23 +33,8 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasSupportActionsConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        RefreshAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreValidationConfiguration.class,
-        CasCoreConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreUtilConfiguration.class})
 @DirtiesContext
+@Import(CasSupportActionsConfiguration.class)
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired
