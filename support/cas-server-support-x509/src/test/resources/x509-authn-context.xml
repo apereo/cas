@@ -19,27 +19,31 @@
     <!--
        | Authentication handler beans
        -->
-    <bean id="acceptUsersAuthenticationHandler"
-          class="org.apereo.cas.authentication.AcceptUsersAuthenticationHandler">
-        <property name="users">
+    <bean id="acceptUsersAuthenticationHandler" class="org.apereo.cas.authentication.AcceptUsersAuthenticationHandler"
+        c:name="">
+        <constructor-arg name="servicesManager" value="#{null}"></constructor-arg>
+        <constructor-arg name="users">
             <map>
                 <entry key="casuser" value="Mellon"/>
             </map>
-        </property>
+        </constructor-arg>
     </bean>
 
-    <bean id="httpBasedAuthenticationHandler"
-          class="org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
+    <bean id="httpBasedAuthenticationHandler" class="org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" >
+        <constructor-arg name="servicesManager" value="#{null}"></constructor-arg>
+    </bean>
 
-    <bean id="x509AuthenticationHandler"
-          class="org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler"
+    <bean id="x509AuthenticationHandler" class="org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler"
+          c:name=""
           c:regExTrustedIssuerDnPattern="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US"
           c:regExSubjectDnPattern="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US"
           c:checkKeyUsage="true"
           c:requireKeyUsage="true"
           c:maxPathLength="2147483647"
           c:maxPathLengthAllowUnspecified="true"
-          c:revocationChecker-ref="revocationChecker" />
+          c:revocationChecker-ref="revocationChecker" >
+        <constructor-arg name="servicesManager" value="#{null}"></constructor-arg>
+    </bean>
 
     <bean id="revocationChecker" 
           class="org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker">
