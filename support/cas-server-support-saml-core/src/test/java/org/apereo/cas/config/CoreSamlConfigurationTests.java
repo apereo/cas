@@ -17,6 +17,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(
         classes = {RefreshAutoConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationPrincipalConfiguration.class,
+                CasCoreAuthenticationPolicyConfiguration.class,
+                CasCoreAuthenticationMetadataConfiguration.class,
+                CasCoreAuthenticationSupportConfiguration.class,
+                CasCoreAuthenticationHandlersConfiguration.class,
+                CasCoreHttpConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CoreSamlConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
