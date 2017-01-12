@@ -1392,8 +1392,7 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 
 ### CRL Fetching / Revocation
 
-CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
-configurability in the revocation machinery built into the JSSE.
+CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability in the revocation machinery built into the JSSE.
 
 Available policies cover the following events:
 
@@ -1453,6 +1452,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
+# cas.authn.x509.certificateAttribute=certificateRevocationList
 
 # cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.x509.ldap.connectionStrategy=

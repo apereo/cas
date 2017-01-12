@@ -125,6 +125,16 @@ public class X509Properties {
 
     private String name;
 
+    private String certificateAttribute = "certificateRevocationList";
+
+    public String getCertificateAttribute() {
+        return certificateAttribute;
+    }
+
+    public void setCertificateAttribute(final String certificateAttribute) {
+        this.certificateAttribute = certificateAttribute;
+    }
+    
     public String getName() {
         return name;
     }
@@ -368,7 +378,7 @@ public class X509Properties {
     public static class Ldap extends AbstractLdapProperties {
         private String baseDn;
         private String searchFilter;
-
+        
         public String getBaseDn() {
             return baseDn;
         }

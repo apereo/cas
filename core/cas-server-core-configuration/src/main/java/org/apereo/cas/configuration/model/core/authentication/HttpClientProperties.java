@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.Beans;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**

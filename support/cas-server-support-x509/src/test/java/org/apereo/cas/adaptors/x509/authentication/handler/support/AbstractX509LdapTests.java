@@ -7,8 +7,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapTestUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Collection;
@@ -19,7 +17,6 @@ import java.util.Collection;
  * @since 4.1
  */
 public abstract class AbstractX509LdapTests extends AbstractLdapTests {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractX509LdapTests.class);
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
 
