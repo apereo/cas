@@ -26,6 +26,7 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
      * @param ehcacheTicketsCache the tickets cache
      */
     public EhCacheMonitor(final Cache ehcacheTicketsCache) {
+        super(EhCacheMonitor.class.getSimpleName());
         this.ehcacheTicketsCache = ehcacheTicketsCache;
     }
 
