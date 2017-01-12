@@ -88,6 +88,14 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         return executeSearchForSpnegoAttribute(remoteIp);
     }
 
+    @Override
+    protected String getRemoteHostName(final String remoteIp) {
+        if ("localhost".equalsIgnoreCase(remoteIp) || remoteIp.startsWith("127.")) {
+            return remoteIp;
+        }
+        return super.getRemoteHostName(remoteIp);
+    }
+
     /**
      * Searches the ldap instance for the attribute value.
      *
