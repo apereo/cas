@@ -3,16 +3,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-   
+
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService">
             <property name="id" value="0"/>
@@ -76,10 +71,8 @@
                 <bean class="org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy">
                     <property name="requiredAttributes">
                         <map>
-                            <entry key="cn"
-                                   value="cnValue"/>
-                            <entry key="givenName"
-                                   value="gnameValue"/>
+                            <entry key="cn" value="cnValue"/>
+                            <entry key="givenName" value="gnameValue"/>
                         </map>
                     </property>
                 </bean>
@@ -198,13 +191,9 @@
             <property name="evaluationOrder" value="100"/>
         </bean>
     </util:list>
-    
+
     <bean id="cachingPrincipalAttributeRepository"
           class="org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
           c:timeUnit="SECONDS"
           c:expiryDuration="20"/>
-    
-    
-    <bean class="org.thymeleaf.spring4.SpringTemplateEngine"/>
-    <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties"/>
 </beans>
