@@ -60,6 +60,7 @@ public class CasPersonDirectoryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao attributeRepository() {

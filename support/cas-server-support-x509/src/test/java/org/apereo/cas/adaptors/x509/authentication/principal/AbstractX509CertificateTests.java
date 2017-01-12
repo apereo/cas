@@ -1,7 +1,9 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 
 import java.math.BigInteger;
@@ -23,6 +25,7 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Import(X509AuthenticationConfiguration.class)
 public abstract class AbstractX509CertificateTests extends AbstractCentralAuthenticationServiceTests {
 
     public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);

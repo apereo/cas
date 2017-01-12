@@ -20,6 +20,7 @@ import java.io.Serializable;
  * @since 4.1
  */
 public class DefaultCasCookieValueManager implements CookieValueManager {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
     private static final char COOKIE_FIELD_SEPARATOR = '@';
     private static final int COOKIE_FIELDS_LENGTH = 3;

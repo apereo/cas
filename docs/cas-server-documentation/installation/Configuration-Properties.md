@@ -1392,8 +1392,7 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 
 ### CRL Fetching / Revocation
 
-CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
-configurability in the revocation machinery built into the JSSE.
+CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability in the revocation machinery built into the JSSE.
 
 Available policies cover the following events:
 
@@ -1453,6 +1452,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
+# cas.authn.x509.certificateAttribute=certificateRevocationList
 
 # cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.x509.ldap.connectionStrategy=
@@ -1658,6 +1658,10 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.trustedDeviceEnabled=true
 # cas.authn.mfa.gauth.name=
 
+# cas.authn.mfa.gauth.cleaner.enabled=true
+# cas.authn.mfa.gauth.cleaner.startDelay=20000
+# cas.authn.mfa.gauth.cleaner.repeatInterval=60000
+
 # cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.gauth.bypass.authenticationAttributeName=bypass|skip
@@ -1667,12 +1671,19 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.bypass.credentialClassType=UsernamePassword.+
 ```
 
+#### Google Authenticator JSON
+
+```properties
+# cas.authn.mfa.gauth.json.config.location=file:/somewhere.json
+```
+
 #### Google Authenticator MongoDb
 
 ```properties
 # cas.authn.mfa.gauth.mongodb.clientUri=
 # cas.authn.mfa.gauth.mongodb.dropCollection=false
 # cas.authn.mfa.gauth.mongodb.collection=MongoDbGoogleAuthenticatorRepository
+# cas.authn.mfa.gauth.mongodb.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
 #### Google Authenticator JPA

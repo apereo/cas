@@ -34,28 +34,28 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     /**
      * Search exec that looks for the attribute.
      */
-    protected SearchExecutor searchExecutor;
+    private final SearchExecutor searchExecutor;
 
     /**
      * The connection config to prep for connections.
      **/
-    protected ConnectionConfig connectionConfig;
-
-    /**
-     * Serialization support.
-     */
-    public LdaptiveResourceCRLFetcher() {
-    }
+    private final ConnectionConfig connectionConfig;
+    
+    private final String certificateAttribute;
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
      *
      * @param connectionConfig the connection configuration
      * @param searchExecutor   the search executor
+     * @param attributeName    the attribute name
      */
-    public LdaptiveResourceCRLFetcher(final ConnectionConfig connectionConfig, final SearchExecutor searchExecutor) {
+    public LdaptiveResourceCRLFetcher(final ConnectionConfig connectionConfig, 
+                                      final SearchExecutor searchExecutor,
+                                      final String attributeName) {
         this.connectionConfig = connectionConfig;
         this.searchExecutor = searchExecutor;
+        this.certificateAttribute = attributeName;
     }
 
     @Override
@@ -107,11 +107,14 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             final Response<SearchResult> result = performLdapSearch(ldapURL);
             if (result.getResultCode() == ResultCode.SUCCESS) {
                 final LdapEntry entry = result.getResult().getEntry();
-                final LdapAttribute attribute = entry.getAttribute();
+                final LdapAttribute attribute = entry.getAttribute(this.certificateAttribute);
 
-                logger.debug("Located entry [{}]. Retrieving first attribute [{}]",
-                        entry, attribute);
-                return fetchX509CRLFromAttribute(attribute);
+                if (attribute.isBinary()) {
+                    logger.debug("Located entry [{}]. Retrieving first attribute [{}]", entry, attribute);
+                    return fetchX509CRLFromAttribute(attribute);
+                } else {
+                    logger.warn("Found certificate attribute [{}] but it is not marked as a binary attribute", this.certificateAttribute);
+                }
             }
 
             logger.debug("Failed to execute the search [{}]", result);
@@ -135,7 +138,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * @throws CertificateException if connection to ldap fails, or attribute to get the revocation list is unavailable
      */
     protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute aval) throws CertificateException, IOException, CRLException {
-        if (aval != null) {
+        if (aval != null && aval.isBinary()) {
             final byte[] val = aval.getBinaryValue();
             if (val == null || val.length == 0) {
                 throw new CertificateException("Empty attribute. Can not download CRL from ldap");
@@ -172,13 +175,5 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
         final ConnectionConfig cc = ConnectionConfig.newConnectionConfig(this.connectionConfig);
         cc.setLdapUrl(ldapURL);
         return new DefaultConnectionFactory(cc);
-    }
-
-    public void setSearchExecutor(final SearchExecutor searchExecutor) {
-        this.searchExecutor = searchExecutor;
-    }
-
-    public void setConnectionConfig(final ConnectionConfig connectionConfig) {
-        this.connectionConfig = connectionConfig;
     }
 }

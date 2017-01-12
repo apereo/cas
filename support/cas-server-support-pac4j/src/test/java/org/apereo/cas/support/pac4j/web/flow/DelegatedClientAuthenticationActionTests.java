@@ -133,7 +133,7 @@ public class DelegatedClientAuthenticationActionTests {
         when(authNManager.authenticate(any(AuthenticationTransaction.class)))
                 .thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
-        transManager.setAuthenticationManager(authNManager);
+        when(transManager.getAuthenticationManager()).thenReturn(authNManager);
         when(transManager.handle(any(AuthenticationTransaction.class),
                 any(AuthenticationResultBuilder.class)))
                 .thenReturn(transManager);

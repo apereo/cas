@@ -20,7 +20,15 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalElectionStrategy.class);
     private static final long serialVersionUID = 6704726217030836315L;
     
-    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final PrincipalFactory principalFactory;
+
+    public DefaultPrincipalElectionStrategy() {
+        this(new DefaultPrincipalFactory());
+    }
+
+    public DefaultPrincipalElectionStrategy(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
+    }
 
     @Override
     public Principal nominate(final Collection<Authentication> authentications, 
@@ -29,9 +37,5 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principalAttributes);
         LOGGER.debug("Nominated [{}] as the primary principal", finalPrincipal);
         return finalPrincipal;
-    }
-
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
-        this.principalFactory = principalFactory;
     }
 }

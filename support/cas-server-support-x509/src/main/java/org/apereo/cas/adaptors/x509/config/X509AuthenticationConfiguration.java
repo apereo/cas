@@ -108,7 +108,7 @@ public class X509AuthenticationConfiguration {
                 getRevocationPolicy(x509.getCrlUnavailablePolicy()),
                 getRevocationPolicy(x509.getCrlExpiredPolicy()),
                 cache,
-                getCrlFetcher(),
+                crlFetcher(),
                 x509.isThrowOnFetchFailure());
     }
 
@@ -135,7 +135,7 @@ public class X509AuthenticationConfiguration {
                 getRevocationPolicy(x509.getCrlResourceUnavailablePolicy()),
                 getRevocationPolicy(x509.getCrlResourceExpiredPolicy()),
                 x509.getRefreshIntervalSeconds(),
-                getCrlFetcher(),
+                crlFetcher(),
                 x509CrlResources);
     }
 
@@ -151,7 +151,8 @@ public class X509AuthenticationConfiguration {
         }
     }
 
-    private CRLFetcher getCrlFetcher() {
+    @Bean
+    public CRLFetcher crlFetcher() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
         switch (x509.getCrlFetcher().toLowerCase()) {
             case "ldap":
@@ -198,17 +199,19 @@ public class X509AuthenticationConfiguration {
     @Bean
     public CRLFetcher ldaptiveResourceCRLFetcher() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        return new LdaptiveResourceCRLFetcher(Beans.newConnectionConfig(x509.getLdap()), Beans.newSearchExecutor(x509.getLdap().getBaseDn(),
-                x509.getLdap().getSearchFilter()));
+        return new LdaptiveResourceCRLFetcher(Beans.newConnectionConfig(x509.getLdap()),
+                Beans.newSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
+                x509.getCertificateAttribute());
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
-        final X509SubjectPrincipalResolver r = new X509SubjectPrincipalResolver(casProperties.getAuthn().getX509().getPrincipalDescriptor());
+        final X509Properties x509 = casProperties.getAuthn().getX509();
+        final X509SubjectPrincipalResolver r = new X509SubjectPrincipalResolver(x509.getPrincipalDescriptor());
         r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getX509().getPrincipal().isReturnNull());
+        r.setPrincipalAttributeName(x509.getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(x509.getPrincipal().isReturnNull());
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
@@ -216,10 +219,11 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
         final X509SubjectDNPrincipalResolver r = new X509SubjectDNPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getX509().getPrincipal().isReturnNull());
+        r.setPrincipalAttributeName(x509.getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(x509.getPrincipal().isReturnNull());
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
@@ -227,10 +231,11 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
         final X509SubjectAlternativeNameUPNPrincipalResolver r = new X509SubjectAlternativeNameUPNPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getX509().getPrincipal().isReturnNull());
+        r.setPrincipalAttributeName(x509.getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(x509.getPrincipal().isReturnNull());
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
@@ -238,10 +243,11 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
         final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getX509().getPrincipal().isReturnNull());
+        r.setPrincipalAttributeName(x509.getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(x509.getPrincipal().isReturnNull());
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }

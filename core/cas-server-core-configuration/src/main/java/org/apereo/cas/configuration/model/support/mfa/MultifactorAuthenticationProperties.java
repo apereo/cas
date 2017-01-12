@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
+import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.apereo.cas.configuration.support.Beans;
 
 import java.io.Serializable;
@@ -795,11 +796,28 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private int windowSize = 3;
 
         private Mongodb mongodb = new Mongodb();
-
         private Jpa jpa = new Jpa();
-
+        private Json json = new Json();
+        private Cleaner cleaner = new Cleaner();
+        
         public GAuth() {
             setId("mfa-gauth");
+        }
+
+        public Cleaner getCleaner() {
+            return cleaner;
+        }
+
+        public void setCleaner(final Cleaner cleaner) {
+            this.cleaner = cleaner;
+        }
+
+        public Json getJson() {
+            return json;
+        }
+
+        public void setJson(final Json json) {
+            this.json = json;
         }
 
         public Mongodb getMongodb() {
@@ -858,9 +876,23 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.label = label;
         }
 
+        public static class Json extends AbstractConfigProperties {
+        }
+        
         public static class Mongodb extends AbstractMongoClientProperties {
+            private String tokenCollection;
+            
             public Mongodb() {
                 setCollection("MongoDbGoogleAuthenticatorRepository");
+                setTokenCollection("MongoDbGoogleAuthenticatorTokenRepository");
+            }
+
+            public String getTokenCollection() {
+                return tokenCollection;
+            }
+
+            public void setTokenCollection(final String tokenCollection) {
+                this.tokenCollection = tokenCollection;
             }
         }
 
@@ -879,6 +911,36 @@ public class MultifactorAuthenticationProperties implements Serializable {
                 public Database() {
                     super.setUrl("jdbc:hsqldb:mem:cas-gauth");
                 }
+            }
+        }
+
+        public static class Cleaner {
+            private boolean enabled = true;
+            private String startDelay = "PT1M";
+            private String repeatInterval = "PT1M";
+
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            public void setEnabled(final boolean enabled) {
+                this.enabled = enabled;
+            }
+
+            public String getStartDelay() {
+                return startDelay;
+            }
+
+            public void setStartDelay(final String startDelay) {
+                this.startDelay = startDelay;
+            }
+
+            public String getRepeatInterval() {
+                return repeatInterval;
+            }
+
+            public void setRepeatInterval(final String repeatInterval) {
+                this.repeatInterval = repeatInterval;
             }
         }
     }

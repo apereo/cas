@@ -31,8 +31,6 @@ import java.util.Map;
  * @since 5.0.0
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
-    private static final String MESSAGE = "At least one authentication handler is required";
-
     /**
      * Log instance for logging events, errors, warnings, etc.
      */
@@ -78,11 +76,19 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
                                             final AuthenticationHandlerResolver authenticationHandlerResolver,
                                             final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators,
                                             final boolean principalResolutionFatal) {
-        Assert.notEmpty(map, MESSAGE);
+        Assert.notNull(map);
+        Assert.notNull(authenticationHandlerResolver);
+        Assert.notNull(authenticationMetaDataPopulators);
+        Assert.notNull(principalResolutionFatal);
+        
         this.handlerResolverMap = map;
         this.authenticationHandlerResolver = authenticationHandlerResolver;
         this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
         this.principalResolutionFailureFatal = principalResolutionFatal;
+        
+        if (handlerResolverMap.isEmpty()) {
+            logger.warn("No authentication handlers are registered with this manager. CAS will fail to respond to any and all authentication transactions");
+        }
     }
 
     /**
@@ -215,7 +221,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         if (principal != null) {
             builder.setPrincipal(principal);
         }
-        logger.debug("Final principal resolved for this authentication event is {}", principal);
+        logger.debug("Final principal resolved for this authentication event is [{}]", principal);
         publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
 

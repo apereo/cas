@@ -62,6 +62,12 @@ import static org.junit.Assert.*;
                 CasWebflowContextConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationPrincipalConfiguration.class,
+                CasCoreAuthenticationPolicyConfiguration.class,
+                CasCoreAuthenticationMetadataConfiguration.class,
+                CasCoreAuthenticationSupportConfiguration.class,
+                CasCoreAuthenticationHandlersConfiguration.class,
+                CasCoreHttpConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasThemesConfiguration.class,
                 CasLoggingConfiguration.class,
@@ -130,7 +136,7 @@ public class CasWebflowContextConfigurationTests {
     @Configuration("testWebflowContextConfiguration")
     public static class TestWebflowContextConfiguration {
         @Bean
-        public Action testWebflow() {
+        public Action testWebflowSerialization() {
             return new AbstractAction() {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) throws Exception {

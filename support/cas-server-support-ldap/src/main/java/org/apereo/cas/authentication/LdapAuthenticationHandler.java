@@ -168,7 +168,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
 
         if (response.getResult()) {
-            logger.debug("LDAP response returned as result. Creating the final LDAP principal");
+            logger.debug("LDAP response returned a result. Creating the final LDAP principal");
             return createHandlerResult(upc, createPrincipal(upc.getUsername(), response.getLdapEntry()), messageList);
         }
 
@@ -189,7 +189,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws LoginException On security policy errors related to principal creation.
      */
     protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws LoginException {
-        logger.debug("Creating LDAP principal for {} based on {}", username, ldapEntry.getDn());
+        logger.debug("Creating LDAP principal for [{}] based on {}", username, ldapEntry.getDn());
         final String id = getLdapPrincipalIdentifier(username, ldapEntry);
 
         final Map<String, Object> attributeMap = new LinkedHashMap<>(this.principalAttributeMap.size());
@@ -210,7 +210,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         logger.debug("Recording principal DN attribute as {}", dnAttribute);
         
         attributeMap.put(dnAttribute, ldapEntry.getDn());
-        logger.debug("Created LDAP principal for id {} and {} attributes", id, attributeMap.size());
+        logger.debug("Created LDAP principal for id [{}] and {} attributes", id, attributeMap.size());
         return this.principalFactory.createPrincipal(id, attributeMap);
     }
 
@@ -231,7 +231,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 logger.warn("The principal id attribute [{}] is not found. CAS cannot construct the final authenticated principal "
                             + "if it's unable to locate the attribute that is designated as the principal id. "
                             + "Attributes available on the LDAP entry are [{}]. Since principal id attribute is not available, CAS will "
-                            + "fallback to construct the principal based on the provided user id: {}",
+                            + "fallback to construct the principal based on the provided user id: [{}]",
                         this.principalIdAttribute, ldapEntry.getAttributes(), username);
                 return username;
             }

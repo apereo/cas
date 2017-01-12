@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.gauth.web.flow;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
+import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;

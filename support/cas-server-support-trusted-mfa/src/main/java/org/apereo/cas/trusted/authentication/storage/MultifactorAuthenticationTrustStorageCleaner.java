@@ -1,7 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
@@ -23,7 +22,7 @@ import java.time.LocalDate;
 @Transactional(readOnly = false, transactionManager = "transactionManagerMfaAuthnTrust")
 public class MultifactorAuthenticationTrustStorageCleaner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationTrustStorageCleaner.class);
 
     private final MultifactorAuthenticationProperties.Trusted trustedProperties;
     private final MultifactorAuthenticationTrustStorage storage;

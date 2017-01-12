@@ -96,7 +96,7 @@ public class MetadataUIUtils {
         }
 
         final SamlMetadataUIInfo mdui = new SamlMetadataUIInfo(registeredService);
-        spExtensions.stream().filter(obj -> obj instanceof UIInfo).forEach(obj -> {
+        spExtensions.stream().filter(UIInfo.class::isInstance).forEach(obj -> {
             final UIInfo uiInfo = (UIInfo) obj;
             LOGGER.debug("Found UI info for [{}] and added to flow context", entityId);
             mdui.setUIInfo(uiInfo);

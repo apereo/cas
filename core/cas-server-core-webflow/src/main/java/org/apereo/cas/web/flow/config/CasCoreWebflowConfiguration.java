@@ -5,9 +5,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
@@ -52,11 +50,7 @@ import java.util.List;
 @Configuration("casCoreWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreWebflowConfiguration {
-
-    @Autowired
-    @Qualifier("webApplicationServiceResponseBuilder")
-    private ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder;
-
+    
     @Autowired(required = false)
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;

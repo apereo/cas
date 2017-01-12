@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
 import com.warrenstrange.googleauth.ICredentialRepository;
-import org.apereo.cas.config.GoogleAuthentiacatorJpaConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorJpaConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +18,14 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 /**
- * Test cases for {@link JpaGoogleAuthenticatorAccountRegistry}.
+ * Test cases for {@link JpaGoogleAuthenticatorCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {GoogleAuthentiacatorJpaConfiguration.class, AopAutoConfiguration.class, RefreshAutoConfiguration.class})
+        classes = {GoogleAuthenticatorJpaConfiguration.class, AopAutoConfiguration.class, RefreshAutoConfiguration.class})
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class JpaGoogleAuthenticatorAccountRegistryTests {
