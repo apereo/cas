@@ -13,7 +13,13 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -30,6 +36,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
@@ -54,6 +61,13 @@ import static org.junit.Assert.*;
 @SpringBootTest(
         classes = {CasCoreAuthenticationConfiguration.class,
                 CasCoreServicesConfiguration.class,
+                CasCoreAuthenticationPrincipalConfiguration.class,
+                CasCoreAuthenticationPolicyConfiguration.class,
+                CasCoreAuthenticationMetadataConfiguration.class,
+                CasCoreAuthenticationSupportConfiguration.class,
+                CasCoreAuthenticationHandlersConfiguration.class,
+                CasCoreHttpConfiguration.class,
+                AopAutoConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
                 CasCoreConfiguration.class,
