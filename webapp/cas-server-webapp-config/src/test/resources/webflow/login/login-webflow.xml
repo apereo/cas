@@ -9,7 +9,7 @@
     </on-start>
 
     <action-state id="initializeLoginForm">
-        <evaluate expression="testWebflow" />
+        <evaluate expression="testWebflowSerialization" />
         <transition on="success" to="end"/>
     </action-state>
 
