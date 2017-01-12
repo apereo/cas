@@ -51,7 +51,7 @@ public class HttpClientProperties {
     }
 
     public static class Truststore {
-        private Resource file = new ClassPathResource("truststore.jks");
+        private Resource file;
 
         private String psw = "changeit";
 
