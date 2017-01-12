@@ -7,6 +7,7 @@ package org.apereo.cas.monitor;
  * @since 3.5.0
  */
 public class PoolStatus extends Status {
+
     /**
      * Return value for {@link #getActiveCount()} and {@link #getIdleCount()}
      * when pool metrics are unknown or unknowable.
@@ -18,7 +19,6 @@ public class PoolStatus extends Status {
 
     /** Number of active pool resources. */
     private int activeCount;
-
 
     /**
      * Creates a new status object with the given code.
@@ -35,7 +35,6 @@ public class PoolStatus extends Status {
         this.idleCount = idle;
     }
 
-
     /**
      * Gets the number of idle pool resources.
      *
@@ -45,7 +44,6 @@ public class PoolStatus extends Status {
         return this.idleCount;
     }
 
-
     /**
      * Gets the number of active pool resources.
      *
@@ -54,7 +52,6 @@ public class PoolStatus extends Status {
     public int getActiveCount() {
         return this.activeCount;
     }
-
 
     /**
      * Builds the description for the pool.
