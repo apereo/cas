@@ -1089,7 +1089,7 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     force = true
                 },
-                dependencies.create("org.pac4j:spring-webmvc-pac4j:$springWebmvcPac4jVersion") {
+                dependencies.create("org.pac4j:spring-webmvc-pac4j:$pac4jSpringWebmvcVersion") {
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
