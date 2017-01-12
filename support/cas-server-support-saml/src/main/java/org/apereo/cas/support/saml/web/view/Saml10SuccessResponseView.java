@@ -69,7 +69,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
         final ZonedDateTime issuedAt = DateTimeUtils.zonedDateTimeOf(response.getIssueInstant());
         final Service service = getAssertionFrom(model).getService();
-        logger.debug("Preparing SAML response for service {}", service);
+        logger.debug("Preparing SAML response for service [{}]", service);
         
         final Authentication authentication = getPrimaryAuthenticationFrom(model);
         final Collection<Object> authnMethods = CollectionUtils.toCollection(authentication.getAttributes()
@@ -79,21 +79,21 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         final Principal principal = getPrincipal(model);
         final AuthenticationStatement authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
                 authentication.getAuthenticationDate(), authnMethods, principal.getId());
-        logger.debug("Built authentication statement for [{}] dated at {}", principal, authentication.getAuthenticationDate());
+        logger.debug("Built authentication statement for [{}] dated at [{}]", principal, authentication.getAuthenticationDate());
         
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt,
                 this.samlObjectBuilder.generateSecureRandomId());
-        logger.debug("Built assertion for issuer {} dated at ", this.issuer, issuedAt);
+        logger.debug("Built assertion for issuer [{}] dated at [{}]", this.issuer, issuedAt);
         
         final Conditions conditions = this.samlObjectBuilder.newConditions(issuedAt, service.getId(), this.skewAllowance);
         assertion.setConditions(conditions);
-        logger.debug("Built assertion conditions for issuer {} and service {} ", this.issuer, service.getId());
+        logger.debug("Built assertion conditions for issuer [{}] and service {{}} ", this.issuer, service.getId());
         
         final Subject subject = this.samlObjectBuilder.newSubject(principal.getId());
-        logger.debug("Built subject for principal {}", principal);
+        logger.debug("Built subject for principal [{}]", principal);
 
         final Map<String, Object> attributesToSend = prepareSamlAttributes(model, service);
-        logger.debug("Authentication statement shall include these attributes {}", attributesToSend);
+        logger.debug("Authentication statement shall include these attributes [{}]", attributesToSend);
         
         if (!attributesToSend.isEmpty()) {
             assertion.getAttributeStatements().add(this.samlObjectBuilder.newAttributeStatement(
@@ -101,7 +101,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         }
 
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
-        logger.debug("Set status code SUCCESS to response");
+        logger.debug("Set response status code to {}", response.getStatus());
         
         response.getAssertions().add(assertion);
     }
@@ -122,7 +122,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
             authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
             authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
         }
-        logger.debug("Retrieved authentication attributes {} from the model", authnAttributes);
+        logger.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);
         
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         final Map<String, Object> attributesToReturn = new HashMap<>();

@@ -202,7 +202,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                                                   final Object attributeValue, 
                                                   final List<XMLObject> attributeList) {
         if (attributeValue == null) {
-            logger.debug("Skipping over SAML attribute {} since it has no value {}", attributeName);
+            logger.debug("Skipping over SAML attribute {} since it has no value", attributeName);
             return;
         }
 

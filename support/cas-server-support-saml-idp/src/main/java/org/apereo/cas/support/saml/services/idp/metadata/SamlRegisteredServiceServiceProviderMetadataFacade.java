@@ -198,7 +198,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         final List<String> nameIdFormats = new ArrayList<>();
         final List<XMLObject> children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
-            nameIdFormats.addAll(children.stream().filter(child -> child instanceof NameIDFormat)
+            nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
                     .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList()));
         }
         return nameIdFormats;
