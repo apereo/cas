@@ -74,9 +74,9 @@ public class InitialFlowSetupActionCookieTests {
 
     @Before
     public void setUp() throws Exception {
-        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
+        this.warnCookieGenerator = new CookieRetrievingCookieGenerator("warn", "", 2, false, null);
         this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
-        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
+        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator("tgt", "", 2, false, null);
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
         final List<ArgumentExtractor> argExtractors = Collections.singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
