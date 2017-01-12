@@ -134,8 +134,7 @@ public class CasValidationConfiguration {
         return new Cas30JsonResponseView(true, 
                 protocolAttributeEncoder,
                 servicesManager,
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), 
-                cas3SuccessView,
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 casProperties.getView().getCas3().isReleaseProtocolAttributes());
     }
 
