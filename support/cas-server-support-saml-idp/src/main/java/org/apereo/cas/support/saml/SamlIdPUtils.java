@@ -86,7 +86,7 @@ public final class SamlIdPUtils {
     public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
                                                                          final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
-            final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(service -> service instanceof SamlRegisteredService);
+            final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
             final List<MetadataResolver> resolvers = new ArrayList<>();
             final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
