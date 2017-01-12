@@ -66,21 +66,9 @@ public class CasPersonDirectoryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("principalFactory") 
-    private PrincipalFactory principalFactory;
+
             
-    @Autowired
-    @RefreshScope
-    @Bean
-    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository) {
-        final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
-        bean.setAttributeRepository(attributeRepository);
-        bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
-        bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
-        bean.setPrincipalFactory(principalFactory);
-        return bean;
-    }
+
     
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
