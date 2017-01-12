@@ -19,6 +19,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,7 +55,7 @@ import static org.junit.Assert.*;
         LdapAuthenticationConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ldap.properties"})
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapAuthenticationHandlerTests.class);
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -63,6 +65,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     @BeforeClass
     public static void bootstrap() throws Exception {
+        LOGGER.debug("Running {}", LdapAuthenticationHandlerTests.class.getSimpleName());
         initDirectoryServer();
     }
 
