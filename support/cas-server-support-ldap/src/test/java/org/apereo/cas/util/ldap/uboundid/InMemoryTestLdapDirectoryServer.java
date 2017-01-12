@@ -47,6 +47,8 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
                                            final InputStream ldifFile,
                                            final InputStream schemaFile) {
         try {
+
+            LOGGER.debug("Loading properties...");
             final Properties p = new Properties();
             p.load(properties);
 
@@ -54,6 +56,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
                     new InMemoryDirectoryServerConfig(p.getProperty("ldap.rootDn"));
             config.addAdditionalBindCredentials(p.getProperty("ldap.managerDn"), p.getProperty("ldap.managerPassword"));
 
+            LOGGER.debug("Loading keystore file...");
             final File keystoreFile = File.createTempFile("key", "store");
             try(OutputStream outputStream = new FileOutputStream(keystoreFile)) {
                 IOUtils.copy(new ClassPathResource("/ldapServerTrustStore").getInputStream(), outputStream);
@@ -64,6 +67,8 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
                     new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()), 
                     new TrustStoreTrustManager(serverKeyStorePath));
             final SSLUtil clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
+
+            LOGGER.debug("Loading LDAP listeners and ports...");
             config.setListenerConfigs(
                     InMemoryListenerConfig.createLDAPConfig("LDAP", // Listener name
                             null, // Listen address. (null = listen on all interfaces)
@@ -78,27 +83,33 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             config.setEnforceSingleStructuralObjectClass(false);
             config.setEnforceAttributeSyntaxCompliance(true);
             config.setMaxConnections(-1);
-         
+
+            LOGGER.debug("Loading LDAP schema...");
             final File file = File.createTempFile("ldap", "schema");
             try(OutputStream outputStream = new FileOutputStream(file)) {
                 IOUtils.copy(schemaFile, outputStream);
             }
 
+            LOGGER.debug("Setting LDAP schema...");
             final Schema s = Schema.mergeSchemas(Schema.getSchema(file));
             config.setSchema(s);
 
             this.directoryServer = new InMemoryDirectoryServer(config);
             LOGGER.debug("Populating directory...");
 
+            LOGGER.debug("Loading LDIF file...");
             final File ldif = File.createTempFile("ldiff", "file");
             try(OutputStream outputStream = new FileOutputStream(ldif)) {
                 IOUtils.copy(ldifFile, outputStream);
             }
+
+            LOGGER.debug("Importing LDIF file...");
             this.directoryServer.importFromLDIF(true, ldif.getCanonicalPath());
             
             int retryCount = 5;
             while (retryCount > 0) {
                 try {
+                    LOGGER.debug("Trying to restart LDAP server: attempt {}", retryCount);
                     this.directoryServer.restartServer();
                     final LDAPConnection c = getConnection();
                     LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
