@@ -16,7 +16,6 @@ public class MemoryStatus extends Status {
     /** JVM total memory. */
     private long totalMemory;
 
-
     /**
      * Creates a new status object with the given code.
      *
@@ -40,7 +39,6 @@ public class MemoryStatus extends Status {
     public long getFreeMemory() {
         return this.freeMemory;
     }
-
 
     /**
      * Gets JVM total memory.

@@ -63,15 +63,12 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final LocalAttributeMap flowScope = new LocalAttributeMap();
         when(this.requestContext.getFlowScope()).thenReturn(flowScope);
 
-        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
+        this.warnCookieGenerator = new CookieRetrievingCookieGenerator("test", "", 2, false, null);
         this.serviceRegistryDao = new InMemoryServiceRegistry();
         this.serviceManager = new DefaultServicesManager(serviceRegistryDao);
         this.serviceManager.load();
 
-        this.warnCookieGenerator.setCookieName("test");
-
-        this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
-        this.ticketGrantingTicketCookieGenerator.setCookieName(COOKIE_TGC_ID);
+        this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator(COOKIE_TGC_ID, "", 2, false, null);
 
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, false);
     }

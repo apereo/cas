@@ -7,6 +7,7 @@ package org.apereo.cas.monitor;
  * @since 3.5.0
  */
 public class SessionStatus extends Status {
+
     /** Total number of SSO sessions maintained by CAS. */
     private long sessionCount;
 
@@ -25,7 +26,6 @@ public class SessionStatus extends Status {
         this(code, desc, 0, 0);
     }
 
-
     /**
      * Creates a new status object with the given code.
      *
@@ -42,7 +42,6 @@ public class SessionStatus extends Status {
         this.serviceTicketCount = serviceTickets;
     }
 
-
     /**
      * Gets total number of SSO sessions maintained by CAS.
      *
@@ -51,7 +50,6 @@ public class SessionStatus extends Status {
     public long getSessionCount() {
         return this.sessionCount;
     }
-
 
     /**
      * Gets the total number of service tickets in the CAS ticket registry.
