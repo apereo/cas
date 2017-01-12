@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +33,6 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
                                  final ProtocolAttributeEncoder protocolAttributeEncoder,
                                  final ServicesManager servicesManager,
                                  final String authenticationContextAttribute,
-                                 final View view,
                                  final boolean releaseProtocolAttributes) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
                 createDelegatedView(), releaseProtocolAttributes);
