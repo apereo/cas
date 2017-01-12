@@ -25,7 +25,8 @@ public class PooledLdapConnectionFactoryMonitor extends AbstractPoolMonitor {
      *  @param  factory  Connection factory to monitor.
      * @param  validator  Validates connections from the factory.
      */
-    public PooledLdapConnectionFactoryMonitor(final ExecutorService executorService, final int maxWait, final PooledConnectionFactory factory, final Validator<Connection> validator) {
+    public PooledLdapConnectionFactoryMonitor(final ExecutorService executorService, final int maxWait, final PooledConnectionFactory factory,
+                                              final Validator<Connection> validator) {
         super(PooledLdapConnectionFactoryMonitor.class.getSimpleName(), executorService, maxWait);
         this.connectionFactory = factory;
         this.validator = validator;

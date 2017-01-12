@@ -21,7 +21,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
     private final ExecutorService executor;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      *
      * @param name monitor name
      * @param executorService executor service responsible for pool resource validation.
