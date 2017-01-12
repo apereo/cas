@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerGoogleAuthenticator")
 public class JpaGoogleAuthenticatorTokenRepository extends BaseGoogleAuthenticatorTokenRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorCredentialRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorTokenRepository.class);
 
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;
