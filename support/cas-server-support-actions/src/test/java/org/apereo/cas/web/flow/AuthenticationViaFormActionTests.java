@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.validation.BindException;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -31,6 +32,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
 public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTests {
 
