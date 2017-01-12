@@ -50,7 +50,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential, String originalPassword)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential, String originalPassword)
             throws GeneralSecurityException, PreventedException {
         try {
             if (this.fileName == null) {
