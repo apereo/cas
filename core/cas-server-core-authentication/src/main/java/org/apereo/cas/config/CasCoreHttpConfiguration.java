@@ -1,8 +1,12 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.ssl.SSLContexts;
 import org.apereo.cas.authentication.FileTrustStoreSslSocketFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +36,11 @@ public class CasCoreHttpConfiguration {
     @RefreshScope
     @Bean
     public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
-        return new FileTrustStoreSslSocketFactory(casProperties.getHttpClient().getTruststore().getFile(),
-                casProperties.getHttpClient().getTruststore().getPsw());
+        final HttpClientProperties.Truststore client = casProperties.getHttpClient().getTruststore();
+        if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
+            return new FileTrustStoreSslSocketFactory(client.getFile(), client.getPsw());
+        }
+        return new SSLConnectionSocketFactory(SSLContexts.createSystemDefault());
     }
 
     @Bean
