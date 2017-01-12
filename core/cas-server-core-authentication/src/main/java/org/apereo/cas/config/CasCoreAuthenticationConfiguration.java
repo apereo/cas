@@ -65,9 +65,11 @@ public class CasCoreAuthenticationConfiguration {
                                                        @Qualifier("authenticationMetadataPopulators")
                                                        final List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators,
                                                        @Qualifier("registeredServiceAuthenticationHandlerResolver")
-                                                       final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver) {
+                                                       final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
+                                                       @Qualifier("authenticationHandlersResolvers")
+                                                       final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers) {
         return new PolicyBasedAuthenticationManager(
-                authenticationHandlersResolvers(),
+                authenticationHandlersResolvers,
                 registeredServiceAuthenticationHandlerResolver,
                 authenticationMetadataPopulators,
                 authenticationPolicy,
