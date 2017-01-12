@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
@@ -19,7 +16,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
-import org.apereo.cas.authentication.FileTrustStoreSslSocketFactory;
 import org.apereo.cas.authentication.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
@@ -30,21 +26,14 @@ import org.apereo.cas.authentication.SuccessfulHandlerMetaDataPopulator;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
-import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,13 +47,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link CasCoreAuthenticationConfiguration}.
@@ -77,9 +62,7 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class CasCoreAuthenticationConfiguration {
-
-    private static final String BEAN_NAME_HTTP_CLIENT = "supportsTrustStoreSslSocketFactoryHttpClient";
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -87,13 +70,6 @@ public class CasCoreAuthenticationConfiguration {
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;
 
-    @Autowired(required = false)
-    @Qualifier("acceptPasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("jaasPasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -103,11 +79,6 @@ public class CasCoreAuthenticationConfiguration {
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
 
-    @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
-    @Bean
-    public PrincipalFactory jaasPrincipalFactory() {
-        return new DefaultPrincipalFactory();
-    }
 
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
@@ -134,27 +105,6 @@ public class CasCoreAuthenticationConfiguration {
         return new AnyAuthenticationPolicy(police.getAny().isTryAll());
     }
 
-    @RefreshScope
-    @Bean
-    public AuthenticationHandler acceptUsersAuthenticationHandler() {
-        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler();
-        h.setUsers(getParsedUsers());
-        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getAccept().getPasswordEncoder()));
-        if (acceptPasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
-        }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getAccept().getPrincipalTransformation()));
-        h.setPrincipalFactory(acceptUsersPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getAccept().getName());
-        return h;
-    }
-
-    @ConditionalOnMissingBean(name = "acceptUsersPrincipalFactory")
-    @Bean
-    public PrincipalFactory acceptUsersPrincipalFactory() {
-        return new DefaultPrincipalFactory();
-    }
 
     @RefreshScope
     @Bean
@@ -166,15 +116,14 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
-        return new DefaultAuthenticationSystemSupport(defaultAuthenticationTransactionManager(httpClient), defaultPrincipalElectionStrategy());
+    public AuthenticationSystemSupport defaultAuthenticationSystemSupport() {
+        return new DefaultAuthenticationSystemSupport(defaultAuthenticationTransactionManager(), defaultPrincipalElectionStrategy());
     }
 
     @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
-    public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                                                                    final HttpClient httpClient) {
+    public AuthenticationTransactionManager defaultAuthenticationTransactionManager() {
         final DefaultAuthenticationTransactionManager r = new DefaultAuthenticationTransactionManager();
-        r.setAuthenticationManager(authenticationManager(httpClient));
+        r.setAuthenticationManager(authenticationManager());
         return r;
     }
 
@@ -185,13 +134,12 @@ public class CasCoreAuthenticationConfiguration {
         return s;
     }
 
-    @RefreshScope
-    @Bean
-    public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
-        return new FileTrustStoreSslSocketFactory(casProperties.getHttpClient().getTruststore().getFile(),
-                casProperties.getHttpClient().getTruststore().getPsw());
+    @ConditionalOnMissingBean(name = "principalFactory")
+    @Bean(name = {"defaultPrincipalFactory", "principalFactory"})
+    public PrincipalFactory defaultPrincipalFactory() {
+        return new DefaultPrincipalFactory();
     }
-
+    
     @Bean
     public AuthenticationPolicy notPreventedAuthenticationPolicy() {
         return new NotPreventedAuthenticationPolicy();
@@ -210,9 +158,9 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
+    public AuthenticationManager authenticationManager() {
         return new PolicyBasedAuthenticationManager(
-                authenticationHandlersResolvers(httpClient),
+                authenticationHandlersResolvers(),
                 registeredServiceAuthenticationHandlerResolver(),
                 authenticationMetadataPopulators(),
                 defaultAuthenticationPolicy(),
@@ -239,126 +187,18 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator() {
         return new RememberMeAuthenticationMetaDataPopulator();
     }
-
-    @RefreshScope
-    @Bean
-    public PrincipalResolver personDirectoryPrincipalResolver() {
-        final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
-        bean.setAttributeRepository(this.attributeRepository);
-        bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
-        bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
-        bean.setPrincipalFactory(defaultPrincipalFactory());
-        return bean;
-    }
-
-    @ConditionalOnMissingBean(name = "principalFactory")
-    @Bean(name = {"defaultPrincipalFactory", "principalFactory"})
-    public PrincipalFactory defaultPrincipalFactory() {
-        return new DefaultPrincipalFactory();
-    }
-
-    @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
-    @Bean
-    public PrincipalFactory proxyPrincipalFactory() {
-        return new DefaultPrincipalFactory();
-    }
-
-    @Bean
-    public PrincipalResolver proxyPrincipalResolver() {
-        final ProxyingPrincipalResolver p = new ProxyingPrincipalResolver();
-        p.setPrincipalFactory(proxyPrincipalFactory());
-        return p;
-    }
-
-    @RefreshScope
-    @Bean
-    public AuthenticationHandler jaasAuthenticationHandler() {
-        final JaasAuthenticationHandler h = new JaasAuthenticationHandler();
-
-        h.setKerberosKdcSystemProperty(casProperties.getAuthn().getJaas().getKerberosKdcSystemProperty());
-        h.setKerberosRealmSystemProperty(casProperties.getAuthn().getJaas().getKerberosRealmSystemProperty());
-        h.setRealm(casProperties.getAuthn().getJaas().getRealm());
-        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getJaas().getPasswordEncoder()));
-
-        if (passwordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);
-        }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getJaas().getPrincipalTransformation()));
-
-        h.setPrincipalFactory(jaasPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getJaas().getName());
-        return h;
-    }
-
-    @Bean
-    @Autowired
-    public AuthenticationHandler proxyAuthenticationHandler(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) {
-        final HttpBasedServiceCredentialsAuthenticationHandler h = new HttpBasedServiceCredentialsAuthenticationHandler();
-        h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
-        h.setPrincipalFactory(proxyPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        return h;
-    }
-
+        
     @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
     @Bean
-    public Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new TreeMap<>();
+    public Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers() {
+        return new TreeMap<>();
+    }
         
-        map.put(proxyAuthenticationHandler(httpClient), proxyPrincipalResolver());
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getJaas().getRealm())) {
-            map.put(jaasAuthenticationHandler(), personDirectoryPrincipalResolver());
-        }
-        return map;
-    }
-
-    @Bean
-    public SimpleHttpClientFactoryBean.DefaultHttpClient httpClient() {
-        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout(Long.valueOf(casProperties.getHttpClient().getReadTimeout()).intValue());
-        return c;
-    }
-
-    @Bean
-    public HttpClient noRedirectHttpClient() throws Exception {
-        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout(Long.valueOf(casProperties.getHttpClient().getReadTimeout()).intValue());
-        c.setRedirectsEnabled(false);
-        c.setCircularRedirectsAllowed(false);
-        c.setSslSocketFactory(trustStoreSslSocketFactory());
-        return c.getObject();
-    }
-
-    @Bean
-    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() throws Exception {
-        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout(Long.valueOf(casProperties.getHttpClient().getReadTimeout()).intValue());
-        c.setSslSocketFactory(trustStoreSslSocketFactory());
-        return c.getObject();
-    }
-
     @Bean
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
         final DefaultAdaptiveAuthenticationPolicy p = new DefaultAdaptiveAuthenticationPolicy();
         p.setGeoLocationService(this.geoLocationService);
         p.setAdaptiveAuthenticationProperties(casProperties.getAuthn().getAdaptive());
         return p;
-    }
-
-    private Map<String, String> getParsedUsers() {
-        final Pattern pattern = Pattern.compile("::");
-
-        final String usersProperty = casProperties.getAuthn().getAccept().getUsers();
-
-        if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains(pattern.pattern())) {
-            return Stream.of(usersProperty.split(","))
-                    .map(pattern::split)
-                    .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
-        }
-        return Collections.emptyMap();
     }
 }

@@ -6,6 +6,10 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -26,8 +30,10 @@ import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +66,22 @@ public class CasPersonDirectoryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("principalFactory") 
+    private PrincipalFactory principalFactory;
+            
+    @Autowired
+    @RefreshScope
+    @Bean
+    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository) {
+        final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
+        bean.setAttributeRepository(attributeRepository);
+        bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
+        bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
+        bean.setPrincipalFactory(principalFactory);
+        return bean;
+    }
+    
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao attributeRepository() {
