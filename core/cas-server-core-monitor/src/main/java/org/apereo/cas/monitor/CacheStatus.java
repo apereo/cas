@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,7 +67,7 @@ public class CacheStatus extends Status {
             sb.append(' ');
         }
         return Stream.of(statistics)
-                .filter(s -> s != null)
+                .filter(Objects::nonNull)
                 .map(s -> {
                     s.toString(sb);
                     return sb.toString();

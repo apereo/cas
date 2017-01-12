@@ -207,7 +207,7 @@ public class DefaultServicesManagerTests {
 
         defaultServicesManager.save(service);
 
-        final Collection<RegisteredService> serviceRetrieved = defaultServicesManager.findServiceBy(s -> s instanceof RegexRegisteredService);
+        final Collection<RegisteredService> serviceRetrieved = defaultServicesManager.findServiceBy(RegexRegisteredService.class::isInstance);
 
         assertEquals(description, serviceRetrieved.toArray(new RegisteredService[]{})[0].getDescription());
     }
@@ -228,7 +228,7 @@ public class DefaultServicesManagerTests {
         dao.save(service);
         defaultServicesManager.load();
 
-        final Collection<RegisteredService> serviceRetrieved = defaultServicesManager.findServiceBy(s -> s instanceof RegexRegisteredService);
+        final Collection<RegisteredService> serviceRetrieved = defaultServicesManager.findServiceBy(RegexRegisteredService.class::isInstance);
 
         assertEquals(description, serviceRetrieved.toArray(new RegisteredService[]{})[0].getDescription());
     }
