@@ -109,9 +109,7 @@ public class CasWebflowContextConfigurationTests {
     public void verifyFlowExecutorByServerSession() {
         final RequestContext ctx = getMockRequestContext();
         final LocalAttributeMap map = new LocalAttributeMap<>();
-        flowExecutorViaServerSessionBindingExecution.launchExecution("login",
-                map,
-                ctx.getExternalContext());
+        flowExecutorViaServerSessionBindingExecution.launchExecution("login", map, ctx.getExternalContext());
 
     }
 
@@ -119,9 +117,7 @@ public class CasWebflowContextConfigurationTests {
     public void verifyFlowExecutorByClient() {
         final RequestContext ctx = getMockRequestContext();
         final LocalAttributeMap map = new LocalAttributeMap<>();
-        flowExecutorViaClientFlowExecution.launchExecution("login",
-                map,
-                ctx.getExternalContext());
+        flowExecutorViaClientFlowExecution.launchExecution("login", map, ctx.getExternalContext());
     }
 
     private RequestContext getMockRequestContext() {
