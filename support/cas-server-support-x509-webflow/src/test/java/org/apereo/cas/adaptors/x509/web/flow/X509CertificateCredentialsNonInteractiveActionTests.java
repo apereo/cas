@@ -1,9 +1,11 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
+import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -22,6 +24,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @TestPropertySource(locations = {"classpath:/x509.properties"})
+@Import(X509AuthenticationWebflowConfiguration.class)
 public class X509CertificateCredentialsNonInteractiveActionTests extends AbstractX509CertificateTests {
     
     @Autowired
