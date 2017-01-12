@@ -1,5 +1,8 @@
 package org.apereo.cas.config;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.ICredentialRepository;
@@ -9,7 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.gauth.InMemoryGoogleAuthenticatorAccountRegistry;
+import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.repository.token.CachingGoogleAuthenticatorTokenRepository;
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepository;
+import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepositoryCleaner;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationWebflowAction;
@@ -25,6 +33,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -36,6 +45,8 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -46,6 +57,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -53,6 +65,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +78,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("googleAuthenticatorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableScheduling
 public class GoogleAuthenticatorConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorConfiguration.class);
+
+    private static final int INITIAL_CACHE_SIZE = 50;
+    private static final long MAX_CACHE_SIZE = 1_000_000;
 
     @Autowired
     @Qualifier("authenticationRequestServiceSelectionStrategies")
@@ -80,6 +98,10 @@ public class GoogleAuthenticatorConfiguration {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private ICredentialRepository googleAuthenticatorAccountRegistry;
+
+    @Autowired
+    @Qualifier("googleAuthenticatorTokenRepository")
+    private GoogleAuthenticatorTokenRepository googleAuthenticatorTokenRepository;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -132,7 +154,8 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
-        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(googleAuthenticatorInstance());
+        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(
+                googleAuthenticatorInstance(), googleAuthenticatorTokenRepository);
         h.setPrincipalFactory(googlePrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setName(casProperties.getAuthn().getMfa().getGauth().getName());
@@ -168,18 +191,22 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public ICredentialRepository googleAuthenticatorAccountRegistry() {
-        return new InMemoryGoogleAuthenticatorAccountRegistry();
+        final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
+        if (gauth.getJson().getConfig().getLocation() != null) {
+            return new JsonGoogleAuthenticatorCredentialRepository(gauth.getJson().getConfig().getLocation());
+        }
+        return new InMemoryGoogleAuthenticatorCredentialRepository();
     }
 
     @Bean
     @RefreshScope
     public IGoogleAuthenticator googleAuthenticatorInstance() {
-        final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr =
-                new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+        final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
+        final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
 
-        bldr.setCodeDigits(casProperties.getAuthn().getMfa().getGauth().getCodeDigits());
-        bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getMfa().getGauth().getTimeStepSize()));
-        bldr.setWindowSize(casProperties.getAuthn().getMfa().getGauth().getWindowSize());
+        bldr.setCodeDigits(gauth.getCodeDigits());
+        bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
+        bldr.setWindowSize(gauth.getWindowSize());
         bldr.setKeyRepresentation(KeyRepresentation.BASE32);
 
         final GoogleAuthenticator g = new GoogleAuthenticator(bldr.build());
@@ -190,19 +217,25 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
+        final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
         final GoogleAuthenticatorMultifactorAuthenticationProvider p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        p.setOrder(casProperties.getAuthn().getMfa().getGauth().getRank());
-        p.setId(casProperties.getAuthn().getMfa().getGauth().getId());
+        p.setOrder(gauth.getRank());
+        p.setId(gauth.getId());
         return p;
     }
 
     @Bean
     @RefreshScope
     public CasWebflowEventResolver googleAuthenticatorAuthenticationWebflowEventResolver() {
-        return new GoogleAuthenticatorAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
+        return new GoogleAuthenticatorAuthenticationWebflowEventResolver(authenticationSystemSupport,
+                centralAuthenticationService,
+                servicesManager,
+                ticketRegistrySupport,
+                warnCookieGenerator,
+                authenticationRequestServiceSelectionStrategies,
+                multifactorAuthenticationProviderSelector);
     }
 
     @Bean
@@ -241,7 +274,31 @@ public class GoogleAuthenticatorConfiguration {
     public GoogleAuthenticatorQRGeneratorController googleAuthenticatorQRGeneratorController() {
         return new GoogleAuthenticatorQRGeneratorController();
     }
-    
+
+    @ConditionalOnMissingBean(name = "googleAuthenticatorTokenRepository")
+    @Bean
+    public GoogleAuthenticatorTokenRepository googleAuthenticatorTokenRepository() {
+        final LoadingCache<String, Collection<GoogleAuthenticatorToken>> storage = CacheBuilder.newBuilder()
+                .initialCapacity(INITIAL_CACHE_SIZE)
+                .maximumSize(MAX_CACHE_SIZE)
+                .recordStats()
+                .expireAfterWrite(casProperties.getAuthn().getMfa().getGauth().getTimeStepSize() * 2, TimeUnit.SECONDS)
+                .build(new CacheLoader<String, Collection<GoogleAuthenticatorToken>>() {
+                    @Override
+                    public Collection<GoogleAuthenticatorToken> load(final String s) throws Exception {
+                        LOGGER.error("Load operation of the cache is not supported.");
+                        return null;
+                    }
+                });
+        return new CachingGoogleAuthenticatorTokenRepository(storage);
+    }
+
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @Bean
+    public GoogleAuthenticatorTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner() {
+        return new GoogleAuthenticatorTokenRepositoryCleaner(googleAuthenticatorTokenRepository);
+    }
+
     /**
      * The google authenticator multifactor trust configuration.
      */

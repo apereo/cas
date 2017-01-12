@@ -165,7 +165,12 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
 
             if (isJsonFormat()) {
-                JsonValue.readHjson(writer.toString()).writeTo(new BufferedWriter(new FileWriter(out)));
+                try (FileWriter fileWriter = new FileWriter(out);
+                     BufferedWriter buffer = new BufferedWriter(fileWriter)) {
+                    JsonValue.readHjson(writer.toString()).writeTo(buffer);
+                    buffer.flush();
+                    fileWriter.flush();
+                }
             } else {
                 FileUtils.write(out, writer.toString(), StandardCharsets.UTF_8);
             }

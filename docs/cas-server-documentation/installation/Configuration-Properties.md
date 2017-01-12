@@ -1658,6 +1658,10 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.trustedDeviceEnabled=true
 # cas.authn.mfa.gauth.name=
 
+# cas.authn.mfa.gauth.cleaner.enabled=true
+# cas.authn.mfa.gauth.cleaner.startDelay=20000
+# cas.authn.mfa.gauth.cleaner.repeatInterval=60000
+
 # cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.gauth.bypass.authenticationAttributeName=bypass|skip
@@ -1667,12 +1671,19 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.bypass.credentialClassType=UsernamePassword.+
 ```
 
+#### Google Authenticator JSON
+
+```properties
+# cas.authn.mfa.gauth.json.config.location=file:/somewhere.json
+```
+
 #### Google Authenticator MongoDb
 
 ```properties
 # cas.authn.mfa.gauth.mongodb.clientUri=
 # cas.authn.mfa.gauth.mongodb.dropCollection=false
 # cas.authn.mfa.gauth.mongodb.collection=MongoDbGoogleAuthenticatorRepository
+# cas.authn.mfa.gauth.mongodb.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
 #### Google Authenticator JPA
