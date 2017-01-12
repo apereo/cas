@@ -19,6 +19,10 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
     @Autowired
     protected CasConfigurationProperties casProperties;
 
+    public AbstractCacheMonitor(final String name) {
+        super(name);
+    }
+
     @Override
     public CacheStatus observe() {
         CacheStatus status;
@@ -39,14 +43,12 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
         return status;
     }
 
-
     /**
      * Gets the statistics from this monitor.
      *
      * @return the statistics
      */
     protected abstract CacheStatistics[] getStatistics();
-
 
     /**
      * Computes the status code for a given set of cache statistics.
@@ -66,6 +68,4 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
         }
         return code;
     }
-
-
 }
