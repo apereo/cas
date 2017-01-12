@@ -21,7 +21,6 @@ public class SimpleCacheStatistics implements CacheStatistics {
 
     private String name;
 
-
     /**
      * Creates a new instance with given parameters.
      *
@@ -35,7 +34,6 @@ public class SimpleCacheStatistics implements CacheStatistics {
         this.capacity = capacity;
         this.evictions = evictions;
     }
-
 
     /**
      * Creates a new named instance with given parameters.
@@ -58,12 +56,10 @@ public class SimpleCacheStatistics implements CacheStatistics {
         return this.size;
     }
 
-
     @Override
     public long getCapacity() {
         return this.capacity;
     }
-
 
     @Override
     public long getEvictions() {
@@ -90,7 +86,6 @@ public class SimpleCacheStatistics implements CacheStatistics {
             builder.append(this.evictions).append(" evictions");
         }
     }
-
 
     /**
      * Gets a descriptive name of the cache instance for which statistics apply.

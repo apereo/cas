@@ -17,6 +17,10 @@ import java.util.List;
  */
 public class HazelcastMonitor extends AbstractCacheMonitor {
 
+    public HazelcastMonitor() {
+        super(HazelcastMonitor.class.getSimpleName());
+    }
+
     @Override
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();

@@ -10,9 +10,9 @@ import java.util.Map;
  * @since 3.5.0
  */
 public class HealthStatus extends Status {
+
     /** Map of names (e.g. monitor that produced it) to status information. */
     private Map<String, Status> details;
-
 
     /**
      * Creates a new status object with the given code.
@@ -26,7 +26,6 @@ public class HealthStatus extends Status {
         super(code);
         this.details = new HashMap<>(detailMap);
     }
-
 
     /**
      * Gets the status details comprising the individual health checks performed for overall health status.

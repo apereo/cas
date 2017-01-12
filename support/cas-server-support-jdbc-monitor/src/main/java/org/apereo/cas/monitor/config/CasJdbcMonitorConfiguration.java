@@ -35,10 +35,7 @@ public class CasJdbcMonitorConfiguration {
     @RefreshScope
     public Monitor dataSourceMonitor(@Qualifier("pooledJdbcMonitorExecutorService") final ExecutorService executor) {
         final MonitorProperties.Jdbc jdbc = casProperties.getMonitor().getJdbc();
-        final JdbcDataSourceMonitor m = new JdbcDataSourceMonitor(monitorDataSource(), jdbc.getValidationQuery());
-        m.setMaxWait(Long.valueOf(jdbc.getMaxWait()).intValue());
-        m.setExecutor(executor);
-        return m;
+        return new JdbcDataSourceMonitor(executor, Long.valueOf(jdbc.getMaxWait()).intValue(), monitorDataSource(), jdbc.getValidationQuery());
     }
 
     @Lazy
