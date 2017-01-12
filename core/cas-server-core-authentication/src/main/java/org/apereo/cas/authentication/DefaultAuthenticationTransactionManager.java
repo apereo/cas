@@ -20,11 +20,8 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
     @Autowired
     private ApplicationEventPublisher eventPublisher;
     
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
     
-    public DefaultAuthenticationTransactionManager() {
-    }
-
     public DefaultAuthenticationTransactionManager(final AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
@@ -43,12 +40,12 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
         }
         return this;
     }
-    
+
     @Override
-    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+    public AuthenticationManager getAuthenticationManager() {
+        return this.authenticationManager;
     }
-    
+
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
