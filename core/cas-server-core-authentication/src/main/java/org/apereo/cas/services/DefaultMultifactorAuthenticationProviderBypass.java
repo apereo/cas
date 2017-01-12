@@ -199,7 +199,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
     protected boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
                                                    final Map<String, Object> attributes,
                                                    final boolean matchIfNoValueProvided) {
-        LOGGER.debug("Locating matching attribute {} with value {} amongst the attribute collection {}", attributes);
+        LOGGER.debug("Locating matching attribute {} with value {} amongst the attribute collection {}", attrName, attrValue, attributes);
         if (StringUtils.isBlank(attrName)) {
             LOGGER.debug("Failed to match since attribute name is undefined");
             return false;
