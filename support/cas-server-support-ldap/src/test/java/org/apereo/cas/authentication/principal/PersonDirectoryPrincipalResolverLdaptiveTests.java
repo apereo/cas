@@ -10,6 +10,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +34,8 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {CasPersonDirectoryConfiguration.class})
 @TestPropertySource(locations={"classpath:/ldap.properties"})
 public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapTests {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonDirectoryPrincipalResolverLdaptiveTests.class);
+    
     private static final String ATTR_NAME_PASSWORD = "userPassword";
     
     @Autowired
@@ -41,6 +44,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
 
     @BeforeClass
     public static void bootstrap() throws Exception {
+        LOGGER.debug("Running {}", PersonDirectoryPrincipalResolverLdaptiveTests.class.getSimpleName());
         initDirectoryServer();
     }
 
@@ -60,7 +64,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
     @Test
     public void verifyChainedResolver() {
         for (final LdapEntry entry : this.getEntries()) {
-            final String username = getUsername(entry);
+            final String username = entry.getAttribute("sAMAccountName").getStringValue();
             final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeRepository);

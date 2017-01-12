@@ -20,8 +20,6 @@ import org.springframework.core.io.ClassPathResource;
 import javax.annotation.PreDestroy;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -127,17 +125,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             throw Throwables.propagate(e);
         }
     }
-
-    /**
-     * Instantiates a new Ldap directory server.
-     */
-    public InMemoryTestLdapDirectoryServer(final File properties, final File ldifFile)
-            throws FileNotFoundException {
-        this(new FileInputStream(properties),
-                new FileInputStream(ldifFile),
-                new FileInputStream(ldifFile));
-    }
-
+    
     private void populateDefaultEntries(final LDAPConnection c) throws Exception {
         populateEntries(c, new ClassPathResource("ldif/users-groups.ldif").getInputStream());
     }
@@ -171,8 +159,16 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
     @PreDestroy
     public void close() {
         LOGGER.debug("Shutting down LDAP server...");
+        this.directoryServer.closeAllConnections(true);
         this.directoryServer.shutDown(true);
         LOGGER.debug("Shut down LDAP server.");
     }
 
+    public boolean isAlive() {
+        try {
+            return getConnection() != null;
+        } catch (final Throwable e) {
+            return false;
+        }
+    }
 }
