@@ -10,7 +10,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 public class WarningCookieRetrievingCookieGenerator extends CookieRetrievingCookieGenerator {
 
     /**
-     * Instantiates a new warning cookie retrieving cookie generator
+     * Instantiates a new warning cookie retrieving cookie generator.
      *
      * @param name cookie name
      * @param path cookie path

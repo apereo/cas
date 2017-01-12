@@ -33,6 +33,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
     public GoogleAuthenticatorAuthenticationHandler(final String name, final ServicesManager servicesManager, final IGoogleAuthenticator googleAuthenticatorInstance,
                                                     final GoogleAuthenticatorTokenRepository tokenRepository) {
+        super(name, servicesManager);
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
         this.tokenRepository = tokenRepository;
     }

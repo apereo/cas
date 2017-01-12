@@ -11,6 +11,8 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
@@ -77,30 +79,28 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
-        final JaasAuthenticationHandler h = new JaasAuthenticationHandler();
+        final JaasAuthenticationProperties jaas = casProperties.getAuthn().getJaas();
+        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(), servicesManager);
 
-        h.setKerberosKdcSystemProperty(casProperties.getAuthn().getJaas().getKerberosKdcSystemProperty());
-        h.setKerberosRealmSystemProperty(casProperties.getAuthn().getJaas().getKerberosRealmSystemProperty());
-        h.setRealm(casProperties.getAuthn().getJaas().getRealm());
-        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getJaas().getPasswordEncoder()));
+        h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
+        h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
+        h.setRealm(jaas.getRealm());
+        h.setPasswordEncoder(Beans.newPasswordEncoder(jaas.getPasswordEncoder()));
 
         if (jaasPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getJaas().getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
 
         h.setPrincipalFactory(jaasPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getJaas().getName());
         return h;
     }
 
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
-        final HttpBasedServiceCredentialsAuthenticationHandler h = new HttpBasedServiceCredentialsAuthenticationHandler();
+        final HttpBasedServiceCredentialsAuthenticationHandler h = new HttpBasedServiceCredentialsAuthenticationHandler(servicesManager);
         h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
         h.setPrincipalFactory(proxyPrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 
@@ -120,16 +120,14 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
-        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler();
-        h.setUsers(getParsedUsers());
-        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getAccept().getPasswordEncoder()));
+        final AcceptAuthenticationProperties accept = casProperties.getAuthn().getAccept();
+        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(accept.getName(), servicesManager, getParsedUsers());
+        h.setPasswordEncoder(Beans.newPasswordEncoder(accept.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getAccept().getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(accept.getPrincipalTransformation()));
         h.setPrincipalFactory(acceptUsersPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getAccept().getName());
         return h;
     }
 

@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
-import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
