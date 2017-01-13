@@ -31,19 +31,21 @@
 					<div class="col-sm-12">
       					<!--<input type="text" class="form-control usertext" name="ot_username" id="inputEmail" maxlength="30"  placeholder="<%= nls.ENTEREMAIL %>" onfocus="this.placeholder=''" onblur="this.placeholder='<%= nls.ENTEREMAIL %>'">-->
 						<input id="username" name="username" class="form-control usertext" placeholder="Enter Email" tabindex="1" accesskey="u" type="text" value="" size="25" autocomplete="off">						
-						<span class="help-inline"></span>
+						<span class="help-inline color-red"></span>
     				</div>
 				</div>
 				<div class="form-group">
 					<div class="col-sm-12">
 	    				<!--<input type="password" class="form-control passwordtext" id="inputpassword" name="ot_password" maxlength="30" placeholder="<%= nls.PASSWORD %>" onfocus="this.placeholder=''" onblur="this.placeholder='<%= nls.PASSWORD %>'">-->
 						<input id="password" name="password" class="form-control passwordtext" name="ot_password" placeholder="Password" tabindex="2" accesskey="p" type="password" value="" size="25" autocomplete="off">
-						<span class="help-inline"></span>
+						<span class="help-inline color-red"></span>
     				</div>
+				</div>
+				<div class="serverErrorMsg col-sm-12">
 				</div>
 				<div class="form-group">
     				<div class="col-sm-12" style="margin-top: 20px;">
-						<input type="submit" class="btn btn-primary outline pull-left" name="submit" id="submit" value="<%= nls.LOGIN %>">
+						<input type="submit" class="btn btn-primary outline pull-left" id="submitLoginForm" value="<%= nls.LOGIN %>">
 						<a id="forgetPasswordLink" href="javascript:;;" class="pull-right"><p class="text-muted">Forgot Password</p></a>
 	    			</div>
   				</div>

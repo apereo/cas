@@ -25,11 +25,10 @@ define(
 		initialize: function() {
 			console.log("Login View Initialize()");
 		},
-	
 		events: {
-			"click .notification-close"	:	"errormsgclose"
+			"click .notification-close"	:	"errormsgclose",
+			"submit #loginForm" : "login"
 		},
-		
 		onShow: function(){
 			$(".usertext").focus();
 			$('#myCarousel').carousel({
@@ -39,31 +38,30 @@ define(
 			{
 				$('.notification_inner').show(500);
 	            $('.ot_username, .ot_password').addClass('has-error');
-	            $('.ot_username, .ot_password').find('.help-inline').addClass('oneteam-error-msg');			            
-			}		
-		
+	            $('.ot_username, .ot_password').find('.help-inline').addClass('oneteam-error-msg');
+			}
 			$("#appIcon").attr("src", $('input[name=appLogo]').val());
 			$("#domainIcon").attr("src", $('input[name=tenantLogo]').val());
-			
+
 			if($("#domainIcon").width() > 400 || $("#domainIcon").width() <= 0) {
 				$("#domainIcon").width(400);
 			}
-			
+
 			if($("#domainIcon").height() > 400 || $("#domainIcon").height() <= 0) {
 				$("#domainIcon").height(400);
 			}
-	
+
 			$('#loginForm input[name=lt]').val($('input[name=loginTicket]').val());
 			$('#loginForm input[name=execution]').val($('input[name=flowExecutionKey]').val());
 			$('#loginForm').attr('action', $('#tempForm').attr('action'));
-			
+
 			$('#loginForm input[name=prevAddress]').val($('input[name=prevAddressContainer]').val());
-			
+
 			$('#loginColumns .socialNetWorks a#facebook').attr("href", $('#list-providers li#Facebook a').attr("href"));
 			$('#loginColumns .socialNetWorks a#twitter').attr("href", $('#list-providers li#Twitter a').attr("href"));
 			$('#loginColumns .socialNetWorks a#google').attr("href", $('#list-providers li#Google2 a').attr("href"));
 			$('#loginColumns .socialNetWorks a#linkedin').attr("href", $('#list-providers li#LinkedIn2 a').attr("href"));
-			
+
 			$('input[name=appLogo]').remove();
 			$('input[name=tenantLogo]').remove();
 			$('input[name=loginTicket]').remove();
@@ -71,13 +69,31 @@ define(
 			$('#tempForm').remove();
 			$('input[name=prevAddressContainer]').remove();
 			$('#list-providers').remove();
-			
+
 			this.addForgetPasswordLink();
+			this.checkLoginErrorMessage();
+		},
+		checkLoginErrorMessage: function(){
+			var errors = $("input[name='loginErrorMsg']");
+			if(errors.length > 0){
+				for(var i = 0; i < errors.length; i++){
+					var msg = $(errors[i]).val();
+					this.showErrorMessage(msg);
+				}
+				$('.serverErrorMsg').css("margin-top","15px").show();
+			}
+		},
+		showErrorMessage: function(msg){
+			var error = '<p class="color-red">' + msg + '</p>';
+			$('.serverErrorMsg').append(error);
+		},
+		hideErrorMessage: function(){
+			$('.serverErrorMsg').hide();
 		},
 		errormsgclose: function() {
-    	   $('.notification_inner').hide(500);
-    	   $('.ot_username, .ot_password').removeClass('has-error');
-    	   $('.ot_username .help-inline, .ot_password .help-inline').removeClass('oneteam-error-msg').text('');
+			$('.notification_inner').hide(500);
+			$('.ot_username, .ot_password').removeClass('has-error');
+			$('.ot_username .help-inline, .ot_password .help-inline').removeClass('oneteam-error-msg').text('');
 		},
 		addForgetPasswordLink: function(){
 			var serviceUrl = this.getParam("service");
@@ -100,6 +116,29 @@ define(
 			var location = document.createElement("a");
 			location.href = href;
 			return location;
+		},
+		login: function(event){
+			this.hideErrorMessage();
+			var allValid = true;
+			//Validate Username
+			var username = $('#username');
+			if(username.val().trim() == ""){
+				username.next().text("Username is required");
+				allValid = false;
+				event.preventDefault();
+			} else {
+				username.next().text("");
+			}
+			
+			//Validate Password
+			var password = $('#password');
+			if(password.val().trim() == ""){
+				password.next().text("Password is required");
+				allValid = false;
+				event.preventDefault();
+			}else {
+				password.next().text("");
+			}
 		}
 	});
 });

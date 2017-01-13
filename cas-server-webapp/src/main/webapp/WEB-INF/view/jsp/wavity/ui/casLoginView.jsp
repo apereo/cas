@@ -128,7 +128,7 @@
 		
 		<c:forEach var="message" items="${flowRequestContext.messageContext.allMessages}">
     		<c:if test="${message.severity eq 'ERROR'}">
-    			<span class="errorLoginMsg">${message.text}</span>
+    			<input type="hidden" name="loginErrorMsg" value="${message.text}" />
     		</c:if>
     	</c:forEach>
     
