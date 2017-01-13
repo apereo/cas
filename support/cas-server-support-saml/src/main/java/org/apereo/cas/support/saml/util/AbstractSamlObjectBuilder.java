@@ -121,7 +121,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         return objectType.cast(builder.buildObject(qName));
     }
 
-
     /**
      * New soap object t.
      *
@@ -131,8 +130,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
         final QName qName = getSamlObjectQName(objectType);
-        final SOAPObjectBuilder<T> builder = (SOAPObjectBuilder<T>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        final SOAPObjectBuilder<T> builder = (SOAPObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
             throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
         }
@@ -279,8 +277,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param publicKey    the public key
      * @return the response
      */
-    public String signSamlResponse(final String samlResponse,
-                                   final PrivateKey privateKey, final PublicKey publicKey) {
+    public String signSamlResponse(final String samlResponse, final PrivateKey privateKey, final PublicKey publicKey) {
         final Document doc = constructDocumentFromXml(samlResponse);
 
         if (doc != null) {
@@ -318,35 +315,28 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param pubKey  the pub key
      * @return the element
      */
-    private org.jdom.Element signSamlElement(final org.jdom.Element element, final PrivateKey privKey,
-                                             final PublicKey pubKey) {
+    private org.jdom.Element signSamlElement(final org.jdom.Element element, final PrivateKey privKey, final PublicKey pubKey) {
         try {
-            final String providerName = System.getProperty("jsr105Provider",
-                    SIGNATURE_FACTORY_PROVIDER_CLASS);
+            final String providerName = System.getProperty("jsr105Provider", SIGNATURE_FACTORY_PROVIDER_CLASS);
 
             final XMLSignatureFactory sigFactory = XMLSignatureFactory
-                    .getInstance("DOM", (Provider) Class.forName(providerName)
-                            .newInstance());
+                    .getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
 
-            final List<Transform> envelopedTransform = Collections
-                    .singletonList(sigFactory.newTransform(Transform.ENVELOPED,
+            final List<Transform> envelopedTransform = Collections.singletonList(sigFactory.newTransform(Transform.ENVELOPED,
                             (TransformParameterSpec) null));
 
             final Reference ref = sigFactory.newReference(StringUtils.EMPTY, sigFactory
-                            .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform,
-                    null, null);
+                            .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform, null, null);
 
             // Create the SignatureMethod based on the type of key
             final SignatureMethod signatureMethod;
             final String algorithm = pubKey.getAlgorithm();
             switch (algorithm) {
                 case "DSA":
-                    signatureMethod = sigFactory.newSignatureMethod(
-                            SignatureMethod.DSA_SHA1, null);
+                    signatureMethod = sigFactory.newSignatureMethod(SignatureMethod.DSA_SHA1, null);
                     break;
                 case "RSA":
-                    signatureMethod = sigFactory.newSignatureMethod(
-                            SignatureMethod.RSA_SHA1, null);
+                    signatureMethod = sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null);
                     break;
                 default:
                     throw new RuntimeException("Error signing SAML element: Unsupported type of key");
@@ -359,17 +349,14 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
             // Create the SignedInfo
             final SignedInfo signedInfo = sigFactory.newSignedInfo(
-                    canonicalizationMethod, signatureMethod, Collections
-                            .singletonList(ref));
+                    canonicalizationMethod, signatureMethod, Collections.singletonList(ref));
 
             // Create a KeyValue containing the DSA or RSA PublicKey
-            final KeyInfoFactory keyInfoFactory = sigFactory
-                    .getKeyInfoFactory();
+            final KeyInfoFactory keyInfoFactory = sigFactory.getKeyInfoFactory();
             final KeyValue keyValuePair = keyInfoFactory.newKeyValue(pubKey);
 
             // Create a KeyInfo and add the KeyValue to it
-            final KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections
-                    .singletonList(keyValuePair));
+            final KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(keyValuePair));
             // Convert the JDOM document to w3c (Java XML signature API requires w3c representation)
             final Element w3cElement = toDom(element);
 
@@ -381,15 +368,13 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             dsc.setNextSibling(xmlSigInsertionPoint);
 
             // Marshal, generate (and sign) the enveloped signature
-            final XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
-                    keyInfo);
+            final XMLSignature signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
             signature.sign(dsc);
 
             return toJdom(w3cElement);
 
         } catch (final Exception e) {
-            throw new RuntimeException("Error signing SAML element: "
-                    + e.getMessage(), e);
+            throw new RuntimeException("Error signing SAML element: " + e.getMessage(), e);
         }
     }
 
@@ -399,10 +384,9 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param elem the elem
      * @return the xml signature insert location
      */
-    private static Node getXmlSignatureInsertLocation(final org.w3c.dom.Element elem) {
+    private static Node getXmlSignatureInsertLocation(final Element elem) {
         final Node insertLocation;
-        NodeList nodeList = elem.getElementsByTagNameNS(
-                SAMLConstants.SAML20P_NS, "Extensions");
+        NodeList nodeList = elem.getElementsByTagNameNS(SAMLConstants.SAML20P_NS, "Extensions");
         if (nodeList.getLength() != 0) {
             insertLocation = nodeList.item(nodeList.getLength() - 1);
         } else {
@@ -459,6 +443,5 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static org.jdom.Element toJdom(final Element e) {
         return new DOMBuilder().build(e);
     }
-
 }
 

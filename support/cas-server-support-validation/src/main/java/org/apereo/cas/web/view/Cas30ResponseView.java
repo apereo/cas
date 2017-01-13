@@ -130,12 +130,11 @@ public class Cas30ResponseView extends Cas20ResponseView {
         encodedAttributes.forEach((k, v) -> {
             final Set<Object> values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
-                final StringBuilder builder = new StringBuilder();
-                builder.append("<cas:".concat(k).concat(">"));
-                builder.append(StringEscapeUtils.escapeXml10(value.toString().trim()));
-                builder.append("</cas:".concat(k).concat(">"));
-
-                final String fmt = builder.toString();
+                final String fmt = new StringBuilder()
+                        .append("<cas:".concat(k).concat(">"))
+                        .append(StringEscapeUtils.escapeXml10(value.toString().trim()))
+                        .append("</cas:".concat(k).concat(">"))
+                        .toString();
                 logger.debug("Formatted attribute for the response: {}", fmt);
                 formattedAttributes.add(fmt);
             });
