@@ -38,7 +38,6 @@ import java.util.stream.Stream;
  */
 @Configuration("casCoreAuthenticationHandlersConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureBefore(CasCoreAuthenticationConfiguration.class)
 public class CasCoreAuthenticationHandlersConfiguration {
 
     @Autowired
@@ -152,7 +151,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     }
 
     @PostConstruct
-    public void initializeAuthenticationHandler() {
+    public void init() {
         this.authenticationHandlersResolvers.put(proxyAuthenticationHandler(), proxyPrincipalResolver());
         if (StringUtils.isNotBlank(casProperties.getAuthn().getJaas().getRealm())) {
             authenticationHandlersResolvers.put(jaasAuthenticationHandler(), personDirectoryPrincipalResolver);
