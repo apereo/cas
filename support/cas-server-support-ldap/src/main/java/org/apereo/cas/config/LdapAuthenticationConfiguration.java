@@ -77,10 +77,17 @@ public class LdapAuthenticationConfiguration {
     private ServicesManager servicesManager;
 
 
+    /**
+     * For principal resolution, let the chain process the principal
+     * attributes as well as what may be gathered by attribute repositories
+     */
     @PostConstruct
     public void initLdapAuthenticationHandlers() {
-        ldapAuthenticationHandlers().forEach(handler ->
-                this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver));
+        ldapAuthenticationHandlers().forEach(handler -> {
+            final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+            resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
+            this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
+        });
     }
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
@@ -146,10 +153,6 @@ public class LdapAuthenticationConfiguration {
                     handler.initialize();
 
                     LOGGER.debug("Ldap authentication for {} is to chain principal resolvers for attributes", l.getLdapUrl());
-                    final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-
-                    // Let the chain process the principal attributes as well as what may be gathered by attribute repositories
-                    resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
                     handlers.add(handler);
                 });
         return handlers;
