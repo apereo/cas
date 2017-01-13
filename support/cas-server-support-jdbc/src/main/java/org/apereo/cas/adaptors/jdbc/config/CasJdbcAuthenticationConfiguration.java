@@ -25,8 +25,8 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -79,7 +79,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     @Bean
     public Collection<AuthenticationHandler> jdbcAuthenticationHandlers() {
-        final Collection<AuthenticationHandler> handlers = new TreeSet<>();
+        final Collection<AuthenticationHandler> handlers = new HashSet<>();
         casProperties.getAuthn().getJdbc()
                 .getBind().forEach(b -> handlers.add(bindModeSearchDatabaseAuthenticationHandler(b)));
         casProperties.getAuthn().getJdbc()

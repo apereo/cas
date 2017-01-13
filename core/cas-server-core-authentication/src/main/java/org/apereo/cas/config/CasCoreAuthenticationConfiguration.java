@@ -19,11 +19,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -80,6 +81,6 @@ public class CasCoreAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
     @Bean
     public Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers() {
-        return new TreeMap<>();
+        return new TreeMap<>(OrderComparator.INSTANCE);
     }
 }

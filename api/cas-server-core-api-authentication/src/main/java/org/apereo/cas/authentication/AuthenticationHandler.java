@@ -12,7 +12,7 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public interface AuthenticationHandler extends Comparable<AuthenticationHandler>, Ordered {
+public interface AuthenticationHandler extends Ordered {
 
     /** Attribute name containing collection of handler names that successfully authenticated credential. */
     String SUCCESSFUL_AUTHENTICATION_HANDLERS = "successfulAuthenticationHandlers";

@@ -3,6 +3,8 @@ package org.apereo.cas.support.events.config;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
@@ -17,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,9 +37,13 @@ public class CasCoreEventsConfiguration {
     private static final long MAX_CACHE_SIZE = 1000;
 
     @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
+    
+    @Autowired
     @Bean
     public DefaultCasEventListener defaultCasEventListener(@Qualifier("casEventRepository") final CasEventRepository casEventRepository) {
-        return new DefaultCasEventListener(casEventRepository);
+        return new DefaultCasEventListener(casEventRepository, authenticationHandlersResolvers);
     }
 
     @ConditionalOnMissingBean(name = "casEventRepository")

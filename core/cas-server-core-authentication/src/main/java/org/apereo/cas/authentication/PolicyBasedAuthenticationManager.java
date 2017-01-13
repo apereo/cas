@@ -91,20 +91,19 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
     }
 
     @Override
-    protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction)
-            throws AuthenticationException {
+    protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction) throws AuthenticationException {
 
         final Collection<Credential> credentials = transaction.getCredentials();
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.stream().forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
-        final Set<AuthenticationHandler> handlerSet = this.authenticationHandlerResolver
-                .resolve(this.handlerResolverMap.keySet(), transaction);
+        final Set<AuthenticationHandler> handlerSet = this.authenticationHandlerResolver.resolve(this.handlerResolverMap.keySet(), transaction);
 
         final boolean success = credentials.stream().anyMatch(credential -> {
             final boolean isSatisfied = handlerSet.stream().filter(handler -> handler.supports(credential))
                     .anyMatch(handler -> {
                         try {
-                            authenticateAndResolvePrincipal(builder, credential, this.handlerResolverMap.get(handler), handler);
+                            final PrincipalResolver resolver = this.handlerResolverMap.get(handler);
+                            authenticateAndResolvePrincipal(builder, credential, resolver, handler);
                             return this.authenticationPolicy.isSatisfiedBy(builder.build());
                         } catch (final GeneralSecurityException e) {
                             logger.info("{} failed authenticating {}", handler.getName(), credential);

@@ -31,7 +31,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * Repository of principal attributes to be retrieved.
      */
-
     protected IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<>());
 
     /**
@@ -80,7 +79,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         logger.debug("Attempting to resolve a principal...");
 
         String principalId = extractPrincipalId(credential);
-
         if (StringUtils.isBlank(principalId)) {
             logger.debug("Principal id [{}] could not be found", principalId);
             return null;

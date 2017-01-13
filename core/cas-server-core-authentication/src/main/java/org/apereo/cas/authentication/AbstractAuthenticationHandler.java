@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -37,7 +36,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      */
     private String name;
 
-    private Integer order = Integer.MAX_VALUE;
+    private Integer order;
 
     /**
      * Instantiates a new Abstract authentication handler.
@@ -74,48 +73,27 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
-    
-    @Override
-    public int compareTo(final AuthenticationHandler o) {
-        final int res = this.order.compareTo(o.getOrder());
-        if (res == 0) {
-            return 1;
-        }
-        return res;
-    }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 137)
-                .append(this.order)
-                .append(this.getName())
-                .build();
-    }
-
+    /**
+     * Sets order. If order is undefined, generates a random order value.
+     * Since handlers are generally sorted by this order, it's important that
+     * order numbers be unique on a best-effort basis.
+     * @param order the order
+     */
     public void setOrder(final Integer order) {
         this.order = order;
+        ensureOrderIsProvidedIfNecessary();
     }
 
     @Override
     public int getOrder() {
+        ensureOrderIsProvidedIfNecessary();
         return this.order;
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
+    
+    private void ensureOrderIsProvidedIfNecessary() {
+        if (this.order == null) {
+            this.order = RandomUtils.nextInt(1, Integer.MAX_VALUE);
         }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final AbstractAuthenticationHandler rhs = (AbstractAuthenticationHandler) obj;
-        return new EqualsBuilder()
-                .append(getName(), rhs.getName())
-                .append(this.getOrder(), rhs.getOrder())
-                .isEquals();
     }
 }

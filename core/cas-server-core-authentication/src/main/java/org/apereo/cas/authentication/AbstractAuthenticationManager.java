@@ -67,28 +67,24 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * the order of evaluation of authentication handlers is important, a map that preserves insertion order
      * (e.g. {@link LinkedHashMap}) should be used.
      *
-     * @param map                              Non-null map of authentication handler to principal resolver containing at least one entry.
+     * @param handlerResolverMap               Non-null map of authentication handler to principal resolver containing at least one entry.
      * @param authenticationHandlerResolver    the authentication handler resolver
      * @param authenticationMetaDataPopulators the authentication meta data populators
      * @param principalResolutionFatal         the principal resolution fatal
      */
-    protected AbstractAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map,
+    protected AbstractAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap,
                                             final AuthenticationHandlerResolver authenticationHandlerResolver,
                                             final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators,
                                             final boolean principalResolutionFatal) {
-        Assert.notNull(map);
+        Assert.notNull(handlerResolverMap);
         Assert.notNull(authenticationHandlerResolver);
         Assert.notNull(authenticationMetaDataPopulators);
         Assert.notNull(principalResolutionFatal);
-        
-        this.handlerResolverMap = map;
+
+        this.handlerResolverMap = handlerResolverMap;
         this.authenticationHandlerResolver = authenticationHandlerResolver;
         this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
         this.principalResolutionFailureFatal = principalResolutionFatal;
-        
-        if (handlerResolverMap.isEmpty()) {
-            logger.warn("No authentication handlers are registered with this manager. CAS will fail to respond to any and all authentication transactions");
-        }
     }
 
     /**
