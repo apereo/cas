@@ -57,10 +57,11 @@ public class DefaultDelegatingAuditTrailManager implements DelegatingAuditTrailM
     @Override
     public void record(final AuditActionContext auditActionContext) {
         this.manager.record(auditActionContext);
-        final String key = auditActionContext.getPrincipal()
-                .concat("@").concat(auditActionContext.getActionPerformed())
-                .concat("@").concat(auditActionContext.getResourceOperatedUpon())
-                .concat("@").concat(ISOStandardDateFormat.getInstance().format(auditActionContext.getWhenActionWasPerformed()));
+        final String key = new StringBuilder(auditActionContext.getPrincipal())
+                .append("@").append(auditActionContext.getActionPerformed())
+                .append("@").append(auditActionContext.getResourceOperatedUpon())
+                .append("@").append(ISOStandardDateFormat.getInstance().format(auditActionContext.getWhenActionWasPerformed()))
+                .toString();
         this.storage.put(key, auditActionContext);
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(new CasAuditActionContextRecordedEvent(this, auditActionContext));
