@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
@@ -31,6 +32,7 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -115,13 +117,18 @@ public class DuoSecurityConfiguration {
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
         final DuoAuthenticationHandler h = new DuoAuthenticationHandler(duoMultifactorAuthenticationProvider());
+        final List<MultifactorAuthenticationProperties.Duo> duos = casProperties.getAuthn().getMfa().getDuo();
         h.setPrincipalFactory(duoPrincipalFactory());
         h.setServicesManager(servicesManager);
-        final String name = casProperties.getAuthn().getMfa().getDuo().stream().findFirst().get().getName();
-        if (casProperties.getAuthn().getMfa().getDuo().size() > 1) {
-            LOGGER.debug("Multiple Duo Security providers are available; Authentication handler is named after {}", name);
+        if (!duos.isEmpty()) {
+            final String name = duos.get(0).getName();
+            if (duos.size() > 1) {
+                LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after {}", name);
+            }
+            h.setName(name);
+        } else {
+            throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
-        h.setName(name);
 
         return h;
     }
@@ -200,7 +207,7 @@ public class DuoSecurityConfiguration {
     }
 
     @PostConstruct
-    protected void initializeServletApplicationContext() {
+    public void init() {
         this.authenticationHandlersResolvers.put(duoAuthenticationHandler(), null);
         authenticationMetadataPopulators.add(0, duoAuthenticationMetaDataPopulator());
     }

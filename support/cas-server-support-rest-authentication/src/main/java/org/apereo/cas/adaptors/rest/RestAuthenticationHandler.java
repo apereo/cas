@@ -31,7 +31,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         try {

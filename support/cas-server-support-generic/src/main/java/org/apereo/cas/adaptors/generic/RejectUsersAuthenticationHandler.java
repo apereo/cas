@@ -34,7 +34,8 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();

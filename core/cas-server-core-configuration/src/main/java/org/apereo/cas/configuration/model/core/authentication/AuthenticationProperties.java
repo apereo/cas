@@ -42,10 +42,10 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private PasswordManagementProperties pm = new PasswordManagementProperties();
-    
+
     @NestedConfigurationProperty
     private AdaptiveAuthenticationProperties adaptive = new AdaptiveAuthenticationProperties();
-    
+
     @NestedConfigurationProperty
     private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
 
@@ -65,13 +65,11 @@ public class AuthenticationProperties {
     private SamlIdPProperties samlIdp = new SamlIdPProperties();
 
     @NestedConfigurationProperty
-    private AuthenticationExceptionsProperties exceptions =
-            new AuthenticationExceptionsProperties();
+    private AuthenticationExceptionsProperties exceptions = new AuthenticationExceptionsProperties();
 
     @NestedConfigurationProperty
-    private AuthenticationPolicyProperties policy =
-            new AuthenticationPolicyProperties();
-    
+    private AuthenticationPolicyProperties policy = new AuthenticationPolicyProperties();
+
     @NestedConfigurationProperty
     private AcceptAuthenticationProperties accept = new AcceptAuthenticationProperties();
 
@@ -154,7 +152,7 @@ public class AuthenticationProperties {
     public AuthenticationPolicyProperties getPolicy() {
         return policy;
     }
-    
+
     public AcceptAuthenticationProperties getAccept() {
         return accept;
     }
@@ -355,7 +353,7 @@ public class AuthenticationProperties {
     public void setDigest(final DigestProperties digest) {
         this.digest = digest;
     }
-    
+
     public PrincipalAttributesProperties getAttributeRepository() {
         return attributeRepository;
     }
