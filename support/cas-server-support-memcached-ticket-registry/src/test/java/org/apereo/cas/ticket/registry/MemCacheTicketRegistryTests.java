@@ -24,10 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
-
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for MemCacheTicketRegistry class.
