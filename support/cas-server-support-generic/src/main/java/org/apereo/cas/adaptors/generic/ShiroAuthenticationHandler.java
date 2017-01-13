@@ -48,7 +48,8 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
         try {
             final UsernamePasswordToken token = new UsernamePasswordToken(transformedCredential.getUsername(),
