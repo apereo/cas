@@ -70,13 +70,12 @@ public class LdapAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-
+    
     /**
      * For principal resolution, let the chain process the principal
      * attributes as well as what may be gathered by attribute repositories
@@ -98,7 +97,7 @@ public class LdapAuthenticationConfiguration {
 
     @Bean
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers() {
-        final Collection<AuthenticationHandler> handlers = new TreeSet<>();
+        final Collection<AuthenticationHandler> handlers = new HashSet<>();
 
         casProperties.getAuthn().getLdap()
                 .stream()
