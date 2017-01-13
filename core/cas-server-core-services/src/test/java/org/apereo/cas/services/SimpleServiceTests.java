@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -18,7 +17,7 @@ public class SimpleServiceTests {
 
     @Test
     public void verifyEqualsWithNull() {
-        Assert.assertNotEquals("Service matches null.", RegisteredServiceTestUtils.getService(), null);
+        assertNotEquals("Service matches null.", RegisteredServiceTestUtils.getService(), null);
     }
 
     @Test

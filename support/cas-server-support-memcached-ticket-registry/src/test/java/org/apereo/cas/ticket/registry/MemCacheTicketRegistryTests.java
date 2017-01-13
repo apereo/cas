@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +24,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 
 /**
@@ -70,10 +71,10 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         when(ticket.getId()).thenReturn(id);
         registry.addTicket(ticket);
         final ServiceTicket ticketFromRegistry = (ServiceTicket) registry.getTicket(id);
-        Assert.assertNotNull(ticketFromRegistry);
-        Assert.assertEquals(id, ticketFromRegistry.getId());
+        assertNotNull(ticketFromRegistry);
+        assertEquals(id, ticketFromRegistry.getId());
         registry.deleteTicket(id);
-        Assert.assertNull(registry.getTicket(id));
+        assertNull(registry.getTicket(id));
     }
 
     @Test
@@ -84,7 +85,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         when(ticket.getId()).thenReturn(id);
         registry.addTicket(ticket);
         Thread.sleep(1000);
-        Assert.assertNull(registry.getTicket(id, ServiceTicket.class));
+        assertNull(registry.getTicket(id, ServiceTicket.class));
     }
 
     @Test
