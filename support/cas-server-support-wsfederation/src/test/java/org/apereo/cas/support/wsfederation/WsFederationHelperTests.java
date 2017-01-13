@@ -10,8 +10,8 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +26,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     private WsFederationConfiguration wsFedConfig;
     
     @Autowired
-    private HashMap<String, String> testTokens;
+    private Map<String, String> testTokens;
 
     @Autowired
     private ApplicationContext ctx;
@@ -114,8 +114,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
         this.wsFedConfig = config;
     }
 
-    public void setTestTokens(final HashMap<String, String> testTokens) {
+    public void setTestTokens(final Map<String, String> testTokens) {
         this.testTokens = testTokens;
     }
-
 }
