@@ -142,15 +142,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         final DirectFormClient userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
 
-        final String callbackUrl = casProperties.getServer().getPrefix().concat(OAuthConstants.BASE_OAUTH20_URL
-                + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        final String callbackUrl = casProperties.getServer().getPrefix().concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         return new Config(callbackUrl, oauthCasClient, basicAuthClient, directFormClient, userFormClient);
     }
 
     private CallbackUrlResolver buildOAuthCasCallbackUrlResolver() {
         return (url, context) -> {
-            final String callbackUrl = casProperties.getServer().getPrefix().concat(OAuthConstants.BASE_OAUTH20_URL
-                    + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+            final String callbackUrl = casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
             if (url.startsWith(callbackUrl)) {
                 final URIBuilder builder = new URIBuilder(url);
                 final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());

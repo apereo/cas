@@ -63,7 +63,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     private View cas3ServiceFailureView;
 
     @Before
-    public void setup() {
+    public void setUp() {
         this.serviceValidateController.setFailureView(cas3ServiceFailureView);
         this.serviceValidateController.setSuccessView(cas3SuccessView);
         this.serviceValidateController.setJsonView(cas3ServiceJsonView);

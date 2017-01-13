@@ -57,7 +57,7 @@ public class MongoAuthenticationHandlerTests {
     private AuthenticationHandler authenticationHandler;
 
     @Before
-    public void setup() {
+    public void setUp() {
         RequestContextHolder.setRequestAttributes(
                 new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
     }
