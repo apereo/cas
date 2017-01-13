@@ -2,7 +2,7 @@ description = "Wavity CAS Utility"
 
 dependencies {
 	compile group: 'commons-codec', name: 'commons-codec', version:commonsCodecVersion
-    compile(group: 'org.apache.httpcomponents', name: 'httpclient', version:httpclientVersion) {
+	compile(group: 'org.apache.httpcomponents', name: 'httpclient', version:httpclientVersion) {
     	exclude(module: 'commons-codec')
     }
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
