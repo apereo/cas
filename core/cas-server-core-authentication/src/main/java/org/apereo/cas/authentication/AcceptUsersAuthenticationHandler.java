@@ -49,7 +49,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");

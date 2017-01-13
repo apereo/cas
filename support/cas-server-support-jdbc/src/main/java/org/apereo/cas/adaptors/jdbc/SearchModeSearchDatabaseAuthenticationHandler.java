@@ -33,7 +33,8 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         String sql = null;

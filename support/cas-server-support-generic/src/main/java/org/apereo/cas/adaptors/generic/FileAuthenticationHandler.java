@@ -44,29 +44,27 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential, 
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
-
         try {
             if (this.fileName == null) {
                 throw new FileNotFoundException("Filename does not exist");
             }
-
-            final String username = credential.getUsername();
+            final String username = transformedCredential.getUsername();
             final String passwordOnRecord = getPasswordOnRecord(username);
             if (StringUtils.isBlank(passwordOnRecord)) {
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
-            final String password = credential.getPassword();
-            if (StringUtils.equals(password, passwordOnRecord)) {
-                return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+            if (matches(originalPassword, passwordOnRecord)) {
+                return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), null);
             }
         } catch (final IOException e) {
             throw new PreventedException("IO error reading backing file", e);
         }
         throw new FailedLoginException();
     }
-
+    
     /**
      * Gets the password on record.
      *
