@@ -74,7 +74,7 @@ public class JdbcAuthenticationProperties {
         public void setOrder(final int order) {
             this.order = order;
         }
-        
+
         public String getName() {
             return name;
         }
@@ -123,21 +123,20 @@ public class JdbcAuthenticationProperties {
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
         @NestedConfigurationProperty
-        private PrincipalTransformationProperties principalTransformation =
-                new PrincipalTransformationProperties();
+        private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
         private String name;
 
-        private int order = Integer.MAX_VALUE;
+        private Integer order;
 
-        public int getOrder() {
+        public Integer getOrder() {
             return order;
         }
 
-        public void setOrder(final int order) {
+        public void setOrder(final Integer order) {
             this.order = order;
         }
-        
+
         public String getName() {
             return name;
         }
@@ -195,7 +194,7 @@ public class JdbcAuthenticationProperties {
         public void setOrder(final int order) {
             this.order = order;
         }
-        
+
         public String getName() {
             return name;
         }
@@ -280,7 +279,7 @@ public class JdbcAuthenticationProperties {
         public void setOrder(final int order) {
             this.order = order;
         }
-        
+
         public String getName() {
             return name;
         }

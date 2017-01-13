@@ -1,6 +1,8 @@
 package org.apereo.cas.support.events.listener;
 
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.CasTicketGrantingTicketCreatedEvent;
@@ -14,6 +16,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
@@ -40,9 +43,24 @@ public class DefaultCasEventListener {
     private ApplicationContext applicationContext;
 
     private final CasEventRepository casEventRepository;
+    private final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
-    public DefaultCasEventListener(final CasEventRepository casEventRepository) {
+    public DefaultCasEventListener(final CasEventRepository casEventRepository,
+                                   final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap) {
         this.casEventRepository = casEventRepository;
+        this.handlerResolverMap = handlerResolverMap;
+    }
+
+    @EventListener
+    public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
+        if (this.handlerResolverMap.isEmpty()) {
+            LOGGER.warn("No authentication handlers are registered. CAS will fail to respond to any and all authentication transactions");
+        } else {
+            LOGGER.info("A total of {} authentication handler(s) are available to authenticate credentials", handlerResolverMap.size());
+
+            LOGGER.debug("Available authentication handlers are:");
+            this.handlerResolverMap.keySet().forEach(hh -> LOGGER.debug("-> {}", hh.getName()));
+        }
     }
 
     /**
@@ -137,7 +155,7 @@ public class DefaultCasEventListener {
             this.casEventRepository.save(dto);
         }
     }
-    
+
     public CasEventRepository getCasEventRepository() {
         return casEventRepository;
     }

@@ -66,13 +66,13 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
 
     private boolean enhanceWithEntryResolver = true;
 
-    private int order = Integer.MAX_VALUE;
+    private Integer order;
 
-    public int getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
-    public void setOrder(final int order) {
+    public void setOrder(final Integer order) {
         this.order = order;
     }
     
