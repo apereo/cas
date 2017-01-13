@@ -18,9 +18,9 @@ public class ServiceResourceResolver implements AuditResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
         final Service service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
-        final StringBuilder builder = new StringBuilder(retval.toString());
-        builder.append(" for ");
-        builder.append(service.getId());
+        final StringBuilder builder = new StringBuilder(retval.toString())
+                .append(" for ")
+                .append(service.getId());
 
         return new String[] {builder.toString()};
     }
