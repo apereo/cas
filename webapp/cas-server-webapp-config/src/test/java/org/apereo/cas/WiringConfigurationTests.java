@@ -29,7 +29,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.spockframework.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -92,7 +91,7 @@ public class WiringConfigurationTests {
 
     @Test
     public void verifyConfigurationClasses() {
-        Assert.notNull(this.applicationContext);
+        assertNotNull(this.applicationContext);
         assertTrue(this.applicationContext.getBeanDefinitionCount() > 0);
     }
 }

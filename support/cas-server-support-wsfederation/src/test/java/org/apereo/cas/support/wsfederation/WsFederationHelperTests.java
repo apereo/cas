@@ -117,5 +117,4 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     public void setTestTokens(final HashMap<String, String> testTokens) {
         this.testTokens = testTokens;
     }
-
 }

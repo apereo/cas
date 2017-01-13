@@ -113,7 +113,7 @@ public class DefaultServicesManagerTests {
         this.defaultServicesManager.save(r);
 
         assertTrue(this.defaultServicesManager.matchesExistingService(service));
-        Assert.assertEquals(r, this.defaultServicesManager.findServiceBy(service));
+        assertEquals(r, this.defaultServicesManager.findServiceBy(service));
         assertNull(this.defaultServicesManager.findServiceBy(service2));
     }
 

@@ -43,6 +43,7 @@ import static org.junit.Assert.*;
  */
 public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
+    private static final String TEST_VALUE = "testValue";
     private Saml10SuccessResponseView response;
 
     @Before
@@ -67,7 +68,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Map<String, Object> model = new HashMap<>();
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("testAttribute", "testValue");
+        attributes.put("testAttribute", TEST_VALUE);
         attributes.put("testEmptyCollection", Collections.emptyList());
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
@@ -92,7 +93,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         assertTrue(written.contains("testPrincipal"));
         assertTrue(written.contains("testAttribute"));
-        assertTrue(written.contains("testValue"));
+        assertTrue(written.contains(TEST_VALUE));
         assertFalse(written.contains("testEmptyCollection"));
         assertTrue(written.contains("testAttributeCollection"));
         assertTrue(written.contains("tac1"));
@@ -136,7 +137,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Map<String, Object> model = new HashMap<>();
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("testAttribute", "testValue");
+        attributes.put("testAttribute", TEST_VALUE);
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authnAttributes = new HashMap<>();
@@ -159,7 +160,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         assertTrue(written.contains("testPrincipal"));
         assertTrue(written.contains("testAttribute"));
-        assertTrue(written.contains("testValue"));
+        assertTrue(written.contains(TEST_VALUE));
         assertTrue(written.contains("authnAttribute1"));
         assertTrue(written.contains("authnAttribute2"));
         assertTrue(written.contains(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));

@@ -19,6 +19,8 @@ import static org.junit.Assert.*;
  */
 public class JcifsSpnegoAuthenticationHandlerTests {
 
+    private static final String USERNAME = "Username";
+
     @Test
     public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
@@ -63,7 +65,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifyGetSimpleCredentials() {
         final String myNtlmUser = "DOMAIN\\Username";
-        final String myNtlmUserWithNoDomain = "Username";
+        final String myNtlmUserWithNoDomain = USERNAME;
         final String myKerberosUser = "Username@DOMAIN.COM";
 
         final PrincipalFactory factory = new DefaultPrincipalFactory();
@@ -74,8 +76,8 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         assertEquals(factory.createPrincipal(myKerberosUser), authenticationHandler.getPrincipal(myKerberosUser, false));
 
         final JcifsSpnegoAuthenticationHandler handlerNoDomain = new JcifsSpnegoAuthenticationHandler(new MockJcifsAuthentication(true), false, true);
-        assertEquals(factory.createPrincipal("Username"), handlerNoDomain.getPrincipal(myNtlmUser, true));
-        assertEquals(factory.createPrincipal("Username"), handlerNoDomain.getPrincipal(myNtlmUserWithNoDomain, true));
-        assertEquals(factory.createPrincipal("Username"), handlerNoDomain.getPrincipal(myKerberosUser, false));
+        assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUser, true));
+        assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUserWithNoDomain, true));
+        assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myKerberosUser, false));
     }
 }

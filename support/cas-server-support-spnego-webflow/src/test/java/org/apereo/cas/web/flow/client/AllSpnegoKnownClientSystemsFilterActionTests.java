@@ -20,6 +20,8 @@ import static org.junit.Assert.*;
  */
 public class AllSpnegoKnownClientSystemsFilterActionTests {
 
+    private static final String ALTERNATE_REMOTE_IP = "74.125.136.102";
+
     @Test
     public void ensureRemoteIpShouldBeChecked() {
         final BaseSpnegoKnownClientSystemsFilterAction action =
@@ -62,7 +64,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
         req.setRemoteAddr("555.555.555.555");
-        req.addHeader("alternateRemoteIp", "74.125.136.102");
+        req.addHeader("alternateRemoteIp", ALTERNATE_REMOTE_IP);
         final ServletExternalContext extCtx = new ServletExternalContext(
                 new MockServletContext(), req,
                 new MockHttpServletResponse());
@@ -79,7 +81,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setRemoteAddr("74.125.136.102");
+        req.setRemoteAddr(ALTERNATE_REMOTE_IP);
         final ServletExternalContext extCtx = new ServletExternalContext(
                 new MockServletContext(), req,
                 new MockHttpServletResponse());
@@ -97,7 +99,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setRemoteAddr("74.125.136.102");
+        req.setRemoteAddr(ALTERNATE_REMOTE_IP);
         final ServletExternalContext extCtx = new ServletExternalContext(
                 new MockServletContext(), req,
                 new MockHttpServletResponse());
@@ -115,7 +117,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setRemoteAddr("74.125.136.102");
+        req.setRemoteAddr(ALTERNATE_REMOTE_IP);
         final ServletExternalContext extCtx = new ServletExternalContext(
                 new MockServletContext(), req,
                 new MockHttpServletResponse());

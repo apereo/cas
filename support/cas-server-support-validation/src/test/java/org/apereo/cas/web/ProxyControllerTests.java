@@ -78,6 +78,6 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
         final Map<String, Object> map = this.proxyController.handleRequestInternal(request,
                 new MockHttpServletResponse()).getModel();
-        assertTrue(!map.containsKey(CasProtocolConstants.PARAMETER_TICKET));
+        assertFalse(map.containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }
 }

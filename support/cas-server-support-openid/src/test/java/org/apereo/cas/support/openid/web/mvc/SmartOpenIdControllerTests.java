@@ -32,7 +32,7 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
         request.addParameter("openid.mode", "associate");
         final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
-        assertEquals(true, canHandle);
+        assertTrue(canHandle);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
         request.addParameter("openid.mode", "anythingElse");
         final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
-        assertEquals(false, canHandle);
+        assertFalse(canHandle);
     }
 
     @Test

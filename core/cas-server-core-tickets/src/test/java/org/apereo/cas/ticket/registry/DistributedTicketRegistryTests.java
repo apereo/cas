@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +30,6 @@ public class DistributedTicketRegistryTests {
     private TestDistributedTicketRegistry ticketRegistry;
 
     private boolean wasTicketUpdated;
-
     
     public void setWasTicketUpdated(final boolean wasTicketUpdated) {
         this.wasTicketUpdated = wasTicketUpdated;
@@ -55,7 +53,7 @@ public class DistributedTicketRegistryTests {
         assertEquals(returned, t);
 
         assertEquals(t.getCreationTime(), returned.getCreationTime());
-        Assert.assertEquals(t.getAuthentication(), returned.getAuthentication());
+        assertEquals(t.getAuthentication(), returned.getAuthentication());
         assertEquals(t.getCountOfUses(), returned.getCountOfUses());
         assertEquals(t.getGrantingTicket(), returned.getGrantingTicket());
         assertEquals(t.getId(), returned.getId());
@@ -76,7 +74,7 @@ public class DistributedTicketRegistryTests {
         assertEquals(s.getGrantingTicket(), sreturned.getGrantingTicket());
         assertEquals(s.getId(), sreturned.getId());
         assertEquals(s.isExpired(), sreturned.isExpired());
-        Assert.assertEquals(s.getService(), sreturned.getService());
+        assertEquals(s.getService(), sreturned.getService());
         assertEquals(s.isFromNewLogin(), sreturned.isFromNewLogin());
     }
 

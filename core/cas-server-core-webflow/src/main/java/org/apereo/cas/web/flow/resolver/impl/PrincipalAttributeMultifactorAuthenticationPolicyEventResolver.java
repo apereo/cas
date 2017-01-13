@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.springframework.util.StringUtils.*;
+import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 /**
  * This is {@link PrincipalAttributeMultifactorAuthenticationPolicyEventResolver}

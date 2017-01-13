@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
@@ -23,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  * This is {@link SamlMetadataUIParserAction} that attempts to parse
  * the mdui extension block for a SAML SP from the provided metadata locations.
  * The result is put into the flow request context. The entity id parameter is
- * specified by default at {@link SamlProtocolConstants#PARAMETER_ENTITY_ID}.
+ * specified by default at {@link org.apereo.cas.support.saml.SamlProtocolConstants#PARAMETER_ENTITY_ID}.
  * <p>This action is best suited to be invoked when the CAS login page
  * is about to render so that the page, once the MDUI info is obtained,
  * has a chance to populate the UI with relevant info about the SP.</p>

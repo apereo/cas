@@ -50,10 +50,9 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
-        final StringBuilder builder = new StringBuilder();
         final String encoding = getEncodingScheme(request);
-        builder.append(request.getRequestURI());
-        builder.append('?');
+        final StringBuilder builder = new StringBuilder(request.getRequestURI())
+                .append('?');
 
         final Map<String, String[]> flowParams = new LinkedHashMap<>(request.getParameterMap());
         flowParams.put(this.flowExecutionKeyParameter, new String[]{flowExecutionKey});

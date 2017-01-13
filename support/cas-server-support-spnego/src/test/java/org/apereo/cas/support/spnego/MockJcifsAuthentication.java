@@ -12,27 +12,23 @@ import java.security.Principal;
  * @since 4.2.0
  */
 public class MockJcifsAuthentication extends Authentication {
+
     private Principal principal;
-
     private boolean valid;
-
     private byte[] outToken = new byte[] {4, 5, 6};
 
     public MockJcifsAuthentication(final boolean valid) {
         this.principal = new MockPrincipal("test");
         this.valid = valid;
-
     }
 
     @Override
     public byte[] getNextToken() {
-
         return this.valid ? this.outToken : null;
     }
 
     @Override
-    public java.security.Principal getPrincipal() {
-
+    public Principal getPrincipal() {
         return this.valid ? this.principal : null;
     }
 
@@ -42,5 +38,4 @@ public class MockJcifsAuthentication extends Authentication {
             throw new AuthenticationException("not valid");
         }
     }
-
 }

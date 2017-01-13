@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vividsolutions.jts.util.Assert;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultResponse;
@@ -159,6 +158,6 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         final GoogleAccountsService service = getGoogleAccountsService();
         MAPPER.writeValue(FILE, service);
         final GoogleAccountsService service2 = MAPPER.readValue(FILE, GoogleAccountsService.class);
-        Assert.equals(service, service2);
+        assertEquals(service, service2);
     }
 }
