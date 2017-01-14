@@ -13,7 +13,8 @@ import org.junit.runners.Suite;
  * @since 5.0.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({FileAuthenticationHandlerTests.class, RejectUsersAuthenticationHandlerTests.class,
+@Suite.SuiteClasses({FileAuthenticationHandlerTests.class, 
+        RejectUsersAuthenticationHandlerTests.class,
         ShiroAuthenticationHandlerTests.class})
 public class AllTestsSuite {
 }

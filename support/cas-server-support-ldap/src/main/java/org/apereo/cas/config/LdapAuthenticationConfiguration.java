@@ -311,6 +311,7 @@ public class LdapAuthenticationConfiguration {
      * The type Ldap authentication event execution plan configuration.
      */
     @Configuration("ldapAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class LdapAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
