@@ -87,11 +87,7 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-
-    @Autowired
-    @Qualifier("uniqueIdGeneratorsMap")
-    private Map uniqueIdGeneratorsMap;
-
+    
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
@@ -123,12 +119,7 @@ public class SamlConfiguration {
         return new Saml10ObjectBuilder(this.configBean);
     }
 
-    @Bean
-    public UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
-        final SamlCompliantUniqueTicketIdGenerator gen = new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
-        gen.setSaml2compliant(casProperties.getSamlCore().isTicketidSaml2());
-        return gen;
-    }
+
 
     @Autowired
     @Bean
@@ -148,11 +139,5 @@ public class SamlConfiguration {
         c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         return c;
     }
-
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        uniqueIdGeneratorsMap.put(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator());
-    }
-
-
+    
 }
