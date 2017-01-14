@@ -98,6 +98,9 @@ public class TokenAuthenticationConfiguration {
         return new TokenTicketCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey());
     }
 
+    /**
+     * The type Token authentication event execution plan configuration.
+     */
     @Configuration("tokenAuthenticationEventExecutionPlanConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class TokenAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {

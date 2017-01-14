@@ -24,9 +24,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
-import java.util.List;
-
 /**
  * This is {@link YubiKeyAuthenticationEventExecutionPlanConfiguration}.
  *
@@ -45,11 +42,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
-
+    
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
@@ -116,20 +109,13 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
         p.setId(casProperties.getAuthn().getMfa().getYubikey().getId());
         return p;
     }
-
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
-        if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
-            authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
-        }
-    }
-    
+        
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
         if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
             plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
+            plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
         }
     }
 }

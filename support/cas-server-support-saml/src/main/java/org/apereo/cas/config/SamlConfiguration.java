@@ -2,12 +2,14 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -36,18 +38,17 @@ import org.springframework.web.servlet.View;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Map;
 
 /**
- * This is {@link SamlConfiguration} that creates the necessary opensaml context and beans.
+ * This is {@link SamlConfiguration} that creates the necessary OpenSAML context and beans.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Configuration("samlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlConfiguration {
+public class SamlConfiguration  {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -95,38 +96,30 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-    
+
     @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
     private Map uniqueIdGeneratorsMap;
 
-    @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
-    
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
         return new Saml10SuccessResponseView(protocolAttributeEncoder,
-                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), 
+                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
                 StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance(),
                 casProperties.getSamlCore().getIssuer(), casProperties.getSamlCore().getAttributeNamespace());
     }
-    
+
     @RefreshScope
     @Bean
     public View casSamlServiceFailureView() {
         return new Saml10FailureResponseView(protocolAttributeEncoder,
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()), 
+                saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
                 StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance());
     }
-    
-    @Bean
-    public AuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator() {
-        return new SamlAuthenticationMetaDataPopulator();
-    }
+
 
     @Bean
     public ServiceFactory<SamlService> samlServiceFactory() {
@@ -146,8 +139,7 @@ public class SamlConfiguration {
 
     @Bean
     public UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
-        final SamlCompliantUniqueTicketIdGenerator gen =
-                new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
+        final SamlCompliantUniqueTicketIdGenerator gen = new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
         gen.setSaml2compliant(casProperties.getSamlCore().isTicketidSaml2());
         return gen;
     }
@@ -174,6 +166,7 @@ public class SamlConfiguration {
     protected void initializeRootApplicationContext() {
         this.argumentExtractor.getServiceFactories().add(0, samlServiceFactory());
         uniqueIdGeneratorsMap.put(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator());
-        authenticationMetadataPopulators.add(0, samlAuthenticationMetaDataPopulator());
     }
+
+
 }

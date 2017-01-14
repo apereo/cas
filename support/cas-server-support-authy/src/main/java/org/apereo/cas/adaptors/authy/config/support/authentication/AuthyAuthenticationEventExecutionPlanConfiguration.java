@@ -29,9 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
-import java.util.List;
-
 /**
  * This is {@link AuthyAuthenticationEventExecutionPlanConfiguration}.
  *
@@ -43,16 +40,12 @@ import java.util.List;
 public class AuthyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
     @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -66,7 +59,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration implements Authe
         }
         return new AuthyClientInstance(authy.getApiKey(), authy.getApiUrl(), authy.getMailAttribute(), authy.getPhoneAttribute());
     }
-    
+
     @RefreshScope
     @Bean
     public AuthenticationHandler authyAuthenticationHandler() {
@@ -102,10 +95,10 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration implements Authe
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getAuthy().getBypass(), 
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getAuthy().getBypass(),
                 ticketRegistrySupport);
     }
-    
+
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator() {
@@ -122,13 +115,9 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration implements Authe
         return new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance());
     }
 
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        authenticationMetadataPopulators.add(0, authyAuthenticationMetaDataPopulator());
-    }
-    
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         plan.registerAuthenticationHandler(authyAuthenticationHandler());
+        plan.registerMetadataPopulator(authyAuthenticationMetaDataPopulator());
     }
 }

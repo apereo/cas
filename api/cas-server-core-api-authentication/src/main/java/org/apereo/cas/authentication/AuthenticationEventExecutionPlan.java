@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,12 +25,25 @@ public interface AuthenticationEventExecutionPlan {
     void registerAuthenticationHandler(AuthenticationHandler handler);
 
     /**
+     * Register metadata populator.
+     *
+     * @param populator the populator
+     */
+    void registerMetadataPopulator(AuthenticationMetaDataPopulator populator);
+
+    /**
+     * Register metadata populators.
+     *
+     * @param populator the populator
+     */
+    void registerMetadataPopulators(Collection<AuthenticationMetaDataPopulator> populator);
+
+    /**
      * Register authentication handler with principal resolver.
      *
      * @param plan the plan
      */
     void registerAuthenticationHandlerWithPrincipalResolver(Map<AuthenticationHandler, PrincipalResolver> plan);
-
 
     /**
      * Register authentication handler with principal resolver.
@@ -46,6 +60,14 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication handlers for transaction
      */
     Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(AuthenticationTransaction transaction);
+
+    /**
+     * Gets authentication metadata populators.
+     *
+     * @param credentials the credentials
+     * @return the authentication metadata populators
+     */
+    Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulators(Collection<Credential> credentials);
 
     /**
      * Gets principal resolver for authentication transaction.
