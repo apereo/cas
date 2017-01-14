@@ -12,7 +12,6 @@ import org.springframework.core.env.Environment;
 import javax.crypto.Cipher;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.Properties;
@@ -24,7 +23,9 @@ import java.util.Properties;
  * @since 5.0.0
  */
 public class CasBanner implements Banner {
-    
+
+    private static final int SEPARATOR_REPEAT_COUNT = 60;
+
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
         AsciiArtUtils.printAsciiArt(out, getTitle(), collectEnvironmentInfo());
@@ -55,22 +56,22 @@ public class CasBanner implements Banner {
             formatter.format("CAS Build Date/Time: %s%n", CasVersion.getDateTime());
             formatter.format("Spring Boot Version: %s%n", SpringBootVersion.getVersion());
             formatter.format("Apache Tomcat Version: %s%n", ServerInfo.getServerInfo());
-            formatter.format("%s%n", String.join("", Collections.nCopies(100, "-")));
+            formatter.format("%s%n", String.join("", Collections.nCopies(SEPARATOR_REPEAT_COUNT, "-")));
 
             formatter.format("System Date/Time: %s%n", LocalDateTime.now());
             formatter.format("System Temp Directory: %s%n", FileUtils.getTempDirectoryPath());
-            formatter.format("%s%n", String.join("", Collections.nCopies(100, "-")));
+            formatter.format("%s%n", String.join("", Collections.nCopies(SEPARATOR_REPEAT_COUNT, "-")));
 
             formatter.format("Java Home: %s%n", properties.get("java.home"));
             formatter.format("Java Vendor: %s%n", properties.get("java.vendor"));
             formatter.format("Java Version: %s%n", properties.get("java.version"));
             formatter.format("JCE Installed: %s%n", BooleanUtils.toStringYesNo(isJceInstalled()));
-            formatter.format("%s%n", String.join("", Collections.nCopies(100, "-")));
+            formatter.format("%s%n", String.join("", Collections.nCopies(SEPARATOR_REPEAT_COUNT, "-")));
 
             formatter.format("OS Architecture: %s%n", properties.get("os.arch"));
             formatter.format("OS Name: %s%n", properties.get("os.name"));
             formatter.format("OS Version: %s%n", properties.get("os.version"));
-            formatter.format("%s%n", String.join("", Collections.nCopies(100, "-")));
+            formatter.format("%s%n", String.join("", Collections.nCopies(SEPARATOR_REPEAT_COUNT, "-")));
             
             return formatter.toString();
         }

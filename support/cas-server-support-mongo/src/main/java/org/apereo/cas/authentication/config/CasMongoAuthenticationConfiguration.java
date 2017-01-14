@@ -62,6 +62,7 @@ public class CasMongoAuthenticationConfiguration {
      * The type Mongo authentication event execution plan configuration.
      */
     @Configuration("mongoAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class MongoAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
         @Qualifier("personDirectoryPrincipalResolver")

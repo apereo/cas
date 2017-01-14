@@ -109,6 +109,7 @@ public class RadiusConfiguration {
      * The type Radius authentication event execution plan configuration.
      */
     @Configuration("radiusAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class RadiusAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {

@@ -1,20 +1,12 @@
 package org.apereo.cas.digest.config;
 
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.digest.DefaultDigestHashedCredentialRetriever;
-import org.apereo.cas.digest.DigestAuthenticationHandler;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationAction;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationWebflowConfigurer;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -40,11 +32,7 @@ public class DigestAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
+    
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -64,11 +52,6 @@ public class DigestAuthenticationConfiguration {
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
-    @ConditionalOnMissingBean(name = "digestAuthenticationPrincipalFactory")
-    @Bean
-    public PrincipalFactory digestAuthenticationPrincipalFactory() {
-        return new DefaultPrincipalFactory();
-    }
 
     @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")
     @Bean
@@ -97,29 +80,6 @@ public class DigestAuthenticationConfiguration {
         return new DefaultDigestHashedCredentialRetriever(digest.getUsers());
     }
 
-    @Bean
-    @RefreshScope
-    public AuthenticationHandler digestAuthenticationHandler() {
-        final DigestProperties digest = casProperties.getAuthn().getDigest();
-        final DigestAuthenticationHandler r = new DigestAuthenticationHandler();
-        r.setPrincipalFactory(digestAuthenticationPrincipalFactory());
-        r.setServicesManager(servicesManager);
-        r.setName(digest.getName());
-        return r;
-    }
 
-    /**
-     * The type Digest authentication event execution plan configuration.
-     */
-    @Configuration("digestAuthenticationEventExecutionPlanConfiguration")
-    public class DigestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Autowired
-        @Qualifier("personDirectoryPrincipalResolver")
-        private PrincipalResolver personDirectoryPrincipalResolver;
-
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(digestAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
-    }
+    
 }
