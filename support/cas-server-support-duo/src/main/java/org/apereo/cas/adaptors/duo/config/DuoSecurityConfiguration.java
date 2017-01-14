@@ -11,12 +11,14 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoDirectAuthenticationAction
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
@@ -206,9 +208,16 @@ public class DuoSecurityConfiguration {
                 duoMultifactorAuthenticationProvider());
     }
 
+    @Configuration("duoSecurityAuthenticationEventExecutionPlanConfiguration")
+    public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandler(duoAuthenticationHandler());
+        }
+    }
+    
     @PostConstruct
     public void init() {
-        this.authenticationHandlersResolvers.put(duoAuthenticationHandler(), null);
         authenticationMetadataPopulators.add(0, duoAuthenticationMetaDataPopulator());
     }
 }

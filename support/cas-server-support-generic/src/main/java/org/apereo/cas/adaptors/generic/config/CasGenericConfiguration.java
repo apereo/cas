@@ -6,12 +6,14 @@ import org.apereo.cas.adaptors.generic.RejectUsersAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.ShiroAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressNonInteractiveCredentialsAction;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
@@ -64,14 +66,6 @@ public class CasGenericConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -180,21 +174,48 @@ public class CasGenericConfiguration {
         return new DefaultPrincipalFactory();
     }
 
-    @PostConstruct
-    public void initializeAuthenticationHandler() {
-        if (casProperties.getAuthn().getShiro().getConfig().getLocation() != null) {
-            LOGGER.debug("Injecting shiro authentication handler");
-            this.authenticationHandlersResolvers.put(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
+    @Configuration("shiroAuthenticationEventExecutionPlanConfiguration")
+    public class ShiroAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
 
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers())) {
-            LOGGER.debug("Added rejecting authentication handler");
-            this.authenticationHandlersResolvers.put(rejectUsersAuthenticationHandler(), personDirectoryPrincipalResolver);
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            if (casProperties.getAuthn().getShiro().getConfig().getLocation() != null) {
+                LOGGER.debug("Injecting shiro authentication handler");
+                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);
+            }
         }
+    }
 
-        if (casProperties.getAuthn().getFile().getFilename() != null) {
-            LOGGER.debug("Added file-based authentication handler");
-            this.authenticationHandlersResolvers.put(fileAuthenticationHandler(), personDirectoryPrincipalResolver);
+    @Configuration("rejectUsersAuthenticationEventExecutionPlanConfiguration")
+    public class RejectUsersAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers())) {
+                LOGGER.debug("Added rejecting authentication handler");
+                plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), personDirectoryPrincipalResolver);
+            }
+        }
+    }
+
+    @Configuration("fileAuthenticationEventExecutionPlanConfiguration")
+    public class FileAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            if (casProperties.getAuthn().getFile().getFilename() != null) {
+                LOGGER.debug("Added file-based authentication handler");
+                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), personDirectoryPrincipalResolver);
+            }
         }
     }
 }
