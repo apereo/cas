@@ -33,8 +33,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -174,6 +172,9 @@ public class CasGenericConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    /**
+     * The type Shiro authentication event execution plan configuration.
+     */
     @Configuration("shiroAuthenticationEventExecutionPlanConfiguration")
     public class ShiroAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
@@ -189,6 +190,9 @@ public class CasGenericConfiguration {
         }
     }
 
+    /**
+     * The type Reject users authentication event execution plan configuration.
+     */
     @Configuration("rejectUsersAuthenticationEventExecutionPlanConfiguration")
     public class RejectUsersAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
@@ -204,6 +208,9 @@ public class CasGenericConfiguration {
         }
     }
 
+    /**
+     * The type File authentication event execution plan configuration.
+     */
     @Configuration("fileAuthenticationEventExecutionPlanConfiguration")
     public class FileAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

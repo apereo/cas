@@ -30,8 +30,10 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
 
     @Override
     public HealthStatus observe() {
-        final Map<String, Status> results = this.monitors.stream().collect(Collectors.toMap(Monitor::getName, HealthCheckMonitor::getResultOf,
-                (v1, v2) -> {throw new IllegalStateException(String.format("Duplicate key %s", v1));}, LinkedHashMap::new));
+        final Map<String, Status> results = this.monitors.stream()
+                .collect(Collectors.toMap(Monitor::getName, HealthCheckMonitor::getResultOf, (v1, v2) -> {
+                    throw new IllegalStateException(String.format("Duplicate key %s", v1));
+                }, LinkedHashMap::new));
 
         return new HealthStatus(getWorstStatusFrom(results), results);
     }

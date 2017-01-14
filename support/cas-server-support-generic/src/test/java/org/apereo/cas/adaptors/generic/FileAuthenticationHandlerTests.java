@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.pac4j.core.credentials.password.PasswordEncoder;
-import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountNotFoundException;

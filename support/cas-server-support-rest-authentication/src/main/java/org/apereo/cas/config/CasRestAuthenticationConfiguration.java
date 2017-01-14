@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import com.google.common.base.Throwables;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -29,9 +28,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.net.URI;
-import java.util.Map;
 
 
 /**
@@ -77,6 +74,9 @@ public class CasRestAuthenticationConfiguration {
         return r;
     }
 
+    /**
+     * The type Rest authentication event execution plan configuration.
+     */
     @Configuration("restAuthenticationEventExecutionPlanConfiguration")
     public class RestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

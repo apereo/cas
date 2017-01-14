@@ -307,6 +307,9 @@ public class LdapAuthenticationConfiguration {
         return handler;
     }
 
+    /**
+     * The type Ldap authentication event execution plan configuration.
+     */
     @Configuration("ldapAuthenticationEventExecutionPlanConfiguration")
     public class LdapAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override
