@@ -23,7 +23,11 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public void registerAuthenticationHandlerWithPrincipalResolver(final AuthenticationHandler handler, final PrincipalResolver principalResolver) {
-        LOGGER.debug("Registering handler [{}] with resolver [{}] into the execution plan", handler, principalResolver);
+        if (principalResolver == null) {
+            LOGGER.warn("Registering handler [{}] with no principal resolver into the execution plan", handler.getName(), principalResolver);
+        } else {
+            LOGGER.warn("Registering handler [{}] principal resolver [{}] into the execution plan", handler.getName(), principalResolver);
+        }
     }
 
     @Override

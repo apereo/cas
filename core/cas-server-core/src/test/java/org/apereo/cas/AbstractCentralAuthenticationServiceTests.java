@@ -143,8 +143,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     public WebApplicationServiceFactory getWebApplicationServiceFactory() {
         return webApplicationServiceFactory;
     }
-
-
+    
     @Configuration("casTestAuthenticationEventExecutionPlanConfiguration")
     public class CasTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

@@ -129,6 +129,7 @@ public class SpnegoConfiguration {
     }
 
     @Configuration("spnegoAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class SpnegoAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {

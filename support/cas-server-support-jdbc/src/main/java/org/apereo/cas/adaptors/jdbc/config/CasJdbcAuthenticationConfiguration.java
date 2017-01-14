@@ -196,6 +196,7 @@ public class CasJdbcAuthenticationConfiguration {
      * The type Jdbc authentication event execution plan configuration.
      */
     @Configuration("jdbcAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class JdbcAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
         @Qualifier("personDirectoryPrincipalResolver")

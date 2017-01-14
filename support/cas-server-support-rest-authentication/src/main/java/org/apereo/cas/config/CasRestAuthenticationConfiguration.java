@@ -30,7 +30,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-
 /**
  * This is {@link CasRestAuthenticationConfiguration}.
  *
@@ -39,11 +38,15 @@ import java.net.URI;
  */
 @Configuration("casRestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasRestAuthenticationConfiguration {
+public class CasRestAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     @RefreshScope
     public RestTemplate restAuthenticationTemplate() {
@@ -74,21 +77,11 @@ public class CasRestAuthenticationConfiguration {
         return r;
     }
 
-    /**
-     * The type Rest authentication event execution plan configuration.
-     */
-    @Configuration("restAuthenticationEventExecutionPlanConfiguration")
-    public class RestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Autowired
-        @Qualifier("personDirectoryPrincipalResolver")
-        private PrincipalResolver personDirectoryPrincipalResolver;
-
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
+    @Override
+    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+        plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
-    
+
     private static class HttpComponentsClientHttpRequestFactoryBasicAuth extends HttpComponentsClientHttpRequestFactory {
 
         private final HttpHost host;

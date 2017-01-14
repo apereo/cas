@@ -58,6 +58,7 @@ public class StormpathAuthenticationConfiguration {
     }
 
     @Configuration("stormpathAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class StormpathAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
         @Qualifier("personDirectoryPrincipalResolver")

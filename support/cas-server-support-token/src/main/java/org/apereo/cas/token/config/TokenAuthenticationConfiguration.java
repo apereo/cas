@@ -99,6 +99,7 @@ public class TokenAuthenticationConfiguration {
     }
 
     @Configuration("tokenAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class TokenAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
         @Qualifier("personDirectoryPrincipalResolver")
