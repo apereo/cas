@@ -255,6 +255,9 @@ public class OpenIdConfiguration {
         return m;
     }
 
+    /**
+     * The type Open id authentication event execution plan configuration.
+     */
     @Configuration("openIdAuthenticationEventExecutionPlanConfiguration")
     public class OpenIdAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override

@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -10,7 +11,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -39,13 +40,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -84,11 +85,7 @@ public class MultifactorAuthenticationTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
+    
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
@@ -97,19 +94,28 @@ public class MultifactorAuthenticationTests {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
+    @Configuration("casTestMultifactorAuthenticationEventExecutionPlanConfiguration")
+    public class CasTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            final HashMap<String, String> users = new HashMap<>();
+            users.put("alice", "alice");
+            users.put("bob", "bob");
+            users.put("mallory", "mallory");
+
+            final HashMap<String, String> credentials = new HashMap<>();
+            credentials.put("alice", "31415");
+            credentials.put("bob", "62831");
+            credentials.put("mallory", "14142");
+
+            plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(users));
+            plan.registerAuthenticationHandler(new TestOneTimePasswordAuthenticationHandler(credentials));
+        }
+    }
+    
     @PostConstruct
     public void init() {
-        final HashMap<String, String> users = new HashMap<>();
-        users.put("alice", "alice");
-        users.put("bob", "bob");
-        users.put("mallory", "mallory");
-        authenticationHandlersResolvers.put(new AcceptUsersAuthenticationHandler(users), null);
 
-        final HashMap<String, String> credentials = new HashMap<>();
-        credentials.put("alice", "31415");
-        credentials.put("bob", "62831");
-        credentials.put("mallory", "14142");
-        authenticationHandlersResolvers.put(new TestOneTimePasswordAuthenticationHandler(credentials), null);
     }
 
     @Test

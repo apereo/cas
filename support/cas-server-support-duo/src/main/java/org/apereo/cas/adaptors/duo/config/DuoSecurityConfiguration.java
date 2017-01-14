@@ -17,7 +17,6 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
@@ -52,7 +51,6 @@ import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link DuoSecurityConfiguration}.
@@ -106,11 +104,7 @@ public class DuoSecurityConfiguration {
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
+    
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
     private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
@@ -208,6 +202,9 @@ public class DuoSecurityConfiguration {
                 duoMultifactorAuthenticationProvider());
     }
 
+    /**
+     * The type Duo security authentication event execution plan configuration.
+     */
     @Configuration("duoSecurityAuthenticationEventExecutionPlanConfiguration")
     public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override
