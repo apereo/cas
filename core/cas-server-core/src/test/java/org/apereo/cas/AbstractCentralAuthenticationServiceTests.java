@@ -1,9 +1,7 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -15,11 +13,14 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -37,7 +38,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -48,7 +48,12 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 3.0.0
  */
 @SpringBootTest(
-        classes = {CasCoreServicesConfiguration.class,
+        classes = {
+                CasTestAuthenticationEventExecutionPlanConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
+                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+                CasCoreTicketIdGeneratorsConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
@@ -144,15 +149,5 @@ public abstract class AbstractCentralAuthenticationServiceTests {
         return webApplicationServiceFactory;
     }
     
-    @Configuration("casTestAuthenticationEventExecutionPlanConfiguration")
-    public class CasTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Autowired
-        @Qualifier("personDirectoryPrincipalResolver")
-        private PrincipalResolver personDirectoryPrincipalResolver;
 
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(new SimpleTestUsernamePasswordAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
-    }
 }

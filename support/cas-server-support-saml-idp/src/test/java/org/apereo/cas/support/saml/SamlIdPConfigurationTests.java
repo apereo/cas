@@ -9,12 +9,15 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -33,7 +36,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 5.1.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CasCoreAuthenticationConfiguration.class,
+@SpringBootTest(classes = {
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,

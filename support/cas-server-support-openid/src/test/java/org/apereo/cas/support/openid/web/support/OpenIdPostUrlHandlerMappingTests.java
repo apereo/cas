@@ -1,8 +1,10 @@
 package org.apereo.cas.support.openid.web.support;
 
+import org.apereo.cas.config.support.authentication.OpenIdServiceFactoryConfiguration;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.*;
