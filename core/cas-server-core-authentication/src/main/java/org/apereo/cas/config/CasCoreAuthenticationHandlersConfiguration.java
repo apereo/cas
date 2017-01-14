@@ -141,8 +141,11 @@ public class CasCoreAuthenticationHandlersConfiguration {
         }
         return Collections.emptyMap();
     }
-    
-    @Configuration("ProxyAuthenticationEventExecutionPlanConfiguration")
+
+    /**
+     * The type Proxy authentication event execution plan configuration.
+     */
+    @Configuration("proxyAuthenticationEventExecutionPlanConfiguration")
     public class ProxyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
@@ -150,6 +153,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
         }
     }
 
+    /**
+     * The type Jaas authentication event execution plan configuration.
+     */
     @Configuration("jaasAuthenticationEventExecutionPlanConfiguration")
     public class JaasAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

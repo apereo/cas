@@ -26,12 +26,13 @@ import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorTrus
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.gauth.web.flow.rest.GoogleAuthenticatorQRGeneratorController;
 import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
@@ -67,7 +68,6 @@ import org.springframework.webflow.execution.Action;
 import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -134,11 +134,7 @@ public class GoogleAuthenticatorConfiguration {
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
+    
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
     private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
@@ -265,7 +261,6 @@ public class GoogleAuthenticatorConfiguration {
     @PostConstruct
     protected void initializeRootApplicationContext() {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
-            authenticationHandlersResolvers.put(googleAuthenticatorAuthenticationHandler(), null);
             authenticationMetadataPopulators.add(0, googleAuthenticatorAuthenticationMetaDataPopulator());
         }
     }
@@ -299,6 +294,19 @@ public class GoogleAuthenticatorConfiguration {
         return new GoogleAuthenticatorTokenRepositoryCleaner(googleAuthenticatorTokenRepository);
     }
 
+    /**
+     * The type Google authenticator authentication event execution plan configuration.
+     */
+    @Configuration("googleAuthenticatorAuthenticationEventExecutionPlanConfiguration")
+    public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
+                plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
+            }
+        }
+    }
+    
     /**
      * The google authenticator multifactor trust configuration.
      */

@@ -16,9 +16,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
-import javax.annotation.PostConstruct;
-import java.util.Map;
-
 /**
  * This is {@link CasRemoteAuthenticationConfiguration}.
  *
@@ -42,6 +39,9 @@ public class CasRemoteAuthenticationConfiguration {
         return new RemoteAddressWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
+    /**
+     * The type Remote address authentication event execution plan configuration.
+     */
     @Configuration("remoteAddressAuthenticationEventExecutionPlanConfiguration")
     public class RemoteAddressAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

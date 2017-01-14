@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -36,13 +37,11 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.annotation.PostConstruct;
-import java.util.Map;
 
 /**
  * @author Scott Battaglia
@@ -102,10 +101,6 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     private WebApplicationServiceFactory webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
-    @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
 
@@ -149,8 +144,16 @@ public abstract class AbstractCentralAuthenticationServiceTests {
         return webApplicationServiceFactory;
     }
 
-    @PostConstruct
-    public void init() {
-        authenticationHandlersResolvers.put(new SimpleTestUsernamePasswordAuthenticationHandler(), personDirectoryPrincipalResolver);
+
+    @Configuration("casTestAuthenticationEventExecutionPlanConfiguration")
+    public class CasTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(new SimpleTestUsernamePasswordAuthenticationHandler(), personDirectoryPrincipalResolver);
+        }
     }
 }

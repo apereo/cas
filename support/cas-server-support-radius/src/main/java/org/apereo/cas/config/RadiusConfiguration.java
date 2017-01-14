@@ -105,6 +105,9 @@ public class RadiusConfiguration {
         return h;
     }
 
+    /**
+     * The type Radius authentication event execution plan configuration.
+     */
     @Configuration("radiusAuthenticationEventExecutionPlanConfiguration")
     public class RadiusAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override

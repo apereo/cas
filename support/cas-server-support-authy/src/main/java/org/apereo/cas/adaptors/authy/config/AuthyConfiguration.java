@@ -51,7 +51,6 @@ import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link AuthyConfiguration}.
@@ -201,6 +200,9 @@ public class AuthyConfiguration {
         return new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance());
     }
 
+    /**
+     * The type Authy authentication event execution plan configuration.
+     */
     @Configuration("authyAuthenticationEventExecutionPlanConfiguration")
     public class AuthyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

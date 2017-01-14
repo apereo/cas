@@ -108,6 +108,9 @@ public class DigestAuthenticationConfiguration {
         return r;
     }
 
+    /**
+     * The type Digest authentication event execution plan configuration.
+     */
     @Configuration("digestAuthenticationEventExecutionPlanConfiguration")
     public class DigestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

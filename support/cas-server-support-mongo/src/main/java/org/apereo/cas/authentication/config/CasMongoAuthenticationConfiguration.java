@@ -20,8 +20,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
-
 /**
  * This is {@link CasMongoAuthenticationConfiguration}.
  *
@@ -60,6 +58,9 @@ public class CasMongoAuthenticationConfiguration {
         return handler;
     }
 
+    /**
+     * The type Mongo authentication event execution plan configuration.
+     */
     @Configuration("mongoAuthenticationEventExecutionPlanConfiguration")
     public class MongoAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

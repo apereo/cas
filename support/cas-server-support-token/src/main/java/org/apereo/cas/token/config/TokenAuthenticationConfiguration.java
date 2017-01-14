@@ -29,9 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
-import java.util.Map;
-
 /**
  * This is {@link TokenAuthenticationConfiguration}.
  *
