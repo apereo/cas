@@ -65,6 +65,7 @@ dependencies {
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-validation")
     compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-events")
     compile project(":core:cas-server-core-configuration")
 
     compile project(":support:cas-server-support-throttle")
@@ -75,6 +76,7 @@ dependencies {
     compile project(":support:cas-server-support-themes")
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
+
 
     compile project(":webapp:cas-server-webapp-init")
     compile project(":webapp:cas-server-webapp-config")
