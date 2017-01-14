@@ -10,12 +10,12 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEven
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
-import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
@@ -48,7 +48,6 @@ import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link YubiKeyConfiguration}.
@@ -59,10 +58,6 @@ import java.util.Map;
 @Configuration("yubikeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class YubiKeyConfiguration {
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
@@ -142,7 +137,7 @@ public class YubiKeyConfiguration {
         if (yubi.getClientId() <= 0) {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getClientId(), 
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getClientId(),
                 yubi.getSecretKey(), this.registry);
 
         handler.setPrincipalFactory(yubikeyPrincipalFactory());
@@ -160,7 +155,7 @@ public class YubiKeyConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, yubikeyAuthenticationHandler(), 
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, yubikeyAuthenticationHandler(),
                 yubikeyAuthenticationProvider());
     }
 
@@ -199,11 +194,21 @@ public class YubiKeyConfiguration {
                 warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
+    @Configuration("yubikeyAuthenticationEventExecutionPlanConfiguration")
+    public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
+            if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
+                authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
+            }
+        }
+    }
+
     @PostConstruct
     protected void initializeRootApplicationContext() {
         final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
         if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
-            this.authenticationHandlersResolvers.put(yubikeyAuthenticationHandler(), null);
             authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
         }
     }

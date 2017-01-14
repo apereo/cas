@@ -1,10 +1,12 @@
 package org.apereo.cas.digest.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.digest.DefaultDigestHashedCredentialRetriever;
@@ -26,9 +28,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
-import javax.annotation.PostConstruct;
-import java.util.Map;
-
 /**
  * This is {@link DigestAuthenticationConfiguration}.
  *
@@ -47,16 +46,8 @@ public class DigestAuthenticationConfiguration {
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
-    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -117,8 +108,15 @@ public class DigestAuthenticationConfiguration {
         return r;
     }
 
-    @PostConstruct
-    public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(digestAuthenticationHandler(), personDirectoryPrincipalResolver);
+    @Configuration("digestAuthenticationEventExecutionPlanConfiguration")
+    public class DigestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(digestAuthenticationHandler(), personDirectoryPrincipalResolver);
+        }
     }
 }

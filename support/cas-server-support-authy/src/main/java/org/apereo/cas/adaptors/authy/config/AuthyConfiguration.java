@@ -12,12 +12,14 @@ import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventRes
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
@@ -98,10 +100,6 @@ public class AuthyConfiguration {
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
@@ -203,9 +201,20 @@ public class AuthyConfiguration {
         return new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance());
     }
 
+    @Configuration("authyAuthenticationEventExecutionPlanConfiguration")
+    public class AuthyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandler(authyAuthenticationHandler());
+        }
+    }
+    
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(authyAuthenticationHandler(), null);
         authenticationMetadataPopulators.add(0, authyAuthenticationMetaDataPopulator());
     }
 
