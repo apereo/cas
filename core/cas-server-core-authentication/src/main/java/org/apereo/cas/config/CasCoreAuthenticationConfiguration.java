@@ -18,10 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
@@ -38,24 +40,13 @@ import java.util.Set;
  */
 @Configuration("casCoreAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class CasCoreAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuthenticationConfiguration.class);
     
-    private Set<AuthenticationEventExecutionPlanConfigurer> configurers = new LinkedHashSet<>();
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Bean
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("principalElectionStrategy")
-                                                                          final PrincipalElectionStrategy principalElectionStrategy,
-                                                                          @Qualifier("authenticationManager")
-                                                                          final AuthenticationManager authenticationManager) {
-        return new DefaultAuthenticationSystemSupport(
-                defaultAuthenticationTransactionManager(authenticationManager), principalElectionStrategy);
-    }
+
 
     @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
     public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier("authenticationManager")
@@ -82,21 +73,14 @@ public class CasCoreAuthenticationConfiguration {
                 casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal()
         );
     }
-
-    @Autowired(required = false)
-    public void setConfigurers(final List<AuthenticationEventExecutionPlanConfigurer> cfg) {
-        if (cfg != null) {
-            LOGGER.debug("Found {} authentication event execution plans", cfg.size());
-            this.configurers.addAll(cfg);
-        }
-    }
-
+    
     @ConditionalOnMissingBean(name = "authenticationEventExecutionPlan")
+    @Autowired
     @Bean
-    public AuthenticationEventExecutionPlan authenticationEventExecutionPlan() {
+    public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
         final DefaultAuthenticationEventExecutionPlan plan = new DefaultAuthenticationEventExecutionPlan();
         configurers.forEach(c -> {
-            LOGGER.debug("Configuring authentication execution plan via {}", c);
+            LOGGER.info("Configuring authentication execution plan [{}]", c);
             c.configureAuthenticationExecutionPlan(plan);
         });
         return plan;
