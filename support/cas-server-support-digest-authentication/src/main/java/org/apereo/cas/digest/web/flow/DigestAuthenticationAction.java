@@ -39,8 +39,10 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
 
     public DigestAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                       final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-                                      final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, final String realm,
-                                      final String authenticationMethod, final DigestHashedCredentialRetriever credentialRetriever) {
+                                      final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, 
+                                      final String realm,
+                                      final String authenticationMethod, 
+                                      final DigestHashedCredentialRetriever credentialRetriever) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.realm = realm;
         this.authenticationMethod = authenticationMethod;

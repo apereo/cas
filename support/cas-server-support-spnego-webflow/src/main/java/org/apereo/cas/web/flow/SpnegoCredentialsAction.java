@@ -8,6 +8,8 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,7 +31,7 @@ import java.nio.charset.Charset;
  * @since 3.1
  */
 public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoCredentialsAction.class);
     private final boolean ntlm;
     private final String messageBeginPrefix;
 
@@ -56,25 +58,25 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
         final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-        logger.debug("SPNEGO Authorization header located as {}", authorizationHeader);
+        LOGGER.debug("SPNEGO Authorization header located as {}", authorizationHeader);
                 
         if (StringUtils.hasText(authorizationHeader)
                 && authorizationHeader.startsWith(this.messageBeginPrefix)
                 && authorizationHeader.length() > this.messageBeginPrefix.length()) {
 
-            logger.debug("SPNEGO Authorization header found with {} bytes",
+            LOGGER.debug("SPNEGO Authorization header found with {} bytes",
                     authorizationHeader.length() - this.messageBeginPrefix.length());
 
             final byte[] token = EncodingUtils.decodeBase64(authorizationHeader.substring(this.messageBeginPrefix.length()));
             if (token == null) {
-                logger.warn("Could not decode authorization header in Base64");
+                LOGGER.warn("Could not decode authorization header in Base64");
                 return null;
             }
-            logger.debug("Obtained token: {}. Creating SPNEGO credential...", new String(token, Charset.defaultCharset()));
+            LOGGER.debug("Obtained token: {}. Creating SPNEGO credential...", new String(token, Charset.defaultCharset()));
             return new SpnegoCredential(token);
         }
 
-        logger.warn("SPNEGO Authorization header not found under {} or it does not begin with the prefix {}",
+        LOGGER.warn("SPNEGO Authorization header not found under {} or it does not begin with the prefix {}",
                 SpnegoConstants.HEADER_AUTHORIZATION, this.messageBeginPrefix);
         return null;
     }
@@ -98,7 +100,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         final Credential credential = WebUtils.getCredential(context);
         
         if (credential == null) {
-            logger.debug("No credential was provided. No response header set.");
+            LOGGER.debug("No credential was provided. No response header set.");
             return;
         }
 
@@ -106,16 +108,16 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final byte[] nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {
-            logger.debug("Obtained output token: {}", new String(nextToken, Charset.defaultCharset()));
+            LOGGER.debug("Obtained output token: {}", new String(nextToken, Charset.defaultCharset()));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
                     ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
                     + ' ' + EncodingUtils.encodeBase64(nextToken));
         } else {
-            logger.debug("Unable to obtain the output token required.");
+            LOGGER.debug("Unable to obtain the output token required.");
         }
 
         if (spnegoCredentials.getPrincipal() == null && this.send401OnAuthenticationFailure) {
-            logger.debug("Setting HTTP Status to 401");
+            LOGGER.debug("Setting HTTP Status to 401");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

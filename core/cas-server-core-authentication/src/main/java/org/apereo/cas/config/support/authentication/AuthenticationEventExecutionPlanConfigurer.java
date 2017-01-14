@@ -18,7 +18,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 public interface AuthenticationEventExecutionPlanConfigurer {
 
     /**
-     * Register authentication handler.
+     * configure the plan.
      *
      * @param plan the plan
      */

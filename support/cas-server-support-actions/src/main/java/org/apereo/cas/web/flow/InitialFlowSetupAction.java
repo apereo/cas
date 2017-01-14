@@ -42,9 +42,11 @@ public class InitialFlowSetupAction extends AbstractAction {
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final List<ArgumentExtractor> argumentExtractors;
 
-    public InitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors, final ServicesManager servicesManager,
+    public InitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors, 
+                                  final ServicesManager servicesManager,
                                   final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                  final CookieRetrievingCookieGenerator warnCookieGenerator, final CasConfigurationProperties casProperties) {
+                                  final CookieRetrievingCookieGenerator warnCookieGenerator, 
+                                  final CasConfigurationProperties casProperties) {
         this.argumentExtractors = argumentExtractors;
         this.servicesManager = servicesManager;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
