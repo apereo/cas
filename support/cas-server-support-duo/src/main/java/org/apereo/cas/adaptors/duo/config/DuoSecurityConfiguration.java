@@ -42,6 +42,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.util.CookieGenerator;
@@ -185,11 +186,16 @@ public class DuoSecurityConfiguration {
     public Action prepareDuoWebLoginFormAction() {
         return new PrepareDuoWebLoginFormAction(duoMultifactorAuthenticationProvider());
     }
-
+    
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
-        return new DuoAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-                warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
+        return new DuoAuthenticationWebflowEventResolver(authenticationSystemSupport, 
+                centralAuthenticationService, 
+                servicesManager, 
+                ticketRegistrySupport,
+                warnCookieGenerator, 
+                authenticationRequestServiceSelectionStrategies, 
+                multifactorAuthenticationProviderSelector);
     }
 
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
