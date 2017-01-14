@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
@@ -11,6 +12,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -36,7 +38,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,7 +46,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -69,25 +69,9 @@ public class LdapAuthenticationConfiguration {
     private PrincipalResolver personDirectoryPrincipalResolver;
 
     @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
-    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
-    /**
-     * For principal resolution, let the chain process the principal
-     * attributes as well as what may be gathered by attribute repositories
-     */
-    @PostConstruct
-    public void initLdapAuthenticationHandlers() {
-        ldapAuthenticationHandlers().forEach(handler -> {
-            final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-            resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
-            this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
-        });
-    }
+
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
@@ -321,5 +305,17 @@ public class LdapAuthenticationConfiguration {
                 Beans.newPooledConnectionFactory(l));
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
+    }
+
+    @Configuration("ldapAuthenticationEventExecutionPlanConfiguration")
+    public class LdapAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            ldapAuthenticationHandlers().forEach(handler -> {
+                final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+                resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
+                plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
+            });
+        }
     }
 }
