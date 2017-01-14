@@ -7,8 +7,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import java.security.GeneralSecurityException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -58,16 +56,14 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
      *
      * @param authenticationEventExecutionPlan the execution plan
      * @param authenticationHandlerResolver    the authentication handler resolver
-     * @param authenticationMetaDataPopulators the authentication meta data populators
      * @param authenticationPolicy             the authentication policy
      * @param principalResolutionFatal         the principal resolution fatal
      */
     public PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
                                             final AuthenticationHandlerResolver authenticationHandlerResolver,
-                                            final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators,
                                             final AuthenticationPolicy authenticationPolicy,
                                             final boolean principalResolutionFatal) {
-        super(authenticationEventExecutionPlan, authenticationHandlerResolver, authenticationMetaDataPopulators, principalResolutionFatal);
+        super(authenticationEventExecutionPlan, authenticationHandlerResolver, principalResolutionFatal);
         this.authenticationPolicy = authenticationPolicy;
     }
 
@@ -92,8 +88,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
     public PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
                                             final ServicesManager servicesManager,
                                             final AuthenticationPolicy authenticationPolicy) {
-        super(authenticationEventExecutionPlan, new RegisteredServiceAuthenticationHandlerResolver(servicesManager),
-                Collections.emptyList(), false);
+        super(authenticationEventExecutionPlan, new RegisteredServiceAuthenticationHandlerResolver(servicesManager), false);
         this.authenticationPolicy = authenticationPolicy;
     }
 

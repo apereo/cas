@@ -39,7 +39,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -54,16 +53,12 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     private static final Logger LOGGER = LoggerFactory.getLogger(DuoSecurityAuthenticationEventExecutionPlanConfiguration.class);
 
     @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
-    
-    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-    
+
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
@@ -71,20 +66,20 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @ConditionalOnMissingBean(name = "duoPrincipalFactory")
     @Bean
     public PrincipalFactory duoPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     @RefreshScope
     public VariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider() {
@@ -125,7 +120,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, duoAuthenticationHandler(),
                 duoMultifactorAuthenticationProvider());
     }
-    
+
     @RefreshScope
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
@@ -157,13 +152,9 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
                 duoMultifactorAuthenticationProvider());
     }
 
-    @PostConstruct
-    public void init() {
-        authenticationMetadataPopulators.add(0, duoAuthenticationMetaDataPopulator());
-    }
-    
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         plan.registerAuthenticationHandler(duoAuthenticationHandler());
+        plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator());
     }
 }

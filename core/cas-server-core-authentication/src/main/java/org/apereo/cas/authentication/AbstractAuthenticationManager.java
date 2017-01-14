@@ -20,7 +20,6 @@ import org.springframework.util.Assert;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,11 +34,6 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * Log instance for logging events, errors, warnings, etc.
      */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
-    /**
-     * An array of AuthenticationAttributesPopulators.
-     */
-    protected final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators;
 
     /**
      * Plan to execute the authentication transaction.
@@ -69,21 +63,17 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      *
      * @param authenticationEventExecutionPlan Describe the execution plan for this manager
      * @param authenticationHandlerResolver    the authentication handler resolver
-     * @param authenticationMetaDataPopulators the authentication meta data populators
      * @param principalResolutionFatal         the principal resolution fatal
      */
     protected AbstractAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
                                             final AuthenticationHandlerResolver authenticationHandlerResolver,
-                                            final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators,
                                             final boolean principalResolutionFatal) {
         Assert.notNull(authenticationEventExecutionPlan);
         Assert.notNull(authenticationHandlerResolver);
-        Assert.notNull(authenticationMetaDataPopulators);
         Assert.notNull(principalResolutionFatal);
 
         this.authenticationEventExecutionPlan = authenticationEventExecutionPlan;
         this.authenticationHandlerResolver = authenticationHandlerResolver;
-        this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
         this.principalResolutionFailureFatal = principalResolutionFatal;
     }
 
@@ -95,7 +85,9 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      */
     protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
                                                             final Collection<Credential> credentials) {
-        for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
+
+        final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(credentials);
+        for (final AuthenticationMetaDataPopulator populator : pops) {
             credentials.stream().filter(populator::supports).forEach(credential -> populator.populateAttributes(builder, credential));
         }
     }
@@ -252,7 +244,17 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler, final AuthenticationTransaction transaction) {
         return this.authenticationEventExecutionPlan.getPrincipalResolverForAuthenticationTransaction(handler, transaction);
     }
-    
+
+    /**
+     * Gets authentication metadata populators for transaction.
+     *
+     * @param credential the credential
+     * @return the authentication metadata populators for transaction
+     */
+    protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(final Collection<Credential> credential) {
+        return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(credential);
+    }
+
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
