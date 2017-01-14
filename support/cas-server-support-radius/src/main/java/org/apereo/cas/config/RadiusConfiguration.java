@@ -5,11 +5,12 @@ import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -22,10 +23,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This this {@link RadiusConfiguration}.
@@ -36,10 +35,6 @@ import java.util.Map;
 @Configuration("radiusConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RadiusConfiguration {
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -110,8 +105,11 @@ public class RadiusConfiguration {
         return h;
     }
 
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(radiusAuthenticationHandler(), null);
+    @Configuration("radiusAuthenticationEventExecutionPlanConfiguration")
+    public class RadiusAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandler(radiusAuthenticationHandler());
+        }
     }
 }

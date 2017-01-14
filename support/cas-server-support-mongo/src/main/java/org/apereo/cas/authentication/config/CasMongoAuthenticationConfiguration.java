@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MongoAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -19,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
-import java.util.Map;
 
 /**
  * This is {@link CasMongoAuthenticationConfiguration}.
@@ -33,19 +34,11 @@ public class CasMongoAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
+    
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
     public PrincipalFactory mongoPrincipalFactory() {
@@ -67,9 +60,15 @@ public class CasMongoAuthenticationConfiguration {
         return handler;
     }
 
+    @Configuration("mongoAuthenticationEventExecutionPlanConfiguration")
+    public class MongoAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
 
-    @PostConstruct
-    public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(mongoAuthenticationHandler(), personDirectoryPrincipalResolver);
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), personDirectoryPrincipalResolver);
+        }
     }
 }
