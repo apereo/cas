@@ -34,6 +34,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     private final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(),
             mock(Credential.class), mock(Credential.class));
+    
 
     @Test
     public void verifyAuthenticateAnySuccess() throws Exception {
