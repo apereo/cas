@@ -26,7 +26,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,10 +48,6 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
-    @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @RefreshScope
     @Bean
@@ -73,7 +68,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
                 ticketRegistrySupport
         );
     }
-    
+
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusTokenServers() {
@@ -97,7 +92,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
     public PrincipalFactory radiusTokenPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @RefreshScope
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
@@ -117,14 +112,9 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
         return new AuthenticationContextAttributeMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
     }
 
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        authenticationMetadataPopulators.add(0, radiusAuthenticationMetaDataPopulator());
-    }
-
-    
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         plan.registerAuthenticationHandler(radiusTokenAuthenticationHandler());
+        plan.registerMetadataPopulator(radiusAuthenticationMetaDataPopulator());
     }
 }

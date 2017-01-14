@@ -128,6 +128,9 @@ public class SpnegoConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    /**
+     * The type Spnego authentication event execution plan configuration.
+     */
     @Configuration("spnegoAuthenticationEventExecutionPlanConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class SpnegoAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
