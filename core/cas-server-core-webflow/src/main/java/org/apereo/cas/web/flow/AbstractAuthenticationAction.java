@@ -7,8 +7,6 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -24,9 +22,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 public abstract class AbstractAuthenticationAction extends AbstractAction {
-
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
     private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
     private final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;

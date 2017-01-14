@@ -2,18 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceResponseBuilder;
@@ -48,7 +43,7 @@ import java.util.Map;
  */
 @Configuration("samlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlConfiguration  {
+public class SamlConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -90,10 +85,6 @@ public class SamlConfiguration  {
     private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
 
     @Autowired
-    @Qualifier("defaultArgumentExtractor")
-    private ArgumentExtractor argumentExtractor;
-
-    @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
@@ -121,11 +112,6 @@ public class SamlConfiguration  {
     }
 
 
-    @Bean
-    public ServiceFactory<SamlService> samlServiceFactory() {
-        return new SamlServiceFactory();
-    }
-
     @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
     @Bean
     public ResponseBuilder samlServiceResponseBuilder() {
@@ -144,8 +130,9 @@ public class SamlConfiguration  {
         return gen;
     }
 
+    @Autowired
     @Bean
-    public SamlValidateController samlValidateController() {
+    public SamlValidateController samlValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         final SamlValidateController c = new SamlValidateController();
         c.setValidationSpecification(cas20WithoutProxyProtocolValidationSpecification);
         c.setSuccessView(casSamlServiceSuccessView());
@@ -164,7 +151,6 @@ public class SamlConfiguration  {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        this.argumentExtractor.getServiceFactories().add(0, samlServiceFactory());
         uniqueIdGeneratorsMap.put(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator());
     }
 
