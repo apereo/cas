@@ -2,8 +2,10 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -37,11 +39,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -61,19 +61,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
-    @Autowired
-    @Qualifier("acceptUsersAuthenticationHandler")
-    private AuthenticationHandler acceptUsersAuthenticationHandler;
-
+    
     @Bean
     public WebContentInterceptor webContentInterceptor() {
         final WebContentInterceptor interceptor = new WebContentInterceptor();
@@ -212,17 +200,32 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
             setSecurityLogic(secLogic);
         }
     }
+    
+    @Configuration("acceptUsersAuthenticationEventExecutionPlanConfiguration")
+    public class AcceptUsersAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
-    @PostConstruct
-    public void init() {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
-            final String header =
-                    "\nCAS is configured to accept a static list of credentials for authentication. "
-                            + "While this is generally useful for demo purposes, it is STRONGLY recommended "
-                            + "that you DISABLE this authentication method (by SETTING 'cas.authn.accept.users' "
-                            + "to a blank value) and switch to a mode that is more suitable for production.";
-            AsciiArtUtils.printAsciiArt(LOGGER, "STOP!", header);
-            this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
+        @Autowired
+        private CasConfigurationProperties casProperties;
+        
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+
+        @Autowired
+        @Qualifier("acceptUsersAuthenticationHandler")
+        private AuthenticationHandler acceptUsersAuthenticationHandler;
+        
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            if (StringUtils.isNotBlank(this.casProperties.getAuthn().getAccept().getUsers())) {
+                final String header =
+                        "\nCAS is configured to accept a static list of credentials for authentication. "
+                        + "While this is generally useful for demo purposes, it is STRONGLY recommended "
+                        + "that you DISABLE this authentication method (by SETTING 'cas.authn.accept.users' "
+                        + "to a blank value) and switch to a mode that is more suitable for production.";
+                AsciiArtUtils.printAsciiArt(LOGGER, "STOP!", header);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
+            }
         }
     }
 }

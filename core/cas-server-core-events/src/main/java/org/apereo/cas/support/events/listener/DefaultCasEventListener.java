@@ -43,24 +43,19 @@ public class DefaultCasEventListener {
     private ApplicationContext applicationContext;
 
     private final CasEventRepository casEventRepository;
-    private final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
-    public DefaultCasEventListener(final CasEventRepository casEventRepository,
-                                   final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap) {
+    public DefaultCasEventListener(final CasEventRepository casEventRepository) {
         this.casEventRepository = casEventRepository;
-        this.handlerResolverMap = handlerResolverMap;
     }
 
+    /**
+     * Handle application ready event.
+     *
+     * @param event the event
+     */
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-        if (this.handlerResolverMap.isEmpty()) {
-            LOGGER.warn("No authentication handlers are registered. CAS will fail to respond to any and all authentication transactions");
-        } else {
-            LOGGER.info("A total of {} authentication handler(s) are available to authenticate credentials", handlerResolverMap.size());
-
-            LOGGER.debug("Available authentication handlers are:");
-            this.handlerResolverMap.keySet().forEach(hh -> LOGGER.debug("-> {}", hh.getName()));
-        }
+        LOGGER.info("CAS is ready to process requests at {}", event.getTimestamp());
     }
 
     /**

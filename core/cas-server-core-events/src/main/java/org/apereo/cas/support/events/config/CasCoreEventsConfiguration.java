@@ -35,15 +35,11 @@ public class CasCoreEventsConfiguration {
     
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1000;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
     
     @Autowired
     @Bean
     public DefaultCasEventListener defaultCasEventListener(@Qualifier("casEventRepository") final CasEventRepository casEventRepository) {
-        return new DefaultCasEventListener(casEventRepository, authenticationHandlersResolvers);
+        return new DefaultCasEventListener(casEventRepository);
     }
 
     @ConditionalOnMissingBean(name = "casEventRepository")

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
@@ -10,20 +11,19 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -42,14 +42,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-    
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
     
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
@@ -149,12 +141,24 @@ public class CasCoreAuthenticationHandlersConfiguration {
         }
         return Collections.emptyMap();
     }
+    
+    @Configuration("ProxyAuthenticationEventExecutionPlanConfiguration")
+    public class ProxyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler(), proxyPrincipalResolver());
+        }
+    }
 
-    @PostConstruct
-    public void init() {
-        this.authenticationHandlersResolvers.put(proxyAuthenticationHandler(), proxyPrincipalResolver());
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getJaas().getRealm())) {
-            authenticationHandlersResolvers.put(jaasAuthenticationHandler(), personDirectoryPrincipalResolver);
+    @Configuration("jaasAuthenticationEventExecutionPlanConfiguration")
+    public class JaasAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+        
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(jaasAuthenticationHandler(), personDirectoryPrincipalResolver);
         }
     }
 }
