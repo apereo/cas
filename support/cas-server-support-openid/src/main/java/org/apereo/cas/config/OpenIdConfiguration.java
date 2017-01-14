@@ -88,9 +88,6 @@ public class OpenIdConfiguration {
     @Qualifier("proxy20Handler")
     private ProxyHandler proxy20Handler;
     
-    @Autowired
-    @Qualifier("serviceTicketUniqueIdGenerator")
-    private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -119,10 +116,6 @@ public class OpenIdConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
     
-    @Autowired
-    @Qualifier("uniqueIdGeneratorsMap")
-    private Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap;
-
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -193,10 +186,5 @@ public class OpenIdConfiguration {
         mappings.put("/login", controller);
         m.setMappings(mappings);
         return m;
-    }
-    
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        uniqueIdGeneratorsMap.put(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
     }
 }
