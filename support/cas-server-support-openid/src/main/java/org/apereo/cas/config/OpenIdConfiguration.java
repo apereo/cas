@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
-import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceResponseBuilder;
 import org.apereo.cas.support.openid.web.OpenIdProviderController;
 import org.apereo.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
@@ -111,11 +110,7 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
     private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
-
-    @Autowired
-    @Qualifier("defaultArgumentExtractor")
-    private ArgumentExtractor argumentExtractor;
-
+    
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
@@ -133,36 +128,10 @@ public class OpenIdConfiguration {
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Bean
-    public DelegatingController openidDelegatingController() {
-        final DelegatingController controller = new DelegatingController();
-        controller.setDelegates(Arrays.asList(smartOpenIdAssociationController(), openIdValidateController()));
-        return controller;
-    }
-
-    @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
         return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView);
     }
-
-    @Bean
-    public AbstractDelegateController openIdValidateController() {
-        final OpenIdValidateController c = new OpenIdValidateController(serverManager());
-        c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
-        c.setSuccessView(casOpenIdServiceSuccessView);
-        c.setFailureView(casOpenIdServiceFailureView);
-        c.setProxyHandler(proxy20Handler);
-        c.setAuthenticationSystemSupport(authenticationSystemSupport);
-        c.setServicesManager(servicesManager);
-        c.setCentralAuthenticationService(centralAuthenticationService);
-        c.setArgumentExtractor(argumentExtractor);
-        c.setMultifactorTriggerSelectionStrategy(multifactorTriggerSelectionStrategy);
-        c.setAuthenticationContextValidator(authenticationContextValidator);
-        c.setJsonView(cas3ServiceJsonView);
-        c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-
-        return c;
-    }
-
+    
     @RefreshScope
     @Bean
     public ServerManager serverManager() {
@@ -180,11 +149,6 @@ public class OpenIdConfiguration {
         return new OpenIdServiceResponseBuilder(casProperties.getServer().getPrefix().concat("/openid"), serverManager(), centralAuthenticationService);
     }
 
-    @Bean
-    @RefreshScope
-    public OpenIdServiceFactory openIdServiceFactory() {
-        return new OpenIdServiceFactory(casProperties.getServer().getPrefix().concat("/openid"));
-    }
 
     @Bean
     @RefreshScope
@@ -203,12 +167,30 @@ public class OpenIdConfiguration {
         return new DefaultOpenIdUserNameExtractor();
     }
 
+    @Autowired
     @Bean
-    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
+    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+        final OpenIdValidateController c = new OpenIdValidateController(serverManager());
+        c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
+        c.setSuccessView(casOpenIdServiceSuccessView);
+        c.setFailureView(casOpenIdServiceFailureView);
+        c.setProxyHandler(proxy20Handler);
+        c.setAuthenticationSystemSupport(authenticationSystemSupport);
+        c.setServicesManager(servicesManager);
+        c.setCentralAuthenticationService(centralAuthenticationService);
+        c.setArgumentExtractor(argumentExtractor);
+        c.setMultifactorTriggerSelectionStrategy(multifactorTriggerSelectionStrategy);
+        c.setAuthenticationContextValidator(authenticationContextValidator);
+        c.setJsonView(cas3ServiceJsonView);
+        c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+
+        final DelegatingController controller = new DelegatingController();
+        controller.setDelegates(Arrays.asList(smartOpenIdAssociationController(), c));
+        
         final OpenIdPostUrlHandlerMapping m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);
         final Properties mappings = new Properties();
-        mappings.put("/login", openidDelegatingController());
+        mappings.put("/login", controller);
         m.setMappings(mappings);
         return m;
     }
@@ -216,6 +198,5 @@ public class OpenIdConfiguration {
     @PostConstruct
     protected void initializeRootApplicationContext() {
         uniqueIdGeneratorsMap.put(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
-        this.argumentExtractor.getServiceFactories().add(0, openIdServiceFactory());
     }
 }

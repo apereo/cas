@@ -2,13 +2,14 @@ package org.apereo.cas.support.saml.config;
 
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceResponseBuilder;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
-import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,7 +19,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
-import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This is {@link SamlGoogleAppsConfiguration}.
@@ -28,7 +30,7 @@ import javax.annotation.PostConstruct;
  */
 @Configuration("samlGoogleAppsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlGoogleAppsConfiguration {
+public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -37,17 +39,13 @@ public class SamlGoogleAppsConfiguration {
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
-
-    @Autowired
-    @Qualifier("defaultArgumentExtractor")
-    private ArgumentExtractor argumentExtractor;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @PostConstruct
-    protected void init() {
-        this.argumentExtractor.getServiceFactories().add(0, googleAccountsServiceFactory());
+    @Override
+    public Collection<ServiceFactory<? extends WebApplicationService>> buildServiceFactories() {
+        return Collections.singleton(googleAccountsServiceFactory());
     }
 
     @Bean

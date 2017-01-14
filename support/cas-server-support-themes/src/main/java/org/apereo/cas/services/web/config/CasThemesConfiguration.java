@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.apereo.cas.services.web.ServiceThemeResolver;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
@@ -24,7 +25,6 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,8 +53,8 @@ public class CasThemesConfiguration {
     private ThymeleafViewResolver thymeleafViewResolver;
 
     @Autowired
-    @Qualifier("argumentExtractors")
-    private List argumentExtractors;
+    @Qualifier("argumentExtractor")
+    private ArgumentExtractor argumentExtractors;
 
     @Autowired
     @Qualifier("serviceThemeResolverSupportedBrowsers")

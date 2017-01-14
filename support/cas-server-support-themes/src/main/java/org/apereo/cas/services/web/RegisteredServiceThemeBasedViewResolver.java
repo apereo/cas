@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,14 +37,16 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
 
     private final ServicesManager servicesManager;
-    private final List argumentExtractors;
+    private final ArgumentExtractor argumentExtractor;
     private final String prefix;
     private final String suffix;
 
-    public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager, final List argumentExtractors, final String prefix,
+    public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager,
+                                                   final ArgumentExtractor argumentExtractor,
+                                                   final String prefix,
                                                    final String suffix) {
         this.servicesManager = servicesManager;
-        this.argumentExtractors = argumentExtractors;
+        this.argumentExtractor = argumentExtractor;
         this.prefix = prefix;
         this.suffix = suffix;
     }
@@ -53,15 +57,16 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
         final WebApplicationService service;
-        
-        final HttpServletResponse response;
 
+        final HttpServletResponse response;
+        final List<ArgumentExtractor> argumentExtractorList = Collections.singletonList(this.argumentExtractor);
+        
         if (requestContext != null) {
             response = WebUtils.getHttpServletResponse(requestContext);
-            service = WebUtils.getService(this.argumentExtractors, requestContext);
+            service = WebUtils.getService(argumentExtractorList, requestContext);
         } else {
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
-            service = WebUtils.getService(this.argumentExtractors, request);
+            service = WebUtils.getService(argumentExtractorList, request);
             response = WebUtils.getHttpServletResponseFromRequestAttributes();
         }
 

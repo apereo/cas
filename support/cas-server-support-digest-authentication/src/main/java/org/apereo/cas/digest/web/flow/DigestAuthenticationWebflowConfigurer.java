@@ -15,7 +15,8 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    public DigestAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+    public DigestAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
         super(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
