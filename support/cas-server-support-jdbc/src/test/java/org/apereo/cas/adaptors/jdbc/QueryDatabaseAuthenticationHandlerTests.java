@@ -89,7 +89,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
         @Column
         private String username;
-        
+
         @Column
         private String password;
     }
@@ -153,7 +153,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     /**
-     * This test proves that in case BCRYPT and 
+     * This test proves that in case BCRYPT and
      * using raw password test can authenticate
      */
     @Test

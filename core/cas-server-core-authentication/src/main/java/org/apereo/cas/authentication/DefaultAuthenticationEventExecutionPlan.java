@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Set;
  */
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationEventExecutionPlan.class);
-    
+
     @Override
     public void registerAuthenticationHandler(final AuthenticationHandler handler) {
         registerAuthenticationHandlerWithPrincipalResolver(handler, null);
@@ -26,12 +27,17 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
+    public void registerAuthenticationHandlerWithPrincipalResolver(final Map<AuthenticationHandler, PrincipalResolver> plan) {
+        plan.forEach((k, v) -> registerAuthenticationHandlerWithPrincipalResolver(k, v));
+    }
+
+    @Override
     public Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(final AuthenticationTransaction transaction) {
         return null;
     }
 
     @Override
-    public PrincipalResolver getPrincipalResolverForAuthenticationTransaction(final AuthenticationHandler handler, 
+    public PrincipalResolver getPrincipalResolverForAuthenticationTransaction(final AuthenticationHandler handler,
                                                                               final AuthenticationTransaction transaction) {
         return null;
     }

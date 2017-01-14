@@ -12,12 +12,12 @@ import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventR
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
-import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
@@ -50,7 +50,6 @@ import org.springframework.webflow.execution.Action;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link RadiusMultifactorConfiguration}.
@@ -68,11 +67,7 @@ public class RadiusMultifactorConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
+    
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
     private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
@@ -205,9 +200,19 @@ public class RadiusMultifactorConfiguration {
         return new RadiusMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, radiusFlowRegistry());
     }
 
+    /**
+     * The type Radius token authentication event execution plan configuration.
+     */
+    @Configuration("radiusTokenAuthenticationEventExecutionPlanConfiguration")
+    public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandler(radiusTokenAuthenticationHandler());
+        }
+    }
+    
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(radiusTokenAuthenticationHandler(), null);
         authenticationMetadataPopulators.add(0, radiusAuthenticationMetaDataPopulator());
     }
 

@@ -194,6 +194,9 @@ public class YubiKeyConfiguration {
                 warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
+    /**
+     * The type Yubi key authentication event execution plan configuration.
+     */
     @Configuration("yubikeyAuthenticationEventExecutionPlanConfiguration")
     public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override

@@ -200,7 +200,10 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
             setSecurityLogic(secLogic);
         }
     }
-    
+
+    /**
+     * The type Accept users authentication event execution plan configuration.
+     */
     @Configuration("acceptUsersAuthenticationEventExecutionPlanConfiguration")
     public class AcceptUsersAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
