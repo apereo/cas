@@ -45,9 +45,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -80,11 +78,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
-
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -197,14 +191,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     public Action saveAccountRegistrationAction() {
         return new GoogleAccountSaveRegistrationAction(googleAuthenticatorInstance());
     }
-
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
-            authenticationMetadataPopulators.add(0, googleAuthenticatorAuthenticationMetaDataPopulator());
-        }
-    }
-
+    
     @ConditionalOnMissingBean(name = "googlePrincipalFactory")
     @Bean
     public PrincipalFactory googlePrincipalFactory() {
@@ -215,6 +202,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
             plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
+            plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
         }
     }
 }

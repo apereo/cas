@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
@@ -50,8 +50,6 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(@Qualifier("authenticationPolicy")
                                                        final AuthenticationPolicy authenticationPolicy,
-                                                       @Qualifier("authenticationMetadataPopulators")
-                                                       final List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators,
                                                        @Qualifier("registeredServiceAuthenticationHandlerResolver")
                                                        final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
                                                        @Qualifier("authenticationEventExecutionPlan")
@@ -59,7 +57,6 @@ public class CasCoreAuthenticationConfiguration {
         return new PolicyBasedAuthenticationManager(
                 authenticationEventExecutionPlan,
                 registeredServiceAuthenticationHandlerResolver,
-                authenticationMetadataPopulators,
                 authenticationPolicy,
                 casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal()
         );
@@ -71,7 +68,8 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
         final DefaultAuthenticationEventExecutionPlan plan = new DefaultAuthenticationEventExecutionPlan();
         configurers.forEach(c -> {
-            LOGGER.info("Configuring authentication execution plan [{}]", c.getClass().getSimpleName());
+            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.info("Configuring authentication execution plan [{}]", name);
             c.configureAuthenticationExecutionPlan(plan);
         });
         return plan;

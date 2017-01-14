@@ -57,6 +57,9 @@ public class StormpathAuthenticationConfiguration {
         return handler;
     }
 
+    /**
+     * The type Stormpath authentication event execution plan configuration.
+     */
     @Configuration("stormpathAuthenticationEventExecutionPlanConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class StormpathAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {

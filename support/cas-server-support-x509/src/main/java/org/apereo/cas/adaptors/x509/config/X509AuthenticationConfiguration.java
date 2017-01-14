@@ -259,6 +259,9 @@ public class X509AuthenticationConfiguration {
         return new X509SerialNumberAndIssuerDNPrincipalResolver(x509.getSerialNumberPrefix(), x509.getValueDelimiter());
     }
 
+    /**
+     * The type X 509 authentication event execution plan configuration.
+     */
     @Configuration("x509AuthenticationEventExecutionPlanConfiguration")
     public class X509AuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

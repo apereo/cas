@@ -28,7 +28,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,10 +49,6 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
     
-    @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
-
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -215,13 +210,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         return h;
     }
     
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        authenticationMetadataPopulators.add(0, clientAuthenticationMetaDataPopulator());
-    }
-    
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver);
+        plan.registerMetadataPopulator(clientAuthenticationMetaDataPopulator());
     }
 }

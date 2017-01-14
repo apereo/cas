@@ -142,7 +142,9 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     public Action initialFlowSetupAction() {
-        return new InitialFlowSetupAction(argumentExtractors, servicesManager, ticketGrantingTicketCookieGenerator, warnCookieGenerator, casProperties);
+        return new InitialFlowSetupAction(argumentExtractors, servicesManager, 
+                ticketGrantingTicketCookieGenerator, 
+                warnCookieGenerator, casProperties);
     }
 
     @RefreshScope
