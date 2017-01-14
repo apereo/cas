@@ -3,6 +3,8 @@ package org.apereo.cas.support.openid.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.support.authentication.OpenIdServiceFactoryConfiguration;
+import org.apereo.cas.config.support.authentication.OpenIdUniqueTicketIdGeneratorConfiguration;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
@@ -14,6 +16,7 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;

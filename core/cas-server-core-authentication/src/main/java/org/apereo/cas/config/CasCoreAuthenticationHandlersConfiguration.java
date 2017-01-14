@@ -92,6 +92,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
         h.setPrincipalFactory(proxyPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setOrder(Integer.MIN_VALUE);
         return h;
     }
 
@@ -166,7 +167,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
         
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(jaasAuthenticationHandler(), personDirectoryPrincipalResolver);
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getJaas().getRealm())) {
+                plan.registerAuthenticationHandlerWithPrincipalResolver(jaasAuthenticationHandler(), personDirectoryPrincipalResolver);
+            }
         }
     }
 }

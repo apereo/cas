@@ -56,13 +56,13 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
 
             LOGGER.debug("Loading keystore file...");
             final File keystoreFile = File.createTempFile("key", "store");
-            try(OutputStream outputStream = new FileOutputStream(keystoreFile)) {
+            try (OutputStream outputStream = new FileOutputStream(keystoreFile)) {
                 IOUtils.copy(new ClassPathResource("/ldapServerTrustStore").getInputStream(), outputStream);
             }
 
             final String serverKeyStorePath = keystoreFile.getCanonicalPath();
             final SSLUtil serverSSLUtil = new SSLUtil(
-                    new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()), 
+                    new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()),
                     new TrustStoreTrustManager(serverKeyStorePath));
             final SSLUtil clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
 
@@ -84,7 +84,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
 
             LOGGER.debug("Loading LDAP schema...");
             final File file = File.createTempFile("ldap", "schema");
-            try(OutputStream outputStream = new FileOutputStream(file)) {
+            try (OutputStream outputStream = new FileOutputStream(file)) {
                 IOUtils.copy(schemaFile, outputStream);
             }
 
@@ -97,35 +97,33 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
 
             LOGGER.debug("Loading LDIF file...");
             final File ldif = File.createTempFile("ldiff", "file");
-            try(OutputStream outputStream = new FileOutputStream(ldif)) {
+            try (OutputStream outputStream = new FileOutputStream(ldif)) {
                 IOUtils.copy(ldifFile, outputStream);
             }
 
             LOGGER.debug("Importing LDIF file...");
             this.directoryServer.importFromLDIF(true, ldif.getCanonicalPath());
-            
+
             int retryCount = 5;
             while (retryCount > 0) {
                 try {
                     LOGGER.debug("Trying to restart LDAP server: attempt {}", retryCount);
                     this.directoryServer.restartServer();
-                    final LDAPConnection c = getConnection();
-                    LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
-                    populateDefaultEntries(c);
-                    c.close();
+                    try (LDAPConnection c = getConnection()) {
+                        LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
+                        populateDefaultEntries(c);
+                    }
                     retryCount = 0;
                 } catch (final Throwable e) {
                     Thread.sleep(2000);
                     retryCount--;
                 }
             }
-            
- 
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
-    
+
     private void populateDefaultEntries(final LDAPConnection c) throws Exception {
         populateEntries(c, new ClassPathResource("ldif/users-groups.ldif").getInputStream());
     }

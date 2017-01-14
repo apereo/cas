@@ -9,15 +9,12 @@ import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceResponseBuilder;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
-import org.apereo.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator;
 import org.apereo.cas.support.saml.web.SamlValidateController;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -31,9 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
 
-import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * This is {@link SamlConfiguration} that creates the necessary OpenSAML context and beans.

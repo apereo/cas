@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceResponseBuilder;
 import org.apereo.cas.support.openid.web.OpenIdProviderController;
 import org.apereo.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
@@ -17,7 +16,6 @@ import org.apereo.cas.support.openid.web.mvc.SmartOpenIdController;
 import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.ValidationSpecification;
@@ -40,9 +38,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Properties;
 
 /**

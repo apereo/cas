@@ -8,10 +8,8 @@ import org.apereo.cas.authentication.principal.DefaultWebApplicationResponseBuil
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
@@ -36,7 +34,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,12 +71,7 @@ public class CasCoreServicesConfiguration {
     public PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator() {
         return new ShibbolethCompatiblePersistentIdGenerator();
     }
-
-    @Bean
-    public ServiceFactory webApplicationServiceFactory() {
-        return new WebApplicationServiceFactory();
-    }
-
+    
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
         return new DefaultWebApplicationResponseBuilderLocator();
@@ -141,14 +133,7 @@ public class CasCoreServicesConfiguration {
             throw Throwables.propagate(e);
         }
     }
-
-    @Bean
-    public List<ServiceFactory> serviceFactoryList() {
-        final List<ServiceFactory> list = new ArrayList<>();
-        list.add(webApplicationServiceFactory());
-        return list;
-    }
-
+    
     /**
      * The embedded service registry that processes built-in JSON service files
      * on the classpath.

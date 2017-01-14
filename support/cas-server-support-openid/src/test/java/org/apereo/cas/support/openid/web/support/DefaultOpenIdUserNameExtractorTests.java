@@ -2,14 +2,15 @@ package org.apereo.cas.support.openid.web.support;
 
 import static org.junit.Assert.*;
 
+import org.apereo.cas.config.support.authentication.OpenIdServiceFactoryConfiguration;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
-
  */
 public class DefaultOpenIdUserNameExtractorTests extends AbstractOpenIdTests {
 
