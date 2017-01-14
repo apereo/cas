@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.RemoteAddressWebflowConfigurer;
@@ -33,27 +35,26 @@ public class CasRemoteAuthenticationConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-
-    @Autowired
-    @Qualifier("remoteAddressAuthenticationHandler")
-    private AuthenticationHandler remoteAddressAuthenticationHandler;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
+    
     @ConditionalOnMissingBean(name = "remoteAddressWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer remoteAddressWebflowConfigurer() {
         return new RemoteAddressWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
-    @PostConstruct
-    public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(remoteAddressAuthenticationHandler, personDirectoryPrincipalResolver);
+    @Configuration("remoteAddressAuthenticationEventExecutionPlanConfiguration")
+    public class RemoteAddressAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("remoteAddressAuthenticationHandler")
+        private AuthenticationHandler remoteAddressAuthenticationHandler;
+
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+        
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler, personDirectoryPrincipalResolver);
+        }
     }
 }
