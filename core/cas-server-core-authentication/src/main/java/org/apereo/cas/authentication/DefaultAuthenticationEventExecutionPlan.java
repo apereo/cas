@@ -3,10 +3,17 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.OrderComparator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationEventExecutionPlan}.
@@ -16,6 +23,9 @@ import java.util.Set;
  */
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationEventExecutionPlan.class);
+
+    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
     @Override
     public void registerAuthenticationHandler(final AuthenticationHandler handler) {
@@ -29,6 +39,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         } else {
             LOGGER.debug("Registering handler [{}] principal resolver [{}] into the execution plan", handler.getName(), principalResolver);
         }
+        this.authenticationHandlerPrincipalResolverMap.put(handler, principalResolver);
     }
 
     @Override
@@ -39,6 +50,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     @Override
     public void registerMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
         LOGGER.debug("Registering metadata populator [{}] into the execution plan", populator);
+        authenticationMetaDataPopulatorList.add(populator);
     }
 
     @Override
@@ -47,18 +59,20 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
+    public Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulators(final Collection<Credential> credentials) {
+        return authenticationMetaDataPopulatorList;
+    }
+
+    @Override
     public Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(final AuthenticationTransaction transaction) {
-        return null;
+        final AuthenticationHandler[] handlers = authenticationHandlerPrincipalResolverMap.keySet().toArray(new AuthenticationHandler[]{});
+        OrderComparator.sortIfNecessary(handlers);
+        return new LinkedHashSet<>(Arrays.stream(handlers).collect(Collectors.toSet()));
     }
 
     @Override
     public PrincipalResolver getPrincipalResolverForAuthenticationTransaction(final AuthenticationHandler handler,
                                                                               final AuthenticationTransaction transaction) {
-        return null;
-    }
-
-    @Override
-    public Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulators(final Collection<Credential> credentials) {
-        return null;
+        return authenticationHandlerPrincipalResolverMap.get(handler);
     }
 }

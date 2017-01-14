@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.jooq.lambda.Unchecked;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -48,6 +49,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
@@ -77,7 +79,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     @Test
     public void verifyAuthenticateSuccess() throws Exception {
         assertNotEquals(handler.size(), 0);
-        this.getEntries().forEach(entry -> {
+        getEntries().forEach(entry -> {
             final String username = entry.getAttribute("sAMAccountName").getStringValue();
             final String psw = entry.getAttribute("userPassword").getStringValue();
 

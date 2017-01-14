@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -79,7 +80,9 @@ public class CasRestAuthenticationConfiguration implements AuthenticationEventEx
 
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver);
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver);
+        }
     }
 
     private static class HttpComponentsClientHttpRequestFactoryBasicAuth extends HttpComponentsClientHttpRequestFactory {

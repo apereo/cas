@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +22,6 @@ import java.util.Collections;
 @Configuration("samlServiceFactoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlServiceFactoryConfiguration implements ServiceFactoryConfigurer {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Override
     public Collection<ServiceFactory<? extends WebApplicationService>> buildServiceFactories() {
         return Collections.singleton(samlServiceFactory());
