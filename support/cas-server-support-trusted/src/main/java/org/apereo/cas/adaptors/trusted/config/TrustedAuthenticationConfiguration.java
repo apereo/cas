@@ -107,6 +107,7 @@ public class TrustedAuthenticationConfiguration {
      * The type Trusted authentication event execution plan configuration.
      */
     @Configuration("trustedAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class TrustedAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {

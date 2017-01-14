@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apache.shiro.util.Assert;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.services.ServicesManager;
@@ -101,7 +102,12 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
         final Collection<Credential> credentials = transaction.getCredentials();
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.stream().forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
+        
         final Set<AuthenticationHandler> handlerSet = getAuthenticationHandlersForThisTransaction(transaction);
+        Assert.notNull(handlerSet, "Resolved authentication handlers for this transaction cannot be null");
+        if (handlerSet.isEmpty()) {
+            logger.warn("Resolved authentication handlers for this transaction are empty");
+        }
 
         final boolean success = credentials.stream().anyMatch(credential -> {
             final boolean isSatisfied = handlerSet.stream().filter(handler -> handler.supports(credential))

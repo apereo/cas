@@ -2,19 +2,12 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
-import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceResponseBuilder;
@@ -27,7 +20,6 @@ import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.AbstractDelegateController;
@@ -35,7 +27,6 @@ import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
@@ -97,22 +88,14 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("proxy20Handler")
     private ProxyHandler proxy20Handler;
-
-    @Autowired
-    @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
-
+    
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -190,32 +173,7 @@ public class OpenIdConfiguration {
         LOGGER.info("Creating openid server manager with OP endpoint {}", casProperties.getServer().getLoginUrl());
         return manager;
     }
-
-    @Bean
-    public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
-        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler(ticketRegistry);
-        h.setPrincipalFactory(openidPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getOpenid().getName());
-        return h;
-    }
-
-    @Bean
-    public OpenIdPrincipalResolver openIdPrincipalResolver() {
-        final OpenIdPrincipalResolver r = new OpenIdPrincipalResolver();
-        r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull());
-        r.setPrincipalFactory(openidPrincipalFactory());
-        return r;
-    }
-
-    @ConditionalOnMissingBean(name = "openidPrincipalFactory")
-    @Bean
-    public PrincipalFactory openidPrincipalFactory() {
-        return new DefaultPrincipalFactory();
-    }
-
+    
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
@@ -253,17 +211,6 @@ public class OpenIdConfiguration {
         mappings.put("/login", openidDelegatingController());
         m.setMappings(mappings);
         return m;
-    }
-
-    /**
-     * The type Open id authentication event execution plan configuration.
-     */
-    @Configuration("openIdAuthenticationEventExecutionPlanConfiguration")
-    public class OpenIdAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(openIdCredentialsAuthenticationHandler(), openIdPrincipalResolver());
-        }
     }
     
     @PostConstruct
