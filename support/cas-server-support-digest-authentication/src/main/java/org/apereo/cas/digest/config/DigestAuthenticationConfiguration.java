@@ -51,8 +51,7 @@ public class DigestAuthenticationConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-
-
+    
     @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer digestAuthenticationWebflowConfigurer() {
@@ -60,7 +59,6 @@ public class DigestAuthenticationConfiguration {
     }
 
     @Autowired
-    @RefreshScope
     @Bean
     public DigestAuthenticationAction digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
                                                                  final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
@@ -79,7 +77,4 @@ public class DigestAuthenticationConfiguration {
         final DigestProperties digest = casProperties.getAuthn().getDigest();
         return new DefaultDigestHashedCredentialRetriever(digest.getUsers());
     }
-
-
-    
 }
