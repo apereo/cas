@@ -60,6 +60,7 @@ import static org.junit.Assert.*;
                 CasWebAppConfiguration.class,
                 CasWebflowContextConfigurationTests.TestWebflowContextConfiguration.class,
                 CasWebflowContextConfiguration.class,
+                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
