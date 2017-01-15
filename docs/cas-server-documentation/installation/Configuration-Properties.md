@@ -1790,6 +1790,28 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
 ```
 
+### Microsoft Azure
+
+To learn more about this topic, [please review this guide](MicrosoftAzure-Authentication.html).
+
+```properties
+# cas.authn.mfa.azure.phoneAttribute=phone
+# cas.authn.mfa.azure.configDir=/etc/cas/azure
+# cas.authn.mfa.azure.privateKeyPassword=
+# cas.authn.mfa.azure.mode=POUND|PIN
+# cas.authn.mfa.azure.rank=0
+# cas.authn.mfa.azure.name=
+# cas.authn.mfa.azure.allowInternationalCalls=false
+
+# cas.authn.mfa.azure.bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.azure.bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.azure.bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.azure.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.azure.bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.azure.bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.azure.bypass.credentialClassType=UsernamePassword.+
+```
+
 ### Authy
 
 To learn more about this topic, [please review this guide](AuthyAuthenticator-Authentication.html).

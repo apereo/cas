@@ -1,10 +1,6 @@
 package org.apereo.cas.config.support.authentication;
 
 import net.phonefactor.pfsdk.PFAuth;
-import net.phonefactor.pfsdk.PFAuthParams;
-import net.phonefactor.pfsdk.PFAuthResult;
-import net.phonefactor.pfsdk.PlainTextPinInfo;
-import net.phonefactor.pfsdk.StandardPinInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationRequestBuilder;
@@ -145,68 +141,6 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getAzure().getConfigDir())) {
             plan.registerAuthenticationHandler(azureAuthenticatorAuthenticationHandler());
             plan.registerMetadataPopulator(azureAuthenticatorAuthenticationMetaDataPopulator());
-        }
-    }
-
-    public static void main(final String[] args) {
-        try {
-            final PFAuth pf = new PFAuth();
-            pf.setDebug(true);
-            pf.setAllowInternationalCalls(true);
-            pf.initialize("/etc/cas/azure/", "XKPN3CBG4QWI8CNP");
-
-            final PFAuthParams params = new PFAuthParams();
-            params.setPhoneNumber("3477464665");
-            params.setCountryCode("1");
-            params.setUsername("casuser");
-            params.setAuthInfo(new StandardPinInfo());
-            //params.setAuthInfo(new PlainTextPinInfo("000000"));
-            final PFAuthResult r = pf.authenticate(params);
-           
-            if (r.getAuthenticated()) {
-                System.out.println(r.getOtp());
-                System.out.println(r.getEnteredPin());
-
-                System.out.println("GOOD AUTH " + r.getCallStatus());
-                System.out.println("Call Status: " + r.getCallStatusString());
-
-                switch (r.getCallStatus()) {
-                    case PFAuthResult.CALL_STATUS_PIN_ENTERED:
-                        System.out.println("I have detected that a PIN was entered.");
-                        break;
-
-                    case PFAuthResult.CALL_STATUS_NO_PIN_ENTERED:
-                        System.out.println("I have detected that NO PIN was entered.");
-                        break;
-
-                    default:
-                }
-            } else {
-                System.out.println("BAD AUTH");
-                System.out.println("Call Status: " + r.getCallStatusString());
-
-                switch (r.getCallStatus()) {
-                    case PFAuthResult.CALL_STATUS_USER_HUNG_UP:
-                        System.out.println("I have detected that the user hung up.");
-                        break;
-
-                    case PFAuthResult.CALL_STATUS_PHONE_BUSY:
-                        System.out.println("I have detected that the phone was busy.");
-                        break;
-
-                    default:
-                }
-                if (r.getMessageErrorId() != 0) {
-                    System.out.println("Message Error ID: " + r.getMessageErrorId());
-
-                    String messageError = r.getMessageError();
-
-                    if (messageError != null)
-                        System.out.println("Message Error: " + messageError);
-                }
-            }
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
         }
     }
 }

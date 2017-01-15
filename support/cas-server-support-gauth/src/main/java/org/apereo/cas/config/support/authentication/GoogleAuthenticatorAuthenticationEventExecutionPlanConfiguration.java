@@ -175,7 +175,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
         }
         
     }
-    
+
+    /**
+     * The type Google authenticator one time token repository cleaner.
+     */
     public class GoogleAuthenticatorOneTimeTokenRepositoryCleaner extends OneTimeTokenRepositoryCleaner {
         public GoogleAuthenticatorOneTimeTokenRepositoryCleaner(final OneTimeTokenRepository tokenRepository) {
             super(tokenRepository);
