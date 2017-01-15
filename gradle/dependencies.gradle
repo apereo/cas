@@ -257,11 +257,14 @@ ext.libraries = [
                 dependencies.create("com.warrenstrange:googleauth:${googleAuthVersion}") {
                     transitive = false
                     force = true
-                },
+                }
+        ],
+        zxingbarcode            : [
                 dependencies.create("com.google.zxing:core:${googleZxingVersion}") {
                     force = true
                 }
         ],
+
         shibidp                 : [
                 dependencies.create("net.shibboleth.idp:idp-attribute-filter-api:$idpVersion") {
                     exclude(group: "com.google.guava", module: "guava")
@@ -1144,7 +1147,7 @@ ext.libraries = [
             exclude(group: "javax.xml.bind", module: "jaxb-api")
             force = true
         },
-        textmagic                 : dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
+        textmagic               : dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")

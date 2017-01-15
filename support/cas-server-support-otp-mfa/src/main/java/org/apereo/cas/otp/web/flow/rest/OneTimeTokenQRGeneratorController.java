@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.gauth.web.flow.rest;
+package org.apereo.cas.otp.web.flow.rest;
 
 import com.google.common.base.Throwables;
 import com.google.zxing.BarcodeFormat;
@@ -21,13 +21,13 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * This is {@link GoogleAuthenticatorQRGeneratorController}.
+ * This is {@link OneTimeTokenQRGeneratorController}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @RestController
-public class GoogleAuthenticatorQRGeneratorController {
+public class OneTimeTokenQRGeneratorController {
 
     /**
      * Generate.
@@ -36,7 +36,7 @@ public class GoogleAuthenticatorQRGeneratorController {
      * @param request  the request
      * @throws Exception the exception
      */
-    @GetMapping(path= { "/gauth/qrgen" })
+    @GetMapping(path= { "/otp/qrgen" })
     public void generate(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         response.setContentType("image/png");
         final String key = request.getParameter("key");
