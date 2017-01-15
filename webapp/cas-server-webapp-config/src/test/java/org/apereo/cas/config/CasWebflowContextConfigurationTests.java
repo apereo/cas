@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logging.config.CasLoggingConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -61,6 +62,7 @@ import static org.junit.Assert.*;
                 CasWebflowContextConfigurationTests.TestWebflowContextConfiguration.class,
                 CasWebflowContextConfiguration.class,
                 CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
