@@ -22,11 +22,12 @@ The following multifactor providers are supported by CAS.
 
 | Provider              | Id              | Instructions
 |-----------------------|-----------------|----------------------------------------------------------
-| Duo Security          | `mfa-duo`       | [See this guide](DuoSecurity-Authentication.html). 
-| Authy Authenticator   | `mfa-authy`     | [See this guide](AuthyAuthenticator-Authentication.html). 
-| YubiKey               | `mfa-yubikey`   | [See this guide](YubiKey-Authentication.html). 
-| RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html). 
-| Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html). 
+| Duo Security          | `mfa-duo`       | [See this guide](DuoSecurity-Authentication.html).
+| Authy Authenticator   | `mfa-authy`     | [See this guide](AuthyAuthenticator-Authentication.html).
+| YubiKey               | `mfa-yubikey`   | [See this guide](YubiKey-Authentication.html).
+| RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
+| Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
+| Microsoft Azure       | `mfa-azure`     | [See this guide](MicrosoftAzure-Authentication.html). 
 
 ## Triggers
 
@@ -64,7 +65,7 @@ to know what provider to next activate.
 This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning
 provider ids to attributes as values.
 
-Needless to say, the attributes need to have been resolved for the principal prior to this step. 
+Needless to say, the attributes need to have been resolved for the principal prior to this step.
 
 ### Adaptive
 
@@ -75,12 +76,12 @@ and will route the flow to execute MFA. See [this guide](Configuring-Adaptive-Au
 
 ### Grouper
 
-MFA can be triggered by [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/) 
-groups to which the authenticated principal is assigned. 
+MFA can be triggered by [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/)
+groups to which the authenticated principal is assigned.
 Groups are collected by CAS and then cross-checked against all available/configured MFA providers.
 The group's comparing factor **MUST** be defined in CAS to activate this behavior
 and it can be based on the group's name, display name, etc where
-a successful match against a provider id shall activate the chosen MFA provider. 
+a successful match against a provider id shall activate the chosen MFA provider.
 
 ```xml
 <dependency>
@@ -111,7 +112,7 @@ MFA can be triggered for a specific authentication request, provided
 the initial request to the CAS `/login` endpoint contains a parameter
 that indicates the required MFA authentication flow. The parameter name
 is configurable, but its value must match the authentication provider id
-of an available MFA provider described above. 
+of an available MFA provider described above.
 
 ```bash
 https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
@@ -141,7 +142,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 
 Each multifactor provider is equipped with options to allow for MFA bypass. Once the provider
 is chosen to honor the authentication request, bypass rules are then consulted to calculate
-whether the provider should ignore the request and skip MFA conditionally. 
+whether the provider should ignore the request and skip MFA conditionally.
 
 Bypass rules allow for the following options for each provider:
 
@@ -149,7 +150,7 @@ Bypass rules allow for the following options for each provider:
 - ...[and optionally] Skip multifactor authentication based on designated **principal** attribute **values**.
 - Skip multifactor authentication based on designated **authentication** attribute **names**.
 - ...[and optionally] Skip multifactor authentication based on designated **authentication** attribute **values**.
-- Skip multifactor authentication depending on method/form of primary authentication execution. 
+- Skip multifactor authentication depending on method/form of primary authentication execution.
 
 A few simple examples follow:
 
@@ -160,7 +161,7 @@ A few simple examples follow:
 
 Note that in addition to the above options, some multifactor authentication providers
 may also skip and bypass the authentication request in the event that the authenticated principal does not quite "qualify"
-for multifactor authentication. See the documentation for each specific provider to learn more. 
+for multifactor authentication. See the documentation for each specific provider to learn more.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
@@ -192,7 +193,7 @@ whose access should bypass MFA may be defined as such in the CAS service registr
 The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
 provider available to CAS and the provider cannot be reached, authentication will be stopped and an error
 will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
-functionality, if that provider cannot respond. 
+functionality, if that provider cannot respond.
 
 ```json
 {
@@ -211,7 +212,7 @@ The following failure modes are supported:
 
 | Field                | Description
 |----------------------|----------------------------------
-| `CLOSED`                  | Authentication is blocked if the provider cannot be reached. 
+| `CLOSED`                  | Authentication is blocked if the provider cannot be reached.
 | `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
 | `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 | `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
@@ -227,17 +228,17 @@ request attempts to exercise that SSO session with a different and often competi
 from the authentication level CAS has already established. Concretely, examples may be:
 
 - CAS has achieved an SSO session, but a separate request now requires step-up authentication with DuoSecurity.
-- CAS has achieved an SSO session with an authentication level satisfied by DuoSecurity, but a separate request now requires step-up 
-authentication with YubiKey. 
+- CAS has achieved an SSO session with an authentication level satisfied by DuoSecurity, but a separate request now requires step-up
+authentication with YubiKey.
 
 In certain scenarios, CAS will attempt to rank authentication levels and compare them with each other. If CAS already has achieved a level
 that is higher than what the incoming request requires, no step-up authentication will be performed. If the opposite is true, CAS will
-route the authentication flow to the required authentication level and upon success, will adjust the SSO session with the new higher 
-authentication level now satisfied. 
+route the authentication flow to the required authentication level and upon success, will adjust the SSO session with the new higher
+authentication level now satisfied.
 
 Ranking of authentication methods is done per provider via specific properties for each in CAS settings. Note that
-the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps 
-and override others with a lower value. 
+the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps
+and override others with a lower value.
 
 ## Trusted Device/Browser
 
