@@ -62,7 +62,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
                 throw new FileNotFoundException(cfg.getAbsolutePath() + " does not exist or is not a directory");
             }
             final PFAuth pf = new PFAuth();
-            pf.setDebug(azure.isDebugEnabled());
+            pf.setDebug(true);
             pf.setAllowInternationalCalls(azure.isAllowInternationalCalls());
 
             final String dir = StringUtils.appendIfMissing(azure.getConfigDir(), "/");
