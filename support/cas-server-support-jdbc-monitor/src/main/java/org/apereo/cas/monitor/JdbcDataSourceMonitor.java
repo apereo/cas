@@ -24,7 +24,8 @@ public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
      * @param executorService the executor service
      * @param maxWait         the max wait
      * @param dataSource      Data source to monitor.
-     * @param validationQuery validation query used to monitor the data source. The validation query should return at least one result; otherwise results are ignored.
+     * @param validationQuery validation query used to monitor the data source. The validation query
+     *                        should return at least one result; otherwise results are ignored.
      */
     public JdbcDataSourceMonitor(final ExecutorService executorService, final int maxWait, final DataSource dataSource, final String validationQuery) {
         super(JdbcDataSourceMonitor.class.getSimpleName(), executorService, maxWait);

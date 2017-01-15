@@ -816,7 +816,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String configDir;
         private String privateKeyPassword;
         private AuthenticationModes mode = AuthenticationModes.POUND;
-        private boolean debugEnabled;
         private boolean allowInternationalCalls;
 
         public Azure() {
@@ -838,15 +837,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         public void setMode(final AuthenticationModes mode) {
             this.mode = mode;
         }
-
-        public boolean isDebugEnabled() {
-            return debugEnabled;
-        }
-
-        public void setDebugEnabled(final boolean debugEnabled) {
-            this.debugEnabled = debugEnabled;
-        }
-
+        
         public boolean isAllowInternationalCalls() {
             return allowInternationalCalls;
         }
