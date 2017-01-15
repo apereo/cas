@@ -1,14 +1,14 @@
 package org.apereo.cas.config;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorTokenRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
 import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.otp.repository.credentials.OneTimeCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -90,8 +90,8 @@ public class GoogleAuthenticatorJpaConfiguration {
     }
 
     @Bean
-    public OneTimeCredentialRepository googleAuthenticatorAccountRegistry() {
-        return new JpaGoogleAuthenticatorCredentialRepository(googleAuthenticatorInstance);
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
+        return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance);
     }
 
     @Bean
