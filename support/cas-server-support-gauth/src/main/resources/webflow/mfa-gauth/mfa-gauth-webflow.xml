@@ -28,7 +28,7 @@
     </view-state>
     
     <action-state id="saveRegistration">
-        <evaluate expression="saveAccountRegistrationAction" />
+        <evaluate expression="googleSaveAccountRegistrationAction" />
         <transition on="success" to="viewLoginForm"/>
     </action-state>
     
@@ -44,7 +44,7 @@
     </view-state>
 
     <action-state id="realSubmit">
-        <evaluate expression="googleAuthenticatorAuthenticationWebflowAction" />
+        <evaluate expression="oneTimeTokenAuthenticationWebflowAction" />
         <transition on="success" to="success" />
         <transition on="error" to="initializeLoginForm" />
     </action-state>

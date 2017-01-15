@@ -34,12 +34,21 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String grouperGroupField;
 
+    private Azure azure = new Azure();
     private Trusted trusted = new Trusted();
     private YubiKey yubikey = new YubiKey();
     private Radius radius = new Radius();
     private GAuth gauth = new GAuth();
     private List<Duo> duo = new ArrayList<>();
     private Authy authy = new Authy();
+
+    public Azure getAzure() {
+        return azure;
+    }
+
+    public void setAzure(final Azure azure) {
+        this.azure = azure;
+    }
 
     public Trusted getTrusted() {
         return trusted;
@@ -786,6 +795,83 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
     }
 
+    public static class Azure extends BaseProvider {
+        private static final long serialVersionUID = 6726032660671158922L;
+
+        /**
+         * The enum Authentication modes.
+         */
+        public enum AuthenticationModes {
+            /**
+             * Ask the user to only press the pound sign.
+             */
+            POUND,
+            /**
+             * Ask the user to enter pin code shown on the screen.
+             */
+            PIN
+        }
+        
+        private String phoneAttributeName = "phone";
+        private String configDir;
+        private String privateKeyPassword;
+        private AuthenticationModes mode = AuthenticationModes.POUND;
+        private boolean debugEnabled;
+        private boolean allowInternationalCalls;
+
+        public Azure() {
+            setId("mfa-azure");
+        }
+
+        public String getPhoneAttributeName() {
+            return phoneAttributeName;
+        }
+
+        public void setPhoneAttributeName(final String phoneAttributeName) {
+            this.phoneAttributeName = phoneAttributeName;
+        }
+
+        public AuthenticationModes getMode() {
+            return mode;
+        }
+
+        public void setMode(final AuthenticationModes mode) {
+            this.mode = mode;
+        }
+
+        public boolean isDebugEnabled() {
+            return debugEnabled;
+        }
+
+        public void setDebugEnabled(final boolean debugEnabled) {
+            this.debugEnabled = debugEnabled;
+        }
+
+        public boolean isAllowInternationalCalls() {
+            return allowInternationalCalls;
+        }
+
+        public void setAllowInternationalCalls(final boolean allowInternationalCalls) {
+            this.allowInternationalCalls = allowInternationalCalls;
+        }
+
+        public String getConfigDir() {
+            return configDir;
+        }
+
+        public void setConfigDir(final String configDir) {
+            this.configDir = configDir;
+        }
+
+        public String getPrivateKeyPassword() {
+            return privateKeyPassword;
+        }
+
+        public void setPrivateKeyPassword(final String privateKeyPassword) {
+            this.privateKeyPassword = privateKeyPassword;
+        }
+    }
+    
     public static class GAuth extends BaseProvider {
         private static final long serialVersionUID = -7401748853833491119L;
         private String issuer = "CASIssuer";

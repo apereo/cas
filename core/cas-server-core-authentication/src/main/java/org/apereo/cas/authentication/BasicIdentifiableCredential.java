@@ -20,7 +20,7 @@ public class BasicIdentifiableCredential implements Credential, Serializable {
     private String id;
 
     /**
-     * Instantiates a new Basic identifiable credental.
+     * Instantiates a new Basic identifiable credential.
      *
      * @param id the id
      */

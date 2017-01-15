@@ -24,7 +24,6 @@ import java.util.Map;
  * is inside the same database table. Supports settings for
  * number of iterations as well as private salt.
  * <p>
- * <p>
  * This handler uses the hashing method defined by Apache Shiro's
  * {@link org.apache.shiro.crypto.hash.DefaultHashService}. Refer to the Javadocs
  * to learn more about the behavior. If the hashing behavior and/or configuration
@@ -71,14 +70,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     /**
      * Static/private salt to be combined with the dynamic salt retrieved
      * from the database. Optional.
-     * <p>
      * <p>If using this implementation as part of a password hashing strategy,
      * it might be desirable to configure a private salt.
      * A hash and the salt used to compute it are often stored together.
      * If an attacker is ever able to access the hash (e.g. during password cracking)
      * and it has the full salt value, the attacker has all of the input necessary
      * to try to brute-force crack the hash (source + complete salt).</p>
-     * <p>
      * <p>However, if part of the salt is not available to the attacker (because it is not stored with the hash),
      * it is much harder to crack the hash value since the attacker does not have the complete inputs necessary.
      * The privateSalt property exists to satisfy this private-and-not-shared part of the salt.</p>

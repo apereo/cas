@@ -87,13 +87,10 @@ public class AuthenticationExceptionHandler {
 
     /**
      * Sets the list of custom exceptions that this class knows how to handle.
-     * <p>
      * <p>This implementation adds the provided list of exceptions to the default list
      * or just returns if the provided list is empty.
-     * <p>
      * <p>This implementation relies on Spring's property source configurer, SpEL, and conversion service
      * infrastructure facilities to convert and inject the collection from cas properties.
-     * <p>
      * <p>This method is thread-safe. It should only be called by the Spring container during
      * application context bootstrap
      * or unit tests.

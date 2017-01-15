@@ -36,6 +36,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.webflow.execution.Action;
 
 import java.util.concurrent.TimeUnit;
@@ -140,7 +141,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Autowired
     public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(@Qualifier("oneTimeTokenAuthenticatorTokenRepository")
                                                                                    final OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository) {
-        return new OneTimeTokenRepositoryCleaner(oneTimeTokenAuthenticatorTokenRepository);
+        return new GoogleAuthenticatorOneTimeTokenRepositoryCleaner(oneTimeTokenAuthenticatorTokenRepository);
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
@@ -156,7 +157,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
 
     @Bean
     @RefreshScope
-    public Action saveAccountRegistrationAction() {
+    public Action googleSaveAccountRegistrationAction() {
         return new OneTimeTokenAccountSaveRegistrationAction(this.googleAuthenticatorAccountRegistry);
     }
 
@@ -171,6 +172,20 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
             plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
             plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
+        }
+        
+    }
+    
+    public class GoogleAuthenticatorOneTimeTokenRepositoryCleaner extends OneTimeTokenRepositoryCleaner {
+        public GoogleAuthenticatorOneTimeTokenRepositoryCleaner(final OneTimeTokenRepository tokenRepository) {
+            super(tokenRepository);
+        }
+
+        @Scheduled(initialDelayString = "${cas.authn.mfa.gauth.cleaner.startDelay:PT30S}",
+                fixedDelayString = "${cas.authn.mfa.gauth.cleaner.repeatInterval:PT35S}")
+        @Override
+        public void clean() {
+            super.clean();
         }
     }
 }
