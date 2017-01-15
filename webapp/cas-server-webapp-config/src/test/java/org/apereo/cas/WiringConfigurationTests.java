@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
 import org.apereo.cas.config.CasSecurityContextConfiguration;
 import org.apereo.cas.config.CasWebAppConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logging.config.CasLoggingConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -64,6 +65,7 @@ import static org.junit.Assert.*;
                 CasCoreAuthenticationMetadataConfiguration.class,
                 CasCoreAuthenticationSupportConfiguration.class,
                 CasCoreAuthenticationHandlersConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
                 CasCoreHttpConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasThemesConfiguration.class,
