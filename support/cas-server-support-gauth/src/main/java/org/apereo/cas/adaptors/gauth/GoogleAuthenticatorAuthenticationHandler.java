@@ -4,11 +4,11 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
-import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepository;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -28,10 +28,10 @@ import java.security.GeneralSecurityException;
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final IGoogleAuthenticator googleAuthenticatorInstance;
-    private final GoogleAuthenticatorTokenRepository tokenRepository;
+    private final OneTimeTokenRepository tokenRepository;
 
     public GoogleAuthenticatorAuthenticationHandler(final IGoogleAuthenticator googleAuthenticatorInstance,
-                                                    final GoogleAuthenticatorTokenRepository tokenRepository) {
+                                                    final OneTimeTokenRepository tokenRepository) {
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
         this.tokenRepository = tokenRepository;
     }

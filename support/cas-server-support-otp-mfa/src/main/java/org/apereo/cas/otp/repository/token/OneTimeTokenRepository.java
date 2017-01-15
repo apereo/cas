@@ -1,12 +1,12 @@
-package org.apereo.cas.adaptors.gauth.repository.token;
+package org.apereo.cas.otp.repository.token;
 
 /**
- * This is {@link GoogleAuthenticatorTokenRepository}.
+ * This is {@link OneTimeTokenRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface GoogleAuthenticatorTokenRepository {
+public interface OneTimeTokenRepository {
 
     /**
      * Clean expired/invalid tokens from the repository.
@@ -19,7 +19,7 @@ public interface GoogleAuthenticatorTokenRepository {
      *
      * @param token the token
      */
-    void store(GoogleAuthenticatorToken token);
+    void store(OneTimeToken token);
 
     /**
      * Determine if the otp for user exists in repository.

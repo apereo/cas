@@ -1,7 +1,10 @@
 package org.apereo.cas.adaptors.gauth;
 
-import org.apereo.cas.adaptors.gauth.repository.credentials.BaseGoogleAuthenticatorCredentialRepository;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
+import org.apereo.cas.otp.repository.credentials.BaseOneTimeCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -20,11 +23,17 @@ import java.util.List;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerGoogleAuthenticator")
-public class JpaGoogleAuthenticatorCredentialRepository extends BaseGoogleAuthenticatorCredentialRepository {
+public class JpaGoogleAuthenticatorCredentialRepository extends BaseOneTimeCredentialRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorCredentialRepository.class);
+
+    private final IGoogleAuthenticator googleAuthenticator;
     
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;
+
+    public JpaGoogleAuthenticatorCredentialRepository(final IGoogleAuthenticator googleAuthenticator) {
+        this.googleAuthenticator = googleAuthenticator;
+    }
 
     @Override
     public String toString() {
@@ -32,7 +41,7 @@ public class JpaGoogleAuthenticatorCredentialRepository extends BaseGoogleAuthen
     }
 
     @Override
-    public String getSecretKey(final String username) {
+    public String getSecret(final String username) {
         try {
             final GoogleAuthenticatorAccount r =
                     this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorAccount.class.getSimpleName() 
@@ -48,10 +57,16 @@ public class JpaGoogleAuthenticatorCredentialRepository extends BaseGoogleAuthen
     }
 
     @Override
-    public void saveUserCredentials(final String userName, final String secretKey,
+    public void save(final String userName, final String secretKey,
                                     final int validationCode,
                                     final List<Integer> scratchCodes) {
         final GoogleAuthenticatorAccount r = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
         this.entityManager.merge(r);
+    }
+
+    @Override
+    public OneTimeTokenAccount create(final String username) {
+        final GoogleAuthenticatorKey key = this.googleAuthenticator.createCredentials();
+        return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
     }
 }

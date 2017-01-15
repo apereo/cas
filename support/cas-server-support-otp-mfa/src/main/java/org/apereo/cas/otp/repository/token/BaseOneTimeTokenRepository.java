@@ -1,17 +1,17 @@
-package org.apereo.cas.adaptors.gauth.repository.token;
+package org.apereo.cas.otp.repository.token;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 /**
- * This is {@link BaseGoogleAuthenticatorTokenRepository}.
+ * This is {@link BaseOneTimeTokenRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class BaseGoogleAuthenticatorTokenRepository implements GoogleAuthenticatorTokenRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseGoogleAuthenticatorTokenRepository.class);
+public abstract class BaseOneTimeTokenRepository implements OneTimeTokenRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseOneTimeTokenRepository.class);
 
     @Override
     public final void clean() {

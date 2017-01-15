@@ -129,7 +129,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
-        assertEquals(0, auth.getFailures().size());
+        assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
     }
 

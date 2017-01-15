@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.gauth.repository.token;
+package org.apereo.cas.otp.repository.token;
 
 import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * This is {@link CachingGoogleAuthenticatorTokenRepository}.
+ * This is {@link CachingOneTimeTokenRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthenticatorTokenRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CachingGoogleAuthenticatorTokenRepository.class);
+public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CachingOneTimeTokenRepository.class);
     
-    private final LoadingCache<String, Collection<GoogleAuthenticatorToken>> storage;
+    private final LoadingCache<String, Collection<OneTimeToken>> storage;
 
-    public CachingGoogleAuthenticatorTokenRepository(final LoadingCache<String, Collection<GoogleAuthenticatorToken>> storage) {
+    public CachingOneTimeTokenRepository(final LoadingCache<String, Collection<OneTimeToken>> storage) {
         this.storage = storage;
     }
 
@@ -30,10 +30,10 @@ public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
     }
 
     @Override
-    public void store(final GoogleAuthenticatorToken token) {
+    public void store(final OneTimeToken token) {
         if (exists(token.getUserId(), token.getToken())) {
             try {
-                final Collection<GoogleAuthenticatorToken> tokens = this.storage.get(token.getUserId());
+                final Collection<OneTimeToken> tokens = this.storage.get(token.getUserId());
                 tokens.add(token);
 
                 LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
@@ -42,7 +42,7 @@ public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
                 LOGGER.warn(e.getMessage(), e);
             }
         } else {
-            final Collection<GoogleAuthenticatorToken> tokens = new ArrayList<>();
+            final Collection<OneTimeToken> tokens = new ArrayList<>();
             tokens.add(token);
 
             LOGGER.debug("Storing previously used token [{}] for user [{}]", token, token.getUserId());
@@ -53,7 +53,7 @@ public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
     @Override
     public boolean exists(final String uid, final Integer otp) {
         try {
-            final Collection<GoogleAuthenticatorToken> tokens = this.storage.getIfPresent(uid);
+            final Collection<OneTimeToken> tokens = this.storage.getIfPresent(uid);
             LOGGER.debug("Found used tokens {}", tokens);
             return tokens != null && tokens.stream().anyMatch(t -> t.getToken().equals(otp));
         } catch (final Exception e) {
