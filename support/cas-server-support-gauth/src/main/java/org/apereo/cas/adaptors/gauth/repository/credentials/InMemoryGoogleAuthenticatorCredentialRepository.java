@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import org.apereo.cas.otp.repository.credentials.BaseInMemoryOneTimeCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 
 /**
  * This is {@link InMemoryGoogleAuthenticatorCredentialRepository}.
@@ -10,54 +11,23 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class InMemoryGoogleAuthenticatorCredentialRepository extends BaseGoogleAuthenticatorCredentialRepository {
+public class InMemoryGoogleAuthenticatorCredentialRepository extends BaseInMemoryOneTimeCredentialRepository {
 
-    private Map<String, GoogleAuthenticatorAccount> accounts;
+    private final IGoogleAuthenticator googleAuthenticator;
 
     /**
      * Instantiates a new In memory google authenticator account registry.
-     */
-    public InMemoryGoogleAuthenticatorCredentialRepository() {
-        this.accounts = new ConcurrentHashMap<>();
-    }
-
-    @Override
-    public String getSecretKey(final String userName) {
-        if (contains(userName)) {
-            return this.accounts.get(userName).getSecretKey();
-        }
-        return null;
-    }
-    
-    @Override
-    public void saveUserCredentials(final String userName, final String secretKey,
-                                    final int validationCode,
-                                    final List<Integer> scratchCodes) {
-        final GoogleAuthenticatorAccount account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
-        this.accounts.put(userName, account);
-    }
-
-    private boolean contains(final String username) {
-        return this.accounts.containsKey(username);
-    }
-
-    /**
-     * Remove.
      *
-     * @param username the username
+     * @param googleAuthenticator the google authenticator
      */
-    public void remove(final String username) {
-        this.accounts.remove(username);
+    public InMemoryGoogleAuthenticatorCredentialRepository(final IGoogleAuthenticator googleAuthenticator) {
+
+        this.googleAuthenticator = googleAuthenticator;
     }
 
-    /**
-     * Clear.
-     */
-    private void clear() {
-        this.accounts.clear();
-    }
-
-    private GoogleAuthenticatorAccount get(final String username) {
-        return this.accounts.get(username);
+    @Override
+    public OneTimeTokenAccount create(final String username) {
+        final GoogleAuthenticatorKey key = this.googleAuthenticator.createCredentials();
+        return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
     }
 }
