@@ -10,16 +10,16 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * This is {@link BaseJsonOneTimeCredentialRepository}.
+ * This is {@link BaseJsonOneTimeTokenCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BaseJsonOneTimeCredentialRepository extends BaseOneTimeCredentialRepository {
+public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
     private final Resource location;
     private final StringSerializer<TreeSet<OneTimeTokenAccount>> serializer = new OneTimeAccountSerializer();
 
-    public BaseJsonOneTimeCredentialRepository(final Resource location) {
+    public BaseJsonOneTimeTokenCredentialRepository(final Resource location) {
         this.location = location;
     }
 

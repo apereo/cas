@@ -1,6 +1,6 @@
 package org.apereo.cas.otp.web.flow;
 
-import org.apereo.cas.otp.repository.credentials.OneTimeCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -14,9 +14,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
-    private final OneTimeCredentialRepository repository;
+    private final OneTimeTokenCredentialRepository repository;
 
-    public OneTimeTokenAccountSaveRegistrationAction(final OneTimeCredentialRepository repository) {
+    public OneTimeTokenAccountSaveRegistrationAction(final OneTimeTokenCredentialRepository repository) {
         this.repository = repository;
     }
 

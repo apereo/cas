@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.gauth;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
-import org.apereo.cas.otp.repository.credentials.BaseOneTimeCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,22 +16,22 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
- * This is {@link JpaGoogleAuthenticatorCredentialRepository} that stores gauth data into a RDBMS database.
+ * This is {@link JpaGoogleAuthenticatorTokenCredentialRepository} that stores gauth data into a RDBMS database.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerGoogleAuthenticator")
-public class JpaGoogleAuthenticatorCredentialRepository extends BaseOneTimeCredentialRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorCredentialRepository.class);
+public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorTokenCredentialRepository.class);
 
     private final IGoogleAuthenticator googleAuthenticator;
     
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;
 
-    public JpaGoogleAuthenticatorCredentialRepository(final IGoogleAuthenticator googleAuthenticator) {
+    public JpaGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator) {
         this.googleAuthenticator = googleAuthenticator;
     }
 

@@ -3,12 +3,12 @@ package org.apereo.cas.otp.repository.credentials;
 import java.util.List;
 
 /**
- * This is {@link OneTimeCredentialRepository}.
+ * This is {@link OneTimeTokenCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface OneTimeCredentialRepository {
+public interface OneTimeTokenCredentialRepository {
     /**
      * Gets secret.
      *
