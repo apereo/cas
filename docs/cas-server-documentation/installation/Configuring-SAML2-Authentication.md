@@ -210,3 +210,12 @@ from a Metadata query server, the metadata location must be configured to point 
 
 A number of SAML2 service provider integrations are provided natively by CAS. To learn more,
 please [review this guide](../integration/Configuring-SAML-SP-Integrations.html).
+
+## Troubleshooting
+
+```xml
+<AsyncLogger name="org.opensaml" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+```

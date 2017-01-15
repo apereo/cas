@@ -25,11 +25,13 @@ public class GoogleAuthenticatorAuthenticationWebflowEventResolver extends Abstr
 
     public GoogleAuthenticatorAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                  final CentralAuthenticationService centralAuthenticationService,
-                                                                 final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                                 final ServicesManager servicesManager, 
+                                                                 final TicketRegistrySupport ticketRegistrySupport,
                                                                  final CookieGenerator warnCookieGenerator,
                                                                  final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
                                                                  final MultifactorAuthenticationProviderSelector selector) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, 
+                ticketRegistrySupport, warnCookieGenerator,
                 authenticationSelectionStrategies, selector);
     }
 

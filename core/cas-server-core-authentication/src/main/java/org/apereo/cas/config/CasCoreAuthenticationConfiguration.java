@@ -69,7 +69,7 @@ public class CasCoreAuthenticationConfiguration {
         final DefaultAuthenticationEventExecutionPlan plan = new DefaultAuthenticationEventExecutionPlan();
         configurers.forEach(c -> {
             final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.info("Configuring authentication execution plan [{}]", name);
+            LOGGER.debug("Configuring authentication execution plan [{}]", name);
             c.configureAuthenticationExecutionPlan(plan);
         });
         return plan;
