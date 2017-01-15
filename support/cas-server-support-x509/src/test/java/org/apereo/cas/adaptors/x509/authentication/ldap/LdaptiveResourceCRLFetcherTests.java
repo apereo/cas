@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,7 @@ import java.security.cert.X509Certificate;
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,

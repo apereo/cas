@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.SpnegoConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -56,6 +57,7 @@ import static org.junit.Assert.*;
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreWebflowConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
