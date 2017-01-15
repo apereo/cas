@@ -1,6 +1,5 @@
 package org.apereo.cas.otp.authentication;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -67,17 +66,12 @@ public class OneTimeTokenCredential implements Credential, Serializable {
     public String getId() {
         return this.token;
     }
-
-
+    
     public String getToken() {
         return this.token;
     }
 
     public void setToken(final String token) {
         this.token = token;
-    }
-
-    public boolean isValid() {
-        return StringUtils.isNotBlank(token);
     }
 }

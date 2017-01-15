@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.gauth.repository.token;
 
 import org.apereo.cas.otp.repository.token.OneTimeToken;
 
+import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
@@ -10,6 +11,7 @@ import javax.persistence.Table;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Entity
 @Table(name = "GoogleAuthenticatorToken")
 public class GoogleAuthenticatorToken extends OneTimeToken {
     private static final long serialVersionUID = 8494781829798273770L;
