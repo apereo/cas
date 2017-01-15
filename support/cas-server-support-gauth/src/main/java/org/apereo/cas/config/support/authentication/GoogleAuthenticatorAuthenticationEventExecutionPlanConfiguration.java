@@ -7,8 +7,8 @@ import com.warrenstrange.googleauth.KeyRepresentation;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorCredentialRepository;
-import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorTokenCredentialRepository;
+import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -17,7 +17,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.otp.repository.credentials.OneTimeCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
@@ -53,7 +53,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Lazy
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
-    private OneTimeCredentialRepository googleAuthenticatorAccountRegistry;
+    private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Lazy
     @Autowired
@@ -146,12 +146,12 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
     @Bean
     @RefreshScope
-    public OneTimeCredentialRepository googleAuthenticatorAccountRegistry() {
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
         final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
         if (gauth.getJson().getConfig().getLocation() != null) {
-            return new JsonGoogleAuthenticatorCredentialRepository(gauth.getJson().getConfig().getLocation(), googleAuthenticatorInstance());
+            return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getConfig().getLocation(), googleAuthenticatorInstance());
         }
-        return new InMemoryGoogleAuthenticatorCredentialRepository(googleAuthenticatorInstance());
+        return new InMemoryGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance());
     }
 
     @Bean

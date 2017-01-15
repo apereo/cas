@@ -6,4 +6,5 @@ dependencies {
     compile libraries.spring
     runtime libraries.hibernate
     compileOnly libraries.springcloud
+    testCompile project(":core:cas-server-core-logout")
 }

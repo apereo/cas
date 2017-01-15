@@ -21,6 +21,9 @@ public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
 
     private static final long serialVersionUID = 2441775052626253711L;
 
+    public GoogleAuthenticatorAccount() {
+       super();
+    }
     /**
      * Instantiates a new Google authenticator account.
      *
