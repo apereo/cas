@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 
+import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @since 5.0.0
  */
 
+@Entity
 @Table(name = "GoogleAuthenticatorRegistrationRecord")
 public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
 

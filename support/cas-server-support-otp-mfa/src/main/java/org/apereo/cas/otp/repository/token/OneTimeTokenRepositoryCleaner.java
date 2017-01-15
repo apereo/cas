@@ -2,7 +2,6 @@ package org.apereo.cas.otp.repository.token;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.ZonedDateTime;
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.warrenstrange.googleauth.ICredentialRepository;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorCredentialRepository;
 import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorTokenRepository;

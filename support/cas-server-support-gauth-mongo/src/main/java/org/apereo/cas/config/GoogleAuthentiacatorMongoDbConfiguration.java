@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import com.mongodb.MongoClientURI;
-import com.warrenstrange.googleauth.ICredentialRepository;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorCredentialRepository;
 import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenRepository;
