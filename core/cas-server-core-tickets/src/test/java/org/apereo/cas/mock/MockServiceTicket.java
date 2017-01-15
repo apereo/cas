@@ -27,7 +27,9 @@ public class MockServiceTicket implements ServiceTicket {
     private ZonedDateTime created;
 
     private Service service;
-
+    
+    private ExpirationPolicy expiration = new NeverExpiresExpirationPolicy();
+    
     private TicketGrantingTicket parent;
 
     public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
@@ -62,7 +64,7 @@ public class MockServiceTicket implements ServiceTicket {
 
     @Override
     public ExpirationPolicy getExpirationPolicy() {
-        return new NeverExpiresExpirationPolicy();
+        return this.expiration;
     }
 
     @Override
@@ -104,5 +106,9 @@ public class MockServiceTicket implements ServiceTicket {
     @Override
     public int hashCode() {
         return this.id.hashCode();
+    }
+
+    public void setExpiration(final ExpirationPolicy expiration) {
+        this.expiration = expiration;
     }
 }
