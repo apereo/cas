@@ -5,8 +5,8 @@ title: CAS - ADFS Integration
 
 # Overview
 
-The integration between the CAS Server and ADFS delegates user authentication from CAS Server 
-to ADFS, making CAS Server a WS-Federation client. 
+The integration between the CAS Server and ADFS delegates user authentication from CAS Server
+to ADFS, making CAS Server a WS-Federation client.
 Claims released from ADFS are made available as attributes to CAS Server, and by extension CAS Clients.
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -19,7 +19,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-You may also need to declare the following Maven repository in your 
+You may also need to declare the following Maven repository in your
 CAS Overlay to be able to resolve dependencies:
 
 ```xml
@@ -44,7 +44,7 @@ To see the relevant list of CAS properties, please [review this guide](../instal
 
 ## Encrypted Assertions
 
-CAS is able to automatically decrypt SAML assertions that are issued by ADFS. To do this, 
+CAS is able to automatically decrypt SAML assertions that are issued by ADFS. To do this,
 you will first need to generate a private/public keypair:
 
 ```bash
@@ -59,9 +59,10 @@ openssl x509 -outform der -in x509.pem -out certificate.crt
 
 Configure CAS to reference the keypair, and configure the relying party trust settings
 in ADFS to use the `certificate.crt` file for encryption.
- 
+
 ## Modifying ADFS Claims
-The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but 
+
+The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but
 before they are inserted into the CAS user principal. For this to happen, you need
 to put together an implementation of `WsFederationAttributeMutator` that changes and manipulates ADFS claims:
 
@@ -107,3 +108,7 @@ registry to match the following:
   }
 }
 ```
+
+## Troubleshooting
+
+Be aware of clock drift issues between CAS and the ADFS server. Validation failures of the response do show up in the logs, and the request is routed back to ADFA again, causing redirect loops.

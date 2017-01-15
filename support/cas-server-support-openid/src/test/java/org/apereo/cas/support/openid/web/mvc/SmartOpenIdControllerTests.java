@@ -1,11 +1,9 @@
 package org.apereo.cas.support.openid.web.mvc;
 
-import org.apereo.cas.config.support.authentication.OpenIdServiceFactoryConfiguration;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.junit.Test;
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 

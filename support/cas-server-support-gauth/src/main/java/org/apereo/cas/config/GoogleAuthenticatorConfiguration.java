@@ -139,4 +139,5 @@ public class GoogleAuthenticatorConfiguration {
                     casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), loginFlowDefinitionRegistry);
         }
     }
+    
 }
