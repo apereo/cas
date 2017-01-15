@@ -5,19 +5,19 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This is {@link BaseInMemoryOneTimeCredentialRepository}.
+ * This is {@link BaseInMemoryOneTimeTokenCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class BaseInMemoryOneTimeCredentialRepository extends BaseOneTimeCredentialRepository {
+public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
     private Map<String, OneTimeTokenAccount> accounts;
 
     /**
      * Instantiates a new In memory google authenticator account registry.
      */
-    public BaseInMemoryOneTimeCredentialRepository() {
+    public BaseInMemoryOneTimeTokenCredentialRepository() {
         this.accounts = new ConcurrentHashMap<>();
     }
 

@@ -47,7 +47,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String username;
 
-    private OneTimeTokenAccount() {
+    public OneTimeTokenAccount() {
     }
     
     /**

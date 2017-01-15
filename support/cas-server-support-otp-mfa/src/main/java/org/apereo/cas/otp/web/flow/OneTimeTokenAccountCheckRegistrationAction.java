@@ -1,7 +1,7 @@
 package org.apereo.cas.otp.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.otp.repository.credentials.OneTimeCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -22,11 +22,11 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OneTimeTokenAccountCheckRegistrationAction.class);
 
-    private final OneTimeCredentialRepository repository;
+    private final OneTimeTokenCredentialRepository repository;
     private final String label;
     private final String issuer;
 
-    public OneTimeTokenAccountCheckRegistrationAction(final OneTimeCredentialRepository repository,
+    public OneTimeTokenAccountCheckRegistrationAction(final OneTimeTokenCredentialRepository repository,
                                                       final String label,
                                                       final String issuer) {
         this.repository = repository;

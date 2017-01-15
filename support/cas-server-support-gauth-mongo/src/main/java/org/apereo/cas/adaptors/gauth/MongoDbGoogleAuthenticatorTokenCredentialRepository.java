@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.gauth;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
-import org.apereo.cas.otp.repository.credentials.BaseOneTimeCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,24 +16,24 @@ import javax.persistence.NoResultException;
 import java.util.List;
 
 /**
- * This is {@link MongoDbGoogleAuthenticatorCredentialRepository}.
+ * This is {@link MongoDbGoogleAuthenticatorTokenCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class MongoDbGoogleAuthenticatorCredentialRepository extends BaseOneTimeCredentialRepository {
+public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbGoogleAuthenticatorCredentialRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbGoogleAuthenticatorTokenCredentialRepository.class);
 
     private final IGoogleAuthenticator googleAuthenticator;
 
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
-    public MongoDbGoogleAuthenticatorCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                          final MongoOperations mongoTemplate, 
-                                                          final String collectionName, 
-                                                          final boolean dropCollection) {
+    public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
+                                                               final MongoOperations mongoTemplate,
+                                                               final String collectionName,
+                                                               final boolean dropCollection) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
         this.googleAuthenticator = googleAuthenticator;

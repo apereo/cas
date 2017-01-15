@@ -2,11 +2,11 @@ package org.apereo.cas.config;
 
 import com.mongodb.MongoClientURI;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorCredentialRepository;
+import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.otp.repository.credentials.OneTimeCredentialRepository;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,9 +65,9 @@ public class GoogleAuthentiacatorMongoDbConfiguration {
     }
 
     @Bean
-    public OneTimeCredentialRepository googleAuthenticatorAccountRegistry() {
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
         final MultifactorAuthenticationProperties.GAuth.Mongodb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
-        return new MongoDbGoogleAuthenticatorCredentialRepository(
+        return new MongoDbGoogleAuthenticatorTokenCredentialRepository(
                 googleAuthenticatorInstance,
                 mongoDbGoogleAuthenticatorTemplate(),
                 mongo.getCollection(),
