@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.gauth;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GoogleAuthentiacatorMongoDbConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
@@ -16,6 +17,7 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -39,10 +41,13 @@ import static org.junit.Assert.*;
                 CasCoreServicesConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
                 GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
-                AopAutoConfiguration.class, RefreshAutoConfiguration.class})
+                AopAutoConfiguration.class,
+                CasCoreUtilConfiguration.class,
+                RefreshAutoConfiguration.class})
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
+@EnableScheduling
 public class MongoDbGoogleAuthenticatorAccountRegistryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
