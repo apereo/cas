@@ -4,7 +4,7 @@
   As boot is upgraded, some of these enforcements below
   may become unnecessary when/if version numbers match.
  */
-ext["hibernateVersion"] = "5.2.5.Final"
+ext["hibernateVersion"] = "5.2.6.Final"
 ext["springBootTomcatVersion"] = "8.5.9"
 ext["hazelcastVersion"] = "3.7.4"
 ext["infinispanVersion"] = "8.2.2.Final"
