@@ -9,7 +9,7 @@
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjrt</artifactId>
-      <version>1.8.9</version>
+      <version>1.8.10</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -21,6 +21,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -29,15 +37,23 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
-      <version>1.8.9</version>
+      <version>1.8.10</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -49,6 +65,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -57,8 +81,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -77,6 +109,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -85,15 +125,23 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
-      <version>2.6.2</version>
+      <version>2.7</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -105,6 +153,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -113,15 +169,23 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.6.2</version>
+      <version>2.7</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -133,6 +197,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -141,15 +213,23 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-jcl</artifactId>
-      <version>2.6.2</version>
+      <version>2.7</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -161,6 +241,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -169,15 +257,23 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.6.2</version>
+      <version>2.7</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -193,6 +289,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -201,15 +305,23 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-web</artifactId>
-      <version>2.6.2</version>
+      <version>2.7</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -221,6 +333,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -229,8 +349,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -249,6 +377,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -257,8 +393,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -277,6 +421,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -285,8 +437,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -305,6 +465,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -313,8 +481,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -333,6 +509,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -341,8 +525,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -361,6 +553,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -373,8 +573,16 @@
           <groupId>org.javassist</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
         <exclusion>
           <artifactId>guava</artifactId>
@@ -397,6 +605,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -405,8 +621,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -457,6 +681,10 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -489,6 +717,10 @@
           <groupId>jboss</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -517,12 +749,20 @@
           <groupId>jcs</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>commons-collections</artifactId>
           <groupId>commons-collections</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
         <exclusion>
           <artifactId>start</artifactId>
@@ -561,6 +801,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -569,8 +817,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -585,12 +841,24 @@
           <groupId>ognl</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>logback-classic</artifactId>
-          <groupId>ch.qos.logback</groupId>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
         </exclusion>
         <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
@@ -601,6 +869,10 @@
           <groupId>commons-digester</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>commons-collections</artifactId>
           <groupId>commons-collections</groupId>
         </exclusion>
@@ -609,12 +881,12 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>commons-lang</artifactId>
-          <groupId>commons-lang</groupId>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
+          <artifactId>commons-lang</artifactId>
+          <groupId>commons-lang</groupId>
         </exclusion>
         <exclusion>
           <artifactId>commons-beanutils</artifactId>
@@ -637,6 +909,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -645,8 +925,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -665,6 +953,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -677,8 +973,16 @@
           <groupId>junit</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
         <exclusion>
           <artifactId>commons-lang</artifactId>
@@ -705,6 +1009,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -713,8 +1025,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -733,6 +1053,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -741,15 +1069,23 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>com.github.lalyos</groupId>
       <artifactId>jfiglet</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -761,6 +1097,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -769,8 +1113,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -789,6 +1141,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -797,8 +1157,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -817,6 +1185,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -825,8 +1201,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -845,6 +1229,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -853,8 +1245,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -865,20 +1265,32 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>ognl</artifactId>
           <groupId>ognl</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>aspectjrt</artifactId>
+          <groupId>org.aspectj</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
           <artifactId>logback-classic</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>logback-core</artifactId>
-          <groupId>ch.qos.logback</groupId>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
@@ -889,6 +1301,10 @@
           <groupId>org.hjson</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -897,8 +1313,8 @@
           <groupId>javax.validation</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>aspectjrt</artifactId>
-          <groupId>org.aspectj</groupId>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -915,6 +1331,10 @@
         <exclusion>
           <artifactId>spring-web</artifactId>
           <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
         </exclusion>
         <exclusion>
           <artifactId>logback-core</artifactId>
@@ -937,12 +1357,20 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
           <artifactId>hjson</artifactId>
           <groupId>org.hjson</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -955,6 +1383,10 @@
         <exclusion>
           <artifactId>validation-api</artifactId>
           <groupId>javax.validation</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-tx</artifactId>
@@ -981,6 +1413,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -989,8 +1429,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -1009,6 +1457,14 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr250-api</artifactId>
+          <groupId>javax.annotation</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>logback-core</artifactId>
           <groupId>ch.qos.logback</groupId>
         </exclusion>
@@ -1017,8 +1473,16 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>cdi-api</artifactId>
+          <groupId>javax.enterprise</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.inject</artifactId>
+          <groupId>javax.inject</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -1193,7 +1657,7 @@
     <dependency>
       <groupId>com.github.fakemongo</groupId>
       <artifactId>fongo</artifactId>
-      <version>2.0.10</version>
+      <version>2.0.11</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -1265,7 +1729,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>1.4.3.RELEASE</version>
+      <version>1.5.0.RC1</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
