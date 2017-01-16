@@ -69,7 +69,7 @@ allprojects {
     } else {
         apply from: rootProject.file("gradle/maven.gradle")
     }
-    
+
     gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
 
     signing {
@@ -187,7 +187,7 @@ subprojects {
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-    
+
     compileJava.options.fork = true
 
     if (Boolean.getBoolean("enableIncremental")) {
@@ -209,10 +209,10 @@ subprojects {
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                       "Implementation-Vendor": project.group,
-                       "Created-By": project.group,
-                       "Specification-Version": rootProject.currentRevision,
-                       "Implementation-Version": project.version)
+                    "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Specification-Version": rootProject.currentRevision,
+                    "Implementation-Version": project.version)
         }
     }
 
@@ -236,7 +236,7 @@ subprojects {
         includePlugins = false
         includeSubProjects = true
     }
-    
+
     findbugs {
         toolVersion = "${findbugsVersion}"
         sourceSets = [sourceSets.main]
@@ -284,7 +284,7 @@ subprojects {
         testCompile libraries.tests
         runtime libraries.javaximpl
     }
-    
+
     if (Boolean.getBoolean("genConfigMetadata")) {
         compileJava.dependsOn(processResources)
     }
@@ -300,8 +300,7 @@ task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single d
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
 
-task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc,
-        description: "Aggregate all Javadocs into a single directory") {
+task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
     classifier = "javadoc"
     from javadoc
 }
