@@ -48,7 +48,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties("cas")
+@ConfigurationProperties(value = "cas")
 public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
