@@ -7,9 +7,9 @@ title: CAS - Microsoft Azure Authentication
 
 Azure Multi-Factor Authentication (MFA) is Microsoft's two-step verification solution. Azure MFA helps safeguard access to data and applications while meeting user demand for a simple sign-in process. It delivers strong authentication via a range of verification methods, including phone call, text message, etc.
 
-To learn more about Microsoft Azure and it multifactor authentication features, [refer to the documentation](https://docs.microsoft.com/en-us/azure/multi-factor-authentication/multi-factor-authentication).
+To learn more about Microsoft Azure and its multifactor authentication features, [refer to Microsoft's documentation](https://docs.microsoft.com/en-us/azure/multi-factor-authentication/multi-factor-authentication).
 
-Support is enabled by including the following dependencies in the WAR overlay:
+Support is enabled by including the following module in the WAR overlay:
 
 ```xml
 <dependency>
@@ -19,9 +19,9 @@ Support is enabled by including the following dependencies in the WAR overlay:
 </dependency>
 ```
 
-The functionality of this feature depends on the availability of a phone number that is resolved as an deployer-defined
-attribute for the principal. Note that only a limited number of authentication modes are available to assist with verification
-of credentials via Microsoft Azure. 
+The functionality of this feature depends on the availability of a phone number that is resolved as a pre-defined
+attribute for the CAS principal. Also note that only a limited number of authentication modes are available to assist with verification
+of credentials via Microsoft Azure. Such modes are activated via the CAS settings.
 
 ## Configuration
 

@@ -55,6 +55,7 @@ layout: null
         *   [RSA/Radius](/$version/installation/RADIUS-Authentication.html)
         *   [Google Authenticator](/$version/installation/GoogleAuthenticator-Authentication.html)
         *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
+        *   [Microsoft Azure](/$version/installation/MicrosoftAzure-Authentication.html)
         *   [Trusted Device](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
