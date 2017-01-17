@@ -19,7 +19,29 @@ ext.libraries = [
                     force = true
                 }
         ],
-
+        apachecxf            : [
+                dependencies.create("org.apache.cxf:cxf-rt-transports-http:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.cxf:cxf-rt-frontend-jaxws:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.cxf:cxf-rt-ws-policy:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
+                    force = true
+                },
+                dependencies.create("org.apache.cxf.services.sts:cxf-services-sts-core:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
+                    exclude(group: "org.apache.santuario", module: "xmlsec")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    force = true
+                }
+        ],
         casclient               : dependencies.create("org.jasig.cas.client:cas-client-core:$casClientVersion") {
             exclude(group: "javax.servlet", module: "servlet-api")
             exclude(group: "org.slf4j", module: "log4j-over-slf4j")
@@ -1126,6 +1148,7 @@ ext.libraries = [
             exclude(group: "org.springframework", module: "spring-tx")
             exclude(group: "com.google.guava", module: "guava")
             exclude(group: "commons-io", module: "commons-io")
+            exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
             force = true
         },
         quartz                  : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {
