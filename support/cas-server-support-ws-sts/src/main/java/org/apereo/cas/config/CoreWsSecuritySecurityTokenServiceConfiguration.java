@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apache.cxf.sts.IdentityMapper;
+import org.apache.cxf.sts.SignatureProperties;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
 import org.apache.cxf.sts.claims.ClaimsManager;
@@ -46,6 +47,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * This is {@link CoreWsSecuritySecurityTokenServiceConfiguration}.
@@ -67,11 +69,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         bean.setEnabled(true);
         bean.setName("cxfServlet");
         bean.setServlet(new CXFServlet());
-        bean.setUrlMappings(Collections.singleton("/ws/sts"));
+        bean.setUrlMappings(Collections.singleton("/ws/sts/*"));
         bean.setAsyncSupported(true);
         return bean;
     }
-    
+
     @Bean
     public EventMapper loggerListener() {
         return new EventMapper(new MapEventLogger());
@@ -101,7 +103,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         op.setServices(transportServices());
         op.setStsProperties(transportSTSProperties());
         op.setClaimsManager(claimsManager());
-        op.setTokenProviders(transportTokenValidators());
+        op.setTokenValidators(transportTokenValidators());
         op.setEventListener(loggerListener());
         op.setDelegationHandlers(delegationHandlers());
         op.setEncryptIssuedToken(true);
@@ -152,7 +154,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public RealmProperties realmA() {
         final RealmProperties realm = new RealmProperties();
         realm.setIssuer("STS Realm A");
-        realm.setSignaturePropertiesFile("stsKeystoreA.properties");
+
+        final Properties p = new Properties();
+        p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.password", "storepass");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.alias", "realma");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.file", "stsrealm_a.jks");
+        realm.setSignatureCryptoProperties(p);
         realm.setCallbackHandler(new PasswordCallbackHandler());
         return realm;
     }
@@ -276,8 +285,21 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         s.setCallbackHandler(new PasswordCallbackHandler());
         s.setIssuer("CAS STS");
         s.setRealmParser(customRealmParser());
-        s.setSignatureCryptoProperties("stsTruststore.properties");
-        s.setEncryptionCryptoProperties("stsEncryption.properties");
+
+        Properties p = new Properties();
+        p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.password", "storepass");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.file", "ststrust.jks");
+        s.setSignatureCryptoProperties(p);
+
+        p = new Properties();
+        p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.password", "storepass");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.file", "stsencrypt.jks");
+        s.setEncryptionCryptoProperties(p);
+        
         s.setRelationships(relationships());
         return s;
     }
@@ -290,7 +312,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public FileClaimsHandler claimsHandlerA() {
         final Map claimsMap = new HashMap();
-        
+
         Map values = new HashMap();
         values.put(ClaimTypeConstants.CLAIMS_GIVEN_NAME, "alice");
         values.put(ClaimTypeConstants.CLAIMS_SURNAME, "smith");
@@ -303,7 +325,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         values.put(ClaimTypeConstants.CLAIMS_SURNAME, "something");
         values.put(ClaimTypeConstants.CLAIMS_EMAIL_ADDRESS_2005, "bobs@somewhere.org");
         values.put(ClaimTypeConstants.CLAIMS_ROLE, "User,Manager,Admin");
-                
+
         final FileClaimsHandler f = new FileClaimsHandler();
         f.setUserClaims(claimsMap);
         f.setSupportedClaims(supportedClaims());
@@ -327,7 +349,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         values.put(ClaimTypeConstants.CLAIMS_SURNAME, "SOMEONE");
         values.put(ClaimTypeConstants.CLAIMS_EMAIL_ADDRESS_2005, "bobs@somewhere.org");
         values.put(ClaimTypeConstants.CLAIMS_ROLE, "User,MANAGER,ADMIN");
-        
+
         final FileClaimsHandler f = new FileClaimsHandler();
         f.setUserClaims(claimsMap);
         f.setSupportedClaims(supportedClaims());
