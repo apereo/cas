@@ -53,13 +53,9 @@ h3 {
 }
 
 .header-link {
-  position: absolute;
-  left: -0.5em;
-  opacity: 0;
-
-  \-webkit-transition: opacity 0.2s ease-in-out 0.1s;
-  \-moz-transition: opacity 0.2s ease-in-out 0.1s;
-  \-ms-transition: opacity 0.2s ease-in-out 0.1s;
+  position: relative;
+  margin-right: 0.25em;
+  color: gainsboro;
 }
 
 h2:hover .header-link,
