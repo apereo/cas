@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  * @since 5.1.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(readOnly = false, transactionManager = "transactionManagerGoogleAuthenticator")
+@Transactional(transactionManager = "transactionManagerGoogleAuthenticator")
 public class JpaGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorTokenRepository.class);
 
