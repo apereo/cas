@@ -85,8 +85,9 @@ One strategy if you are planning to support both X.509 and userid/password valid
 <div class="alert alert-info"><strong>Almost There</strong><p>If you previously configured CAS without X.509 authentication, then you probably have the `keystoreFile` already configured and 
 loaded with a certificate identifying this server. All you need to add is the `truststoreFile` part.</p></div>
 
-```xml
 The configured connector will look something like:
+
+```xml
 <!-- Define a SSL HTTP/1.1 Connector on port 443 -->
 <!-- if you do not specify a truststoreFile, then the default java "cacerts" truststore will be used-->
 <Connector port="443"
