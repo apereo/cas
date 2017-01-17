@@ -37,23 +37,13 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
         } else {
             context = new GeoApiContext();
         }
-        if (StringUtils.isNotBlank(properties.getClientId())
-                && StringUtils.isNotBlank(properties.getClientSecret())) {
-
+        if (StringUtils.isNotBlank(properties.getClientId()) && StringUtils.isNotBlank(properties.getClientSecret())) {
             context.setEnterpriseCredentials(properties.getClientId(), properties.getClientSecret());
         }
         context.setApiKey(properties.getApiKey());
         context.setConnectTimeout(properties.getConnectTimeout(), TimeUnit.MILLISECONDS);
     }
-
-    /**
-     * Init the google authn context.
-     */
-    @PostConstruct
-    public void init() {
-
-    }
-
+    
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
         return locate(address.getHostAddress());
