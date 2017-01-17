@@ -22,7 +22,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(readOnly = false, transactionManager = "transactionManagerGoogleAuthenticator")
+@Transactional(transactionManager = "transactionManagerGoogleAuthenticator")
 public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorTokenCredentialRepository.class);
 
