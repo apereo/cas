@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apache.cxf.sts.IdentityMapper;
-import org.apache.cxf.sts.SignatureProperties;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
 import org.apache.cxf.sts.claims.ClaimsManager;
