@@ -46,7 +46,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         try {
             final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
 
-            if ((StringUtils.isNotBlank(originalPassword) && !this.matches(originalPassword, dbPassword))
+            if ((StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword))
                 || (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
@@ -59,11 +59,5 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
-    }
-
-    @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
-            throws GeneralSecurityException, PreventedException {
-        return authenticateUsernamePasswordInternal(credential, null);
     }
 }

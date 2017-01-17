@@ -1,7 +1,8 @@
 package org.apereo.cas.adaptors.gauth;
 
-import org.apereo.cas.adaptors.gauth.repository.token.BaseGoogleAuthenticatorTokenRepository;
 import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
+import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
+import org.apereo.cas.otp.repository.token.OneTimeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class MongoDbGoogleAuthenticatorTokenRepository extends BaseGoogleAuthenticatorTokenRepository {
+public class MongoDbGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbGoogleAuthenticatorTokenRepository.class);
     
     private final long expireTokensInSeconds;
@@ -48,7 +49,7 @@ public class MongoDbGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
     }
 
     @Override
-    public void store(final GoogleAuthenticatorToken token) {
+    public void store(final OneTimeToken token) {
         this.mongoTemplate.save(token, this.collectionName);
     }
 

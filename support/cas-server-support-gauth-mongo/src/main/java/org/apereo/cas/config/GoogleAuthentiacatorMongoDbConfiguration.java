@@ -1,14 +1,16 @@
 package org.apereo.cas.config;
 
 import com.mongodb.MongoClientURI;
-import com.warrenstrange.googleauth.ICredentialRepository;
-import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorCredentialRepository;
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenRepository;
-import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +34,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 public class GoogleAuthentiacatorMongoDbConfiguration {
 
+    @Autowired
+    @Qualifier("googleAuthenticatorInstance")
+    private IGoogleAuthenticator googleAuthenticatorInstance;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -59,9 +65,10 @@ public class GoogleAuthentiacatorMongoDbConfiguration {
     }
 
     @Bean
-    public ICredentialRepository googleAuthenticatorAccountRegistry() {
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
         final MultifactorAuthenticationProperties.GAuth.Mongodb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
-        return new MongoDbGoogleAuthenticatorCredentialRepository(
+        return new MongoDbGoogleAuthenticatorTokenCredentialRepository(
+                googleAuthenticatorInstance,
                 mongoDbGoogleAuthenticatorTemplate(),
                 mongo.getCollection(),
                 mongo.isDropCollection()
@@ -69,7 +76,7 @@ public class GoogleAuthentiacatorMongoDbConfiguration {
     }
 
     @Bean
-    public GoogleAuthenticatorTokenRepository googleAuthenticatorTokenRepository() {
+    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         final MultifactorAuthenticationProperties.GAuth.Mongodb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
         return new MongoDbGoogleAuthenticatorTokenRepository(mongoDbGoogleAuthenticatorTemplate(),
                 mongo.getTokenCollection(),

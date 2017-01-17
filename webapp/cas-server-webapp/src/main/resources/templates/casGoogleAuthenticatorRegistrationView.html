@@ -12,7 +12,7 @@
 
         <form method="post" id="fm1" class="fm-v clearfix">
             <div class="row fl-controls-left">
-                <img th:src="@{/gauth/qrgen(key=${keyUri})}"/>
+                <img th:src="@{/otp/qrgen(key=${keyUri})}"/>
                 <br/>
                 <div>
                     <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}"></p>

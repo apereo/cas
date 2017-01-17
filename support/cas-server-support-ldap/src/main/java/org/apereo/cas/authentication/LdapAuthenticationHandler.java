@@ -141,7 +141,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
+                                                                 final String originalPassword) throws GeneralSecurityException, PreventedException {
         final AuthenticationResponse response;
         try {
             logger.debug("Attempting LDAP authentication for {}", upc);

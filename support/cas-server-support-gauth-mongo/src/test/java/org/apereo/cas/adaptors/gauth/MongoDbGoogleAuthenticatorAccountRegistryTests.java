@@ -1,7 +1,13 @@
 package org.apereo.cas.adaptors.gauth;
 
-import com.warrenstrange.googleauth.ICredentialRepository;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.GoogleAuthentiacatorMongoDbConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,19 +32,26 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {GoogleAuthentiacatorMongoDbConfiguration.class, AopAutoConfiguration.class, RefreshAutoConfiguration.class})
+        classes = {GoogleAuthentiacatorMongoDbConfiguration.class,
+                CasCoreTicketsConfiguration.class,
+                CasCoreLogoutConfiguration.class,
+                CasCoreHttpConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
+                GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
+                AopAutoConfiguration.class, RefreshAutoConfiguration.class})
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
 public class MongoDbGoogleAuthenticatorAccountRegistryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
-    private ICredentialRepository registry;
+    private OneTimeTokenCredentialRepository registry;
 
     @Test
     public void verifySave() {
-        registry.saveUserCredentials("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
-        final String s = registry.getSecretKey("uid");
+        registry.save("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
+        final String s = registry.getSecret("uid");
         assertEquals(s, "secret");
     }
 }

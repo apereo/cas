@@ -26,7 +26,7 @@ public class YubiKeyAuthenticationHandlerTests {
     private static final Integer CLIENT_ID = 18421;
     private static final String SECRET_KEY = "iBIehjui12aK8x82oe5qzGeb0As=";
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
-    private static final String HANDLER_NAME = "handlerName";
+    private static final String HANDLER_NAME = null;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

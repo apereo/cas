@@ -1,9 +1,7 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -15,10 +13,14 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -41,15 +43,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.PostConstruct;
-import java.util.Map;
-
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
 @SpringBootTest(
-        classes = {CasCoreServicesConfiguration.class,
+        classes = {
+                CasTestAuthenticationEventExecutionPlanConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
+                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+                CasCoreTicketIdGeneratorsConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
@@ -102,10 +106,6 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     private WebApplicationServiceFactory webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
-    @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
 
@@ -148,9 +148,6 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     public WebApplicationServiceFactory getWebApplicationServiceFactory() {
         return webApplicationServiceFactory;
     }
+    
 
-    @PostConstruct
-    public void init() {
-        authenticationHandlersResolvers.put(new SimpleTestUsernamePasswordAuthenticationHandler(), personDirectoryPrincipalResolver);
-    }
 }

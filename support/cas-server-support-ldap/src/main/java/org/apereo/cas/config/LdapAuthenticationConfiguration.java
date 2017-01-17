@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
@@ -11,6 +12,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -36,7 +38,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,7 +46,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -69,19 +69,9 @@ public class LdapAuthenticationConfiguration {
     private PrincipalResolver personDirectoryPrincipalResolver;
 
     @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
-
-    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-
-    @PostConstruct
-    public void initLdapAuthenticationHandlers() {
-        ldapAuthenticationHandlers().forEach(handler ->
-                this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver));
-    }
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
@@ -91,7 +81,7 @@ public class LdapAuthenticationConfiguration {
 
     @Bean
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers() {
-        final Collection<AuthenticationHandler> handlers = new TreeSet<>();
+        final Collection<AuthenticationHandler> handlers = new HashSet<>();
 
         casProperties.getAuthn().getLdap()
                 .stream()
@@ -144,10 +134,6 @@ public class LdapAuthenticationConfiguration {
                     handler.initialize();
 
                     LOGGER.debug("Ldap authentication for {} is to chain principal resolvers for attributes", l.getLdapUrl());
-                    final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-
-                    // Let the chain process the principal attributes as well as what may be gathered by attribute repositories
-                    resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
                     handlers.add(handler);
                 });
         return handlers;
@@ -317,5 +303,21 @@ public class LdapAuthenticationConfiguration {
                 Beans.newPooledConnectionFactory(l));
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
+    }
+
+    /**
+     * The type Ldap authentication event execution plan configuration.
+     */
+    @Configuration("ldapAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public class LdapAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            ldapAuthenticationHandlers().forEach(handler -> {
+                final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+                resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
+                plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
+            });
+        }
     }
 }

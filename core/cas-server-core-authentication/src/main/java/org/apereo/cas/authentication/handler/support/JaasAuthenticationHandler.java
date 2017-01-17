@@ -93,7 +93,8 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         if (this.kerberosKdcSystemProperty != null) {

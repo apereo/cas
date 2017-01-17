@@ -19,10 +19,12 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevoca
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.configuration.support.Beans;
@@ -39,8 +41,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
-import javax.annotation.PostConstruct;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -61,14 +61,6 @@ public class X509AuthenticationConfiguration {
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -265,30 +257,39 @@ public class X509AuthenticationConfiguration {
         return new X509SerialNumberAndIssuerDNPrincipalResolver(x509.getSerialNumberPrefix(), x509.getValueDelimiter());
     }
 
-    @PostConstruct
-    public void initializeAuthenticationHandler() {
+    /**
+     * The type X 509 authentication event execution plan configuration.
+     */
+    @Configuration("x509AuthenticationEventExecutionPlanConfiguration")
+    public class X509AuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
 
-        PrincipalResolver resolver = personDirectoryPrincipalResolver;
-        if (casProperties.getAuthn().getX509().getPrincipalType() != null) {
-            switch (casProperties.getAuthn().getX509().getPrincipalType()) {
-                case SERIAL_NO:
-                    resolver = x509SerialNumberPrincipalResolver();
-                    break;
-                case SERIAL_NO_DN:
-                    resolver = x509SerialNumberAndIssuerDNPrincipalResolver();
-                    break;
-                case SUBJECT:
-                    resolver = x509SubjectPrincipalResolver();
-                    break;
-                case SUBJECT_ALT_NAME:
-                    resolver = x509SubjectAlternativeNameUPNPrincipalResolver();
-                    break;
-                default:
-                    resolver = x509SubjectDNPrincipalResolver();
-                    break;
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            PrincipalResolver resolver = personDirectoryPrincipalResolver;
+            if (casProperties.getAuthn().getX509().getPrincipalType() != null) {
+                switch (casProperties.getAuthn().getX509().getPrincipalType()) {
+                    case SERIAL_NO:
+                        resolver = x509SerialNumberPrincipalResolver();
+                        break;
+                    case SERIAL_NO_DN:
+                        resolver = x509SerialNumberAndIssuerDNPrincipalResolver();
+                        break;
+                    case SUBJECT:
+                        resolver = x509SubjectPrincipalResolver();
+                        break;
+                    case SUBJECT_ALT_NAME:
+                        resolver = x509SubjectAlternativeNameUPNPrincipalResolver();
+                        break;
+                    default:
+                        resolver = x509SubjectDNPrincipalResolver();
+                        break;
+                }
             }
+            
+            plan.registerAuthenticationHandlerWithPrincipalResolver(x509CredentialsAuthenticationHandler(), resolver);
         }
-
-        this.authenticationHandlersResolvers.put(x509CredentialsAuthenticationHandler(), resolver);
     }
 }

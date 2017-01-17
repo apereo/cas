@@ -4,11 +4,13 @@ import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalB
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -22,9 +24,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
-
-import javax.annotation.PostConstruct;
-import java.util.Map;
 
 /**
  * This is {@link TrustedAuthenticationConfiguration}.
@@ -54,10 +53,6 @@ public class TrustedAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("attributeRepository")
@@ -93,18 +88,29 @@ public class TrustedAuthenticationConfiguration {
     @RefreshScope
     public Action principalFromRemoteUserAction() {
         return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, trustedPrincipalFactory());
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                trustedPrincipalFactory());
     }
 
     @Bean
     @RefreshScope
     public Action principalFromRemoteUserPrincipalAction() {
         return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, trustedPrincipalFactory());
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                trustedPrincipalFactory());
     }
 
-    @PostConstruct
-    public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(principalBearingCredentialsAuthenticationHandler(), trustedPrincipalResolver());
+    /**
+     * The type Trusted authentication event execution plan configuration.
+     */
+    @Configuration("trustedAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public class TrustedAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(principalBearingCredentialsAuthenticationHandler(), trustedPrincipalResolver());
+        }
     }
 }

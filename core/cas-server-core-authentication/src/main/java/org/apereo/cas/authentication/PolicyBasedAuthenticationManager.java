@@ -1,14 +1,12 @@
 package org.apereo.cas.authentication;
 
+import org.apache.shiro.util.Assert;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.services.ServicesManager;
 
 import java.security.GeneralSecurityException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -56,55 +54,62 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
     /**
      * Instantiates a new Policy based authentication manager.
      *
-     * @param map                              the map
+     * @param authenticationEventExecutionPlan the execution plan
      * @param authenticationHandlerResolver    the authentication handler resolver
-     * @param authenticationMetaDataPopulators the authentication meta data populators
      * @param authenticationPolicy             the authentication policy
      * @param principalResolutionFatal         the principal resolution fatal
      */
-    public PolicyBasedAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map,
+    public PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
                                             final AuthenticationHandlerResolver authenticationHandlerResolver,
-                                            final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators,
                                             final AuthenticationPolicy authenticationPolicy,
                                             final boolean principalResolutionFatal) {
-        super(map, authenticationHandlerResolver, authenticationMetaDataPopulators, principalResolutionFatal);
+        super(authenticationEventExecutionPlan, authenticationHandlerResolver, principalResolutionFatal);
         this.authenticationPolicy = authenticationPolicy;
     }
 
     /**
      * Instantiates a new Policy based authentication manager.
      *
-     * @param map             the map
-     * @param servicesManager the services manager
+     * @param authenticationEventExecutionPlan the authentication event execution plan
+     * @param servicesManager                  the services manager
      */
-    public PolicyBasedAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map,
+    public PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
                                             final ServicesManager servicesManager) {
-        this(map, servicesManager, new AnyAuthenticationPolicy(false));
+        this(authenticationEventExecutionPlan, servicesManager, new AnyAuthenticationPolicy(false));
     }
 
-    public PolicyBasedAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map,
+    /**
+     * Instantiates a new Policy based authentication manager.
+     *
+     * @param authenticationEventExecutionPlan the authentication event execution plan
+     * @param servicesManager                  the services manager
+     * @param authenticationPolicy             the authentication policy
+     */
+    public PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
                                             final ServicesManager servicesManager,
                                             final AuthenticationPolicy authenticationPolicy) {
-        super(map, new RegisteredServiceAuthenticationHandlerResolver(servicesManager),
-                Collections.emptyList(), false);
+        super(authenticationEventExecutionPlan, new RegisteredServiceAuthenticationHandlerResolver(servicesManager), false);
         this.authenticationPolicy = authenticationPolicy;
     }
 
     @Override
-    protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction)
-            throws AuthenticationException {
-
+    protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction) throws AuthenticationException {
         final Collection<Credential> credentials = transaction.getCredentials();
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.stream().forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
-        final Set<AuthenticationHandler> handlerSet = this.authenticationHandlerResolver
-                .resolve(this.handlerResolverMap.keySet(), transaction);
+        
+        final Set<AuthenticationHandler> handlerSet = getAuthenticationHandlersForThisTransaction(transaction);
+        Assert.notNull(handlerSet, "Resolved authentication handlers for this transaction cannot be null");
+        if (handlerSet.isEmpty()) {
+            logger.warn("Resolved authentication handlers for this transaction are empty");
+        }
 
         final boolean success = credentials.stream().anyMatch(credential -> {
             final boolean isSatisfied = handlerSet.stream().filter(handler -> handler.supports(credential))
                     .anyMatch(handler -> {
                         try {
-                            authenticateAndResolvePrincipal(builder, credential, this.handlerResolverMap.get(handler), handler);
+                            final PrincipalResolver resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
+                            authenticateAndResolvePrincipal(builder, credential, resolver, handler);
                             return this.authenticationPolicy.isSatisfiedBy(builder.build());
                         } catch (final GeneralSecurityException e) {
                             logger.info("{} failed authenticating {}", handler.getName(), credential);
@@ -133,6 +138,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
 
         return builder;
     }
+    
 
     /**
      * Evaluate produced authentication context.

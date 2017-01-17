@@ -74,7 +74,7 @@ public class ValidateCaptchaAction extends AbstractAction {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                     final String response = in.lines().collect(Collectors.joining());
                     LOGGER.debug("Google captcha response received: {}", response);
-                    final JsonNode node = READER.readTree(response.toString());
+                    final JsonNode node = READER.readTree(response);
                     if (node.has("success") && node.get("success").booleanValue()) {
                         return null;
                     }

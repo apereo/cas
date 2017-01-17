@@ -11,7 +11,6 @@ import org.apereo.cas.mock.MockService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -90,7 +89,7 @@ public class TicketGrantingTicketImplTests {
 
         final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null, authentication, new NeverExpiresExpirationPolicy());
 
-        Assert.assertEquals(t.getAuthentication(), authentication);
+        assertEquals(t.getAuthentication(), authentication);
         assertEquals(t.getId(), t.toString());
     }
 

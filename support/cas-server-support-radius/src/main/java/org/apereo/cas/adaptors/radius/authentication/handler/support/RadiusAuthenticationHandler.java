@@ -57,7 +57,8 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         try {

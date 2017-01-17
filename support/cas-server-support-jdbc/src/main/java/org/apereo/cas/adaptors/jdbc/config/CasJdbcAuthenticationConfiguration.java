@@ -5,11 +5,13 @@ import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -23,10 +25,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.HashSet;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasJdbcAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasJdbcAuthenticationConfiguration.class);
-    
+
     @Autowired(required = false)
     @Qualifier("queryAndEncodePasswordPolicyConfiguration")
     private PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration;
@@ -64,22 +64,9 @@ public class CasJdbcAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
-    @PostConstruct
-    public void initializeJdbcAuthenticationHandlers() {
-        jdbcAuthenticationHandlers().forEach(h -> authenticationHandlersResolvers.put(h, personDirectoryPrincipalResolver));
-    }
-
     @Bean
     public Collection<AuthenticationHandler> jdbcAuthenticationHandlers() {
-        final Collection<AuthenticationHandler> handlers = new TreeSet<>();
+        final Collection<AuthenticationHandler> handlers = new HashSet<>();
         casProperties.getAuthn().getJdbc()
                 .getBind().forEach(b -> handlers.add(bindModeSearchDatabaseAuthenticationHandler(b)));
         casProperties.getAuthn().getJdbc()
@@ -101,7 +88,7 @@ public class CasJdbcAuthenticationConfiguration {
         if (bindSearchPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration);
         }
-        
+
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
         h.setPrincipalFactory(jdbcPrincipalFactory());
 
@@ -109,7 +96,7 @@ public class CasJdbcAuthenticationConfiguration {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
             h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
-        
+
         LOGGER.debug("Created authentication handler {} to handle database url at {}", h.getName(), b.getUrl());
         return h;
     }
@@ -195,5 +182,21 @@ public class CasJdbcAuthenticationConfiguration {
     @Bean
     public PrincipalFactory jdbcPrincipalFactory() {
         return new DefaultPrincipalFactory();
+    }
+
+    /**
+     * The type Jdbc authentication event execution plan configuration.
+     */
+    @Configuration("jdbcAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public class JdbcAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            jdbcAuthenticationHandlers().forEach(h -> plan.registerAuthenticationHandlerWithPrincipalResolver(h, personDirectoryPrincipalResolver));
+        }
     }
 }

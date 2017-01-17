@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class ShiroAuthenticationHandlerTests {
 
-    private static final String HANDLER_NAME = "handlerName";
+    private static final String HANDLER_NAME = null;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

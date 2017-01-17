@@ -42,9 +42,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     @Qualifier("cas2ServiceFailureView")
     private View cas2ServiceFailureView;
 
-
     @Before
-    public void setup() {
+    public void setUp() {
         this.serviceValidateController.setFailureView(cas2ServiceFailureView);
         this.serviceValidateController.setSuccessView(cas2SuccessView);
         this.serviceValidateController.setJsonView(cas3ServiceJsonView);

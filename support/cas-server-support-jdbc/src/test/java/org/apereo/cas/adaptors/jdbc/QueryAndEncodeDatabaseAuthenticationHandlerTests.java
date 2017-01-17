@@ -49,7 +49,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final int NUM_ITERATIONS = 5;
     private static final String STATIC_SALT = "STATIC_SALT";
     private static final String PASSWORD_FIELD_NAME = "password";
-    private static final String HANDLER_NAME = "handlerName";
+    private static final String HANDLER_NAME = null;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

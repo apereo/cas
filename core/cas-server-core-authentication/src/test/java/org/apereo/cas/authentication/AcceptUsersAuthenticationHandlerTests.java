@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -34,7 +33,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         users.put("bill", "thisisAwesoME");
         users.put("brian", "t�st");
 
-        this.authenticationHandler = new AcceptUsersAuthenticationHandler("handlerName", null, users);
+        this.authenticationHandler = new AcceptUsersAuthenticationHandler(null, null, users);
         this.authenticationHandler.setPrincipalFactory(new DefaultPrincipalFactory());
     }
 
@@ -43,7 +42,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
-        Assert.assertEquals("brian", this.authenticationHandler.authenticate(c).getPrincipal().getId());
+        assertEquals("brian", this.authenticationHandler.authenticate(c).getPrincipal().getId());
     }
 
     @Test
@@ -74,7 +73,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword("rutgers");
 
         try {
-            Assert.assertEquals("scott", this.authenticationHandler.authenticate(c).getPrincipal().getId());
+            assertEquals("scott", this.authenticationHandler.authenticate(c).getPrincipal().getId());
         } catch (final GeneralSecurityException e) {
             fail("Authentication exception caught but it should not have been thrown.");
         }

@@ -2,25 +2,19 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
-import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceResponseBuilder;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
-import org.apereo.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator;
 import org.apereo.cas.support.saml.web.SamlValidateController;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -34,13 +28,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
 
-import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
 /**
- * This is {@link SamlConfiguration} that creates the necessary opensaml context and beans.
+ * This is {@link SamlConfiguration} that creates the necessary OpenSAML context and beans.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -89,49 +80,28 @@ public class SamlConfiguration {
     private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
 
     @Autowired
-    @Qualifier("defaultArgumentExtractor")
-    private ArgumentExtractor argumentExtractor;
-
-    @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-    
-    @Autowired
-    @Qualifier("uniqueIdGeneratorsMap")
-    private Map uniqueIdGeneratorsMap;
-
-    @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
     
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
         return new Saml10SuccessResponseView(protocolAttributeEncoder,
-                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), 
+                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
                 StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance(),
                 casProperties.getSamlCore().getIssuer(), casProperties.getSamlCore().getAttributeNamespace());
     }
-    
+
     @RefreshScope
     @Bean
     public View casSamlServiceFailureView() {
         return new Saml10FailureResponseView(protocolAttributeEncoder,
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()), 
+                saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
                 StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance());
     }
-    
-    @Bean
-    public AuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator() {
-        return new SamlAuthenticationMetaDataPopulator();
-    }
 
-    @Bean
-    public ServiceFactory<SamlService> samlServiceFactory() {
-        return new SamlServiceFactory();
-    }
 
     @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
     @Bean
@@ -144,16 +114,11 @@ public class SamlConfiguration {
         return new Saml10ObjectBuilder(this.configBean);
     }
 
-    @Bean
-    public UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
-        final SamlCompliantUniqueTicketIdGenerator gen =
-                new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
-        gen.setSaml2compliant(casProperties.getSamlCore().isTicketidSaml2());
-        return gen;
-    }
 
+
+    @Autowired
     @Bean
-    public SamlValidateController samlValidateController() {
+    public SamlValidateController samlValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         final SamlValidateController c = new SamlValidateController();
         c.setValidationSpecification(cas20WithoutProxyProtocolValidationSpecification);
         c.setSuccessView(casSamlServiceSuccessView());
@@ -169,11 +134,5 @@ public class SamlConfiguration {
         c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         return c;
     }
-
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        this.argumentExtractor.getServiceFactories().add(0, samlServiceFactory());
-        uniqueIdGeneratorsMap.put(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator());
-        authenticationMetadataPopulators.add(0, samlAuthenticationMetaDataPopulator());
-    }
+    
 }

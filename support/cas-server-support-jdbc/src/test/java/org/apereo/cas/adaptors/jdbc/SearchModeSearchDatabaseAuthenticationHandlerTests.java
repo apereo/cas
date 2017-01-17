@@ -96,18 +96,18 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         this.thrown.expect(FailedLoginException.class);
         this.thrown.expectMessage("hello not found with SQL query.");
 
-        this.handler.authenticateUsernamePasswordInternal(c);
+        this.handler.authenticate(c);
     }
 
     @Test
     public void verifyFoundUser() throws Exception {
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
-        assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
+        assertNotNull(this.handler.authenticate(c));
     }
 
     @Test
     public void verifyMultipleUsersFound() throws Exception {
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
-        assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
+        assertNotNull(this.handler.authenticate(c));
     }
 }

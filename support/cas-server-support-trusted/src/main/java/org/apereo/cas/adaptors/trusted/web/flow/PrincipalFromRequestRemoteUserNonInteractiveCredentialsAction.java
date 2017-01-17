@@ -26,9 +26,8 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.0.0
  */
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
-
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction.class);
+    
     private final PrincipalFactory principalFactory;
 
     public PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(
@@ -45,7 +44,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction exten
         final String remoteUser = request.getRemoteUser();
 
         if (StringUtils.hasText(remoteUser)) {
-            logger.debug("Remote User [{}] found in HttpServletRequest", remoteUser);
+            LOGGER.debug("Remote User [{}] found in HttpServletRequest", remoteUser);
             return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser));
         }
         return null;

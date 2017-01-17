@@ -101,11 +101,7 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultArgumentExtractor")
-    private ArgumentExtractor argumentExtractor;
-
+    
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
@@ -146,8 +142,9 @@ public class CasValidationConfiguration {
                 servicesManager, authenticationContextAttribute, cas3SuccessView, isReleaseProtocolAttributes);
     }
 
+    @Autowired
     @Bean
-    public V3ServiceValidateController v3ServiceValidateController() {
+    public V3ServiceValidateController v3ServiceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         final V3ServiceValidateController c = new V3ServiceValidateController();
         c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
         c.setSuccessView(cas3ServiceSuccessView());
@@ -164,8 +161,9 @@ public class CasValidationConfiguration {
         return c;
     }
 
+    @Autowired
     @Bean
-    public V3ProxyValidateController v3ProxyValidateController() {
+    public V3ProxyValidateController v3ProxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         final V3ProxyValidateController c = new V3ProxyValidateController();
         c.setValidationSpecification(cas20ProtocolValidationSpecification);
         c.setSuccessView(cas3ServiceSuccessView());
@@ -182,8 +180,9 @@ public class CasValidationConfiguration {
         return c;
     }
 
+    @Autowired
     @Bean
-    public ProxyValidateController proxyValidateController() {
+    public ProxyValidateController proxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         final ProxyValidateController c = new ProxyValidateController();
         c.setValidationSpecification(cas20ProtocolValidationSpecification);
         c.setSuccessView(cas3ServiceSuccessView());
@@ -200,8 +199,9 @@ public class CasValidationConfiguration {
         return c;
     }
 
+    @Autowired
     @Bean
-    public LegacyValidateController legacyValidateController() {
+    public LegacyValidateController legacyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         final LegacyValidateController c = new LegacyValidateController();
         c.setValidationSpecification(this.cas10ProtocolValidationSpecification);
         c.setSuccessView(cas1ServiceSuccessView());
@@ -223,8 +223,9 @@ public class CasValidationConfiguration {
         return new ProxyController(centralAuthenticationService, webApplicationServiceFactory);
     }
 
+    @Autowired
     @Bean
-    public ServiceValidateController serviceValidateController() {
+    public ServiceValidateController serviceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         final ServiceValidateController c = new ServiceValidateController();
         c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
         c.setSuccessView(cas2ServiceSuccessView());

@@ -16,13 +16,7 @@ import java.util.Objects;
  * @since 4.2
  */
 public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
-
-    /**
-     * Default extractor.
-     */
-    public DefaultArgumentExtractor() {
-    }
-
+    
     /**
      * Instantiates a new argument extractor.
      *

@@ -20,8 +20,7 @@ import org.springframework.util.Assert;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link AbstractAuthenticationManager}, which provides common operations
@@ -37,14 +36,9 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     * An array of AuthenticationAttributesPopulators.
+     * Plan to execute the authentication transaction.
      */
-    protected final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators;
-
-    /**
-     * Map of authentication handlers to resolvers to be used when handler does not resolve a principal.
-     */
-    protected final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
+    protected final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     /**
      * The Authentication handler resolver.
@@ -67,28 +61,20 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * the order of evaluation of authentication handlers is important, a map that preserves insertion order
      * (e.g. {@link LinkedHashMap}) should be used.
      *
-     * @param map                              Non-null map of authentication handler to principal resolver containing at least one entry.
+     * @param authenticationEventExecutionPlan Describe the execution plan for this manager
      * @param authenticationHandlerResolver    the authentication handler resolver
-     * @param authenticationMetaDataPopulators the authentication meta data populators
      * @param principalResolutionFatal         the principal resolution fatal
      */
-    protected AbstractAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map,
+    protected AbstractAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
                                             final AuthenticationHandlerResolver authenticationHandlerResolver,
-                                            final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators,
                                             final boolean principalResolutionFatal) {
-        Assert.notNull(map);
+        Assert.notNull(authenticationEventExecutionPlan);
         Assert.notNull(authenticationHandlerResolver);
-        Assert.notNull(authenticationMetaDataPopulators);
         Assert.notNull(principalResolutionFatal);
-        
-        this.handlerResolverMap = map;
+
+        this.authenticationEventExecutionPlan = authenticationEventExecutionPlan;
         this.authenticationHandlerResolver = authenticationHandlerResolver;
-        this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
         this.principalResolutionFailureFatal = principalResolutionFatal;
-        
-        if (handlerResolverMap.isEmpty()) {
-            logger.warn("No authentication handlers are registered with this manager. CAS will fail to respond to any and all authentication transactions");
-        }
     }
 
     /**
@@ -99,7 +85,9 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      */
     protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
                                                             final Collection<Credential> credentials) {
-        for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
+
+        final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(credentials);
+        for (final AuthenticationMetaDataPopulator populator : pops) {
             credentials.stream().filter(populator::supports).forEach(credential -> populator.populateAttributes(builder, credential));
         }
     }
@@ -234,6 +222,38 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @throws AuthenticationException When one or more credentials failed authentication such that security policy was not satisfied.
      */
     protected abstract AuthenticationBuilder authenticateInternal(AuthenticationTransaction transaction) throws AuthenticationException;
+
+    /**
+     * Gets authentication handlers for this transaction.
+     *
+     * @param transaction the transaction
+     * @return the authentication handlers for this transaction
+     */
+    protected Set<AuthenticationHandler> getAuthenticationHandlersForThisTransaction(final AuthenticationTransaction transaction) {
+        final Set<AuthenticationHandler> handlers = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
+        return this.authenticationHandlerResolver.resolve(handlers, transaction);
+    }
+
+    /**
+     * Gets principal resolver linked to the handler if any.
+     *
+     * @param handler     the handler
+     * @param transaction the transaction
+     * @return the principal resolver linked to handler if any, or null.
+     */
+    protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler, final AuthenticationTransaction transaction) {
+        return this.authenticationEventExecutionPlan.getPrincipalResolverForAuthenticationTransaction(handler, transaction);
+    }
+
+    /**
+     * Gets authentication metadata populators for transaction.
+     *
+     * @param credential the credential
+     * @return the authentication metadata populators for transaction
+     */
+    protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(final Collection<Credential> credential) {
+        return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(credential);
+    }
 
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {

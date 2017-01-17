@@ -25,6 +25,7 @@ import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
 
-import java.util.List;
+import java.util.Collections;
 
 /**
  * This is {@link CasSupportActionsConfiguration}.
@@ -62,10 +63,6 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("argumentExtractors")
-    private List argumentExtractors;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -141,8 +138,12 @@ public class CasSupportActionsConfiguration {
 
     @RefreshScope
     @Bean
-    public Action initialFlowSetupAction() {
-        return new InitialFlowSetupAction(argumentExtractors, servicesManager, ticketGrantingTicketCookieGenerator, warnCookieGenerator, casProperties);
+    @Autowired
+    public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+        return new InitialFlowSetupAction(Collections.singletonList(argumentExtractor),
+                servicesManager,
+                ticketGrantingTicketCookieGenerator,
+                warnCookieGenerator, casProperties);
     }
 
     @RefreshScope

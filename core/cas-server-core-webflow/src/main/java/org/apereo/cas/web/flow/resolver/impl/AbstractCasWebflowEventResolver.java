@@ -57,12 +57,11 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
-    /**
-     * Authentication succeeded with warnings from authn subsystem that should be displayed to user.
-     */
+
     private static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
     private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
-
+    private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
+    
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -523,6 +522,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return Collections.singleton(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
+            final MessageContext messageContext = context.getMessageContext();
+            messageContext.addMessage(new MessageBuilder().error()
+                    .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName())).build());
             return Collections.singleton(new Event(this, "error"));
         }
     }

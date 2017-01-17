@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,7 +25,7 @@ import static org.junit.Assert.*;
  */
 public class FileAuthenticationHandlerTests {
 
-    private static final String HANDLER_NAME = "handlerName";
+    private static final String HANDLER_NAME = null;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -33,6 +35,11 @@ public class FileAuthenticationHandlerTests {
     public void setUp() throws Exception {
         this.authenticationHandler = new FileAuthenticationHandler(HANDLER_NAME, null,
                 new ClassPathResource("org/apereo/cas/adaptors/generic/authentication.txt"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
+        final PasswordEncoderProperties p = new PasswordEncoderProperties();
+        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
+        p.setEncodingAlgorithm("MD5");
+        p.setCharacterEncoding("UTF-8");
+        this.authenticationHandler.setPasswordEncoder(Beans.newPasswordEncoder(p));
     }
 
     @Test
@@ -45,7 +52,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyDoesntSupportBadUserCredentials() {
+    public void verifyDoesNotSupportBadUserCredentials() {
         try {
             final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
                 new URL("http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService());
@@ -81,39 +88,27 @@ public class FileAuthenticationHandlerTests {
     @Test
     public void verifyFailsNullUserName() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
         c.setUsername(null);
         c.setPassword("user");
-
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
-
         this.authenticationHandler.authenticate(c);
     }
 
     @Test
     public void verifyFailsNullUserNameAndPassword() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
         c.setUsername(null);
         c.setPassword(null);
-
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
-
         this.authenticationHandler.authenticate(c);
     }
 
     @Test
     public void verifyFailsNullPassword() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
         c.setUsername("scott");
         c.setPassword(null);
-
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Password is null.");
-
         this.authenticationHandler.authenticate(c);
     }
 
@@ -126,7 +121,6 @@ public class FileAuthenticationHandlerTests {
 
         c.setUsername("scott");
         c.setPassword("rutgers");
-
         assertNotNull(this.authenticationHandler.authenticate(c));
     }
 
@@ -139,10 +133,8 @@ public class FileAuthenticationHandlerTests {
 
         c.setUsername("fds");
         c.setPassword("rutgers");
-
         this.thrown.expect(AccountNotFoundException.class);
         this.thrown.expectMessage("fds not found in backing file.");
-
         this.authenticationHandler.authenticate(c);
     }
 

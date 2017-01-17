@@ -4,6 +4,8 @@ import org.apereo.cas.AbstractMemcachedTests;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.mock.MockServiceTicket;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -11,7 +13,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +26,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 
 /**
  * Unit test for MemCacheTicketRegistry class.
@@ -64,39 +63,35 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     @Test
     public void verifyWriteGetDelete() throws Exception {
-        final String id = "ST-1234567890ABCDEFGHIJKL-crud";
-        final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
-        when(ticket.getExpirationPolicy()).thenReturn(new NeverExpiresExpirationPolicy());
-        when(ticket.getId()).thenReturn(id);
+        final String id = "ST-1234567890ABCDEFGHIJKL123-crud";
+        final ServiceTicket ticket = new MockServiceTicket(id, RegisteredServiceTestUtils.getService(),
+                new MockTicketGrantingTicket("test"));
         registry.addTicket(ticket);
         final ServiceTicket ticketFromRegistry = (ServiceTicket) registry.getTicket(id);
-        Assert.assertNotNull(ticketFromRegistry);
-        Assert.assertEquals(id, ticketFromRegistry.getId());
+        assertNotNull(ticketFromRegistry);
+        assertEquals(id, ticketFromRegistry.getId());
         registry.deleteTicket(id);
-        Assert.assertNull(registry.getTicket(id));
+        assertNull(registry.getTicket(id));
     }
 
     @Test
     public void verifyExpiration() throws Exception {
-        final String id = "ST-1234567890ABCDEFGHIJKL-exp";
-        final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
-        when(ticket.getExpirationPolicy()).thenReturn(new AlwaysExpiresExpirationPolicy());
-        when(ticket.getId()).thenReturn(id);
+        final String id = "ST-1234567890ABCDEFGHIJKL-exp1";
+        final MockServiceTicket ticket = new MockServiceTicket(id, RegisteredServiceTestUtils.getService(), new MockTicketGrantingTicket("test"));
+        ticket.setExpiration(new AlwaysExpiresExpirationPolicy());
         registry.addTicket(ticket);
-        Thread.sleep(1000);
-        Assert.assertNull(registry.getTicket(id, ServiceTicket.class));
+        Thread.sleep(1500);
+        assertNull(registry.getTicket(id, ServiceTicket.class));
     }
 
     @Test
     public void verifyDeleteTicketWithChildren() throws Exception {
         this.registry.addTicket(new TicketGrantingTicketImpl(
-                "TGT",
-                CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+                "TGT", CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.registry.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service =
-                RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), false, false);

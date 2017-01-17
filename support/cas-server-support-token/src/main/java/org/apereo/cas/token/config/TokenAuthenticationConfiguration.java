@@ -1,12 +1,14 @@
 package org.apereo.cas.token.config;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
@@ -27,9 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
-import java.util.Map;
-
 /**
  * This is {@link TokenAuthenticationConfiguration}.
  *
@@ -39,15 +38,7 @@ import java.util.Map;
 @Configuration("tokenAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TokenAuthenticationConfiguration {
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -104,8 +95,19 @@ public class TokenAuthenticationConfiguration {
         return new TokenTicketCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey());
     }
 
-    @PostConstruct
-    public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(tokenAuthenticationHandler(), personDirectoryPrincipalResolver);
+    /**
+     * The type Token authentication event execution plan configuration.
+     */
+    @Configuration("tokenAuthenticationEventExecutionPlanConfiguration")
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public class TokenAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        @Autowired
+        @Qualifier("personDirectoryPrincipalResolver")
+        private PrincipalResolver personDirectoryPrincipalResolver;
+
+        @Override
+        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(tokenAuthenticationHandler(), personDirectoryPrincipalResolver);
+        }
     }
 }

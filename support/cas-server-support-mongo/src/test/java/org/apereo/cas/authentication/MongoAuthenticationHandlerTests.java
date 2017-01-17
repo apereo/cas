@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +47,7 @@ import static org.junit.Assert.*;
                 CasCoreAuthenticationHandlersConfiguration.class,
                 CasCoreHttpConfiguration.class,
                 CasCoreServicesConfiguration.class,
+                CasWebApplicationServiceFactoryConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
                 RefreshAutoConfiguration.class})
 @EnableScheduling
@@ -57,7 +59,7 @@ public class MongoAuthenticationHandlerTests {
     private AuthenticationHandler authenticationHandler;
 
     @Before
-    public void setup() {
+    public void setUp() {
         RequestContextHolder.setRequestAttributes(
                 new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
     }

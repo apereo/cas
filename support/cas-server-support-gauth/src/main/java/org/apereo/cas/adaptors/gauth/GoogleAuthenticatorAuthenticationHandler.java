@@ -4,12 +4,12 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
-import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorTokenRepository;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -29,10 +29,10 @@ import java.security.GeneralSecurityException;
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final IGoogleAuthenticator googleAuthenticatorInstance;
-    private final GoogleAuthenticatorTokenRepository tokenRepository;
+    private final OneTimeTokenRepository tokenRepository;
 
     public GoogleAuthenticatorAuthenticationHandler(final String name, final ServicesManager servicesManager, final IGoogleAuthenticator googleAuthenticatorInstance,
-                                                    final GoogleAuthenticatorTokenRepository tokenRepository) {
+                                                    final OneTimeTokenRepository tokenRepository) {
         super(name, servicesManager);
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
         this.tokenRepository = tokenRepository;
@@ -62,7 +62,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         if (this.tokenRepository.exists(uid, otp)) {
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
         }
-
+        
         final boolean isCodeValid = this.googleAuthenticatorInstance.authorize(secKey, otp);
         if (isCodeValid) {
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));

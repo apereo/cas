@@ -2,20 +2,12 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
-import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
-import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
-import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceResponseBuilder;
 import org.apereo.cas.support.openid.web.OpenIdProviderController;
 import org.apereo.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
@@ -24,9 +16,7 @@ import org.apereo.cas.support.openid.web.mvc.SmartOpenIdController;
 import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.AbstractDelegateController;
@@ -34,7 +24,6 @@ import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
@@ -49,9 +38,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -96,22 +83,11 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("proxy20Handler")
     private ProxyHandler proxy20Handler;
-
-    @Autowired
-    @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
-
-    @Autowired
-    @Qualifier("serviceTicketUniqueIdGenerator")
-    private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
+    
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -127,11 +103,7 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
     private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
-
-    @Autowired
-    @Qualifier("defaultArgumentExtractor")
-    private ArgumentExtractor argumentExtractor;
-
+    
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
@@ -139,50 +111,16 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
-
-    @Autowired
-    @Qualifier("uniqueIdGeneratorsMap")
-    private Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap;
-
+    
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Bean
-    public DelegatingController openidDelegatingController() {
-        final DelegatingController controller = new DelegatingController();
-        controller.setDelegates(Arrays.asList(smartOpenIdAssociationController(), openIdValidateController()));
-        return controller;
-    }
-
-    @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
         return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView);
     }
-
-    @Bean
-    public AbstractDelegateController openIdValidateController() {
-        final OpenIdValidateController c = new OpenIdValidateController(serverManager());
-        c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
-        c.setSuccessView(casOpenIdServiceSuccessView);
-        c.setFailureView(casOpenIdServiceFailureView);
-        c.setProxyHandler(proxy20Handler);
-        c.setAuthenticationSystemSupport(authenticationSystemSupport);
-        c.setServicesManager(servicesManager);
-        c.setCentralAuthenticationService(centralAuthenticationService);
-        c.setArgumentExtractor(argumentExtractor);
-        c.setMultifactorTriggerSelectionStrategy(multifactorTriggerSelectionStrategy);
-        c.setAuthenticationContextValidator(authenticationContextValidator);
-        c.setJsonView(cas3ServiceJsonView);
-        c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-
-        return c;
-    }
-
+    
     @RefreshScope
     @Bean
     public ServerManager serverManager() {
@@ -193,42 +131,13 @@ public class OpenIdConfiguration {
         LOGGER.info("Creating openid server manager with OP endpoint {}", casProperties.getServer().getLoginUrl());
         return manager;
     }
-
-    @Bean
-    public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
-        final String name = casProperties.getAuthn().getOpenid().getName();
-        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler(name, servicesManager, ticketRegistry);
-        h.setPrincipalFactory(openidPrincipalFactory());
-        return h;
-    }
-
-    @Bean
-    public OpenIdPrincipalResolver openIdPrincipalResolver() {
-        final OpenIdPrincipalResolver r = new OpenIdPrincipalResolver();
-        r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull());
-        r.setPrincipalFactory(openidPrincipalFactory());
-        return r;
-    }
-
-    @ConditionalOnMissingBean(name = "openidPrincipalFactory")
-    @Bean
-    public PrincipalFactory openidPrincipalFactory() {
-        return new DefaultPrincipalFactory();
-    }
-
+    
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
         return new OpenIdServiceResponseBuilder(casProperties.getServer().getPrefix().concat("/openid"), serverManager(), centralAuthenticationService);
     }
 
-    @Bean
-    @RefreshScope
-    public OpenIdServiceFactory openIdServiceFactory() {
-        return new OpenIdServiceFactory(casProperties.getServer().getPrefix().concat("/openid"));
-    }
 
     @Bean
     @RefreshScope
@@ -247,20 +156,31 @@ public class OpenIdConfiguration {
         return new DefaultOpenIdUserNameExtractor();
     }
 
+    @Autowired
     @Bean
-    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
+    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+        final OpenIdValidateController c = new OpenIdValidateController(serverManager());
+        c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
+        c.setSuccessView(casOpenIdServiceSuccessView);
+        c.setFailureView(casOpenIdServiceFailureView);
+        c.setProxyHandler(proxy20Handler);
+        c.setAuthenticationSystemSupport(authenticationSystemSupport);
+        c.setServicesManager(servicesManager);
+        c.setCentralAuthenticationService(centralAuthenticationService);
+        c.setArgumentExtractor(argumentExtractor);
+        c.setMultifactorTriggerSelectionStrategy(multifactorTriggerSelectionStrategy);
+        c.setAuthenticationContextValidator(authenticationContextValidator);
+        c.setJsonView(cas3ServiceJsonView);
+        c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+
+        final DelegatingController controller = new DelegatingController();
+        controller.setDelegates(Arrays.asList(smartOpenIdAssociationController(), c));
+        
         final OpenIdPostUrlHandlerMapping m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);
         final Properties mappings = new Properties();
-        mappings.put("/login", openidDelegatingController());
+        mappings.put("/login", controller);
         m.setMappings(mappings);
         return m;
-    }
-
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(openIdCredentialsAuthenticationHandler(), openIdPrincipalResolver());
-        uniqueIdGeneratorsMap.put(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
-        this.argumentExtractor.getServiceFactories().add(0, openIdServiceFactory());
     }
 }

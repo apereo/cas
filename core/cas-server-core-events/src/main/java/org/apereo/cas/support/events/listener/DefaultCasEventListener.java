@@ -14,6 +14,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
@@ -43,6 +44,16 @@ public class DefaultCasEventListener {
 
     public DefaultCasEventListener(final CasEventRepository casEventRepository) {
         this.casEventRepository = casEventRepository;
+    }
+
+    /**
+     * Handle application ready event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
+        LOGGER.info("CAS is ready to process requests at {}", event.getTimestamp());
     }
 
     /**
@@ -137,7 +148,7 @@ public class DefaultCasEventListener {
             this.casEventRepository.save(dto);
         }
     }
-    
+
     public CasEventRepository getCasEventRepository() {
         return casEventRepository;
     }

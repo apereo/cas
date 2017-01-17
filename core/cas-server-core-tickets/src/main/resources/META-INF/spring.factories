@@ -1,1 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasCoreTicketsConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration,\
+  org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration,\
+  org.apereo.cas.config.CasCoreTicketsConfiguration
