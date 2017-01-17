@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.codahale.metrics.servlets.MetricsServlet;
 import org.apache.cxf.sts.IdentityMapper;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
@@ -188,7 +187,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public DefaultConditionsProvider conditionsProvider() {
         final DefaultConditionsProvider c = new DefaultConditionsProvider();
-        c.setLifetime(1_200);
+        c.setLifetime(1000);
         c.setAcceptClientLifetime(true);
         return c;
     }
