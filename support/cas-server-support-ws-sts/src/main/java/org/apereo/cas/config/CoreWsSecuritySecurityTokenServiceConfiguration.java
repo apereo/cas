@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.codahale.metrics.servlets.MetricsServlet;
 import org.apache.cxf.sts.IdentityMapper;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
@@ -20,6 +21,7 @@ import org.apache.cxf.sts.token.realm.Relationship;
 import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
 import org.apache.cxf.sts.token.validator.UsernameTokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
+import org.apache.cxf.transport.servlet.CXFServlet;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.ClaimTypeConstants;
@@ -33,6 +35,7 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -40,6 +43,7 @@ import org.springframework.context.annotation.ImportResource;
 import javax.xml.ws.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,10 +63,22 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
+    public ServletRegistrationBean cxfServlet() {
+        final ServletRegistrationBean bean = new ServletRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("cxfServlet");
+        bean.setServlet(new CXFServlet());
+        bean.setUrlMappings(Collections.singleton("/ws/sts"));
+        bean.setAsyncSupported(true);
+        return bean;
+    }
+    
+    @Bean
     public EventMapper loggerListener() {
         return new EventMapper(new MapEventLogger());
     }
 
+    @Bean
     public List<TokenDelegationHandler> delegationHandlers() {
         return Arrays.asList(new SAMLDelegationHandler(), new X509TokenDelegationHandler());
     }
@@ -232,7 +248,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Bean
     public List transportServices() {
-        return Arrays.asList(myEncryptionService(), transportServices());
+        return Arrays.asList(myEncryptionService(), transportService());
     }
 
     @Bean
