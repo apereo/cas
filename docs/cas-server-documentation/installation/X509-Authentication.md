@@ -14,8 +14,18 @@ certificate presented in the SSL handshake be accessible to the servlet containe
 directly at the servlet container and when using Apache/mod_jk; for other architectures it may be necessary to do
 additional work.
 
-
 ## Overview
+
+Certificates are exchanged as part of the SSL (also called TLS) initialization that occurs when any browser connects to an `https:` website. 
+A certain number of public CA certficates are preinstalled in each browser. It is assumed that:
+
+- Your organization is already able to generate and distribute certificates that a user can install in their browser
+- Somewhere in that certificate there is a field that contains the Principal name or can be easily mapped to the Principal name that CAS can use. 
+
+The remaining problem is to make sure that the browsers, servers and Java are all prepared to support these institutional certificates and, ideally, 
+that these institutional certificates will be the only ones exchanged when a browser connects to CAS.
+
+## Configuration
 
 X.509 support is enabled by including the following dependency in the WAR overlay:
 
