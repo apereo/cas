@@ -61,7 +61,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     private static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
     private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
-    
+
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -69,7 +69,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     @Autowired
     protected ApplicationEventPublisher eventPublisher;
-    
+
     /**
      * The Application context.
      */
@@ -308,12 +308,12 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return map;
     }
 
-    private Set<Event> resolveEventViaMultivaluedPrincipalAttribute(final Principal principal,
-                                                                    final Object attributeValue,
-                                                                    final RegisteredService service,
-                                                                    final RequestContext context,
-                                                                    final MultifactorAuthenticationProvider provider,
-                                                                    final Predicate<String> predicate) {
+    private Set<Event> resolveEventViaMultivaluedAttribute(final Principal principal,
+                                                           final Object attributeValue,
+                                                           final RegisteredService service,
+                                                           final RequestContext context,
+                                                           final MultifactorAuthenticationProvider provider,
+                                                           final Predicate<String> predicate) {
         final Set<Event> events = new HashSet<>();
         if (attributeValue instanceof Collection) {
             logger.debug("Attribute value {} is a multi-valued attribute", attributeValue);
@@ -342,17 +342,17 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             }
             return events;
         }
-        logger.debug("Attribute value {} of type {} is not a multi-valued attribute", 
+        logger.debug("Attribute value {} of type {} is not a multi-valued attribute",
                 attributeValue, attributeValue.getClass());
         return null;
     }
 
-    private Set<Event> resolveEventViaSinglePrincipalAttribute(final Principal principal,
-                                                               final Object attributeValue,
-                                                               final RegisteredService service,
-                                                               final RequestContext context,
-                                                               final MultifactorAuthenticationProvider provider,
-                                                               final Predicate<String> predicate) {
+    private Set<Event> resolveEventViaSingleAttribute(final Principal principal,
+                                                      final Object attributeValue,
+                                                      final RegisteredService service,
+                                                      final RequestContext context,
+                                                      final MultifactorAuthenticationProvider provider,
+                                                      final Predicate<String> predicate) {
         try {
             if (attributeValue instanceof String) {
                 logger.debug("Attribute value {} is a single-valued attribute", attributeValue);
@@ -382,6 +382,66 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return null;
     }
 
+    private Set<Event> resolveEventViaAttribute(final Principal principal,
+                                                final Map<String, Object> attributesToExamine,
+                                                final Collection<String> attributeNames,
+                                                final RegisteredService service,
+                                                final RequestContext context,
+                                                final Collection<MultifactorAuthenticationProvider> providers,
+                                                final Predicate<String> predicate) {
+        if (providers == null || providers.isEmpty()) {
+            logger.debug("No authentication provider is associated with this service");
+            return null;
+        }
+
+        logger.debug("Locating attribute value for attribute(s): {}", attributeNames);
+        for (final String attributeName : attributeNames) {
+            final Object attributeValue = attributesToExamine.get(attributeName);
+            if (attributeValue == null) {
+                logger.debug("Attribute value for {} to determine event is not configured for {}", attributeName, principal.getId());
+                continue;
+            }
+
+            logger.debug("Selecting a multifactor authentication provider out of {} for {} and service {}", providers, principal.getId(), service);
+            final MultifactorAuthenticationProvider provider =
+                    this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+
+            logger.debug("Located attribute value {} for {}", attributeValue, attributeNames);
+
+            Set<Event> results = resolveEventViaSingleAttribute(principal, attributeValue, service, context, provider, predicate);
+            if (results == null || results.isEmpty()) {
+                results = resolveEventViaMultivaluedAttribute(principal, attributeValue, service, context, provider, predicate);
+            }
+            if (results != null && !results.isEmpty()) {
+                logger.debug("Resolved set of events based on the attribute {} are {}", attributeName, results);
+                return results;
+            }
+        }
+        logger.debug("No set of events based on the attribute(s) {} could be matched", attributeNames);
+        return null;
+    }
+
+    /**
+     * Resolve event via authentication attribute set.
+     *
+     * @param authentication the authentication
+     * @param attributeNames the attribute name
+     * @param service        the service
+     * @param context        the context
+     * @param providers      the providers
+     * @param predicate      the predicate
+     * @return the set of resolved events
+     */
+    protected Set<Event> resolveEventViaAuthenticationAttribute(final Authentication authentication,
+                                                           final Collection<String> attributeNames,
+                                                           final RegisteredService service,
+                                                           final RequestContext context,
+                                                           final Collection<MultifactorAuthenticationProvider> providers,
+                                                           final Predicate<String> predicate) {
+        return resolveEventViaAttribute(authentication.getPrincipal(), authentication.getAttributes(),
+                attributeNames, service, context, providers, predicate);
+    }
+
     /**
      * Resolve event via principal attribute set.
      *
@@ -400,36 +460,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                            final Collection<MultifactorAuthenticationProvider> providers,
                                                            final Predicate<String> predicate) {
 
-        if (providers == null || providers.isEmpty()) {
-            logger.debug("No authentication provider is associated with this service");
-            return null;
-        }
-
-        logger.debug("Locating principal attribute value for attribute(s): {}", attributeNames);
-        for (final String attributeName : attributeNames) {
-            final Object attributeValue = principal.getAttributes().get(attributeName);
-            if (attributeValue == null) {
-                logger.debug("Attribute value for {} to determine event is not configured for {}", attributeName, principal.getId());
-                continue;
-            }
-
-            logger.debug("Selecting a multifactor authentication provider out of {} for {} and service {}", providers, principal.getId(), service);
-            final MultifactorAuthenticationProvider provider =
-                    this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
-
-            logger.debug("Located principal attribute value {} for {}", attributeValue, attributeNames);
-
-            Set<Event> results = resolveEventViaSinglePrincipalAttribute(principal, attributeValue, service, context, provider, predicate);
-            if (results == null || results.isEmpty()) {
-                results = resolveEventViaMultivaluedPrincipalAttribute(principal, attributeValue, service, context, provider, predicate);
-            }
-            if (results != null && !results.isEmpty()) {
-                logger.debug("Resolved set of events based the principal attribute {} are {}", attributeName, results);
-                return results;
-            }
-        }
-        logger.debug("No set of events based the principal attribute(s) {} could be matched", attributeNames);
-        return null;
+        return resolveEventViaAttribute(principal, principal.getAttributes(), attributeNames, service, context, providers, predicate);
     }
 
     @Override
@@ -467,7 +498,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         }
         return Optional.empty();
     }
-    
+
     /**
      * Put resolved events as attribute.
      *
