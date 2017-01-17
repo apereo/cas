@@ -1985,6 +1985,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.evernote.nameIdFormat=emailAddress
 ```
 
+### Tableau
+
+```properties
+# cas.samlSP.tableau.metadata=/etc/cas/saml/tableau.xml
+# cas.samlSP.tableau.name=Tableau
+# cas.samlSP.tableau.description=Tableau Integration
+# cas.samlSP.tableau.attributes=username
+```
+
 ### Asana
 
 ```properties
