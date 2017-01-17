@@ -39,6 +39,9 @@ ext.libraries = [
                     exclude(group: "org.apache.santuario", module: "xmlsec")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 }
         ],
