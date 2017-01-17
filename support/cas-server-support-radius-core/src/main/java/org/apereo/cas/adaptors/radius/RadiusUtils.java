@@ -21,8 +21,9 @@ public final class RadiusUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(RadiusUtils.class);
 
-    private RadiusUtils() {}
-    
+    private RadiusUtils() {
+    }
+
     /**
      * Authenticate pair.
      *
@@ -37,8 +38,7 @@ public final class RadiusUtils {
     public static Pair<Boolean, Optional<Map<String, Object>>> authenticate(final String username, final String password,
                                                                             final List<RadiusServer> servers,
                                                                             final boolean failoverOnAuthenticationFailure,
-                                                                            final boolean failoverOnException) 
-                            throws Exception {
+                                                                            final boolean failoverOnException) throws Exception {
         for (final RadiusServer radiusServer : servers) {
             LOGGER.debug("Attempting to authenticate {} at {}", username, radiusServer);
             try {

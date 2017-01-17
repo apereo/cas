@@ -16,10 +16,13 @@ import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
+import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
@@ -142,12 +145,15 @@ public class JRadiusServerImpl implements RadiusServer {
                     response.getClass().getName());
 
             if (response instanceof AccessAccept) {
-                final AccessAccept acceptedResponse = (AccessAccept) response;
-               
-                return new RadiusResponse(acceptedResponse.getCode(),
-                        acceptedResponse.getIdentifier(),
-                        acceptedResponse.getAttributes().getAttributeList());
+                final List<RadiusAttribute> attributes = response.getAttributes().getAttributeList();
+                LOGGER.debug("Radius response code {} accepted with attributes {} and identifier {}",
+                        response.getCode(), attributes, response.getIdentifier());
+                
+                return new RadiusResponse(response.getCode(),
+                        response.getIdentifier(),
+                        attributes);
             }
+            LOGGER.debug("Response is not recognized");
         } finally {
             if (client != null) {
                 client.close();
