@@ -113,16 +113,17 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param servicesManager                                 the services manager.
      * @param logoutManager                                   the logout manager.
      * @param authenticationRequestServiceSelectionStrategies The service selection strategy during validation events.
-     * @param authenticationPolicyFactory                     Authentication policy that uses a service context to produce stateful security policies to apply when
+     * @param authenticationPolicyFactory                     Authentication policy that uses a service context to produce stateful
+     *                                                        security policies to apply when
      *                                                        authenticating credentials.
      * @param principalFactory                                principal factory to create principal objects
      * @param cipherExecutor                                  Cipher executor to handle ticket validation.
      */
-    public AbstractCentralAuthenticationService(final TicketRegistry ticketRegistry, 
+    public AbstractCentralAuthenticationService(final TicketRegistry ticketRegistry,
                                                 final TicketFactory ticketFactory, final ServicesManager servicesManager,
-                                                final LogoutManager logoutManager, 
+                                                final LogoutManager logoutManager,
                                                 final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
-                                                final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory, 
+                                                final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
                                                 final PrincipalFactory principalFactory,
                                                 final CipherExecutor<String, String> cipherExecutor) {
         this.ticketRegistry = ticketRegistry;
