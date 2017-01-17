@@ -3,6 +3,7 @@ dependencies {
     compile libraries.opensaml
     compile libraries.bouncycastle
     compileOnly libraries.springcloud
+    compile libraries.apachecxf
     compile libraries.guava
     compile libraries.spring
     compile project(":core:cas-server-core-web")
