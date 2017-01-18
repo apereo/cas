@@ -97,11 +97,9 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
         final MultifactorAuthenticationProperties.Radius radius = casProperties.getAuthn().getMfa().getRadius();
-        final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler(radiusTokenServers(), radius.isFailoverOnException(),
-                radius.isFailoverOnAuthenticationFailure());
+        final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager, radiusTokenServers(),
+                radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
         a.setPrincipalFactory(radiusTokenPrincipalFactory());
-        a.setServicesManager(servicesManager);
-        a.setName(radius.getName());
         return a;
     }
 

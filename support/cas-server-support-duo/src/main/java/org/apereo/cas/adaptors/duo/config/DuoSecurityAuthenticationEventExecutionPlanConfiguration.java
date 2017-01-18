@@ -124,23 +124,11 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @RefreshScope
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
-        final DuoAuthenticationHandler h = new DuoAuthenticationHandler(duoMultifactorAuthenticationProvider());
         final List<MultifactorAuthenticationProperties.Duo> duos = casProperties.getAuthn().getMfa().getDuo();
+        final DuoAuthenticationHandler h = new DuoAuthenticationHandler(getDuosName(duos), servicesManager, duoMultifactorAuthenticationProvider());
         h.setPrincipalFactory(duoPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        if (!duos.isEmpty()) {
-            final String name = duos.get(0).getName();
-            if (duos.size() > 1) {
-                LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after {}", name);
-            }
-            h.setName(name);
-        } else {
-            throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
-        }
-
         return h;
     }
-
 
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
     @Bean
@@ -156,5 +144,17 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         plan.registerAuthenticationHandler(duoAuthenticationHandler());
         plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator());
+    }
+
+    private String getDuosName(final List<MultifactorAuthenticationProperties.Duo> duos) {
+        if (!duos.isEmpty()) {
+            final String name = duos.get(0).getName();
+            if (duos.size() > 1) {
+                LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after {}", name);
+            }
+            return name;
+        } else {
+            throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
+        }
     }
 }

@@ -84,21 +84,17 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
     @Bean
     @RefreshScope
     public AuthenticationHandler azureAuthenticatorAuthenticationHandler() {
-        final AzureAuthenticatorAuthenticationHandler h =
-                new AzureAuthenticatorAuthenticationHandler(azureAuthenticatorInstance(), azureAuthenticationRequestBuilder());
+        final String name = casProperties.getAuthn().getMfa().getAzure().getName();
+        final AzureAuthenticatorAuthenticationHandler h = new AzureAuthenticatorAuthenticationHandler(name, servicesManager, azureAuthenticatorInstance(),
+                azureAuthenticationRequestBuilder());
         h.setPrincipalFactory(azurePrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getMfa().getAzure().getName());
         return h;
     }
 
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass azureBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getAzure().getBypass(),
-                ticketRegistrySupport
-        );
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getAzure().getBypass(), ticketRegistrySupport);
     }
 
     @Bean

@@ -65,8 +65,7 @@ public class TokenAuthenticationConfiguration {
     @Bean
     public ResponseBuilder webApplicationServiceResponseBuilder() {
         return new TokenWebApplicationServiceResponseBuilder(servicesManager,
-                tokenCipherExecutor(),
-                grantingTicketExpirationPolicy);
+                tokenCipherExecutor(), grantingTicketExpirationPolicy);
     }
 
     @ConditionalOnMissingBean(name = "tokenPrincipalFactory")
@@ -78,11 +77,9 @@ public class TokenAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
         final TokenAuthenticationProperties token = casProperties.getAuthn().getToken();
-        final TokenAuthenticationHandler h = new TokenAuthenticationHandler();
+        final TokenAuthenticationHandler h = new TokenAuthenticationHandler(token.getName(), servicesManager);
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(token.getPrincipalTransformation()));
         h.setPrincipalFactory(tokenPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(token.getName());
         return h;
     }
 

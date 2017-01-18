@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
  */
 public class RejectUsersAuthenticationHandlerTests {
 
+    private static final String HANDLER_NAME = null;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -33,7 +34,7 @@ public class RejectUsersAuthenticationHandlerTests {
         users.add("dima");
         users.add("bill");
 
-        this.authenticationHandler = new RejectUsersAuthenticationHandler(users);
+        this.authenticationHandler = new RejectUsersAuthenticationHandler(HANDLER_NAME, null, users);
     }
 
     @Test

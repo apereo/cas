@@ -64,11 +64,10 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration implements Authe
     @Bean
     public AuthenticationHandler authyAuthenticationHandler() {
         try {
-            final boolean forceVerification = casProperties.getAuthn().getMfa().getAuthy().isForceVerification();
-            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authyClientInstance(), forceVerification);
-            h.setServicesManager(servicesManager);
+            final MultifactorAuthenticationProperties.Authy authy = casProperties.getAuthn().getMfa().getAuthy();
+            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authy.getName(), servicesManager, authyClientInstance(),
+                    authy.isForceVerification());
             h.setPrincipalFactory(authyPrincipalFactory());
-            h.setName(casProperties.getAuthn().getMfa().getAuthy().getName());
             return h;
         } catch (final Exception e) {
             throw Throwables.propagate(e);

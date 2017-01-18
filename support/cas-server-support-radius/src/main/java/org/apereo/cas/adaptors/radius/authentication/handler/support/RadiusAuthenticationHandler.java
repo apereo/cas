@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -45,8 +46,9 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      * @param failoverOnException boolean on whether to failover or not.
      * @param failoverOnAuthenticationFailure boolean on whether to failover or not.
      */
-    public RadiusAuthenticationHandler(final List<RadiusServer> servers, final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
-        super();
+    public RadiusAuthenticationHandler(final String name, final ServicesManager servicesManager, final List<RadiusServer> servers,
+                                       final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
+        super(name, servicesManager);
         logger.debug("Using {}", getClass().getSimpleName());
 
         this.servers = servers;

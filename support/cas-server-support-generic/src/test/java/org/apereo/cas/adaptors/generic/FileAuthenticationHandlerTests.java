@@ -25,6 +25,7 @@ import static org.junit.Assert.*;
  */
 public class FileAuthenticationHandlerTests {
 
+    private static final String HANDLER_NAME = null;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -32,8 +33,8 @@ public class FileAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-        this.authenticationHandler = new FileAuthenticationHandler(new ClassPathResource("authentication.txt"),
-                FileAuthenticationHandler.DEFAULT_SEPARATOR);
+        this.authenticationHandler = new FileAuthenticationHandler(HANDLER_NAME, null,
+                new ClassPathResource("org/apereo/cas/adaptors/generic/authentication.txt"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
         final PasswordEncoderProperties p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("MD5");
@@ -114,7 +115,10 @@ public class FileAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticatesUserInFileWithCommaSeparator() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
-        this.authenticationHandler = new FileAuthenticationHandler(new ClassPathResource("authentication2.txt"), ",");
+
+        this.authenticationHandler = new FileAuthenticationHandler(HANDLER_NAME, null,
+                new ClassPathResource("org/apereo/cas/adaptors/generic/authentication2.txt"), ",");
+
         c.setUsername("scott");
         c.setPassword("rutgers");
         assertNotNull(this.authenticationHandler.authenticate(c));
@@ -124,7 +128,9 @@ public class FileAuthenticationHandlerTests {
     public void verifyFailsUserNotInFileWithCommaSeparator() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
-        this.authenticationHandler = new FileAuthenticationHandler(new ClassPathResource("authentication2.txt"), ",");
+        this.authenticationHandler = new FileAuthenticationHandler(HANDLER_NAME, null,
+                new ClassPathResource("org/apereo/cas/adaptors/generic/authentication2.txt"), ",");
+
         c.setUsername("fds");
         c.setPassword("rutgers");
         this.thrown.expect(AccountNotFoundException.class);
@@ -135,7 +141,8 @@ public class FileAuthenticationHandlerTests {
     @Test
     public void verifyFailsGoodUsernameBadPassword() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
-        this.authenticationHandler = new FileAuthenticationHandler(new ClassPathResource("authentication2.txt"), ",");
+        this.authenticationHandler = new FileAuthenticationHandler(HANDLER_NAME, null,
+                new ClassPathResource("org/apereo/cas/adaptors/generic/authentication2.txt"), ",");
 
         c.setUsername("scott");
         c.setPassword("rutgers1");
@@ -148,7 +155,8 @@ public class FileAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticateNoFileName() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
-        this.authenticationHandler = new FileAuthenticationHandler(new ClassPathResource("fff"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
+        this.authenticationHandler = new FileAuthenticationHandler(HANDLER_NAME, null, new ClassPathResource("fff"),
+                FileAuthenticationHandler.DEFAULT_SEPARATOR);
 
         c.setUsername("scott");
         c.setPassword("rutgers");

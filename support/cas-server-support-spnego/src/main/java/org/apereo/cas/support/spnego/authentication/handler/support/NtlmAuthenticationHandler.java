@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -47,7 +48,9 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
     private final String includePattern;
 
-    public NtlmAuthenticationHandler(final boolean loadBalance, final String domainController, final String includePattern) {
+    public NtlmAuthenticationHandler(final String name, final ServicesManager servicesManager, final boolean loadBalance, final String domainController,
+                                     final String includePattern) {
+        super(name, servicesManager);
         this.loadBalance = loadBalance;
         if (StringUtils.isBlank(domainController)) {
             this.domainController = DEFAULT_DOMAIN_CONTROLLER;

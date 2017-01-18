@@ -2,12 +2,12 @@ package org.apereo.cas.authentication;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,21 +30,15 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * The list of users we will accept.
      */
-    private Map<String, String> users;
+    private final Map<String, String> users;
 
-    /**
-     * Instantiates a new Accept users authentication handler.
-     */
-    public AcceptUsersAuthenticationHandler() {
-        this(new HashMap<>());
-    }
-    
     /**
      * Instantiates a new Accept users authentication handler.
      *
      * @param users the users
      */
-    public AcceptUsersAuthenticationHandler(final Map<String, String> users) {
+    public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager, final Map<String, String> users) {
+        super(name, servicesManager);
         this.users = users;
     }
 
@@ -68,12 +62,5 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         }
         final List<MessageDescriptor> list = new ArrayList<>();
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), list);
-    }
-
-    /**
-     * @param users The users to set.
-     */
-    public void setUsers(final Map<String, String> users) {
-        this.users = new HashMap<>(users);
     }
 }

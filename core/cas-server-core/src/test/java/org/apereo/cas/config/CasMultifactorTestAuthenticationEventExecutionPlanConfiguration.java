@@ -16,6 +16,7 @@ import java.util.HashMap;
  */
 @Configuration("CasMultifactorTestAuthenticationEventExecutionPlanConfiguration")
 public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         final HashMap<String, String> users = new HashMap<>();
@@ -28,7 +29,7 @@ public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration imp
         credentials.put("bob", "62831");
         credentials.put("mallory", "14142");
 
-        plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(users));
+        plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(null, null, users));
         plan.registerAuthenticationHandler(new TestOneTimePasswordAuthenticationHandler(credentials));
     }
 }

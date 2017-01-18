@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
@@ -30,8 +31,9 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     private final IGoogleAuthenticator googleAuthenticatorInstance;
     private final OneTimeTokenRepository tokenRepository;
 
-    public GoogleAuthenticatorAuthenticationHandler(final IGoogleAuthenticator googleAuthenticatorInstance,
+    public GoogleAuthenticatorAuthenticationHandler(final String name, final ServicesManager servicesManager, final IGoogleAuthenticator googleAuthenticatorInstance,
                                                     final OneTimeTokenRepository tokenRepository) {
+        super(name, servicesManager);
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
         this.tokenRepository = tokenRepository;
     }

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,11 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      * The network base address.
      */
     private InetAddress inetNetwork;
+
+    public RemoteAddressAuthenticationHandler(final String name, final ServicesManager servicesManager, final String ipAddressRange) {
+        super(name, servicesManager);
+        setIpNetworkRange(ipAddressRange);
+    }
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
@@ -96,10 +102,8 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      *
      * @param ipAddressRange the IP address range that should be allowed trusted logins
      */
-    public void setIpNetworkRange(final String ipAddressRange) {
-
+    private void setIpNetworkRange(final String ipAddressRange) {
         if (StringUtils.isNotBlank(ipAddressRange)) {
-
             final String[] splitAddress = ipAddressRange.split("/");
 
             if (splitAddress.length == 2) {

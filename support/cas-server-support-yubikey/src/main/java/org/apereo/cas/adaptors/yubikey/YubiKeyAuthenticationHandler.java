@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -43,7 +44,9 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
      * @param secretKey the secret key
      * @param registry  the account registry which holds registrations.
      */
-    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey, final YubiKeyAccountRegistry registry) {
+    public YubiKeyAuthenticationHandler(final String name, final ServicesManager servicesManager, final Integer clientId, final String secretKey,
+                                        final YubiKeyAccountRegistry registry) {
+        super(name, servicesManager);
         this.registry = registry;
         this.client = YubicoClient.getClient(clientId, secretKey);
 
@@ -54,10 +57,6 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
         }
     }
 
-    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey) {
-        this(clientId, secretKey, null);
-    }   
-    
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final YubiKeyCredential yubiKeyCredential = (YubiKeyCredential) credential;

@@ -97,8 +97,6 @@ public class MultifactorAuthenticationTests {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
-    
-    
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials("alice", "alice"));

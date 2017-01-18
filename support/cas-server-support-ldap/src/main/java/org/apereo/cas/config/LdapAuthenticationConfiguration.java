@@ -95,9 +95,7 @@ public class LdapAuthenticationConfiguration {
                             attributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 
                     LOGGER.debug("Creating ldap authentication handler for {}", l.getLdapUrl());
-                    final LdapAuthenticationHandler handler = new LdapAuthenticationHandler(authenticator);
-                    handler.setServicesManager(servicesManager);
-                    handler.setName(l.getName());
+                    final LdapAuthenticationHandler handler = new LdapAuthenticationHandler(l.getName(), servicesManager, authenticator);
                     handler.setOrder(l.getOrder());
                     handler.setPrincipalFactory(ldapPrincipalFactory());
 

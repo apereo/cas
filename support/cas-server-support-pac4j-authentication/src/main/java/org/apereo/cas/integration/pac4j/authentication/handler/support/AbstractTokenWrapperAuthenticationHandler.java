@@ -1,8 +1,10 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.TokenCredentials;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -24,10 +26,14 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
     /**
-     * Default constructor.
+     * Instantiates a new AbstractTokenWrapper authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
      */
-    public AbstractTokenWrapperAuthenticationHandler() {
-
+    public AbstractTokenWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override

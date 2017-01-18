@@ -202,11 +202,10 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
     @RefreshScope
     @Bean
     public AuthenticationHandler clientAuthenticationHandler() {
-        final ClientAuthenticationHandler h = new ClientAuthenticationHandler(builtClients());
+        final Pac4jProperties pac4j = casProperties.getAuthn().getPac4j();
+        final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager, builtClients());
         h.setPrincipalFactory(clientPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setTypedIdUsed(casProperties.getAuthn().getPac4j().isTypedIdUsed());
-        h.setName(casProperties.getAuthn().getPac4j().getName());
+        h.setTypedIdUsed(pac4j.isTypedIdUsed());
         return h;
     }
     

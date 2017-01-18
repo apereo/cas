@@ -1,11 +1,13 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.security.auth.login.FailedLoginException;
@@ -20,7 +22,18 @@ import java.security.GeneralSecurityException;
 public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private boolean isTypedIdUsed;
-    
+
+    /**
+     * Instantiates a new AbstractPac4j authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
+     */
+    public AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
+    }
+
     /**
      * Build the handler result.
      *

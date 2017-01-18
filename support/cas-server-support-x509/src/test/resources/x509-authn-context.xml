@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="authenticationManager" class="org.apereo.cas.authentication.PolicyBasedAuthenticationManager">
+        <constructor-arg name="map">
+            <map>
+                <entry key-ref="acceptUsersAuthenticationHandler" value-ref="usernamePasswordCredentialsResolver" />
+                <entry key-ref="x509AuthenticationHandler" value-ref="x509CredentialsResolver" />
+                <entry key-ref="httpBasedAuthenticationHandler" value-ref="httpBasedCredentialsResolver" />
+            </map>
+        </constructor-arg>
+        <constructor-arg name="servicesManager" value="#{null}"></constructor-arg>
+    </bean>
+
+    <!--
+       | Authentication handler beans
+       -->
+    <bean id="acceptUsersAuthenticationHandler" class="org.apereo.cas.authentication.AcceptUsersAuthenticationHandler"
+        c:name="">
+        <constructor-arg name="servicesManager" value="#{null}"></constructor-arg>
+        <constructor-arg name="users">
+            <map>
+                <entry key="casuser" value="Mellon"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="httpBasedAuthenticationHandler" class="org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" >
+        <constructor-arg name="servicesManager" value="#{null}"></constructor-arg>
+    </bean>
+
+    <bean id="x509AuthenticationHandler" class="org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler"
+          c:name=""
+          c:regExTrustedIssuerDnPattern="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US"
+          c:regExSubjectDnPattern="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US"
+          c:checkKeyUsage="true"
+          c:requireKeyUsage="true"
+          c:maxPathLength="2147483647"
+          c:maxPathLengthAllowUnspecified="true"
+          c:revocationChecker-ref="revocationChecker" >
+        <constructor-arg name="servicesManager" value="#{null}"></constructor-arg>
+    </bean>
+
+    <bean id="revocationChecker" 
+          class="org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker">
+        <constructor-arg name="crlCache">
+            <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+                  p:cacheName="CRLCache"
+                  p:eternal="false"
+                  p:overflowToDisk="false"
+                  p:maxElementsInMemory="100"
+                  p:timeToLive="21600"
+                  p:timeToIdle="21600">
+                <property name="cacheManager">
+                    <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+                          p:shared="false" p:cacheManagerName="crlcache-mgmr" />
+                </property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg name="unavailableCRLPolicy">
+            <bean class="org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy" />
+        </constructor-arg>
+        <constructor-arg name="expiredCRLPolicy">
+            <bean class="org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy">
+                <constructor-arg name="threshold" value="172800" />
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <!--
+       | Credential-to-principal resolver beans
+       -->
+    <bean id="usernamePasswordCredentialsResolver"
+          class="org.apereo.cas.authentication.principal.ProxyingPrincipalResolver" />
+
+    <bean id="httpBasedCredentialsResolver"
+          class="org.apereo.cas.authentication.principal.ProxyingPrincipalResolver" />
+
+    <!--
+       | Resolves a principal from the subject DN of an X.509 certificate.
+       | The following example resolves the principal ID jacky@vt.edu from a certificate whose
+       | subject DN is DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto.
+       -->
+    <bean id="x509CredentialsResolver"
+          class="org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
+          c:descriptor="$UID@$DC.$DC" />
+
+</beans>

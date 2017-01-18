@@ -20,11 +20,13 @@ import static org.junit.Assert.*;
 public class JcifsSpnegoAuthenticationHandlerTests {
 
     private static final String USERNAME = "Username";
+    private static final String HANDLER_NAME = null;
 
     @Test
     public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
-        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(new MockJcifsAuthentication(true), true, true);
+        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(HANDLER_NAME, null, new MockJcifsAuthentication(true),
+                true, true);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
@@ -33,7 +35,8 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
-        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(new MockJcifsAuthentication(true), false, true);
+        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(HANDLER_NAME, null, new MockJcifsAuthentication(true),
+                false, true);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
@@ -42,7 +45,8 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifyUnsuccessfulAuthentication() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
-        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(new MockJcifsAuthentication(false), true, true);
+        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(HANDLER_NAME, null, new MockJcifsAuthentication(false),
+                true, true);
 
         try {
             authenticationHandler.authenticate(credentials);
@@ -55,7 +59,8 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
     @Test
     public void verifySupports() {
-        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(new MockJcifsAuthentication(true), true, true);
+        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(HANDLER_NAME, null, new MockJcifsAuthentication(true),
+                true, true);
 
         assertFalse(authenticationHandler.supports(null));
         assertTrue(authenticationHandler.supports(new SpnegoCredential(new byte[] {0, 1, 2})));
@@ -69,15 +74,17 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         final String myKerberosUser = "Username@DOMAIN.COM";
 
         final PrincipalFactory factory = new DefaultPrincipalFactory();
-        final JcifsSpnegoAuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(new MockJcifsAuthentication(true), true, true);
+        final JcifsSpnegoAuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler(HANDLER_NAME, null,
+                new MockJcifsAuthentication(true), true, true);
 
         assertEquals(factory.createPrincipal(myNtlmUser), authenticationHandler.getPrincipal(myNtlmUser, true));
         assertEquals(factory.createPrincipal(myNtlmUserWithNoDomain), authenticationHandler.getPrincipal(myNtlmUserWithNoDomain, false));
         assertEquals(factory.createPrincipal(myKerberosUser), authenticationHandler.getPrincipal(myKerberosUser, false));
 
-        final JcifsSpnegoAuthenticationHandler handlerNoDomain = new JcifsSpnegoAuthenticationHandler(new MockJcifsAuthentication(true), false, true);
-        assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUser, true));
-        assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUserWithNoDomain, true));
-        assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myKerberosUser, false));
+        final JcifsSpnegoAuthenticationHandler handlerNoDomain = new JcifsSpnegoAuthenticationHandler(HANDLER_NAME, null, new MockJcifsAuthentication(true),
+                false, true);
+        assertEquals(factory.createPrincipal("Username"), handlerNoDomain.getPrincipal(myNtlmUser, true));
+        assertEquals(factory.createPrincipal("Username"), handlerNoDomain.getPrincipal(myNtlmUserWithNoDomain, true));
+        assertEquals(factory.createPrincipal("Username"), handlerNoDomain.getPrincipal(myKerberosUser, false));
     }
 }

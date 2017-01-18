@@ -1,12 +1,14 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,6 +34,17 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     private Predicate<Credential> credentialSelectionPredicate = credential -> true;
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
+
+    /**
+     * Instantiates a new Abstract authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
+     */
+    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
+    }
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {

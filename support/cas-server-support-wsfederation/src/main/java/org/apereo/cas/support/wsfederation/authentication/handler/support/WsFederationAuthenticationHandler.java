@@ -1,9 +1,11 @@
 package org.apereo.cas.support.wsfederation.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 
@@ -19,6 +21,17 @@ import java.util.Map;
  * @since 4.2.0
  */
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+
+    /**
+     * Instantiates a new WsFederation authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
+     */
+    public WsFederationAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
+    }
 
     /**
      * Determines if this handler can support the credentials provided.

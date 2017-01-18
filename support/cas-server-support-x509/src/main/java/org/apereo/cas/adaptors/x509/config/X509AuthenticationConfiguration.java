@@ -173,7 +173,7 @@ public class X509AuthenticationConfiguration {
                 break;
         }
 
-        final X509CredentialsAuthenticationHandler h = new X509CredentialsAuthenticationHandler(
+        final X509CredentialsAuthenticationHandler h = new X509CredentialsAuthenticationHandler(x509.getName(), servicesManager,
                 StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())
                         ? RegexUtils.createPattern(x509.getRegExTrustedIssuerDnPattern()) : null,
                 x509.getMaxPathLength(),
@@ -185,8 +185,6 @@ public class X509AuthenticationConfiguration {
                 revChecker);
 
         h.setPrincipalFactory(x509PrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(x509.getName());
         return h;
     }
 

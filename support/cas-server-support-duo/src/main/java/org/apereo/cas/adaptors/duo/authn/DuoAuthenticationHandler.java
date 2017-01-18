@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,7 +28,8 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     private VariegatedMultifactorAuthenticationProvider provider;
 
-    public DuoAuthenticationHandler(final VariegatedMultifactorAuthenticationProvider provider) {
+    public DuoAuthenticationHandler(final String name, final ServicesManager servicesManager, final VariegatedMultifactorAuthenticationProvider provider) {
+        super(name, servicesManager);
         this.provider = provider;
     }
 

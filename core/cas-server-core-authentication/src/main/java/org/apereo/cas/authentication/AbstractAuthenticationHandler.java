@@ -29,36 +29,34 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     /**
      * The services manager instance, as the entry point to the registry.
      **/
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
     /**
      * Configurable handler name.
      */
-    private String name;
+    private final String name;
 
     private Integer order;
 
     /**
      * Instantiates a new Abstract authentication handler.
+     *
+     * @param name Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best practice generally.
      */
-    public AbstractAuthenticationHandler() {
+    public AbstractAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+        if (StringUtils.isNotBlank(name)) {
+            this.name = name;
+        } else {
+            this.name = getClass().getSimpleName();
+        }
     }
 
     @Override
     public String getName() {
-        return StringUtils.isNotBlank(this.name) ? this.name : getClass().getSimpleName();
-    }
-
-    /**
-     * Sets the authentication handler name. Authentication handler names SHOULD be unique within an
-     * {@link AuthenticationManager}, and particular implementations
-     * may require uniqueness. Uniqueness is a best
-     * practice generally.
-     *
-     * @param name Handler name.
-     */
-    public void setName(final String name) {
-        this.name = name;
+        return this.name;
     }
 
     /**
@@ -68,10 +66,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      */
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 
     /**
@@ -90,7 +84,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
         ensureOrderIsProvidedIfNecessary();
         return this.order;
     }
-    
+
     private void ensureOrderIsProvidedIfNecessary() {
         if (this.order == null) {
             this.order = RandomUtils.nextInt(1, Integer.MAX_VALUE);

@@ -88,22 +88,17 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Bean
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
-        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(
-                googleAuthenticatorInstance(),
+        final String name = casProperties.getAuthn().getMfa().getGauth().getName();
+        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(name, servicesManager, googleAuthenticatorInstance(),
                 oneTimeTokenAuthenticatorTokenRepository);
         h.setPrincipalFactory(googlePrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getMfa().getGauth().getName());
         return h;
     }
 
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass googleBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getGauth().getBypass(),
-                ticketRegistrySupport
-        );
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getGauth().getBypass(), ticketRegistrySupport);
     }
 
     @Bean
@@ -131,9 +126,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {
-        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry,
-                casProperties.getAuthn().getMfa().getGauth().getLabel(),
-                casProperties.getAuthn().getMfa().getGauth().getIssuer());
+        final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
+        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry, gauth.getLabel(), gauth.getIssuer());
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)

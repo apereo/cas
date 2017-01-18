@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,10 +72,9 @@ public class CasRestAuthenticationConfiguration implements AuthenticationEventEx
     @Bean
     @RefreshScope
     public AuthenticationHandler restAuthenticationHandler() {
-        final RestAuthenticationHandler r = new RestAuthenticationHandler();
-        r.setApi(restAuthenticationApi());
-        r.setName(casProperties.getAuthn().getRest().getName());
-        r.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getRest().getPasswordEncoder()));
+        final RestAuthenticationProperties rest = casProperties.getAuthn().getRest();
+        final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi());
+        r.setPasswordEncoder(Beans.newPasswordEncoder(rest.getPasswordEncoder()));
         return r;
     }
 

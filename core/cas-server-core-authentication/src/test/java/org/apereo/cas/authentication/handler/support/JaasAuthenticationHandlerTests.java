@@ -36,7 +36,7 @@ public class JaasAuthenticationHandlerTests {
         }
         if (fileName.exists()) {
             System.setProperty("java.security.auth.login.config", '=' + fileName.getCanonicalPath());
-            this.handler = new JaasAuthenticationHandler();
+            this.handler = new JaasAuthenticationHandler(null, null);
         }
     }
 
