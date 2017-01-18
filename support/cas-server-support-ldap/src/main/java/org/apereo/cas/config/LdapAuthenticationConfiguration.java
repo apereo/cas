@@ -301,8 +301,7 @@ public class LdapAuthenticationConfiguration {
     }
 
     private static PooledCompareAuthenticationHandler getPooledCompareAuthenticationHandler(final LdapAuthenticationProperties l) {
-        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(
-                Beans.newPooledConnectionFactory(l));
+        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(Beans.newPooledConnectionFactory(l));
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
     }
