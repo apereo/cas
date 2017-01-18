@@ -167,10 +167,8 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
                 "Password expires in {} days. Expiration warning threshold is {} days.",
                 ttl,
                 configuration.getPasswordWarningNumberOfDays());
-        if (configuration.isAlwaysDisplayPasswordExpirationWarning()
-                || ttl < configuration.getPasswordWarningNumberOfDays()) {
-            messages.add(new PasswordExpiringWarningMessageDescriptor(
-                    "Password expires in {0} days.", ttl));
+        if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {
+            messages.add(new PasswordExpiringWarningMessageDescriptor("Password expires in {0} days.", ttl));
         }
         if (warning.getLoginsRemaining() > 0) {
             messages.add(new DefaultMessageDescriptor(
