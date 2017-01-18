@@ -496,6 +496,7 @@ public final class Beans {
      * @return the pooled connection factory
      */
     public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
+    public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
         final ConnectionPool cp = newBlockingConnectionPool(l);
         return new PooledConnectionFactory(cp);
     }
