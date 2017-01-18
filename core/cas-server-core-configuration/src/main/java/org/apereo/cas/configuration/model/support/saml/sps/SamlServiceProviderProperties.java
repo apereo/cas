@@ -23,6 +23,15 @@ public class SamlServiceProviderProperties {
     private Zoom zoom = new Zoom();
     private Evernote evernote = new Evernote();
     private Asana asana = new Asana();
+    private Tableau tableau = new Tableau();
+
+    public Tableau getTableau() {
+        return tableau;
+    }
+
+    public void setTableau(final Tableau tableau) {
+        this.tableau = tableau;
+    }
 
     public Asana getAsana() {
         return asana;
@@ -187,6 +196,13 @@ public class SamlServiceProviderProperties {
             setAttributes(Arrays.asList("firstName,lastName"));
         }
     }
+    
+    public static class Tableau extends AbstractSamlSPProperties {
+        public Tableau() {
+            setAttributes(Arrays.asList("username"));
+        }
+    }
+    
     public static class TestShib extends AbstractSamlSPProperties {
         public TestShib() {
             //setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
