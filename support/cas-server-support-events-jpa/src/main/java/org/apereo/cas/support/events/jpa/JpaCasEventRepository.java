@@ -17,7 +17,7 @@ import java.util.Collection;
  * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(readOnly = false, transactionManager = "transactionManagerEvents")
+@Transactional(transactionManager = "transactionManagerEvents")
 public class JpaCasEventRepository extends AbstractCasEventRepository {
 
     private static final String SELECT_QUERY = "SELECT r from CasEvent r ";

@@ -22,7 +22,7 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
+@Transactional(transactionManager = "ticketTransactionManager")
 public class JpaLockingStrategy implements LockingStrategy {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaLockingStrategy.class);

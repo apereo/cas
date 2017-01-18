@@ -13,14 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * This is {@link CasSamlSPAsanaConfiguration}.
+ * This is {@link CasSamlSPTableauConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casSamlSPAsanaConfiguration")
+@Configuration("casSamlSPTableauConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasSamlSPAsanaConfiguration {
+public class CasSamlSPTableauConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -36,7 +36,7 @@ public class CasSamlSPAsanaConfiguration {
     @PostConstruct
     public void init() {
         final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(
-                casProperties.getSamlSP().getAsana(), 
+                casProperties.getSamlSP().getTableau(), 
                 samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             service.setSignResponses(true);

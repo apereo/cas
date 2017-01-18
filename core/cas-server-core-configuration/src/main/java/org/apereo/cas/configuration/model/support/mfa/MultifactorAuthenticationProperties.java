@@ -29,6 +29,9 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private String globalPrincipalAttributeNameTriggers;
     private String globalPrincipalAttributeValueRegex;
 
+    private String globalAuthenticationAttributeNameTriggers;
+    private String globalAuthenticationAttributeValueRegex;
+    
     private String contentType = "application/cas";
     private String globalProviderId;
 
@@ -80,6 +83,22 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     public void setRequestParameter(final String requestParameter) {
         this.requestParameter = requestParameter;
+    }
+
+    public String getGlobalAuthenticationAttributeNameTriggers() {
+        return globalAuthenticationAttributeNameTriggers;
+    }
+
+    public void setGlobalAuthenticationAttributeNameTriggers(final String globalAuthenticationAttributeNameTriggers) {
+        this.globalAuthenticationAttributeNameTriggers = globalAuthenticationAttributeNameTriggers;
+    }
+
+    public String getGlobalAuthenticationAttributeValueRegex() {
+        return globalAuthenticationAttributeValueRegex;
+    }
+
+    public void setGlobalAuthenticationAttributeValueRegex(final String globalAuthenticationAttributeValueRegex) {
+        this.globalAuthenticationAttributeValueRegex = globalAuthenticationAttributeValueRegex;
     }
 
     public String getGlobalPrincipalAttributeValueRegex() {

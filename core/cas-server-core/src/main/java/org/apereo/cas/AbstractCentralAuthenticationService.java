@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * @since 4.2.0
  */
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable,
-                                                                      ApplicationEventPublisherAware {
+        ApplicationEventPublisherAware {
 
     private static final long serialVersionUID = -7572316677901391166L;
 
@@ -107,20 +107,25 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     /**
      * Build the central authentication service implementation.
-     *  @param ticketRegistry  the tickets registry.
-     * @param ticketFactory   the ticket factory
-     * @param servicesManager the services manager.
-     * @param logoutManager   the logout manager.
+     *
+     * @param ticketRegistry                                  the tickets registry.
+     * @param ticketFactory                                   the ticket factory
+     * @param servicesManager                                 the services manager.
+     * @param logoutManager                                   the logout manager.
      * @param authenticationRequestServiceSelectionStrategies The service selection strategy during validation events.
-     * @param authenticationPolicyFactory Authentication policy that uses a service context to produce stateful security policies to apply when
-     * authenticating credentials.
-     * @param principalFactory principal factory to create principal objects
-     * @param cipherExecutor Cipher executor to handle ticket validation.
+     * @param authenticationPolicyFactory                     Authentication policy that uses a service context to produce stateful
+     *                                                        security policies to apply when
+     *                                                        authenticating credentials.
+     * @param principalFactory                                principal factory to create principal objects
+     * @param cipherExecutor                                  Cipher executor to handle ticket validation.
      */
-    public AbstractCentralAuthenticationService(final TicketRegistry ticketRegistry, final TicketFactory ticketFactory, final ServicesManager servicesManager,
-             final LogoutManager logoutManager, final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
-             final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory, final PrincipalFactory principalFactory,
-             final CipherExecutor<String, String> cipherExecutor) {
+    public AbstractCentralAuthenticationService(final TicketRegistry ticketRegistry,
+                                                final TicketFactory ticketFactory, final ServicesManager servicesManager,
+                                                final LogoutManager logoutManager,
+                                                final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
+                                                final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
+                                                final PrincipalFactory principalFactory,
+                                                final CipherExecutor<String, String> cipherExecutor) {
         this.ticketRegistry = ticketRegistry;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
@@ -130,6 +135,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.serviceContextAuthenticationPolicyFactory = authenticationPolicyFactory;
         this.cipherExecutor = cipherExecutor;
     }
+
     /**
      * Publish CAS events.
      *
@@ -142,7 +148,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
-    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager",
+    @Transactional(transactionManager = "ticketTransactionManager",
             noRollbackFor = InvalidTicketException.class)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
@@ -163,8 +169,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * access to critical section. The reason is that cache pulls serialized data and
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
-    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager",
-            noRollbackFor = InvalidTicketException.class)
+    @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
     @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
@@ -176,7 +181,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return (T) ticket;
     }
 
-    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
+    @Transactional(transactionManager = "ticketTransactionManager")
     @Timed(name = "GET_TICKETS_TIMER")
     @Metered(name = "GET_TICKETS_METER")
     @Counted(name = "GET_TICKETS_COUNTER", monotonic = true)

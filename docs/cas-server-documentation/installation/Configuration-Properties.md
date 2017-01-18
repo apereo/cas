@@ -1565,6 +1565,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 ```properties
 # cas.authn.mfa.globalProviderId=mfa-duo
 
+# cas.authn.mfa.globalAuthenticationAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
+# cas.authn.mfa.globalAuthenticationAttributeValueRegex=faculty|staff
+
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
 
@@ -1983,6 +1986,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.evernote.description=Evernote Integration
 # cas.samlSP.evernote.nameIdAttribute=mail
 # cas.samlSP.evernote.nameIdFormat=emailAddress
+```
+
+### Tableau
+
+```properties
+# cas.samlSP.tableau.metadata=/etc/cas/saml/tableau.xml
+# cas.samlSP.tableau.name=Tableau
+# cas.samlSP.tableau.description=Tableau Integration
+# cas.samlSP.tableau.attributes=username
 ```
 
 ### Asana

@@ -1,6 +1,7 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasSamlSPWorkdayConfiguration,\
 org.apereo.cas.config.CasSamlSPTestShibConfiguration,\
 org.apereo.cas.config.CasSamlSPWebexConfiguration,\
+org.apereo.cas.config.CasSamlSPTableauConfiguration,\
 org.apereo.cas.config.CasSamlSPSalesforceConfiguration,\
 org.apereo.cas.config.CasSamlSPSaManageConfiguration,\
 org.apereo.cas.config.CasSamlSPDropboxConfiguration,\

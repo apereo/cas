@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
+@Transactional(transactionManager = "ticketTransactionManager")
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
     private TicketRegistry ticketRegistry;
