@@ -90,7 +90,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(
                 googleAuthenticatorInstance(),
-                oneTimeTokenAuthenticatorTokenRepository);
+                oneTimeTokenAuthenticatorTokenRepository,
+                googleAuthenticatorAccountRegistry);
         h.setPrincipalFactory(googlePrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setName(casProperties.getAuthn().getMfa().getGauth().getName());

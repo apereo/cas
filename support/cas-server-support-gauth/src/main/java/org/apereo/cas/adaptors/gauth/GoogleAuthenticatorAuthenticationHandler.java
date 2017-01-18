@@ -4,10 +4,12 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
@@ -29,11 +31,14 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
     private final IGoogleAuthenticator googleAuthenticatorInstance;
     private final OneTimeTokenRepository tokenRepository;
+    private final OneTimeTokenCredentialRepository credentialRepository;
 
     public GoogleAuthenticatorAuthenticationHandler(final IGoogleAuthenticator googleAuthenticatorInstance,
-                                                    final OneTimeTokenRepository tokenRepository) {
+                                                    final OneTimeTokenRepository tokenRepository,
+                                                    final OneTimeTokenCredentialRepository credentialRepository) {
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
         this.tokenRepository = tokenRepository;
+        this.credentialRepository = credentialRepository;
     }
 
     @Override
@@ -48,11 +53,17 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         logger.debug("Received OTP {}", otp);
 
         final RequestContext context = RequestContextHolder.getRequestContext();
-        final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
+        if (context == null) {
+            new IllegalArgumentException("No request context could be found to locate an authentication event");
+        }
+        final Authentication authentication = WebUtils.getAuthentication(context);
+        if (authentication == null) {
+            new IllegalArgumentException("Request context has no reference to an authentication event to locate a principal");
+        }
+        final String uid = authentication.getPrincipal().getId();
 
         logger.debug("Received principal id {}", uid);
-
-        final String secKey = this.googleAuthenticatorInstance.getCredentialRepository().getSecretKey(uid);
+        final String secKey = this.credentialRepository.getSecret(uid);
         if (StringUtils.isBlank(secKey)) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
@@ -60,7 +71,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         if (this.tokenRepository.exists(uid, otp)) {
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
         }
-        
+
         final boolean isCodeValid = this.googleAuthenticatorInstance.authorize(secKey, otp);
         if (isCodeValid) {
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
