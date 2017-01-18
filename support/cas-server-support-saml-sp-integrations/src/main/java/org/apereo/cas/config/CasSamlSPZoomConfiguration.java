@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
  * This is {@link CasSamlSPZoomConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.0
  */
 @Configuration("casSamlSPZoomConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
