@@ -134,8 +134,6 @@ public class LdapAuthenticationConfiguration {
 
                     LOGGER.debug("Initializing ldap authentication handler for {}", l.getLdapUrl());
                     handler.initialize();
-
-                    LOGGER.debug("Ldap authentication for {} is to chain principal resolvers for attributes", l.getLdapUrl());
                     handlers.add(handler);
                 });
         return handlers;
@@ -316,6 +314,7 @@ public class LdapAuthenticationConfiguration {
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
             ldapAuthenticationHandlers().forEach(handler -> {
                 final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+                LOGGER.debug("Ldap authentication for {} is to chain principal resolvers for attribute resolution", handler.getName());
                 resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
                 plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
             });
