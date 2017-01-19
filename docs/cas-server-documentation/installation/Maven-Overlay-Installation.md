@@ -9,7 +9,7 @@ CAS installation is a fundamentally source-oriented process, and we recommend a
 WAR overlay (1) project to organize
 customizations such as component configuration and UI design.
 The output of a WAR overlay build is a `cas.war` file that can be deployed to a servlet container like
-[Tomcat](http://tomcat.apache.org/whichversion.html).
+[Apache Tomcat](http://tomcat.apache.org/whichversion.html).
 
 ## What is a WAR Overlay?
 
