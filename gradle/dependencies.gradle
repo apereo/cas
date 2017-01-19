@@ -19,6 +19,12 @@ ext.libraries = [
                     force = true
                 }
         ],
+        apachefediz : [
+                dependencies.create("org.apache.cxf.fediz:fediz-core:$apacheFedizVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },  
+        ],
         apachecxf            : [
                 dependencies.create("org.apache.cxf:cxf-rt-transports-http:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -28,19 +34,59 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
+                dependencies.create("org.apache.cxf:cxf-rt-ws-security:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
+                    exclude(group: "org.apache.santuario", module: "xmlsec")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-api")
+                    force = true
+                },
+                dependencies.create("org.apache.cxf:cxf-rt-rs-security-sso-saml:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.santuario", module: "xmlsec")
+                    exclude(group: "net.shibboleth.utilities", module: "java-support")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    force = true
+                },
                 dependencies.create("org.apache.cxf:cxf-rt-ws-policy:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
                     force = true
                 },
+                dependencies.create("org.apache.cxf:cxf-rt-ws-addr:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
+                    force = true
+                },
+                dependencies.create("org.apache.cxf:cxf-rt-rs-client:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.cxf:cxf-rt-frontend-jaxrs:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.cxf:cxf-rt-rs-service-description:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.apache.cxf:cxf-rt-rs-extension-providers:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
                 dependencies.create("org.apache.cxf.services.sts:cxf-services-sts-core:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.santuario", module: "xmlsec")
                     exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
                     exclude(group: "org.apache.santuario", module: "xmlsec")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                     force = true
                 }
@@ -938,6 +984,24 @@ ext.libraries = [
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     force = true
                 },
+                dependencies.create("org.opensaml:opensaml-xacml-saml-impl:$opensamlVersion") {
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.cryptacular", module: "cryptacular")
+                    force = true
+                },
+                dependencies.create("org.opensaml:opensaml-xacml-saml-api:$opensamlVersion") {
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.cryptacular", module: "cryptacular")
+                    force = true
+                },
                 dependencies.create("org.opensaml:opensaml-security-impl:$opensamlVersion") {
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "joda-time", module: "joda-time")
@@ -1764,7 +1828,6 @@ ext.libraries = [
 
                     force = true
                 },
-
                 dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContextVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
