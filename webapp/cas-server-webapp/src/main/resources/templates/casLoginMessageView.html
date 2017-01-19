@@ -10,7 +10,7 @@
     <div class="alert alert-warning">
         <h2 th:text="#{screen.authentication.warning}"/>
         <div th:each="message : ${messages}">
-            <p class="message" th:text="${message.text}"/>
+            <p class="message" th:utext="${message.text}"/>
         </div>
         <section class="row btn-row">
             <a class="btn btn-submit" th:href="@{/login(execution=${flowExecutionKey},_eventId=proceed)}">
