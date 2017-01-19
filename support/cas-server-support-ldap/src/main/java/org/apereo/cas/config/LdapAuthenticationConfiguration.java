@@ -182,24 +182,31 @@ public class LdapAuthenticationConfiguration {
         };
     }
 
-    private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(
-            final LdapAuthenticationProperties l, final Authenticator authenticator) {
-
+    private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l, 
+                                                                                         final Authenticator authenticator) {
         final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
         if (cfg.getPasswordWarningNumberOfDays() > 0) {
             handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
             handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-            handlers.add(new FreeIPAAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays()),
-                    cfg.getLoginFailures()));
+            handlers.add(new FreeIPAAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
+        } else {
+            LOGGER.debug("Password warning number of days is undefined; LDAP authentication may NOT support "
+                    + "EDirectory, AD and FreeIPA to handle password policy authentication responses");
         }
+
         handlers.add(new PasswordPolicyAuthenticationResponseHandler());
         handlers.add(new PasswordExpirationAuthenticationResponseHandler());
         authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(
                 new AuthenticationResponseHandler[handlers.size()]));
 
+        LOGGER.debug("LDAP authentication response handlers configured are: {}", handlers);
+
         if (StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeName())
                 && StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeValue())) {
+
+            LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute {} and value {}",
+                    l.getPasswordPolicy().getWarningAttributeName(), l.getPasswordPolicy().getWarningAttributeValue());
 
             final OptionalWarningAccountStateHandler accountHandler = new OptionalWarningAccountStateHandler();
             accountHandler.setDisplayWarningOnMatch(l.getPasswordPolicy().isDisplayWarningOnMatch());
@@ -211,6 +218,7 @@ public class LdapAuthenticationConfiguration {
             final DefaultAccountStateHandler accountHandler = new DefaultAccountStateHandler();
             accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
             cfg.setAccountStateHandler(accountHandler);
+            LOGGER.debug("Configuring the default account state handler for LDAP authentication");
         }
         return cfg;
     }
