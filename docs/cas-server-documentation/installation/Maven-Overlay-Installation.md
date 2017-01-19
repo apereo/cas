@@ -226,4 +226,4 @@ by using a `scope=import` dependency:
 To take advantage of the CAS BOM via Gradle, please [use this guide](https://plugins.gradle.org/plugin/io.spring.dependency-management) 
 and configure the Gradle build accordingly.
 
-*(1) http://maven.apache.org/plugins/maven-war-plugin/overlays.html*
+*(1) [WAR Overlays](http://maven.apache.org/plugins/maven-war-plugin/overlays.html)*
