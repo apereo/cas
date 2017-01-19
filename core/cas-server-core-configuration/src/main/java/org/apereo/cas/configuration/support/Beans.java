@@ -323,6 +323,7 @@ public final class Beans {
      * @return the connection config
      */
     public static ConnectionConfig newConnectionConfig(final AbstractLdapProperties l) {
+        LOGGER.debug("Creating LDAP connection configuration for {}", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
         cc.setUseSSL(l.isUseSsl());
@@ -408,6 +409,7 @@ public final class Beans {
      * @return the pool config
      */
     public static PoolConfig newPoolConfig(final AbstractLdapProperties l) {
+        LOGGER.debug("Creating LDAP connection pool configuration for {}", l.getLdapUrl());
         final PoolConfig pc = new PoolConfig();
         pc.setMinPoolSize(l.getMinPoolSize());
         pc.setMaxPoolSize(l.getMaxPoolSize());
@@ -424,6 +426,7 @@ public final class Beans {
      * @return the connection factory
      */
     public static DefaultConnectionFactory newConnectionFactory(final AbstractLdapProperties l) {
+        LOGGER.debug("Creating LDAP connection factory for {}", l.getLdapUrl());
         final ConnectionConfig cc = newConnectionConfig(l);
         final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
         if (l.getProviderClass() != null) {
