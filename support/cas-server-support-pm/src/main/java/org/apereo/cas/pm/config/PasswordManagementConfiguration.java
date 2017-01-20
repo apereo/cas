@@ -3,6 +3,7 @@ package org.apereo.cas.pm.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidator;
@@ -98,10 +99,11 @@ public class PasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public CipherExecutor<Serializable, String> passwordManagementCipherExecutor() {
-        if (casProperties.getAuthn().getPm().isEnabled()) {
+        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
+        if (pm.isEnabled()) {
             return new PasswordResetTokenCipherExecutor(
-                    casProperties.getAuthn().getPm().getReset().getSecurity().getEncryptionKey(),
-                    casProperties.getAuthn().getPm().getReset().getSecurity().getSigningKey());
+                    pm.getReset().getSecurity().getEncryptionKey(),
+                    pm.getReset().getSecurity().getSigningKey());
         }
         return NoOpCipherExecutor.getInstance();
     }
@@ -110,14 +112,14 @@ public class PasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        if (casProperties.getAuthn().getPm().isEnabled()
-                && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getLdapUrl())
-                && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getBaseDn())
-                && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getUserFilter())) {
+        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
+        if (casProperties.getAuthn().getPm().isEnabled() && StringUtils.isNotBlank(pm.getLdap().getLdapUrl())
+                && StringUtils.isNotBlank(pm.getLdap().getBaseDn())
+                && StringUtils.isNotBlank(pm.getLdap().getUserFilter())) {
             return new LdapPasswordManagementService(passwordManagementCipherExecutor());
         }
 
-        if (casProperties.getAuthn().getPm().isEnabled()) {
+        if (pm.isEnabled()) {
             LOGGER.warn("No backend is configured to handle the account update operations. Verify your settings");
         }
         return new PasswordManagementService() {
