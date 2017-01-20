@@ -4,6 +4,7 @@ dependencies {
     compile libraries.bouncycastle
     compileOnly libraries.springcloud
     compile libraries.apachecxf
+    compile libraries.apachefediz
     compile libraries.guava
     compile libraries.spring
     compile project(":core:cas-server-core-web")
