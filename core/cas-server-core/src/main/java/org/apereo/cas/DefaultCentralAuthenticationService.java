@@ -72,33 +72,30 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
     /**
      * Build the central authentication service implementation.
-     *  @param ticketRegistry  the tickets registry.
-     * @param ticketFactory   the ticket factory
-     * @param servicesManager the services manager.
-     * @param logoutManager   the logout manager.
+     *
+     * @param ticketRegistry                                  the tickets registry.
+     * @param ticketFactory                                   the ticket factory
+     * @param servicesManager                                 the services manager.
+     * @param logoutManager                                   the logout manager.
      * @param authenticationRequestServiceSelectionStrategies The service selection strategy during validation events.
-     * @param authenticationPolicyFactory Authentication policy that uses a service context to produce stateful security policies to apply when
-     * authenticating credentials.
-     * @param principalFactory principal factory to create principal objects
-     * @param cipherExecutor Cipher executor to handle ticket validation.
+     * @param authenticationPolicyFactory                     Authentication policy that uses a service context to
+     *                                                        produce stateful security policies to apply when authenticating credentials.
+     * @param principalFactory                                principal factory to create principal objects
+     * @param cipherExecutor                                  Cipher executor to handle ticket validation.
      */
-    public DefaultCentralAuthenticationService(final TicketRegistry ticketRegistry, final TicketFactory ticketFactory, final ServicesManager servicesManager,
-            final LogoutManager logoutManager, final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
+    public DefaultCentralAuthenticationService(final TicketRegistry ticketRegistry,
+                                               final TicketFactory ticketFactory,
+                                               final ServicesManager servicesManager,
+                                               final LogoutManager logoutManager,
+                                               final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
                                                final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
-                                               final PrincipalFactory principalFactory, final CipherExecutor<String, String> cipherExecutor) {
-        super(ticketRegistry, ticketFactory, servicesManager, logoutManager, authenticationRequestServiceSelectionStrategies, authenticationPolicyFactory,
+                                               final PrincipalFactory principalFactory,
+                                               final CipherExecutor<String, String> cipherExecutor) {
+        super(ticketRegistry, ticketFactory, servicesManager, logoutManager,
+                authenticationRequestServiceSelectionStrategies, authenticationPolicyFactory,
                 principalFactory, cipherExecutor);
     }
 
-    /**
-     * {@inheritDoc}
-     * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
-     * Ticket that was derived from the TicketGrantingTicket being destroyed. May throw an
-     * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
-     *
-     * @param ticketGrantingTicketId the id of the ticket we want to destroy
-     * @return the logout requests.
-     */
     @Audit(
             action = "TICKET_GRANTING_TICKET_DESTROYED",
             actionResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
