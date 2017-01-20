@@ -188,7 +188,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws LoginException On security policy errors related to principal creation.
      */
     protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws LoginException {
-        logger.debug("Creating LDAP principal for [{}] based on {} and attributes {}", 
+        logger.debug("Creating LDAP principal for [{}] based on {} and attributes {}",
                 username, ldapEntry.getDn(), ldapEntry.getAttributeNames());
         final String id = getLdapPrincipalIdentifier(username, ldapEntry);
 
@@ -205,7 +205,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     attributeMap.put(principalAttrName, attr.getStringValue());
                 }
             } else {
-                logger.warn("Requested LDAP attribute {} could not be found on the resolved LDAP entry for {}", 
+                logger.warn("Requested LDAP attribute {} could not be found on the resolved LDAP entry for {}",
                         ldapAttr.getKey(), ldapEntry.getDn());
             }
         }
@@ -285,6 +285,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (!attributes.isEmpty()) {
             this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
         }
-        logger.debug("LDAP authentication entry attributes for the authentication request are {}", this.authenticatedEntryAttributes);
+        logger.debug("LDAP authentication entry attributes for the authentication request are {}",
+                (Object[]) this.authenticatedEntryAttributes);
     }
 }
