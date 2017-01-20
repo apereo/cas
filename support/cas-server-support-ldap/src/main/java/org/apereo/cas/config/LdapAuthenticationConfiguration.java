@@ -170,33 +170,47 @@ public class LdapAuthenticationConfiguration {
                 LOGGER.warn("Skipping ldap authentication entry since no type is defined");
                 return false;
             }
-            if (l.getBaseDn() == null) {
+            if (StringUtils.isBlank(l.getBaseDn())) {
                 LOGGER.warn("Skipping ldap authentication entry since no baseDn is defined");
                 return false;
             }
-            if (l.getLdapUrl() == null) {
+            if (StringUtils.isBlank(l.getLdapUrl())) {
                 LOGGER.warn("Skipping ldap authentication entry since no ldap url is defined");
+                return false;
+            }
+            if (StringUtils.isBlank(l.getUserFilter())) {
+                LOGGER.warn("Skipping ldap authentication entry since no user filter is defined");
                 return false;
             }
             return true;
         };
     }
 
-    private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l, 
+    private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
                                                                                          final Authenticator authenticator) {
         final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
         if (cfg.getPasswordWarningNumberOfDays() > 0) {
-            handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-            handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-            handlers.add(new FreeIPAAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
+            LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: {}", l.getPasswordPolicy().getType());
+            switch (l.getPasswordPolicy().getType()) {
+                case AD:
+                    handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                    break;
+                case FreeIPA:
+                    handlers.add(new FreeIPAAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
+                    break;
+                case EDirectory:
+                    handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                    break;
+                default:
+                    handlers.add(new PasswordPolicyAuthenticationResponseHandler());
+                    handlers.add(new PasswordExpirationAuthenticationResponseHandler());
+                    break;
+            }
         } else {
             LOGGER.debug("Password warning number of days is undefined; LDAP authentication may NOT support "
                     + "EDirectory, AD and FreeIPA to handle password policy authentication responses");
         }
-
-        handlers.add(new PasswordPolicyAuthenticationResponseHandler());
-        handlers.add(new PasswordExpirationAuthenticationResponseHandler());
         authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(
                 new AuthenticationResponseHandler[handlers.size()]));
 
