@@ -55,20 +55,7 @@ public class PasswordManagementProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
-
-        /**
-         * The ldap type used to handle specific ops.
-         */
-        public enum LdapType {
-            /**
-             * Generic ldap type (openldap, 389ds, etc).
-             */
-            GENERIC,
-            /**
-             * Active directory.
-             */
-            AD
-        }
+        
         private String baseDn;
         private String userFilter;
         private LdapType type = LdapType.AD;

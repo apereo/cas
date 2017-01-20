@@ -17,6 +17,28 @@ import java.util.List;
  */
 public abstract class AbstractLdapProperties {
     /**
+     * The ldap type used to handle specific ops.
+     */
+    public enum LdapType {
+        /**
+         * Generic ldap type (OpenLDAP, 389ds, etc).
+         */
+        GENERIC,
+        /**
+         * Active directory.
+         */
+        AD,
+        /**
+         * FreeIPA directory.
+         */
+        FreeIPA,
+        /**
+         * EDirectory.
+         */
+        EDirectory
+    }
+    
+    /**
      * Describe ldap connection strategies.
      */
     public enum LdapConnectionStrategy {

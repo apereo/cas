@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.LoginException;
@@ -24,9 +25,17 @@ public class PasswordPolicyProperties {
     private boolean displayWarningOnMatch = true;
 
     private boolean warnAll;
-
     private int warningDays = 30;
-    
+    private AbstractLdapProperties.LdapType type = AbstractLdapProperties.LdapType.GENERIC;
+
+    public AbstractLdapProperties.LdapType getType() {
+        return type;
+    }
+
+    public void setType(final AbstractLdapProperties.LdapType type) {
+        this.type = type;
+    }
+
     public void setWarnAll(final boolean warnAll) {
         this.warnAll = warnAll;
     }
