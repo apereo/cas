@@ -279,7 +279,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     /**
      * Triggered on successful validation events. Extensions are to
-     * use this as hook to plug in behvior.
+     * use this as hook to plug in behavior.
      *
      * @param serviceTicketId the service ticket id
      * @param assertion the assertion
@@ -338,7 +338,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param proxyGrantingTicket the proxy granting ticket
      * @return the model and view, pointed to the view name set by
      */
-    private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou,
+    private ModelAndView generateSuccessView(final Assertion assertion, 
+                                             final String proxyIou,
                                              final WebApplicationService service,
                                              final HttpServletRequest request,
                                              final Optional<MultifactorAuthenticationProvider> contextProvider,
