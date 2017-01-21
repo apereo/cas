@@ -17,7 +17,7 @@ public interface OAuthCasClientRedirectActionBuilder {
      * and configure the CAS client accordingly based
      * on the properties of the web context.
      *
-     * @param casClient the cas client
+     * @param casClient the cas client config
      * @param context   the context
      * @return the redirect action
      */

@@ -12,14 +12,16 @@ import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.pac4j.test.MockFacebookClient;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.exception.HttpAction;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
+import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -120,11 +122,15 @@ public class DelegatedClientAuthenticationActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
 
-        final FacebookClient facebookClient = new MockFacebookClient();
+        final FacebookClient facebookClient = new FacebookClient() {
+            @Override
+            protected OAuth20Credentials retrieveCredentials(final WebContext context) throws HttpAction {
+                return new OAuth20Credentials("fakeVerifier", FacebookClient.class.getSimpleName());
+            }
+        };
+        facebookClient.setName(FacebookClient.class.getSimpleName());
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
-
-        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class),
-                mock(ExpirationPolicy.class));
+        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
 
@@ -134,9 +140,7 @@ public class DelegatedClientAuthenticationActionTests {
                 .thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         when(transManager.getAuthenticationManager()).thenReturn(authNManager);
-        when(transManager.handle(any(AuthenticationTransaction.class),
-                any(AuthenticationResultBuilder.class)))
-                .thenReturn(transManager);
+        when(transManager.handle(any(AuthenticationTransaction.class), any(AuthenticationResultBuilder.class))).thenReturn(transManager);
 
         final AuthenticationSystemSupport support = mock(AuthenticationSystemSupport.class);
         when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
