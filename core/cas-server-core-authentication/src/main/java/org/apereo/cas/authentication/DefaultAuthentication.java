@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -26,9 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class DefaultAuthentication implements Authentication {
 
-    /**
-     * UID for serializing.
-     */
     private static final long serialVersionUID = 3206127526058061391L;
 
     /**
@@ -188,9 +186,11 @@ public class DefaultAuthentication implements Authentication {
         return builder.isEquals();
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialProvided() {
-        return this.attributes.containsKey(AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED)
+        return this.attributes != null
+                && this.attributes.containsKey(AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED)
                 && (Boolean) this.attributes.get(AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED);
     }
 

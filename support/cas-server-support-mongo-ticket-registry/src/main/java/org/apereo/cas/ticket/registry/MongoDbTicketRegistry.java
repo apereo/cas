@@ -78,8 +78,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticket) {
-        logger.debug("Adding ticket {}", ticket);
         try {
+            logger.debug("Adding ticket {}", ticket);
             this.mongoTemplate.insert(buildTicketAsDocument(ticket), this.collectionName);
         } catch (final Exception e) {
             logger.error("Failed adding {}: {}", ticket, e);
