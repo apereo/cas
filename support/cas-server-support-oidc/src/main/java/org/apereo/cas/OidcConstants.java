@@ -1,11 +1,10 @@
 package org.apereo.cas;
 
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OidcConstants}.
@@ -15,6 +14,26 @@ import java.util.Set;
  */
 public interface OidcConstants {
 
+    /**
+     * Dnamic client registration mode.
+     */
+    enum DynamicClientRegistrationMode {
+        /** Registration is open to all. */
+        OPEN,
+
+        /** registration is protected for all. */
+        PROTECTED
+    }
+    /**
+     * ACR passed in the id token.
+     */
+    String ACR = "acr";
+
+    /**
+     * Authentication method reference passed in the id token.
+     */
+    String AMR = "amr";
+    
     /**
      * The Authorization Server MUST NOT display any authentication or consent user interface pages.
      */
@@ -48,16 +67,16 @@ public interface OidcConstants {
     /**
      * The Scopes.
      */
-    List<String> SCOPES = ImmutableList.of("openid", "profile", "email", "address", "phone", "offline_access");
+    List<String> SCOPES = Arrays.asList("openid", "profile", "email", "address", "phone", "offline_access");
 
     /**
      * The Claims.
      */
-    Set<String> CLAIMS = ImmutableSet.of(CLAIM_SUB, "name", CLAIM_PREFERRED_USERNAME,
+    Set<String> CLAIMS = Stream.of(CLAIM_SUB, "name", CLAIM_PREFERRED_USERNAME,
             "family_name", "given_name", "middle_name", "given_name", "profile",
             "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
             "birthdate", "email", "email_verified", "phone_number",
-            "phone_number_verified", "address");
+            "phone_number_verified", "address").collect(Collectors.toSet());
 
     /**
      * The id token.

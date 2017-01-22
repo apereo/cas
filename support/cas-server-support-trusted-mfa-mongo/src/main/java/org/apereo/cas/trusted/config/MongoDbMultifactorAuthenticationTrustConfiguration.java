@@ -13,6 +13,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
@@ -20,7 +21,7 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
  * This is {@link MongoDbMultifactorAuthenticationTrustConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @Configuration("mongoDbMultifactorAuthenticationTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -31,7 +32,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
     @Autowired
     @Qualifier("mfaTrustCipherExecutor")
-    private CipherExecutor<String, String> mfaTrustCipherExecutor;
+    private CipherExecutor mfaTrustCipherExecutor;
 
     @RefreshScope
     @Bean
@@ -48,7 +49,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     
     @RefreshScope
     @Bean
-    public SimpleMongoDbFactory mongoMfaTrustedAuthnDbFactory() {
+    public MongoDbFactory mongoMfaTrustedAuthnDbFactory() {
         try {
             return new SimpleMongoDbFactory(new MongoClientURI(
                     casProperties.getAuthn().getMfa().getTrusted().getMongodb().getClientUri()));

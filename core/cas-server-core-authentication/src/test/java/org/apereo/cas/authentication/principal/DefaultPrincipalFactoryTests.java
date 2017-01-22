@@ -23,7 +23,7 @@ public class DefaultPrincipalFactoryTests {
     @Test
     public void checkCreatingSimplePrincipalWithAttributes() {
         final PrincipalFactory f = new DefaultPrincipalFactory();
-        final Principal p = f.createPrincipal("uid", Collections.<String, Object>singletonMap("mail", "final@example.com"));
+        final Principal p = f.createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
         assertEquals(p.getId(), "uid");
         assertEquals(p.getAttributes().size(), 1);
         assertTrue(p.getAttributes().containsKey("mail"));

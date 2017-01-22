@@ -31,31 +31,29 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         try {
             final UsernamePasswordCredential creds = new UsernamePasswordCredential(c.getUsername(), c.getPassword());
             
             final ResponseEntity<SimplePrincipal> authenticationResponse = api.authenticate(creds);
-            if (authenticationResponse.getStatusCode().value() == HttpStatus.OK.value()) {
+            if (authenticationResponse.getStatusCode() == HttpStatus.OK) {
                 final SimplePrincipal principalFromRest = authenticationResponse.getBody();
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {
-                    throw new FailedLoginException("Could not determine authentication response from rest endpoint for "
-                            + c.getUsername());
+                    throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + c.getUsername());
                 }
-                return createHandlerResult(c,
-                        this.principalFactory.createPrincipal(principalFromRest.getId()),
-                        new ArrayList<>());
+                return createHandlerResult(c, this.principalFactory.createPrincipal(principalFromRest.getId()), new ArrayList<>());
             }
         } catch (final HttpClientErrorException e) {
-            if (e.getStatusCode().value() == HttpStatus.FORBIDDEN.value()) {
+            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw new AccountDisabledException("Could not authenticate forbidden account for " + c.getUsername());
             }
-            if (e.getStatusCode().value() == HttpStatus.UNAUTHORIZED.value()) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 throw new FailedLoginException("Could not authenticate account for " + c.getUsername());
             }
-            if (e.getStatusCode().value() == HttpStatus.NOT_FOUND.value()) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new AccountNotFoundException("Could not locate account for " + c.getUsername());
             }
             throw new FailedLoginException("Rest endpoint returned an unknown status code "

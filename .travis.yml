@@ -16,6 +16,10 @@ jdk:
 cache:
   directories:
     - '$HOME/.gradle/caches'
+git:
+  depth: 3
+notifications:
+  slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
@@ -24,6 +28,8 @@ env:
 before_script:
  - export JAVA_OPTS="-Xmx2048m"
 before_install:
+- git gc --aggressive --prune=now
+- sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 - ls ./etc
 - sudo unzip -j -o ./etc/jce8.zip *.jar -d `jdk_switcher home oraclejdk8`/jre/lib/security
 - sudo ls `jdk_switcher home oraclejdk8`/jre/lib/security
@@ -34,7 +40,7 @@ before_install:
 install:
 - ./gradlew clean bootRepackage install --parallel -x test --stacktrace
 script:
-- travis_wait ./gradlew test --stacktrace --parallel
+- travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh

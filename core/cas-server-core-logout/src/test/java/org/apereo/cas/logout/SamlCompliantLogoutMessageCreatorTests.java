@@ -1,6 +1,7 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -23,13 +24,13 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnit4.class)
 public class SamlCompliantLogoutMessageCreatorTests {
 
-    private LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
+    private final LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
 
     @Test
     public void verifyMessageBuilding() throws Exception {
 
-        final SingleLogoutService service = mock(SingleLogoutService.class);
-        when(service.getOriginalUrl()).thenReturn(TestUtils.CONST_TEST_URL);
+        final WebApplicationService service = mock(WebApplicationService.class);
+        when(service.getOriginalUrl()).thenReturn(RegisteredServiceTestUtils.CONST_TEST_URL);
         final URL logoutUrl = new URL(service.getOriginalUrl());
         final DefaultLogoutRequest request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl);
 

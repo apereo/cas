@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.apereo.cas.services.web.ServiceThemeResolver;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
@@ -12,25 +13,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.ViewResolver;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Comment;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Macro;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.dom.Text;
+import org.thymeleaf.dialect.IPostProcessorDialect;
+import org.thymeleaf.engine.AbstractTemplateHandler;
+import org.thymeleaf.model.ICloseElementTag;
+import org.thymeleaf.model.IOpenElementTag;
+import org.thymeleaf.model.IText;
+import org.thymeleaf.postprocessor.IPostProcessor;
+import org.thymeleaf.postprocessor.PostProcessor;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import org.thymeleaf.templatemode.ITemplateModeHandler;
-import org.thymeleaf.templatemode.TemplateModeHandler;
-import org.thymeleaf.templateparser.xmlsax.XhtmlAndHtml5NonValidatingSAXTemplateParser;
-import org.thymeleaf.templatewriter.AbstractGeneralTemplateWriter;
-import org.thymeleaf.templatewriter.ITemplateWriter;
+import org.thymeleaf.templatemode.TemplateMode;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link CasThemesConfiguration}.
@@ -50,15 +46,15 @@ public class CasThemesConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ThymeleafProperties properties;
+    private ThymeleafProperties thymeleafProperties;
 
     @Autowired
     @Qualifier("thymeleafViewResolver")
     private ThymeleafViewResolver thymeleafViewResolver;
 
     @Autowired
-    @Qualifier("argumentExtractors")
-    private List argumentExtractors;
+    @Qualifier("argumentExtractor")
+    private ArgumentExtractor argumentExtractors;
 
     @Autowired
     @Qualifier("serviceThemeResolverSupportedBrowsers")
@@ -66,10 +62,11 @@ public class CasThemesConfiguration {
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
-        final RegisteredServiceThemeBasedViewResolver r = new RegisteredServiceThemeBasedViewResolver();
+        final RegisteredServiceThemeBasedViewResolver r = new RegisteredServiceThemeBasedViewResolver(servicesManager, argumentExtractors,
+                thymeleafProperties.getPrefix(), thymeleafProperties.getSuffix());
 
         r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
-        r.setCache(this.properties.isCache());
+        r.setCache(this.thymeleafProperties.isCache());
         if (!r.isCache()) {
             r.setCacheLimit(0);
         }
@@ -82,60 +79,69 @@ public class CasThemesConfiguration {
         r.setRedirectHttp10Compatible(this.thymeleafViewResolver.isRedirectHttp10Compatible());
         r.setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
 
-        final SpringTemplateEngine engine = this.thymeleafViewResolver.getTemplateEngine();
-        if (!engine.isInitialized()) {
-            final ITemplateWriter writer = new AbstractGeneralTemplateWriter() {
-                @Override
-                protected boolean shouldWriteXmlDeclaration() {
-                    return false;
-                }
+        final SpringTemplateEngine engine = SpringTemplateEngine.class.cast(this.thymeleafViewResolver.getTemplateEngine());
+        engine.addDialect(new IPostProcessorDialect() {
+            @Override
+            public int getDialectPostProcessorPrecedence() {
+                return Integer.MAX_VALUE;
+            }
 
-                @Override
-                protected boolean useXhtmlTagMinimizationRules() {
-                    return true;
-                }
+            @Override
+            public Set<IPostProcessor> getPostProcessors() {
+                return Collections.singleton(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
+                        CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
+            }
 
-                @Override
-                protected void writeText(final Arguments arguments, final Writer writer, final Text text)
-                        throws IOException {
-                    final String contentString = text.getContent();
-                    if (!contentString.isEmpty() && contentString.trim().isEmpty()) {
-                        return;
-                    }
-                    super.writeText(arguments, writer, text);
-                }
+            @Override
+            public String getName() {
+                return CasThymeleafOutputTemplateHandler.class.getSimpleName();
+            }
+        });
 
-                @Override
-                public void writeNode(final Arguments arguments, final Writer writer, final Node node)
-                        throws IOException {
-                    super.writeNode(arguments, writer, node);
-                    if (node instanceof Element || node instanceof Comment || node instanceof Macro) {
-                        writer.write("\n");
-                    }
-                }
-            };
-
-            final ITemplateModeHandler handler = new TemplateModeHandler("HTML5",
-                    new XhtmlAndHtml5NonValidatingSAXTemplateParser(2), writer);
-            engine.setTemplateModeHandlers(Collections.singleton(handler));
-        }
         r.setTemplateEngine(engine);
         r.setViewNames(this.thymeleafViewResolver.getViewNames());
-        r.setServicesManager(this.servicesManager);
-        r.setArgumentExtractors(this.argumentExtractors);
-        r.setPrefix(this.properties.getPrefix());
-        r.setSuffix(this.properties.getSuffix());
 
         return r;
     }
 
     @Bean(name = {"serviceThemeResolver", "themeResolver"})
     public ThemeResolver serviceThemeResolver() {
-        final ServiceThemeResolver resolver = new ServiceThemeResolver();
-        resolver.setDefaultThemeName(casProperties.getTheme().getDefaultThemeName());
-        resolver.setServicesManager(this.servicesManager);
-        resolver.setMobileBrowsers(serviceThemeResolverSupportedBrowsers);
-        return resolver;
+        final String defaultThemeName = casProperties.getTheme().getDefaultThemeName();
+        return new ServiceThemeResolver(defaultThemeName, servicesManager, serviceThemeResolverSupportedBrowsers);
     }
 
+    /**
+     * The Cas thymeleaf output template handler which attempts to compress the whitespace
+     * produced by thymeleaf's conditional flags.
+     */
+    public static class CasThymeleafOutputTemplateHandler extends AbstractTemplateHandler {
+        private boolean writeWhitespace;
+        
+        public CasThymeleafOutputTemplateHandler() {
+        }
+
+        @Override
+        public void handleText(final IText text) {
+            final String contentString = text.getText();
+            if (!contentString.isEmpty() && contentString.trim().isEmpty()) {
+                if (!writeWhitespace) {
+                    return;
+                }
+                writeWhitespace = false;
+            }
+            super.handleText(text);
+        }
+
+        @Override
+        public void handleCloseElement(final ICloseElementTag tag) {
+            super.handleCloseElement(tag);
+            writeWhitespace = true;
+        }
+
+        @Override
+        public void handleOpenElement(final IOpenElementTag openElementTag) {
+            super.handleOpenElement(openElementTag);
+            writeWhitespace = true;
+        }
+    }
 }

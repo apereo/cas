@@ -26,23 +26,23 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     /**
      * The must-have attribute name.
      */
-    private String spnegoAttributeName;
-
-    private ConnectionFactory connectionFactory;
-    private SearchRequest searchRequest;
-
-    public LdapSpnegoKnownClientSystemsFilterAction() {
-    }
+    private final String spnegoAttributeName;
+    private final ConnectionFactory connectionFactory;
+    private final SearchRequest searchRequest;
 
     /**
      * Instantiates a new action.
-     *
+     * @param ipsToCheckPattern the ips to check pattern
+     * @param alternativeRemoteHostAttribute the alternative remote host attribute
+     * @param dnsTimeout # of milliseconds to wait for a DNS request to return
      * @param connectionFactory   the connection factory
      * @param searchRequest       the search request
      * @param spnegoAttributeName the certificate revocation list attribute name
      */
-    public LdapSpnegoKnownClientSystemsFilterAction(final ConnectionFactory connectionFactory, final SearchRequest searchRequest,
+    public LdapSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeRemoteHostAttribute,
+                                                    final long dnsTimeout, final ConnectionFactory connectionFactory, final SearchRequest searchRequest,
                                                     final String spnegoAttributeName) {
+        super(ipsToCheckPattern, alternativeRemoteHostAttribute, dnsTimeout);
         this.connectionFactory = connectionFactory;
         this.spnegoAttributeName = spnegoAttributeName;
         this.searchRequest = searchRequest;
@@ -88,6 +88,14 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         return executeSearchForSpnegoAttribute(remoteIp);
     }
 
+    @Override
+    protected String getRemoteHostName(final String remoteIp) {
+        if ("localhost".equalsIgnoreCase(remoteIp) || remoteIp.startsWith("127.")) {
+            return remoteIp;
+        }
+        return super.getRemoteHostName(remoteIp);
+    }
+
     /**
      * Searches the ldap instance for the attribute value.
      *
@@ -97,8 +105,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
         Connection connection = null;
         final String remoteHostName = getRemoteHostName(remoteIp);
-        logger.debug("Resolved remote hostname {} based on ip {}",
-                remoteHostName, remoteIp);
+        logger.debug("Resolved remote hostname {} based on ip {}", remoteHostName, remoteIp);
 
         try {
             connection = createConnection();

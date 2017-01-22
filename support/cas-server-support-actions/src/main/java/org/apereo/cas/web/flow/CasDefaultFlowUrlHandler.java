@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -50,10 +50,9 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
-        final StringBuilder builder = new StringBuilder();
         final String encoding = getEncodingScheme(request);
-        builder.append(request.getRequestURI());
-        builder.append('?');
+        final StringBuilder builder = new StringBuilder(request.getRequestURI())
+                .append('?');
 
         final Map<String, String[]> flowParams = new LinkedHashMap<>(request.getParameterMap());
         flowParams.put(this.flowExecutionKeyParameter, new String[]{flowExecutionKey});
@@ -61,7 +60,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
         final String queryString = flowParams.entrySet().stream()
                 .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
                 .reduce((param1, param2) -> param1 + '&' + param2)
-                .orElse("");
+                .orElse(StringUtils.EMPTY);
 
         builder.append(queryString);
         return builder.toString();
@@ -71,22 +70,15 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     public String createFlowDefinitionUrl(final String flowId, final AttributeMap input, final HttpServletRequest request) {
         return request.getRequestURI()
             + (request.getQueryString() != null ? '?'
-            + request.getQueryString() : "");
+            + request.getQueryString() : StringUtils.EMPTY);
     }
 
-    private Stream<String> encodeMultiParameter(final String key, final String[] values, final String encoding) {
+    private static Stream<String> encodeMultiParameter(final String key, final String[] values, final String encoding) {
         return Stream.of(values).map(value -> encodeSingleParameter(key, value, encoding));
     }
 
-    private String encodeSingleParameter(final String key, final String value, final String encoding) {
-        return urlEncode(key, encoding) + '=' + urlEncode(value, encoding);
+    private static String encodeSingleParameter(final String key, final String value, final String encoding) {
+        return EncodingUtils.urlEncode(key, encoding) + '=' + EncodingUtils.urlEncode(value, encoding);
     }
 
-    private String urlEncode(final String value, final String encodingScheme) {
-        try {
-            return URLEncoder.encode(value, encodingScheme);
-        } catch (final UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("Cannot url encode " + value);
-        }
-    }
 }

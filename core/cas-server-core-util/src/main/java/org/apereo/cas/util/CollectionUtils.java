@@ -1,11 +1,13 @@
 package org.apereo.cas.util;
 
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,7 +30,7 @@ public final class CollectionUtils {
      * @return The collection instance containing the object provided
      */
     @SuppressWarnings("unchecked")
-    public static Set<Object> convertValueToCollection(final Object obj) {
+    public static Set<Object> toCollection(final Object obj) {
         final Set<Object> c = new HashSet<>();
         if (obj == null) {
             LOGGER.debug("Converting null obj to empty collection");
@@ -38,12 +40,42 @@ public final class CollectionUtils {
         } else if (obj instanceof Map) {
             throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
         } else if (obj.getClass().isArray()) {
-            c.addAll(Lists.newArrayList((Object[]) obj));
+            Collections.addAll(c, obj);
             LOGGER.debug("Converting array attribute [{}]", obj);
         } else {
             c.add(obj);
             LOGGER.debug("Converting attribute [{}]", obj);
         }
         return c;
+    }
+
+    /**
+     * Wraps a possibly null map in an immutable wrapper.
+     *
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param source Nullable map to wrap.
+     * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
+     * {@link java.util.Collections#emptyMap()}.
+     */
+    public static <K, V> Map<K, V> wrap(final Map<K, V> source) {
+        if (source != null) {
+            return new HashMap<>(source);
+        }
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Wraps a possibly null list in an immutable wrapper.
+     *
+     * @param <T>    the type parameter
+     * @param source Nullable list to wrap.
+     * @return {@link Collections#unmodifiableList(List)} if given list is not null, otherwise {@link java.util.Collections#EMPTY_LIST}.
+     */
+    public static <T> List<T> wrap(final List<T> source) {
+        if (source != null) {
+            return Collections.unmodifiableList(source);
+        }
+        return Collections.emptyList();
     }
 }

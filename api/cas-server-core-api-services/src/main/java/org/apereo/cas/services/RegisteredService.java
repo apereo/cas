@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.1
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredService extends Cloneable, Serializable {
 
     /**
@@ -120,6 +122,14 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return true if they match, false otherwise.
      */
     boolean matches(Service service);
+
+    /**
+     * Returns whether the service id matches the registered service.
+     *
+     * @param serviceId the service id to match.
+     * @return true if they match, false otherwise.
+     */
+    boolean matches(String serviceId);
 
     /**
      * Clone this service.

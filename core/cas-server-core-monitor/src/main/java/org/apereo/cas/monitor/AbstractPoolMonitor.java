@@ -13,31 +13,26 @@ import java.util.concurrent.TimeoutException;
  * @since 3.5.0
  */
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
-    
+
     /** Maximum amount of time in ms to wait while validating pool resources. */
-    private int maxWait;
+    private final int maxWait;
 
     /** Executor that performs pool resource validation. */
-    private ExecutorService executor;
-    
+    private final ExecutorService executor;
+
     /**
-     * Sets the executor service responsible for pool resource validation.
+     * Creates a new instance.
      *
-     * @param executorService Executor of pool validation operations.
-     */
-    public void setExecutor(final ExecutorService executorService) {
-        this.executor = executorService;
-    }
-    
-    /**
-     * Set the maximum amount of time wait while validating pool resources.
+     * @param name monitor name
+     * @param executorService executor service responsible for pool resource validation.
+     * @param maxWait Set the maximum amount of time wait while validating pool resources.
      * If the pool defines a maximum time to wait for a resource, this property
      * should be set less than that value.
-     *
-     * @param time Wait time in milliseconds.
      */
-    public void setMaxWait(final int time) {
-        this.maxWait = time;
+    public AbstractPoolMonitor(final String name, final ExecutorService executorService, final int maxWait) {
+        super(name);
+        this.executor = executorService;
+        this.maxWait = maxWait;
     }
 
     @Override
@@ -60,7 +55,6 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
         return new PoolStatus(code, description, getActiveCount(), getIdleCount());
     }
 
-
     /**
      * Performs a health check on a the pool.  The recommended implementation is to
      * obtain a pool resource, validate it, and return it to the pool.
@@ -71,14 +65,12 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
      */
     protected abstract StatusCode checkPool() throws Exception;
 
-
     /**
      * Gets the number of pool resources idle at present.
      *
      * @return Number of idle pool resources.
      */
     protected abstract int getIdleCount();
-
 
     /**
      * Gets the number of pool resources active at present.
@@ -88,7 +80,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
     protected abstract int getActiveCount();
 
     private static class Validator implements Callable<StatusCode> {
-        private AbstractPoolMonitor monitor;
+        private final AbstractPoolMonitor monitor;
 
         /**
          * Instantiates a new Validator.

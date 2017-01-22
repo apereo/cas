@@ -23,7 +23,11 @@ import javax.security.auth.login.FailedLoginException;
  */
 public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
     
-    private TicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
+
+    public OpenIdCredentialsAuthenticationHandler(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
@@ -47,7 +51,4 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
         return credential instanceof OpenIdCredential;
     }
 
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
 }

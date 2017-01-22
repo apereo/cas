@@ -2,6 +2,7 @@ description = "Apereo CAS JWT Token Authentication Support"
 dependencies {
     compile project(":api:cas-server-core-api")
     compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-services")
     compile project(":support:cas-server-support-pac4j-authentication")
@@ -10,6 +11,9 @@ dependencies {
     compile libraries.spring
     runtime libraries.hibernate
     testCompile project(":core:cas-server-core-authentication")
+    testCompile project(":core:cas-server-core")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(":support:cas-server-support-cookie")
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
 }

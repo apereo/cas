@@ -1,6 +1,5 @@
 package org.apereo.cas.util.http;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -27,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of CAS {@link HttpClient}
@@ -68,10 +68,8 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
      * @param httpClient             the HTTP client used by the client
      * @param requestExecutorService the request executor service used by the client
      */
-    SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
-                     final FutureRequestExecutionService requestExecutorService) {
-        Collections.sort(acceptableCodes);
-        this.acceptableCodes = ImmutableList.copyOf(acceptableCodes);
+    SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient, final FutureRequestExecutionService requestExecutorService) {
+        this.acceptableCodes = acceptableCodes.stream().sorted().collect(Collectors.toList());
         this.httpClient = httpClient;
         this.requestExecutorService = requestExecutorService;
     }
@@ -122,8 +120,8 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                     return msg;
                 }
             }
-            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned {}",
-                    responseCode);
+            LOGGER.warn("Response code {} from {} did not match any of the acceptable response codes.",
+                    responseCode, url);
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 final String value = response.getStatusLine().getReasonPhrase();
                 LOGGER.error("There was an error contacting the endpoint: {}; The error:\n{}", url.toExternalForm(),

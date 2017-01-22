@@ -16,13 +16,7 @@ import java.util.List;
  */
 public class MemcachedMonitor extends AbstractCacheMonitor {
 
-    private MemcachedClientIF memcachedClient;
-
-    /**
-     * Instantiates a new Memcached monitor.
-     */
-    public MemcachedMonitor() {
-    }
+    private final MemcachedClientIF memcachedClient;
 
     /**
      * Creates a new monitor that observes the given memcached client.
@@ -30,9 +24,9 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
      * @param client Memcached client.
      */
     public MemcachedMonitor(final MemcachedClientIF client) {
+        super(MemcachedMonitor.class.getSimpleName());
         this.memcachedClient = client;
     }
-
 
     /**
      * Supersede the default cache status algorithm by considering unavailable memcached nodes above cache statistics.
@@ -84,9 +78,5 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
             });
         }
         return statsList.toArray(new CacheStatistics[statsList.size()]);
-    }
-
-    public void setMemcachedClient(final MemcachedClientIF memcachedClient) {
-        this.memcachedClient = memcachedClient;
     }
 }

@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.InvalidLoginLocationException;
 import org.apereo.cas.authentication.InvalidLoginTimeException;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
@@ -68,6 +69,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         this.errorMap.put(ActiveDirectoryAccountState.Error.INVALID_WORKSTATION, new InvalidLoginLocationException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE, new AccountPasswordMustChangeException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
         this.errorMap.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
         this.errorMap.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
         this.errorMap.put(EDirectoryAccountState.Error.LOGIN_TIME_LIMITED, new InvalidLoginTimeException());
@@ -165,10 +167,8 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
                 "Password expires in {} days. Expiration warning threshold is {} days.",
                 ttl,
                 configuration.getPasswordWarningNumberOfDays());
-        if (configuration.isAlwaysDisplayPasswordExpirationWarning()
-                || ttl < configuration.getPasswordWarningNumberOfDays()) {
-            messages.add(new PasswordExpiringWarningMessageDescriptor(
-                    "Password expires in {0} days.", ttl));
+        if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {
+            messages.add(new PasswordExpiringWarningMessageDescriptor("Password expires in {0} days.", ttl));
         }
         if (warning.getLoginsRemaining() > 0) {
             messages.add(new DefaultMessageDescriptor(

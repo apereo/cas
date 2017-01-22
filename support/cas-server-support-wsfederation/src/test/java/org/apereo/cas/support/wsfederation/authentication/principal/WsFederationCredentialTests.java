@@ -1,14 +1,11 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
@@ -19,9 +16,6 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 public class WsFederationCredentialTests extends AbstractWsFederationTests {
-
-    @Autowired
-    private HashMap<String, String> testTokens;
     
     private WsFederationCredential standardCred;
 
@@ -83,9 +77,5 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         
         final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
         assertFalse("testIsValidOldToken() - False", result);
-    }
-
-    public void setTestTokens(final HashMap<String, String> testTokens) {
-        this.testTokens = testTokens;
     }
 }

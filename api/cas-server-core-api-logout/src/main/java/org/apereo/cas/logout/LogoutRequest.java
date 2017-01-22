@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
+
 import java.io.Serializable;
 import java.net.URL;
 
@@ -36,7 +38,7 @@ public interface LogoutRequest extends Serializable {
      *
      * @return the service
      */
-    SingleLogoutService getService();
+    WebApplicationService getService();
 
     /**
      * Gets logout url.

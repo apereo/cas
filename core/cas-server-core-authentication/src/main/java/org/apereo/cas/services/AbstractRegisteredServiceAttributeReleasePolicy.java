@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -8,15 +7,14 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesReposit
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.ApplicationContextProvider;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 import java.util.Set;
-
-import static com.google.common.collect.Maps.newTreeMap;
+import java.util.TreeMap;
 
 /**
  * Abstract release policy for attributes, provides common shared settings such as loggers and attribute filter config.
@@ -28,30 +26,13 @@ import static com.google.common.collect.Maps.newTreeMap;
 public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 5325460875620586503L;
-
-    /**
-     * The logger.
-     */
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredServiceAttributeReleasePolicy.class);
 
-    /**
-     * The attribute filter.
-     */
     private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
-
-    /**
-     * Attribute repository that refreshes attributes for a principal.
-     **/
     private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
 
-    /**
-     * Authorize the release of credential for this service. Default is false.
-     **/
     private boolean authorizedToReleaseCredentialPassword;
-
-    /**
-     * Authorize the release of PGT for this service. Default is false.
-     **/
     private boolean authorizedToReleaseProxyGrantingTicket;
 
     @Override
@@ -110,7 +91,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         LOGGER.debug("Default attributes found to be released are {}", defaultAttributes);
 
         LOGGER.debug("Attempting to merge policy attributes and default attributes");
-        final Map<String, Object> attributesToRelease = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+        final Map<String, Object> attributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         LOGGER.debug("Adding default attributes first to the released set of attributes");
         attributesToRelease.putAll(defaultAttributes);
@@ -153,7 +134,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             final Set<String> defaultAttrs = props.getAuthn().getAttributeRepository().getDefaultAttributesToRelease();
             LOGGER.debug("Default attributes for release are: {}", defaultAttrs);
 
-            final Map<String, Object> defaultAttributesToRelease = newTreeMap(String.CASE_INSENSITIVE_ORDER);
+            final Map<String, Object> defaultAttributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             defaultAttrs.stream().forEach(key -> {
                 if (attributes.containsKey(key)) {
                     LOGGER.debug("Found and added default attribute for release: {}", key);
@@ -163,7 +144,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             return defaultAttributesToRelease;
         }
 
-        return Maps.newTreeMap();
+        return new TreeMap<>();
     }
 
     /**

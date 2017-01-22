@@ -1,6 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
+import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ClassPathResource;
 
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
@@ -21,22 +25,23 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Import(X509AuthenticationConfiguration.class)
 public abstract class AbstractX509CertificateTests extends AbstractCentralAuthenticationServiceTests {
 
     public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
-
-    public static final X509Certificate INVALID_CERTIFICATE = new CasX509Certificate(false);
-
+    
     protected static class CasX509Certificate extends X509Certificate {
         
         private static final long serialVersionUID = -4449243195531417769L;
-
-        private boolean valid;
+        private final X509Certificate x509Certificate = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+        
+        private final boolean valid;
 
         protected CasX509Certificate(final boolean valid) {
             this.valid = valid;
         }
 
+        
         @Override
         public void checkValidity() throws CertificateExpiredException,
         CertificateNotYetValidException {
@@ -55,7 +60,7 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
 
         @Override
         public int getBasicConstraints() {
-            return -1;
+            return x509Certificate.getBasicConstraints();
         }
 
         @Override
@@ -65,82 +70,82 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
 
         @Override
         public boolean[] getIssuerUniqueID() {
-            return null;
+            return x509Certificate.getIssuerUniqueID();
         }
 
         @Override
         public boolean[] getKeyUsage() {
-            return null;
+            return x509Certificate.getKeyUsage();
         }
 
         @Override
         public Date getNotAfter() {
-            return null;
+            return x509Certificate.getNotAfter();
         }
 
         @Override
         public Date getNotBefore() {
-            return null;
+            return x509Certificate.getNotBefore();
         }
 
         @Override
         public BigInteger getSerialNumber() {
-            return new BigInteger("500000");
+            return x509Certificate.getSerialNumber();
         }
 
         @Override
         public String getSigAlgName() {
-            return null;
+            return x509Certificate.getSigAlgName();
         }
 
         @Override
         public String getSigAlgOID() {
-            return null;
+            return x509Certificate.getSigAlgOID();
         }
 
         @Override
         public byte[] getSigAlgParams() {
-            return null;
+            return x509Certificate.getSigAlgParams();
         }
 
         @Override
         public byte[] getSignature() {
-            return null;
+            return x509Certificate.getSignature();
         }
 
         @Override
         public Principal getSubjectDN() {
-            return () -> "CN=CAS,DC=jasig,DC=org";
+            return x509Certificate.getSubjectDN();
         }
 
         @Override
         public boolean[] getSubjectUniqueID() {
-            return null;
+            return x509Certificate.getSubjectUniqueID();
         }
 
         @Override
         public byte[] getTBSCertificate() throws CertificateEncodingException {
-            return null;
+            return x509Certificate.getTBSCertificate();
         }
 
         @Override
         public int getVersion() {
-            return 0;
+            return x509Certificate.getVersion();
         }
 
         @Override
         public Set<String> getCriticalExtensionOIDs() {
-            return null;
+            return x509Certificate.getCriticalExtensionOIDs();
         }
 
         @Override
         public byte[] getExtensionValue(final String arg0) {
-            return null;
+            return x509Certificate.getExtensionValue(arg0);
         }
 
         @Override
         public Set<String> getNonCriticalExtensionOIDs() {
-            return null;
+            return x509Certificate.getNonCriticalExtensionOIDs();
         }
 
         @Override
@@ -150,17 +155,17 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
 
         @Override
         public byte[] getEncoded() throws CertificateEncodingException {
-            return null;
+            return x509Certificate.getEncoded();
         }
 
         @Override
         public PublicKey getPublicKey() {
-            return null;
+            return x509Certificate.getPublicKey();
         }
 
         @Override
         public String toString() {
-            return "CasX509Certficate";
+            return CertUtils.toString(x509Certificate);
         }
 
         @Override

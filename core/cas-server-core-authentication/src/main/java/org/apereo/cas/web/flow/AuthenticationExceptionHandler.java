@@ -39,25 +39,19 @@ import java.util.stream.Collectors;
  */
 public class AuthenticationExceptionHandler {
 
-    /**
-     * State name when no matching exception is found.
-     */
+
     private static final String UNKNOWN = "UNKNOWN";
 
-    /**
-     * Default message bundle prefix.
-     */
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
 
     /**
      * Default list of errors this class knows how to handle.
      */
-    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST =
-            new HashSet<>();
+    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new HashSet<>();
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
+    /*
      * Order is important here; We want the account policy exceptions to be handled
      * first before moving onto more generic errors. In the event that multiple handlers
      * are defined, where one failed due to account policy restriction and one fails
@@ -93,13 +87,10 @@ public class AuthenticationExceptionHandler {
 
     /**
      * Sets the list of custom exceptions that this class knows how to handle.
-     *
      * <p>This implementation adds the provided list of exceptions to the default list
      * or just returns if the provided list is empty.
-     *
      * <p>This implementation relies on Spring's property source configurer, SpEL, and conversion service
      * infrastructure facilities to convert and inject the collection from cas properties.
-     *
      * <p>This method is thread-safe. It should only be called by the Spring container during
      * application context bootstrap
      * or unit tests.
@@ -220,11 +211,7 @@ public class AuthenticationExceptionHandler {
                 .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
                 .findFirst();
 
-        if (match.isPresent()) {
-            messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build());
-        }
-
-        // return the matched simple class name
+        match.ifPresent(s -> messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build()));
         return match.orElse(UNKNOWN);
     }
 }

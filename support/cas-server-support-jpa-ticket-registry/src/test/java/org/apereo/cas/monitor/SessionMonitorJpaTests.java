@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.mock.MockService;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -10,16 +10,14 @@ import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
@@ -31,11 +29,9 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @Transactional
-@SpringApplicationConfiguration(
-        classes = {RefreshAutoConfiguration.class, JpaTicketRegistryConfiguration.class},
-        initializers = {ConfigFileApplicationContextInitializer.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, JpaTicketRegistryConfiguration.class})
 public class SessionMonitorJpaTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
@@ -45,45 +41,28 @@ public class SessionMonitorJpaTests {
     @Qualifier("jpaTicketRegistry")
     private TicketRegistry jpaRegistry;
 
-    private SessionMonitor monitor;
-
-    @Before
-    public void setUp() {
-        this.monitor = new SessionMonitor();
-    }
-
     @Test
     @Rollback(false)
     public void verifyObserveOkJpaTicketRegistry() throws Exception {
-        addTicketsToRegistry(this.jpaRegistry, 5, 5);
-        assertEquals(10, this.jpaRegistry.getTickets().size());
-        this.monitor.setTicketRegistry(this.jpaRegistry);
-        final SessionStatus status = this.monitor.observe();
+        addTicketsToRegistry(jpaRegistry, 5, 5);
+        assertEquals(10, jpaRegistry.getTickets().size());
+        final SessionMonitor monitor = new SessionMonitor(jpaRegistry, -1, -1);
+        final SessionStatus status = monitor.observe();
         assertEquals(5, status.getSessionCount());
         assertEquals(5, status.getServiceTicketCount());
         assertEquals(StatusCode.OK, status.getCode());
     }
 
-    private static void addTicketsToRegistry(final TicketRegistry registry,
-                                             final int tgtCount,
-                                             final int stCount) {
+    private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
         TicketGrantingTicketImpl ticket = null;
         for (int i = 0; i < tgtCount; i++) {
-            ticket = new TicketGrantingTicketImpl(
-                    GENERATOR.getNewTicketId("TGT"),
-                    TestUtils.getAuthentication(),
-                    TEST_EXP_POLICY);
+            ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
             registry.addTicket(ticket);
         }
 
         if (ticket != null) {
             for (int i = 0; i < stCount; i++) {
-                registry.addTicket(ticket.grantServiceTicket(
-                        GENERATOR.getNewTicketId("ST"),
-                        new MockService("junit"),
-                        TEST_EXP_POLICY,
-                        null,
-                        true));
+                registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"), new MockService("junit"), TEST_EXP_POLICY, false, true));
             }
         }
     }

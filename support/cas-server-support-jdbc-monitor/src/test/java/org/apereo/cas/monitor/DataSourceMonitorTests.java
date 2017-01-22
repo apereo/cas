@@ -21,17 +21,14 @@ public class DataSourceMonitorTests {
 
     @Before
     public void setUp() {
-        final ClassPathXmlApplicationContext ctx = new
-            ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
+        final ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
         this.dataSource = ctx.getBean("dataSource", DataSource.class);
     }
 
     @Test
     public void verifyObserve() throws Exception {
-        final JdbcDataSourceMonitor monitor = new JdbcDataSourceMonitor(this.dataSource);
-        monitor.setMaxWait(5000);
-        monitor.setExecutor(Executors.newSingleThreadExecutor());
-        monitor.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        final JdbcDataSourceMonitor monitor = new JdbcDataSourceMonitor(Executors.newSingleThreadExecutor(), 5000, this.dataSource,
+                "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
         final PoolStatus status = monitor.observe();
         assertEquals(StatusCode.OK, status.getCode());
     }

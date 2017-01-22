@@ -1,9 +1,9 @@
 package org.apereo.cas.monitor;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Describes meaningful health metrics on the status of a cache.
@@ -13,21 +13,19 @@ import java.util.stream.Collectors;
  */
 public class CacheStatus extends Status {
 
-    private CacheStatistics[] statistics;
+    private final CacheStatistics[] statistics;
 
-    
     /**
      * Creates a new instance describing cache status.
      *
-     * @param code Status code.
+     * @param code        Status code.
      * @param description Optional status description.
-     * @param statistics One or more sets of cache statistics.
+     * @param statistics  One or more sets of cache statistics.
      */
     public CacheStatus(final StatusCode code, final String description, final CacheStatistics... statistics) {
         super(code, buildDescription(description, statistics));
         this.statistics = statistics;
     }
-
 
     /**
      * Creates a new instance when cache statistics are unavailable due to given exception.
@@ -40,21 +38,19 @@ public class CacheStatus extends Status {
         this.statistics = null;
     }
 
-
     /**
      * Gets the current cache statistics.
      *
      * @return Cache statistics.
      */
     public CacheStatistics[] getStatistics() {
-        return ImmutableList.copyOf(this.statistics).toArray(new CacheStatistics[this.statistics.length]);
+        return Arrays.copyOf(this.statistics, this.statistics.length);
     }
-
 
     /**
      * Builds the description string for the retrieved statistics.
      *
-     * @param desc the desc
+     * @param desc       the desc
      * @param statistics the statistics
      * @return the string
      */
@@ -70,9 +66,13 @@ public class CacheStatus extends Status {
             }
             sb.append(' ');
         }
-        sb.append("Cache statistics: [");
-        sb.append(String.join("|", Arrays.stream(statistics).map(Object::toString).collect(Collectors.toList())));
-        sb.append(']');
-        return sb.toString();
+        return Stream.of(statistics)
+                .filter(Objects::nonNull)
+                .map(s -> {
+                    s.toString(sb);
+                    return sb.toString();
+                })
+                .collect(Collectors.joining("|",
+                        sb.toString() + "Cache statistics: [", "]"));
     }
 }

@@ -7,14 +7,13 @@ title: CAS - Service Management
 
 The CAS service management facility allows CAS server administrators to declare and configure which services
 (CAS clients) may make use of CAS in which ways. The core component of the service management facility is the
-service registry that stores one or more registered services
-containing metadata that drives a number of CAS behaviors:
+service registry that stores one or more registered services containing metadata that drives a number of CAS behaviors:
 
-* Authorized services - Control which services may participate in a CAS SSO session.
+* [Authorized services](Configuring-Service-Access-Strategy.html) - Control which services may participate in a CAS SSO session.
 * Forced authentication - Provides administrative control for forced authentication.
-* Attribute release - Provide user details to services for authorization and personalization.
-* Proxy control - Further restrict authorized services by granting/denying proxy authentication capability.
-* Theme control - Define alternate CAS themes to be used for particular services.
+* [Attribute release](../integration/Attribute-Release.html) - Provide user details to services for authorization and personalization.
+* [Proxy control](Configuring-Service-Proxy-Policy.html) - Further restrict authorized services by granting/denying proxy authentication capability.
+* [Theme control](User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
 
 ## Service Management Webapp
 
@@ -31,7 +30,7 @@ the CAS server itself so the entire system can load the same services data. To l
 Registered services present the following metadata:
 
 | Field                             | Description
-|-----------------------------------+--------------------------------------------------------------------------------+
+|-----------------------------------|---------------------------------------------------------------------------------
 | `id`                              | Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`. This **MUST** be a valid numeric value.
 | `name`                            | Required name (255 characters or less).
 | `description`                     | Optional free-text description of the service. (255 characters or less)
@@ -47,7 +46,7 @@ Registered services present the following metadata:
 | `accessStrategy`                  | The strategy configuration that outlines and access rules for this service. It describes whether the service is allowed, authorized to participate in SSO, or can be granted access from the CAS perspective based on a particular attribute-defined role, aka RBAC. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
 | `publicKey`                  		| The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](Configuring-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
 | `logoutUrl`                  		| URL endpoint for this service to receive logout requests. See [this guide](Logout-Single-Signout.html) for more details
-| `properties`                  	| Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis.
+| `properties`                  	| Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis. [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 | `multifactorPolicy`           	| The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](Configuring-Multifactor-Authentication.html).
 
 
@@ -64,6 +63,8 @@ Registered services present the following metadata:
 [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 
 ## Persisting Services
+
+The following options may be used to store services in CAS.
 
 ### Memory
 

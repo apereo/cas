@@ -1,26 +1,17 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationService;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
-import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
-import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
-import org.junit.Before;
+import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -29,32 +20,13 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  *
  */
+@Import(TrustedAuthenticationConfiguration.class)
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests extends AbstractCentralAuthenticationServiceTests {
 
-    private PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction action;
-
-    @Before
-    public void setUp() throws Exception {
-        this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
-        this.action.setPrincipalFactory(new DefaultPrincipalFactory());
-
-        final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
-                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
-                        new PrincipalBearingCredentialsAuthenticationHandler(),
-                        new PrincipalBearingPrincipalResolver()));
-
-        final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
-                getCentralAuthenticationService();
-
-        this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.setAuthenticationSystemSupport(
-                new DefaultAuthenticationSystemSupport(
-                        new DefaultAuthenticationTransactionManager(authenticationManager),
-                        new DefaultPrincipalElectionStrategy()
-                )
-        );
-    }
-
+    @Autowired
+    @Qualifier("principalFromRemoteUserAction")
+    private Action action;
+    
     @Test
     public void verifyRemoteUserExists() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();

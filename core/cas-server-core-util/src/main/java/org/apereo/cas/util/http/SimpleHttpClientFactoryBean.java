@@ -1,8 +1,6 @@
 package org.apereo.cas.util.http;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Ints;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -46,6 +44,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * The factory to build a {@link SimpleHttpClient}.
@@ -74,7 +74,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[]{
             HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
             HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
-            HttpURLConnection.HTTP_ACCEPTED};
+            HttpURLConnection.HTTP_ACCEPTED, HttpURLConnection.HTTP_NO_CONTENT};
 
     /**
      * 20% of the total of threads in the pool to handle overhead.
@@ -104,9 +104,9 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     /**
      * List of HTTP status codes considered valid by the caller.
      */
-    private List<Integer> acceptableCodes = Ints.asList(DEFAULT_ACCEPTABLE_CODES);
+    private List<Integer> acceptableCodes = IntStream.of(DEFAULT_ACCEPTABLE_CODES).boxed().collect(Collectors.toList());
 
-    private int connectionTimeout = DEFAULT_TIMEOUT;
+    private long connectionTimeout = DEFAULT_TIMEOUT;
 
     private int readTimeout = DEFAULT_TIMEOUT;
 
@@ -228,8 +228,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
             final RequestConfig requestConfig = RequestConfig.custom()
                     .setSocketTimeout(this.readTimeout)
-                    .setConnectTimeout(this.connectionTimeout)
-                    .setConnectionRequestTimeout(this.connectionTimeout)
+                    .setConnectTimeout(Long.valueOf(this.connectionTimeout).intValue())
+                    .setConnectionRequestTimeout(Long.valueOf(this.connectionTimeout).intValue())
                     .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
                     .setRedirectsEnabled(this.redirectsEnabled)
                     .setAuthenticationEnabled(this.authenticationEnabled)
@@ -315,19 +315,18 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     public List<Integer> getAcceptableCodes() {
-        return ImmutableList.copyOf(this.acceptableCodes);
+        return Collections.unmodifiableList(this.acceptableCodes);
     }
 
     public void setAcceptableCodes(final int[] acceptableCodes) {
-        this.acceptableCodes = Ints.asList(acceptableCodes);
+        this.acceptableCodes = IntStream.of(acceptableCodes).boxed().collect(Collectors.toList());
     }
 
-    public int getConnectionTimeout() {
+    public long getConnectionTimeout() {
         return this.connectionTimeout;
     }
 
-
-    public void setConnectionTimeout(final int connectionTimeout) {
+    public void setConnectionTimeout(final long connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 

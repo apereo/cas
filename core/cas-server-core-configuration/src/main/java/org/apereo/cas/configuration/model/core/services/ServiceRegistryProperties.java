@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.core.services;
 
-import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 
@@ -24,17 +25,16 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
     private LdapServiceRegistryProperties ldap = new LdapServiceRegistryProperties();
 
     @NestedConfigurationProperty
-    private MongoServiceRegistryProperties mongo =
-            new MongoServiceRegistryProperties();
+    private MongoServiceRegistryProperties mongo = new MongoServiceRegistryProperties();
 
     @NestedConfigurationProperty
     private CouchbaseServiceRegistryProperties couchbase = new CouchbaseServiceRegistryProperties();
 
-    private boolean initFromJson = true;
+    private boolean initFromJson;
 
-    private int startDelay = 15000;
-    
-    private int repeatInterval = 120000;
+    private String startDelay = "PT15S";
+
+    private String repeatInterval = "PT2M";
 
     private boolean watcherEnabled = true;
 
@@ -44,7 +44,7 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
     public ServiceRegistryProperties() {
         super.getConfig().setLocation(new ClassPathResource("services"));
     }
-    
+
     public boolean isInitFromJson() {
         return initFromJson;
     }
@@ -61,19 +61,19 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
         this.watcherEnabled = watcherEnabled;
     }
 
-    public int getStartDelay() {
-        return startDelay;
+    public long getStartDelay() {
+        return Beans.newDuration(startDelay).toMillis();
     }
 
-    public void setStartDelay(final int startDelay) {
+    public void setStartDelay(final String startDelay) {
         this.startDelay = startDelay;
     }
 
-    public int getRepeatInterval() {
-        return repeatInterval;
+    public long getRepeatInterval() {
+        return Beans.newDuration(repeatInterval).toMillis();
     }
 
-    public void setRepeatInterval(final int repeatInterval) {
+    public void setRepeatInterval(final String repeatInterval) {
         this.repeatInterval = repeatInterval;
     }
 

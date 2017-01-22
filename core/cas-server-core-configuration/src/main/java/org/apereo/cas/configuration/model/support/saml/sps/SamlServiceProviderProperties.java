@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
 
 /**
  * This is {@link SamlServiceProviderProperties}.
@@ -18,6 +18,60 @@ public class SamlServiceProviderProperties {
     private NetPartner netPartner = new NetPartner();
     private Webex webex = new Webex();
     private Office365 office365 = new Office365();
+    private TestShib testShib = new TestShib();
+    private InCommon inCommon = new InCommon();
+    private Zoom zoom = new Zoom();
+    private Evernote evernote = new Evernote();
+    private Asana asana = new Asana();
+    private Tableau tableau = new Tableau();
+
+    public Tableau getTableau() {
+        return tableau;
+    }
+
+    public void setTableau(final Tableau tableau) {
+        this.tableau = tableau;
+    }
+
+    public Asana getAsana() {
+        return asana;
+    }
+
+    public void setAsana(final Asana asana) {
+        this.asana = asana;
+    }
+
+    public Evernote getEvernote() {
+        return evernote;
+    }
+
+    public void setEvernote(final Evernote evernote) {
+        this.evernote = evernote;
+    }
+
+    public Zoom getZoom() {
+        return zoom;
+    }
+
+    public void setZoom(final Zoom zoom) {
+        this.zoom = zoom;
+    }
+    
+    public InCommon getInCommon() {
+        return inCommon;
+    }
+
+    public void setInCommon(final InCommon inCommon) {
+        this.inCommon = inCommon;
+    }
+
+    public TestShib getTestShib() {
+        return testShib;
+    }
+
+    public void setTestShib(final TestShib testShib) {
+        this.testShib = testShib;
+    }
 
     public Office365 getOffice365() {
         return office365;
@@ -99,7 +153,7 @@ public class SamlServiceProviderProperties {
 
     public static class Box extends AbstractSamlSPProperties {
         public Box() {
-            setAttributes(Lists.newArrayList("email", "firstName", "lastName"));
+            setAttributes(Arrays.asList("email", "firstName", "lastName"));
         }
     }
 
@@ -114,13 +168,13 @@ public class SamlServiceProviderProperties {
 
     public static class Salesforce extends AbstractSamlSPProperties {
         public Salesforce() {
-            setAttributes(Lists.newArrayList("mail", "eduPersonPrincipalName"));
+            setAttributes(Arrays.asList("mail", "eduPersonPrincipalName"));
         }
     }
 
     public static class ServiceNow extends AbstractSamlSPProperties {
         public ServiceNow() {
-            setAttributes(Lists.newArrayList("eduPersonPrincipalName"));
+            setAttributes(Arrays.asList("eduPersonPrincipalName"));
         }
     }
 
@@ -133,13 +187,55 @@ public class SamlServiceProviderProperties {
     public static class Office365 extends AbstractSamlSPProperties {
         public Office365() {
             setNameIdAttribute("scopedImmutableID");
-            setAttributes(Lists.newArrayList("IDPEmail,ImmutableID"));
+            setAttributes(Arrays.asList("IDPEmail,ImmutableID"));
         }
     }
     public static class Webex extends AbstractSamlSPProperties {
         public Webex() {
             setNameIdAttribute("email");
-            setAttributes(Lists.newArrayList("firstName,lastName"));
+            setAttributes(Arrays.asList("firstName,lastName"));
+        }
+    }
+    
+    public static class Tableau extends AbstractSamlSPProperties {
+        public Tableau() {
+            setAttributes(Arrays.asList("username"));
+        }
+    }
+    
+    public static class TestShib extends AbstractSamlSPProperties {
+        public TestShib() {
+            //setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
+            setAttributes(Arrays.asList("eduPersonPrincipalName"));
+        }
+    }
+
+    public static class Zoom extends AbstractSamlSPProperties {
+        public Zoom() {
+            setNameIdAttribute("mail");
+            setAttributes(Arrays.asList("mail,sn,givenName"));
+        }
+    }
+    
+    public static class InCommon extends AbstractSamlSPProperties {
+        public InCommon() {
+            //setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
+            //setSignatureLocation("/etc/cas/config/certs/inc-md-cert.pem");
+            setAttributes(Arrays.asList("eduPersonPrincipalName"));
+        }
+    }
+    
+    public static class Evernote extends AbstractSamlSPProperties {
+        public Evernote() {
+            setNameIdAttribute("email");
+            setNameIdFormat("emailAddress");
+        }
+    }
+    
+    public static class Asana extends AbstractSamlSPProperties {
+        public Asana() {
+            setNameIdAttribute("email");
+            setNameIdFormat("emailAddress");
         }
     }
 }

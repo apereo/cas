@@ -1,16 +1,19 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,10 +32,13 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"},
-        classes = {RefreshAutoConfiguration.class})
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
 public class SearchModeSearchDatabaseAuthenticationHandlerTests {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private SearchModeSearchDatabaseAuthenticationHandler handler;
 
@@ -42,13 +48,8 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-
-        this.handler = new SearchModeSearchDatabaseAuthenticationHandler();
+        this.handler = new SearchModeSearchDatabaseAuthenticationHandler("username", "password", "cassearchusers");
         handler.setDataSource(this.dataSource);
-        handler.setTableUsers("cassearchusers");
-        handler.setFieldUser("username");
-        handler.setFieldPassword("password");
-        handler.afterPropertiesSet();
 
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
@@ -69,8 +70,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         c.setAutoCommit(true);
 
         for (int i = 0; i < 5; i++) {
-            final String sql = String.format("delete from casusers;");
-            s.execute(sql);
+            s.execute("delete from casusers;");
         }
         c.close();
     }
@@ -79,7 +79,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         return String.format("insert into cassearchusers (username, password) values('%s', '%s');", "user" + i, "psw" + i);
     }
 
-    @Entity(name="cassearchusers")
+    @Entity(name = "cassearchusers")
     public static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -89,23 +89,25 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         private String password;
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void verifyNotFoundUser() throws Exception {
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
-        this.handler.authenticateUsernamePasswordInternal(c);
+        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
+
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("hello not found with SQL query.");
+
+        this.handler.authenticate(c);
     }
 
     @Test
     public void verifyFoundUser() throws Exception {
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
-        assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
+        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
+        assertNotNull(this.handler.authenticate(c));
     }
 
     @Test
     public void verifyMultipleUsersFound() throws Exception {
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
-        assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
+        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
+        assertNotNull(this.handler.authenticate(c));
     }
-
 }
-

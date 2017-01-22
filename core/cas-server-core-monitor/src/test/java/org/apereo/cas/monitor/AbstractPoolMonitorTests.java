@@ -1,9 +1,9 @@
 package org.apereo.cas.monitor;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -15,11 +15,11 @@ import static org.junit.Assert.*;
  */
 public class AbstractPoolMonitorTests {
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Test
     public void verifyObserveOK() throws Exception {
-        final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {
+        final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor", executor, 1000) {
             @Override
             protected StatusCode checkPool() throws Exception {
                 return StatusCode.OK;
@@ -35,18 +35,15 @@ public class AbstractPoolMonitorTests {
                 return 2;
             }
         };
-        monitor.setExecutor(this.executor);
-        monitor.setMaxWait(1000);
         final PoolStatus status = monitor.observe();
         assertEquals(StatusCode.OK, status.getCode());
         assertEquals(3, status.getIdleCount());
         assertEquals(2, status.getActiveCount());
     }
 
-
     @Test
     public void verifyObserveWarn() throws Exception {
-        final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {
+        final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor", executor, 500) {
             @Override
             protected StatusCode checkPool() throws Exception {
                 Thread.sleep(1000);
@@ -63,18 +60,15 @@ public class AbstractPoolMonitorTests {
                 return 1;
             }
         };
-        monitor.setExecutor(this.executor);
-        monitor.setMaxWait(500);
         final PoolStatus status = monitor.observe();
         assertEquals(StatusCode.WARN, status.getCode());
         assertEquals(1, status.getIdleCount());
         assertEquals(1, status.getActiveCount());
     }
 
-
     @Test
     public void verifyObserveError() throws Exception {
-        final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {
+        final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor", executor, 500) {
             @Override
             protected StatusCode checkPool() throws Exception {
                 throw new RuntimeException("Pool check failed due to rogue penguins.");
@@ -90,8 +84,6 @@ public class AbstractPoolMonitorTests {
                 return 1;
             }
         };
-        monitor.setExecutor(this.executor);
-        monitor.setMaxWait(500);
         final PoolStatus status = monitor.observe();
         assertEquals(StatusCode.ERROR, status.getCode());
         assertEquals(1, status.getIdleCount());

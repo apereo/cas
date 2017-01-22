@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The default argument extractor is responsible for creating service
@@ -15,13 +16,7 @@ import java.util.List;
  * @since 4.2
  */
 public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
-
-    /**
-     * Default extractor.
-     */
-    public DefaultArgumentExtractor() {
-    }
-
+    
     /**
      * Instantiates a new argument extractor.
      *
@@ -49,7 +44,7 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
                 return service;
             }
             return null;
-        }).filter(service -> service != null).findFirst().orElseGet(() -> {
+        }).filter(Objects::nonNull).findFirst().orElseGet(() -> {
             logger.debug("No service could be extracted based on the given request");
             return null;
         });

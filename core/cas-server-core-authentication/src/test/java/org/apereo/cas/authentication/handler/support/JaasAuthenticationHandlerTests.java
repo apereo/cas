@@ -1,19 +1,17 @@
 package org.apereo.cas.authentication.handler.support;
 
-import javax.security.auth.login.LoginException;
-
-
 import org.apache.commons.io.IOUtils;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.charset.Charset;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +21,8 @@ import static org.junit.Assert.*;
  */
 public class JaasAuthenticationHandlerTests {
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private JaasAuthenticationHandler handler;
 
@@ -32,7 +31,7 @@ public class JaasAuthenticationHandlerTests {
         final ClassPathResource resource = new ClassPathResource("jaas.conf");
         final File fileName = new File(System.getProperty("java.io.tmpdir"), "jaas.conf");
         try(FileWriter writer = new FileWriter(fileName)) {
-            IOUtils.copy(resource.getInputStream(), writer);
+            IOUtils.copy(resource.getInputStream(), writer, Charset.defaultCharset());
             writer.flush();
         }
         if (fileName.exists()) {
@@ -41,28 +40,29 @@ public class JaasAuthenticationHandlerTests {
         }
     }
 
-    @Test(expected = LoginException.class)
+    @Test
     public void verifyWithAlternativeRealm() throws Exception {
+        this.thrown.expect(LoginException.class);
 
         this.handler.setRealm("TEST");
-        this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+        this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
     }
 
     @Test
     public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
         this.handler.setRealm("TEST");
-        assertNotNull(this.handler.authenticate(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
+        assertNotNull(this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
     }
 
     @Test
     public void verifyWithValidCredenials() throws Exception {
-        assertNotNull(this.handler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertNotNull(this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
-    @Test(expected = LoginException.class)
+    @Test
     public void verifyWithInvalidCredentials() throws Exception {
-        this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
-    }
+        this.thrown.expect(LoginException.class);
 
+        this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+    }
 }

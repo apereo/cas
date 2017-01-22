@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -16,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
@@ -25,7 +23,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.MessageInterpolator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -41,18 +38,12 @@ import java.util.Map;
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
-    @Qualifier("messageInterpolator")
-    private MessageInterpolator messageInterpolator;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Lazy
     @Bean
     public LocalValidatorFactoryBean credentialsValidator() {
-        final LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
-        bean.setMessageInterpolator(this.messageInterpolator);
-        return bean;
+        return new LocalValidatorFactoryBean();
     }
 
     @RefreshScope
@@ -79,14 +70,6 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
-    @RefreshScope
-    @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
-        bean.setParamName(this.casProperties.getLocale().getParamName());
-        return bean;
-    }
-
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();
@@ -107,7 +90,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
                     throws Exception {
                 final String queryString = request.getQueryString();
                 final String url = request.getContextPath() + "/login"
-                        + (queryString != null ? '?' + queryString : "");
+                        + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
 
@@ -126,14 +109,14 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public SimpleUrlHandlerMapping handlerMapping() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
-        
+
         final Controller root = rootController();
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
         mapping.setRootHandler(root);
         final Map urls = new HashMap();
         urls.put("/", root);
-        
+
         mapping.setUrlMap(urls);
         return mapping;
     }

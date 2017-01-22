@@ -7,6 +7,15 @@ ext {
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
+
+    /*
+    Open the Git repository in the current directory.
+    Get commit id of HEAD.
+     */
+    git = org.ajoberstar.grgit.Grgit.open(file('.'))
+    def gitHead = git.head()
+    currentRevision = gitHead.id
+    currentAbbreviatedRevision = gitHead.abbreviatedId
 }
 
 def isArtifactSigningRequired = {
@@ -16,6 +25,7 @@ def isArtifactSigningRequired = {
     return false
 }
 
+apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.gradle.build-scan"
 
@@ -38,10 +48,11 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:5.0.0"
+        classpath "com.netflix.nebula:gradle-lint-plugin:6.1.1"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.gradle:build-scan-plugin:1.0"
+        classpath "org.ajoberstar:grgit:1.1.0"
     }
 }
 
@@ -58,7 +69,7 @@ allprojects {
     } else {
         apply from: rootProject.file("gradle/maven.gradle")
     }
-    
+
     gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
 
     signing {
@@ -83,8 +94,12 @@ allprojects {
 }
 
 subprojects {
-    task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") << {}
-    task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {}
+    task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") {
+        doLast {}
+    }
+    task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {
+        doLast {}
+    }
 
     apply plugin: "java"
     apply plugin: "checkstyle"
@@ -147,8 +162,8 @@ subprojects {
             if (!Boolean.getBoolean("skipVersionConflict")) {
                 failOnVersionConflict()
             }
-            cacheDynamicVersionsFor 24, 'hours'
-            cacheChangingModulesFor 24, 'hours'
+            cacheDynamicVersionsFor 5, 'days'
+            cacheChangingModulesFor 5, 'days'
         }
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
@@ -172,8 +187,12 @@ subprojects {
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-    
-    compileJava.options.fork = true 
+
+    compileJava.options.fork = true
+
+    if (Boolean.getBoolean("enableIncremental")) {
+        compileJava.options.incremental = true
+    }
 
     def currentTime = java.time.ZonedDateTime.now()
     compileJava.doLast {
@@ -190,9 +209,10 @@ subprojects {
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                       "Implementation-Vendor": project.group,
-                       "Created-By": project.group,
-                       "Implementation-Version": project.version)
+                    "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Specification-Version": rootProject.currentRevision,
+                    "Implementation-Version": project.version)
         }
     }
 
@@ -216,7 +236,7 @@ subprojects {
         includePlugins = false
         includeSubProjects = true
     }
-    
+
     findbugs {
         toolVersion = "${findbugsVersion}"
         sourceSets = [sourceSets.main]
@@ -264,7 +284,7 @@ subprojects {
         testCompile libraries.tests
         runtime libraries.javaximpl
     }
-    
+
     if (Boolean.getBoolean("genConfigMetadata")) {
         compileJava.dependsOn(processResources)
     }
@@ -280,8 +300,7 @@ task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single d
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
 
-task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc,
-        description: "Aggregate all Javadocs into a single directory") {
+task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
     classifier = "javadoc"
     from javadoc
 }

@@ -1,20 +1,15 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.ResponseBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
 public class OpenIdService extends AbstractWebApplicationService {
-
-    /** The Constant LOGGER. */
-    protected static final Logger LOGGER = LoggerFactory.getLogger(OpenIdService.class);
 
     private static final long serialVersionUID = 5776500133123291301L;
 
@@ -23,30 +18,21 @@ public class OpenIdService extends AbstractWebApplicationService {
     /**
      * Instantiates a new OpenID service.
      *
-     * @param id the id
-     * @param originalUrl the original url
-     * @param artifactId the artifact id
-     * @param openIdIdentity the OpenID identity
-     * @param responseBuilder the response builder
+     * @param id              the id
+     * @param originalUrl     the original url
+     * @param artifactId      the artifact id
+     * @param identity        the OpenID identity
      */
-    protected OpenIdService(final String id, final String originalUrl,
-                            final String artifactId, final String openIdIdentity,
-                            final ResponseBuilder<WebApplicationService> responseBuilder) {
-        super(id, originalUrl, artifactId, responseBuilder);
-        this.identity = openIdIdentity;
+
+    @JsonCreator
+    protected OpenIdService(@JsonProperty("id") final String id,
+                            @JsonProperty("originalUrl") final String originalUrl,
+                            @JsonProperty("artifactId") final String artifactId,
+                            @JsonProperty("identity") final String identity) {
+        super(id, originalUrl, artifactId);
+        this.identity = identity;
     }
-
-
-    /**
-     * Return that the service is already logged out.
-     *
-     * @return that the service is already logged out.
-     */
-    @Override
-    public boolean isLoggedOutAlready() {
-        return true;
-    }
-
+    
     @Override
     public int hashCode() {
         return new HashCodeBuilder()

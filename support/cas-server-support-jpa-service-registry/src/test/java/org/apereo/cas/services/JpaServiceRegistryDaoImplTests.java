@@ -4,6 +4,7 @@ import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +29,7 @@ import static org.junit.Assert.*;
  * @author battags
  * @since 3.1.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, JpaServiceRegistryConfiguration.class})
 public class JpaServiceRegistryDaoImplTests {
 
@@ -174,4 +175,21 @@ public class JpaServiceRegistryDaoImplTests {
         assertEquals(r, r2);
     }
 
+    @Test
+    public void verifySamlService() {
+        final SamlRegisteredService r = new SamlRegisteredService();
+        r.setName("test345");
+        r.setServiceId("Testing");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final Map fmt = new HashMap();
+        fmt.put("key", "value");
+        r.setAttributeNameFormats(fmt);
+        r.setMetadataCriteriaDirection("INCLUDE");
+        r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
+        r.setMetadataSignatureLocation("location");
+        r.setRequiredAuthenticationContextClass("Testing");
+        final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
+        assertEquals(r, r2);
+    }
 }

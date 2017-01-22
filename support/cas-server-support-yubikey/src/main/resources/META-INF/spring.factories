@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.support.authentication.YubiKeyAuthenticationEventExecutionPlanConfiguration,\
+  org.apereo.cas.config.YubiKeyConfiguration

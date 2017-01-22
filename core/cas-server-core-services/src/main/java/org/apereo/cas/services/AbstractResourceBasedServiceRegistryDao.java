@@ -2,8 +2,8 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.LockedOutputStream;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,12 +40,12 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
      * The Service registry directory.
      */
     protected Path serviceRegistryDirectory;
-    
+
     /**
      * Map of service ID to registered service.
      */
     private Map<Long, RegisteredService> serviceMap = new ConcurrentHashMap<>();
-    
+
     /**
      * The Registered service json serializer.
      */
@@ -100,7 +100,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         if (enableWatcher) {
 
             LOGGER.info("Watching service registry directory at {}", configDirectory);
-            
+
             this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, eventPublisher);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
@@ -108,14 +108,18 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
             LOGGER.debug("Started service registry watcher thread");
         }
     }
-    
+
     /**
      * Destroy the watch service thread.
      */
     @PreDestroy
     public void destroy() {
-        this.serviceRegistryConfigWatcher.close();
-        this.serviceRegistryWatcherThread.interrupt();
+        if (this.serviceRegistryConfigWatcher != null) {
+            this.serviceRegistryConfigWatcher.close();
+        }
+        if (serviceRegistryWatcherThread != null) {
+            this.serviceRegistryWatcherThread.interrupt();
+        }
     }
 
     @Override
@@ -126,6 +130,11 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
     @Override
     public RegisteredService findServiceById(final long id) {
         return this.serviceMap.get(id);
+    }
+
+    @Override
+    public RegisteredService findServiceById(final String id) {
+        return this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
     }
 
     @Override

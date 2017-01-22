@@ -71,6 +71,8 @@ Support is provided via the following module:
 </dependency>
 ```
 
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+
 ### Mongo
 
 User decisions may also be kept inside a MongoDb instance.
@@ -100,7 +102,7 @@ Support is provided via the following module:
 </dependency>
 ```
 
-## Retrieve Trusted Records
+#### Retrieve Trusted Records
 
 A `GET` request that returns all trusted authentication records that are valid and not-expired.
 
@@ -122,7 +124,7 @@ Response payload may produce a collection of objects that contain:
 ]
 ```
 
-## Store Trusted Records
+#### Store Trusted Records
 
 A `POST` request that stores a newly trusted device record.
 

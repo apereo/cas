@@ -14,22 +14,25 @@ import java.io.Serializable;
  */
 public class UsernamePasswordCredential implements Credential, Serializable {
 
-    /** Authentication attribute name for password. **/
+    /**
+     * Authentication attribute name for password.
+     **/
     public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
 
     private static final long serialVersionUID = -700605081472810939L;
-
-
     
-    @Size(min=1, message = "required.username")
+    @Size(min = 1, message = "required.username")
     private String username;
 
-    
-    @Size(min=1, message = "required.password")
+
+    @Size(min = 1, message = "required.password")
     private String password;
 
-    /** Default constructor. */
-    public UsernamePasswordCredential() {}
+    /**
+     * Default constructor.
+     */
+    public UsernamePasswordCredential() {
+    }
 
     /**
      * Creates a new instance with the given username and password.
@@ -45,13 +48,11 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     public String getPassword() {
         return this.password;
     }
-
-
+    
     public void setPassword(final String password) {
         this.password = password;
     }
-
-
+    
     public String getUsername() {
         return this.username;
     }
@@ -59,8 +60,7 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     public void setUsername(final String userName) {
         this.username = userName;
     }
-
-
+    
     @Override
     public String getId() {
         return this.username;
@@ -86,11 +86,7 @@ public class UsernamePasswordCredential implements Credential, Serializable {
             return false;
         }
 
-        if (this.username != null ? !this.username.equals(that.username) : that.username != null) {
-            return false;
-        }
-
-        return true;
+        return this.username != null ? this.username.equals(that.username) : that.username == null;
     }
 
     @Override

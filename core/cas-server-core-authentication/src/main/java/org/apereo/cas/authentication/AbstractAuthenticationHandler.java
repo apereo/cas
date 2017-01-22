@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -14,26 +16,37 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
-    /** Instance of logging for subclasses. */
+    /**
+     * Instance of logging for subclasses.
+     */
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Factory to create the principal type. **/
+    /**
+     * Factory to create the principal type.
+     **/
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
-    /** The services manager instance, as the entry point to the registry. **/
+    /**
+     * The services manager instance, as the entry point to the registry.
+     **/
     protected ServicesManager servicesManager;
 
-    /** Configurable handler name. */
+    /**
+     * Configurable handler name.
+     */
     private String name;
+
+    private Integer order;
 
     /**
      * Instantiates a new Abstract authentication handler.
      */
-    public AbstractAuthenticationHandler() {}
+    public AbstractAuthenticationHandler() {
+    }
 
     @Override
     public String getName() {
-        return this.name != null ? this.name : getClass().getSimpleName();
+        return StringUtils.isNotBlank(this.name) ? this.name : getClass().getSimpleName();
     }
 
     /**
@@ -59,5 +72,28 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
+    }
+
+    /**
+     * Sets order. If order is undefined, generates a random order value.
+     * Since handlers are generally sorted by this order, it's important that
+     * order numbers be unique on a best-effort basis.
+     * @param order the order
+     */
+    public void setOrder(final Integer order) {
+        this.order = order;
+        ensureOrderIsProvidedIfNecessary();
+    }
+
+    @Override
+    public int getOrder() {
+        ensureOrderIsProvidedIfNecessary();
+        return this.order;
+    }
+    
+    private void ensureOrderIsProvidedIfNecessary() {
+        if (this.order == null) {
+            this.order = RandomUtils.nextInt(1, Integer.MAX_VALUE);
+        }
     }
 }

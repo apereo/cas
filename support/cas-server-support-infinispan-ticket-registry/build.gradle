@@ -1,7 +1,9 @@
 description = "Apereo CAS Infinispan Integration"
 dependencies {
     compile libraries.spring
-    compile libraries.hibernate
+    compile libraries.springboot
+    compile libraries.springcloud
+    runtime libraries.hibernate
     compile libraries.infinispan
     compile project(":api:cas-server-core-api")
     compile project(":core:cas-server-core-tickets")
@@ -11,5 +13,6 @@ dependencies {
     testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
     testCompile project(":core:cas-server-core-util")
     testCompile project(":core:cas-server-core-logout")
+    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testCompile libraries.tests
 }

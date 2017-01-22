@@ -3,7 +3,6 @@ package org.apereo.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
@@ -23,7 +22,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +31,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -87,14 +87,13 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * The service selection strategy during validation events.
      **/
-    protected List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
+    protected List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
-    protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
-            new AcceptAnyAuthenticationPolicyFactory();
+    protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory = new AcceptAnyAuthenticationPolicyFactory();
 
     /**
      * Factory to create the principal type.
@@ -102,46 +101,39 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
-     * Instantiates a new Central authentication service impl.
+     * Cipher executor to handle ticket validation.
      */
-    protected AbstractCentralAuthenticationService() {
-    }
+    protected CipherExecutor<String, String> cipherExecutor;
 
     /**
      * Build the central authentication service implementation.
      *
-     * @param ticketRegistry  the tickets registry.
-     * @param ticketFactory   the ticket factory
-     * @param servicesManager the services manager.
-     * @param logoutManager   the logout manager.
+     * @param ticketRegistry                                  the tickets registry.
+     * @param ticketFactory                                   the ticket factory
+     * @param servicesManager                                 the services manager.
+     * @param logoutManager                                   the logout manager.
+     * @param authenticationRequestServiceSelectionStrategies The service selection strategy during validation events.
+     * @param authenticationPolicyFactory                     Authentication policy that uses a service context to produce stateful
+     *                                                        security policies to apply when
+     *                                                        authenticating credentials.
+     * @param principalFactory                                principal factory to create principal objects
+     * @param cipherExecutor                                  Cipher executor to handle ticket validation.
      */
-    public AbstractCentralAuthenticationService(
-            final TicketRegistry ticketRegistry,
-            final TicketFactory ticketFactory,
-            final ServicesManager servicesManager,
-            final LogoutManager logoutManager) {
-
+    public AbstractCentralAuthenticationService(final TicketRegistry ticketRegistry,
+                                                final TicketFactory ticketFactory, final ServicesManager servicesManager,
+                                                final LogoutManager logoutManager,
+                                                final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
+                                                final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
+                                                final PrincipalFactory principalFactory,
+                                                final CipherExecutor<String, String> cipherExecutor) {
         this.ticketRegistry = ticketRegistry;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
-    }
-
-    public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
-        this.serviceContextAuthenticationPolicyFactory = policy;
-    }
-
-    public void setTicketFactory(final TicketFactory ticketFactory) {
-        this.ticketFactory = ticketFactory;
-    }
-
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
         this.principalFactory = principalFactory;
+        this.serviceContextAuthenticationPolicyFactory = authenticationPolicyFactory;
+        this.cipherExecutor = cipherExecutor;
     }
 
     /**
@@ -150,11 +142,13 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param e the event
      */
     protected void doPublishEvent(final ApplicationEvent e) {
-        logger.debug("Publishing {}", e);
-        this.applicationEventPublisher.publishEvent(e);
+        if (applicationEventPublisher != null) {
+            logger.debug("Publishing {}", e);
+            this.applicationEventPublisher.publishEvent(e);
+        }
     }
 
-    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager",
+    @Transactional(transactionManager = "ticketTransactionManager",
             noRollbackFor = InvalidTicketException.class)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
@@ -166,7 +160,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         verifyTicketState(ticket, ticketId, null);
         return (T) ticket;
     }
-    
+
     /**
      * {@inheritDoc}
      * <p>
@@ -175,36 +169,29 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * access to critical section. The reason is that cache pulls serialized data and
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
-    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager", 
-            noRollbackFor = InvalidTicketException.class)
+    @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
     @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz)
-            throws InvalidTicketException {
+    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) throws InvalidTicketException {
         Assert.notNull(ticketId, "ticketId cannot be null");
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
         verifyTicketState(ticket, ticketId, clazz);
         return (T) ticket;
     }
 
-    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
+    @Transactional(transactionManager = "ticketTransactionManager")
     @Timed(name = "GET_TICKETS_TIMER")
     @Metered(name = "GET_TICKETS_METER")
     @Counted(name = "GET_TICKETS_COUNTER", monotonic = true)
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
-        final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
-        final Iterator<Ticket> it = c.iterator();
-        while (it.hasNext()) {
-            if (!predicate.apply(it.next())) {
-                it.remove();
-            }
-        }
-        return c;
+        return this.ticketRegistry.getTickets().stream()
+                .filter(predicate)
+                .collect(Collectors.toSet());
     }
-    
+
     /**
      * Gets the authentication satisfied by policy.
      *
@@ -213,12 +200,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @return the authentication satisfied by policy
      * @throws AbstractTicketException the ticket exception
      */
-    protected Authentication getAuthenticationSatisfiedByPolicy(
-            final Authentication authentication, 
-            final ServiceContext context) throws AbstractTicketException {
+    protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication, final ServiceContext context)
+            throws AbstractTicketException {
 
-        final ContextualAuthenticationPolicy<ServiceContext> policy =
-                this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
+        final ContextualAuthenticationPolicy<ServiceContext> policy = this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
         if (policy.isSatisfiedBy(authentication)) {
             return authentication;
         }
@@ -287,26 +272,38 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return ticket;
     }
 
+    /**
+     * Resolve service from authentication request.
+     *
+     * @param service the service
+     * @return the service
+     */
+    protected Service resolveServiceFromAuthenticationRequest(final Service service) {
+        return this.authenticationRequestServiceSelectionStrategies.stream()
+                .sorted()
+                .filter(s -> s.supports(service))
+                .findFirst()
+                .get()
+                .resolveServiceFrom(service);
+    }
+
+    /**
+     * Verify the ticket id received is actually legitimate
+     * before contacting downstream systems to find and process it.
+     *
+     * @param ticketId the ticket id
+     * @return true/false
+     */
+    protected boolean isTicketAuthenticityVerified(final String ticketId) {
+        if (this.cipherExecutor != null) {
+            logger.debug("Attempting to decode service ticket {} to verify authenticity", ticketId);
+            return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
+        }
+        return !StringUtils.isEmpty(ticketId);
+    }
+
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
-
-    
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setLogoutManager(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
-    }
-
-    public void setValidationServiceSelectionStrategies(final List list) {
-        this.validationServiceSelectionStrategies = list;
-    }
-    
 }

@@ -13,7 +13,7 @@ public interface AuthenticationTransactionManager {
     /**
      * Handle authentication transaction manager.
      *
-     * @param authenticationTransaction    the authn attempt
+     * @param authenticationTransaction   the authn attempt
      * @param authenticationResultBuilder the authentication context
      * @return the transaction manager
      * @throws AuthenticationException the authentication exception
@@ -23,9 +23,9 @@ public interface AuthenticationTransactionManager {
                                             throws AuthenticationException;
 
     /**
-     * Sets authentication manager.
+     * Gets authentication manager.
      *
-     * @param authenticationManager the authentication manager
+     * @return the authentication manager
      */
-    void setAuthenticationManager(AuthenticationManager authenticationManager);
+    AuthenticationManager getAuthenticationManager();
 }

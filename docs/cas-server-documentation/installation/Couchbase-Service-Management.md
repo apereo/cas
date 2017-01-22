@@ -32,8 +32,22 @@ so in reality the bucket property must also be set.
 
 ## Auto Initialization
 
-Upon startup and if the services registry database is blank, 
+Upon startup and configuration permitting, 
 the registry is able to auto initialize itself from default 
 JSON service definitions available to CAS.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following
+levels:
+
+```xml
+...
+<AsyncLogger name="com.couchbase" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
+```

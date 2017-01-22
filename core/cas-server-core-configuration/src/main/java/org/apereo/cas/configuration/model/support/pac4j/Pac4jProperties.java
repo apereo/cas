@@ -10,6 +10,7 @@ package org.apereo.cas.configuration.model.support.pac4j;
 public class Pac4jProperties {
 
     private boolean typedIdUsed;
+    private boolean autoRedirect;
 
     private Facebook facebook = new Facebook();
     private Twitter twitter = new Twitter();
@@ -17,12 +18,39 @@ public class Pac4jProperties {
     private Oidc oidc = new Oidc();
     private Cas cas = new Cas();
 
+    private LinkedIn linkedIn = new LinkedIn();
     private Dropbox dropbox = new Dropbox();
     private Github github = new Github();
     private Google google = new Google();
     private Yahoo yahoo = new Yahoo();
     private Foursquare foursquare = new Foursquare();
     private WindowsLive windowsLive = new WindowsLive();
+
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public boolean isAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(final boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
+    }
+
+    public LinkedIn getLinkedIn() {
+        return linkedIn;
+    }
+
+    public void setLinkedIn(final LinkedIn linkedIn) {
+        this.linkedIn = linkedIn;
+    }
 
     public WindowsLive getWindowsLive() {
         return windowsLive;
@@ -120,6 +148,45 @@ public class Pac4jProperties {
         return this.twitter;
     }
 
+    public static class LinkedIn {
+        private String id;
+        private String secret;
+        private String scope;
+        private String fields;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+
+        public String getScope() {
+            return this.scope;
+        }
+
+        public void setScope(final String scope) {
+            this.scope = scope;
+        }
+
+        public String getFields() {
+            return this.fields;
+        }
+
+        public void setFields(final String fields) {
+            this.fields = fields;
+        }
+    }
+
     public static class Facebook {
         private String id;
         private String secret;
@@ -187,6 +254,7 @@ public class Pac4jProperties {
         private String identityProviderMetadataPath;
         private String maximumAuthenticationLifetime;
         private String serviceProviderEntityId;
+        private String serviceProviderMetadataPath;
 
         public String getKeystorePassword() {
             return this.keystorePassword;
@@ -235,6 +303,14 @@ public class Pac4jProperties {
         public void setServiceProviderEntityId(final String serviceProviderEntityId) {
             this.serviceProviderEntityId = serviceProviderEntityId;
         }
+
+        public String getServiceProviderMetadataPath() {
+            return serviceProviderMetadataPath;
+        }
+
+        public void setServiceProviderMetadataPath(final String serviceProviderMetadataPath) {
+            this.serviceProviderMetadataPath = serviceProviderMetadataPath;
+        }
     }
 
     public static class Cas {
@@ -263,12 +339,21 @@ public class Pac4jProperties {
         private String secret;
         private String discoveryUri;
         private String useNonce;
+        private String scope;
         private String preferredJwsAlgorithm;
         private String maxClockSkew;
         private String customParamKey1;
         private String customParamValue1;
         private String customParamKey2;
         private String customParamValue2;
+
+        public String getScope() {
+            return scope;
+        }
+
+        public void setScope(final String scope) {
+            this.scope = scope;
+        }
 
         public String getId() {
             return this.id;

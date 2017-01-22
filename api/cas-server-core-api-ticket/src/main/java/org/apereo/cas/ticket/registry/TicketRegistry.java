@@ -27,9 +27,9 @@ public interface TicketRegistry {
      * Retrieve a ticket from the registry. If the ticket retrieved does not
      * match the expected class, an InvalidTicketException is thrown.
      *
+     * @param <T>      the generic ticket type to return that extends {@link Ticket}
      * @param ticketId the id of the ticket we wish to retrieve.
-     * @param clazz The expected class of the ticket we wish to retrieve.
-     * @param <T> the generic ticket type to return that extends {@link Ticket}
+     * @param clazz    The expected class of the ticket we wish to retrieve.
      * @return the requested ticket.
      */
     <T extends Ticket> T getTicket(String ticketId, Class<T> clazz);
@@ -52,10 +52,16 @@ public interface TicketRegistry {
     int deleteTicket(String ticketId);
 
     /**
+     * Delete all tickets from the registry.
+     *
+     * @return the number of tickets deleted.
+     */
+    long deleteAll();
+
+    /**
      * Retrieve all tickets from the registry.
      *
-     * @return collection of tickets currently stored in the registry. Tickets
-     * might or might not be valid i.e. expired.
+     * @return collection of tickets currently stored in the registry. Tickets might or might not be valid i.e. expired.
      */
     Collection<Ticket> getTickets();
 
@@ -63,22 +69,21 @@ public interface TicketRegistry {
      * Update the received ticket.
      *
      * @param ticket the ticket
+     * @return the updated ticket
      */
-    void updateTicket(Ticket ticket);
+    Ticket updateTicket(Ticket ticket);
 
     /**
      * Computes the number of SSO sessions stored in the ticket registry.
      *
-     * @return Number of ticket-granting tickets in the registry at time of invocation
-     *         or {@link Integer#MIN_VALUE} if unknown.
+     * @return Number of ticket-granting tickets in the registry at time of invocation         or {@link Integer#MIN_VALUE} if unknown.
      */
     long sessionCount();
-    
+
     /**
      * Computes the number of service tickets stored in the ticket registry.
      *
-     * @return Number of service tickets in the registry at time of invocation
-     *         or {@link Integer#MIN_VALUE} if unknown.
+     * @return Number of service tickets in the registry at time of invocation         or {@link Integer#MIN_VALUE} if unknown.
      */
     long serviceTicketCount();
 

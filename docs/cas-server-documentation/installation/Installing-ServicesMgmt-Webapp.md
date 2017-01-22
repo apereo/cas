@@ -11,12 +11,12 @@ is a standalone web application.
 * The CAS server loads/relies on all these defined CAS services to process all incoming requests.
 
 <div class="alert alert-warning"><strong>Synchronized Configuration</strong><p>
-You MUST keep in mind that both applications (the CAS server and the services management webapp)
+You <strong>MUST</strong> keep in mind that both applications (the CAS server and the services management webapp)
 share the <strong>same</strong> service registry configuration for CAS services.
 </p></div>
 
-A sample Maven overlay for the services management webapp is provided
- here: [https://github.com/Apereo/cas-services-management-overlay](https://github.com/Apereo/cas-services-management-overlay)
+A sample overlay for the services management webapp is provided
+ here: [https://github.com/Apereo/cas-services-management-overlay](https://github.com/apereo/cas-services-management-overlay)
  
  To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
@@ -30,6 +30,8 @@ Access to the management webapp is by default configured to authenticate against
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Authorization
+
+Learn how to control access to the management web application. 
 
 ### Static List of Users
 

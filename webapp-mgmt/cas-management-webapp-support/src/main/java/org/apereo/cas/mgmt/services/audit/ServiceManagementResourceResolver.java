@@ -1,5 +1,6 @@
 package org.apereo.cas.mgmt.services.audit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 
 import org.aspectj.lang.JoinPoint;
@@ -32,13 +33,13 @@ public class ServiceManagementResourceResolver implements AuditResourceResolver 
      * @param joinPoint the join point
      * @return the string[]
      */
-    private String[] findService(final JoinPoint joinPoint) {
+    private static String[] findService(final JoinPoint joinPoint) {
         final JoinPoint j = AopUtils.unWrapJoinPoint(joinPoint);
 
         final Long id = (Long) j.getArgs()[0];
 
         if (id == null) {
-            return new String[] {""};
+            return new String[] {StringUtils.EMPTY};
         }
 
         return new String[] {"id=" + id};

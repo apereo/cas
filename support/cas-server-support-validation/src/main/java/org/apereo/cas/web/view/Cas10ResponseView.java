@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,14 +18,17 @@ import java.util.Map;
  */
 public class Cas10ResponseView extends AbstractCasView {
 
-    @Override
-    protected void renderMergedOutputModel(final Map model,
-            final HttpServletRequest request, final HttpServletResponse response)
-                    throws Exception {
+    public Cas10ResponseView(final boolean successResponse, 
+                             final ProtocolAttributeEncoder protocolAttributeEncoder, 
+                             final ServicesManager servicesManager, 
+                             final String authenticationContextAttribute) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute);
+    }
 
+    @Override
+    protected void renderMergedOutputModel(final Map model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (this.successResponse) {
-            response.getWriter().print(
-                    "yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
+            response.getWriter().print("yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
         } else {
             response.getWriter().print("no\n\n");
         }

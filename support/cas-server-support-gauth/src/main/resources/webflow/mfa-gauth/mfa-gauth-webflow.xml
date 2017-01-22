@@ -28,7 +28,7 @@
     </view-state>
     
     <action-state id="saveRegistration">
-        <evaluate expression="saveAccountRegistrationAction" />
+        <evaluate expression="googleSaveAccountRegistrationAction" />
         <transition on="success" to="viewLoginForm"/>
     </action-state>
     
@@ -39,12 +39,12 @@
         <on-entry>
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
-        <transition on="submit" bind="true" validate="false" to="realSubmit"/>
+        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
 
     </view-state>
 
     <action-state id="realSubmit">
-        <evaluate expression="googleAuthenticatorAuthenticationWebflowAction" />
+        <evaluate expression="oneTimeTokenAuthenticationWebflowAction" />
         <transition on="success" to="success" />
         <transition on="error" to="initializeLoginForm" />
     </action-state>

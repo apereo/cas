@@ -10,7 +10,7 @@
     <bean id="testCase1" class="org.apereo.cas.ticket.registry.MemCacheTicketRegistry">
         <constructor-arg index="0">
             <bean class="net.spy.memcached.spring.MemcachedClientFactoryBean"
-                  p:servers="localhost:11211">
+                  p:servers="memcached-14938.c10.us-east-1-3.ec2.cloud.redislabs.com:14938">
             </bean>
         </constructor-arg>
     </bean>
@@ -19,7 +19,7 @@
     <bean id="testCase2" class="org.apereo.cas.ticket.registry.MemCacheTicketRegistry">
         <constructor-arg index="0">
             <bean class="net.spy.memcached.spring.MemcachedClientFactoryBean"
-                  p:servers="localhost:11211"
+                  p:servers="memcached-14938.c10.us-east-1-3.ec2.cloud.redislabs.com:14938"
                   p:protocol="BINARY"
                   p:locatorType="ARRAY_MOD"
                   p:failureMode="Redistribute"
@@ -36,6 +36,6 @@
 
     <bean id="kryoTranscover" class="org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder"/>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.spring.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 </beans>

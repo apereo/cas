@@ -14,7 +14,7 @@
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
-            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF" />
+            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
             <property name="allowUndeclaredRTE" value="true"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
             <property name="allowThrowsTagsForSubclasses" value="true"/>
@@ -28,7 +28,7 @@
         <module name="JavadocVariable">
             <property name="severity" value="error"/>
             <property name="scope" value="protected"/>
-      <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
+            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
         </module>
         <module name="JavadocStyle">
             <property name="severity" value="error"/>
@@ -70,6 +70,7 @@
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreFieldDeclaration" value="true"/>
             <property name="severity" value="error"/>
+            <property name="ignoreNumbers" value="-1, 0, 1, 2, 1000"/>
         </module>
         <module name="LocalFinalVariableName">
             <property name="severity" value="error"/>
@@ -99,7 +100,7 @@
         </module>
         <module name="ParameterName">
             <property name="severity" value="error"/>
-            <property name="ignoreOverridden" value="true" />
+            <property name="ignoreOverridden" value="true"/>
         </module>
         <module name="StaticVariableName">
             <property name="severity" value="error"/>
@@ -128,7 +129,7 @@
                       org.springframework.test.web.client.match.MockRestRequestMatchers,
                       org.springframework.test.web.client.response.MockRestResponseCreators,
                       java.nio.file.StandardWatchEventKinds"/>
-            <property name="allowStaticMemberImports" value="false"/>
+            <property name="allowStaticMemberImports" value="true"/>
         </module>
         <module name="SingleLineJavadoc">
             <property name="severity" value="warning"/>
@@ -139,7 +140,7 @@
         <module name="RedundantImport">
             <property name="severity" value="error"/>
         </module>
-        
+
         <!--
         This check insofar is unable to ignore constants and logger fields.
         <module name="RequireThis">
@@ -148,7 +149,7 @@
             <property name="validateOnlyOverlapping" value="false" />
         </module>
         -->
-        
+
         <module name="UnusedImports">
             <property name="severity" value="error"/>
         </module>
@@ -186,7 +187,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="ParenPad">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter">
@@ -232,11 +233,7 @@
         <module name="StringLiteralEquality">
             <property name="severity" value="error"/>
         </module>
-        
-        <module name="AnnotationLocation">
-            <property name="severity" value="error" />
-        </module>
-        
+
         <!--
         <module name="MissingCtor">
             <property name="severity" value="error" />
@@ -244,20 +241,20 @@
         -->
 
         <module name="OuterTypeFilename">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="OuterTypeNumber">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="AnnotationUseStyle">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="CatchParameterName">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="AnonInnerLength">
-            <property name="max" value="40" />
-            <property name="severity" value="error" />
+            <property name="max" value="40"/>
+            <property name="severity" value="error"/>
         </module>
         <module name="RightCurly">
             <property name="severity" value="error"/>
@@ -296,7 +293,7 @@
                       value="(^&quot;&quot;$)|(^&quot;(no|false|\/|true|//|yes|default|\.|,|=|&amp;|\?|UTF-8|\*|\\|//)&quot;$)" />
         </module>
          -->
-        
+
         <module name="VisibilityModifier">
             <property name="severity" value="error"/>
             <property name="protectedAllowed" value="true"/>
@@ -343,7 +340,7 @@
             <property name="message"
                       value="It's better to name controller/component/configuration annotations to avoid implicit configuration"/>
         </module>
-        
+
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Parameteric log messages"/>
             <property name="severity" value="error"/>
@@ -392,6 +389,13 @@
             <property name="format" value="(public|protected)\s+void\s+test\w+\(.+\{$"/>
             <property name="message"
                       value="JUnit test methods should not begin with the 'test' prefix. Use annotations instead and/or rename the method"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="commonslang3"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Force using commons-lang v3"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="org\.apache\.commons\.lang\."/>
+            <property name="message" value="Use 'org.apache.commons.lang3' instead."/>
         </module>
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;logger&quot;"/>
@@ -459,7 +463,6 @@
         <property name="severity" value="error"/>
     </module>
 
-    
 
     <!-- Custom checks based on regular expressions -->
     <module name="RegexpSingleline">
@@ -467,6 +470,18 @@
         <property name="severity" value="error"/>
         <property name="format" value="\w+\s+$"/>
         <property name="message" value="Line has trailing spaces."/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Forbidden annotations"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="@Component|@Value"/>
+        <property name="message" value="Avoid using the indicated annotations."/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use Java streams"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="new .+(Set|List).+\(Arrays\.asList"/>
+        <property name="message" value="Avoid chaining collections. Shoot for immutability. Try Stream.of() and collect."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Space instead of tabs"/>
@@ -496,15 +511,41 @@
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
         <property name="severity" value="error"/>
-        <property name="format" value="Arrays\.asList\(.+"/>
-        <property name="message" value="Use Lists.newArrayList() instead."/>
+        <property name="format" value="Lists\.newArrayList\(.+"/>
+        <property name="message" value="Use Arrays.asList() or Collections.singletonList() instead."/>
     </module>
-    
+
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
         <property name="severity" value="error"/>
         <property name="format" value="import\s+static\s+org\.mockito\.Mockito\.\w+"/>
         <property name="message" value="Mockito methods MUST be imported statically with a *"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Test class is named incorrectly"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="public\s+(abstract\s+)*class\s+.+Test\s*\{"/>
+        <property name="message" value="Name of the test class MUST end in 'Tests'"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="@Test\(expect"/>
+        <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>
+        <property name="severity" value="info"/>
+        <property name="format" value="new.*Set&lt;&gt;\((Arrays\.asList\([^,]+\)|Collections\.singletonList\(.*\))\)"/>
+        <property name="message" value="Consider using Collections.singleton instead"/>
+    </module>
+
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="method = RequestMethod\."/>
+        <property name="fileExtensions" value="java"/>
+        <property name="message" value="Use specific request annotation from org.springframework.web.bind.annotation package"/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>

@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.monitor.JdbcDataSourceMonitor;
 import org.apereo.cas.monitor.Monitor;
@@ -32,14 +33,9 @@ public class CasJdbcMonitorConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public Monitor dataSourceMonitor(
-            @Qualifier("pooledJdbcMonitorExecutorService")
-            final ExecutorService executor) {
-        final JdbcDataSourceMonitor m = new JdbcDataSourceMonitor(monitorDataSource());
-        m.setValidationQuery(casProperties.getMonitor().getJdbc().getValidationQuery());
-        m.setMaxWait(casProperties.getMonitor().getJdbc().getMaxWait());
-        m.setExecutor(executor);
-        return m;
+    public Monitor dataSourceMonitor(@Qualifier("pooledJdbcMonitorExecutorService") final ExecutorService executor) {
+        final MonitorProperties.Jdbc jdbc = casProperties.getMonitor().getJdbc();
+        return new JdbcDataSourceMonitor(executor, Long.valueOf(jdbc.getMaxWait()).intValue(), monitorDataSource(), jdbc.getValidationQuery());
     }
 
     @Lazy

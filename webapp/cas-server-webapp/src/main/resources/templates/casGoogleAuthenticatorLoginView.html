@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html layout:decorator="layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
 
-<head th:inline="text">
-    <title>[[#{cas.mfa.googleauth.pagetitle}]]</title>
+<head>
+    <title th:text="#{cas.mfa.googleauth.pagetitle}"></title>
 </head>
 
 <body id="cas">
@@ -15,11 +15,14 @@
             </div>
 
             <div class="row fl-controls-left">
-                <label for="password" class="fl-label" th:utext="#{screen.welcome.label.password}"/>
+                <label for="password" class="fl-label" th:utext="#{cas.mfa.googleauth.label.token}"/>
 
                 <input type="password" class="required" id="token" size="25" tabindex="1"
                        th:field="*{token}"
                        th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
+                <div>
+                    <p/>
+                </div>
                 <input class="btn-submit" name="_eventId_submit" accesskey="l"
                        th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
             </div>

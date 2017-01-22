@@ -1,8 +1,16 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.PrincipalException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Delegates to one or more principal resolves in series to resolve a principal. The input to first configured resolver
@@ -16,8 +24,16 @@ import java.util.List;
  * @since 4.0.0
  */
 public class ChainingPrincipalResolver implements PrincipalResolver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChainingPrincipalResolver.class);
 
-    /** The chain of delegate resolvers that are invoked in order. */
+    /**
+     * Factory to create the principal type.
+     **/
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
+    /**
+     * The chain of delegate resolvers that are invoked in order.
+     */
     private List<PrincipalResolver> chain;
 
     /**
@@ -33,24 +49,48 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
 
     /**
      * Resolves a credential by delegating to each of the configured resolvers in sequence. Note that the
-     * {@link PrincipalResolver#supports(Credential)} method is called only for the
-     * first configured resolver.
+     * final principal is taken from the first resolved principal in the chain, yet attributes are merged.
      *
      * @param credential Authenticated credential.
-     *
+     * @param principal  Authenticated principal, if any.
      * @return The principal from the last configured resolver in the chain.
      */
     @Override
-    public Principal resolve(final Credential credential) {
-        final Principal[] result = {null};
-        final Credential[] input = {credential};
-        this.chain.stream().forEach(resolver -> {
-            if (result[0] != null) {
-                input[0] = new IdentifiableCredential(result[0].getId());
+    public Principal resolve(final Credential credential, final Principal principal) {
+        final List<Principal> principals = new ArrayList<>();
+        for (final PrincipalResolver resolver : chain) {
+            if (resolver.supports(credential)) {
+                LOGGER.debug("Invoking principal resolver {}", resolver.getClass().getSimpleName());
+                final Principal p = resolver.resolve(credential, principal);
+                if (p != null) {
+                    principals.add(p);
+                }
             }
-            result[0] = resolver.resolve(input[0]);
+        }
+
+        if (principals.isEmpty()) {
+            LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
+            return NullPrincipal.getInstance();
+        }
+
+        final Map<String, Object> attributes = new HashMap<>();
+        principals.forEach(p -> {
+            if (p != null && p.getAttributes() != null && !p.getAttributes().isEmpty()) {
+                LOGGER.debug("Adding attributes {} for the final principal", p.getAttributes());
+                attributes.putAll(p.getAttributes());
+            }
         });
-        return result[0];
+
+        final long count = principals.stream().map(Principal::getId).distinct().collect(Collectors.toSet()).size();
+        if (count > 1) {
+            throw new PrincipalException("Resolved principals by the chain are not unique",
+                    Collections.emptyMap(),
+                    Collections.emptyMap());
+        }
+        final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
+        final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
+        LOGGER.debug("Final principal constructed by the chain of resolvers is {}", finalPrincipal);
+        return finalPrincipal;
     }
 
     /**
@@ -58,31 +98,10 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      * resolver in the chain.
      *
      * @param credential The credential to check for support.
-     *
      * @return True if the first configured resolver in the chain supports the credential, false otherwise.
      */
     @Override
     public boolean supports(final Credential credential) {
         return this.chain.get(0).supports(credential);
-    }
-
-    /** Credential that stores only an ID. */
-    private static class IdentifiableCredential implements Credential {
-        /** Credential identifier. */
-        private String id;
-
-        /**
-         * Creates a new instance with the given ID.
-         *
-         * @param id the credential id
-         */
-        IdentifiableCredential(final String id) {
-            this.id = id;
-        }
-
-        @Override
-        public String getId() {
-            return this.id;
-        }
     }
 }

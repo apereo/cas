@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.security.cert.X509Certificate;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
 
@@ -13,17 +14,17 @@ import org.junit.Test;
  * @since 3.0.0.6
  *
  */
-public class X509SerialNumberPrincipalResolverTests
-extends AbstractX509CertificateTests {
+public class X509SerialNumberPrincipalResolverTests extends AbstractX509CertificateTests {
 
-    private X509SerialNumberPrincipalResolver resolver = new X509SerialNumberPrincipalResolver();
+    private final X509SerialNumberPrincipalResolver resolver = new X509SerialNumberPrincipalResolver();
 
     @Test
     public void verifyResolvePrincipalInternal() {
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
 
-        assertEquals(VALID_CERTIFICATE.getSerialNumber().toString(), this.resolver.resolve(c).getId());
+        assertEquals(VALID_CERTIFICATE.getSerialNumber().toString(),
+                this.resolver.resolve(c, CoreAuthenticationTestUtils.getPrincipal()).getId());
     }
 
     @Test

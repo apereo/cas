@@ -47,9 +47,9 @@ import java.util.stream.Collectors;
 public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceServiceProviderMetadataFacade.class);
 
-    private SPSSODescriptor ssoDescriptor;
-    private EntityDescriptor entityDescriptor;
-    private MetadataResolver metadataResolver;
+    private final SPSSODescriptor ssoDescriptor;
+    private final EntityDescriptor entityDescriptor;
+    private final MetadataResolver metadataResolver;
 
     private SamlRegisteredServiceServiceProviderMetadataFacade(final SPSSODescriptor ssoDescriptor,
                                                                final EntityDescriptor entityDescriptor,
@@ -92,15 +92,18 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
                                                                          final SamlRegisteredService registeredService,
                                                                          final String entityID,
                                                                          final CriteriaSet criterions) {
+        LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
+                registeredService.getName(), entityID);
         try {
             criterions.add(new BindingCriterion(Collections.singletonList(SAMLConstants.SAML2_POST_BINDING_URI)));
             criterions.add(new EntityIdCriterion(entityID));
 
-            LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
-                    registeredService.getName(), entityID);
-            LOGGER.info("Locating metadata for entityID [{}] with binding [{}]",
+            LOGGER.info("Locating metadata for entityID [{}] with binding [{}] by attempting to run through the metadata chain...",
                     entityID, SAMLConstants.SAML2_POST_BINDING_URI);
             final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
+            LOGGER.info("Resolved metadata chain for service {}. Filtering the chain by entity ID {} and binding {}",
+                    registeredService, entityID, SAMLConstants.SAML2_POST_BINDING_URI);
+
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 throw new SAMLException("Cannot find entity " + entityID + " in metadata provider.");
@@ -110,7 +113,8 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
             if (ssoDescriptor != null) {
                 LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]",
                         entityID, ssoDescriptor.getValidUntil());
-                return new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor, chainingMetadataResolver);
+                return new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor,
+                        entityDescriptor, chainingMetadataResolver);
             }
             throw new SamlException("Could not locate SPSSODescriptor in the metadata for " + entityID);
         } catch (final Exception e) {
@@ -190,11 +194,11 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
      *
      * @return the supported name formats
      */
-    public List<String> getSupportedNameFormats() {
+    public List<String> getSupportedNameIdFormats() {
         final List<String> nameIdFormats = new ArrayList<>();
         final List<XMLObject> children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
-            nameIdFormats.addAll(children.stream().filter(child -> child instanceof NameIDFormat)
+            nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
                     .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList()));
         }
         return nameIdFormats;

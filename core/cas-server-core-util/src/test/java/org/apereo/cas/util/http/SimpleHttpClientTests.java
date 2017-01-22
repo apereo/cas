@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class SimpleHttpClientTests {
 
-    private SimpleHttpClient getHttpClient() throws Exception {
+    private static SimpleHttpClient getHttpClient() throws Exception {
         final SimpleHttpClient httpClient = new SimpleHttpClientFactoryBean().getObject();
         return httpClient;
     }
@@ -36,7 +36,7 @@ public class SimpleHttpClientTests {
     @Test
     public void verifyInvalidHttpsUrl() throws Exception {
         final HttpClient client = this.getHttpClient();
-        assertFalse(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
+        assertFalse(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
 
     @Test
@@ -46,10 +46,10 @@ public class SimpleHttpClientTests {
         clientFactory.setHostnameVerifier(new NoopHostnameVerifier());
         clientFactory.setAcceptableCodes(new int[] {200, 403});
         final SimpleHttpClient client = clientFactory.getObject();
-        assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
+        assertTrue(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
 
-    private SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
+    private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
         final TrustManager trm = new X509TrustManager() {
             @Override
             public X509Certificate[] getAcceptedIssuers() {

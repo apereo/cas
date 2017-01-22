@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.http.HttpClient;
 import org.jasig.cas.client.util.URIBuilder;
-import org.apereo.cas.util.ApplicationContextProvider;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
                 final HttpMessage message = client.sendMessageToEndPoint(url);
                 LOGGER.debug("Message received from {} is {}", url, message);
                 return message != null && StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes)
-                        .contains(message.getResponseCode());
+                        .contains(String.valueOf(message.getResponseCode()));
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -71,7 +71,6 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
     public void setAcceptableResponseCodes(final String acceptableResponseCodes) {
         this.acceptableResponseCodes = acceptableResponseCodes;
     }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -100,7 +99,6 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
                 .append(acceptableResponseCodes)
                 .toHashCode();
     }
-
 
     @Override
     public String toString() {

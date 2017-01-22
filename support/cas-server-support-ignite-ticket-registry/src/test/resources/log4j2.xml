@@ -18,7 +18,10 @@
         <Logger name="org.apache.xml.security" level="off" />
         <Logger name="org.springframework.test" level="off" />
 
-        <Logger name="org.apereo" level="info">
+        <Logger name="org.apereo" level="info" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.apache.ignite" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="warn">

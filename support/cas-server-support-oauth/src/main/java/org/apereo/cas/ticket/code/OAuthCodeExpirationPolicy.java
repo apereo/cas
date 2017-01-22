@@ -1,8 +1,7 @@
 package org.apereo.cas.ticket.code;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link OAuthCodeExpirationPolicy}.
@@ -10,6 +9,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
     private static final long serialVersionUID = -8383186621682727360L;
 
@@ -22,16 +22,5 @@ public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPo
     public OAuthCodeExpirationPolicy(final int numberOfUses,
                                      final long timeToKillInMilliSeconds) {
         super(numberOfUses, timeToKillInMilliSeconds);
-    }
-
-    /**
-     * Instantiates a new O auth code expiration policy.
-     *
-     * @param numberOfUses the number of uses
-     * @param timeToKill   the time to kill
-     * @param timeUnit     the time unit
-     */
-    public OAuthCodeExpirationPolicy(final int numberOfUses, final long timeToKill, final TimeUnit timeUnit) {
-        super(numberOfUses, timeToKill, timeUnit);
     }
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
@@ -24,7 +24,6 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-
 /**
  * @author Jerome Leleu
  * @since 4.0.0
@@ -33,15 +32,12 @@ import static org.mockito.Mockito.*;
 public class LogoutManagerImplTests {
 
     private static final String ID = "id";
-
     private static final String URL = "http://www.github.com";
 
     private LogoutManagerImpl logoutManager;
 
     @Mock
     private TicketGrantingTicket tgt;
-
-    private Map<String, Service> services;
 
     private AbstractWebApplicationService simpleWebApplicationServiceImpl;
 
@@ -52,6 +48,7 @@ public class LogoutManagerImplTests {
 
     @Mock
     private HttpClient client;
+    private DefaultSingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
 
     public LogoutManagerImplTests() {
         MockitoAnnotations.initMocks(this);
@@ -59,25 +56,20 @@ public class LogoutManagerImplTests {
 
     @Before
     public void setUp() {
-
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
-        this.logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator());
 
-        final DefaultSingleLogoutServiceMessageHandler handler = new DefaultSingleLogoutServiceMessageHandler();
-        handler.setHttpClient(client);
-        handler.setLogoutMessageBuilder(new SamlCompliantLogoutMessageCreator());
-        handler.setServicesManager(servicesManager);
-        handler.setSingleLogoutServiceLogoutUrlBuilder(new DefaultSingleLogoutServiceLogoutUrlBuilder());
-        this.logoutManager.setSingleLogoutServiceMessageHandler(handler);
+        singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client, new SamlCompliantLogoutMessageCreator(), servicesManager,
+                new DefaultSingleLogoutServiceLogoutUrlBuilder(), true);
 
-        this.services = new HashMap<>();
-        this.simpleWebApplicationServiceImpl = TestUtils.getService(URL);
-        this.services.put(ID, this.simpleWebApplicationServiceImpl);
-        when(this.tgt.getServices()).thenReturn(this.services);
+        final Map<String, Service> services = new HashMap<>();
+        this.simpleWebApplicationServiceImpl = RegisteredServiceTestUtils.getService(URL);
+        services.put(ID, this.simpleWebApplicationServiceImpl);
+        when(this.tgt.getServices()).thenReturn(services);
 
-        this.registeredService = TestUtils.getRegisteredService(URL);
+        this.logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator(), singleLogoutServiceMessageHandler, false);
+        this.registeredService = RegisteredServiceTestUtils.getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
     }
 
@@ -91,7 +83,8 @@ public class LogoutManagerImplTests {
 
     @Test
     public void verifyLogoutDisabled() {
-        this.logoutManager.setSingleLogoutCallbacksDisabled(true);
+        this.logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator(), singleLogoutServiceMessageHandler, true);
+
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
@@ -154,8 +147,6 @@ public class LogoutManagerImplTests {
     @Test
     public void verifyAsynchronousLogout() {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
-        DefaultSingleLogoutServiceMessageHandler.class.cast(this.logoutManager.getSingleLogoutServiceMessageHandler()).
-                setAsynchronous(true);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
     }

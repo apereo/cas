@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation;
 
-import com.google.common.collect.Lists;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import java.io.Serializable;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Describes how the WS-FED principal resolution machinery
@@ -63,7 +63,7 @@ public class WsFederationConfiguration implements Serializable {
     
     private String relyingPartyIdentifier;
     
-    private int tolerance;
+    private long tolerance;
     
     private WsFedPrincipalResolutionAttributesType attributesType;
     
@@ -172,7 +172,7 @@ public class WsFederationConfiguration implements Serializable {
      * @param signingCertificateResources a list of certificate files to read in.
      */
     public void setSigningCertificateResources(final Resource... signingCertificateResources) {
-        this.signingCertificateResources = Lists.newArrayList(signingCertificateResources);
+        this.signingCertificateResources = Arrays.asList(signingCertificateResources);
         createSigningWallet(this.signingCertificateResources);
     }
 
@@ -185,7 +185,7 @@ public class WsFederationConfiguration implements Serializable {
      *
      * @return the tolerance in milliseconds
      */
-    public int getTolerance() {
+    public long getTolerance() {
         return this.tolerance;
     }
 
@@ -194,7 +194,7 @@ public class WsFederationConfiguration implements Serializable {
      *
      * @param tolerance the tolerance in milliseconds
      */
-    public void setTolerance(final int tolerance) {
+    public void setTolerance(final long tolerance) {
         this.tolerance = tolerance;
     }
 

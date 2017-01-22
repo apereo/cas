@@ -46,7 +46,7 @@ public final class SerializationUtils {
      * @since 5.0.0
      */
     public static void serialize(final Serializable object, final OutputStream outputStream) {
-        try(ObjectOutputStream out = new ObjectOutputStream(outputStream);) {
+        try(ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
             out.writeObject(object);
         } catch (final IOException e) {
             throw Throwables.propagate(e);
@@ -101,10 +101,10 @@ public final class SerializationUtils {
      * @return the byte []
      * @since 4.2
      */
-    public static byte[] serializeAndEncodeObject(final CipherExecutor<byte[], byte[]> cipher,
+    public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
                                                   final Serializable object) {
         final byte[] outBytes = serialize(object);
-        return cipher.encode(outBytes);
+        return (byte[]) cipher.encode(outBytes);
     }
 
     /**

@@ -29,13 +29,13 @@ public class GenericSuccessViewAction extends AbstractAction {
     /**
      * Log instance for logging events, info, warnings, errors, etc.
      */
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private CentralAuthenticationService centralAuthenticationService;
-    private ServicesManager servicesManager;
-    private ServiceFactory serviceFactory;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final ServicesManager servicesManager;
+    private final ServiceFactory serviceFactory;
 
-    private String redirectUrl;
+    private final String redirectUrl;
 
     /**
      * Instantiates a new Generic success view action.
@@ -43,16 +43,13 @@ public class GenericSuccessViewAction extends AbstractAction {
      * @param centralAuthenticationService the central authentication service
      * @param servicesManager              the services manager
      * @param serviceFactory               the service factory
+     * @param redirectUrl                  the redirect url
      */
-    public GenericSuccessViewAction(final CentralAuthenticationService centralAuthenticationService,
-                                    final ServicesManager servicesManager,
-                                    final ServiceFactory serviceFactory) {
+    public GenericSuccessViewAction(final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
+                                    final ServiceFactory serviceFactory, final String redirectUrl) {
         this.centralAuthenticationService = centralAuthenticationService;
         this.servicesManager = servicesManager;
         this.serviceFactory = serviceFactory;
-    }
-    
-    public void setRedirectUrl(final String redirectUrl) {
         this.redirectUrl = redirectUrl;
     }
 
@@ -79,14 +76,13 @@ public class GenericSuccessViewAction extends AbstractAction {
      */
     public Principal getAuthenticationPrincipal(final String ticketGrantingTicketId) {
         try {
-            final TicketGrantingTicket ticketGrantingTicket =
-                    this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return ticketGrantingTicket.getAuthentication().getPrincipal();
         } catch (final InvalidTicketException e) {
-            logger.warn(e.getMessage());
+            logger.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());
+            logger.debug(e.getMessage(), e);
         }
-        logger.debug("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}",
-                NullPrincipal.class.getSimpleName());
+        logger.warn("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}", NullPrincipal.class.getSimpleName());
         return NullPrincipal.getInstance();
     }
 }

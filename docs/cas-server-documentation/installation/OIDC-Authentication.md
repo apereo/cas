@@ -5,7 +5,8 @@ title: CAS - OIDC Authentication
 
 # OpenID Connect Authentication
 
-## Configuration
+Allow CAS to act as an OpenId Connect Provider (OP). 
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -16,16 +17,28 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
+To learn more about OpenId Connect, please [review this guide](http://openid.net/specs/openid-connect-basic-1_0.html).
+
+The current implementation provides support for:
+
+- [Authorization Code workflow](http://openid.net/specs/openid-connect-basic-1_0.html)
+- [Dynamic Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
+- Administration and registration of [OIDC clients](Service-Management.html).
+- Administration and registration of OIDC clients via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
+- Ability to [resolve and release claims](../integration/Attribute-Release-Policies.html).
+- Ability to configure an expiration policy for various tokens.
+
 ## Endpoints
 
 | Field                                     | Description
-|-------------------------------------------+------------------------------------------------------+
+|-------------------------------------------|-------------------------------------------------------
 | `/cas/oidc/.well-known`                       | Discovery endpoint.
 | `/cas/oidc/.well-known/openid-configuration`  | Discovery endpoint.
 | `/cas/oidc/jwks`                              | Provides an aggregate of all keystores.
 | `/cas/oidc/authorize`                         | Authorization requests are handled here.
 | `/cas/oidc/profile`                           | User profile requests are handled here.
 | `/cas/oidc/accessToken`                       | Produces authorized access tokens.
+| `/cas/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
 
 ## Register Clients
 
@@ -40,37 +53,62 @@ OpenID Connect clients can be registered with CAS as such:
   "signIdToken": true,
   "name": "OIDC",
   "id": 1000,
+  "evaluationOrder": 100,
   "jwks": "..."
 }
 ```
 
-| Field                                | Description
-|--------------------------------------+-----------------------------------------------------------------+
-| `serviceId`                   | The redirect URI for this OIDC client.
-| `signIdToken`                 | Whether ID tokens should be signed.
-| `jwks`                        | Path to the location of the keystore that holds the signing keys. If none defined, default below will be used.
+| Field                   | Description
+|-------------------------|------------------------------------------------------------------
+| `serviceId`             | The authorized redirect URI for this OIDC client.
+| `signIdToken`           | Whether ID tokens should be signed. Default is `true`.
+| `jwks`                  | Path to the location of the keystore that holds the signing keys for this application. If none defined, defaults will be used.
 
 ## Settings
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
+## Server Configuration
+
+Remember that OpenID Connect features of CAS require session affinity (and optionally session replication),
+as the authorization responses throughout the login flow
+are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers
+accordinngly.
+
+## Claims
+
+OpenID connect claims are simply treated as normal CAS attributes that need to 
+be [resolved and released](../integration/Attribute-Release-Policies.html).
+
+## Authentication Context Class
+
+Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request,
+which is mostly taken into account by the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS.
+Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
+
+## Dynamic Registration
+
+Clients applications may dynamically be registered with CAS for authentication. By default, CAS operates in a `PROTECTED` mode
+where the registration endpoint requires user authentication. This behavior may be relaxed via CAS settings to allow CAS to operate
+in an `OPEN` mode.
+
 ## Keystores
 
 Each registered application in CAS can contain its own keystore as a `jwks` resource. By default,
-a global keystore can be expected and defined via the above property configuration. The format of the keystore
+a global keystore can be expected and defined via CAS properties. The format of the keystore
 file is similar to the following:
 
 ```json
 {
-    "d": "N70Ylz9rzmTxEXwEbRysF-Us9XoViIYrZtAy_-J_n4hZ804zKjDmQCAkfptwsi_CTLDcfQvLHAp6JTfHVJviBvGbLW_wtETKvYEXd7HO78tqqcEHvZJAaFnMNrCFylGCVJVBPEmiWjnkKzJ-G2C-BRCC_7lguOQ-buuiuzpXHxHsQbrhWehxRnWT9YmjdmRFR9lsKPMLsuoGLVq6d_H8WVwexVmNLgqGH-X-5JYXWljrM_CzL__Jv_nbPpk3Al6lyk0b7jLPcUcI3MckWkDBuiEySg8kh5EJFb3FvzQiFsmY9SEZ3HkR-P-Cm4m9vjzxNgk8yOnzeBzOCrHPBxBdcQ",
-    "dp": "AmagGLoRCVs-qU4KLI3kT0GPFdycG3vtjLo47-_J0JXpWJ4qyt9MRGOZmToa0VhJltUfvr8ik94LjeDRXCi_FNc5J6RnmjuvlVmHIRaVIw4ziL9a3uHRITSXEduuWITVIisJ01o6oZwk_3pbXqPlx1WUUZ0kYy5aOaUz09JjJEE",
-    "dq": "i_EoRl4_2qIvMSjCg2Cdj13T9yvrrqa05DZZShP9eDe-eHrFYA7BNWVB9IhFD6Q7fr9sJNHm7267_rPhG51mj3az6ryAGmb7e2OHsWRyqfAvSFkdnIUjzCmt8xv0YdqK8iyZmHjB9eNHyzdmkWWBNTgj0_w-YlQWrXKD_HGKgP8",
-    "e": "AQAB",
-    "kty": "RSA",
-    "n": "uLKF_1O7u5BDY-nQOgB7SGxgINAR2CEvxl6dp7EWyAFdhswgugb-y-t0Fq0tZs33TsOr_o3QGzPG8Lm5EtyYJpFBZ6rbvAoIDgddVYW-Agy3c_IKSPnxLKHoI18kaJNpNRbvEFH-V2Ya1VihGGWZnO-dN4iCgGnsG5InzM8GkVoP8NnjL5uhBYxsCo1a9HGd6rziyRaQBUI81t-YbHbP-m7mF315yFLX7uZyoBZSgxjezYo5s1va4uVUXXwVDQuUtvSJ1jV6aNgvZEmCFL7BmJWm0tQxLdKj_nweLNOXfjoDbtKpdDptNVR7t1H0E3whRgdNlpjUGaWU1n2TmmZs9w",
-    "p": "_ChowodJnANKElbCtIozV72ttgdfN88xf-gRS8jsdgqjf88SfHq5Trb4Ilb-IhgtlnJJywcbfPky1yCCCrXXoB__iNhONdykhwUenJmHPHJLDlBA6vLga19K2b5xUBK6qry3InvkCVgLVRGUGfSvRkz8Yw-XG2Flvh_IoBaMkh0",
-    "q": "u4L4r4UDQUNNlIEBfg5l_VPUVTAcMXv2_esKXD18k0_b0uOy8q6YAaq2v8ZZwzgZQ6-EKje4R8Gg8psE_u4ATt9aMcxlriq60FF_vZIjgmuAkMDku_TtMMs3Ol_PlaO6lHxxOjg3I2dtZfrur1QryplvUpERP79QJVBtiBjdzyM",
-    "qi": "x3HwBVFfnR2wa3jKLQxlADcZw0I2Be6tqTrJ9erfWfsznCL6zH6beClyObVF9pdDXujZTUVYyhgHMZ15zRVQ2UgCa9k5x8KJn2y-OFz3m2gWu4UAvfM7UotpdMcZlDiFm8J1BWv8QKYjmFNBAE_gAf7k9YiSxJTAsChCks1Q5gk"
+  "keys": [
+    {
+      "d": "eg5wj4Cfsp9gvIaorkdGgIKLSvWH5oitIMrLa5KGLIv7K7Iwi1_-otTORMSi8aKcqyBTGhNYT6-j23Q_dn6Ne6a87EOC5VUiz26y8_ZnovoCxH5nZtvEY8Y-RxhhmbQadm6zsK4o4bVQgn4ZNOCNQZiJUCozh79AedbbnzSSm9LhZlhnNP8hPEMnFp9EqVB0nNLG6vZ11KeSNvYng1LHBhqEhfloRuJV9vkWK8ekrpOQ6j2kdk0XRtryoS1DHVj_a_D7EG7CnjVx3zGSyf0B9JRViRVsKPVLGAtq7O0JiJZWMwIhOJBdviDu3Gi8ovD4yBOfQa_e86cqNmEnf7f2wQ",
+      "e": "AQAB",
+      "n": "k_2zfdFHTepOJYH3bCe7E_3bulz00qsDK7SBnK6aUbzby4xrXfzAQ6_Uxo3uttfFtx_WclfNF0hnkQW3V06LcY5CNQJm6WYrZ7EMuXmpPV6n9PEb5IHczG0ONwJVX_GykOUNPUuAig-B3XnjjyK8W8uwPv0oJzDcB3YIU5XEQBCrcJzefNUoOuT1pYBmJcCdnasUjRGsA-SsuGuaA82cDJNFT-mDenj6YpAZFrDyLHWHYgSsTxPhF-u7q4n3Xl4Zj2Vw2gDE5pXZHzsZS9U0Dn37bIWZWkI5sQoEh6x5P1fkWOIJw630qWMWChuKboaCmp08f7JBfvGQwNlVVgDmUw",
+      "kty": "RSA",
+      "kid": "cas"
+    }
+  ]
 }
 ```
 

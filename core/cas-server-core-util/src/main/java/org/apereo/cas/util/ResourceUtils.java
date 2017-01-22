@@ -76,6 +76,10 @@ public final class ResourceUtils {
      * @return the file
      */
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource) {
+        if (resource == null) {
+            LOGGER.debug("No resource defined to prepare. Returning null");
+            return null;
+        }
         return prepareClasspathResourceIfNeeded(resource, false, resource.getFilename());
     }
 
@@ -94,7 +98,11 @@ public final class ResourceUtils {
                                                             final boolean isDirectory,
                                                             final String containsName) {
         try {
-
+            if (resource == null) {
+                LOGGER.debug("No resource defined to prepare. Returning null");
+                return null;
+            }
+            
             if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
                 return resource;
             }
@@ -110,7 +118,7 @@ public final class ResourceUtils {
             if (isDirectory) {
                 FileUtils.forceMkdir(destination);
                 FileUtils.cleanDirectory(destination);
-            } else {
+            } else if (destination.exists()) {
                 FileUtils.forceDelete(destination);
             }
 

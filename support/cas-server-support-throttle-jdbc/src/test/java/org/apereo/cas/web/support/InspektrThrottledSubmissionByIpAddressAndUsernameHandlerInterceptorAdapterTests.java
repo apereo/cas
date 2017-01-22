@@ -1,18 +1,25 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.support.config.CasJdbcThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -20,12 +27,13 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -39,16 +47,26 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = {
-        "classpath:/jdbc-audit-context.xml"
-}, classes = {CasJdbcThrottlingConfiguration.class, CasCoreAuditConfiguration.class,
-        CasCoreConfiguration.class, CasCoreServicesConfiguration.class,
-        CasCoreUtilConfiguration.class, CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class, RefreshAutoConfiguration.class,
-        CasPersonDirectoryAttributeRepositoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {CasJdbcThrottlingConfiguration.class, 
+        CasCoreAuditConfiguration.class,
+        CasCoreConfiguration.class, 
+        CasCoreServicesConfiguration.class,
+        CasCoreUtilConfiguration.class, 
+        CasCoreTicketsConfiguration.class,
+        CasCoreLogoutConfiguration.class, 
+        RefreshAutoConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasSupportJdbcAuditConfiguration.class})
+@ContextConfiguration(locations = {"classpath:/jdbc-audit-context.xml"})
+@TestPropertySource(locations={"classpath:/casthrottle.properties"})
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
@@ -57,15 +75,14 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private AuthenticationManager authenticationManager;
 
     @Override
-    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
-            throws Exception {
+    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("POST");
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
         final MockRequestContext context = new MockRequestContext();
-        context.setCurrentEvent(new Event("", "error"));
+        context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -73,7 +90,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         throttle.preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(AuthenticationTransaction.wrap(TestUtils.getService(),
+            authenticationManager.authenticate(AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(),
                     badCredentials(username)));
         } catch (final AuthenticationException e) {
             throttle.postHandle(request, response, null, null);

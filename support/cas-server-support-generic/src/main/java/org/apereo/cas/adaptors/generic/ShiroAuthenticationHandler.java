@@ -29,7 +29,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,21 +39,17 @@ import java.util.Set;
  */
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
-    private Set<String> requiredRoles = new HashSet<>();
+    private final Set<String> requiredRoles;
+    private final Set<String> requiredPermissions;
 
-    private Set<String> requiredPermissions = new HashSet<>();
-
-
-    public void setRequiredRoles(final Set<String> requiredRoles) {
+    public ShiroAuthenticationHandler(final Set<String> requiredRoles, final Set<String> requiredPermissions) {
         this.requiredRoles = requiredRoles;
-    }
-
-    public void setRequiredPermissions(final Set<String> requiredPermissions) {
         this.requiredPermissions = requiredPermissions;
     }
-    
+
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
         try {
             final UsernamePasswordToken token = new UsernamePasswordToken(transformedCredential.getUsername(),
@@ -74,10 +69,8 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             throw new AccountNotFoundException(uae.getMessage());
         } catch (final IncorrectCredentialsException ice) {
             throw new FailedLoginException(ice.getMessage());
-        } catch (final LockedAccountException lae) {
+        } catch (final LockedAccountException|ExcessiveAttemptsException lae) {
             throw new AccountLockedException(lae.getMessage());
-        } catch (final ExcessiveAttemptsException eae) {
-            throw new AccountLockedException(eae.getMessage());
         } catch (final ExpiredCredentialsException eae) {
             throw new CredentialExpiredException(eae.getMessage());
         } catch (final DisabledAccountException eae) {
@@ -118,8 +111,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      * @param currentUser the current user
      * @return the handler result
      */
-    protected HandlerResult createAuthenticatedSubjectResult(final Credential credential,
-                                                             final Subject currentUser) {
+    protected HandlerResult createAuthenticatedSubjectResult(final Credential credential, final Subject currentUser) {
         final String username = currentUser.getPrincipal().toString();
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
@@ -142,8 +134,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     public void loadShiroConfiguration(final Resource resource) {
         try {
             final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
-            if (shiroResource.exists()) {
-
+            if (shiroResource != null && shiroResource.exists()) {
                 final String location = shiroResource.getURI().toString();
                 logger.debug("Loading Shiro configuration from {}", location);
 

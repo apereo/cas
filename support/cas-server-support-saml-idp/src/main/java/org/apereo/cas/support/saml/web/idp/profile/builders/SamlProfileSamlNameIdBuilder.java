@@ -5,6 +5,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -30,50 +31,68 @@ import java.util.List;
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
     private static final long serialVersionUID = -6231886395225437320L;
 
+    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean) {
+        super(configBean);
+    }
+
     @Override
     public NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                              final Assertion assertion, final SamlRegisteredService service,
-                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+                        final Assertion assertion, final SamlRegisteredService service,
+                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         return buildNameId(authnRequest, assertion, service, adaptor);
     }
 
-    private NameID buildNameId(final AuthnRequest authnRequest, final Assertion assertion,
-                               final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-            throws SamlException {
+    /**
+     * Build name id.
+     * If there are no explicitly defined NameIDFormats, include the default format.
+     * see: http://saml2int.org/profile/current/#section92
+     *
+     * @param authnRequest the authn request
+     * @param assertion    the assertion
+     * @param service      the service
+     * @param adaptor      the adaptor
+     * @return the name id
+     * @throws SamlException the saml exception
+     */
+    private NameID buildNameId(final AuthnRequest authnRequest,
+                               final Assertion assertion,
+                               final SamlRegisteredService service,
+                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
-        final List<String> supportedNameFormats = adaptor.getSupportedNameFormats();
+        final List<String> supportedNameFormats = adaptor.getSupportedNameIdFormats();
         logger.debug("Metadata for [{}] declares support for the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
 
-        // there are no explicitly defined NameIDFormats, include the default format
-        // see: http://saml2int.org/profile/current/#section92
         if (supportedNameFormats.isEmpty()) {
             supportedNameFormats.add(NameIDType.TRANSIENT);
+            logger.debug("No supported nameId formats could be determined from metadata. Added default {}", NameIDType.TRANSIENT);
         }
         if (StringUtils.isNotBlank(service.getRequiredNameIdFormat())) {
-            supportedNameFormats.add(0, service.getRequiredNameIdFormat());
+            final String fmt = parseAndBuildRequiredNameIdFormat(service);
+            supportedNameFormats.add(0, fmt);
+            logger.debug("Added required nameId format {} based on saml service configuration for {}", fmt, service.getServiceId());
         }
 
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {
             requiredNameFormat = authnRequest.getNameIDPolicy().getFormat();
-            logger.debug("AuthN request says [{}] is the required NameID format", requiredNameFormat);
+            logger.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
             if (NameID.ENCRYPTED.equals(requiredNameFormat)) {
                 logger.warn("Encrypted NameID formats are not supported");
                 requiredNameFormat = null;
             }
         }
-        
+
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
             logger.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
                     requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest), adaptor.getEntityId());
             throw new SamlException("Required NameID format cannot be provided because it is not supported");
         }
 
-        try {
-            for (final String nameFormat : supportedNameFormats) {
+        for (final String nameFormat : supportedNameFormats) {
+            try {
                 logger.debug("Evaluating NameID format {}", nameFormat);
-                
+
                 final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
                 encoder.setNameFormat(nameFormat);
                 if (authnRequest.getNameIDPolicy() != null) {
@@ -86,15 +105,48 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 logger.debug("NameID attribute value is set to {}", assertion.getPrincipal().getName());
                 attribute.setValues(Collections.singletonList(value));
                 logger.debug("Encoding NameID based on {}", nameFormat);
-                
+
                 final NameID nameid = encoder.encode(attribute);
                 logger.debug("Final NameID encoded is {} with value {}", nameid.getFormat(), nameid.getValue());
                 return nameid;
+
+            } catch (final Exception e) {
+                logger.error(e.getMessage(), e);
             }
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
         }
         return null;
     }
-    
+
+    private String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
+        final String fmt = service.getRequiredNameIdFormat().trim();
+        if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
+            return NameIDType.EMAIL;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.TRANSIENT, fmt)) {
+            return NameIDType.TRANSIENT;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.UNSPECIFIED, fmt)) {
+            return NameIDType.UNSPECIFIED;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.PERSISTENT, fmt)) {
+            return NameIDType.PERSISTENT;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.ENTITY, fmt)) {
+            return NameIDType.ENTITY;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.X509_SUBJECT, fmt)) {
+            return NameIDType.X509_SUBJECT;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.WIN_DOMAIN_QUALIFIED, fmt)) {
+            return NameIDType.WIN_DOMAIN_QUALIFIED;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.KERBEROS, fmt)) {
+            return NameIDType.KERBEROS;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.ENCRYPTED, fmt)) {
+            return NameIDType.ENCRYPTED;
+        }
+        return fmt;
+    }
+
 }

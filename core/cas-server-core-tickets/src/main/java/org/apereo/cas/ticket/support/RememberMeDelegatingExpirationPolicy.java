@@ -1,5 +1,10 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
@@ -14,11 +19,13 @@ import javax.annotation.PostConstruct;
  *
  * @author Scott Battaglia
  * @since 3.2.1
- *
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = -2735975347698196127L;
 
     /**
@@ -26,15 +33,30 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
      * deserialization the field is null.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeDelegatingExpirationPolicy.class);
-    
+
+    @JsonProperty
     private ExpirationPolicy rememberMeExpirationPolicy;
 
+    @JsonProperty
     private ExpirationPolicy sessionExpirationPolicy;
 
     /**
      * Instantiates a new Remember me delegating expiration policy.
      */
-    public RememberMeDelegatingExpirationPolicy() {}
+    public RememberMeDelegatingExpirationPolicy() {
+    }
+
+    /**
+     * Instantiates a new Remember me delegating expiration policy.
+     *
+     * @param rememberMeExpirationPolicy the remember me expiration policy
+     * @param sessionExpirationPolicy    the session expiration policy
+     */
+    public RememberMeDelegatingExpirationPolicy(final ExpirationPolicy rememberMeExpirationPolicy,
+                                                final ExpirationPolicy sessionExpirationPolicy) {
+        this.rememberMeExpirationPolicy = rememberMeExpirationPolicy;
+        this.sessionExpirationPolicy = sessionExpirationPolicy;
+    }
 
     @PostConstruct
     private void postConstruct() {
@@ -65,6 +87,7 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
         return false;
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToLive() {
         if (this.rememberMeExpirationPolicy != null) {
@@ -73,6 +96,7 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
         return 0L;
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToIdle() {
         if (this.rememberMeExpirationPolicy != null) {
@@ -81,12 +105,38 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
         return 0L;
     }
 
-    public void setRememberMeExpirationPolicy(
-        final ExpirationPolicy rememberMeExpirationPolicy) {
+    public void setRememberMeExpirationPolicy(final ExpirationPolicy rememberMeExpirationPolicy) {
         this.rememberMeExpirationPolicy = rememberMeExpirationPolicy;
     }
 
     public void setSessionExpirationPolicy(final ExpirationPolicy sessionExpirationPolicy) {
         this.sessionExpirationPolicy = sessionExpirationPolicy;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final RememberMeDelegatingExpirationPolicy rhs = (RememberMeDelegatingExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .append(this.rememberMeExpirationPolicy, rhs.rememberMeExpirationPolicy)
+                .append(this.sessionExpirationPolicy, rhs.sessionExpirationPolicy)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(rememberMeExpirationPolicy)
+                .append(sessionExpirationPolicy)
+                .toHashCode();
     }
 }

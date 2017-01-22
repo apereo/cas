@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +26,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
     /**
      * The underlying pac4j authenticator.
      */
-    protected UsernamePasswordAuthenticator authenticator = new SimpleTestUsernamePasswordAuthenticator();
+    protected Authenticator<UsernamePasswordCredentials> authenticator = new SimpleTestUsernamePasswordAuthenticator();
 
     /**
      * PasswordEncoder to be used by subclasses to encode passwords for
@@ -67,7 +66,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
         return this.authenticator;
     }
 
-    public void setAuthenticator(final UsernamePasswordAuthenticator authenticator) {
+    public void setAuthenticator(final Authenticator<UsernamePasswordCredentials> authenticator) {
         this.authenticator = authenticator;
     }
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -46,5 +47,11 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         builder.append(getClass().getName());
         builder.append(getId());
         return builder.toHashCode();
+    }
+
+    @JsonIgnore
+    @Override
+    public Class<? extends Credential> getCredentialClass() {
+        return this.getClass();
     }
 }

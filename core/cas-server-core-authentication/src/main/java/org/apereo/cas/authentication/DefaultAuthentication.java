@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
@@ -10,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Immutable authentication event whose attributes may not change after creation.
@@ -18,33 +21,49 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.0.0
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class DefaultAuthentication implements Authentication {
 
-    /** UID for serializing. */
+    /**
+     * UID for serializing.
+     */
     private static final long serialVersionUID = 3206127526058061391L;
 
-    /** Authentication date stamp. */
+    /**
+     * Authentication date stamp.
+     */
     private ZonedDateTime authenticationDate;
 
-    /** List of metadata about credentials presented at authentication. */
+    /**
+     * List of metadata about credentials presented at authentication.
+     */
     private List<CredentialMetaData> credentials;
 
-    /** Authenticated principal. */
+    /**
+     * Authenticated principal.
+     */
     private Principal principal;
 
-    /** Authentication metadata attributes. */
-    private Map<String, Object> attributes;
+    /**
+     * Authentication metadata attributes.
+     */
+    private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
-    /** Map of handler name to handler authentication success event. */
+    /**
+     * Map of handler name to handler authentication success event.
+     */
     private Map<String, HandlerResult> successes;
 
-    /** Map of handler name to handler authentication failure cause. */
+    /**
+     * Map of handler name to handler authentication failure cause.
+     */
     private Map<String, Class<? extends Exception>> failures;
 
-    /** No-arg constructor for serialization support. */
+    /**
+     * No-arg constructor for serialization support.
+     */
     private DefaultAuthentication() {
         this.authenticationDate = null;
         this.credentials = null;
@@ -57,10 +76,10 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Creates a new instance with the given data.
      *
-     * @param date Non-null authentication date.
-     * @param principal Non-null authenticated principal.
+     * @param date       Non-null authentication date.
+     * @param principal  Non-null authenticated principal.
      * @param attributes Nullable map of authentication metadata.
-     * @param successes Non-null map of authentication successes containing at least one entry.
+     * @param successes  Non-null map of authentication successes containing at least one entry.
      */
     public DefaultAuthentication(
             final ZonedDateTime date,
@@ -75,21 +94,21 @@ public class DefaultAuthentication implements Authentication {
 
         this.authenticationDate = date;
         this.principal = principal;
-        this.attributes = attributes.isEmpty() ? null : attributes;
+        this.attributes = attributes;
         this.successes = successes;
         this.credentials = null;
         this.failures = null;
     }
-    
+
     /**
      * Creates a new instance with the given data.
      *
-     * @param date Non-null authentication date.
+     * @param date        Non-null authentication date.
      * @param credentials Non-null list of credential metadata containing at least one entry.
-     * @param principal Non-null authenticated principal.
-     * @param attributes Nullable map of authentication metadata.
-     * @param successes Non-null map of authentication successes containing at least one entry.
-     * @param failures Nullable map of authentication failures.
+     * @param principal   Non-null authenticated principal.
+     * @param attributes  Nullable map of authentication metadata.
+     * @param successes   Non-null map of authentication successes containing at least one entry.
+     * @param failures    Nullable map of authentication failures.
      */
     public DefaultAuthentication(
             final ZonedDateTime date,
@@ -100,12 +119,12 @@ public class DefaultAuthentication implements Authentication {
             final Map<String, Class<? extends Exception>> failures) {
 
         this(date, principal, attributes, successes);
-        
+
         Assert.notNull(credentials, "Credential cannot be null");
         Assert.notEmpty(credentials, "Credential cannot be empty");
 
         this.credentials = credentials;
-        this.failures = failures.isEmpty() ? null : failures;
+        this.failures = failures.isEmpty() ? Collections.emptyMap() : failures;
     }
 
     @Override
@@ -120,7 +139,7 @@ public class DefaultAuthentication implements Authentication {
 
     @Override
     public Map<String, Object> getAttributes() {
-        return wrap(this.attributes);
+        return CollectionUtils.wrap(this.attributes);
     }
 
     @Override
@@ -135,7 +154,7 @@ public class DefaultAuthentication implements Authentication {
 
     @Override
     public Map<String, Class<? extends Exception>> getFailures() {
-        return wrap(this.failures);
+        return CollectionUtils.wrap(this.failures);
     }
 
     @Override
@@ -164,30 +183,26 @@ public class DefaultAuthentication implements Authentication {
         builder.append(this.credentials, other.getCredentials());
         builder.append(this.successes, other.getSuccesses());
         builder.append(this.authenticationDate, other.getAuthenticationDate());
-        builder.append(wrap(this.attributes), other.getAttributes());
-        builder.append(wrap(this.failures), other.getFailures());
+        builder.append(CollectionUtils.wrap(this.attributes), other.getAttributes());
+        builder.append(CollectionUtils.wrap(this.failures), other.getFailures());
         return builder.isEquals();
     }
 
-    /**
-     * Wraps a possibly null map in an immutable wrapper.
-     *
-     * @param <K> the key type
-     * @param <V> the value type
-     * @param source Nullable map to wrap.
-     * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
-     * {@link java.util.Collections#emptyMap()}.
-     */
-    private static <K, V> Map<K, V> wrap(final Map<K, V> source) {
-        if (source != null) {
-            return new HashMap<>(source);
-        }
-        return Collections.emptyMap();
+    @Override
+    public boolean isCredentialProvided() {
+        return this.attributes.containsKey(AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED)
+                && (Boolean) this.attributes.get(AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED);
     }
 
     @Override
     public void update(final Authentication authn) {
         this.attributes.putAll(authn.getAttributes());
         this.authenticationDate = authn.getAuthenticationDate();
+    }
+
+    @Override
+    public void updateAll(final Authentication authn) {
+        this.attributes.clear();
+        update(authn);
     }
 }

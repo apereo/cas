@@ -1,13 +1,13 @@
 package org.apereo.cas.monitor;
 
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.junit.Test;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
-import org.junit.Before;
-import org.junit.Test;
-
+import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 
 /**
@@ -18,36 +18,25 @@ import static org.junit.Assert.*;
  */
 public class HealthCheckMonitorTests {
 
-    private HealthCheckMonitor monitor;
-
-    @Before
-    public void setUp() throws Exception {
-        this.monitor = new HealthCheckMonitor();
-    }
-
     @Test
     public void verifyObserveUnknown() throws Exception {
-        assertEquals(StatusCode.UNKNOWN, this.monitor.observe().getCode());
+        final HealthCheckMonitor monitor = new HealthCheckMonitor(Collections.emptySet());
+
+        assertEquals(StatusCode.UNKNOWN, monitor.observe().getCode());
     }
 
     @Test
     public void verifyObserveOk() throws Exception {
-        final Set<Monitor> monitors = new HashSet<>();
-        monitors.add(new MemoryMonitor());
-        monitors.add(newSessionMonitor());
-        this.monitor.setMonitors(monitors);
-        assertEquals(StatusCode.OK, this.monitor.observe().getCode());
+        final Set<Monitor> monitors = new HashSet<>(asList(new MemoryMonitor(0), newSessionMonitor()));
+        final HealthCheckMonitor monitor = new HealthCheckMonitor(monitors);
+        assertEquals(StatusCode.OK, monitor.observe().getCode());
     }
 
     @Test
     public void verifyObserveWarn() throws Exception {
-        final Set<Monitor> monitors = new HashSet<>();
-        final MemoryMonitor memoryMonitor = new MemoryMonitor();
-        memoryMonitor.setFreeMemoryWarnThreshold(100);
-        monitors.add(memoryMonitor);
-        monitors.add(newSessionMonitor());
-        this.monitor.setMonitors(monitors);
-        assertEquals(StatusCode.WARN, this.monitor.observe().getCode());
+        final Set<Monitor> monitors = new HashSet<>(asList(new MemoryMonitor(100), newSessionMonitor()));
+        final HealthCheckMonitor monitor = new HealthCheckMonitor(monitors);
+        assertEquals(StatusCode.WARN, monitor.observe().getCode());
     }
 
     @Test
@@ -63,13 +52,11 @@ public class HealthCheckMonitorTests {
                 throw new IllegalStateException("Boogity!");
             }
         };
-        this.monitor.setMonitors(Collections.singleton(throwsUnchecked));
-        assertEquals(StatusCode.ERROR, this.monitor.observe().getCode());
+        final HealthCheckMonitor monitor = new HealthCheckMonitor(Collections.singleton(throwsUnchecked));
+        assertEquals(StatusCode.ERROR, monitor.observe().getCode());
     }
 
-    private SessionMonitor newSessionMonitor() {
-        final SessionMonitor sessionMonitor = new SessionMonitor();
-        sessionMonitor.setTicketRegistry(new DefaultTicketRegistry());
-        return sessionMonitor;
+    private static SessionMonitor newSessionMonitor() {
+        return new SessionMonitor(new DefaultTicketRegistry(), 0, 0);
     }
 }

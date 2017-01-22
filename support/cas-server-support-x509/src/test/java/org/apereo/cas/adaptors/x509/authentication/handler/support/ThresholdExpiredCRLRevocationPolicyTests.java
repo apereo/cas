@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.adaptors.x509.util.MockX509CRL;
 
@@ -28,13 +30,13 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class ThresholdExpiredCRLRevocationPolicyTests {
     /** Policy instance under test. */
-    private ThresholdExpiredCRLRevocationPolicy policy;
+    private final ThresholdExpiredCRLRevocationPolicy policy;
 
     /** CRL to test. */
-    private X509CRL crl;
+    private final X509CRL crl;
 
     /** Expected result of check; null for success */
-    private GeneralSecurityException expected;
+    private final GeneralSecurityException expected;
 
 
     /**
@@ -72,8 +74,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
 
         // Test case #1
         // Expect expired for zero leniency on CRL expiring 1ms ago
-        final ThresholdExpiredCRLRevocationPolicy zeroThreshold = new ThresholdExpiredCRLRevocationPolicy();
-        zeroThreshold.setThreshold(0);
+        final ThresholdExpiredCRLRevocationPolicy zeroThreshold = new ThresholdExpiredCRLRevocationPolicy(0);
         params.add(new Object[] {
                 zeroThreshold,
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(oneHourAgo), DateTimeUtils.dateOf(now.minusSeconds(1))),
@@ -82,8 +83,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
 
         // Test case #2
         // Expect expired for 1h leniency on CRL expired 1 hour 1ms ago
-        final ThresholdExpiredCRLRevocationPolicy oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy();
-        oneHourThreshold.setThreshold(3600);
+        final ThresholdExpiredCRLRevocationPolicy oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy(3600);
         params.add(new Object[] {
                 oneHourThreshold,
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(oneHourAgo.minusSeconds(1))),

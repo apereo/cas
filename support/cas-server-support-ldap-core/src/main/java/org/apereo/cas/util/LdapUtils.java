@@ -1,8 +1,8 @@
 package org.apereo.cas.util;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
@@ -24,6 +24,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.ad.UnicodePwdAttribute;
 import org.ldaptive.extended.PasswordModifyOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.referral.DeleteReferralHandler;
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,7 +115,7 @@ public final class LdapUtils {
      */
     public static Long getLong(final LdapEntry entry, final String attribute, final Long nullValue) {
         final String v = getString(entry, attribute, nullValue.toString());
-        if (v != null && NumberUtils.isNumber(v)) {
+        if (v != null && NumberUtils.isCreatable(v)) {
             return Long.valueOf(v);
         }
         return nullValue;
@@ -168,10 +169,8 @@ public final class LdapUtils {
      * @return the response
      * @throws LdapException the ldap exception
      */
-    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
-                                                                final String baseDn,
-                                                                final SearchFilter filter)
-            throws LdapException {
+    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory, final String baseDn,
+                                                                final SearchFilter filter) throws LdapException {
         try (Connection connection = createConnection(connectionFactory)) {
             final SearchOperation searchOperation = new SearchOperation(connection);
             final SearchRequest request = Beans.newSearchRequest(baseDn, filter);
@@ -179,7 +178,6 @@ public final class LdapUtils {
             return searchOperation.execute(request);
         }
     }
-
 
     /**
      * Checks to see if response has a result.
@@ -189,10 +187,7 @@ public final class LdapUtils {
      */
     public static boolean containsResultEntry(final Response<SearchResult> response) {
         final SearchResult result = response.getResult();
-        if (result != null && result.getEntry() != null) {
-            return true;
-        }
-        return false;
+        return result != null && result.getEntry() != null;
     }
 
     /**
@@ -218,16 +213,36 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param oldPassword       the old password
      * @param newPassword       the new password
-     * @return true/false
+     * @param type              the type
+     * @return true /false
      */
     public static boolean executePasswordModifyOperation(final String currentDn,
                                                          final ConnectionFactory connectionFactory,
                                                          final String oldPassword,
-                                                         final String newPassword) {
+                                                         final String newPassword,
+                                                         final AbstractLdapProperties.LdapType type) {
         try (Connection modifyConnection = createConnection(connectionFactory)) {
+            if (!modifyConnection.getConnectionConfig().getUseSSL()
+                    && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
+                LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
+                        + "To modify password attributes, the connection to the LDAP server SHOULD be secured and/or encrypted.");
+            }
+            if (type == AbstractLdapProperties.LdapType.AD) {
+                LOGGER.debug("Executing password modification op for active directory based on "
+                        + "[https://support.microsoft.com/en-us/kb/269190]");
+                final ModifyOperation operation = new ModifyOperation(modifyConnection);
+                final Response response = operation.execute(new ModifyRequest(currentDn,
+                        new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
+                LOGGER.debug("Result code {}, message: {}", response.getResult(), response.getMessage());
+                return response.getResultCode() == ResultCode.SUCCESS;
+            }
+
+            LOGGER.debug("Executing password modification op for generic LDAP");
             final PasswordModifyOperation operation = new PasswordModifyOperation(modifyConnection);
             final Response response = operation.execute(new PasswordModifyRequest(currentDn,
-                    new Credential(oldPassword), new Credential(newPassword)));
+                    StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
+                    new Credential(newPassword)));
+            LOGGER.debug("Result code {}, message: {}", response.getResult(), response.getMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
@@ -243,8 +258,7 @@ public final class LdapUtils {
      * @param attributes        the attributes
      * @return true/false
      */
-    public static boolean executeModifyOperation(final String currentDn,
-                                                 final ConnectionFactory connectionFactory,
+    public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory,
                                                  final Map<String, Set<String>> attributes) {
         try (Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
@@ -270,13 +284,10 @@ public final class LdapUtils {
      * @param entry             the entry
      * @return true/false
      */
-    public static boolean executeModifyOperation(final String currentDn,
-                                                 final ConnectionFactory connectionFactory,
-                                                 final LdapEntry entry) {
-        final Map<String, Set<String>> attributes = new HashMap<>(entry.getAttribute().size());
-        for (final LdapAttribute ldapAttribute : entry.getAttributes()) {
-            attributes.put(ldapAttribute.getName(), ImmutableSet.copyOf(ldapAttribute.getStringValues()));
-        }
+    public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory, final LdapEntry entry) {
+        final Map<String, Set<String>> attributes = entry.getAttributes().stream()
+                .collect(Collectors.toMap(LdapAttribute::getName, (ldapAttribute) -> new HashSet<>(ldapAttribute.getStringValues())));
+
         return executeModifyOperation(currentDn, connectionFactory, attributes);
     }
 
@@ -288,9 +299,7 @@ public final class LdapUtils {
      * @return true/false
      * @throws LdapException the ldap exception
      */
-    public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry)
-            throws LdapException {
-
+    public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) throws LdapException {
         try (Connection connection = createConnection(connectionFactory)) {
             final AddOperation operation = new AddOperation(connection);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
@@ -301,7 +310,6 @@ public final class LdapUtils {
         return false;
     }
 
-
     /**
      * Execute delete operation boolean.
      *
@@ -310,9 +318,7 @@ public final class LdapUtils {
      * @return true/false
      * @throws LdapException the ldap exception
      */
-    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory,
-                                                 final LdapEntry entry) throws LdapException {
-
+    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) throws LdapException {
         try (Connection connection = createConnection(connectionFactory)) {
             final DeleteOperation delete = new DeleteOperation(connection);
             final DeleteRequest request = new DeleteRequest(entry.getDn());
@@ -354,5 +360,4 @@ public final class LdapUtils {
     public static boolean isLdapConnectionUrl(final URL r) {
         return r.getProtocol().equalsIgnoreCase(LDAP_PREFIX);
     }
-
 }

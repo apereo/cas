@@ -10,6 +10,7 @@ OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAu
 other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
 ## Configuration
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -20,7 +21,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-After enabling OAuth support, three new urls will be available:
+After enabling OAuth support, the following endpoints will be available:
 
 * **/cas/oauth2.0/authorize**  
 It's the url to call to authorize the user: the CAS login page will be displayed and the user will login.
@@ -45,8 +46,8 @@ With the access token, you'll be able to query the `/profile` endpoint and get t
 
 The authorization code grant type is made for UI interactions: the user will enter his own credentials.
 
-1) `/cas/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK` returns the code as a parameter of the CALLBACK url
-2) `/cas/oauth2.0/accessToken?grant_type=authorization_code&client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK` returns the access token
+- `/cas/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK` returns the code as a parameter of the CALLBACK url
+- `/cas/oauth2.0/accessToken?grant_type=authorization_code&client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK` returns the access token
 
 ### Implicit
 
@@ -97,6 +98,14 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 
 The expiration policy for OAuth tokens is controlled by CAS settings and properties.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+## Server Configuration
+
+Remember that OAuth features of CAS require session affinity (and optionally session replication),
+as the authorization responses throughout the login flow
+are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers
+accordinngly.
+
 
 # OpenID Authentication
 

@@ -22,7 +22,7 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
+@Transactional(transactionManager = "ticketTransactionManager")
 public class JpaLockingStrategy implements LockingStrategy {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaLockingStrategy.class);
@@ -42,42 +42,31 @@ public class JpaLockingStrategy implements LockingStrategy {
     private String uniqueId;
 
     /** Amount of time in seconds lock may be held. */
-    private int lockTimeout;
+    private long lockTimeout;
 
     /**
-     * @param  id  Application identifier that identifies a row in the lock
+     *
+     * @param applicationId Application identifier that identifies a row in the lock
      *             table for which multiple clients vie to hold the lock.
      *             This must be the same for all clients contending for a
      *             particular lock.
-     */
-    public void setApplicationId(final String id) {
-        this.applicationId = id;
-    }
-
-
-    /**
-     * @param  id  Identifier used to identify this instance in a row of the
+     * @param uniqueId Identifier used to identify this instance in a row of the
      *             lock table.  Must be unique across all clients vying for
      *             locks for a given application ID.
-     */
-    public void setUniqueId(final String id) {
-        this.uniqueId = id;
-    }
-
-
-    /**
-     * @param  seconds  Maximum amount of time in seconds lock may be held.
+     * @param lockTimeout Maximum amount of time in seconds lock may be held.
      *                  A value of zero indicates that locks are held indefinitely.
      *                  Use of a reasonable timeout facilitates recovery from node failures,
      *                  so setting to zero is discouraged.
      */
-    public void setLockTimeout(final int seconds) {
-        if (seconds < 0) {
+    public JpaLockingStrategy(final String applicationId, final String uniqueId, final long lockTimeout) {
+        this.applicationId = applicationId;
+        this.uniqueId = uniqueId;
+        if (lockTimeout < 0) {
             throw new IllegalArgumentException("Lock timeout must be non-negative.");
         }
-        this.lockTimeout = seconds;
+        this.lockTimeout = lockTimeout;
     }
-    
+
     @Override
     public boolean acquire() {
         final Lock lock;
@@ -174,7 +163,8 @@ public class JpaLockingStrategy implements LockingStrategy {
     @Entity
     @Table(name = "locks")
     private static class Lock implements Serializable {
-        
+
+        private static final long serialVersionUID = -5750740484289616656L;
         /** column name that holds application identifier. */
         @Id
         @Column(name="application_id")

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.jpa.ticketregistry;
 
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -14,11 +15,11 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     /** Default lock timeout is 1 hour. */
-    public static final int DEFAULT_LOCK_TIMEOUT = 3600;
+    public static final String DEFAULT_LOCK_TIMEOUT = "PT1H";
     
     private boolean jpaLockingTgtEnabled = true;
     
-    private int jpaLockingTimeout = DEFAULT_LOCK_TIMEOUT;
+    private String jpaLockingTimeout = DEFAULT_LOCK_TIMEOUT;
 
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
@@ -43,11 +44,11 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
         this.jpaLockingTgtEnabled = jpaLockingTgtEnabled;
     }
 
-    public int getJpaLockingTimeout() {
-        return jpaLockingTimeout;
+    public long getJpaLockingTimeout() {
+        return Beans.newDuration(jpaLockingTimeout).getSeconds();
     }
 
-    public void setJpaLockingTimeout(final int jpaLockingTimeout) {
+    public void setJpaLockingTimeout(final String jpaLockingTimeout) {
         this.jpaLockingTimeout = jpaLockingTimeout;
     }
 }

@@ -4,11 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.support.CasAttributeEncoder;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
@@ -18,14 +17,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,25 +38,38 @@ public abstract class AbstractCasView extends AbstractView {
      * Indicate whether this view will be generating the success response or not.
      * By default, the view is treated as a failure.
      */
-    protected boolean successResponse;
+    protected final boolean successResponse;
 
     /**
      * The attribute encoder instance.
      */
-    protected CasAttributeEncoder casAttributeEncoder;
+    protected final ProtocolAttributeEncoder protocolAttributeEncoder;
 
     /**
      * The Services manager.
      */
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
     /**
      * Logger instance.
      **/
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
-    private String authenticationContextAttribute;
-    
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * authentication context attribute name.
+     */
+    protected final String authenticationContextAttribute;
+
+    public AbstractCasView(final boolean successResponse,
+                           final ProtocolAttributeEncoder protocolAttributeEncoder,
+                           final ServicesManager servicesManager,
+                           final String authenticationContextAttribute) {
+        this.successResponse = successResponse;
+        this.protocolAttributeEncoder = protocolAttributeEncoder;
+        this.servicesManager = servicesManager;
+        this.authenticationContextAttribute = authenticationContextAttribute;
+    }
+
     /**
      * Gets the assertion from the model.
      *
@@ -215,15 +225,11 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the satisfied multifactor authentication provider
      */
-    protected Optional<MultifactorAuthenticationProvider> getSatisfiedMultifactorAuthenticationProvider(
-            final Map<String, Object> model) {
-        if (StringUtils.isNotBlank(authenticationContextAttribute)
-                && model.containsKey(this.authenticationContextAttribute)) {
-            final Optional<MultifactorAuthenticationProvider> result =
-                    (Optional<MultifactorAuthenticationProvider>) model.get(this.authenticationContextAttribute);
-            return result;
+    protected String getSatisfiedMultifactorAuthenticationProviderId(final Map<String, Object> model) {
+        if (StringUtils.isNotBlank(authenticationContextAttribute) && model.containsKey(this.authenticationContextAttribute)) {
+            return model.get(this.authenticationContextAttribute).toString();
         }
-        return Optional.empty();
+        return null;
     }
 
     /**
@@ -278,24 +284,19 @@ public abstract class AbstractCasView extends AbstractView {
 
     /**
      * Gets chained authentications.
+     * Note that the last index in the list always describes the primary authentication
+     * event. All others in the chain should denote proxies. Per the CAS protocol,
+     * when authentication has proceeded through multiple proxies,
+     * the order in which the proxies were traversed MUST be reflected in the response.
+     * The most recently-visited proxy MUST be the first proxy listed, and all the
+     * other proxies MUST be shifted down as new proxies are added.
      *
      * @param model the model
      * @return the chained authentications
      */
     protected Collection<Authentication> getChainedAuthentications(final Map<String, Object> model) {
-        final Collection<Authentication> chainedAuthenticationsToReturn = new ArrayList<>();
-
         final Assertion assertion = getAssertionFrom(model);
         final List<Authentication> chainedAuthentications = assertion.getChainedAuthentications();
-
-        /**
-         * Note that the last index in the list always describes the primary authentication
-         * event. All others in the chain should denote proxies. Per the CAS protocol,
-         * when authentication has proceeded through multiple proxies,
-         * the order in which the proxies were traversed MUST be reflected in the response.
-         * The most recently-visited proxy MUST be the first proxy listed, and all the
-         * other proxies MUST be shifted down as new proxies are added. I
-         */
         return chainedAuthentications.stream().limit(chainedAuthentications.size() - 1).collect(Collectors.toList());
     }
 
@@ -395,33 +396,17 @@ public abstract class AbstractCasView extends AbstractView {
     protected void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values) {
         model.putAll(values);
     }
-    
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
 
-
-    public void setCasAttributeEncoder(final CasAttributeEncoder casAttributeEncoder) {
-        this.casAttributeEncoder = casAttributeEncoder;
-    }
-
-    public CasAttributeEncoder getCasAttributeEncoder() {
-        return this.casAttributeEncoder;
+    public ProtocolAttributeEncoder getProtocolAttributeEncoder() {
+        return this.protocolAttributeEncoder;
     }
 
     public ServicesManager getServicesManager() {
         return this.servicesManager;
-    }
-    
-    public void setSuccessResponse(final boolean successResponse) {
-        this.successResponse = successResponse;
     }
 
     public String getAuthenticationContextAttribute() {
         return authenticationContextAttribute;
     }
 
-    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
-        this.authenticationContextAttribute = authenticationContextAttribute;
-    }
 }

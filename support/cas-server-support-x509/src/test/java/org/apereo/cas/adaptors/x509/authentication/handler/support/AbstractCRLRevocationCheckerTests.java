@@ -3,6 +3,8 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.AbstractCRLRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,10 +28,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
 
     /** Expected result of check; null for success. */
     private GeneralSecurityException expected;
-
-    public AbstractCRLRevocationCheckerTests() {
-    }
-
+    
     /**
      * Creates a new test instance with given parameters.
      *

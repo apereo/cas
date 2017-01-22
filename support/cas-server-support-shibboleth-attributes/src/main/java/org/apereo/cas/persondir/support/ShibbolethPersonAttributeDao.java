@@ -5,13 +5,11 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.NamedPersonImpl;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,23 +22,12 @@ import java.util.stream.Collectors;
  * @author Jonathan Johnson
  * @since 5.0.0
  */
-public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
-    
-    private AttributeResolver attributeResolver;
+public class ShibbolethPersonAttributeDao extends BasePersonAttributeDao {
 
-    /**
-     * Initializes the component. Right now, all it does is makes sure that the attribute resolver is initialized
-     */
-    @PostConstruct
-    public void init() {
-        if (this.attributeResolver instanceof InitializableComponent
-                && !((InitializableComponent) this.attributeResolver).isInitialized()) {
-            try {
-                ((InitializableComponent) this.attributeResolver).initialize();
-            } catch (final ComponentInitializationException e) {
-                throw Throwables.propagate(e);
-            }
-        }
+    private final AttributeResolver attributeResolver;
+
+    public ShibbolethPersonAttributeDao(final AttributeResolver attributeResolver) {
+        this.attributeResolver = attributeResolver;
     }
 
     @Override
@@ -50,7 +37,6 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
 
         try {
             this.attributeResolver.resolveAttributes(attributeResolutionContext);
-
             final Map<String, List<Object>> attributes = attributeResolutionContext.getResolvedIdPAttributes()
                     .entrySet()
                     .stream()
@@ -65,52 +51,23 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
         }
     }
 
-
     @Override
     public Set<IPersonAttributes> getPeople(final Map<String, Object> query) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query) {
         throw new UnsupportedOperationException();
     }
-
 
     @Override
     public Set<String> getPossibleUserAttributeNames() {
         throw new UnsupportedOperationException();
     }
 
-
     @Override
     public Set<String> getAvailableQueryAttributes() {
         throw new UnsupportedOperationException();
-    }
-
-
-    @Override
-    public Map<String, List<Object>> getMultivaluedUserAttributes(final Map<String, List<Object>> seed) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Map<String, List<Object>> getMultivaluedUserAttributes(final String uid) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    @Override
-    public Map<String, Object> getUserAttributes(final Map<String, Object> seed) {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public Map<String, Object> getUserAttributes(final String uid) {
-        throw new UnsupportedOperationException();
-    }
-
-    public void setAttributeResolver(final AttributeResolver attributeResolver) {
-        this.attributeResolver = attributeResolver;
     }
 }

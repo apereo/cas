@@ -1,24 +1,25 @@
 package org.apereo.cas.support.oauth.web;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuthGrantType;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.services.OAuthWebApplicationService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
@@ -40,6 +41,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -305,14 +307,14 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Lists.newArrayList(VALUE, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
+        final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
-        final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory();
-        expiringOAuthCodeFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
-        final Service service = new OAuthWebApplicationService(registeredService);
+        final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory(new AlwaysExpiresExpirationPolicy());
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
+        final Service service = factory.createService(registeredService.getServiceId());
         final OAuthCode code = expiringOAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
 
@@ -636,9 +638,9 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final Principal principal = createPrincipal();
         final RegisteredService registeredService = addRegisteredService();
         final Authentication authentication = getAuthentication(principal);
-        final Service service = new OAuthWebApplicationService(registeredService);
-        final DefaultRefreshTokenFactory expiringRefreshTokenFactory = new DefaultRefreshTokenFactory();
-        expiringRefreshTokenFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
+        final Service service = factory.createService(registeredService.getServiceId());
+        final DefaultRefreshTokenFactory expiringRefreshTokenFactory = new DefaultRefreshTokenFactory(new AlwaysExpiresExpirationPolicy());
         final RefreshToken refreshToken = expiringRefreshTokenFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(refreshToken);
 
@@ -772,10 +774,10 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     private static Principal createPrincipal() {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Lists.newArrayList(VALUE, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        return org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
+        return CoreAuthenticationTestUtils.getPrincipal(ID, map);
     }
 
     private OAuthRegisteredService addRegisteredService() {
@@ -786,7 +788,8 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     private OAuthCode addCode(final Principal principal, final RegisteredService registeredService) {
         final Authentication authentication = getAuthentication(principal);
-        final Service service = new OAuthWebApplicationService(registeredService);
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
+        final Service service = factory.createService(registeredService.getServiceId());
         final OAuthCode code = oAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
         return code;
@@ -794,7 +797,8 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     private RefreshToken addRefreshToken(final Principal principal, final RegisteredService registeredService) {
         final Authentication authentication = getAuthentication(principal);
-        final Service service = new OAuthWebApplicationService(registeredService);
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
+        final Service service = factory.createService(registeredService.getServiceId());
         final RefreshToken refreshToken = oAuthRefreshTokenFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(refreshToken);
         return refreshToken;

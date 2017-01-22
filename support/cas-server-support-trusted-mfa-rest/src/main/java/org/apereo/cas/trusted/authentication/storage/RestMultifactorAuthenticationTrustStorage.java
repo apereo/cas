@@ -1,23 +1,25 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link RestMultifactorAuthenticationTrustStorage}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 
-    private String endpoint;
+    private final String endpoint;
 
     public RestMultifactorAuthenticationTrustStorage(final String endpoint) {
         this.endpoint = endpoint;
@@ -26,20 +28,25 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         final String url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(principal);
-        final RestTemplate restTemplate = new RestTemplate();
-        final ResponseEntity<MultifactorAuthenticationTrustRecord[]> responseEntity = 
-                restTemplate.getForEntity(url, MultifactorAuthenticationTrustRecord[].class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            final MultifactorAuthenticationTrustRecord[] results = responseEntity.getBody();
-            return Sets.newHashSet(results);
-        }
-        
-        return Sets.newHashSet();
+        return getResults(url);
     }
 
     @Override
     public void expire(final LocalDate onOrBefore) {
-        logger.info("{} does not support expiring trusted authentication records", this.getClass().getSimpleName());
+        final RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForEntity(this.endpoint, onOrBefore, Object.class);
+    }
+
+    @Override
+    public void expire(final String key) {
+        final RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForEntity(this.endpoint, key, Object.class);
+    }
+
+    @Override
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+        final String url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(onOrAfterDate.toString());
+        return getResults(url);
     }
 
     @Override
@@ -50,5 +57,17 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             return record;
         }
         return null;
+    }
+    
+    private static Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
+        final RestTemplate restTemplate = new RestTemplate();
+        final ResponseEntity<MultifactorAuthenticationTrustRecord[]> responseEntity =
+                restTemplate.getForEntity(url, MultifactorAuthenticationTrustRecord[].class);
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            final MultifactorAuthenticationTrustRecord[] results = responseEntity.getBody();
+            return Stream.of(results).collect(Collectors.toSet());
+        }
+
+        return Collections.emptySet();
     }
 }

@@ -54,12 +54,12 @@ of configuration environments, as well as being accessible to a wide range of to
 Note that CAS also is a client of its own configuration, because not only it has to manage and control 
 CAS settings, it also needs to contact the configuration server to retrieve and use those settings. 
 
-The configuration server is controlled and defined by the `bootstrap.properties` file.
+The configuration server is controlled and defined by the `src/main/resources/bootstrap.properties` file.
 
 The following endpoints are secured and exposed by the configuration server's `/configserver` endpoint:
 
 | Parameter                         | Description
-|-----------------------------------+-----------------------------------------+
+|-----------------------------------|------------------------------------------
 | `/encrypt`           | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`           | Accepts a `POST` to decrypt CAS configuration settings.
 | `/cas/default`       | Describes what the configuration server knows about the `default` settings profile.
@@ -98,17 +98,21 @@ By default, all CAS settings and configuration is controlled via the embedded `a
 
 ### Native
 
-CAS is also configured to load `*.properties` or `*.yml` files from an external location that is `/etc/cas/config`. 
+CAS is also configured by default to load a `cas.properties` or `cas.yml` file from an external location that is `/etc/cas/config`. 
 This location is constantly monitored by CAS to detect external changes. Note that this location simply needs to 
-exist, and does not require any special permissions
-or structure. The names of the configuration files that go inside this directory also do
- not matter, and there can be many. 
+exist, and does not require any special permissions or structure. The name of the configuration file that goes inside this 
+directory needs to match the `spring.application.name` (i.e. `cas.properties`). 
 
-The configuration of this behavior is controlled via the `src/main/resources/bootstrap.properties` file:
+If you want to use additional configuration files, they need to have the 
+form `application-<profile>.properties` or `application-<profile>.yml`.
+A file named `application.properties` or `application.yml` will be included by default. The profile specific 
+files can be activated by using the `spring.profiles.include` configuration option,
+controlled via the `src/main/resources/bootstrap.properties` file:
 
 ```properties
 spring.profiles.active=native
 spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
+spring.profiles.include=profile1,profile2
 ```
 
 An example of an external `.properties` file hosted by an external location follows:
@@ -141,7 +145,7 @@ Needless to say, the repositories could use both YAML and Properties syntax to h
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>Again, in all of the above strategies,
 an adopter is encouraged to only keep and maintain properties needed for their particular deployment. It is
-unnecessary to grab a copy of all CAS settings and move them to an external location. Settings that are
+UNNECESSARY to grab a copy of all CAS settings and move them to an external location. Settings that are
 defined by the external configuration location or repository are able to override what is provided by CAS
 as a default.</p></div>
 
@@ -160,9 +164,24 @@ Support is provided via the following dependency:
 </dependency>
 ```
 
+Note that to access and review the collection of CAS properties, 
+you will need to use [the CAS administrative interfaces](Monitoring-Statistics.html), or you may
+also use your own native tooling for MongoDB to configure and inject settings.
+
+MongoDb documents are required to be found in the collection `MongoDbProperty`, as the following document:
+
+```json
+{
+    "id": "kfhf945jegnsd45sdg93452",
+    "name": "the-setting-name",
+    "value": "the-setting-value"
+} 
+```
+
+
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html).
 
-### Vault
+### HashiCorp Vault
 
 CAS is also able to use [Vault](https://www.vaultproject.io/) to 
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).

@@ -29,13 +29,13 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     @Column(length = 255, updatable = true, insertable = true)
     private String clientId;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private Boolean bypassApprovalPrompt = Boolean.FALSE;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private Boolean generateRefreshToken = Boolean.FALSE;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private Boolean jsonFormat = Boolean.FALSE;
 
     public String getClientId() {

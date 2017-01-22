@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler;
 
-import org.apereo.cas.configuration.support.ConvertCasePrincipalNameTransformer;
-import org.apereo.cas.configuration.support.PrefixSuffixPrincipalNameTransformer;
+import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
+import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

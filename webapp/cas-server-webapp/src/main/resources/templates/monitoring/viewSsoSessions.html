@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html layout:decorator="monitoring/layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
 
-<head th:inline="text">
-    <title>[[#{cas.ssosessions.report.pagetitle}]]</title>
+<head>
+    <title th:text="#{cas.ssosessions.report.pagetitle}"></title>
 </head>
 
 <body id="cas">
 <div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/ssosessions.css}"/> 
+    
     <div id="content">
 
         <script type="text/javascript" th:inline="javascript">
@@ -20,19 +22,6 @@
 
             function jqueryReady() {
                 head.load(
-                        // Bootstrap Datables CSS
-                        "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
-                        "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
-                        "//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
-                        /*[[@{/css/ssosessions.css}]]*/
-                );
-
-                head.load(
-                        // JS Libraries
-                        "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
-                        // Bootstrap Datatables
-                        "//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
-                        "//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
                         /*[[@{/js/ssosessions.js}]]*/
                 );
             }
@@ -42,7 +31,7 @@
             <div id="loadingMessage"><h3 th:text="#{cas.ssosessions.loading}"/></div>
 
             <div id="no-cas-sessions">
-                <h3 th:text="#{cas.ssosessions.nosessionsfound}"/>
+                <h3 th:text="#{cas.ssosessions.nosessionsfound}"/><p/>
             </div>
 
             <div id="cas-sessions">
@@ -50,9 +39,7 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4><span class="glyphicon glyphicon-stats" aria-hidden="true"/>
-                            <span th:text="#{cas.ssosessions.report.pagetitle}"/>
-                        </h4>
+                        <h4 th:text="#{cas.ssosessions.report.pagetitle}"><span class="glyphicon glyphicon-stats" aria-hidden="true"/></h4>
                     </div>
                     <div class="panel-body">
                         <div id="session-counts" class="container-fluid">

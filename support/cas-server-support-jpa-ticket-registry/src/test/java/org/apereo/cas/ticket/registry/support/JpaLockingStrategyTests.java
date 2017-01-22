@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket.registry.support;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,11 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -42,15 +43,15 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class, JpaTicketRegistryConfiguration.class})
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, JpaTicketRegistryConfiguration.class})
 public class JpaLockingStrategyTests {
     /**
      * Number of clients contending for lock in concurrent test.
      */
     private static final int CONCURRENT_SIZE = 13;
     
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     @Qualifier("ticketTransactionManager")
@@ -99,7 +100,7 @@ public class JpaLockingStrategyTests {
     public void verifyLockExpiration() throws Exception {
         final String appId = "expquick";
         final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, 1);
+        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, "1");
         try {
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
@@ -142,7 +143,7 @@ public class JpaLockingStrategyTests {
     public void verifyConcurrentAcquireAndRelease() throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            testConcurrency(executor, Lists.newArrayList(getConcurrentLocks("concurrent-new")));
+            testConcurrency(executor, Arrays.asList(getConcurrentLocks("concurrent-new")));
         } catch (final Exception e) {
             logger.debug("testConcurrentAcquireAndRelease produced an error", e);
             fail("testConcurrentAcquireAndRelease failed.");
@@ -161,7 +162,7 @@ public class JpaLockingStrategyTests {
         locks[0].release();
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            testConcurrency(executor, Lists.newArrayList(locks));
+            testConcurrency(executor, Arrays.asList(locks));
         } catch (final Exception e) {
             logger.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
             fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");
@@ -178,12 +179,9 @@ public class JpaLockingStrategyTests {
         return locks;
     }
 
-    private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final int ttl) {
-        final JpaLockingStrategy lock = new JpaLockingStrategy();
+    private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final String ttl) {
+        final JpaLockingStrategy lock = new JpaLockingStrategy(appId, uniqueId, Beans.newDuration(ttl).getSeconds());
         lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
-        lock.setApplicationId(appId);
-        lock.setUniqueId(uniqueId);
-        lock.setLockTimeout(ttl);
         return (LockingStrategy) Proxy.newProxyInstance(
                 JpaLockingStrategy.class.getClassLoader(),
                 new Class[]{LockingStrategy.class},
@@ -228,9 +226,9 @@ public class JpaLockingStrategyTests {
     }
 
     private static class TransactionalLockInvocationHandler implements InvocationHandler {
-        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-        private JpaLockingStrategy jpaLock;
-        private PlatformTransactionManager txManager;
+        private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+        private final JpaLockingStrategy jpaLock;
+        private final PlatformTransactionManager txManager;
 
         TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
                                            final PlatformTransactionManager txManager) {
@@ -260,8 +258,8 @@ public class JpaLockingStrategyTests {
     }
 
     private static class Locker implements Callable<Boolean> {
-        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-        private LockingStrategy lock;
+        private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+        private final LockingStrategy lock;
 
         Locker(final LockingStrategy l) {
             lock = l;
@@ -279,8 +277,8 @@ public class JpaLockingStrategyTests {
     }
 
     private static class Releaser implements Callable<Boolean> {
-        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-        private LockingStrategy lock;
+        private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+        private final LockingStrategy lock;
 
         Releaser(final LockingStrategy l) {
             lock = l;

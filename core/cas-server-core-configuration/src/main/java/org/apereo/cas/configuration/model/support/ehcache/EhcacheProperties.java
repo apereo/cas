@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.ehcache;
 
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -22,7 +23,7 @@ public class EhcacheProperties {
     
     private int maximumBatchSize = 100;
 
-    private int replicationInterval = 10000;
+    private String replicationInterval = "PT10S";
     
     private boolean replicatePuts = true;
 
@@ -48,7 +49,7 @@ public class EhcacheProperties {
     
     private int maxElementsInMemory = 10_000;
     
-    private int maxElementsInCache = 10_000;
+    private int maxElementsInCache;
 
     private int maxElementsOnDisk;
     
@@ -95,11 +96,11 @@ public class EhcacheProperties {
         this.maximumBatchSize = maximumBatchSize;
     }
 
-    public int getReplicationInterval() {
-        return replicationInterval;
+    public long getReplicationInterval() {
+        return Beans.newDuration(replicationInterval).toMillis();
     }
 
-    public void setReplicationInterval(final int replicationInterval) {
+    public void setReplicationInterval(final String replicationInterval) {
         this.replicationInterval = replicationInterval;
     }
 

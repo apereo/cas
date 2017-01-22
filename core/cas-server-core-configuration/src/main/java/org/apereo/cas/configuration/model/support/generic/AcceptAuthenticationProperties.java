@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -12,7 +13,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 public class AcceptAuthenticationProperties {
 
-    private String users = "";
+    private String users = StringUtils.EMPTY;
+    private String name;
 
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
@@ -43,5 +45,13 @@ public class AcceptAuthenticationProperties {
 
     public void setUsers(final String users) {
         this.users = users;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 }

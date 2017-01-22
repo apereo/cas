@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html layout:decorator="layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
 
-<head th:inline="text">
-    <title>[[#{cas.login.pagetitle}]]</title>
+<head>
+    <title th:text="#{cas.login.pagetitle}"></title>
 </head>
 
 <body id="cas" class="login">

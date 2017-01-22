@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.util.Set;
 
@@ -10,6 +12,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceMultifactorPolicy extends Serializable {
 
     /**
@@ -64,5 +67,12 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      * @return the principal attribute value to match
      */
     String getPrincipalAttributeValueToMatch();
+
+    /**
+     * Indicates whether authentication should be skipped.
+     *
+     * @return true/false
+     */
+    boolean isBypassEnabled();
 
 }

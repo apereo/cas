@@ -11,19 +11,28 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.0.0
  */
 public class MongoAuthenticationProperties {
-
+    
+    private String attributes;
     private String collectionName = "users";
     private String mongoHostUri = "mongodb://uri";
-    private String attributes;
     private String usernameAttribute = "username";
     private String passwordAttribute = "password";
-
+    
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
     public PrincipalTransformationProperties getPrincipalTransformation() {
         return principalTransformation;
@@ -33,13 +42,14 @@ public class MongoAuthenticationProperties {
         this.principalTransformation = principalTransformation;
     }
 
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
+    public String getAttributes() {
+        return attributes;
     }
 
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    public void setAttributes(final String attributes) {
+        this.attributes = attributes;
     }
+
 
     public String getCollectionName() {
         return collectionName;
@@ -57,14 +67,6 @@ public class MongoAuthenticationProperties {
         this.mongoHostUri = mongoHostUri;
     }
 
-    public String getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(final String attributes) {
-        this.attributes = attributes;
-    }
-
     public String getUsernameAttribute() {
         return usernameAttribute;
     }
@@ -80,4 +82,13 @@ public class MongoAuthenticationProperties {
     public void setPasswordAttribute(final String passwordAttribute) {
         this.passwordAttribute = passwordAttribute;
     }
+
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
 }

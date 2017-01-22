@@ -3,10 +3,11 @@ dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":core:cas-server-core-logout")
     compile project(":support:cas-server-support-saml")
+    compile project(":support:cas-server-support-saml-mdui-core")
     compile project(":support:cas-server-support-saml-idp-core")
-    compile libraries.commons
     compile libraries.casclient
     compile libraries.shibidp
+    compile libraries.httpclient
     runtime libraries.hibernate
     runtime libraries.groovy
     compileOnly libraries.springcloud
@@ -17,4 +18,5 @@ dependencies {
     testCompile project(":core:cas-server-core")
     testCompile project(":core:cas-server-core-logout")
     testCompile project(path: ":support:cas-server-support-json-service-registry")
+    testCompile project(":support:cas-server-support-cookie")
 }

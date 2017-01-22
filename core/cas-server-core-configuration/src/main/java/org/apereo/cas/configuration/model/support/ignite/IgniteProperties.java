@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.support.ignite;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.time.Duration;
 
 /**
  * This is {@link IgniteProperties}.
@@ -23,9 +25,82 @@ public class IgniteProperties {
     private String keyAlgorithm;
     private String trustStoreFilePath;
     private String trustStorePassword;
-
+    
+    private String heartbeatFrequency = "PT2S";
+    private String joinTimeout = "PT1S";
+    private String localAddress;
+    private int localPort = -1;
+    private String networkTimeout = "PT5S";
+    private String socketTimeout = "PT5S";
+    private int threadPriority = 10;
+    private boolean forceServerMode;
+    
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
+
+    public long getHeartbeatFrequency() {
+        return Duration.parse(heartbeatFrequency).toMillis();
+    }
+
+    public void setHeartbeatFrequency(final String heartbeatFrequency) {
+        this.heartbeatFrequency = heartbeatFrequency;
+    }
+
+    public long getJoinTimeout() {
+        return Beans.newDuration(joinTimeout).toMillis();
+    }
+
+    public void setJoinTimeout(final String joinTimeout) {
+        this.joinTimeout = joinTimeout;
+    }
+
+    public String getLocalAddress() {
+        return localAddress;
+    }
+
+    public void setLocalAddress(final String localAddress) {
+        this.localAddress = localAddress;
+    }
+
+    public int getLocalPort() {
+        return localPort;
+    }
+
+    public void setLocalPort(final int localPort) {
+        this.localPort = localPort;
+    }
+
+    public long getNetworkTimeout() {
+        return Beans.newDuration(networkTimeout).toMillis();
+    }
+
+    public void setNetworkTimeout(final String networkTimeout) {
+        this.networkTimeout = networkTimeout;
+    }
+
+    public long getSocketTimeout() {
+        return Beans.newDuration(socketTimeout).toMillis();
+    }
+
+    public void setSocketTimeout(final String socketTimeout) {
+        this.socketTimeout = socketTimeout;
+    }
+
+    public int getThreadPriority() {
+        return threadPriority;
+    }
+
+    public void setThreadPriority(final int threadPriority) {
+        this.threadPriority = threadPriority;
+    }
+
+    public boolean isForceServerMode() {
+        return forceServerMode;
+    }
+
+    public void setForceServerMode(final boolean forceServerMode) {
+        this.forceServerMode = forceServerMode;
+    }
 
     public CryptographyProperties getCrypto() {
         return crypto;
@@ -114,21 +189,7 @@ public class IgniteProperties {
     public void setTicketsCache(final TicketsCache ticketsCache) {
         this.ticketsCache = ticketsCache;
     }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("igniteAddresses", igniteAddresses)
-                .append("ticketsCache", ticketsCache)
-                .append("keyStoreType", keyStoreType)
-                .append("keyStoreFilePath", keyStoreFilePath)
-                .append("trustStoreType", trustStoreType)
-                .append("protocol", protocol)
-                .append("keyAlgorithm", keyAlgorithm)
-                .append("trustStoreFilePath", trustStoreFilePath)
-                .toString();
-    }
-
+        
     public static class TicketsCache {
         private String cacheName = "TicketsCache";
         private String cacheMode = "REPLICATED";
@@ -167,8 +228,6 @@ public class IgniteProperties {
             this.writeSynchronizationMode = writeSynchronizationMode;
         }
     }
-    
-    
 }
 
 

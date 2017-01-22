@@ -18,8 +18,8 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
-    private MockHttpServletRequest request = new MockHttpServletRequest();
-    private HttpServletResponse response = new MockHttpServletResponse();
+    private final MockHttpServletRequest request = new MockHttpServletRequest();
+    private final HttpServletResponse response = new MockHttpServletResponse();
 
     @Autowired
     private ServerManager manager;
@@ -32,7 +32,7 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
         request.addParameter("openid.mode", "associate");
         final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
-        assertEquals(true, canHandle);
+        assertTrue(canHandle);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
         request.addParameter("openid.mode", "anythingElse");
         final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
-        assertEquals(false, canHandle);
+        assertFalse(canHandle);
     }
 
     @Test

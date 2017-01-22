@@ -1,10 +1,10 @@
 ---
 layout: default
-title: CAS - Delegate authentication
+title: CAS - Delegate Authentication
 ---
 
 <p align="center">
-  <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="300" />
+  <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="150" />
 </p>
 
 # Delegate Authentication
@@ -31,17 +31,19 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server. 
 If you want to delegate the CAS authentication to Twitter for example, you have to add an 
-OAuth client for the provider: Twitter. For each delegated authentication mechanism, you must define the appropriate client.
+OAuth client for the Twitter provider, which will be done automatically for you once provider settings are taught to CAS.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 Notice that for each OAuth provider, the CAS server is considered as an OAuth client and therefore should be declared as 
 an OAuth client at the OAuth provider. After the declaration, a key and a secret is given by the OAuth provider which has 
-to be defined in the beans (*the_key_for_xxx* and *the_secret_for_xxx* values for the *key* and *secret* properties).
+to be defined in the CAS configuration as well.
 
 ## User Interface
 
 All available clients are automatically displayed on the login page as clickable buttons.
+CAS does allow options for auto-redirection of the authentication flow to a provider,
+if only there is a single provider available and configured.
 
 ## Authenticated User Id
 
@@ -53,7 +55,7 @@ To see the relevant list of CAS properties, please [review this guide](../instal
 
 ## Demo
 
-Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) 
+Take a look at [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) 
 to see this authentication delegation mechanism in action.
 
 ## Returned Payload
@@ -126,3 +128,17 @@ final FacebookProfile rebuiltProfileOnCasClientSide = (FacebookProfile) ProfileH
 ```
 
 ...and then use it in your application.
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following
+levels:
+
+```xml
+...
+<AsyncLogger name="org.pac4j" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
+```

@@ -1,6 +1,5 @@
 package org.apereo.cas.services.support;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -9,13 +8,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
+
     private static final long serialVersionUID = 403015306984610128L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceRegexAttributeFilter.class);
@@ -93,7 +93,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
                 }
             } else if (attributeValue.getClass().isArray()) {
                 LOGGER.trace("Attribute value {} is an array", attributeValue);
-                final List filteredAttributes = filterAttributes(Lists.newArrayList((String[]) attributeValue), attributeName);
+                final List filteredAttributes = filterAttributes(Arrays.asList((String[]) attributeValue), attributeName);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
@@ -185,7 +185,6 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         final RegisteredServiceRegexAttributeFilter rhs = (RegisteredServiceRegexAttributeFilter) obj;
         return new EqualsBuilder().append(this.pattern.pattern(), rhs.getPattern().pattern()).isEquals();
     }
-
 
     @Override
     public String toString() {

@@ -1,15 +1,20 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.core.Ordered;
+
 import java.io.Serializable;
 
 /**
  * Represents the task of building a CAS response
  * that is returned by a service.
+ *
+ * @param <T> the type parameter
  * @author Misagh Moayyed
- * @param <T>   the type parameter
  * @since 4.2.0
  */
-public interface ResponseBuilder<T extends WebApplicationService> extends Serializable {
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+public interface ResponseBuilder<T extends WebApplicationService> extends Serializable, Ordered {
 
     /**
      * Build response. The implementation must produce
@@ -18,9 +23,17 @@ public interface ResponseBuilder<T extends WebApplicationService> extends Serial
      * as part of the response. If the response type
      * is not recognized, an error must be thrown back.
      *
-     * @param service the service
-     * @param ticketId the ticket id
+     * @param service         the service
+     * @param serviceTicketId the service ticket id
      * @return the response
      */
-    Response build(T service, String ticketId);
+    Response build(T service, String serviceTicketId);
+
+    /**
+     * Supports this service.
+     *
+     * @param service the service
+     * @return true/false
+     */
+    boolean supports(T service);
 }

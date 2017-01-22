@@ -1,5 +1,5 @@
 apply plugin: "war"
-apply plugin: "spring-boot"
+apply plugin: "org.springframework.boot"
 
 description = "Apereo CAS Web Application"
 
@@ -17,11 +17,13 @@ javadoc {
 
 war {
     def currentTime = java.time.ZonedDateTime.now()
+    
     manifest {
         attributes("Implementation-Title": project.name,
                 "Implementation-Vendor": project.group,
                 "Created-By": project.group,
                 "Implementation-Date": currentTime,
+                "Specification-Version": rootProject.currentRevision,
                 "Implementation-Version": project.version)
     }
     from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
@@ -63,6 +65,7 @@ dependencies {
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-validation")
     compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-events")
     compile project(":core:cas-server-core-configuration")
 
     compile project(":support:cas-server-support-throttle")
@@ -73,6 +76,7 @@ dependencies {
     compile project(":support:cas-server-support-themes")
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
+    compile project(":support:cas-server-support-ldap")
 
     compile project(":webapp:cas-server-webapp-init")
     compile project(":webapp:cas-server-webapp-config")
@@ -84,7 +88,7 @@ dependencies {
     compile libraries.pac4j
     compile libraries.springcloud
     compile libraries.springboot
-    compile libraries.thmyeleaf
+    compile libraries.thymeleaf
     compile libraries.groovy
     compile libraries.spring
     compile libraries.cassecurityfilter

@@ -34,7 +34,7 @@ The following Javascript libraries are utilized by CAS automatically:
 * JQuery
 * JQuery UI
 * JQuery Cookie
-* [JavaScript Debug](http://benalman.com/projects/javascript-debug-console-log/): A simple wrapper for `console.log()`
+* Bootstrap
 
 ## Asynchronous Script Loading
 CAS will attempt load the aforementioned script libraries asynchronously so as to not block the page rendering functionality.

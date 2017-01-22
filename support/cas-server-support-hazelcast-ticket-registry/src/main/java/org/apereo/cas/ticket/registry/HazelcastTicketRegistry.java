@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.query.PagingPredicate;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.Ticket;
 
 import javax.annotation.PostConstruct;
@@ -36,22 +37,12 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     /**
      * Instantiates a new Hazelcast ticket registry.
-     */
-    public HazelcastTicketRegistry() {
-    }
-
-    /**
-     * Instantiates a new Hazelcast ticket registry.
      *
      * @param hz       An instance of {@code HazelcastInstance}
      * @param mapName  Name of map to use
      * @param pageSize the page size
      */
-    public HazelcastTicketRegistry(
-            final HazelcastInstance hz,
-            final String mapName,
-            final int pageSize) {
-
+    public HazelcastTicketRegistry(final HazelcastInstance hz, final String mapName, final int pageSize) {
         this.registry = hz.getMap(mapName);
         this.hazelcastInstance = hz;
         this.pageSize = pageSize;
@@ -62,15 +53,15 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
      */
     @PostConstruct
     public void init() {
-        logger.info("Setting up Hazelcast Ticket Registry instance {} with name {}",
-                this.hazelcastInstance, this.registry.getName());
+        logger.info("Setting up Hazelcast Ticket Registry instance {} with name {}", this.hazelcastInstance, registry.getName());
     }
 
     @Override
-    public void updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
+        return ticket;
     }
-    
+
     @Override
     public void addTicket(final Ticket ticket) {
         logger.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
@@ -82,7 +73,11 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
-        return decodeTicket(this.registry.get(encTicketId));
+        if (StringUtils.isNotBlank(encTicketId)) {
+            final Ticket ticket = this.registry.get(encTicketId);
+            return decodeTicket(ticket);
+        }
+        return null;
     }
 
     @Override
@@ -91,43 +86,54 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     }
 
     @Override
+    public long deleteAll() {
+        final int size = this.registry.size();
+        this.registry.evictAll();
+        this.registry.clear();
+        return size;
+    }
+    
+    @Override
     public Collection<Ticket> getTickets() {
         final Collection<Ticket> collection = new HashSet<>();
 
+        logger.debug("Attempting to acquire lock from Hazelcast instance...");
         final Lock lock = this.hazelcastInstance.getLock(getClass().getName());
         lock.lock();
+        logger.debug("Hazelcast instance lock acquired");
+
         try {
+            logger.debug("Setting up the paging predicate with page size of {}", this.pageSize);
             final PagingPredicate pagingPredicate = new PagingPredicate(this.pageSize);
-            for (Collection<Ticket> entrySet = this.registry.values(pagingPredicate);
-                 !entrySet.isEmpty();
-                 pagingPredicate.nextPage(), entrySet = this.registry.values(pagingPredicate)) {
+
+            logger.debug("Retrieving the initial collection of tickets from Hazelcast instance...");
+            Collection<Ticket> entrySet = this.registry.values(pagingPredicate);
+
+            while (!entrySet.isEmpty()) {
                 collection.addAll(entrySet.stream().map(this::decodeTicket).collect(Collectors.toList()));
+
+                pagingPredicate.nextPage();
+                entrySet = this.registry.values(pagingPredicate);
             }
+        } catch (final Exception e) {
+            logger.debug(e.getMessage(), e);
         } finally {
             lock.unlock();
         }
         return collection;
     }
-    
+
     /**
      * Make sure we shutdown HazelCast when the context is destroyed.
      */
     @PreDestroy
     public void shutdown() {
-        logger.info("Shutting down Hazelcast instance {}", this.hazelcastInstance.getConfig().getInstanceName());
         try {
+            logger.info("Shutting down Hazelcast instance {}", this.hazelcastInstance.getConfig().getInstanceName());
             this.hazelcastInstance.shutdown();
         } catch (final Throwable e) {
             logger.debug(e.getMessage());
         }
-    }
-
-    public void setRegistry(final IMap<String, Ticket> registry) {
-        this.registry = registry;
-    }
-
-    public void setHazelcastInstance(final HazelcastInstance hazelcastInstance) {
-        this.hazelcastInstance = hazelcastInstance;
     }
 
     @Override

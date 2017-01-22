@@ -1,8 +1,6 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
@@ -13,23 +11,25 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory {
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
     /**
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
-    protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+    protected UniqueTicketIdGenerator tgtIdGenerator;
 
     /**
      * Expiration policy for ticket granting tickets.
      */
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
+    public DefaultTicketGrantingTicketFactory(final ExpirationPolicy expirationPolicy, final UniqueTicketIdGenerator idGenerator) {
+        this.ticketGrantingTicketExpirationPolicy = expirationPolicy;
+        this.tgtIdGenerator = idGenerator;
+    }
+
     @Override
     public <T extends TicketGrantingTicket> T create(final Authentication authentication) {
-        final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-                this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
+        final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(this.tgtIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
                 authentication, this.ticketGrantingTicketExpirationPolicy);
         return (T) ticketGrantingTicket;
     }
@@ -37,13 +37,5 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     @Override
     public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
         return (T) this;
-    }
-
-    public void setTicketGrantingTicketUniqueTicketIdGenerator(final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator) {
-        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
-    }
-
-    public void setTicketGrantingTicketExpirationPolicy(final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
     }
 }

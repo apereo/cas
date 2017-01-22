@@ -23,7 +23,6 @@ import java.util.Map;
  * password using the public salt value. Assumes everything
  * is inside the same database table. Supports settings for
  * number of iterations as well as private salt.
- *
  * <p>
  * This handler uses the hashing method defined by Apache Shiro's
  * {@link org.apache.shiro.crypto.hash.DefaultHashService}. Refer to the Javadocs
@@ -31,12 +30,13 @@ import java.util.Map;
  * of private and public salts does nto meet your needs, a extension can be developed
  * to specify alternative methods of encoding and digestion of the encoded password.
  * </p>
+ *
  * @author Misagh Moayyed
  * @author Charles Hasegawa
  * @since 4.1.0
  */
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-    
+
     /**
      * The Algorithm name.
      */
@@ -68,13 +68,40 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     protected long numberOfIterations;
 
     /**
-     * The static/private salt.
+     * Static/private salt to be combined with the dynamic salt retrieved
+     * from the database. Optional.
+     * <p>If using this implementation as part of a password hashing strategy,
+     * it might be desirable to configure a private salt.
+     * A hash and the salt used to compute it are often stored together.
+     * If an attacker is ever able to access the hash (e.g. during password cracking)
+     * and it has the full salt value, the attacker has all of the input necessary
+     * to try to brute-force crack the hash (source + complete salt).</p>
+     * <p>However, if part of the salt is not available to the attacker (because it is not stored with the hash),
+     * it is much harder to crack the hash value since the attacker does not have the complete inputs necessary.
+     * The privateSalt property exists to satisfy this private-and-not-shared part of the salt.</p>
+     * <p>If you configure this attribute, you can obtain this additional very important safety feature.</p>
      */
     protected String staticSalt;
 
+    public QueryAndEncodeDatabaseAuthenticationHandler(final String algorithmName,
+                                                       final String sql,
+                                                       final String passwordFieldName,
+                                                       final String saltFieldName,
+                                                       final String numberOfIterationsFieldName,
+                                                       final long numberOfIterations,
+                                                       final String staticSalt) {
+        this.algorithmName = algorithmName;
+        this.sql = sql;
+        this.passwordFieldName = passwordFieldName;
+        this.saltFieldName = saltFieldName;
+        this.numberOfIterationsFieldName = numberOfIterationsFieldName;
+        this.numberOfIterations = numberOfIterations;
+        this.staticSalt = staticSalt;
+    }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
+                                                                 final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || StringUtils.isBlank(this.algorithmName) || getJdbcTemplate() == null) {
@@ -89,26 +116,23 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
-            return createHandlerResult(transformedCredential,
-                    this.principalFactory.createPrincipal(username), null);
+            return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), null);
 
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
                 throw new AccountNotFoundException(username + " not found with SQL query");
-            } else {
-                throw new FailedLoginException("Multiple records found for " + username);
-            }
+            } 
+            throw new FailedLoginException("Multiple records found for " + username);
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
-
     }
 
     /**
      * Digest encoded password.
      *
      * @param encodedPassword the encoded password
-     * @param values the values retrieved from database
+     * @param values          the values retrieved from database
      * @return the digested password
      */
     protected String digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
@@ -132,55 +156,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
         final String dynaSalt = values.get(this.saltFieldName).toString();
         final HashRequest request = new HashRequest.Builder()
-                                    .setSalt(dynaSalt)
-                                    .setSource(encodedPassword)
-                                    .build();
+                .setSalt(dynaSalt)
+                .setSource(encodedPassword)
+                .build();
         return hashService.computeHash(request).toHex();
     }
-    
-    public void setAlgorithmName(final String algorithmName) {
-        this.algorithmName = algorithmName;
-    }
-    
-    public void setSql(final String sql) {
-        this.sql = sql;
-    }
-
-    /**
-     * Sets static/private salt to be combined with the dynamic salt retrieved
-     * from the database. Optional.
-     *
-     * <p>If using this implementation as part of a password hashing strategy,
-     * it might be desirable to configure a private salt.
-     * A hash and the salt used to compute it are often stored together.
-     * If an attacker is ever able to access the hash (e.g. during password cracking)
-     * and it has the full salt value, the attacker has all of the input necessary
-     * to try to brute-force crack the hash (source + complete salt).</p>
-     *
-     * <p>However, if part of the salt is not available to the attacker (because it is not stored with the hash),
-     * it is much harder to crack the hash value since the attacker does not have the complete inputs necessary.
-     * The privateSalt property exists to satisfy this private-and-not-shared part of the salt.</p>
-     * <p>If you configure this attribute, you can obtain this additional very important safety feature.</p>
-     * @param staticSalt the static salt
-     */
-    public void setStaticSalt(final String staticSalt) {
-        this.staticSalt = staticSalt;
-    }
-    
-    public void setPasswordFieldName(final String passwordFieldName) {
-        this.passwordFieldName = passwordFieldName;
-    }
-    
-    public void setSaltFieldName(final String saltFieldName) {
-        this.saltFieldName = saltFieldName;
-    }
-    
-    public void setNumberOfIterationsFieldName(final String numberOfIterationsFieldName) {
-        this.numberOfIterationsFieldName = numberOfIterationsFieldName;
-    }
-    
-    public void setNumberOfIterations(final long numberOfIterations) {
-        this.numberOfIterations = numberOfIterations;
-    }
-    
 }

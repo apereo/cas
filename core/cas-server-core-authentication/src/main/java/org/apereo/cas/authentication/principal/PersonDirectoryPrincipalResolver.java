@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.util.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
@@ -31,7 +31,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * Repository of principal attributes to be retrieved.
      */
-
     protected IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<>());
 
     /**
@@ -61,21 +60,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     public void setReturnNullIfNoAttributes(final boolean returnNullIfNoAttributes) {
         this.returnNullIfNoAttributes = returnNullIfNoAttributes;
     }
-
-    /**
-     * Sets the name of the attribute whose first non-null value should be used for the principal ID.
-     *
-     * @param attribute Name of attribute containing principal ID.
-     */
+    
     public void setPrincipalAttributeName(final String attribute) {
         this.principalAttributeName = attribute;
     }
-
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
+    
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
@@ -86,11 +75,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     @Override
-    public Principal resolve(final Credential credential) {
+    public Principal resolve(final Credential credential, final Principal currentPrincipal) {
         logger.debug("Attempting to resolve a principal...");
 
         String principalId = extractPrincipalId(credential);
-
         if (StringUtils.isBlank(principalId)) {
             logger.debug("Principal id [{}] could not be found", principalId);
             return null;
@@ -116,9 +104,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
         logger.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
 
-
         final Pair<String, Map<String, Object>> pair = convertPersonAttributesToPrincipal(principalId, attributes);
-        return this.principalFactory.createPrincipal(pair.getFirst(), pair.getSecond());
+        return this.principalFactory.createPrincipal(pair.getKey(), pair.getValue());
     }
 
     /**
@@ -137,8 +124,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
             logger.debug("Found attribute [{}]", key);
             final List<Object> values = entry.getValue();
-            if (StringUtils.isNotBlank(this.principalAttributeName)
-                    && key.equalsIgnoreCase(this.principalAttributeName)) {
+            if (StringUtils.isNotBlank(this.principalAttributeName) && key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     logger.debug("{} is empty, using {} for principal", this.principalAttributeName, extractedPrincipalId);
                 } else {
@@ -152,7 +138,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
             }
         });
-        return new Pair<>(principalId[0], convertedAttributes);
+        return Pair.of(principalId[0], convertedAttributes);
     }
 
     /**

@@ -172,8 +172,8 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         if (currentValue == null) {
             return addAttribute(key, value);
         }
-        final Collection collection = CollectionUtils.convertValueToCollection(currentValue);
-        collection.addAll(CollectionUtils.convertValueToCollection(value));
+        final Collection collection = CollectionUtils.toCollection(currentValue);
+        collection.addAll(CollectionUtils.toCollection(value));
         return addAttribute(key, collection);
     }
 
@@ -181,7 +181,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public boolean hasAttribute(final String name, final Predicate<Object> predicate) {
         if (this.attributes.containsKey(name)) {
             final Object value = this.attributes.get(name);
-            final Collection valueCol = CollectionUtils.convertValueToCollection(value);
+            final Collection valueCol = CollectionUtils.toCollection(value);
             return valueCol.stream().filter(predicate).count() > 0;
         }
         return false;

@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -74,7 +75,7 @@ import java.util.List;
  */
 public class SamlObjectSigner {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     /**
      * The Override signature reference digest methods.
      */
@@ -98,6 +99,14 @@ public class SamlObjectSigner {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    public SamlObjectSigner(final List overrideSignatureReferenceDigestMethods, final List overrideSignatureAlgorithms,
+                            final List overrideBlackListedSignatureAlgorithms, final List overrideWhiteListedAlgorithms) {
+        this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
+        this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
+        this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
+        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
+    }
 
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
@@ -252,25 +261,25 @@ public class SamlObjectSigner {
     protected SignatureValidationConfiguration getSignatureValidationConfiguration() throws Exception {
         final BasicSignatureValidationConfiguration config =
                 DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
-
+        final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
-                && !casProperties.getAuthn().getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm().isEmpty()) {
+                && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
             config.setWhitelistMerge(true);
         }
-        
+
         if (this.overrideWhiteListedAlgorithms != null && !this.overrideWhiteListedAlgorithms.isEmpty()) {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
             config.setBlacklistMerge(true);
         }
-        
+
         logger.debug("Signature validation blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Signature validation whitelisted algorithms: {}", config.getWhitelistedAlgorithms());
 
         return config;
     }
-    
+
     /**
      * Gets signature signing configuration.
      *
@@ -280,10 +289,10 @@ public class SamlObjectSigner {
     protected SignatureSigningConfiguration getSignatureSigningConfiguration() throws Exception {
         final BasicSignatureSigningConfiguration config =
                 DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
-
+        final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
-                && !casProperties.getAuthn().getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm().isEmpty()) {
+                && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
         }
 
@@ -299,10 +308,8 @@ public class SamlObjectSigner {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
         }
 
-        if (StringUtils.isNotBlank(
-                casProperties.getAuthn().getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm())) {
-            config.setSignatureCanonicalizationAlgorithm(
-                    casProperties.getAuthn().getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm());
+        if (StringUtils.isNotBlank(samlIdp.getAlgs().getOverrideSignatureCanonicalizationAlgorithm())) {
+            config.setSignatureCanonicalizationAlgorithm(samlIdp.getAlgs().getOverrideSignatureCanonicalizationAlgorithm());
         }
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
@@ -325,12 +332,12 @@ public class SamlObjectSigner {
      * Gets signing certificate.
      *
      * @return the signing certificate
+     * @throws Exception the exception
      */
-    protected X509Certificate getSigningCertificate() {
-        logger.debug("Locating signature signing certificate file from [{}]",
-                casProperties.getAuthn().getSamlIdp().getMetadata().getSigningCertFile());
-        return SamlUtils.readCertificate(
-                new FileSystemResource(casProperties.getAuthn().getSamlIdp().getMetadata().getSigningCertFile()));
+    protected X509Certificate getSigningCertificate() throws Exception {
+        final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
+        logger.debug("Locating signature signing certificate file from [{}]", samlIdp.getMetadata().getSigningCertFile());
+        return SamlUtils.readCertificate(new FileSystemResource(samlIdp.getMetadata().getSigningCertFile().getFile()));
     }
 
     /**
@@ -340,14 +347,12 @@ public class SamlObjectSigner {
      * @throws Exception the exception
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
+        final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(
-                new FileSystemResource(casProperties.getAuthn().getSamlIdp().getMetadata().getSigningKeyFile()));
-        privateKeyFactoryBean.setAlgorithm(
-                casProperties.getAuthn().getSamlIdp().getMetadata().getPrivateKeyAlgName());
+        privateKeyFactoryBean.setLocation(new FileSystemResource(samlIdp.getMetadata().getSigningKeyFile().getFile()));
+        privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating signature signing key file from [{}]", 
-                casProperties.getAuthn().getSamlIdp().getMetadata().getSigningKeyFile());
+        logger.debug("Locating signature signing key file from [{}]", samlIdp.getMetadata().getSigningKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 
@@ -365,12 +370,12 @@ public class SamlObjectSigner {
                                                  final HttpServletRequest request,
                                                  final MessageContext context) throws Exception {
 
-        
+
         final BasicRoleDescriptorResolver roleDescriptorResolver = new BasicRoleDescriptorResolver(metadataResolver);
         roleDescriptorResolver.initialize();
-        
+
         logger.debug("Validating signature for [{}]", profileRequest.getClass().getName());
-        
+
         final Signature signature = profileRequest.getSignature();
         if (signature != null) {
             final SAMLSignatureProfileValidator validator = new SAMLSignatureProfileValidator();
@@ -386,18 +391,18 @@ public class SamlObjectSigner {
             logger.debug("Validating signature using credentials for [{}]", credential.getEntityId());
             SignatureValidator.validate(signature, credential);
             logger.info("Successfully validated the request signature.");
-            
+
         } else {
             final SAML2HTTPRedirectDeflateSignatureSecurityHandler handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
             final SAMLPeerEntityContext peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
             peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
             logger.debug("Validating request signature for {} via {}...", peer.getEntityId(), handler.getClass().getSimpleName());
-            
+
             logger.debug("Resolving role descriptor for {}", peer.getEntityId());
-            
+
             final RoleDescriptor roleDescriptor = roleDescriptorResolver.resolveSingle(
-                        new CriteriaSet(new EntityIdCriterion(peer.getEntityId()), 
-                                        new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
+                    new CriteriaSet(new EntityIdCriterion(peer.getEntityId()),
+                            new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
             peer.setRole(roleDescriptor.getElementQName());
             final SAMLProtocolContext protocol = context.getSubcontext(SAMLProtocolContext.class, true);
             protocol.setProtocol(SAMLConstants.SAML20P_NS);
@@ -405,13 +410,13 @@ public class SamlObjectSigner {
             logger.debug("Building security parameters context for signature validation of {}", peer.getEntityId());
             final SecurityParametersContext secCtx = context.getSubcontext(SecurityParametersContext.class, true);
             final SignatureValidationParameters validationParams = new SignatureValidationParameters();
-            
-            if (!overrideBlackListedSignatureAlgorithms.isEmpty()) {
+
+            if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
                 validationParams.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
                 logger.debug("Validation override blacklisted algorithms are {}", this.overrideWhiteListedAlgorithms);
             }
-            
-            if (!overrideWhiteListedAlgorithms.isEmpty()) {
+
+            if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
                 validationParams.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
                 logger.debug("Validation override whitelisted algorithms are {}", this.overrideWhiteListedAlgorithms);
             }
@@ -421,13 +426,13 @@ public class SamlObjectSigner {
             if (credential == null) {
                 throw new SamlException("Signing credential for validation could not be resolved");
             }
-            
+
             final CredentialResolver resolver = new StaticCredentialResolver(credential);
             final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(credential);
             final SignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
             validationParams.setSignatureTrustEngine(trustEngine);
             secCtx.setSignatureValidationParameters(validationParams);
-            
+
             handler.setHttpServletRequest(request);
             logger.debug("Initializing {} to execute signature validation for {}", handler.getClass().getSimpleName(), peer.getEntityId());
             handler.initialize();
@@ -438,22 +443,7 @@ public class SamlObjectSigner {
         }
     }
 
-    public void setOverrideSignatureReferenceDigestMethods(final List overrideSignatureReferenceDigestMethods) {
-        this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
-    }
 
-    public void setOverrideSignatureAlgorithms(final List overrideSignatureAlgorithms) {
-        this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
-    }
-
-    public void setOverrideBlackListedSignatureAlgorithms(final List overrideBlackListedSignatureAlgorithms) {
-        this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
-    }
-
-    public void setOverrideWhiteListedAlgorithms(final List overrideWhiteListedAlgorithms) {
-        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
-    }
-    
     private Credential getSigningCredential(final RoleDescriptorResolver resolver, final RequestAbstractType profileRequest) {
         try {
             final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();

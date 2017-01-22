@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -47,17 +46,16 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     private String credentialCriteria;
     private String dnFormat;
-    private String principalAttributeId = "uid";
+    private String principalAttributeId;
     private String principalAttributePassword;
-    private List principalAttributeList = Lists.newArrayList("cn,sn,givenName,displayName");
+    private List principalAttributeList = new ArrayList();
     private boolean allowMultiplePrincipalAttributeValues;
     private List additionalAttributes = new ArrayList();
     private AuthenticationTypes type;
@@ -65,6 +63,26 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     private boolean subtreeSearch = true;
     private String baseDn;
     private String userFilter;
+
+    private boolean enhanceWithEntryResolver = true;
+
+    private Integer order;
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(final Integer order) {
+        this.order = order;
+    }
+    
+    public boolean isEnhanceWithEntryResolver() {
+        return enhanceWithEntryResolver;
+    }
+
+    public void setEnhanceWithEntryResolver(final boolean enhanceWithEntryResolver) {
+        this.enhanceWithEntryResolver = enhanceWithEntryResolver;
+    }
 
     public String getBaseDn() {
         return baseDn;
@@ -89,7 +107,7 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     public void setSubtreeSearch(final boolean subtreeSearch) {
         this.subtreeSearch = subtreeSearch;
     }
-    
+
     public PasswordPolicyProperties getPasswordPolicy() {
         return passwordPolicy;
     }
@@ -113,7 +131,7 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-    
+
     public String getDnFormat() {
         return dnFormat;
     }

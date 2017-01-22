@@ -1,11 +1,11 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class AbstractRegisteredServiceTests {
     private static final boolean ALLOWED_TO_PROXY = false;
     private static final boolean SSO_ENABLED = false;
     
-    private AbstractRegisteredService r = new AbstractRegisteredService() {
+    private final AbstractRegisteredService r = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -44,6 +44,11 @@ public class AbstractRegisteredServiceTests {
 
         @Override
         public boolean matches(final Service service) {
+            return true;
+        }
+
+        @Override
+        public boolean matches(final String serviceId) {
             return true;
         }
     };
@@ -71,15 +76,15 @@ public class AbstractRegisteredServiceTests {
                 .isServiceAccessAllowedForSso());
         assertEquals(THEME, this.r.getTheme());
 
-        assertFalse(this.r.equals(null));
+        assertNotNull(this.r);
         assertFalse(this.r.equals(new Object()));
-        assertTrue(this.r.equals(this.r));
+        assertEquals(this.r, this.r);
     }
 
     @Test
     public void verifyEquals() throws Exception {
         assertTrue(r.equals(r.clone()));
-        assertFalse(new RegexRegisteredService().equals(null));
+        assertNotNull(new RegexRegisteredService());
         assertFalse(new RegexRegisteredService().equals(new Object()));
     }
     
@@ -104,7 +109,7 @@ public class AbstractRegisteredServiceTests {
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
         
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -117,14 +122,14 @@ public class AbstractRegisteredServiceTests {
     public void verifyServiceAttributeFilterAllowedAttributes() {
         prepareService();
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        policy.setAllowedAttributes(Lists.newArrayList("attr1", "attr3"));
+        policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
         this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
         
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
         
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -150,7 +155,7 @@ public class AbstractRegisteredServiceTests {
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
         
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -162,15 +167,25 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void verifyServiceEquality() {
-        final RegisteredService svc1 = TestUtils.getRegisteredService(SERVICEID);
-        final RegisteredService svc2 = TestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
         assertEquals(svc1, svc2);
     }
 
     @Test
     public void verifyServiceCopy() throws Exception {
-        final RegisteredService svc1 = TestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
         final RegisteredService svc2 = svc1.clone();
         assertEquals(svc1, svc2);
+    }
+
+    @Test
+    public void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() throws Exception {
+        final String invalidId = "***";
+        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
+
+        service.matches("notRelevant");
+
+        assertEquals(service.getServiceId(), invalidId);
     }
 }

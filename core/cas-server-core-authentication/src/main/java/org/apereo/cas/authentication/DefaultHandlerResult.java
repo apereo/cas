@@ -1,13 +1,14 @@
 package org.apereo.cas.authentication;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.
@@ -19,28 +20,41 @@ import org.springframework.util.Assert;
  */
 public class DefaultHandlerResult implements HandlerResult {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = -3113998493287982485L;
 
-    /** The name of the authentication handler that successfully authenticated a credential. */
+    /**
+     * The name of the authentication handler that successfully authenticated a credential.
+     */
     private String handlerName;
 
-    /** Credential meta data. */
+    /**
+     * Credential meta data.
+     */
     private CredentialMetaData credentialMetaData;
 
-    /** Resolved principal for authenticated credential. */
+    /**
+     * Resolved principal for authenticated credential.
+     */
     private Principal principal;
 
-    /** List of warnings issued by the authentication source while authenticating the credential. */
+    /**
+     * List of warnings issued by the authentication source while authenticating the credential.
+     */
     private List<MessageDescriptor> warnings;
 
-    /** No-arg constructor for serialization support. */
-    private DefaultHandlerResult() {}
+    /**
+     * No-arg constructor for serialization support.
+     */
+    private DefaultHandlerResult() {
+    }
 
     /**
      * Instantiates a new handler result.
      *
-     * @param source the source
+     * @param source   the source
      * @param metaData the meta data
      */
     public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
@@ -50,9 +64,9 @@ public class DefaultHandlerResult implements HandlerResult {
     /**
      * Instantiates a new handler result.
      *
-     * @param source the source
+     * @param source   the source
      * @param metaData the meta data
-     * @param p the p
+     * @param p        the p
      */
     public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
         this(source, metaData, p, null);
@@ -61,21 +75,21 @@ public class DefaultHandlerResult implements HandlerResult {
     /**
      * Instantiates a new handler result.
      *
-     * @param source the source
+     * @param source   the source
      * @param metaData the meta data
      * @param warnings the warnings
      */
-    public DefaultHandlerResult(
-            final AuthenticationHandler source, final CredentialMetaData metaData, final List<MessageDescriptor> warnings) {
+    public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, 
+                                final List<MessageDescriptor> warnings) {
         this(source, metaData, null, warnings);
     }
 
     /**
      * Instantiates a new handler result.
      *
-     * @param source the source
+     * @param source   the source
      * @param metaData the meta data
-     * @param p the p
+     * @param p        the p
      * @param warnings the warnings
      */
     public DefaultHandlerResult(
@@ -83,10 +97,10 @@ public class DefaultHandlerResult implements HandlerResult {
             final CredentialMetaData metaData,
             final Principal p,
             final List<MessageDescriptor> warnings) {
-        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), 
+        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(),
                 metaData, p, warnings);
     }
-    
+
     /**
      * Instantiates a new Default handler result.
      *
@@ -105,6 +119,7 @@ public class DefaultHandlerResult implements HandlerResult {
         this.principal = p;
         this.warnings = warnings;
     }
+
     @Override
     public String getHandlerName() {
         return this.handlerName;
@@ -123,7 +138,7 @@ public class DefaultHandlerResult implements HandlerResult {
     @Override
     public List<MessageDescriptor> getWarnings() {
         return this.warnings == null
-                ? Collections.<MessageDescriptor>emptyList()
+                ? Collections.emptyList()
                 : Collections.unmodifiableList(this.warnings);
     }
 
@@ -150,7 +165,7 @@ public class DefaultHandlerResult implements HandlerResult {
         builder.append(this.handlerName, other.handlerName);
         builder.append(this.credentialMetaData, other.credentialMetaData);
         builder.append(this.principal, other.principal);
-        builder.append(this.warnings, other.warnings);
+        builder.append(CollectionUtils.wrap(this.warnings), CollectionUtils.wrap(other.warnings));
         return builder.isEquals();
     }
 

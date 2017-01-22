@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -7,9 +8,11 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -19,6 +22,7 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -31,8 +35,13 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -54,7 +63,7 @@ public final class WebUtils {
     public static final String USER_AGENT_HEADER = "user-agent";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
-    
+
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
     private static final String PARAMETER_AUTHENTICATION = "authentication";
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
@@ -66,6 +75,7 @@ public final class WebUtils {
     private static final String PARAMETER_SERVICE = "service";
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
+    private static final String PARAMETER_SERVICE_UI_METADATA = "serviceUIMetadata";
 
     /**
      * Instantiates a new web utils instance.
@@ -79,10 +89,8 @@ public final class WebUtils {
      * @param context the context
      * @return the http servlet request
      */
-    public static HttpServletRequest getHttpServletRequest(
-            final RequestContext context) {
-        Assert.isInstanceOf(ServletExternalContext.class, context
-                        .getExternalContext(),
+    public static HttpServletRequest getHttpServletRequest(final RequestContext context) {
+        Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
                 "Cannot obtain HttpServletRequest from event of type: "
                         + context.getExternalContext().getClass().getName());
 
@@ -98,9 +106,9 @@ public final class WebUtils {
         final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
-        } else {
-            return null;
         }
+        return null;
+
     }
 
     /**
@@ -109,7 +117,12 @@ public final class WebUtils {
      * @return the http servlet request from request attributes
      */
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
-        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        try {
+            return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**
@@ -127,8 +140,7 @@ public final class WebUtils {
      * @param context the context
      * @return the http servlet response
      */
-    public static HttpServletResponse getHttpServletResponse(
-            final RequestContext context) {
+    public static HttpServletResponse getHttpServletResponse(final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
                 "Cannot obtain HttpServletResponse from event of type: " + context.getExternalContext().getClass().getName());
         return (HttpServletResponse) context.getExternalContext().getNativeResponse();
@@ -155,11 +167,9 @@ public final class WebUtils {
      * @param request            the request
      * @return the service, or null.
      */
-    public static WebApplicationService getService(
-            final List<ArgumentExtractor> argumentExtractors,
-            final HttpServletRequest request) {
+    public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final HttpServletRequest request) {
         return argumentExtractors.stream().map(argumentExtractor -> argumentExtractor.extractService(request))
-                .filter(service -> service != null).findFirst().orElse(null);
+                .filter(Objects::nonNull).findFirst().orElse(null);
     }
 
     /**
@@ -169,9 +179,7 @@ public final class WebUtils {
      * @param context            the context
      * @return the service
      */
-    public static WebApplicationService getService(
-            final List<ArgumentExtractor> argumentExtractors,
-            final RequestContext context) {
+    public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         return getService(argumentExtractors, request);
     }
@@ -217,7 +225,7 @@ public final class WebUtils {
     public static void putTicketGrantingTicketInScopes(final RequestContext context, final String ticketValue) {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
-        
+
         FlowSession session = context.getFlowExecutionContext().getActiveSession().getParent();
         while (session != null) {
             putTicketGrantingTicketIntoMap(session.getScope(), ticketValue);
@@ -232,8 +240,7 @@ public final class WebUtils {
      * @param map         the map
      * @param ticketValue the ticket value
      */
-    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
-                                                      final String ticketValue) {
+    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map, final String ticketValue) {
         map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, ticketValue);
     }
 
@@ -243,8 +250,7 @@ public final class WebUtils {
      * @param context the context
      * @return the ticket granting ticket id
      */
-    public static String getTicketGrantingTicketId(
-            final RequestContext context) {
+    public static String getTicketGrantingTicketId(final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
         final String tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
 
@@ -258,8 +264,7 @@ public final class WebUtils {
      * @param context     the context
      * @param ticketValue the ticket value
      */
-    public static void putServiceTicketInRequestScope(
-            final RequestContext context, final ServiceTicket ticketValue) {
+    public static void putServiceTicketInRequestScope(final RequestContext context, final ServiceTicket ticketValue) {
         context.getRequestScope().put(PARAMETER_SERVICE_TICKET_ID, ticketValue.getId());
     }
 
@@ -324,13 +329,23 @@ public final class WebUtils {
     }
 
     /**
+     * Gets warning cookie.
+     *
+     * @param context the context
+     * @return warning cookie value, if present.
+     */
+    public static boolean getWarningCookie(final RequestContext context) {
+        final String val = ObjectUtils.defaultIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
+        return Boolean.valueOf(val);
+    }
+
+    /**
      * Put registered service into flowscope.
      *
      * @param context           the context
      * @param registeredService the service
      */
-    public static void putRegisteredService(final RequestContext context,
-                                            final RegisteredService registeredService) {
+    public static void putRegisteredService(final RequestContext context, final RegisteredService registeredService) {
         context.getFlowScope().put(PARAMETER_REGISTERED_SERVICE, registeredService);
     }
 
@@ -356,6 +371,21 @@ public final class WebUtils {
         return credential;
     }
 
+    /**
+     * Puts credential into the context.
+     *
+     * @param context the context
+     * @param c       the c
+     */
+    public static void putCredential(final RequestContext context, final Credential c) {
+        if (c == null) {
+            context.getRequestScope().remove(PARAMETER_CREDENTIAL);
+            context.getFlowScope().remove(PARAMETER_CREDENTIAL);
+        } else {
+            context.getRequestScope().put(PARAMETER_CREDENTIAL, c);
+            context.getFlowScope().put(PARAMETER_CREDENTIAL, c);
+        }
+    }
 
     /**
      * Return the username of the authenticated user (based on pac4j security).
@@ -417,8 +447,6 @@ public final class WebUtils {
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
-            } else {
-                warnCookieGenerator.removeCookie(response);
             }
         } else {
             LOGGER.debug("No warning cookie generator is defined");
@@ -510,15 +538,14 @@ public final class WebUtils {
     /**
      * Gets http servlet request geo location.
      *
+     * @param request the request
      * @return the http servlet request geo location
      */
-    public static GeoLocationRequest getHttpServletRequestGeoLocation() {
+    public static GeoLocationRequest getHttpServletRequestGeoLocation(final HttpServletRequest request) {
         final int latIndex = 0;
         final int longIndex = 1;
-        final int accuIndex = 2;
+        final int accuracyIndex = 2;
         final int timeIndex = 3;
-
-        final HttpServletRequest request = WebUtils.getHttpServletRequest();
         final GeoLocationRequest loc = new GeoLocationRequest();
         if (request != null) {
             final String geoLocationParam = request.getParameter("geolocation");
@@ -526,11 +553,20 @@ public final class WebUtils {
                 final String[] geoLocation = geoLocationParam.split(",");
                 loc.setLatitude(geoLocation[latIndex]);
                 loc.setLongitude(geoLocation[longIndex]);
-                loc.setAccuracy(geoLocation[accuIndex]);
+                loc.setAccuracy(geoLocation[accuracyIndex]);
                 loc.setTimestamp(geoLocation[timeIndex]);
             }
         }
         return loc;
+    }
+
+    /**
+     * Gets http servlet request geo location.
+     *
+     * @return the http servlet request geo location
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocation() {
+        return getHttpServletRequestGeoLocation(WebUtils.getHttpServletRequest());
     }
 
     /**
@@ -589,8 +625,7 @@ public final class WebUtils {
      * @param context                 the context
      * @param unauthorizedRedirectUrl the url to redirect to
      */
-    public static void putUnauthorizedRedirectUrl(final RequestContext context,
-                                                  final URI unauthorizedRedirectUrl) {
+    public static void putUnauthorizedRedirectUrl(final RequestContext context, final URI unauthorizedRedirectUrl) {
         context.getFlowScope().put(PARAMETER_UNAUTHORIZED_REDIRECT_URL, unauthorizedRedirectUrl);
     }
 
@@ -622,5 +657,90 @@ public final class WebUtils {
      */
     public static void putRememberMeAuthenticationEnabled(final RequestContext context, final Boolean enabled) {
         context.getFlowScope().put("rememberMeAuthenticationEnabled", enabled);
+    }
+
+    /**
+     * Gets all multifactor authentication providers from application context.
+     *
+     * @param applicationContext the application context
+     * @return the all multifactor authentication providers from application context
+     */
+    public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
+            final ApplicationContext applicationContext) {
+        try {
+            return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
+        } catch (final Exception e) {
+            LOGGER.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class);
+        }
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Put resolved multifactor authentication providers into scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putResolvedMultifactorAuthenticationProviders(final RequestContext context,
+                                                                     final Collection<MultifactorAuthenticationProvider> value) {
+        context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", value);
+    }
+
+    /**
+     * Gets resolved multifactor authentication providers.
+     *
+     * @param context the context
+     * @return the resolved multifactor authentication providers
+     */
+    public static Collection<MultifactorAuthenticationProvider> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
+        return context.getConversationScope().get("resolvedMultifactorAuthenticationProviders", Collection.class);
+    }
+
+    /**
+     * Sets service user interface metadata.
+     *
+     * @param requestContext the request context
+     * @param mdui           the mdui
+     */
+    public static void putServiceUserInterfaceMetadata(final RequestContext requestContext, final Serializable mdui) {
+        if (mdui != null) {
+            requestContext.getFlowScope().put(PARAMETER_SERVICE_UI_METADATA, mdui);
+        }
+    }
+
+    /**
+     * Gets service user interface metadata.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clz            the clz
+     * @return the service user interface metadata
+     */
+    public static <T> T getServiceUserInterfaceMetadata(final RequestContext requestContext, final Class<T> clz) {
+        if (requestContext.getFlowScope().contains(PARAMETER_SERVICE_UI_METADATA)) {
+            return requestContext.getFlowScope().get(PARAMETER_SERVICE_UI_METADATA, clz);
+        }
+        return null;
+    }
+
+    /**
+     * Put service response into request scope.
+     *
+     * @param requestContext the request context
+     * @param response       the response
+     */
+    public static void putServiceResponseIntoRequestScope(final RequestContext requestContext, final Response response) {
+        requestContext.getRequestScope().put("parameters", response.getAttributes());
+        requestContext.getRequestScope().put("url", response.getUrl());
+    }
+
+    /**
+     * Put service original url into request scope.
+     *
+     * @param requestContext the request context
+     * @param service        the service
+     */
+    public static void putServiceOriginalUrlIntoRequestScope(final RequestContext requestContext, final WebApplicationService service) {
+        requestContext.getRequestScope().put("originalUrl", service.getOriginalUrl());
     }
 }

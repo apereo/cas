@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html>
-
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <title layout:title-pattern="$CONTENT_TITLE - $DECORATOR_TITLE">CAS &#8211; Central Authentication Service</title>
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">CAS &#8211; Central Authentication Service</title>
 
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
@@ -19,7 +18,7 @@
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-    <script src="//www.google.com/recaptcha/api.js" th:if="${recaptchaSiteKey}"></script>
+    <script src="//www.google.com/recaptcha/api.js" async defer th:if="${recaptchaSiteKey}"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
     <script th:inline="javascript">
@@ -52,7 +51,7 @@
     </div>
     <div th:replace="fragments/footer"/>
 </div>
-<div th:include="fragments/bottom"/>
+<div th:insert="fragments/bottom"/>
 
 </body>
 </html>

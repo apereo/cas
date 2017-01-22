@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
@@ -25,6 +24,8 @@ import java.util.Set;
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResultBuilder.class);
     private static final long serialVersionUID = 6180465589526463843L;
+
+    private Credential providedCredential;
 
     private Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
 
@@ -55,6 +56,13 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
+    public AuthenticationResultBuilder collect(final Credential credential) {
+        this.providedCredential = credential;
+        return this;
+    }
+
+
+    @Override
     public AuthenticationResult build() {
         return build(null);
     }
@@ -63,12 +71,13 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     public AuthenticationResult build(final Service service) {
         final Authentication authentication = buildAuthentication();
         if (authentication == null) {
-            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning "
-                    + "null");
+            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
             return null;
         }
         LOGGER.debug("Building an authentication result for authentication {} and service {}", authentication, service);
-        return new DefaultAuthenticationResult(authentication, service);
+        final DefaultAuthenticationResult res = new DefaultAuthenticationResult(authentication, service);
+        res.setCredentialProvided(authentication.isCredentialProvided());
+        return res;
     }
 
     private boolean isEmpty() {
@@ -93,16 +102,19 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         LOGGER.debug("Collected authentication attributes for this result are [{}]", authenticationAttributes);
 
         authenticationBuilder.setAuthenticationDate(ZonedDateTime.now());
+        authenticationBuilder.addAttribute(Authentication.AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED,
+                this.providedCredential != null
+                        || authenticationBuilder.hasAttribute(Authentication.AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED, o -> (Boolean) o));
         final Authentication auth = authenticationBuilder.build();
         LOGGER.debug("Authentication result commenced at [{}]", auth.getAuthenticationDate());
         return auth;
 
     }
 
-    private void buildAuthenticationHistory(final Set<Authentication> authentications,
-                                            final Map<String, Object> authenticationAttributes,
-                                            final Map<String, Object> principalAttributes,
-                                            final AuthenticationBuilder authenticationBuilder) {
+    private static void buildAuthenticationHistory(final Set<Authentication> authentications,
+                                                   final Map<String, Object> authenticationAttributes,
+                                                   final Map<String, Object> principalAttributes,
+                                                   final AuthenticationBuilder authenticationBuilder) {
 
         LOGGER.debug("Collecting authentication history based on [{}] authentication events", authentications.size());
         authentications.stream().forEach(authn -> {
@@ -119,9 +131,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                     final Object oldValue = authenticationAttributes.remove(attrName);
 
                     LOGGER.debug("Converting authentication attribute [{}] to a collection of values", attrName);
-                    final Collection<Object> listOfValues = CollectionUtils.convertValueToCollection(oldValue);
+                    final Collection<Object> listOfValues = CollectionUtils.toCollection(oldValue);
                     final Object newValue = authn.getAttributes().get(attrName);
-                    listOfValues.addAll(CollectionUtils.convertValueToCollection(newValue));
+                    listOfValues.addAll(CollectionUtils.toCollection(newValue));
                     authenticationAttributes.put(attrName, listOfValues);
                     LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
                 } else {
@@ -135,8 +147,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                 }
             });
 
-            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result",
-                    authenticationAttributes);
+            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
             authenticationBuilder.addSuccesses(authn.getSuccesses())
                     .addFailures(authn.getFailures())
@@ -150,10 +161,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * when composing the authentication chain for the caller.
      */
     private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
-        return this.principalElectionStrategy.nominate(ImmutableSet.copyOf(authentications), principalAttributes);
-    }
-    
-    public void setPrincipalElectionStrategy(final PrincipalElectionStrategy principalElectionStrategy) {
-        this.principalElectionStrategy = principalElectionStrategy;
+        return this.principalElectionStrategy.nominate(Collections.unmodifiableSet(authentications), principalAttributes);
     }
 }

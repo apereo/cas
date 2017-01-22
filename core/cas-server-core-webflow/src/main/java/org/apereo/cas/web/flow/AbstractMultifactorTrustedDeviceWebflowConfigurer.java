@@ -5,6 +5,7 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.execution.Action;
 
@@ -14,7 +15,7 @@ import java.util.Arrays;
  * This is {@link AbstractMultifactorTrustedDeviceWebflowConfigurer}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
@@ -22,17 +23,25 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
      **/
     public static final String MFA_TRUSTED_AUTHN_SCOPE_ATTR = "mfaTrustedAuthentication";
 
-    private FlowDefinitionRegistry flowDefinitionRegistry;
     private boolean enableDeviceRegistration = true;
+
+    public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                             final boolean enableDeviceRegistration) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
+        this.enableDeviceRegistration = enableDeviceRegistration;
+    }
 
     /**
      * Register multifactor trusted authentication into webflow.
+     *
+     * @param flowDefinitionRegistry the flow definition registry
      */
-    protected void registerMultifactorTrustedAuthentication() {
+    protected void registerMultifactorTrustedAuthentication(final FlowDefinitionRegistry flowDefinitionRegistry) {
         if (flowDefinitionRegistry.getFlowDefinitionCount() <= 0) {
             throw new IllegalArgumentException("Flow definition registry has no flow definitions");
         }
-        logger.debug("Flow definitions found in the registry are {}", flowDefinitionRegistry.getFlowDefinitionIds());
+        logger.debug("Flow definitions found in the registry are {}", (Object[]) flowDefinitionRegistry.getFlowDefinitionIds());
         final String flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().get();
         logger.debug("Processing flow definition {}", flowId);
 
@@ -84,23 +93,11 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         createStateDefaultTransition(finishMfaTrustedAuth, CasWebflowConstants.STATE_ID_SUCCESS);
     }
 
-    public void setFlowDefinitionRegistry(final FlowDefinitionRegistry flowDefinitionRegistry) {
-        this.flowDefinitionRegistry = flowDefinitionRegistry;
-    }
-
-    public FlowDefinitionRegistry getFlowDefinitionRegistry() {
-        return flowDefinitionRegistry;
-    }
-
     public boolean isEnableDeviceRegistration() {
         return enableDeviceRegistration;
     }
 
-    public void setEnableDeviceRegistration(final boolean enableDeviceRegistration) {
-        this.enableDeviceRegistration = enableDeviceRegistration;
-    }
-
-    private String isDeviceRegistrationRequired() {
+    private static String isDeviceRegistrationRequired() {
         return "flashScope.".concat(MFA_TRUSTED_AUTHN_SCOPE_ATTR).concat("== null");
     }
 }

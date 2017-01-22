@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html layout:decorator="layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
 
-<head th:inline="text">
-    <title>[[#{cas.acceptableusagepolicyview.pagetitle}]]</title>
+<head>
+    <title th:text="#{cas.acceptableusagepolicyview.pagetitle}"></title>
 </head>
 
 <body id="cas">

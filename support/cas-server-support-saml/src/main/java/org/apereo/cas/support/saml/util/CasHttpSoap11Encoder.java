@@ -44,7 +44,7 @@ public class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
         final Body body = bodyBuilder.buildObject(
                 SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
 
-        if(!body.getUnknownXMLObjects().isEmpty()) {
+        if (!body.getUnknownXMLObjects().isEmpty()) {
             LOGGER.warn("Existing SOAP Envelope Body already contained children");
         }
 

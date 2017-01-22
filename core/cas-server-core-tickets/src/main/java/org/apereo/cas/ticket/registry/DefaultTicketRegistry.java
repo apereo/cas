@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.util.Assert;
 
@@ -36,16 +37,18 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
      * @param initialCapacity  - the initial capacity. The implementation
      *                         performs internal sizing to accommodate this many elements.
      * @param loadFactor       - the load factor threshold, used to control resizing.
-     *                         Resizing may be performed when the average number of elements per bin
-     *                         exceeds this threshold.
+     *                         Resizing may be performed when the average number of elements per bin exceeds this threshold.
      * @param concurrencyLevel - the estimated number of concurrently updating
      *                         threads. The implementation performs internal sizing to try to
      *                         accommodate this many threads.
+     * @param cipherExecutor   the cipher executor
      */
     public DefaultTicketRegistry(final int initialCapacity,
                                  final float loadFactor,
-                                 final int concurrencyLevel) {
+                                 final int concurrencyLevel,
+                                 final CipherExecutor cipherExecutor) {
         this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
+        setCipherExecutor(cipherExecutor);
     }
 
     @Override
@@ -62,7 +65,7 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     @PostConstruct
     public void init() {
         logger.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
-                    + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
+                + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
     }
 
     @Override
@@ -79,14 +82,21 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
         return this.cache.remove(ticketId) != null;
     }
 
+    @Override
+    public long deleteAll() {
+        final int size = this.cache.size();
+        this.cache.clear();
+        return size;
+    }
 
     @Override
     public Collection<Ticket> getTickets() {
         return Collections.unmodifiableCollection(this.cache.values());
     }
-    
+
     @Override
-    public void updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
+        return ticket;
     }
 }

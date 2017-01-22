@@ -1,18 +1,20 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.CentralAuthenticationServiceImpl;
+import org.apereo.cas.DefaultCentralAuthenticationService;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
+import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -55,7 +57,7 @@ public class CasCoreConfiguration {
     private TicketFactory ticketFactory;
         
     @Bean(name={"authenticationPolicyFactory", "defaultAuthenticationPolicyFactory"})
-    public ContextualAuthenticationPolicyFactory authenticationPolicyFactory() {
+    public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
             return new RequiredHandlerAuthenticationPolicyFactory();
         }
@@ -63,32 +65,25 @@ public class CasCoreConfiguration {
     }
     
     @Bean
-    public List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies() {
-        final List list = new ArrayList<>();
+    public List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies() {
+        final List<AuthenticationRequestServiceSelectionStrategy> list = new ArrayList<>();
         list.add(defaultValidationServiceSelectionStrategy());
         return list;
     }
 
     @Bean
     @Scope(value = "prototype")
-    public ValidationServiceSelectionStrategy defaultValidationServiceSelectionStrategy() {
-        return new DefaultValidationServiceSelectionStrategy();
+    public AuthenticationRequestServiceSelectionStrategy defaultValidationServiceSelectionStrategy() {
+        return new DefaultAuthenticationRequestServiceSelectionStrategy();
     }
     
     @Autowired
     @Bean
-    public CentralAuthenticationService centralAuthenticationService(@Qualifier("validationServiceSelectionStrategies")
-                                                                     final List validationServiceSelectionStrategies,
-                                                                     @Qualifier("principalFactory")
-                                                                     final PrincipalFactory principalFactory) {
-        final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
-        impl.setTicketRegistry(this.ticketRegistry);
-        impl.setServicesManager(this.servicesManager);
-        impl.setLogoutManager(this.logoutManager);
-        impl.setTicketFactory(this.ticketFactory);
-        impl.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
-        impl.setServiceContextAuthenticationPolicyFactory(authenticationPolicyFactory());
-        impl.setPrincipalFactory(principalFactory);
-        return impl;
+    public CentralAuthenticationService centralAuthenticationService(
+            @Qualifier("authenticationRequestServiceSelectionStrategies") final List<AuthenticationRequestServiceSelectionStrategy> selectionStrategies,
+            @Qualifier("principalFactory") final PrincipalFactory principalFactory,
+            @Qualifier("protocolTicketCipherExecutor") final CipherExecutor cipherExecutor) {
+        return new DefaultCentralAuthenticationService(ticketRegistry, ticketFactory, servicesManager, logoutManager,
+                selectionStrategies, authenticationPolicyFactory(), principalFactory, cipherExecutor);
     }
 }

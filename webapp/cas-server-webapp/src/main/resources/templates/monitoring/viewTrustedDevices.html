@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
+
+<head>
+    <title>Trusted Devices</title>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        
+        var urls = {
+            getRecords: /*[[@{/status/trustedDevs/getRecords}]]*/ ,
+            revokeRecord: /*[[@{/status/trustedDevs/revokeRecord}]]*/
+        };
+
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:inline="javascript">
+
+        function jqueryReady() {
+            head.load(
+                    /*[[@{/css/trustedDevices.css}]]*/
+            );
+            head.load(
+                    /*[[@{/js/trustedDevices.js}]]*/
+            );
+        }
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+
+    <div id="trustedDevices">
+        <h1>Manage Trusted Devices</h1>
+        
+        <div class="tabsContainer row">
+            <!-- Nav tabs -->
+            <ul id="myTabs" class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#trustedDevices" aria-controls="trustedDevices" role="tab"
+                                                          data-toggle="tab">Trusted Devices</a></li>
+            </ul>
+                        
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="trustedDevicesTab">
+                    <table id="trustedDevicesTable" class="display table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Principal</th>
+                            <th>Date</th>
+                            <th>Geography</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div th:replace="fragments/footerButtons"/>
+    </div>
+
+
+</div>
+</body>
+</html>

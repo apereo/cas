@@ -1,9 +1,11 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -25,41 +27,47 @@ public class YubiKeyAuthenticationHandlerTests {
     private static final String SECRET_KEY = "iBIehjui12aK8x82oe5qzGeb0As=";
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Before
     public void before() {
         final RequestContext ctx = mock(RequestContext.class);
         when(ctx.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-        WebUtils.putAuthentication(TestUtils.getAuthentication(), ctx);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), ctx);
         RequestContextHolder.setRequestContext(ctx);
     }
     
     @Test
     public void checkDefaultAccountRegistry() {
-        final YubiKeyAuthenticationHandler handler =
-                new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
         assertNull(handler.getRegistry());
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void checkReplayedAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler =
-                new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
+
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("Authentication failed with status: REPLAYED_OTP");
+
         handler.authenticate(new YubiKeyCredential(OTP));
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void checkBadConfigAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler =
-                new YubiKeyAuthenticationHandler(123456, "123456");
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(123456, "123456");
+
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("OTP format is invalid");
+
         handler.authenticate(new YubiKeyCredential("casuser"));
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void checkAccountNotFound() throws Exception {
-        final YubiKeyAuthenticationHandler handler =
-                new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
-        handler.setRegistry((uid, yubikeyPublicId) -> false);
-
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY, (uid, yubikeyPublicId) -> false);
+        this.thrown.expect(AccountNotFoundException.class);
         handler.authenticate(new YubiKeyCredential(OTP));
     }
 }

@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenticationEventExecutionPlanConfiguration,\
+org.apereo.cas.adaptors.authy.config.AuthyConfiguration

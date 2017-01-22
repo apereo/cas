@@ -22,15 +22,15 @@ public class HttpMessage implements Serializable {
     /** The default asynchronous callbacks enabled. */
     private static final boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
     
-    private URL url;
-    private String message;
+    private final URL url;
+    private final String message;
     private int responseCode;
     
     /**
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
      **/
-    private boolean asynchronous;
+    private final boolean asynchronous;
     
     /**
      * The content type for this message once submitted.

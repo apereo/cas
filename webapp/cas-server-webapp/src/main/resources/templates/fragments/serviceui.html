@@ -1,19 +1,32 @@
 <div th:if="${registeredService}" id="serviceui" class="alert alert-info">
-    <div th:if="${mduiContext}">
+    <div th:if="${serviceUIMetadata}">
         <table>
             <tr>
                 <td>
-                    <img th:src="${mduiContext.logoUrl}"/>
+
+                    <img th:if="${serviceUIMetadata.logoUrl}"
+                         th:title="${serviceUIMetadata.displayName}"
+                         th:alt="${serviceUIMetadata.displayName}"
+                         th:src="${serviceUIMetadata.logoUrl}"
+                         th:width="${serviceUIMetadata.logoWidth}"
+                         th:height="${serviceUIMetadata.logoHeight}"/>
+
+                    <img th:unless="${serviceUIMetadata.logoUrl}"
+                         th:title="${serviceUIMetadata.displayName}"
+                         th:alt="${serviceUIMetadata.displayName}"
+                         th:src="@{images/webapp.png}"
+                         th:width="${serviceUIMetadata.logoWidth}"
+                         th:height="${serviceUIMetadata.logoHeight}"/>
                 </td>
                 <td id="servicedesc">
-                    <h2 th:text="${mduiContext.displayName}"></h2>
-                    <p th:text="${mduiContext.description}"></p>
+                    <h2 th:text="${serviceUIMetadata.displayName}"></h2>
+                    <p th:text="${serviceUIMetadata.description}"></p>
                 </td>
             </tr>
         </table>
     </div>
 
-    <div th:unless="${mduiContext}">
+    <div th:unless="${serviceUIMetadata}">
         <table>
             <tr>
                 <td>

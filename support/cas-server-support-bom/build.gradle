@@ -27,6 +27,13 @@ def generateBom() {
                     delegate.url(project.projectIssueUrl)
                 }
 
+                delegate.developers {
+                    delegate.developer {
+                        delegate.id("mmoayyed")
+                        delegate.name("Misagh Moayyed")
+                    }
+                }
+                
                 delegate.scm {
                     delegate.url(project.projectScmUrl)
                     delegate.connection(project.projectScmUrl)

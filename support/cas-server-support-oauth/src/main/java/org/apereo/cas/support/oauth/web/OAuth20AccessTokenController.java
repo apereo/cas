@@ -1,27 +1,34 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuthGrantType;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +54,19 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
 
+    public OAuth20AccessTokenController(final ServicesManager servicesManager,
+                                        final TicketRegistry ticketRegistry,
+                                        final OAuth20Validator validator,
+                                        final AccessTokenFactory accessTokenFactory,
+                                        final PrincipalFactory principalFactory,
+                                        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                        final RefreshTokenFactory refreshTokenFactory,
+                                        final AccessTokenResponseGenerator accessTokenResponseGenerator) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+        this.refreshTokenFactory = refreshTokenFactory;
+        this.accessTokenResponseGenerator = accessTokenResponseGenerator;
+    }
+
     /**
      * Handle request internal model and view.
      *
@@ -55,7 +75,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL, method = RequestMethod.POST)
+    @PostMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL)
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 
@@ -74,11 +94,10 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
 
-
         if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE) || isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
             final Optional<UserProfile> profile = manager.get(true);
             final String clientId = profile.get().getId();
-            registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+            registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
 
             // we generate a refresh token if requested by the service but not from a refresh token
             generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken()
@@ -101,7 +120,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
         } else {
             final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-            registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+            registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
             generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
 
             try {
@@ -125,7 +144,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         RefreshToken refreshToken = null;
         if (generateRefreshToken) {
             refreshToken = this.refreshTokenFactory.create(service, authentication);
-            this.ticketRegistry.addTicket(refreshToken);
+            getTicketRegistry().addTicket(refreshToken);
         }
 
         logger.debug("access token: {} / timeout: {} / refresh token: {}", accessToken,
@@ -148,17 +167,17 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
      */
     private OAuthToken getToken(final HttpServletRequest request, final String parameterName) {
         final String codeParameter = request.getParameter(parameterName);
-        final OAuthToken token = this.ticketRegistry.getTicket(codeParameter, OAuthToken.class);
+        final OAuthToken token = getTicketRegistry().getTicket(codeParameter, OAuthToken.class);
         // token should not be expired
         if (token == null || token.isExpired()) {
             logger.error("Code or refresh token expired: {}", token);
             if (token != null) {
-                this.ticketRegistry.deleteTicket(token.getId());
+                getTicketRegistry().deleteTicket(token.getId());
             }
             return null;
         }
         if (token instanceof OAuthCode && !(token instanceof RefreshToken)) {
-            this.ticketRegistry.deleteTicket(token.getId());
+            getTicketRegistry().deleteTicket(token.getId());
         }
 
         return token;
@@ -193,27 +212,27 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
             final String clientId = uProfile.getId();
             final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-            final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+            final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
 
             return uProfile instanceof OAuthClientProfile
-                    && this.validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                    && this.validator.checkParameterExist(request, OAuthConstants.CODE)
-                    && this.validator.checkCallbackValid(registeredService, redirectUri);
+                    && getValidator().checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+                    && getValidator().checkParameterExist(request, OAuthConstants.CODE)
+                    && getValidator().checkCallbackValid(registeredService, redirectUri);
 
         } else if (isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
             // refresh token grant type
             return uProfile instanceof OAuthClientProfile
-                    && this.validator.checkParameterExist(request, OAuthConstants.REFRESH_TOKEN);
+                    && getValidator().checkParameterExist(request, OAuthConstants.REFRESH_TOKEN);
 
         } else {
 
             final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-            final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+            final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
 
             // resource owner password grant type
             return uProfile instanceof OAuthUserProfile
-                    && this.validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
-                    && this.validator.checkServiceValid(registeredService);
+                    && getValidator().checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                    && getValidator().checkServiceValid(registeredService);
         }
     }
 
@@ -246,18 +265,4 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
     private static boolean isGrantType(final String type, final OAuthGrantType expectedType) {
         return expectedType != null && expectedType.name().toLowerCase().equals(type);
     }
-
-    public void setAccessTokenResponseGenerator(final AccessTokenResponseGenerator accessTokenResponseGenerator) {
-        this.accessTokenResponseGenerator = accessTokenResponseGenerator;
-    }
-
-    public RefreshTokenFactory getRefreshTokenFactory() {
-        return this.refreshTokenFactory;
-    }
-
-    public void setRefreshTokenFactory(final RefreshTokenFactory refreshTokenFactory) {
-        this.refreshTokenFactory = refreshTokenFactory;
-    }
-
-
 }

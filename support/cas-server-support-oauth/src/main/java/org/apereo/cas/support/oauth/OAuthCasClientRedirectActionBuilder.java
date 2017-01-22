@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth;
 
 import org.pac4j.cas.client.CasClient;
-import org.pac4j.core.client.RedirectAction;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.redirect.RedirectAction;
 
 /**
  * This is {@link OAuthCasClientRedirectActionBuilder}.
@@ -17,7 +17,7 @@ public interface OAuthCasClientRedirectActionBuilder {
      * and configure the CAS client accordingly based
      * on the properties of the web context.
      *
-     * @param casClient the cas client
+     * @param casClient the cas client config
      * @param context   the context
      * @return the redirect action
      */

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -39,14 +40,16 @@ import java.util.Set;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
-                     columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
+        columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
 @Table(name = "RegexRegisteredService")
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService> {
 
     private static final long serialVersionUID = 7645279151115635245L;
-    
-    /** The unique identifier for this service. */
+
+    /**
+     * The unique identifier for this service.
+     */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     protected String serviceId;
 
@@ -80,11 +83,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      */
     @Lob
     @Column(name = "username_attr", nullable = true, length = Integer.MAX_VALUE)
-    private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
-        new DefaultRegisteredServiceUsernameProvider();
+    private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
 
     /**
-     * The logout type of the service. 
+     * The logout type of the service.
      * The default logout type is the back channel one.
      */
     @Column(name = "logout_type", nullable = true)
@@ -94,13 +96,17 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "required_handlers", length = Integer.MAX_VALUE)
     private HashSet<String> requiredHandlers = new HashSet<>();
 
-    /** The attribute filtering policy. */
+    /**
+     * The attribute filtering policy.
+     */
     @Lob
     @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy =
             new ReturnAllowedAttributeReleasePolicy();
 
-    /** The mfa policy. */
+    /**
+     * The mfa policy.
+     */
     @Lob
     @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy =
@@ -114,15 +120,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Lob
     @Column(name = "access_strategy", nullable = true, length = Integer.MAX_VALUE)
-    private RegisteredServiceAccessStrategy accessStrategy =
-            new DefaultRegisteredServiceAccessStrategy();
+    private RegisteredServiceAccessStrategy accessStrategy = new DefaultRegisteredServiceAccessStrategy();
 
     @Lob
     @Column(name = "public_key", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServicePublicKey publicKey;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="RegisteredServiceImpl_Props")
+    @JoinTable(name = "RegisteredServiceImpl_Props")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
     @Override
@@ -168,6 +173,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     /**
      * Initializes the registered service with default values
      * for fields that are unspecified. Only triggered by JPA.
+     *
      * @since 4.1
      */
     @PostLoad
@@ -319,6 +325,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.usernameAttributeProvider = usernameProvider;
     }
 
+    @JsonIgnore
     @Override
     public LogoutType getLogoutType() {
         return this.logoutType;
@@ -376,11 +383,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Override
     public int compareTo(final RegisteredService other) {
         return new CompareToBuilder()
-                  .append(this.getEvaluationOrder(), other.getEvaluationOrder())
-                  .append(this.getName().toLowerCase(), other.getName().toLowerCase())
-                  .append(this.getServiceId(), other.getServiceId())
-                  .append(this.getId(), other.getId())
-                  .toComparison();
+                .append(this.getEvaluationOrder(), other.getEvaluationOrder())
+                .append(this.getName().toLowerCase(), other.getName().toLowerCase())
+                .append(this.getServiceId(), other.getServiceId())
+                .append(this.getId(), other.getId())
+                .toComparison();
     }
 
     @Override

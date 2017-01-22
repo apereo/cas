@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class JpaEventsConfiguration {
     }
     
     public String[] jpaEventPackagesToScan() {
-        return new String[]{"org.apereo.cas.support.events.dao"};
+        return new String[]{CasEvent.class.getPackage().getName()};
     }
     
     @Lazy
@@ -70,8 +71,7 @@ public class JpaEventsConfiguration {
     
     @Autowired
     @Bean
-    public PlatformTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory")
-                                                          final EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory") final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;

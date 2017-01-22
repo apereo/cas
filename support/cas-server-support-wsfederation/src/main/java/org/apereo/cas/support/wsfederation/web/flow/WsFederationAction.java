@@ -1,6 +1,6 @@
 package org.apereo.cas.support.wsfederation.web.flow;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -44,15 +44,24 @@ public class WsFederationAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationAction.class);
 
-    private WsFederationHelper wsFederationHelper;
+    private final WsFederationHelper wsFederationHelper;
+    private final WsFederationConfiguration configuration;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+    private final ServicesManager servicesManager;
+    private final String authorizationUrl;
 
-    private WsFederationConfiguration configuration;
+    public WsFederationAction(final AuthenticationSystemSupport authenticationSystemSupport, final CentralAuthenticationService centralAuthenticationService,
+                              final WsFederationConfiguration wsFederationConfiguration, final WsFederationHelper wsFederationHelper,
+                              final ServicesManager servicesManager) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.configuration = wsFederationConfiguration;
+        this.wsFederationHelper = wsFederationHelper;
+        this.servicesManager = servicesManager;
 
-    private CentralAuthenticationService centralAuthenticationService;
-
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
-    private ServicesManager servicesManager;
+        this.authorizationUrl = configuration.getIdentityProviderUrl() + QUERYSTRING;
+    }
 
     /**
      * Executes the webflow action.
@@ -107,22 +116,16 @@ public class WsFederationAction extends AbstractAction {
 
                         LOGGER.debug("Validated assertion for the created credential successfully");
                         if (this.configuration.getAttributeMutator() != null) {
-                            LOGGER.debug("Modifying credential attributes based on {}",
-                                    this.configuration.getAttributeMutator().getClass().getSimpleName());
+                            LOGGER.debug("Modifying credential attributes based on {}", this.configuration.getAttributeMutator().getClass().getSimpleName());
                             this.configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
                         }
                     } else {
                         LOGGER.warn("SAML assertions are blank or no longer valid based on RP identifier {} and IdP identifier {}",
                                 rpId, this.configuration.getIdentityProviderIdentifier());
 
-                        final String authorizationUrl = String.format(
-                                "%s%s%s",
-                                this.configuration.getIdentityProviderUrl(),
-                                QUERYSTRING,
-                                getRelyingPartyIdentifier(service)
-                        );
-                        context.getFlowScope().put(PROVIDERURL, authorizationUrl);
-                        LOGGER.warn("Created authentication url {} and returning error", authorizationUrl);
+                        final String url = authorizationUrl + rpId;
+                        context.getFlowScope().put(PROVIDERURL, url);
+                        LOGGER.warn("Created authentication url {} and returning error", url);
                         return error();
                     }
 
@@ -156,23 +159,17 @@ public class WsFederationAction extends AbstractAction {
                 saveRequestParameter(request, session, LOCALE);
                 saveRequestParameter(request, session, METHOD);
 
-                final String relyingPartyIdentifier = getRelyingPartyIdentifier(service);
-                final String authorizationUrl = this.configuration.getIdentityProviderUrl()
-                        + QUERYSTRING
-                        + relyingPartyIdentifier;
+                final String url = authorizationUrl + getRelyingPartyIdentifier(service);
 
-                LOGGER.info("Preparing to redirect to the IdP {}", authorizationUrl);
-                context.getFlowScope().put(PROVIDERURL, authorizationUrl);
+                LOGGER.info("Preparing to redirect to the IdP {}", url);
+                context.getFlowScope().put(PROVIDERURL, url);
             }
-
             LOGGER.debug("Returning error event");
             return error();
-
         } catch (final Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
             return error();
         }
-
     }
 
     /**
@@ -219,35 +216,5 @@ public class WsFederationAction extends AbstractAction {
         if (value != null) {
             session.setAttribute(name, value);
         }
-    }
-
-    /**
-     * set the CAS config.
-     *
-     * @param centralAuthenticationService the cas config
-     */
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    /**
-     * sets the WsFederation configuration.
-     *
-     * @param configuration the configuration
-     */
-    public void setConfiguration(final WsFederationConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public void setWsFederationHelper(final WsFederationHelper wsFederationHelper) {
-        this.wsFederationHelper = wsFederationHelper;
-    }
-
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 }

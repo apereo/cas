@@ -1,13 +1,12 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -20,13 +19,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class GatewayServicesManagementCheck extends AbstractAction {
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Qualifier("servicesManager")
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     private ServicesManager servicesManager;
-
-    public GatewayServicesManagementCheck() {
-    }
 
     /**
      * Initialize the component with an instance of the services manager.

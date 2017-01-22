@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import java.util.Map;
  * of attributes.
  * </p>
  * <p>
- * An Authentication object must be serializable to permit persistance and
+ * An Authentication object must be serializable to permit persistence and
  * clustering.
  * </p>
  * <p>
@@ -28,8 +29,22 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface Authentication extends Serializable {
 
+    /**
+     * Internal authentication attribute that captures whether credentials were directly provided
+     * and renewed at the time of authentication creation.
+     */
+    String AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED = "renewedCredentialsProvided";
+
+    /**
+     * Determines whether credentials where directly provided as part of this authentication transaction
+     * at the time it was established.
+     * @return true/false
+     */
+    boolean isCredentialProvided();
+    
     /**
      * Method to obtain the Principal.
      *
@@ -78,8 +93,16 @@ public interface Authentication extends Serializable {
 
     /**
      * Updates the authentication object with what's passed.
-     *
+     * Does not override current keys if there are clashes
      * @param authn the authn object
      */
     void update(Authentication authn);
+
+    /**
+     * Updates the authentication object with what's passed.
+     * Does override current keys if there are clashes.
+     * Clears the existing attributes and starts over.
+     * @param authn the authn object
+     */
+    void updateAll(Authentication authn);
 }

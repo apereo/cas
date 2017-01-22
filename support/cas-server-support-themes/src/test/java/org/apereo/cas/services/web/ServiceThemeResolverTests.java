@@ -1,9 +1,9 @@
 package org.apereo.cas.services.web;
 
-import org.apereo.cas.services.DefaultServicesManagerImpl;
-import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,19 +26,16 @@ import static org.junit.Assert.*;
 public class ServiceThemeResolverTests {
 
     private ServiceThemeResolver serviceThemeResolver;
-
-    private DefaultServicesManagerImpl servicesManager;
+    private DefaultServicesManager servicesManager;
+    private Map<String, String> mobileBrowsers;
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry());
 
-        this.serviceThemeResolver = new ServiceThemeResolver();
-        this.serviceThemeResolver.setDefaultThemeName("test");
-        this.serviceThemeResolver.setServicesManager(this.servicesManager);
-        final Map<String, String> mobileBrowsers = new HashMap<>();
+        mobileBrowsers = new HashMap<>();
         mobileBrowsers.put("Mozilla", "theme");
-        this.serviceThemeResolver.setMobileBrowsers(mobileBrowsers);
+        this.serviceThemeResolver = new ServiceThemeResolver("test", servicesManager, mobileBrowsers);
     }
 
     @Test
@@ -54,7 +51,7 @@ public class ServiceThemeResolverTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final RequestContext ctx = mock(RequestContext.class);
         final MutableAttributeMap scope = new LocalAttributeMap();
-        scope.put("service", TestUtils.getService(r.getServiceId()));
+        scope.put("service", RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);
         request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");
@@ -71,7 +68,8 @@ public class ServiceThemeResolverTests {
 
     @Test
     public void verifyGetDefaultServiceWithNoServicesManager() {
-        this.serviceThemeResolver.setServicesManager(null);
+        this.serviceThemeResolver = new ServiceThemeResolver("test", null, mobileBrowsers);
+
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
         request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");

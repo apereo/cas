@@ -1,30 +1,48 @@
 package org.apereo.cas.configuration.support;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
+import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
+import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
+import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.CompareRequest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.DefaultConnectionStrategy;
+import org.ldaptive.DnsSrvConnectionStrategy;
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.RandomConnectionStrategy;
 import org.ldaptive.ReturnAttributes;
+import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
@@ -33,11 +51,14 @@ import org.ldaptive.ad.extended.FastBindOperation;
 import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.CompareValidator;
+import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.referral.SearchReferralHandler;
 import org.ldaptive.sasl.CramMd5Config;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.ExternalConfig;
@@ -48,6 +69,8 @@ import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
@@ -59,7 +82,10 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -70,7 +96,11 @@ import java.util.Properties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class Beans {
+public final class Beans {
+    /**
+     * Default parameter name in search filters for ldap.
+     */
+    public static final String LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME = "user";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
 
@@ -92,7 +122,7 @@ public class Beans {
             bean.setPassword(jpaProperties.getPassword());
 
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
-            bean.setMinimumIdle(jpaProperties.getPool().getMaxIdleTime());
+            bean.setMinimumIdle(Long.valueOf(jpaProperties.getPool().getMaxIdleTime()).intValue());
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
             bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
             bean.setInitializationFailFast(jpaProperties.isFailFast());
@@ -100,7 +130,7 @@ public class Beans {
             bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
             bean.setAutoCommit(jpaProperties.isAutocommit());
-            bean.setLoginTimeout(jpaProperties.getPool().getMaxWait());
+            bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
             bean.setValidationTimeout(jpaProperties.getPool().getMaxWait());
             return bean;
         } catch (final Exception e) {
@@ -131,7 +161,7 @@ public class Beans {
         final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
         bean.setCorePoolSize(config.getMinSize());
         bean.setMaxPoolSize(config.getMaxSize());
-        bean.setKeepAliveSeconds(config.getMaxWait());
+        bean.setKeepAliveSeconds(Long.valueOf(config.getMaxWait()).intValue());
         return bean;
     }
 
@@ -158,6 +188,12 @@ public class Beans {
         properties.put("hibernate.dialect", jpaProperties.getDialect());
         properties.put("hibernate.hbm2ddl.auto", jpaProperties.getDdlAuto());
         properties.put("hibernate.jdbc.batch_size", jpaProperties.getBatchSize());
+        if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
+            properties.put("hibernate.default_catalog", jpaProperties.getDefaultCatalog());
+        }
+        if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
+            properties.put("hibernate.default_schema", jpaProperties.getDefaultSchema());
+        }
         bean.setJpaProperties(properties);
         return bean;
     }
@@ -171,9 +207,10 @@ public class Beans {
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         try {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            final Map pdirMap = new HashMap<>();
+            final Map<String, List<Object>> pdirMap = new HashMap<>();
             p.getAttributes().entrySet().forEach(entry -> {
-                pdirMap.put(entry.getKey(), Lists.newArrayList(entry.getValue()));
+                final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
+                pdirMap.put(entry.getKey(), Arrays.asList((Object[]) vals));
             });
             dao.setBackingMap(pdirMap);
             return dao;
@@ -189,16 +226,42 @@ public class Beans {
      * @return the password encoder
      */
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
-        switch (properties.getType()) {
-            case NONE:
+        final String type = properties.getType();
+        if (StringUtils.isBlank(type)) {
+            LOGGER.debug("No password encoder type is defined, and so none shall be created");
+            return NoOpPasswordEncoder.getInstance();
+        }
+
+        if (type.contains(".")) {
+            try {
+                LOGGER.debug("Configuration indicates use of a custom password encoder {}", type);
+                final Class<PasswordEncoder> clazz = (Class<PasswordEncoder>) Class.forName(type);
+                return clazz.newInstance();
+            } catch (final Exception e) {
+                LOGGER.error("Falling back to a no-op password encoder as CAS has failed to create "
+                        + "an instance of the custom password encoder class " + type, e);
                 return NoOpPasswordEncoder.getInstance();
+            }
+        }
+
+        final PasswordEncoderProperties.PasswordEncoderTypes encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
+        switch (encoderType) {
             case DEFAULT:
+                LOGGER.debug("Creating default password encoder with encoding alg {} and character encoding {}",
+                        properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
                 return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
             case STANDARD:
+                LOGGER.debug("Creating standard password encoder with the secret defined in the configuration");
                 return new StandardPasswordEncoder(properties.getSecret());
-            default:
-                return new BCryptPasswordEncoder(properties.getStrength(), 
+            case BCRYPT:
+                LOGGER.debug("Creating BCRYPT password encoder given the strength {} and secret in the configuration",
+                        properties.getStrength());
+                return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
+            case NONE:
+            default:
+                LOGGER.debug("No password encoder shall be created");
+                return NoOpPasswordEncoder.getInstance();
         }
     }
 
@@ -211,11 +274,12 @@ public class Beans {
      */
     public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
 
-        PrincipalNameTransformer res = null;
+        final PrincipalNameTransformer res;
         if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
             final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
             t.setPrefix(p.getPrefix());
             t.setSuffix(p.getSuffix());
+            res = t;
         } else {
             res = formUserId -> formUserId;
         }
@@ -239,42 +303,63 @@ public class Beans {
     /**
      * New dn resolver entry resolver.
      *
-     * @param l the ldap settings
+     * @param l       the ldap settings
+     * @param factory the factory
      * @return the entry resolver
      */
-    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l) {
+    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l,
+                                                       final PooledConnectionFactory factory) {
         final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getUserFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
-        entryResolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
+        entryResolver.setConnectionFactory(factory);
         return entryResolver;
     }
 
-    /**
-     * New pooled connection factory pooled connection factory.
-     *
-     * @param l the l
-     * @return the pooled connection factory
-     */
-    public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
-        final PoolConfig pc = new PoolConfig();
-        pc.setMinPoolSize(l.getMinPoolSize());
-        pc.setMaxPoolSize(l.getMaxPoolSize());
-        pc.setValidateOnCheckOut(l.isValidateOnCheckout());
-        pc.setValidatePeriodically(l.isValidatePeriodically());
-        pc.setValidatePeriod(newDuration(l.getValidatePeriod()));
 
+    /**
+     * New connection config connection config.
+     *
+     * @param l the ldap properties
+     * @return the connection config
+     */
+    public static ConnectionConfig newConnectionConfig(final AbstractLdapProperties l) {
+        LOGGER.debug("Creating LDAP connection configuration for {}", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
         cc.setUseSSL(l.isUseSsl());
         cc.setUseStartTLS(l.isUseStartTls());
         cc.setConnectTimeout(newDuration(l.getConnectTimeout()));
+        cc.setResponseTimeout(newDuration(l.getResponseTimeout()));
+
+        if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
+            final AbstractLdapProperties.LdapConnectionStrategy strategy =
+                    AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
+            switch (strategy) {
+                case RANDOM:
+                    cc.setConnectionStrategy(new RandomConnectionStrategy());
+                    break;
+                case DNS_SRV:
+                    cc.setConnectionStrategy(new DnsSrvConnectionStrategy());
+                    break;
+                case ACTIVE_PASSIVE:
+                    cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
+                    break;
+                case ROUND_ROBIN:
+                    cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
+                    break;
+                case DEFAULT:
+                default:
+                    cc.setConnectionStrategy(new DefaultConnectionStrategy());
+                    break;
+            }
+        }
 
         if (l.getTrustCertificates() != null) {
             final X509CredentialConfig cfg = new X509CredentialConfig();
             cfg.setTrustCertificates(l.getTrustCertificates());
-            cc.setSslConfig(new SslConfig());
+            cc.setSslConfig(new SslConfig(cfg));
         } else if (l.getKeystore() != null) {
             final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
             cfg.setKeyStore(l.getKeystore());
@@ -284,7 +369,6 @@ public class Beans {
         } else {
             cc.setSslConfig(new SslConfig());
         }
-
         if (l.getSaslMechanism() != null) {
             final BindConnectionInitializer bc = new BindConnectionInitializer();
             final SaslConfig sc;
@@ -293,25 +377,19 @@ public class Beans {
                     sc = new DigestMd5Config();
                     ((DigestMd5Config) sc).setRealm(l.getSaslRealm());
                     break;
-
                 case CRAM_MD5:
                     sc = new CramMd5Config();
                     break;
-
                 case EXTERNAL:
                     sc = new ExternalConfig();
                     break;
-
                 case GSSAPI:
                     sc = new GssApiConfig();
                     ((GssApiConfig) sc).setRealm(l.getSaslRealm());
                     break;
-
                 default:
                     throw new IllegalArgumentException("Unknown SASL mechanism " + l.getSaslMechanism().name());
-
             }
-
             sc.setAuthorizationId(l.getSaslAuthorizationId());
             sc.setMutualAuthentication(l.getSaslMutualAuth());
             sc.setQualityOfProtection(l.getSaslQualityOfProtection());
@@ -321,12 +399,38 @@ public class Beans {
         } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
             cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
-            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(),
-                    new Credential(l.getBindCredential())));
+            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
         }
+        return cc;
+    }
 
+    /**
+     * New pool config pool config.
+     *
+     * @param l the ldap properties
+     * @return the pool config
+     */
+    public static PoolConfig newPoolConfig(final AbstractLdapProperties l) {
+        LOGGER.debug("Creating LDAP connection pool configuration for {}", l.getLdapUrl());
+        final PoolConfig pc = new PoolConfig();
+        pc.setMinPoolSize(l.getMinPoolSize());
+        pc.setMaxPoolSize(l.getMaxPoolSize());
+        pc.setValidateOnCheckOut(l.isValidateOnCheckout());
+        pc.setValidatePeriodically(l.isValidatePeriodically());
+        pc.setValidatePeriod(newDuration(l.getValidatePeriod()));
+        return pc;
+    }
+
+    /**
+     * New connection factory connection factory.
+     *
+     * @param l the l
+     * @return the connection factory
+     */
+    public static DefaultConnectionFactory newConnectionFactory(final AbstractLdapProperties l) {
+        LOGGER.debug("Creating LDAP connection factory for {}", l.getLdapUrl());
+        final ConnectionConfig cc = newConnectionConfig(l);
         final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
-
         if (l.getProviderClass() != null) {
             try {
                 final Class clazz = ClassUtils.getClass(l.getProviderClass());
@@ -335,6 +439,18 @@ public class Beans {
                 LOGGER.error(e.getMessage(), e);
             }
         }
+        return bindCf;
+    }
+
+    /**
+     * New blocking connection pool connection pool.
+     *
+     * @param l the l
+     * @return the connection pool
+     */
+    public static ConnectionPool newBlockingConnectionPool(final AbstractLdapProperties l) {
+        final DefaultConnectionFactory bindCf = newConnectionFactory(l);
+        final PoolConfig pc = newPoolConfig(l);
         final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
 
         cp.setBlockWaitTime(newDuration(l.getBlockWaitTime()));
@@ -345,20 +461,67 @@ public class Beans {
         strategy.setPrunePeriod(newDuration(l.getPrunePeriod()));
 
         cp.setPruneStrategy(strategy);
-        cp.setValidator(new SearchValidator());
+
+        switch (l.getValidator().getType().trim().toLowerCase()) {
+            case "compare":
+                final CompareRequest compareRequest = new CompareRequest();
+                compareRequest.setDn(l.getValidator().getDn());
+                compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
+                        l.getValidator().getAttributeValues().toArray(new String[]{})));
+                compareRequest.setReferralHandler(new SearchReferralHandler());
+                cp.setValidator(new CompareValidator(compareRequest));
+                break;
+            case "none":
+                LOGGER.debug("No validator is configured for the LDAP connection pool of {}", l.getLdapUrl());
+                break;
+            case "search":
+            default:
+                final SearchRequest searchRequest = new SearchRequest();
+                searchRequest.setBaseDn(l.getValidator().getBaseDn());
+                searchRequest.setSearchFilter(new SearchFilter(l.getValidator().getSearchFilter()));
+                searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
+                searchRequest.setSearchScope(l.getValidator().getScope());
+                searchRequest.setSizeLimit(1L);
+                searchRequest.setReferralHandler(new SearchReferralHandler());
+                cp.setValidator(new SearchValidator(searchRequest));
+                break;
+        }
+
         cp.setFailFastInitialize(l.isFailFast());
+
+        LOGGER.debug("Initializing ldap connection pool for {} and bindDn {}", l.getLdapUrl(), l.getBindDn());
         cp.initialize();
+        return cp;
+    }
+
+    /**
+     * New pooled connection factory pooled connection factory.
+     *
+     * @param l the ldap properties
+     * @return the pooled connection factory
+     */
+    public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
+        final ConnectionPool cp = newBlockingConnectionPool(l);
         return new PooledConnectionFactory(cp);
     }
 
     /**
-     * New duration.
+     * New duration. If the provided length is duration,
+     * it will be parsed accordingly, or if it's a numeric value
+     * it will be pared as a duration assuming it's provided as seconds.
      *
      * @param length the length in seconds.
      * @return the duration
      */
-    public static Duration newDuration(final long length) {
-        return Duration.ofSeconds(length);
+    public static Duration newDuration(final String length) {
+        try {
+            if (NumberUtils.isCreatable(length)) {
+                return Duration.ofSeconds(Long.valueOf(length));
+            }
+            return Duration.parse(length);
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     /**
@@ -368,8 +531,20 @@ public class Beans {
      * @return the cipher executor
      */
     public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry) {
-        if (StringUtils.isNotBlank(registry.getEncryption().getKey())
-                && StringUtils.isNotBlank(registry.getEncryption().getKey())) {
+        return newTicketRegistryCipherExecutor(registry, false);
+    }
+
+    /**
+     * New ticket registry cipher executor cipher executor.
+     *
+     * @param registry         the registry
+     * @param forceIfBlankKeys the force if blank keys
+     * @return the cipher executor
+     */
+    public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry, final boolean forceIfBlankKeys) {
+        if ((StringUtils.isNotBlank(registry.getEncryption().getKey())
+                && StringUtils.isNotBlank(registry.getEncryption().getKey()))
+                || forceIfBlankKeys) {
             return new DefaultTicketCipherExecutor(
                     registry.getEncryption().getKey(),
                     registry.getSigning().getKey(),
@@ -377,11 +552,11 @@ public class Beans {
                     registry.getSigning().getKeySize(),
                     registry.getEncryption().getKeySize());
         }
-        LOGGER.info("Ticket registry encryption/signing is turned off. This may NOT be safe in a "
+        LOGGER.debug("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a "
                 + "clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
-                + "ticket registry tickets.");
-        return new NoOpCipherExecutor();
+                + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
+        return NoOpCipherExecutor.getInstance();
     }
 
     /**
@@ -404,18 +579,42 @@ public class Beans {
      * the username as a parameter.
      *
      * @param filterQuery the query filter
+     * @return Search filter with parameters applied.
+     */
+    public static SearchFilter newSearchFilter(final String filterQuery) {
+        return newSearchFilter(filterQuery, Collections.emptyList());
+    }
+
+    /**
+     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * the username as a parameter.
+     *
+     * @param filterQuery the query filter
      * @param params      the username
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newSearchFilter(final String filterQuery, final String... params) {
+    public static SearchFilter newSearchFilter(final String filterQuery, final List<String> params) {
+        return newSearchFilter(filterQuery, LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, params);
+    }
+
+    /**
+     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * the username as a parameter.
+     *
+     * @param filterQuery the query filter
+     * @param paramName   the param name
+     * @param params      the username
+     * @return Search filter with parameters applied.
+     */
+    public static SearchFilter newSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(filterQuery);
         if (params != null) {
-            for (int i = 0; i < params.length; i++) {
-                if (filter.getFilter().contains("{" + i + "}")) {
-                    filter.setParameter(i, params[i]);
+            for (int i = 0; i < params.size(); i++) {
+                if (filter.getFilter().contains("{" + i + '}')) {
+                    filter.setParameter(i, params.get(i));
                 } else {
-                    filter.setParameter("user", params[i]);
+                    filter.setParameter(paramName, params.get(i));
                 }
             }
         }
@@ -431,12 +630,80 @@ public class Beans {
      * @param params      the params
      * @return the search executor
      */
-    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final String... params) {
+    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final List<String> params) {
         final SearchExecutor executor = new SearchExecutor();
         executor.setBaseDn(baseDn);
         executor.setSearchFilter(newSearchFilter(filterQuery, params));
         executor.setReturnAttributes(ReturnAttributes.ALL.value());
         executor.setSearchScope(SearchScope.SUBTREE);
         return executor;
+    }
+
+    /**
+     * New search executor search executor.
+     *
+     * @param baseDn      the base dn
+     * @param filterQuery the filter query
+     * @return the search executor
+     */
+    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery) {
+        return newSearchExecutor(baseDn, filterQuery, Collections.emptyList());
+    }
+
+    /**
+     * New mongo db client options factory bean.
+     *
+     * @param mongo the mongo properties.
+     * @return the mongo client options factory bean
+     */
+    public static MongoClientOptionsFactoryBean newMongoDbClientOptionsFactoryBean(final AbstractMongoInstanceProperties mongo) {
+        try {
+            final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
+            bean.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
+            bean.setHeartbeatConnectTimeout(Long.valueOf(mongo.getTimeout()).intValue());
+            bean.setHeartbeatSocketTimeout(Long.valueOf(mongo.getTimeout()).intValue());
+            bean.setMaxConnectionLifeTime(mongo.getConns().getLifetime());
+            bean.setSocketKeepAlive(mongo.isSocketKeepAlive());
+            bean.setMaxConnectionIdleTime(Long.valueOf(mongo.getIdleTimeout()).intValue());
+            bean.setConnectionsPerHost(mongo.getConns().getPerHost());
+            bean.setSocketTimeout(Long.valueOf(mongo.getTimeout()).intValue());
+            bean.setConnectTimeout(Long.valueOf(mongo.getTimeout()).intValue());
+            bean.afterPropertiesSet();
+            return bean;
+        } catch (final Exception e) {
+            throw new BeanCreationException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * New mongo db client options.
+     *
+     * @param mongo the mongo
+     * @return the mongo client options
+     */
+    public static MongoClientOptions newMongoDbClientOptions(final AbstractMongoInstanceProperties mongo) {
+        try {
+            return newMongoDbClientOptionsFactoryBean(mongo).getObject();
+        } catch (final Exception e) {
+            throw new BeanCreationException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * New mongo db client.
+     *
+     * @param mongo the mongo
+     * @return the mongo
+     */
+    public static Mongo newMongoDbClient(final AbstractMongoInstanceProperties mongo) {
+        return new MongoClient(new ServerAddress(
+                mongo.getHost(),
+                mongo.getPort()),
+                Collections.singletonList(
+                        MongoCredential.createCredential(
+                                mongo.getUserId(),
+                                mongo.getDatabaseName(),
+                                mongo.getPassword().toCharArray())),
+                newMongoDbClientOptions(mongo));
     }
 }

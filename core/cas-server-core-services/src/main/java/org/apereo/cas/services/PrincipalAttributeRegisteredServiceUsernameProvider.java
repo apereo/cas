@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.ApplicationContextProvider;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -93,7 +93,6 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
         toStringBuilder.append("usernameAttribute", this.usernameAttribute);
         return toStringBuilder.toString();
     }
-
 
     @Override
     public boolean equals(final Object obj) {

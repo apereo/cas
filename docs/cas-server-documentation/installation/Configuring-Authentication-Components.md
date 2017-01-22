@@ -8,9 +8,10 @@ title: CAS - Configuring Authentication Components
 The CAS authentication process is primarily controlled by an authentication manager, which orchestrates a collection of authentication handlers.
 
 ## Authentication Manager
+
 CAS ships with a single yet flexible authentication manager which performs authentication according to the following contract.
 
-For each given credential do the following:
+For any given credential the manager does the following:
 
 1. Iterate over all configured authentication handlers.
 2. Attempt to authenticate a credential if a handler supports it.
@@ -28,6 +29,11 @@ There is an implicit security policy that requires at least one handler to succe
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
+### Authentication Sequence
+
+At runtime, CAS maintains a collection of authentication handlers/strategies that typically execute one after another. Each CAS module that presents a form of authentication strategy will simply insert itself into this collection at bootstrap time. At the end of this process, the result of all authentication transactions is collected and optionally processed by an authentication policy where success/failure of certain strategies/sources may be taken into account to fully satisfy the authentication requirements. The collection of authentication handlers tries to preserve order in a rather more deterministic way. The idea is that adopters can assign an `order` value to an authentication handler thereby explicitly positioning it in the collection and controlling its execution sequence. 
+
+
 ## Authentication Handlers
 
 There are a variety of authentication handlers and schemes supported by CAS. Use the menu to navigate around the site and choose. 
@@ -38,6 +44,7 @@ configured via the static authencation handler, and <strong>MUST</strong> be rem
 prior to production rollouts.</p></div>
 
 ## Principal Resolution
+
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
 
 ### Principal Transformation
@@ -50,14 +57,14 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ## Long Term Authentication
 
 CAS has support for long term Ticket Granting Tickets, a feature that is also referred to as _"Remember Me"_
-to extends the length of the SSO session beyond the typical configuration.
+to extend the length of the SSO session beyond the typical configuration.
 Please [see this guide](Configuring-LongTerm-Authentication.html) for more details.
 
 ## Proxy Authentication
 
 Please [see this guide](Configuring-Proxy-Authentication.html) for more details.
 
-## Multi-factor Authentication (MFA)
+## Multifactor Authentication (MFA)
 
 Please [see this guide](Configuring-Multifactor-Authentication.html) for more details.
 

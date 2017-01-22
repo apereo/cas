@@ -33,3 +33,5 @@ classes/
 out
 ajcore.*
 reports
+
+*.asc

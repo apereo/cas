@@ -14,5 +14,6 @@ dependencies {
     testCompile project(":core:cas-server-core-authentication")
     testCompile project(":core:cas-server-core-tickets")
     testCompile project(":support:cas-server-support-oauth-core")
+    testCompile project(":support:cas-server-support-saml-idp-core")
     testCompile project(":core:cas-server-core-logout")
 }

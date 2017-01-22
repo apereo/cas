@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.spnego;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -29,7 +30,7 @@ public class SpnegoProperties {
     private String kerberosKdc = "172.10.1.10";
     private String kerberosRealm = "EXAMPLE.COM";
     private String loginConf;
-    private long timeout = 300000;
+    private String timeout = "PT5M";
     private long cachePolicy = 600;
     private String jcifsNetbiosWins;
     private String jcifsUsername;
@@ -37,7 +38,7 @@ public class SpnegoProperties {
     private String jcifsDomain;
     private String kerberosDebug;
     private boolean useSubjectCredsOnly;
-    private int dnsTimeout = 2000;
+    private String dnsTimeout = "PT2S";
     private String hostNamePatternString = ".+";
     private String ipsToCheckPattern = "127.+";
     private String alternativeRemoteHostAttribute = "alternateRemoteHeader";
@@ -54,6 +55,15 @@ public class SpnegoProperties {
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
 
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
     public PrincipalTransformationProperties getPrincipalTransformation() {
         return principalTransformation;
@@ -119,11 +129,11 @@ public class SpnegoProperties {
         this.spnegoAttributeName = spnegoAttributeName;
     }
 
-    public int getDnsTimeout() {
-        return dnsTimeout;
+    public long getDnsTimeout() {
+        return Beans.newDuration(dnsTimeout).toMillis();
     }
 
-    public void setDnsTimeout(final int dnsTimeout) {
+    public void setDnsTimeout(final String dnsTimeout) {
         this.dnsTimeout = dnsTimeout;
     }
 
@@ -208,10 +218,10 @@ public class SpnegoProperties {
     }
 
     public long getTimeout() {
-        return timeout;
+        return Beans.newDuration(timeout).toMillis();
     }
 
-    public void setTimeout(final long timeout) {
+    public void setTimeout(final String timeout) {
         this.timeout = timeout;
     }
 

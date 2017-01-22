@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * This is {@link InMemoryMultifactorAuthenticationTrustStorage}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 
@@ -19,6 +19,11 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
 
     public InMemoryMultifactorAuthenticationTrustStorage(final LoadingCache<String, MultifactorAuthenticationTrustRecord> st) {
         this.storage = st;
+    }
+
+    @Override
+    public void expire(final String key) {
+        storage.asMap().keySet().removeIf(k -> k.equalsIgnoreCase(key));
     }
 
     @Override
@@ -30,12 +35,24 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
                 .sorted()
                 .distinct()
                 .collect(Collectors.toSet());
-        
+
         logger.info("Found {} expired records", results.size());
         if (!results.isEmpty()) {
             results.forEach(entry -> storage.invalidate(entry.getKey()));
             logger.info("Invalidated and removed {} expired records", results.size());
         }
+    }
+
+    @Override
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+        expire(onOrAfterDate);
+        return storage.asMap()
+                .values()
+                .stream()
+                .filter(entry -> entry.getDate().isEqual(onOrAfterDate) || entry.getDate().isAfter(onOrAfterDate))
+                .sorted()
+                .distinct()
+                .collect(Collectors.toSet());
     }
 
     @Override

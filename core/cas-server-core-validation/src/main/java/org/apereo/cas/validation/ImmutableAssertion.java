@@ -38,7 +38,7 @@ public class ImmutableAssertion implements Assertion, Serializable {
      * Creates a new instance with required parameters.
      *
      * @param primary Primary authentication.
-     * @param chained Chained authentitications.
+     * @param chained Chained authentications.
      * @param service The service we are asserting this ticket for.
      * @param fromNewLogin True if the ticket was issued as a result of authentication, false otherwise.
      *

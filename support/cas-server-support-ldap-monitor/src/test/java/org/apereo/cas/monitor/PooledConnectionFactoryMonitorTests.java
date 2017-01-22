@@ -7,9 +7,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
@@ -19,9 +20,9 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = {"/ldap-context.xml"},
-        classes = {LdapMonitorConfiguration.class, RefreshAutoConfiguration.class})
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {LdapMonitorConfiguration.class, RefreshAutoConfiguration.class})
+@TestPropertySource(locations={"classpath:/ldapmonitor.properties"})
 public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
     @Autowired

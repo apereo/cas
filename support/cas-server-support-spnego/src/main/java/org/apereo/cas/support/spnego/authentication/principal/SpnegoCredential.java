@@ -28,25 +28,25 @@ public class SpnegoCredential implements Credential, Serializable {
 
     private static final int NTLM_TOKEN_MAX_LENGTH = 8;
 
-    private static final Byte CHAR_S_BYTE = Byte.valueOf((byte) 'S');
+    private static final Byte CHAR_S_BYTE = (byte) 'S';
 
     /** The ntlmssp signature. */
-    private static final Byte[] NTLMSSP_SIGNATURE = {Byte.valueOf((byte) 'N'),
-            Byte.valueOf((byte) 'T'), Byte.valueOf((byte) 'L'),
-            Byte.valueOf((byte) 'M'), CHAR_S_BYTE, CHAR_S_BYTE,
-            Byte.valueOf((byte) 'P'), Byte.valueOf((byte) 0)};
+    private static final Byte[] NTLMSSP_SIGNATURE = {(byte) 'N',
+            (byte) 'T', (byte) 'L',
+            (byte) 'M', CHAR_S_BYTE, CHAR_S_BYTE,
+            (byte) 'P', (byte) 0};
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The SPNEGO Init Token.
      */
-    private ByteSource initToken;
+    private byte[] initToken;
 
     /**
      * The SPNEGO Next Token.
      */
-    private ByteSource nextToken;
+    private byte[] nextToken;
 
     /**
      * The Principal.
@@ -65,16 +65,16 @@ public class SpnegoCredential implements Credential, Serializable {
      */
     public SpnegoCredential(final byte[] initToken) {
         Assert.notNull(initToken, "The initToken cannot be null.");
-        this.initToken = ByteSource.wrap(initToken);
+        this.initToken = consumeByteSourceOrNull(ByteSource.wrap(initToken));
         this.isNtlm = isTokenNtlm(this.initToken);
     }
 
     public byte[] getInitToken() {
-        return consumeByteSourceOrNull(this.initToken);
+        return this.initToken;
     }
 
     public byte[] getNextToken() {
-        return consumeByteSourceOrNull(this.nextToken);
+        return this.nextToken;
     }
 
     /**
@@ -83,7 +83,7 @@ public class SpnegoCredential implements Credential, Serializable {
      * @param nextToken the next token
      */
     public void setNextToken(final byte[] nextToken) {
-        this.nextToken = ByteSource.wrap(nextToken);
+        this.nextToken = consumeByteSourceOrNull(ByteSource.wrap(nextToken));
     }
 
     public Principal getPrincipal() {
@@ -111,18 +111,15 @@ public class SpnegoCredential implements Credential, Serializable {
     /**
      * Checks if is token ntlm.
      *
-     * @param tokenSource the token
+     * @param token the token
      * @return true, if  token ntlm
      */
-    private boolean isTokenNtlm(final ByteSource tokenSource) {
-
-
-        final byte[] token = consumeByteSourceOrNull(tokenSource);
+    private static boolean isTokenNtlm(final byte[] token) {
         if (token == null || token.length < NTLM_TOKEN_MAX_LENGTH) {
             return false;
         }
         for (int i = 0; i < NTLM_TOKEN_MAX_LENGTH; i++) {
-            if (NTLMSSP_SIGNATURE[i].byteValue() != token[i]) {
+            if (NTLMSSP_SIGNATURE[i] != token[i]) {
                 return false;
             }
         }
