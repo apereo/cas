@@ -12,6 +12,8 @@ appropriate claims and properties of the user resource.
 
 SCIM versions 1.1 and 2 are both supported, thanks to the SDK provided by [UnboundID](https://github.com/UnboundID).
 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>SCIM functionality at this point is experimental.</p></div>
+
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
