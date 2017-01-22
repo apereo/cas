@@ -2,7 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,28 +31,23 @@ public class FileTrustStoreSslSocketFactoryTests {
         assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
     }
     
-    @Ignore
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();
-        assertTrue(client.isValidEndPoint("https://test.scaldingspoon.org/idp/shibboleth"));
+        assertTrue(client.isValidEndPoint("https://untrusted-root.badssl.com"));
     }
 
     @Test
      public void verifyTrustStoreNotFound() throws Exception {
         this.thrown.expect(RuntimeException.class);
-        this.thrown.expectMessage("java.io.FileNotFoundException: test.jks (No such file or directory)");
-
         new FileTrustStoreSslSocketFactory(new FileSystemResource("test.jks"), "changeit");
     }
 
     @Test
     public void verifyTrustStoreBadPassword() throws Exception {
         this.thrown.expect(RuntimeException.class);
-        this.thrown.expectMessage("java.io.IOException: Keystore was tampered with, or password was incorrect");
-
         new FileTrustStoreSslSocketFactory(RESOURCE, "invalid");
     }
 
