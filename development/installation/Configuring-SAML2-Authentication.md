@@ -7,6 +7,11 @@ title: CAS - SAML2 Authentication
 
 CAS can act as a SAML2 identity provider accepting authentication requests and producing SAML assertions.
 
+<div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on 
+SAML2 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure about the 
+concepts referred to on this page, 
+please start with reviewing the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
+
 ## SAML Endpoints
 
 The following CAS endpoints respond to supported SAML2 profiles:
@@ -81,6 +86,11 @@ Here is a generated metadata file as an example:
 </EntityDescriptor>
 ```
 
+<div class="alert alert-info"><strong>Server Configuration</strong><p>If you have deployed CAS in an external application server/servlet container 
+(i.e. Apache Tomcat) you will need to make sure
+that the server is adjusted to handle large-enough <code>HttpHeaderSize</code> and <code>HttpPostSize</code> values (i.e. 2097152). 
+The embedded container that ships with CAS handles this automatically.</p></div>
+
 Note that CAS metadata endpoints for various bindings are typically available under `/cas/idp/...`. If you
 mean you use an existing metadata file whose binding endpoints begin with `/idp/...`, you may need to deploy
 CAS at the root context path so it's able to respond to those requests. (i.e. `https://sso.example.org/cas/login` becomes
@@ -105,7 +115,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 You may also need to declare the following Maven repository in
-your CAS Overlay to be able to resolve dependencies:
+your CAS overlay to be able to resolve dependencies:
 
 ```xml
 <repositories>

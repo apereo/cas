@@ -1176,6 +1176,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].validator.attributeValues=top
 # cas.authn.ldap[0].validator.dn=
 
+# cas.authn.ldap[0].passwordPolicy.type=GENERIC|AD|FreeIPA|EDirectory
 # cas.authn.ldap[0].passwordPolicy.enabled=true
 # cas.authn.ldap[0].passwordPolicy.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
 # cas.authn.ldap[0].passwordPolicy.loginFailures=5
@@ -3321,6 +3322,20 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
+## Provisioning
+
+### SCIM
+
+Provision the authenticated CAS principal via SCIM.
+
+```properties
+# cas.scim.version=2
+# cas.scim.target=
+# cas.scim.oauthToken=
+# cas.scim.username=
+# cas.scim.password=
+```
+
 ## Password Management
 
 Allow the user to update their account password, etc in-place.
@@ -3357,7 +3372,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 ### LDAP
 
 ```properties
-# cas.authn.pm.ldap.type=GENERIC|AD
+# cas.authn.pm.ldap.type=GENERIC|AD|FreeIPA|EDirectory
 # cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.pm.ldap.connectionStrategy=
 # cas.authn.pm.ldap.useSsl=true
