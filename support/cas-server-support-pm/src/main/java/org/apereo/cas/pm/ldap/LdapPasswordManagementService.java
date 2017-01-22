@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
@@ -100,6 +101,9 @@ public class LdapPasswordManagementService implements PasswordManagementService 
         return null;
     }
 
+    @Audit(action = "CHANGE_PASSWORD",
+            actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
+            resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
     @Override
     public boolean change(final Credential credential, final PasswordChangeBean bean) {
         Assert.notNull(credential, "Credential cannot be null");
