@@ -635,7 +635,35 @@ ext.libraries = [
                     force = true
                 }
         ],
+        unboundidscim : [
+                dependencies.create("com.unboundid.product.scim2:scim2-sdk-client:$unboundidScim2Version") {
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.jaxrs", module: "jackson-jaxrs-json-provider")
 
+                    force = true
+                },
+                dependencies.create("com.unboundid.product.scim:scim-sdk:$unboundidScim1Version") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.glassfish.jersey.core", module: "oauth2-client")
+                    exclude(group: "org.glassfish.jersey.core", module: "jersey-common")
+                    exclude(group: "org.glassfish.jersey.core", module: "jersey-client")
+                    exclude(group: "javax.xml.bind", module: "jaxb-api")
+                    exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    force = true
+                },
+                dependencies.create("org.glassfish.jersey.security:oauth2-client:$jerseyOauth2ClientVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    force = true
+                }
+
+        ],
         jackson                 : [
                 dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")

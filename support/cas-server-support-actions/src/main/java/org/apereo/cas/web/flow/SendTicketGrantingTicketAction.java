@@ -34,9 +34,11 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     private ServicesManager servicesManager;
     private AuthenticationSystemSupport authenticationSystemSupport;
 
-    public SendTicketGrantingTicketAction(final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
+    public SendTicketGrantingTicketAction(final CentralAuthenticationService centralAuthenticationService, 
+                                          final ServicesManager servicesManager,
                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                          final AuthenticationSystemSupport authenticationSystemSupport, final boolean renewedAuthn) {
+                                          final AuthenticationSystemSupport authenticationSystemSupport, 
+                                          final boolean renewedAuthn) {
         super();
         this.centralAuthenticationService = centralAuthenticationService;
         this.servicesManager = servicesManager;
