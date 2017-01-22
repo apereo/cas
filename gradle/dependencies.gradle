@@ -635,6 +635,17 @@ ext.libraries = [
                     force = true
                 }
         ],
+        kotlin           : [
+                dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") {
+                    force = true
+                },
+                dependencies.create("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") {
+                    force = true
+                },
+                dependencies.create("org.jetbrains.kotlin:kotlin-test:$kotlinVersion") {
+                    force = true
+                }
+        ],
         unboundidscim : [
                 dependencies.create("com.unboundid.product.scim2:scim2-sdk-client:$unboundidScim2Version") {
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
