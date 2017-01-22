@@ -58,7 +58,8 @@ for auditing functionality, enable the following module in your configuration:
 </dependency>
 ```
 
-To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html). To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html). 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Audit Events
 
@@ -75,4 +76,5 @@ The following events are tracked and recorded in the audit log:
 | `EVALUATE_RISKY_AUTHENTICATION`       | N/A
 | `MITIGATE_RISKY_AUTHENTICATION`       | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
+| `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
