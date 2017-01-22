@@ -3322,6 +3322,20 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
+## Provisioning
+
+### SCIM
+
+Provision the authenticated CAS principal via SCIM.
+
+```properties
+# cas.scim.version=2
+# cas.scim.target=
+# cas.scim.oauthToken=
+# cas.scim.username=
+# cas.scim.password=
+```
+
 ## Password Management
 
 Allow the user to update their account password, etc in-place.
