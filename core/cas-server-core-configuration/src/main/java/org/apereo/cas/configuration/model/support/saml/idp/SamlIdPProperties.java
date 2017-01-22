@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link SamlIdPProperties}.
@@ -98,7 +99,7 @@ public class SamlIdPProperties {
     public static class Metadata {
         private boolean failFast = true;
         private boolean requireValidMetadata = true;
-        private long cacheExpirationMinutes = 30;
+        private long cacheExpirationMinutes = TimeUnit.DAYS.toMinutes(1);
         private Resource location = new FileSystemResource("/etc/cas/saml");
         private String privateKeyAlgName = "RSA";
         private String basicAuthnUsername;
