@@ -109,7 +109,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 verifyRegisteredServiceProperties(registeredService, service);
                 return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
-                logger.error("Error constructing {}", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
+                logger.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
             }
         }
         return null;

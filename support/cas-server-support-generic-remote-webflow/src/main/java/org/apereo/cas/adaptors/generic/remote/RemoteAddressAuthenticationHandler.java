@@ -45,7 +45,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
                     return new DefaultHandlerResult(this, c, this.principalFactory.createPrincipal(c.getId()));
                 }
             } catch (final UnknownHostException e) {
-                logger.debug("Unknown host {}", c.getRemoteAddress());
+                logger.debug("Unknown host [{}]", c.getRemoteAddress());
             }
         }
         throw new FailedLoginException(c.getRemoteAddress() + " not in allowed range.");

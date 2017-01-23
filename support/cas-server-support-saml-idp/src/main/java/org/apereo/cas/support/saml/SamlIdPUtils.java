@@ -153,7 +153,7 @@ public final class SamlIdPUtils {
                 acs.setIsDefault(Boolean.TRUE);
             }
 
-            LOGGER.debug("Resolved AssertionConsumerService from the request is {}", acs);
+            LOGGER.debug("Resolved AssertionConsumerService from the request is [{}]", acs);
             if (StringUtils.isBlank(acs.getBinding())) {
                 throw new SamlException("AssertionConsumerService has no protocol binding defined");
             }

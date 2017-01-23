@@ -200,7 +200,7 @@ public class SamlObjectEncrypter {
         logger.debug("Encryption blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Encryption key algorithms: [{}]", config.getKeyTransportEncryptionAlgorithms());
         logger.debug("Signature data algorithms: [{}]", config.getDataEncryptionAlgorithms());
-        logger.debug("Encryption whitelisted algorithms: {}", config.getWhitelistedAlgorithms());
+        logger.debug("Encryption whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
 
         final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
 

@@ -59,7 +59,7 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
                 final CountryResponse response = this.countryDatabaseReader.country(address);
                 location.addAddress(response.getCountry().getName());
             }
-            LOGGER.debug("Geo location for {} is calculated as {}", address, location);
+            LOGGER.debug("Geo location for [{}] is calculated as [{}]", address, location);
             return location;
         } catch (final AddressNotFoundException e) {
             LOGGER.info(e.getMessage(), e);

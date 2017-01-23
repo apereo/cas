@@ -296,7 +296,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected boolean isTicketAuthenticityVerified(final String ticketId) {
         if (this.cipherExecutor != null) {
-            logger.debug("Attempting to decode service ticket {} to verify authenticity", ticketId);
+            logger.debug("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
             return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
         }
         return !StringUtils.isEmpty(ticketId);
