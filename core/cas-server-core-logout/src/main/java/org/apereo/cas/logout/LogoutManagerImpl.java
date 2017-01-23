@@ -55,14 +55,14 @@ public class LogoutManagerImpl implements LogoutManager {
         }
         final List<LogoutRequest> logoutRequests = new ArrayList<>();
         performLogoutForTicket(ticket, logoutRequests);
-        LOGGER.info("{} logout requests were processed", logoutRequests.size());
+        LOGGER.info("[{}] logout requests were processed", logoutRequests.size());
         return logoutRequests;
     }
 
     private void performLogoutForTicket(final TicketGrantingTicket ticket, final List<LogoutRequest> logoutRequests) {
         ticket.getServices().entrySet().stream().filter(entry -> entry.getValue() instanceof WebApplicationService).forEach(entry -> {
             final Service service = entry.getValue();
-            LOGGER.debug("Handling single logout callback for {}", service);
+            LOGGER.debug("Handling single logout callback for [{}]", service);
             final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((WebApplicationService) service, entry.getKey());
             if (logoutRequest != null) {
                 LOGGER.debug("Captured logout request [{}]", logoutRequest);

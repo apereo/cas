@@ -65,7 +65,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
     
     @PostConstruct
     private void init() {
-        logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",
+        logger.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",
                 this.getClass().getName());
     }
     
@@ -85,7 +85,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
         } else if (exception instanceof RuntimeException) {
             throw (RuntimeException) exception;
         } else if (exception != null) {
-            logger.debug("Cannot throw checked exception {} since it is not declared by method signature.",
+            logger.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",
                     exception.getClass().getName(),
                     exception);
         }
