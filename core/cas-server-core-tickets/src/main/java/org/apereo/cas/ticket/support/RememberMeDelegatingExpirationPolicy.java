@@ -61,10 +61,10 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
     @PostConstruct
     private void postConstruct() {
         if (this.rememberMeExpirationPolicy != null) {
-            LOGGER.debug("Using remember-me expiration policy of {}", this.rememberMeExpirationPolicy);
+            LOGGER.debug("Using remember-me expiration policy of [{}]", this.rememberMeExpirationPolicy);
         }
         if (this.sessionExpirationPolicy != null) {
-            LOGGER.debug("Using session expiration policy of {}", this.sessionExpirationPolicy);
+            LOGGER.debug("Using session expiration policy of [{}]", this.sessionExpirationPolicy);
         }
     }
 
@@ -76,11 +76,11 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
                     get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
 
             if (b == null || b.equals(Boolean.FALSE)) {
-                LOGGER.debug("Ticket is not associated with a remember-me authentication. Invoking {}", this.sessionExpirationPolicy);
+                LOGGER.debug("Ticket is not associated with a remember-me authentication. Invoking [{}]", this.sessionExpirationPolicy);
                 return this.sessionExpirationPolicy.isExpired(ticketState);
             }
 
-            LOGGER.debug("Ticket is associated with a remember-me authentication. Invoking {}", this.rememberMeExpirationPolicy);
+            LOGGER.debug("Ticket is associated with a remember-me authentication. Invoking [{}]", this.rememberMeExpirationPolicy);
             return this.rememberMeExpirationPolicy.isExpired(ticketState);
         }
         LOGGER.warn("No expiration policy settings are defined");

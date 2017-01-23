@@ -44,7 +44,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         final Principal principal = authentication.getPrincipal();
         final boolean bypassByPrincipal = locateMatchingAttributeBasedOnPrincipalAttributes(bypass, principal);
         if (bypassByPrincipal) {
-            LOGGER.debug("Bypass rules for principal {} indicate the request may be ignored", principal.getId());
+            LOGGER.debug("Bypass rules for principal [{}] indicate the request may be ignored", principal.getId());
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }

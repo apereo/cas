@@ -140,13 +140,13 @@ public class JRadiusServerImpl implements RadiusServer {
                     RadiusClient.getAuthProtocol(this.protocol.getName()),
                     this.retries);
 
-            LOGGER.debug("RADIUS response from {}: {}",
+            LOGGER.debug("RADIUS response from [{}]: [{}]",
                     client.getRemoteInetAddress().getCanonicalHostName(),
                     response.getClass().getName());
 
             if (response instanceof AccessAccept) {
                 final List<RadiusAttribute> attributes = response.getAttributes().getAttributeList();
-                LOGGER.debug("Radius response code {} accepted with attributes {} and identifier {}",
+                LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]",
                         response.getCode(), attributes, response.getIdentifier());
                 
                 return new RadiusResponse(response.getCode(),

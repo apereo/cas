@@ -84,7 +84,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
         }
-        logger.debug("Attempting to locate attribute {} for {}", this.spnegoAttributeName, remoteIp);
+        logger.debug("Attempting to locate attribute [{}] for [{}]", this.spnegoAttributeName, remoteIp);
         return executeSearchForSpnegoAttribute(remoteIp);
     }
 
@@ -105,14 +105,14 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
         Connection connection = null;
         final String remoteHostName = getRemoteHostName(remoteIp);
-        logger.debug("Resolved remote hostname {} based on ip {}", remoteHostName, remoteIp);
+        logger.debug("Resolved remote hostname [{}] based on ip [{}]", remoteHostName, remoteIp);
 
         try {
             connection = createConnection();
             final Operation searchOperation = new SearchOperation(connection);
             this.searchRequest.getSearchFilter().setParameter(0, remoteHostName);
 
-            logger.debug("Using search filter {} on baseDn {}",
+            logger.debug("Using search filter [{}] on baseDn [{}]",
                     this.searchRequest.getSearchFilter().format(),
                     this.searchRequest.getBaseDn());
 
@@ -146,7 +146,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         }
         final LdapEntry entry = result.getEntry();
         final LdapAttribute attribute = entry.getAttribute(this.spnegoAttributeName);
-        logger.debug("Spnego attribute {} found as {} for {}", attribute.getName(), attribute.getStringValue(), entry.getDn());
+        logger.debug("Spnego attribute [{}] found as [{}] for [{}]", attribute.getName(), attribute.getStringValue(), entry.getDn());
         return verifySpnegoAttributeValue(attribute);
     }
 

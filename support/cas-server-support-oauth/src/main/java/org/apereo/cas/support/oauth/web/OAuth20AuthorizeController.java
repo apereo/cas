@@ -132,7 +132,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         }
 
         final String redirectUri = context.getRequestParameter(OAuthConstants.REDIRECT_URI);
-        logger.debug("Authorize request verification successful for client {} with redirect uri {}",
+        logger.debug("Authorize request verification successful for client [{}] with redirect uri [{}]",
                 clientId, redirectUri);
 
         final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
@@ -142,7 +142,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         } else {
             callbackUrl = buildCallbackUrlForImplicitResponseType(context, authentication, service, redirectUri);
         }
-        logger.debug("callbackUrl: {}", callbackUrl);
+        logger.debug("callbackUrl: [{}]", callbackUrl);
         return OAuthUtils.redirectTo(callbackUrl);
     }
 
@@ -155,7 +155,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
 
         final AccessToken accessToken = generateAccessToken(service, authentication, context);
-        logger.debug("Generated Oauth access token: {}", accessToken);
+        logger.debug("Generated Oauth access token: [{}]", accessToken);
 
         final URIBuilder builder = new URIBuilder(redirectUri);
         final StringBuilder stringBuilder = new StringBuilder();
@@ -192,7 +192,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                                                                     final String redirectUri) {
 
         final OAuthCode code = this.oAuthCodeFactory.create(service, authentication);
-        logger.debug("Generated OAuth code: {}", code);
+        logger.debug("Generated OAuth code: [{}]", code);
         getTicketRegistry().addTicket(code);
 
         final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
@@ -241,14 +241,14 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @return whether the response type is supported
      */
     private boolean checkResponseTypes(final String type, final OAuthResponseType... expectedTypes) {
-        logger.debug("Response type: {}", type);
+        logger.debug("Response type: [{}]", type);
 
         for (final OAuthResponseType expectedType : expectedTypes) {
             if (isResponseType(type, expectedType)) {
                 return true;
             }
         }
-        logger.error("Unsupported response type: {}", type);
+        logger.error("Unsupported response type: [{}]", type);
         return false;
     }
 

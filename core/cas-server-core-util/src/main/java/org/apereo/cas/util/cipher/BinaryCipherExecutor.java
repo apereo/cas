@@ -46,7 +46,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
         if (StringUtils.isBlank(signingKeyToUse)) {
             logger.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
             signingKeyToUse = generateOctetJsonWebKeyOfSize(signingKeySize);
-            logger.warn("Generated signing key {} of size {}. The generated key MUST be added to CAS settings.",
+            logger.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
                     signingKeyToUse, signingKeySize);
         }
         setSigningKey(signingKeyToUse);
@@ -54,7 +54,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
         if (StringUtils.isBlank(encryptionSecretKey)) {
             logger.warn("No encryption key is defined. CAS will attempt to auto-generate keys");
             this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(encryptionKeySize);
-            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS settings.",
+            logger.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
                     this.encryptionSecretKey, encryptionKeySize);
         } else {
             this.encryptionSecretKey = encryptionSecretKey;

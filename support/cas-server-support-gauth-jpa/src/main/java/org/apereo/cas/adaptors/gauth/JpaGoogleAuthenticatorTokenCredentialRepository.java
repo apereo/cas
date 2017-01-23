@@ -51,7 +51,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
                 return r.getSecretKey();
             }
         } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id {}", username);
+            LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         }
         return null;
     }

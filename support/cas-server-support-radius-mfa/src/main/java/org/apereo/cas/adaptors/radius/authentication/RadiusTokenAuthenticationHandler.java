@@ -39,7 +39,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
 
-        logger.debug("Using {}", getClass().getSimpleName());
+        logger.debug("Using [{}]", getClass().getSimpleName());
     }
 
     @Override
@@ -77,17 +77,17 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     public boolean canPing() {
         final String uidPsw = getClass().getSimpleName();
         for (final RadiusServer server : this.servers) {
-            logger.debug("Attempting to ping RADIUS server {} via simulating an authentication request. If the server responds "
+            logger.debug("Attempting to ping RADIUS server [{}] via simulating an authentication request. If the server responds "
                     + "successfully, mock authentication will fail correctly.", server);
             try {
                 server.authenticate(uidPsw, uidPsw);
             } catch (final TimeoutException | SocketTimeoutException e) {
 
-                logger.debug("Server {} is not available", server);
+                logger.debug("Server [{}] is not available", server);
                 continue;
 
             } catch (final Exception e) {
-                logger.debug("Pinging RADIUS server was successful. Response {}", e.getMessage());
+                logger.debug("Pinging RADIUS server was successful. Response [{}]", e.getMessage());
             }
             return true;
         }

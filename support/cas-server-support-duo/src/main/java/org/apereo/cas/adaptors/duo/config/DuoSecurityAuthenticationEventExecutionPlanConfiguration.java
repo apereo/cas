@@ -131,7 +131,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         if (!duos.isEmpty()) {
             final String name = duos.get(0).getName();
             if (duos.size() > 1) {
-                LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after {}", name);
+                LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after [{}]", name);
             }
             h.setName(name);
         } else {
