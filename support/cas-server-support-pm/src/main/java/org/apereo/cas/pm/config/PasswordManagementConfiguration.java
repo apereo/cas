@@ -4,9 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.pm.NoOpPasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidator;
+import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 import org.apereo.cas.pm.ldap.LdapPasswordManagementService;
 import org.apereo.cas.pm.web.flow.InitPasswordChangeAction;
 import org.apereo.cas.pm.web.flow.InitPasswordResetAction;
@@ -113,18 +116,35 @@ public class PasswordManagementConfiguration {
     @Bean
     public PasswordManagementService passwordChangeService() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
-        if (casProperties.getAuthn().getPm().isEnabled() && StringUtils.isNotBlank(pm.getLdap().getLdapUrl())
-                && StringUtils.isNotBlank(pm.getLdap().getBaseDn())
-                && StringUtils.isNotBlank(pm.getLdap().getUserFilter())) {
-            return new LdapPasswordManagementService(passwordManagementCipherExecutor());
+        if (casProperties.getAuthn().getPm().isEnabled()) {
+            if (StringUtils.isNotBlank(pm.getLdap().getLdapUrl())
+                    && StringUtils.isNotBlank(pm.getLdap().getBaseDn())
+                    && StringUtils.isNotBlank(pm.getLdap().getUserFilter())) {
+                return new LdapPasswordManagementService(passwordManagementCipherExecutor(),
+                        casProperties.getServer().getPrefix(),
+                        casProperties.getAuthn().getPm());
+            }
+
+            if (StringUtils.isNotBlank(pm.getJdbc().getSqlChangePassword())
+                    && StringUtils.isNotBlank(pm.getJdbc().getSqlFindEmail())
+                    && StringUtils.isNotBlank(pm.getJdbc().getUrl())
+                    && StringUtils.isNotBlank(pm.getJdbc().getUser())
+                    && StringUtils.isNotBlank(pm.getJdbc().getSqlSecurityQuestions())) {
+                return new JdbcPasswordManagementService(passwordManagementCipherExecutor(),
+                        casProperties.getServer().getPrefix(),
+                        casProperties.getAuthn().getPm(),
+                        Beans.newHickariDataSource(casProperties.getAuthn().getPm().getJdbc()));
+            }
         }
 
         if (pm.isEnabled()) {
-            LOGGER.warn("No backend is configured to handle the account update operations. Verify your settings");
+            LOGGER.warn("No backend is configured to handle the account update and password service operations. Verify your settings");
         }
-        return new PasswordManagementService() {
-        };
+        return new NoOpPasswordManagementService(passwordManagementCipherExecutor(),
+                casProperties.getServer().getPrefix(),
+                casProperties.getAuthn().getPm());
     }
+
 
     @Autowired
     @Bean
