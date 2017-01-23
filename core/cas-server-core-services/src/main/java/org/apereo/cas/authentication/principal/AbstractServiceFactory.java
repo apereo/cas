@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,5 +69,11 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
                 + url.substring(questionMarkPosition);
     }
 
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .toString();
+    }
 }
 

@@ -21,7 +21,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
      * Memcached client.
      */
     private final MemcachedClientIF client;
-    
+
     /**
      * Creates a new instance using the given memcached client instance, which is presumably configured via
      * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
@@ -55,18 +55,23 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         Assert.notNull(this.client, "No memcached client is defined.");
-
-        final Ticket ticket = encodeTicket(ticketToAdd);
-        logger.debug("Adding ticket [{}]", ticket);
         try {
+            final Ticket ticket = encodeTicket(ticketToAdd);
+            logger.debug("Adding ticket [{}]", ticket);
+            final int timeout = getTimeout(ticketToAdd);
             if (!this.client.add(ticket.getId(), getTimeout(ticketToAdd), ticket).get()) {
-                logger.error("Failed to add [{}]", ticket);
+                logger.error("Failed to add [{}] without timeout [{}]", ticketToAdd, timeout);
+            }
+            // Sanity check to ensure ticket can retrieved
+            if (this.client.get(ticket.getId()) == null) {
+                logger.warn("Ticket [{}] was added to memcached with timeout [{}], yet it cannot be retrieved. "
+                        + "Ticket expiration policy may be too aggressive ?", ticketToAdd, timeout);
             }
         } catch (final InterruptedException e) {
             logger.warn("Interrupted while waiting for response to async add operation for ticket [{}]."
-                    + "Cannot determine whether add was successful.", ticket);
+                    + "Cannot determine whether add was successful.", ticketToAdd);
         } catch (final Exception e) {
-            logger.error("Failed adding [{}]", ticket, e);
+            logger.error("Failed adding [{}]", ticketToAdd, e);
         }
     }
 
@@ -75,7 +80,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         logger.debug("deleteAll() isn't supported. Returning empty list");
         return 0;
     }
-    
+
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         Assert.notNull(this.client, "No memcached client is defined.");
@@ -106,7 +111,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         }
         return null;
     }
-    
+
     @Override
     public Collection<Ticket> getTickets() {
         logger.debug("getTickets() isn't supported. Returning empty list");

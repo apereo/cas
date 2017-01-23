@@ -26,7 +26,7 @@ public class TicketEncryptionDecryptionTests {
     @Test
     public void checkSerializationOfTgt() {
         final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, tgt);
-        final Ticket obj = SerializationUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
+        final Ticket obj = SerializationUtils.decodeAndDeserializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
@@ -34,7 +34,7 @@ public class TicketEncryptionDecryptionTests {
     public void checkSerializationOfSt() {
         final MockServiceTicket st = new MockServiceTicket("serviceid", RegisteredServiceTestUtils.getService(), tgt);
         final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
-        final Ticket obj = SerializationUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
+        final Ticket obj = SerializationUtils.decodeAndDeserializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
@@ -45,14 +45,14 @@ public class TicketEncryptionDecryptionTests {
         final String string = EncodingUtils.encodeBase64(bytes);
         assertNotNull(string);
         final byte[] result = EncodingUtils.decodeBase64(string);
-        final Ticket obj = SerializationUtils.decodeAndSerializeObject(result, cipher, Ticket.class);
+        final Ticket obj = SerializationUtils.decodeAndDeserializeObject(result, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
     @Test
     public void checkSerializationOfTgtByteSource() throws Exception {
         final ByteSource bytes = ByteSource.wrap(SerializationUtils.serializeAndEncodeObject(cipher, tgt));
-        final Ticket obj = SerializationUtils.decodeAndSerializeObject(bytes.read(), cipher, Ticket.class);
+        final Ticket obj = SerializationUtils.decodeAndDeserializeObject(bytes.read(), cipher, Ticket.class);
         assertNotNull(obj);
     }
 
