@@ -8,12 +8,11 @@ import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -61,7 +60,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public Principal resolve(final Credential credential, final Principal principal) {
-        final Set<Principal> principals = new HashSet<>();
+        final List<Principal> principals = new ArrayList<>();
         for (final PrincipalResolver resolver : chain) {
             if (resolver.supports(credential)) {
                 LOGGER.debug("Invoking principal resolver [{}]", resolver);
