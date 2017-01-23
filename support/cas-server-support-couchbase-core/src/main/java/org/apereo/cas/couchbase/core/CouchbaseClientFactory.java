@@ -129,7 +129,7 @@ public class CouchbaseClientFactory {
         logger.debug("Ensure that indexes exist in bucket [{}]", this.bucket.name());
         final DesignDocument newDocument = DesignDocument.create(documentName, views);
         if (!newDocument.equals(this.bucket.bucketManager().getDesignDocument(documentName))) {
-            logger.warn("Missing indexes in bucket {} for document [{}]", this.bucket.name(), documentName);
+            logger.warn("Missing indexes in bucket [{}] for document [{}]", this.bucket.name(), documentName);
             this.bucket.bucketManager().upsertDesignDocument(newDocument);
         }
     }

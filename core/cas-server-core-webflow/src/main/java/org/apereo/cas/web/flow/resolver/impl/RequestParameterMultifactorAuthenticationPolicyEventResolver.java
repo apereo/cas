@@ -61,7 +61,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final String[] values = request.getParameterValues(mfaRequestParameter);
         if (values != null && values.length > 0) {
-            logger.debug("Received request parameter {} as {}", mfaRequestParameter, values);
+            logger.debug("Received request parameter [{}] as [{}]", mfaRequestParameter, values);
 
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);

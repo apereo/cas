@@ -129,12 +129,12 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<MessageDescriptor> messages)
             throws LoginException {
 
-        logger.debug("Handling error {}", error);
+        logger.debug("Handling error [{}]", error);
         final LoginException ex = this.errorMap.get(error);
         if (ex != null) {
             throw ex;
         }
-        logger.debug("No LDAP error mapping defined for {}", error);
+        logger.debug("No LDAP error mapping defined for [{}]", error);
     }
 
 

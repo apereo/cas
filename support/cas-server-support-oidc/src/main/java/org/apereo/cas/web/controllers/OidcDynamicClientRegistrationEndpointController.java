@@ -72,7 +72,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
                                                                                 final HttpServletResponse response) throws Exception {
         try {
             final OidcClientRegistrationRequest registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
-            logger.debug("Received client registration request {}", registrationRequest);
+            logger.debug("Received client registration request [{}]", registrationRequest);
 
             final OidcRegisteredService registeredService = new OidcRegisteredService();
             registeredService.setName(registrationRequest.getClientName());

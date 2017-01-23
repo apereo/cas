@@ -63,7 +63,7 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
 
         if (StringUtils.isNotBlank(policy.getPrincipalAttributeNameTrigger())
                 || StringUtils.isNotBlank(policy.getPrincipalAttributeValueToMatch())) {
-            logger.debug("Authentication policy for {} has defined principal attribute triggers. Skipping...",
+            logger.debug("Authentication policy for [{}] has defined principal attribute triggers. Skipping...",
                     service.getServiceId());
             return null;
         }
@@ -106,7 +106,7 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
                 return Collections.singleton(event);
             }
 
-            logger.debug("No multifactor authentication providers could be located for {}", service);
+            logger.debug("No multifactor authentication providers could be located for [{}]", service);
             return null;
 
         } catch (final Exception e) {

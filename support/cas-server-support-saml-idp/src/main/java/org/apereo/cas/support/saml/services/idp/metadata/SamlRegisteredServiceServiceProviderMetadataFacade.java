@@ -101,7 +101,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
             LOGGER.info("Locating metadata for entityID [{}] with binding [{}] by attempting to run through the metadata chain...",
                     entityID, SAMLConstants.SAML2_POST_BINDING_URI);
             final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
-            LOGGER.info("Resolved metadata chain for service {}. Filtering the chain by entity ID {} and binding {}",
+            LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}] and binding [{}]",
                     registeredService, entityID, SAMLConstants.SAML2_POST_BINDING_URI);
 
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);

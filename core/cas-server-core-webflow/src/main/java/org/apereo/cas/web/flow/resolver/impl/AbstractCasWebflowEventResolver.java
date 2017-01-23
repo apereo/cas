@@ -283,7 +283,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 logger.warn("Transition definition cannot be found for event [{}]", event.getId());
                 throw new AuthenticationException();
             }
-            logger.debug("Found matching transition [{}] with target [{}] for event [{}] with attributes {}.",
+            logger.debug("Found matching transition [{}] with target [{}] for event [{}] with attributes [{}].",
                     def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
             return event;
         } catch (final Exception e) {

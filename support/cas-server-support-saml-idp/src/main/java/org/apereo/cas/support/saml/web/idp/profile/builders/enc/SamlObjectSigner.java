@@ -275,7 +275,7 @@ public class SamlObjectSigner {
         }
 
         logger.debug("Signature validation blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
-        logger.debug("Signature validation whitelisted algorithms: {}", config.getWhitelistedAlgorithms());
+        logger.debug("Signature validation whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
 
         return config;
     }
@@ -314,7 +314,7 @@ public class SamlObjectSigner {
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
         logger.debug("Signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
-        logger.debug("Signature signing whitelisted algorithms: {}", config.getWhitelistedAlgorithms());
+        logger.debug("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
         logger.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         final PrivateKey privateKey = getSigningPrivateKey();

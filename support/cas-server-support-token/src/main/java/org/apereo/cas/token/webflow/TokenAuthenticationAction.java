@@ -54,7 +54,7 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
                 final Credential credential = new TokenCredential(authTokenValue, service);
-                LOGGER.debug("Received token authentication request {} ", credential);
+                LOGGER.debug("Received token authentication request [{}] ", credential);
                 return credential;
             } catch (final Exception e) {
                 LOGGER.warn(e.getMessage(), e);

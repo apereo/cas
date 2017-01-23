@@ -139,7 +139,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             final RegisteredServiceProperty propSigning = service.getProperties().get(propName);
             final String tokenSigningSecret = propSigning.getValue();
             if (StringUtils.isNotBlank(tokenSigningSecret)) {
-                logger.debug("Found the secret value {} for service [{}]", propName, service.getServiceId());
+                logger.debug("Found the secret value [{}] for service [{}]", propName, service.getServiceId());
                 return tokenSigningSecret;
             }
         }

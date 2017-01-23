@@ -52,7 +52,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         }
 
         if (StringUtils.isNotBlank(currentDn)) {
-            logger.debug("Updating {}", currentDn);
+            logger.debug("Updating [{}]", currentDn);
             return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,
                     Collections.singletonMap(this.aupAttributeName,
                             Collections.singleton(Boolean.TRUE.toString())));

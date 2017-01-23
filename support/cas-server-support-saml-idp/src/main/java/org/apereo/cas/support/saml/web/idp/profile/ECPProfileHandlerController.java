@@ -242,7 +242,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             final WebContext webContext = new J2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {
-                logger.debug("Received basic authentication ECP request from credentials {} ", credentials);
+                logger.debug("Received basic authentication ECP request from credentials [{}]", credentials);
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             }
         } catch (final Exception e) {

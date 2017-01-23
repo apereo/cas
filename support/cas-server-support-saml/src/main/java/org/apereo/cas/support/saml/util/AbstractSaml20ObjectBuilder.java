@@ -181,7 +181,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
+                logger.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
             final Attribute attribute = newAttribute(setFriendlyName, e, configuredNameFormats);

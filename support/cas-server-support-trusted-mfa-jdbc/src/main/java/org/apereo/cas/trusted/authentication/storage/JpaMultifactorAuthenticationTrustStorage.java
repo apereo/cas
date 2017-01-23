@@ -34,7 +34,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
                     MultifactorAuthenticationTrustRecord.class)
                     .setParameter("key", key)
                     .executeUpdate();
-            logger.info("Found and removed {} records", count);
+            logger.info("Found and removed [{}] records", count);
         } catch (final NoResultException e) {
             logger.info("No trusted authentication records could be found");
         }

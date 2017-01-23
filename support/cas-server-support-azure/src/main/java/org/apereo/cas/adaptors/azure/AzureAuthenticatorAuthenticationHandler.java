@@ -47,7 +47,7 @@ public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostP
             if (r.getAuthenticated()) {
                 return createHandlerResult(c, principalFactory.createPrincipal(principal.getId()), null);
             }
-            logger.error("Authentication failed. Call status: {}-{}. Error: [{}]", r.getCallStatus(),
+            logger.error("Authentication failed. Call status: [{}]-[{}]. Error: [{}]", r.getCallStatus(),
                     r.getCallStatusString(), r.getMessageError());
 
         } catch (final Exception e) {
