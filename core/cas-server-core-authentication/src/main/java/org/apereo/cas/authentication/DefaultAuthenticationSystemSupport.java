@@ -36,7 +36,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
         if (credential != null && credential.length > 0) {
             builder.collect(credential[0]);
         }
-        
+
         return this.handleAuthenticationTransaction(builder, credential);
     }
 
@@ -47,8 +47,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     @Override
     public AuthenticationResultBuilder handleAuthenticationTransaction(final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                       final Credential... credential)
-            throws AuthenticationException {
+                                                                       final Credential... credential) throws AuthenticationException {
 
         this.authenticationTransactionManager.handle(AuthenticationTransaction.wrap(credential), authenticationResultBuilder);
         return authenticationResultBuilder;
