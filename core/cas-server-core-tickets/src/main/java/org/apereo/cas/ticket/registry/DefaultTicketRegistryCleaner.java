@@ -81,7 +81,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                 .stream()
                 .filter(Ticket::isExpired)
                 .collect(Collectors.toSet());
-        LOGGER.debug("{} expired tickets found.", ticketsToRemove.size());
+        LOGGER.debug("[{}] expired tickets found.", ticketsToRemove.size());
 
         int count = 0;
 
@@ -97,7 +97,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                 LOGGER.warn("Unknown ticket type [{}] found to clean", ticket.getClass().getSimpleName());
             }
         }
-        LOGGER.info("{} expired tickets removed.", count);
+        LOGGER.info("[{}] expired tickets removed.", count);
     }
 
     /**

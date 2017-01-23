@@ -162,20 +162,20 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     private boolean validateConfiguration() {
         if (this.resources == null || this.resources.isEmpty()) {
-            logger.debug("{} is not configured with resources. Skipping configuration...",
+            logger.debug("[{}] is not configured with resources. Skipping configuration...",
                     this.getClass().getSimpleName());
             return false;
         }
         if (this.fetcher == null) {
-            logger.debug("{} is not configured with a CRL fetcher. Skipping configuration...", getClass().getSimpleName());
+            logger.debug("[{}] is not configured with a CRL fetcher. Skipping configuration...", getClass().getSimpleName());
             return false;
         }
         if (getExpiredCRLPolicy() == null) {
-            logger.debug("{} is not configured with a CRL expiration policy. Skipping configuration...", getClass().getSimpleName());
+            logger.debug("[{}] is not configured with a CRL expiration policy. Skipping configuration...", getClass().getSimpleName());
             return false;
         }
         if (getUnavailableCRLPolicy() == null) {
-            logger.debug("{} is not configured with a CRL unavailable policy. Skipping configuration...", getClass().getSimpleName());
+            logger.debug("[{}] is not configured with a CRL unavailable policy. Skipping configuration...", getClass().getSimpleName());
             return false;
         }
         return true;
@@ -205,7 +205,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     @Override
     protected boolean addCRL(final Object issuer, final X509CRL crl) {
-        logger.debug("Adding CRL for issuer {}", issuer);
+        logger.debug("Adding CRL for issuer [{}]", issuer);
         this.crlIssuerMap.put((X500Principal) issuer, crl);
         return this.crlIssuerMap.containsKey(issuer);
     }
@@ -217,7 +217,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         if (this.crlIssuerMap.containsKey(principal)) {
             return Collections.singleton(this.crlIssuerMap.get(principal));
         }
-        logger.warn("Could not locate CRL for issuer principal {}", principal);
+        logger.warn("Could not locate CRL for issuer principal [{}]", principal);
         return Collections.emptyList();
     }
 

@@ -270,7 +270,7 @@ public class JpaLockingStrategyTests {
             try {
                 return lock.acquire();
             } catch (final Exception e) {
-                logger.debug("{} failed to acquire lock", lock, e);
+                logger.debug("[{}] failed to acquire lock", lock, e);
                 return false;
             }
         }
@@ -290,7 +290,7 @@ public class JpaLockingStrategyTests {
                 lock.release();
                 return true;
             } catch (final Exception e) {
-                logger.debug("{} failed to release lock", lock, e);
+                logger.debug("[{}] failed to release lock", lock, e);
                 return false;
             }
         }

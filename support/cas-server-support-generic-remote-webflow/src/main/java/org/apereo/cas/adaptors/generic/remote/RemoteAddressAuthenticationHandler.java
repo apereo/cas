@@ -83,11 +83,11 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         for (int i = 0; i < netmaskBytes.length; i++) {
             final int mask = netmaskBytes[i] & HEX_RIGHT_SHIFT_COEFFICIENT;
             if ((networkBytes[i] & mask) != (ipBytes[i] & mask)) {
-                logger.debug("{} is not in {}/{}", ip, network, netmask);
+                logger.debug("[{}] is not in [{}]/[{}]", ip, network, netmask);
                 return false;
             }
         }
-        logger.debug("{} is in {}/{}", ip, network, netmask);
+        logger.debug("[{}] is in [{}]/[{}]", ip, network, netmask);
         return true;
     }
 
@@ -109,16 +109,16 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
 
                 try {
                     this.inetNetwork = InetAddress.getByName(network);
-                    logger.debug("InetAddress network: {}", this.inetNetwork.toString());
+                    logger.debug("InetAddress network: [{}]", this.inetNetwork.toString());
                 } catch (final UnknownHostException e) {
-                    logger.error("The network address was not valid: {}", e.getMessage());
+                    logger.error("The network address was not valid: [{}]", e.getMessage());
                 }
 
                 try {
                     this.inetNetmask = InetAddress.getByName(netmask);
-                    logger.debug("InetAddress netmask: {}", this.inetNetmask.toString());
+                    logger.debug("InetAddress netmask: [{}]", this.inetNetmask.toString());
                 } catch (final UnknownHostException e) {
-                    logger.error("The network netmask was not valid: {}", e.getMessage());
+                    logger.error("The network netmask was not valid: [{}]", e.getMessage());
                 }
             }
         }

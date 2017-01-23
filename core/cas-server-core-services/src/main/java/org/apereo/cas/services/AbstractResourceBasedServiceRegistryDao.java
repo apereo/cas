@@ -183,7 +183,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         if (errorCount[0] == 0) {
             this.serviceMap = temp;
         } else {
-            LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are "
+            LOGGER.warn("[{}] errors encountered when loading service definitions. New definitions are not loaded until errors are "
                     + "corrected", errorCount[0]);
         }
         return new ArrayList(this.serviceMap.values());
@@ -258,7 +258,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
             LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
             return svcFile;
         } catch (final IOException e) {
-            LOGGER.warn("Service file name {} is invalid; Examine for illegal characters in the name.", fileName);
+            LOGGER.warn("Service file name [{}] is invalid; Examine for illegal characters in the name.", fileName);
             throw new IllegalArgumentException(e);
         }
     }

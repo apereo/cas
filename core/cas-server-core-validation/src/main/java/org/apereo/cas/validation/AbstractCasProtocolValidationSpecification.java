@@ -60,12 +60,12 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
         boolean satisfied = isSatisfiedByInternal(assertion);
         if (!satisfied) {
-            logger.warn("{} is not satisfied by the produced assertion", getClass().getSimpleName());
+            logger.warn("[{}] is not satisfied by the produced assertion", getClass().getSimpleName());
             return false;
         }
         satisfied = !this.renew || assertion.isFromNewLogin();
         if (!satisfied) {
-            logger.warn("{} is to enforce the [{}] CAS protocol behavior, yet the assertion is not issued from a new login",
+            logger.warn("[{}] is to enforce the [{}] CAS protocol behavior, yet the assertion is not issued from a new login",
                     getClass().getSimpleName(), CasProtocolConstants.PARAMETER_RENEW);
             return false;
         }
