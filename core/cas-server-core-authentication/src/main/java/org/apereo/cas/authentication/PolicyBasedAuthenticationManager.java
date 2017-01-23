@@ -112,11 +112,11 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
                             return this.authenticationPolicy.isSatisfiedBy(builder.build());
                         } catch (final GeneralSecurityException e) {
-                            logger.info("{} failed authenticating {}", handler.getName(), credential);
-                            logger.debug("{} exception details: {}", handler.getName(), e.getMessage());
+                            logger.info("[{}] failed authenticating [{}]", handler.getName(), credential);
+                            logger.debug("[{}] exception details: [{}]", handler.getName(), e.getMessage());
                             builder.addFailure(handler.getName(), e.getClass());
                         } catch (final PreventedException e) {
-                            logger.error("{}: {}  (Details: {})", handler.getName(), e.getMessage(), e.getCause().getMessage());
+                            logger.error("[{}]: [{}]  (Details: [{}])", handler.getName(), e.getMessage(), e.getCause().getMessage());
                             builder.addFailure(handler.getName(), e.getClass());
                         }
                         return false;
@@ -152,7 +152,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
         if (builder.getSuccesses().isEmpty()) {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
-        logger.debug("Executing authentication policy {}", this.authenticationPolicy);
+        logger.debug("Executing authentication policy [{}]", this.authenticationPolicy);
         if (!this.authenticationPolicy.isSatisfiedBy(builder.build())) {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
