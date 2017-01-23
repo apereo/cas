@@ -69,11 +69,11 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public boolean removeTicket(final Ticket ticket) {
         try {
             final ZonedDateTime creationDate = ticket.getCreationTime();
-            logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
+            logger.debug("Removing Ticket [{}] created: [{}]", ticket, creationDate.toString());
             this.entityManager.remove(ticket);
             return true;
         } catch (final Exception e) {
-            logger.error("Error removing {} from registry.", ticket.getId(), e);
+            logger.error("Error removing [{}] from registry.", ticket.getId(), e);
         }
         return false;
     }

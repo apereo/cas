@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cryptacular.x509.dn.Attribute;
 import org.cryptacular.x509.dn.AttributeType;
 import org.cryptacular.x509.dn.NameReader;
@@ -139,6 +140,14 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         return values.toArray(new String[values.size()]);
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("descriptor", descriptor)
+                .toString();
+    }
+
 
     private static class AttributeContext {
         private int currentIndex;
@@ -167,4 +176,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
             return this.values[this.currentIndex++];
         }
     }
+    
+    
 }

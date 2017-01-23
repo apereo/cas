@@ -45,21 +45,21 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         final String principal = c.getPrincipal().getId();
         final LocalDate onOrAfter = LocalDate.now().minus(trustedProperties.getExpiration(),
                 DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
-        LOGGER.warn("Retrieving trusted authentication records for {} that are on/after {}", principal, onOrAfter);
+        LOGGER.warn("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
         final Set<MultifactorAuthenticationTrustRecord> results = storage.get(principal, onOrAfter);
         if (results.isEmpty()) {
-            LOGGER.debug("No valid trusted authentication records could be found for {}", principal);
+            LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
             return no();
         }
         final String geography = MultifactorAuthenticationTrustUtils.generateGeography();
-        LOGGER.debug("Retrieving authentication records for {} that match {}", principal, geography);
+        LOGGER.debug("Retrieving authentication records for [{}] that match [{}]", principal, geography);
         if (results.stream()
                 .noneMatch(entry -> entry.getGeography().equals(geography))) {
-            LOGGER.debug("No trusted authentication records could be found for {} to match the current geography", principal);
+            LOGGER.debug("No trusted authentication records could be found for [{}] to match the current geography", principal);
             return no();
         }
 
-        LOGGER.debug("Trusted authentication records found for {} that matches the current geography", principal);
+        LOGGER.debug("Trusted authentication records found for [{}] that matches the current geography", principal);
 
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(

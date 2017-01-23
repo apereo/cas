@@ -213,7 +213,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
             final String nameFormat = configuredNameFormats.get(attribute.getName());
-            logger.debug("Found name format {} for attribute {}", nameFormat, attribute.getName());
+            logger.debug("Found name format [{}] for attribute [{}]", nameFormat, attribute.getName());
             switch (nameFormat.trim().toLowerCase()) {
                 case "basic":
                     attribute.setNameFormat(Attribute.BASIC);
@@ -228,12 +228,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                     attribute.setNameFormat(nameFormat);
                     break;
             }
-            logger.debug("Attribute {} is assigned the name format of {}", attribute.getName(), attribute.getNameFormat());
+            logger.debug("Attribute [{}] is assigned the name format of [{}]", attribute.getName(), attribute.getNameFormat());
         } else {
-            logger.debug("Skipped name format, as no name formats are defined or none is found for attribute {}", attribute.getName());
+            logger.debug("Skipped name format, as no name formats are defined or none is found for attribute [{}]", attribute.getName());
         }
 
-        logger.debug("Attribute {} has {} value(s)", attribute.getName(), attribute.getAttributeValues().size());
+        logger.debug("Attribute [{}] has [{}] value(s)", attribute.getName(), attribute.getAttributeValues().size());
         return attribute;
     }
 

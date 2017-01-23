@@ -80,7 +80,7 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
         final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(providerMap.values());
         if (providers.size() == 1 && StringUtils.isNotBlank(globalAuthenticationAttributeValueRegex)) {
             final MultifactorAuthenticationProvider provider = providers.iterator().next();
-            logger.debug("Found a single multifactor provider {} in the application context", provider);
+            logger.debug("Found a single multifactor provider [{}] in the application context", provider);
             return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
                     input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));
         }

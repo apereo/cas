@@ -49,7 +49,7 @@ public final class SamlSPUtils {
                                                                       final SamlRegisteredServiceCachingMetadataResolver resolver) {
 
         if (StringUtils.isBlank(sp.getMetadata())) {
-            LOGGER.debug("Skipped registration of {} since no metadata location is found", sp.getName());
+            LOGGER.debug("Skipped registration of [{}] since no metadata location is found", sp.getName());
             return null;
         }
 
@@ -81,7 +81,7 @@ public final class SamlSPUtils {
             if (entityIDList.isEmpty()) {
                 final ChainingMetadataResolver chainingResolver = resolver.resolve(service);
                 if (chainingResolver.getResolvers().isEmpty()) {
-                    LOGGER.warn("Skipped registration of {} since no metadata resolver could be constructed", sp.getName());
+                    LOGGER.warn("Skipped registration of [{}] since no metadata resolver could be constructed", sp.getName());
                     return null;
                 }
 
@@ -95,21 +95,21 @@ public final class SamlSPUtils {
                         if (descriptor.isPresent()) {
                             entityIDList.add(descriptor.get().getEntityID());
                         } else {
-                            LOGGER.warn("Skipped registration of {} since no entity id could be found", sp.getName());
+                            LOGGER.warn("Skipped registration of [{}] since no entity id could be found", sp.getName());
                         }
                     }
                 });
             }
 
             if (entityIDList.isEmpty()) {
-                LOGGER.warn("Skipped registration of {} since no metadata entity ids could be found", sp.getName());
+                LOGGER.warn("Skipped registration of [{}] since no metadata entity ids could be found", sp.getName());
                 return null;
             }
             final String entityIds = org.springframework.util.StringUtils.collectionToDelimitedString(entityIDList, "|");
             service.setMetadataCriteriaDirection(PredicateFilter.Direction.INCLUDE.name());
             service.setMetadataCriteriaPattern(entityIds);
 
-            LOGGER.debug("Registering saml service {} by entity id {}", sp.getName(), entityIds);
+            LOGGER.debug("Registering saml service [{}] by entity id [{}]", sp.getName(), entityIds);
             service.setServiceId(entityIds);
             return service;
         } catch (final Exception e) {
@@ -128,11 +128,11 @@ public final class SamlSPUtils {
 
         if (servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService
                 && registeredService.getServiceId().equals(service.getServiceId())) != null) {
-            LOGGER.info("Service {} does not exist in the registry and will be added.", service.getServiceId());
+            LOGGER.info("Service [{}] does not exist in the registry and will be added.", service.getServiceId());
             servicesManager.save(service);
             servicesManager.load();
         } else {
-            LOGGER.info("Service {} exists in the registry and will not be added again.", service.getServiceId());
+            LOGGER.info("Service [{}] exists in the registry and will not be added again.", service.getServiceId());
         }
     }
 }
