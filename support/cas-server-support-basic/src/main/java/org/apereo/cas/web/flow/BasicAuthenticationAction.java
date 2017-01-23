@@ -42,7 +42,7 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
             final WebContext webContext = new J2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {
-                LOGGER.debug("Received basic authentication request from credentials {} ", credentials);
+                LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             }
         } catch (final Exception e) {

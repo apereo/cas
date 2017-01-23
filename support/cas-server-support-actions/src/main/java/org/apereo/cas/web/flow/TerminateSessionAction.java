@@ -68,7 +68,7 @@ public class TerminateSessionAction extends AbstractAction {
                 tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
             }
             if (tgtId != null) {
-                LOGGER.debug("Destroying SSO session linked to ticket-granting ticket {}", tgtId);
+                LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
                 final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
                 WebUtils.putLogoutRequests(context, logoutRequests);
             }

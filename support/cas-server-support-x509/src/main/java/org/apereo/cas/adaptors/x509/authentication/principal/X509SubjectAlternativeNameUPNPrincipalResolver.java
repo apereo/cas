@@ -41,7 +41,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        logger.debug("Resolving principal from Subject Alternative Name UPN for {}", certificate);
+        logger.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
         try {
             final Collection<List<?>> subjectAltNames = certificate.getSubjectAlternativeNames();
             if (subjectAltNames != null) {
@@ -132,7 +132,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             try (ASN1InputStream input = new ASN1InputStream(bInput)) {
                 oct = input.readObject();
             } catch (final IOException e) {
-                logger.error("Error on getting Alt Name as a DERSEquence: {}", e.getMessage(), e);
+                logger.error("Error on getting Alt Name as a DERSEquence: [{}]", e.getMessage(), e);
             }
             return ASN1Sequence.getInstance(oct);
         } catch (final IOException e) {

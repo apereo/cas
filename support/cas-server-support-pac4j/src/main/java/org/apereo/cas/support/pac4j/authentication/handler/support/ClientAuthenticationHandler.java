@@ -43,15 +43,15 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         try {
             final ClientCredential clientCredentials = (ClientCredential) credential;
-            logger.debug("clientCredentials  {}", clientCredentials);
+            logger.debug("clientCredentials  [{}]", clientCredentials);
 
             final Credentials credentials = clientCredentials.getCredentials();
             final String clientName = credentials.getClientName();
-            logger.debug("clientName:  {}", clientName);
+            logger.debug("clientName:  [{}]", clientName);
 
             // get client
             final Client client = this.clients.findClient(clientName);
-            logger.debug("client: {}", client);
+            logger.debug("client: [{}]", client);
 
             // web context
             final HttpServletRequest request = WebUtils.getHttpServletRequest();
@@ -60,7 +60,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
             // get user profile
             final UserProfile userProfile = client.getUserProfile(credentials, webContext);
-            logger.debug("userProfile: {}", userProfile);
+            logger.debug("userProfile: [{}]", userProfile);
             return createResult(clientCredentials, userProfile);
         } catch (final HttpAction e) {
             throw new PreventedException(e);

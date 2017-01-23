@@ -40,14 +40,14 @@ public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostP
             final RequestContext context = RequestContextHolder.getRequestContext();
             final Principal principal = WebUtils.getAuthentication(context).getPrincipal();
 
-            logger.debug("Received principal id {}", principal.getId());
+            logger.debug("Received principal id [{}]", principal.getId());
             final PFAuthParams params = authenticationRequestBuilder.build(principal, c);
             final PFAuthResult r = azureAuthenticatorInstance.authenticate(params);
 
             if (r.getAuthenticated()) {
                 return createHandlerResult(c, principalFactory.createPrincipal(principal.getId()), null);
             }
-            logger.error("Authentication failed. Call status: {}-{}. Error: {}", r.getCallStatus(),
+            logger.error("Authentication failed. Call status: {}-{}. Error: [{}]", r.getCallStatus(),
                     r.getCallStatusString(), r.getMessageError());
 
         } catch (final Exception e) {
