@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -16,7 +17,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -63,15 +63,15 @@ import static org.mockito.Mockito.*;
         CasCoreUtilConfiguration.class})
 @DirtiesContext
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
-    
+
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
     private SendTicketGrantingTicketAction action;
-    
+
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    
+
     private MockRequestContext context;
 
     @Before
@@ -89,10 +89,12 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void verifyTgtToSet() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "127.0.0.1"));
-        
-        final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("127.0.0.1");
+        request.setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+
+        final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addHeader("User-Agent", "Test");
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("test");
@@ -108,10 +110,12 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void verifyTgtToSetRemovingOldTgt() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "127.0.0.1"));
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("127.0.0.1");
+        request.setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("User-Agent", "Test");
 
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
