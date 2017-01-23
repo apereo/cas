@@ -217,7 +217,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                         try {
                             addURL(urls, DERIA5String.getInstance(name.getName()).getString());
                         } catch (final RuntimeException e) {
-                            logger.warn("{} not supported. String or GeneralNameList expected.", pointName);
+                            logger.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
                         }
                     }
                 }
@@ -249,7 +249,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             }
             list.add(uri);
         } catch (final Exception e) {
-            logger.warn("{} is not a valid distribution point URI.", uriString);
+            logger.warn("[{}] is not a valid distribution point URI.", uriString);
         }
     }
 
