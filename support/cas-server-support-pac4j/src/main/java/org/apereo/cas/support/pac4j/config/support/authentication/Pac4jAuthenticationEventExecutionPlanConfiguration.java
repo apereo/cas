@@ -196,7 +196,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
     @Bean
     public Action saml2ClientLogoutAction() {
-        return new SAML2ClientLogoutAction(builtClients(), httpClient);
+        return new SAML2ClientLogoutAction(builtClients());
     }
 
     @RefreshScope

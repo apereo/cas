@@ -96,8 +96,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
     @RefreshScope
     public MultifactorAuthenticationProviderBypass azureBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getAzure().getBypass(),
-                ticketRegistrySupport
+                casProperties.getAuthn().getMfa().getAzure().getBypass()
         );
     }
 
