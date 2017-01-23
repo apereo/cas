@@ -37,17 +37,17 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         Assert.notNull(this.client, "No memcached client is defined.");
 
         final Ticket ticket = encodeTicket(ticketToUpdate);
-        logger.debug("Updating ticket {}", ticket);
+        logger.debug("Updating ticket [{}]", ticket);
         try {
             if (!this.client.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket).get()) {
-                logger.error("Failed to update {}", ticket);
+                logger.error("Failed to update [{}]", ticket);
                 return null;
             }
         } catch (final InterruptedException e) {
-            logger.warn("Interrupted while waiting for response to async replace operation for ticket {}. "
+            logger.warn("Interrupted while waiting for response to async replace operation for ticket [{}]. "
                     + "Cannot determine whether update was successful.", ticket);
         } catch (final Exception e) {
-            logger.error("Failed updating {}", ticket, e);
+            logger.error("Failed updating [{}]", ticket, e);
         }
         return ticket;
     }
@@ -57,16 +57,16 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         Assert.notNull(this.client, "No memcached client is defined.");
 
         final Ticket ticket = encodeTicket(ticketToAdd);
-        logger.debug("Adding ticket {}", ticket);
+        logger.debug("Adding ticket [{}]", ticket);
         try {
             if (!this.client.add(ticket.getId(), getTimeout(ticketToAdd), ticket).get()) {
-                logger.error("Failed to add {}", ticket);
+                logger.error("Failed to add [{}]", ticket);
             }
         } catch (final InterruptedException e) {
-            logger.warn("Interrupted while waiting for response to async add operation for ticket {}."
+            logger.warn("Interrupted while waiting for response to async add operation for ticket [{}]."
                     + "Cannot determine whether add was successful.", ticket);
         } catch (final Exception e) {
-            logger.error("Failed adding {}", ticket, e);
+            logger.error("Failed adding [{}]", ticket, e);
         }
     }
 
@@ -81,12 +81,12 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         Assert.notNull(this.client, "No memcached client is defined.");
         try {
             if (this.client.delete(ticketId).get()) {
-                logger.debug("Removed ticket {} from the cache", ticketId);
+                logger.debug("Removed ticket [{}] from the cache", ticketId);
             } else {
-                logger.info("Ticket {} not found or is already removed.", ticketId);
+                logger.info("Ticket [{}] not found or is already removed.", ticketId);
             }
         } catch (final Exception e) {
-            logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);
+            logger.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId, e);
         }
         return true;
     }
@@ -102,7 +102,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
                 return decodeTicket(t);
             }
         } catch (final Exception e) {
-            logger.error("Failed fetching {} ", ticketId, e);
+            logger.error("Failed fetching [{}] ", ticketId, e);
         }
         return null;
     }

@@ -128,7 +128,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             if (loc != null) {
                 final String address = loc.build();
                 if (address.matches(pattern)) {
-                    logger.debug("Current address [{}] at [{}] matches the provided pattern {} for "
+                    logger.debug("Current address [{}] at [{}] matches the provided pattern [{}] for "
                                     + "adaptive authentication and is required to use [{}]",
                             address, clientIp, pattern, mfaMethod);
                     return true;

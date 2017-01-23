@@ -102,18 +102,18 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
                 }
             }
 
-            logger.debug("Using {} as the recipient of the SAML response for {}", serviceId, service);
+            logger.debug("Using [{}] as the recipient of the SAML response for [{}]", serviceId, service);
             final Response samlResponse = this.samlObjectBuilder.newResponse(
                     this.samlObjectBuilder.generateSecureRandomId(),
                     ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
-            logger.debug("Created SAML response for service {}", serviceId);
+            logger.debug("Created SAML response for service [{}]", serviceId);
             
             prepareResponse(samlResponse, model);
 
-            logger.debug("Starting to encode SAML response for service {}", serviceId);
+            logger.debug("Starting to encode SAML response for service [{}]", serviceId);
             this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
-            logger.error("Error generating SAML response for service {}.", serviceId, e);
+            logger.error("Error generating SAML response for service [{}].", serviceId, e);
             throw e;
         }
     }

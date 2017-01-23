@@ -384,7 +384,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public EndState createEndState(final Flow flow, final String id, final ViewFactory viewFactory) {
 
         if (containsFlowState(flow, id)) {
-            logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
+            logger.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
             return (EndState) flow.getStateInstance(id);
         }
 
@@ -392,9 +392,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         if (viewFactory != null) {
             final Action finalResponseAction = new ViewFactoryActionAdapter(viewFactory);
             endState.setFinalResponseAction(finalResponseAction);
-            logger.debug("Created end state state {} on flow id {}, backed by view factory {}", id, flow.getId(), viewFactory);
+            logger.debug("Created end state state [{}] on flow id [{}], backed by view factory [{}]", id, flow.getId(), viewFactory);
         } else {
-            logger.debug("Created end state state {} on flow id {}", id, flow.getId());
+            logger.debug("Created end state state [{}] on flow id [{}]", id, flow.getId());
         }
         return endState;
 
@@ -405,7 +405,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                      final BinderConfiguration binder) {
         try {
             if (containsFlowState(flow, id)) {
-                logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
+                logger.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
                 return (ViewState) flow.getTransitionableState(id);
             }
 
@@ -418,7 +418,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                     this.flowBuilderServices.getValidationHintResolver());
 
             final ViewState viewState = new ViewState(flow, id, viewFactory);
-            logger.debug("Added view state {}", viewState.getId());
+            logger.debug("Added view state [{}]", viewState.getId());
             return viewState;
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
@@ -439,7 +439,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public SubflowState createSubflowState(final Flow flow, final String id, final String subflow, final Action entryAction) {
         if (containsFlowState(flow, id)) {
-            logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
+            logger.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
             return (SubflowState) flow.getTransitionableState(id);
         }
 
@@ -538,7 +538,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         subflowState.setAttributeMapper(subflowMapper);
         subflowState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId));
 
-        logger.debug("Retrieved action state {}", actionState.getId());
+        logger.debug("Retrieved action state [{}]", actionState.getId());
         createTransitionForState(actionState, subflowId, subflowId);
 
         registerFlowDefinitionIntoLoginFlowRegistry(registry);

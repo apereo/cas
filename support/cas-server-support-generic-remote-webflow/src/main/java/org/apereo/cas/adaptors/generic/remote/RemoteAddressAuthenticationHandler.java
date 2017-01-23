@@ -65,7 +65,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      * @return A boolean value.
      */
     private boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
-        logger.debug("Checking IP address: {} in {} by {}", ip, network, netmask);
+        logger.debug("Checking IP address: [{}] in [{}] by [{}]", ip, network, netmask);
 
         final byte[] networkBytes = network.getAddress();
         final byte[] netmaskBytes = netmask.getAddress();
@@ -74,7 +74,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         /* check IPv4/v6-compatibility or parameters: */
         if (networkBytes.length != netmaskBytes.length
                 || netmaskBytes.length != ipBytes.length) {
-            logger.debug("Network address {}, subnet mask {} and/or host address {}"
+            logger.debug("Network address [{}], subnet mask [{}] and/or host address [{}]"
                     + " have different sizes! (return false ...)", network, netmask, ip);
             return false;
         }

@@ -72,51 +72,51 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        logger.debug("Updating ticket {}", ticket);
+        logger.debug("Updating ticket [{}]", ticket);
         try {
             final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticket), ticket);
 
-            logger.debug("Upserting document {} into couchbase bucket {}", document.id(), this.couchbase.bucket().name());
+            logger.debug("Upserting document [{}] into couchbase bucket [{}]", document.id(), this.couchbase.bucket().name());
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
-            logger.error("Failed updating {}: {}", ticket, e);
+            logger.error("Failed updating [{}]: [{}]", ticket, e);
         }
         return ticket;
     }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        logger.debug("Adding ticket {}", ticketToAdd);
+        logger.debug("Adding ticket [{}]", ticketToAdd);
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            logger.debug("Created document for ticket {}. Upserting into bucket {}", ticketToAdd, this.couchbase.bucket().name());
+            logger.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, this.couchbase.bucket().name());
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
-            logger.error("Failed adding {}: {}", ticketToAdd, e);
+            logger.error("Failed adding [{}]: [{}]", ticketToAdd, e);
         }
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
         try {
-            logger.debug("Locating ticket id {}", ticketId);
+            logger.debug("Locating ticket id [{}]", ticketId);
             final String encTicketId = encodeTicketId(ticketId);
             if (encTicketId == null) {
-                logger.debug("Ticket id {} could not be found", ticketId);
+                logger.debug("Ticket id [{}] could not be found", ticketId);
                 return null;
             }
 
             final SerializableDocument document = this.couchbase.bucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
-                logger.debug("Got ticket {} from the registry.", t);
+                logger.debug("Got ticket [{}] from the registry.", t);
                 return t;
             }
-            logger.debug("Ticket {} not found in the registry.", encTicketId);
+            logger.debug("Ticket [{}] not found in the registry.", encTicketId);
             return null;
         } catch (final Exception e) {
-            logger.error("Failed fetching {}: {}", ticketId, e);
+            logger.error("Failed fetching [{}]: [{}]", ticketId, e);
             return null;
         }
     }
@@ -152,11 +152,11 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        logger.debug("Deleting ticket {}", ticketId);
+        logger.debug("Deleting ticket [{}]", ticketId);
         try {
             return this.couchbase.bucket().remove(ticketId) != null;
         } catch (final Exception e) {
-            logger.error("Failed deleting {}: {}", ticketId, e);
+            logger.error("Failed deleting [{}]: [{}]", ticketId, e);
             return false;
         }
     }
@@ -212,7 +212,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         if (iterator.hasNext()) {
             final ViewRow res = iterator.next();
             final Integer count = (Integer) res.value();
-            logger.debug("Found {} rows", count);
+            logger.debug("Found [{}] rows", count);
             return count;
         }
         logger.debug("No rows could be found by the query iterator.");
@@ -220,7 +220,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     }
 
     private ViewResult getViewResultIteratorForPrefixedTickets(final String prefix) {
-        logger.debug("Running query on document {} and view {} with prefix {}",
+        logger.debug("Running query on document [{}] and view [{}] with prefix [{}]",
                 UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
         return this.couchbase.bucket().query(
                 ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
@@ -239,7 +239,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private int getTimeToLive(final Ticket ticket) {
         final int expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
         if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
-            logger.warn("Any expiration time larger than {} days in seconds is considered absolute (as in a Unix time stamp) "
+            logger.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "
                     + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
 
         }

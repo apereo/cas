@@ -104,9 +104,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @Bean
     public PrincipalResolver proxyPrincipalResolver() {
-        final ProxyingPrincipalResolver p = new ProxyingPrincipalResolver();
-        p.setPrincipalFactory(proxyPrincipalFactory());
-        return p;
+        return new ProxyingPrincipalResolver(proxyPrincipalFactory());
     }
 
     @RefreshScope

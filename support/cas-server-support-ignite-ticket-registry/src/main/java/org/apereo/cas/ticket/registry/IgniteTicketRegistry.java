@@ -192,9 +192,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         configureSecureTransport();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("igniteConfiguration.cacheConfiguration={}", (Object[]) this.igniteConfiguration.getCacheConfiguration());
-            logger.debug("igniteConfiguration.getDiscoverySpi={}", this.igniteConfiguration.getDiscoverySpi());
-            logger.debug("igniteConfiguration.getSslContextFactory={}", this.igniteConfiguration.getSslContextFactory());
+            logger.debug("igniteConfiguration.cacheConfiguration=[{}]", (Object[]) this.igniteConfiguration.getCacheConfiguration());
+            logger.debug("igniteConfiguration.getDiscoverySpi=[{}]", this.igniteConfiguration.getDiscoverySpi());
+            logger.debug("igniteConfiguration.getSslContextFactory=[{}]", this.igniteConfiguration.getSslContextFactory());
         }
 
         if (Ignition.state() == IgniteState.STOPPED) {

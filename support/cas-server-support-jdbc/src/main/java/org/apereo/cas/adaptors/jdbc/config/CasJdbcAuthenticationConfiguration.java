@@ -99,7 +99,7 @@ public class CasJdbcAuthenticationConfiguration {
         }
         h.setName(b.getName());
 
-        LOGGER.debug("Created authentication handler {} to handle database url at {}", h.getName(), b.getUrl());
+        LOGGER.debug("Created authentication handler [{}] to handle database url at [{}]", h.getName(), b.getUrl());
         return h;
     }
 
@@ -128,7 +128,7 @@ public class CasJdbcAuthenticationConfiguration {
         }
         h.setName(b.getName());
 
-        LOGGER.debug("Created authentication handler {} to handle database url at {}", h.getName(), b.getUrl());
+        LOGGER.debug("Created authentication handler [{}] to handle database url at [{}]", h.getName(), b.getUrl());
         return h;
     }
 
@@ -153,7 +153,7 @@ public class CasJdbcAuthenticationConfiguration {
         }
         h.setName(b.getName());
 
-        LOGGER.debug("Created authentication handler {} to handle database url at {}", h.getName(), b.getUrl());
+        LOGGER.debug("Created authentication handler [{}] to handle database url at [{}]", h.getName(), b.getUrl());
         return h;
     }
 
@@ -182,7 +182,7 @@ public class CasJdbcAuthenticationConfiguration {
         }
         h.setName(b.getName());
 
-        LOGGER.debug("Created authentication handler {} to handle database url at {}", h.getName(), b.getUrl());
+        LOGGER.debug("Created authentication handler [{}] to handle database url at [{}]", h.getName(), b.getUrl());
         return h;
     }
 

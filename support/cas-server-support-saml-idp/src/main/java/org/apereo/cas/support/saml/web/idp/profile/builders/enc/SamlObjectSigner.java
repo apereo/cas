@@ -379,9 +379,9 @@ public class SamlObjectSigner {
         final Signature signature = profileRequest.getSignature();
         if (signature != null) {
             final SAMLSignatureProfileValidator validator = new SAMLSignatureProfileValidator();
-            logger.debug("Validating profile signature for {} via {}...", profileRequest.getIssuer(), validator.getClass().getSimpleName());
+            logger.debug("Validating profile signature for [{}] via [{}]...", profileRequest.getIssuer(), validator.getClass().getSimpleName());
             validator.validate(signature);
-            logger.debug("Successfully validated profile signature for {}.", profileRequest.getIssuer());
+            logger.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
 
             final Credential credential = getSigningCredential(roleDescriptorResolver, profileRequest);
             if (credential == null) {
@@ -396,9 +396,9 @@ public class SamlObjectSigner {
             final SAML2HTTPRedirectDeflateSignatureSecurityHandler handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
             final SAMLPeerEntityContext peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
             peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
-            logger.debug("Validating request signature for {} via {}...", peer.getEntityId(), handler.getClass().getSimpleName());
+            logger.debug("Validating request signature for [{}] via [{}]...", peer.getEntityId(), handler.getClass().getSimpleName());
 
-            logger.debug("Resolving role descriptor for {}", peer.getEntityId());
+            logger.debug("Resolving role descriptor for [{}]", peer.getEntityId());
 
             final RoleDescriptor roleDescriptor = roleDescriptorResolver.resolveSingle(
                     new CriteriaSet(new EntityIdCriterion(peer.getEntityId()),
@@ -407,21 +407,21 @@ public class SamlObjectSigner {
             final SAMLProtocolContext protocol = context.getSubcontext(SAMLProtocolContext.class, true);
             protocol.setProtocol(SAMLConstants.SAML20P_NS);
 
-            logger.debug("Building security parameters context for signature validation of {}", peer.getEntityId());
+            logger.debug("Building security parameters context for signature validation of [{}]", peer.getEntityId());
             final SecurityParametersContext secCtx = context.getSubcontext(SecurityParametersContext.class, true);
             final SignatureValidationParameters validationParams = new SignatureValidationParameters();
 
             if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
                 validationParams.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
-                logger.debug("Validation override blacklisted algorithms are {}", this.overrideWhiteListedAlgorithms);
+                logger.debug("Validation override blacklisted algorithms are [{}]", this.overrideWhiteListedAlgorithms);
             }
 
             if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
                 validationParams.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
-                logger.debug("Validation override whitelisted algorithms are {}", this.overrideWhiteListedAlgorithms);
+                logger.debug("Validation override whitelisted algorithms are [{}]", this.overrideWhiteListedAlgorithms);
             }
 
-            logger.debug("Resolving signing credentials for {}", peer.getEntityId());
+            logger.debug("Resolving signing credentials for [{}]", peer.getEntityId());
             final Credential credential = getSigningCredential(roleDescriptorResolver, profileRequest);
             if (credential == null) {
                 throw new SamlException("Signing credential for validation could not be resolved");
@@ -434,12 +434,12 @@ public class SamlObjectSigner {
             secCtx.setSignatureValidationParameters(validationParams);
 
             handler.setHttpServletRequest(request);
-            logger.debug("Initializing {} to execute signature validation for {}", handler.getClass().getSimpleName(), peer.getEntityId());
+            logger.debug("Initializing [{}] to execute signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
             handler.initialize();
 
-            logger.debug("Invoking {} to handle signature validation for {}", handler.getClass().getSimpleName(), peer.getEntityId());
+            logger.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
             handler.invoke(context);
-            logger.debug("Successfully validated request signature for {}.", profileRequest.getIssuer());
+            logger.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
         }
     }
 

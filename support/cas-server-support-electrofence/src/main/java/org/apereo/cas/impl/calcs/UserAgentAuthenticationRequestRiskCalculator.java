@@ -28,11 +28,11 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
                                         final Collection<CasEvent> events) {
 
         final String agent = WebUtils.getHttpServletRequestUserAgent(request);
-        logger.debug("Filtering authentication events for user agent {}", agent);
+        logger.debug("Filtering authentication events for user agent [{}]", agent);
         final long count = events.stream().filter(e -> e.getAgent().equalsIgnoreCase(agent)).count();
-        logger.debug("Total authentication events found for {}: {}", agent, count);
+        logger.debug("Total authentication events found for [{}]: [{}]", agent, count);
         if (count == events.size()) {
-            logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), agent);
+            logger.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), agent);
             return LOWEST_RISK_SCORE;
         }
         return getFinalAveragedScore(count, events.size());

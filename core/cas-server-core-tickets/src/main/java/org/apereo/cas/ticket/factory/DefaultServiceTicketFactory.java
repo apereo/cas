@@ -49,9 +49,9 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket, final Service service, final boolean credentialProvided) {
         String ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode service ticket {}", ticketId);
+            LOGGER.debug("Attempting to encode service ticket [{}]", ticketId);
             ticketId = this.cipherExecutor.encode(ticketId);
-            LOGGER.debug("Encoded service ticket id {}", ticketId);
+            LOGGER.debug("Encoded service ticket id [{}]", ticketId);
         }
         return produceTicket(ticketGrantingTicket, service, credentialProvided, ticketId);
     }

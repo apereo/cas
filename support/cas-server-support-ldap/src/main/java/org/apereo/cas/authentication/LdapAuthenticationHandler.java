@@ -144,8 +144,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                                                                  final String originalPassword) throws GeneralSecurityException, PreventedException {
         final AuthenticationResponse response;
         try {
-            logger.debug("Attempting LDAP authentication for {}. Authenticator pre-configured attributes are {}, "
-                            + "additional requested attributes for this authentication request are {}",
+            logger.debug("Attempting LDAP authentication for [{}]. Authenticator pre-configured attributes are [{}], "
+                            + "additional requested attributes for this authentication request are [{}]",
                     upc, authenticator.getReturnAttributes(), authenticatedEntryAttributes);
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
                     new org.ldaptive.Credential(upc.getPassword()), authenticatedEntryAttributes);
@@ -154,12 +154,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             logger.trace(e.getMessage(), e);
             throw new PreventedException("Unexpected LDAP error", e);
         }
-        logger.debug("LDAP response: {}", response);
+        logger.debug("LDAP response: [{}]", response);
 
         final List<MessageDescriptor> messageList;
         final LdapPasswordPolicyConfiguration ldapPasswordPolicyConfiguration = (LdapPasswordPolicyConfiguration) super.getPasswordPolicyConfiguration();
         if (ldapPasswordPolicyConfiguration != null) {
-            logger.debug("Applying password policy to {}", response);
+            logger.debug("Applying password policy to [{}]", response);
             messageList = ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(response, ldapPasswordPolicyConfiguration);
         } else {
             logger.debug("No ldap password policy configuration is defined");
@@ -172,7 +172,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
 
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
-            logger.warn("DN resolution failed. {}", response.getMessage());
+            logger.warn("DN resolution failed. [{}]", response.getMessage());
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
         throw new FailedLoginException("Invalid credentials");
@@ -188,7 +188,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws LoginException On security policy errors related to principal creation.
      */
     protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws LoginException {
-        logger.debug("Creating LDAP principal for [{}] based on {} and attributes {}",
+        logger.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]",
                 username, ldapEntry.getDn(), ldapEntry.getAttributeNames());
         final String id = getLdapPrincipalIdentifier(username, ldapEntry);
 
@@ -196,24 +196,24 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         for (final Map.Entry<String, String> ldapAttr : this.principalAttributeMap.entrySet()) {
             final LdapAttribute attr = ldapEntry.getAttribute(ldapAttr.getKey());
             if (attr != null) {
-                logger.debug("Found principal attribute: {}", attr);
+                logger.debug("Found principal attribute: [{}]", attr);
                 final String principalAttrName = ldapAttr.getValue();
                 if (attr.size() > 1) {
-                    logger.debug("Principal attribute: {} is multivalued", attr);
+                    logger.debug("Principal attribute: [{}] is multivalued", attr);
                     attributeMap.put(principalAttrName, attr.getStringValues());
                 } else {
                     attributeMap.put(principalAttrName, attr.getStringValue());
                 }
             } else {
-                logger.warn("Requested LDAP attribute {} could not be found on the resolved LDAP entry for {}",
+                logger.warn("Requested LDAP attribute [{}] could not be found on the resolved LDAP entry for [{}]",
                         ldapAttr.getKey(), ldapEntry.getDn());
             }
         }
         final String dnAttribute = getName().concat(".").concat(username);
-        logger.debug("Recording principal DN attribute as {}", dnAttribute);
+        logger.debug("Recording principal DN attribute as [{}]", dnAttribute);
 
         attributeMap.put(dnAttribute, ldapEntry.getDn());
-        logger.debug("Created LDAP principal for id [{}] and {} attributes", id, attributeMap.size());
+        logger.debug("Created LDAP principal for id [{}] and [{}] attributes", id, attributeMap.size());
         return this.principalFactory.createPrincipal(id, attributeMap);
     }
 
@@ -243,13 +243,13 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 if (!this.allowMultiplePrincipalAttributeValues) {
                     throw new LoginException("Multiple principal values are not allowed: " + principalAttr);
                 }
-                logger.warn("Found multiple values for principal id attribute: {}. Using first value={}.", principalAttr, principalAttr.getStringValue());
+                logger.warn("Found multiple values for principal id attribute: [{}]. Using first value=[{}].", principalAttr, principalAttr.getStringValue());
             }
-            logger.debug("Retrieved principal id attribute {}", principalAttr.getStringValue());
+            logger.debug("Retrieved principal id attribute [{}]", principalAttr.getStringValue());
             return principalAttr.getStringValue();
         }
 
-        logger.debug("Principal id attribute is not defined. Using the default provided user id {}", username);
+        logger.debug("Principal id attribute is not defined. Using the default provided user id [{}]", username);
         return username;
     }
 

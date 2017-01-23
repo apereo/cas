@@ -282,7 +282,7 @@ public class WsFederationHelper {
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) {
         try {
             // This will need to contain the private keypair in PEM format
-            LOGGER.debug("Locating encryption credential private key {}", config.getEncryptionPrivateKey());
+            LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
             final BufferedReader br = new BufferedReader(new InputStreamReader(
                     config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
             Security.addProvider(new BouncyCastleProvider());
@@ -309,12 +309,12 @@ public class WsFederationHelper {
 
             final X509CertParser certParser = new X509CertParser();
             // This is the certificate shared with ADFS in DER format, i.e certificate.crt
-            LOGGER.debug("Locating encryption certificate {}", config.getEncryptionCertificate());
+            LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
             certParser.engineInit(config.getEncryptionCertificate().getInputStream());
 
-            LOGGER.debug("Invoking certificate engine to parse the certificate {}", config.getEncryptionCertificate());
+            LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
             final X509CertificateObject cert = (X509CertificateObject) certParser.engineRead();
-            LOGGER.debug("Creating final credential based on the certificate {} and the private key", cert.getIssuerDN());
+            LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
             return new BasicX509Credential(cert, kp.getPrivate());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
@@ -328,7 +328,7 @@ public class WsFederationHelper {
         list.add(new EncryptedElementTypeEncryptedKeyResolver());
         list.add(new SimpleRetrievalMethodEncryptedKeyResolver());
 
-        LOGGER.debug("Built a list of encrypted key resolvers: {}", list);
+        LOGGER.debug("Built a list of encrypted key resolvers: [{}]", list);
 
         final ChainingEncryptedKeyResolver encryptedKeyResolver = new ChainingEncryptedKeyResolver(list);
 

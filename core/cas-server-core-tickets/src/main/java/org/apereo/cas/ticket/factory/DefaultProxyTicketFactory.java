@@ -92,9 +92,9 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
 
         String ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
         if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode proxy ticket {}", ticketId);
+            LOGGER.debug("Attempting to encode proxy ticket [{}]", ticketId);
             ticketId = this.cipherExecutor.encode(ticketId);
-            LOGGER.debug("Encoded proxy ticket id {}", ticketId);
+            LOGGER.debug("Encoded proxy ticket id [{}]", ticketId);
         }
         return ticketId;
     }

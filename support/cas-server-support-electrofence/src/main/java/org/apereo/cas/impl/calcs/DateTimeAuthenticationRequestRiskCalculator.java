@@ -28,15 +28,15 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
                                         final RegisteredService service, final Collection<CasEvent> events) {
         final ZonedDateTime timestamp = ZonedDateTime.now();
-        logger.debug("Filtering authentication events for timestamp {}", timestamp);
+        logger.debug("Filtering authentication events for timestamp [{}]", timestamp);
 
         final long count = events.stream().filter(e -> e.getCreationTime().getHour() == timestamp.getHour()
                 || e.getCreationTime().plusHours(windowInHours).getHour() == timestamp.getHour()
                 || e.getCreationTime().minusHours(windowInHours).getHour() == timestamp.getHour()).count();
         
-        logger.debug("Total authentication events found for {}: {}", timestamp, count);
+        logger.debug("Total authentication events found for [{}]: [{}]", timestamp, count);
         if (count == events.size()) {
-            logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), timestamp);
+            logger.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), timestamp);
             return LOWEST_RISK_SCORE;
         }
         return getFinalAveragedScore(count, events.size());

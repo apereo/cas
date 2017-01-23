@@ -143,7 +143,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected void doPublishEvent(final ApplicationEvent e) {
         if (applicationEventPublisher != null) {
-            logger.debug("Publishing {}", e);
+            logger.debug("Publishing [{}]", e);
             this.applicationEventPublisher.publishEvent(e);
         }
     }

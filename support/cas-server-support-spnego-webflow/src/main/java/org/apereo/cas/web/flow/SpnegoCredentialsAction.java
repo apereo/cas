@@ -58,13 +58,13 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
         final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-        LOGGER.debug("SPNEGO Authorization header located as {}", authorizationHeader);
+        LOGGER.debug("SPNEGO Authorization header located as [{}]", authorizationHeader);
                 
         if (StringUtils.hasText(authorizationHeader)
                 && authorizationHeader.startsWith(this.messageBeginPrefix)
                 && authorizationHeader.length() > this.messageBeginPrefix.length()) {
 
-            LOGGER.debug("SPNEGO Authorization header found with {} bytes",
+            LOGGER.debug("SPNEGO Authorization header found with [{}] bytes",
                     authorizationHeader.length() - this.messageBeginPrefix.length());
 
             final byte[] token = EncodingUtils.decodeBase64(authorizationHeader.substring(this.messageBeginPrefix.length()));
@@ -72,11 +72,11 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
                 LOGGER.warn("Could not decode authorization header in Base64");
                 return null;
             }
-            LOGGER.debug("Obtained token: {}. Creating SPNEGO credential...", new String(token, Charset.defaultCharset()));
+            LOGGER.debug("Obtained token: [{}]. Creating SPNEGO credential...", new String(token, Charset.defaultCharset()));
             return new SpnegoCredential(token);
         }
 
-        LOGGER.warn("SPNEGO Authorization header not found under {} or it does not begin with the prefix {}",
+        LOGGER.warn("SPNEGO Authorization header not found under [{}] or it does not begin with the prefix [{}]",
                 SpnegoConstants.HEADER_AUTHORIZATION, this.messageBeginPrefix);
         return null;
     }
@@ -108,7 +108,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final byte[] nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {
-            LOGGER.debug("Obtained output token: {}", new String(nextToken, Charset.defaultCharset()));
+            LOGGER.debug("Obtained output token: [{}]", new String(nextToken, Charset.defaultCharset()));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
                     ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
                     + ' ' + EncodingUtils.encodeBase64(nextToken));

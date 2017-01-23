@@ -60,12 +60,12 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
                                   final Authentication authentication,
                                   final RegisteredService registeredService) {
         if (e == null || !e.getId().matches(getId())) {
-            logger.debug("Provided event id {} is not applicable to this provider identified by {}", e.getId(), getId());
+            logger.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", e.getId(), getId());
             return false;
         }
         if (bypassEvaluator != null && !bypassEvaluator.isAuthenticationRequestHonored(
                 authentication, registeredService, this)) {
-            logger.debug("Request cannot be supported by provider {} as it's configured for bypass", getId());
+            logger.debug("Request cannot be supported by provider [{}] as it's configured for bypass", getId());
             return false;
         }
 

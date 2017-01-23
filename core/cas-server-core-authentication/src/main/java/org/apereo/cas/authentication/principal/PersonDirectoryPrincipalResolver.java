@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -32,7 +33,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * Repository of principal attributes to be retrieved.
      */
     protected IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<>());
-
     /**
      * Factory to create the principal type.
      **/
@@ -87,8 +87,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         if (principalNameTransformer != null) {
             principalId = principalNameTransformer.transform(principalId);
         }
-
-        logger.debug("Creating SimplePrincipal for [{}]", principalId);
+        
+        logger.debug("Creating principal for [{}]", principalId);
         final Map<String, List<Object>> attributes = retrievePersonAttributes(principalId, credential);
 
         if (attributes == null || attributes.isEmpty()) {
@@ -174,5 +174,18 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     protected String extractPrincipalId(final Credential credential) {
         return credential.getId();
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("returnNullIfNoAttributes", returnNullIfNoAttributes)
+                .append("principalAttributeName", principalAttributeName)
+                .toString();
+    }
+
+    @Override
+    public IPersonAttributeDao getAttributeRepository() {
+        return this.attributeRepository;
     }
 }

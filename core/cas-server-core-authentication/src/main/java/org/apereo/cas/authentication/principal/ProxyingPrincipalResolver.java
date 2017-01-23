@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.services.persondir.IPersonAttributeDao;
 
 /**
  * Provides the most basic means of principal resolution by mapping
@@ -12,7 +14,15 @@ import org.apereo.cas.authentication.Credential;
  */
 public class ProxyingPrincipalResolver implements PrincipalResolver {
 
-    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final PrincipalFactory principalFactory;
+
+    public ProxyingPrincipalResolver() {
+        this(new DefaultPrincipalFactory());
+    }
+
+    public ProxyingPrincipalResolver(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
+    }
 
     @Override
     public Principal resolve(final Credential credential, final Principal currentPrincipal) {
@@ -24,12 +34,13 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
         return credential.getId() != null;
     }
 
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
-        this.principalFactory = principalFactory;
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).toString();
+    }
+
+    @Override
+    public IPersonAttributeDao getAttributeRepository() {
+        return null;
     }
 }

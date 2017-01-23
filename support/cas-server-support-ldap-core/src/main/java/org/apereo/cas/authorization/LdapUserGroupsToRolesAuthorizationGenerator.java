@@ -69,18 +69,18 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends LdapUserAttribu
                                    final CommonProfile profile,
                                    final LdapAttribute attribute) {
         try {
-            LOGGER.debug("Attempting to get roles for user {}.", userEntry.getDn());
+            LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
             final Response<SearchResult> response = this.groupSearchExecutor.search(
                     this.connectionFactory,
                     Beans.newSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
                             Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Arrays.asList(userEntry.getDn())));
-            LOGGER.debug("LDAP role search response: {}", response);
+            LOGGER.debug("LDAP role search response: [{}]", response);
             final SearchResult groupResult = response.getResult();
             
             for (final LdapEntry entry : groupResult.getEntries()) {
                 final LdapAttribute groupAttribute = entry.getAttribute(this.groupAttributeName);
                 if (groupAttribute == null) {
-                    LOGGER.warn("Role attribute not found on entry {}", entry);
+                    LOGGER.warn("Role attribute not found on entry [{}]", entry);
                     continue;
                 }
                 addProfileRolesFromAttributes(profile, groupAttribute, this.groupPrefix);

@@ -89,13 +89,13 @@ public class LdapAuthenticationConfiguration {
                 .filter(ldapInstanceConfigurationPredicate())
                 .forEach(l -> {
                     final Map<String, String> attributes = buildPrincipalAttributeMap(l);
-                    LOGGER.debug("Creating ldap authenticator for {} and baseDn {}", l.getLdapUrl(), l.getBaseDn());
+                    LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
                     final Authenticator authenticator = getAuthenticator(l);
                     authenticator.setReturnAttributes(attributes.keySet().toArray(new String[]{}));
-                    LOGGER.debug("Ldap authenticator configured with return attributes {} for {} and baseDn {}",
+                    LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
                             attributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 
-                    LOGGER.debug("Creating ldap authentication handler for {}", l.getLdapUrl());
+                    LOGGER.debug("Creating ldap authentication handler for [{}]", l.getLdapUrl());
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler(authenticator);
                     handler.setServicesManager(servicesManager);
                     handler.setName(l.getName());
@@ -112,26 +112,26 @@ public class LdapAuthenticationConfiguration {
                     handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(l.getPrincipalTransformation()));
 
                     if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
-                        LOGGER.debug("Ldap authentication for {} is filtering credentials by {}", l.getLdapUrl(), l.getCredentialCriteria());
+                        LOGGER.debug("Ldap authentication for [{}] is filtering credentials by [{}]", l.getLdapUrl(), l.getCredentialCriteria());
                         final Predicate<String> predicate = Pattern.compile(l.getCredentialCriteria()).asPredicate();
                         handler.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
                     }
 
                     handler.setPrincipalAttributeMap(attributes);
                     if (StringUtils.isBlank(l.getPrincipalAttributeId())) {
-                        LOGGER.debug("No principal id attribute is found for ldap authentication via {}", l.getLdapUrl());
+                        LOGGER.debug("No principal id attribute is found for ldap authentication via [{}]", l.getLdapUrl());
                     } else {
                         handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
-                        LOGGER.debug("Using principal id attribute {} for ldap authentication via {}", l.getPrincipalAttributeId(),
+                        LOGGER.debug("Using principal id attribute [{}] for ldap authentication via [{}]", l.getPrincipalAttributeId(),
                                 l.getLdapUrl());
                     }
 
                     if (l.getPasswordPolicy().isEnabled()) {
-                        LOGGER.debug("Password policy is enabled for {}. Constructing password policy configuration", l.getLdapUrl());
+                        LOGGER.debug("Password policy is enabled for [{}]. Constructing password policy configuration", l.getLdapUrl());
                         handler.setPasswordPolicyConfiguration(createLdapPasswordPolicyConfiguration(l, authenticator));
                     }
 
-                    LOGGER.debug("Initializing ldap authentication handler for {}", l.getLdapUrl());
+                    LOGGER.debug("Initializing ldap authentication handler for [{}]", l.getLdapUrl());
                     handler.initialize();
                     handlers.add(handler);
                 });
@@ -142,7 +142,7 @@ public class LdapAuthenticationConfiguration {
         final Map<String, String> attributes = new HashMap<>();
 
         if (l.getPrincipalAttributeList().isEmpty()) {
-            LOGGER.debug("No principal attributes are defined for {}", l.getLdapUrl());
+            LOGGER.debug("No principal attributes are defined for [{}]", l.getLdapUrl());
         } else {
             l.getPrincipalAttributeList().forEach(a -> {
                 final String attributeName = a.toString().trim();
@@ -150,17 +150,17 @@ public class LdapAuthenticationConfiguration {
                     final String[] attrCombo = attributeName.split(":");
                     final String name = attrCombo[0].trim();
                     final String value = attrCombo[1].trim();
-                    LOGGER.debug("Mapped principal attribute name {} to {} for {}", name, value, l.getLdapUrl());
+                    LOGGER.debug("Mapped principal attribute name [{}] to [{}] for [{}]", name, value, l.getLdapUrl());
                     attributes.put(name, value);
                 } else {
-                    LOGGER.debug("Mapped principal attribute name {} for {}", attributeName, l.getLdapUrl());
+                    LOGGER.debug("Mapped principal attribute name [{}] for [{}]", attributeName, l.getLdapUrl());
                     attributes.put(attributeName, attributeName);
                 }
             });
         }
         attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
 
-        LOGGER.debug("Ldap authentication for {} is configured with principal attributes {}...", l.getLdapUrl(), attributes);
+        LOGGER.debug("Ldap authentication for [{}] is configured with principal attributes [{}]...", l.getLdapUrl(), attributes);
         return attributes;
     }
 
@@ -191,7 +191,7 @@ public class LdapAuthenticationConfiguration {
         final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
         if (cfg.getPasswordWarningNumberOfDays() > 0) {
-            LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: {}", l.getPasswordPolicy().getType());
+            LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", l.getPasswordPolicy().getType());
             switch (l.getPasswordPolicy().getType()) {
                 case AD:
                     handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
@@ -214,12 +214,12 @@ public class LdapAuthenticationConfiguration {
         authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(
                 new AuthenticationResponseHandler[handlers.size()]));
 
-        LOGGER.debug("LDAP authentication response handlers configured are: {}", handlers);
+        LOGGER.debug("LDAP authentication response handlers configured are: [{}]", handlers);
 
         if (StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeName())
                 && StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeValue())) {
 
-            LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute {} and value {}",
+            LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute [{}] and value [{}]",
                     l.getPasswordPolicy().getWarningAttributeName(), l.getPasswordPolicy().getWarningAttributeValue());
 
             final OptionalWarningAccountStateHandler accountHandler = new OptionalWarningAccountStateHandler();
@@ -239,23 +239,23 @@ public class LdapAuthenticationConfiguration {
 
     private static Authenticator getAuthenticator(final LdapAuthenticationProperties l) {
         if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.AD) {
-            LOGGER.debug("Creating active directory authenticator for {}", l.getLdapUrl());
+            LOGGER.debug("Creating active directory authenticator for [{}]", l.getLdapUrl());
             return getActiveDirectoryAuthenticator(l);
         }
         if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.DIRECT) {
-            LOGGER.debug("Creating direct-bind authenticator for {}", l.getLdapUrl());
+            LOGGER.debug("Creating direct-bind authenticator for [{}]", l.getLdapUrl());
             return getDirectBindAuthenticator(l);
         }
         if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.SASL) {
-            LOGGER.debug("Creating SASL authenticator for {}", l.getLdapUrl());
+            LOGGER.debug("Creating SASL authenticator for [{}]", l.getLdapUrl());
             return getSaslAuthenticator(l);
         }
         if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.AUTHENTICATED) {
-            LOGGER.debug("Creating authenticated authenticator for {}", l.getLdapUrl());
+            LOGGER.debug("Creating authenticated authenticator for [{}]", l.getLdapUrl());
             return getAuthenticatedOrAnonSearchAuthenticator(l);
         }
 
-        LOGGER.debug("Creating anonymous authenticator for {}", l.getLdapUrl());
+        LOGGER.debug("Creating anonymous authenticator for [{}]", l.getLdapUrl());
         return getAuthenticatedOrAnonSearchAuthenticator(l);
     }
 
@@ -337,12 +337,27 @@ public class LdapAuthenticationConfiguration {
     @Configuration("ldapAuthenticationEventExecutionPlanConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class LdapAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+
+        private boolean isAttributeRepositorySourceDefined() {
+            return personDirectoryPrincipalResolver.getAttributeRepository() != null
+                    && personDirectoryPrincipalResolver.getAttributeRepository().getAvailableQueryAttributes() != null
+                    && !personDirectoryPrincipalResolver.getAttributeRepository().getAvailableQueryAttributes().isEmpty();
+        }
+
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
             ldapAuthenticationHandlers().forEach(handler -> {
                 final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-                LOGGER.debug("Ldap authentication for [{}] is to chain principal resolvers for attribute resolution", handler.getName());
-                resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
+                if (isAttributeRepositorySourceDefined()) {
+                    LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain");
+                    resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
+                } else {
+                    LOGGER.debug("Attribute repository sources are not available for principal resolution so principal resolver will echo "
+                            + "back the principal resolved during LDAP authentication directly.");
+                    resolver.setChain(Arrays.asList(new EchoingPrincipalResolver()));
+                }
+                LOGGER.debug("Ldap authentication for [{}] is to chain principal resolvers via [[{}]] for attribute resolution",
+                        handler.getName(), resolver);
                 plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
             });
         }

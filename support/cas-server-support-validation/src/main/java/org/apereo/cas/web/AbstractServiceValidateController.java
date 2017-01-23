@@ -215,13 +215,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             try {
                 proxyGrantingTicketId = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
             } catch (final AuthenticationException e) {
-                logger.warn("Failed to authenticate service credential {}", serviceCredential);
+                logger.warn("Failed to authenticate service credential [{}]", serviceCredential);
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, new Object[]{serviceCredential.getId()}, request, service);
             } catch (final InvalidTicketException e) {
-                logger.error("Failed to create proxy granting ticket due to an invalid ticket for {}", serviceCredential, e);
+                logger.error("Failed to create proxy granting ticket due to an invalid ticket for [{}]", serviceCredential, e);
                 return generateErrorView(e.getCode(), new Object[]{serviceTicketId}, request, service);
             } catch (final AbstractTicketException e) {
-                logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                logger.error("Failed to create proxy granting ticket for [{}]", serviceCredential, e);
                 return generateErrorView(e.getCode(), new Object[]{serviceCredential.getId()}, request, service);
             }
         }
@@ -248,7 +248,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         onSuccessfulValidation(serviceTicketId, assertion);
-        logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
+        logger.debug("Successfully validated service ticket [{}] for service [{}]", serviceTicketId, service.getId());
         return generateSuccessView(assertion, proxyIou, service, request, ctxResult.getValue(), proxyGrantingTicketId);
     }
 

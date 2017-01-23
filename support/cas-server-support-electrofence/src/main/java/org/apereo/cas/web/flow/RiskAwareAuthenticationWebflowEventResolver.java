@@ -82,13 +82,13 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
 
         this.eventPublisher.publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
         
-        logger.debug("Evaluating possible suspicious authentication attempt for {}", authentication.getPrincipal());
+        logger.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
 
         if (score.isRiskGreaterThan(threshold)) {
             this.eventPublisher.publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
 
-            logger.debug("Calculated risk score {} for authentication request by {} is above the risk threshold {}.",
+            logger.debug("Calculated risk score [{}] for authentication request by [{}] is above the risk threshold [{}].",
                     score.getScore(),
                     authentication.getPrincipal(),
                     threshold);
@@ -100,7 +100,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
             return Collections.singleton(res.getResult());
         }
 
-        logger.debug("Authentication request for {} is below the risk threshold", authentication.getPrincipal());
+        logger.debug("Authentication request for [{}] is below the risk threshold", authentication.getPrincipal());
         return null;
     }
 }

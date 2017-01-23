@@ -1,7 +1,7 @@
-
 description = "Apereo CAS Core Authentication APIs"
 dependencies {
     compile project(":api:cas-server-core-api-protocol")
     compile libraries.jackson
+    compile libraries.persondirectory
 }
 

@@ -22,7 +22,7 @@ public class RememberMeAuthenticationMetaDataPopulator implements Authentication
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         final RememberMeCredential r = (RememberMeCredential) credential;
         if (r.isRememberMe()) {
-            LOGGER.debug("Credential is configured to be remembered. Captured this as {} attribute",
+            LOGGER.debug("Credential is configured to be remembered. Captured this as [{}] attribute",
                     RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
             builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
         }

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 
@@ -21,5 +22,13 @@ public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalR
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof PrincipalBearingCredential;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .toString();
     }
 }

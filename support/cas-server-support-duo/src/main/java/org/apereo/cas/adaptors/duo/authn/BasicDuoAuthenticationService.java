@@ -57,7 +57,7 @@ public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService 
             final Http request = buildHttpPostAuthRequest();
             signHttpAuthRequest(request, p.getId());
             final JSONObject result = (JSONObject) request.executeRequest();
-            logger.debug("Duo authentication response: {}", result);
+            logger.debug("Duo authentication response: [{}]", result);
             if ("allow".equalsIgnoreCase(result.getString("result"))) {
                 return Pair.of(Boolean.TRUE, crds.getId());
             }
@@ -73,7 +73,7 @@ public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService 
             throw new IllegalArgumentException("No signed request token was passed to verify");
         }
 
-        logger.debug("Calling DuoWeb.verifyResponse with signed request token '{}'", signedRequestToken);
+        logger.debug("Calling DuoWeb.verifyResponse with signed request token '[{}]'", signedRequestToken);
         final String result = DuoWeb.verifyResponse(duoProperties.getDuoIntegrationKey(),
                 duoProperties.getDuoSecretKey(),
                 duoProperties.getDuoApplicationKey(), signedRequestToken);
