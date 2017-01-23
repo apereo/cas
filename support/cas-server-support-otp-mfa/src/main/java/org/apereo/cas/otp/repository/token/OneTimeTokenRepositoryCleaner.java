@@ -25,7 +25,7 @@ public class OneTimeTokenRepositoryCleaner {
      * Clean the repository.
      */
     public void clean() {
-        LOGGER.debug("Starting to clean previously used authenticator tokens from {} at [{}]", this.tokenRepository, ZonedDateTime.now());
+        LOGGER.debug("Starting to clean previously used authenticator tokens from [{}] at [{}]", this.tokenRepository, ZonedDateTime.now());
         synchronized (this.lock) {
             tokenRepository.clean();
         }

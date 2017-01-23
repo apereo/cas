@@ -71,7 +71,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             final Service service = WebUtils.getService(context);
             if (service != null) {
 
-                logger.debug("Locating service {} in service registry to determine authentication policy", service);
+                logger.debug("Locating service [{}] in service registry to determine authentication policy", service);
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 

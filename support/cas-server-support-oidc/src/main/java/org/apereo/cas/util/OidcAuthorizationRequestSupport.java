@@ -132,7 +132,7 @@ public class OidcAuthorizationRequestSupport {
             final long authTime = authenticationDate.toEpochSecond();
             final long diffInSeconds = now - authTime;
             if (diffInSeconds > maxAge.get()) {
-                LOGGER.info("Authentication is too old: {} and was created {} seconds ago.",
+                LOGGER.info("Authentication is too old: [{}] and was created [{}] seconds ago.",
                         authTime, diffInSeconds);
                 return true;
             }

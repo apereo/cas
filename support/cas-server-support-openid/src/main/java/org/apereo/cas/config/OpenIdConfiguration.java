@@ -128,7 +128,7 @@ public class OpenIdConfiguration {
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
         manager.setEnforceRpId(casProperties.getAuthn().getOpenid().isEnforceRpId());
         manager.setSharedAssociations(new InMemoryServerAssociationStore());
-        LOGGER.info("Creating openid server manager with OP endpoint {}", casProperties.getServer().getLoginUrl());
+        LOGGER.info("Creating openid server manager with OP endpoint [{}]", casProperties.getServer().getLoginUrl());
         return manager;
     }
     

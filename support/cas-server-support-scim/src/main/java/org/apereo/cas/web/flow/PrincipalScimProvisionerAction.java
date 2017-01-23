@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -43,7 +41,11 @@ public class PrincipalScimProvisionerAction extends AbstractAction {
         final Principal p = authentication.getPrincipal();
         LOGGER.debug("Starting to provision principal [{}]", p);
         final boolean res = this.scimProvisioner.create(p, c);
-        LOGGER.debug("Provisioning of principal [{}] did{}execute successfully", p, BooleanUtils.toString(res, StringUtils.EMPTY, " not "));
+        if (res) {
+            LOGGER.debug("Provisioning of principal [{}] executed successfully", p);
+        } else {
+            LOGGER.warn("Provisioning of principal [{}] has failed", p);
+        }
         return success();
     }
 }

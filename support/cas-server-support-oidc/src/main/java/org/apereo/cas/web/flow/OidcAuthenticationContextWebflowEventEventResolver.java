@@ -79,7 +79,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            logger.error("No multifactor authentication providers are available in the application context to handle {}", values);
+            logger.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
             throw new AuthenticationException();
         }
 
@@ -91,7 +91,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         if (provider.isPresent()) {
             return Collections.singleton(new Event(this, provider.get().getId()));
         }
-        logger.warn("The requested authentication class {} cannot be satisfied by any of the MFA providers available", values);
+        logger.warn("The requested authentication class [{}] cannot be satisfied by any of the MFA providers available", values);
         throw new AuthenticationException();
     }
 }

@@ -118,7 +118,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
             shire = adaptor.getAssertionConsumerService().getLocation();
         }
         if (StringUtils.isBlank(shire)) {
-            logger.warn("Unable to resolve SP ACS URL for AuthnRequest construction for entityID: {}", providerId);
+            logger.warn("Unable to resolve SP ACS URL for AuthnRequest construction for entityID: [{}]", providerId);
             throw new MessageDecodingException("Unable to resolve SP ACS URL for AuthnRequest construction");
         }
 
