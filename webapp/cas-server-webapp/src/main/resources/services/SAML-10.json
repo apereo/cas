@@ -1,0 +1,8 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp",
+  "name" : "SAML",
+  "id" : 10,
+  "evaluationOrder" : 10,
+  "metadataLocation" : "http://www.testshib.org/metadata/testshib-providers.xml"
+}
