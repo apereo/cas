@@ -63,7 +63,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass yubikeyBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getYubikey().getBypass(), ticketRegistrySupport);
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getYubikey().getBypass());
     }
 
     @ConditionalOnMissingBean(name = "yubikeyPrincipalFactory")

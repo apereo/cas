@@ -32,9 +32,6 @@ import static org.mockito.Mockito.*;
 public class FrontChannelLogoutActionTests {
 
     private static final String FLOW_EXECUTION_KEY = "12234";
-    private static final String TICKET_ID = "ST-XXX";
-    private static final String TEST_URL = "https://www.apereo.org";
-
     private FrontChannelLogoutAction frontChannelLogoutAction;
 
     private RequestContext requestContext;
