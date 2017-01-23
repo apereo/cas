@@ -3406,3 +3406,34 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.validator.attributeValues=top
 # cas.authn.pm.ldap.validator.dn=
 ```
+
+### JDBC
+
+```properties
+# cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
+# cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
+# cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
+
+# cas.authn.pm.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.pm.jdbc.isolateInternalQueries=false
+# cas.authn.pm.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.pm.jdbc.failFast=true
+# cas.authn.pm.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.pm.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.pm.jdbc.leakThreshold=10
+# cas.authn.pm.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.pm.jdbc.batchSize=1
+# cas.authn.pm.jdbc.user=sa
+# cas.authn.pm.jdbc.ddlAuto=create-drop
+# cas.authn.pm.jdbc.maxAgeDays=180
+# cas.authn.pm.jdbc.password=
+# cas.authn.pm.jdbc.autocommit=false
+# cas.authn.pm.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.pm.jdbc.idleTimeout=5000
+
+# cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.pm.jdbc.passwordEncoder.characterEncoding=
+# cas.authn.pm.jdbc.passwordEncoder.encodingAlgorithm=
+# cas.authn.pm.jdbc.passwordEncoder.secret=
+# cas.authn.pm.jdbc.passwordEncoder.strength=16
+````

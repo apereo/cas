@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
     
     private final String sql;
+    
     public QueryDatabaseAuthenticationHandler(final String sql) {
         this.sql = sql;
     }

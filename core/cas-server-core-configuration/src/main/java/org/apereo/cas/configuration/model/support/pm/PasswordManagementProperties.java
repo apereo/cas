@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.ticket.SigningEncryptionProperties;
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -20,6 +22,7 @@ public class PasswordManagementProperties {
     private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
     
     private Ldap ldap = new Ldap();
+    private Jdbc jdbc = new Jdbc();
     private Reset reset = new Reset();
 
     public Reset getReset() {
@@ -46,6 +49,14 @@ public class PasswordManagementProperties {
         this.policyPattern = policyPattern;
     }
 
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(final Jdbc jdbc) {
+        this.jdbc = jdbc;
+    }
+
     public Ldap getLdap() {
         return ldap;
     }
@@ -54,6 +65,47 @@ public class PasswordManagementProperties {
         this.ldap = ldap;
     }
 
+    public static class Jdbc extends AbstractJpaProperties {
+        @NestedConfigurationProperty
+        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+        private String sqlChangePassword;
+        private String sqlFindEmail;
+        private String sqlSecurityQuestions;
+
+        public String getSqlChangePassword() {
+            return sqlChangePassword;
+        }
+
+        public void setSqlChangePassword(final String sqlChangePassword) {
+            this.sqlChangePassword = sqlChangePassword;
+        }
+
+        public String getSqlFindEmail() {
+            return sqlFindEmail;
+        }
+
+        public void setSqlFindEmail(final String sqlFindEmail) {
+            this.sqlFindEmail = sqlFindEmail;
+        }
+
+        public String getSqlSecurityQuestions() {
+            return sqlSecurityQuestions;
+        }
+
+        public void setSqlSecurityQuestions(final String sqlSecurityQuestions) {
+            this.sqlSecurityQuestions = sqlSecurityQuestions;
+        }
+
+        public PasswordEncoderProperties getPasswordEncoder() {
+            return passwordEncoder;
+        }
+
+        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+        }
+    }
+    
     public static class Ldap extends AbstractLdapProperties {
         
         private String baseDn;
