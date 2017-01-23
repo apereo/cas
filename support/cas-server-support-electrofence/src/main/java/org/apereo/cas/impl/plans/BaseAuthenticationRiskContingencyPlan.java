@@ -45,13 +45,13 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
                                                                final RegisteredService service,
                                                                final AuthenticationRiskScore score,
                                                                final HttpServletRequest request) {
-        logger.debug("Executing {} to produce a risk response", getClass().getSimpleName());
+        logger.debug("Executing [{}] to produce a risk response", getClass().getSimpleName());
 
         notifiers.forEach(e -> {
             e.setAuthentication(authentication);
             e.setAuthenticationRiskScore(score);
             e.setRegisteredService(service);
-            logger.debug("Executing risk notification {}", e.getClass().getSimpleName());
+            logger.debug("Executing risk notification [{}]", e.getClass().getSimpleName());
             new Thread(e, e.getClass().getSimpleName()).start();
         });
         return executeInternal(authentication, service, score, request);

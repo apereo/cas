@@ -87,14 +87,14 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
-            logger.debug("Returning webflow event as {}", id);
+            logger.debug("Returning webflow event as [{}]", id);
             return Collections.singleton(event);
         }
 
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getKey()) {
-            logger.debug("Authentication context is successfully validated by {} for service {}", id, service);
+            logger.debug("Authentication context is successfully validated by [{}] for service [{}]", id, service);
             return resumeFlow();
         }
 
@@ -102,7 +102,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return Collections.singleton(validateEventIdForMatchingTransitionInContext(id, context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, result.getValue().get())));
         }
-        logger.warn("The authentication context cannot be satisfied and the requested event {} is unrecognized", id);
+        logger.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
         return Collections.singleton(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
     }
 

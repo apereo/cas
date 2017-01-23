@@ -40,24 +40,24 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
 
         final GeoLocationRequest loc = WebUtils.getHttpServletRequestGeoLocation();
         if (loc.isValid()) {
-            logger.debug("Filtering authentication events for geolocation {}", loc);
+            logger.debug("Filtering authentication events for geolocation [{}]", loc);
             final long count = events.stream().filter(e -> e.getGeoLocation().equals(loc)).count();
-            logger.debug("Total authentication events found for {}: {}", loc, count);
+            logger.debug("Total authentication events found for [{}]: [{}]", loc, count);
             if (count == events.size()) {
-                logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), loc);
+                logger.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), loc);
                 return LOWEST_RISK_SCORE;
             }
             return getFinalAveragedScore(count, events.size());
         } else {
             final String remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
-            logger.debug("Filtering authentication events for location based on ip {}", remoteAddr);
+            logger.debug("Filtering authentication events for location based on ip [{}]", remoteAddr);
             final GeoLocationResponse response = this.geoLocationService.locate(remoteAddr);
             if (response != null) {
                 final long count = events.stream().filter(e -> e.getGeoLocation().equals(
                         new GeoLocationRequest(response.getLatitude(), response.getLongitude()))).count();
-                logger.debug("Total authentication events found for location of {}: {}", remoteAddr, count);
+                logger.debug("Total authentication events found for location of [{}]: [{}]", remoteAddr, count);
                 if (count == events.size()) {
-                    logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), loc);
+                    logger.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), loc);
                     return LOWEST_RISK_SCORE;
                 }
                 return getFinalAveragedScore(count, events.size());

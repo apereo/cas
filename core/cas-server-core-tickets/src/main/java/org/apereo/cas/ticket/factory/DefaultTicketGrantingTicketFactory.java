@@ -81,9 +81,9 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     protected String produceTicketIdentifier(final Authentication authentication) {
         String tgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
         if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode ticket-granting ticket {}", tgtId);
+            LOGGER.debug("Attempting to encode ticket-granting ticket [{}]", tgtId);
             tgtId = this.cipherExecutor.encode(tgtId);
-            LOGGER.debug("Encoded ticket-granting ticket id {}", tgtId);
+            LOGGER.debug("Encoded ticket-granting ticket id [{}]", tgtId);
         }
         return tgtId;
     }

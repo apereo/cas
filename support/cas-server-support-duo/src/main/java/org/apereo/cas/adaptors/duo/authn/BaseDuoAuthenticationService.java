@@ -56,12 +56,12 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     public boolean ping() {
         try {
             final String url = buildUrlHttpScheme(getApiHost().concat("/rest/v1/ping"));
-            logger.debug("Contacting Duo @ {}", url);
+            logger.debug("Contacting Duo @ [{}]", url);
 
             final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(url));
             if (msg != null) {
                 final String response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
-                logger.debug("Received Duo ping response {}", response);
+                logger.debug("Received Duo ping response [{}]", response);
 
                 final JsonNode result = MAPPER.readTree(response);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
@@ -69,10 +69,10 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
                         && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
                     return true;
                 }
-                logger.warn("Could not reach/ping Duo. Response returned is {}", result);
+                logger.warn("Could not reach/ping Duo. Response returned is [{}]", result);
             }
         } catch (final Exception e) {
-            logger.warn("Pinging Duo has failed with error: {}", e.getMessage(), e);
+            logger.warn("Pinging Duo has failed with error: [{}]", e.getMessage(), e);
         }
         return false;
     }
@@ -117,10 +117,10 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
         try {
             final Http userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
-            logger.debug("Contacting Duo to inquire about username {}", username);
+            logger.debug("Contacting Duo to inquire about username [{}]", username);
             final String userResponse = userRequest.executeHttpRequest().body().string();
             final String jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
-            logger.debug("Received Duo admin response {}", jsonResponse);
+            logger.debug("Received Duo admin response [{}]", jsonResponse);
 
             final JsonNode result = MAPPER.readTree(jsonResponse);
             if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
@@ -131,7 +131,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
                 return DuoUserAccountAuthStatus.valueOf(authResult);
             }
         } catch (final Exception e) {
-            logger.warn("Reaching Duo has failed with error: {}", e.getMessage(), e);
+            logger.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
         }
         return DuoUserAccountAuthStatus.AUTH;
     }

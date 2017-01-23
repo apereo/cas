@@ -138,11 +138,11 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
                 final RegisteredService registeredService = servicesManager.findServiceBy(service);
 
                 if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                    LOGGER.debug("Located service {} in the registry. Attempting to resolve attributes for {}",
+                    LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]",
                             registeredService, p.getId());
 
                     if (registeredService.getAttributeReleasePolicy() == null) {
-                        LOGGER.debug("No attribute release policy is defined for {}. Returning default principal attributes",
+                        LOGGER.debug("No attribute release policy is defined for [{}]. Returning default principal attributes",
                                 service.getId());
                         return p.getAttributes();
                     }
@@ -150,7 +150,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
                 }
             }
 
-            LOGGER.debug("Could not locate service {} in the registry.", service.getId());
+            LOGGER.debug("Could not locate service [{}] in the registry.", service.getId());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
         LOGGER.warn("No application context could be detected. Returning default principal attributes");

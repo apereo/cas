@@ -122,16 +122,16 @@ public class LdapPasswordManagementService implements PasswordManagementService 
 
             if (LdapUtils.containsResultEntry(response)) {
                 final String dn = response.getResult().getEntry().getDn();
-                LOGGER.debug("Updating account password for {}", dn);
+                LOGGER.debug("Updating account password for [{}]", dn);
                 if (LdapUtils.executePasswordModifyOperation(dn, factory,
                         c.getPassword(), bean.getPassword(),
                         casProperties.getAuthn().getPm().getLdap().getType())) {
-                    LOGGER.debug("Successfully updated the account password for {}", dn);
+                    LOGGER.debug("Successfully updated the account password for [{}]", dn);
                     return true;
                 }
-                LOGGER.error("Could not update the LDAP entry's password for {} and base DN {}", filter.format(), ldap.getBaseDn());
+                LOGGER.error("Could not update the LDAP entry's password for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
             } else {
-                LOGGER.error("Could not locate an LDAP entry for {} and base DN {}", filter.format(), ldap.getBaseDn());
+                LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

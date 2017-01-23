@@ -65,12 +65,12 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
         if (supportedNameFormats.isEmpty()) {
             supportedNameFormats.add(NameIDType.TRANSIENT);
-            logger.debug("No supported nameId formats could be determined from metadata. Added default {}", NameIDType.TRANSIENT);
+            logger.debug("No supported nameId formats could be determined from metadata. Added default [{}]", NameIDType.TRANSIENT);
         }
         if (StringUtils.isNotBlank(service.getRequiredNameIdFormat())) {
             final String fmt = parseAndBuildRequiredNameIdFormat(service);
             supportedNameFormats.add(0, fmt);
-            logger.debug("Added required nameId format {} based on saml service configuration for {}", fmt, service.getServiceId());
+            logger.debug("Added required nameId format [{}] based on saml service configuration for [{}]", fmt, service.getServiceId());
         }
 
         String requiredNameFormat = null;
@@ -91,23 +91,23 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
         for (final String nameFormat : supportedNameFormats) {
             try {
-                logger.debug("Evaluating NameID format {}", nameFormat);
+                logger.debug("Evaluating NameID format [{}]", nameFormat);
 
                 final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
                 encoder.setNameFormat(nameFormat);
                 if (authnRequest.getNameIDPolicy() != null) {
                     final String qualifier = authnRequest.getNameIDPolicy().getSPNameQualifier();
-                    logger.debug("NameID qualifier is set to {}", qualifier);
+                    logger.debug("NameID qualifier is set to [{}]", qualifier);
                     encoder.setNameQualifier(qualifier);
                 }
                 final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
                 final IdPAttributeValue<String> value = new StringAttributeValue(assertion.getPrincipal().getName());
-                logger.debug("NameID attribute value is set to {}", assertion.getPrincipal().getName());
+                logger.debug("NameID attribute value is set to [{}]", assertion.getPrincipal().getName());
                 attribute.setValues(Collections.singletonList(value));
-                logger.debug("Encoding NameID based on {}", nameFormat);
+                logger.debug("Encoding NameID based on [{}]", nameFormat);
 
                 final NameID nameid = encoder.encode(attribute);
-                logger.debug("Final NameID encoded is {} with value {}", nameid.getFormat(), nameid.getValue());
+                logger.debug("Final NameID encoded is [{}] with value [{}]", nameid.getFormat(), nameid.getValue());
                 return nameid;
 
             } catch (final Exception e) {

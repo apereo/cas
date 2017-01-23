@@ -215,7 +215,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             logger.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
             final Authentication authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authenticationFromTgt == null) {
-                logger.debug("Authentication session associated with {} is no longer valid", ticketGrantingTicket);
+                logger.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             } else if (authentication.getPrincipal().equals(authenticationFromTgt.getPrincipal())) {
                 logger.debug("Resulting authentication matches the authentication from context");

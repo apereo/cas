@@ -139,7 +139,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
 
         final String jsonClaims = claims.toJson();
         jws.setPayload(jsonClaims);
-        logger.debug("Generated claims are {}", jsonClaims);
+        logger.debug("Generated claims are [{}]", jsonClaims);
 
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
         jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
@@ -153,10 +153,10 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
             } else {
                 jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
             }
-            logger.debug("Signing id token with key id header value {}", jws.getKeyIdHeaderValue());
+            logger.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
             jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
         }
-        logger.debug("Signing id token with algorithm {}", jws.getAlgorithmHeaderValue());
+        logger.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
         return jws.getCompactSerialization();
     }
 
@@ -171,7 +171,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         JsonWebKeySet jsonWebKeySet = null;
         try {
             if (StringUtils.isNotBlank(service.getJwks())) {
-                logger.debug("Loading JWKS from {}", service.getJwks());
+                logger.debug("Loading JWKS from [{}]", service.getJwks());
                 final Resource resource = this.resourceLoader.getResource(service.getJwks());
                 jsonWebKeySet = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
             }
@@ -179,7 +179,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
             logger.debug(e.getMessage(), e);
         } finally {
             if (jsonWebKeySet == null) {
-                logger.debug("Loading default JWKS from {}", this.jwksFile);
+                logger.debug("Loading default JWKS from [{}]", this.jwksFile);
 
                 if (this.jwksFile != null) {
                     final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);

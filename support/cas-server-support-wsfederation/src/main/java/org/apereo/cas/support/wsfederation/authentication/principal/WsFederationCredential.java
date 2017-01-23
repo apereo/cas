@@ -135,36 +135,36 @@ public class WsFederationCredential implements Credential {
      */
     public boolean isValid(final String expectedAudience, final String expectedIssuer, final long timeDrift) {
         if (!this.getAudience().equalsIgnoreCase(expectedAudience)) {
-            logger.warn("Audience is invalid: {}", this.getAudience());
+            logger.warn("Audience is invalid: [{}]", this.getAudience());
             return false;
         }
 
         if (!this.issuer.equalsIgnoreCase(expectedIssuer)) {
-            logger.warn("Issuer is invalid: {}", this.issuer);
+            logger.warn("Issuer is invalid: [{}]", this.issuer);
             return false;
         }
 
         final ZonedDateTime retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
         if (this.issuedOn.isBefore(retrievedOnTimeDrift)) {
-            logger.warn("Ticket is issued before the allowed drift. Issued on {} while allowed drift is {}",
+            logger.warn("Ticket is issued before the allowed drift. Issued on [{}] while allowed drift is [{}]",
                     this.issuedOn, retrievedOnTimeDrift);
             return false;
         }
 
         final ZonedDateTime retrievedOnTimeAfterDrift = this.retrievedOn.plus(timeDrift, ChronoUnit.MILLIS);
         if (this.issuedOn.isAfter(retrievedOnTimeAfterDrift)) {
-            logger.warn("Ticket is issued after the allowed drift. Issued on {} while allowed drift is {}",
+            logger.warn("Ticket is issued after the allowed drift. Issued on [{}] while allowed drift is [{}]",
                     this.issuedOn, retrievedOnTimeAfterDrift);
             return false;
         }
 
         if (this.retrievedOn.isAfter(this.notOnOrAfter)) {
-            logger.warn("Ticket is too late because it's retrieved on {} which is after {}.",
+            logger.warn("Ticket is too late because it's retrieved on [{}] which is after [{}].",
                     this.retrievedOn, this.notOnOrAfter);
             return false;
         }
 
-        logger.debug("WsFed Credential is validated for {} and {}.", expectedAudience, expectedIssuer);
+        logger.debug("WsFed Credential is validated for [{}] and [{}].", expectedAudience, expectedIssuer);
         return true;
     }
 }
