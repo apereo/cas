@@ -60,7 +60,7 @@ public class CasPersonDirectoryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    
+
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao attributeRepository() {
@@ -132,17 +132,18 @@ public class CasPersonDirectoryConfiguration {
         impl.setCachedPersonAttributesDao(mergingDao);
 
         if (list.isEmpty()) {
-            LOGGER.debug("No attribute repository sources are available to merge together.");
+            LOGGER.debug("No attribute repository sources are available/defined to merge together.");
         } else {
-            LOGGER.debug("Configured attribute repository sources to merge together: {}", list);
-            LOGGER.debug("Configured cache expiration policy for merging attribute sources to be {} minute(s)",
+            LOGGER.debug("Configured attribute repository sources to merge together: [{}]", list);
+            LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
                     casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
         }
         return impl;
     }
 
     private void addStubAttributeRepositoryIfNothingElse(final List<IPersonAttributeDao> list) {
-        if (!casProperties.getAuthn().getAttributeRepository().getAttributes().isEmpty() && list.isEmpty()) {
+        final Map<String, String> attrs = casProperties.getAuthn().getAttributeRepository().getAttributes();
+        if (!attrs.isEmpty() && list.isEmpty()) {
             final boolean foundAttrs = casProperties.getAuthn().getLdap().stream().filter(p ->
                     p.getPrincipalAttributeList() != null && !p.getPrincipalAttributeList().isEmpty()
                             || p.getAdditionalAttributes() != null && !p.getAdditionalAttributes().isEmpty()
@@ -151,12 +152,12 @@ public class CasPersonDirectoryConfiguration {
             if (foundAttrs) {
                 LOGGER.debug("Found attributes which are resolved from authentication sources. Static attributes are ignored");
             } else {
-                LOGGER.warn("Found and added static attributes {} to the attribute repository",
-                        casProperties.getAuthn().getAttributeRepository().getAttributes().keySet());
+                LOGGER.warn("Found and added static attributes {} to the attribute repository", attrs.keySet());
                 list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
             }
         } else {
-            LOGGER.debug("No attributes are defined for attribute repositories, or other attribute repository sources are defined");
+            LOGGER.debug("No attributes are defined for attribute repositories or other attribute repository sources are defined. "
+                    + "Stub attribute repository for static attributes will not be created.");
         }
     }
 

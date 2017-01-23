@@ -53,12 +53,12 @@ public abstract class AbstractManagementController {
         logger.error(ex.getMessage(), ex);
         final String contentType = request.getHeader(AJAX_REQUEST_HEADER_NAME);
         if (contentType != null && contentType.equals(AJAX_REQUEST_HEADER_VALUE)) {
-            logger.debug("Handling exception {} for ajax request indicated by header {}",
+            logger.debug("Handling exception [{}] for ajax request indicated by header [{}]",
                     ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
             JsonUtils.renderException(ex, response);
             return null;
         }
-        logger.trace("Unable to resolve exception {} for request. AJAX request header {} not found.",
+        logger.trace("Unable to resolve exception [{}] for request. AJAX request header [{}] not found.",
                 ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
         final ModelAndView mv = new ModelAndView("error");
         mv.addObject(ex);

@@ -106,8 +106,6 @@ public class PersonDirectoryPrincipalResolverTests {
         chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
 
         this.thrown.expect(PrincipalException.class);
-        this.thrown.expectMessage("Resolved principals by the chain are not unique");
-
         chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                 CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap("attr1", "value")));
     }
