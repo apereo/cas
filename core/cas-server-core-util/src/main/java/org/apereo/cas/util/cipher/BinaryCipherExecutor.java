@@ -90,7 +90,6 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
             final byte[] result = cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
             return result;
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
     }
