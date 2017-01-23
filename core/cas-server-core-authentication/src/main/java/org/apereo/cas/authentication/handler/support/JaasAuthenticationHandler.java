@@ -96,11 +96,11 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             throws GeneralSecurityException, PreventedException {
 
         if (this.kerberosKdcSystemProperty != null) {
-            logger.debug("Configured kerberos system property {} to {}", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
+            logger.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
         }
         if (this.kerberosRealmSystemProperty != null) {
-            logger.debug("Setting kerberos system property {} to {}", SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
+            logger.debug("Setting kerberos system property [{}] to [{}]", SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
             System.setProperty(SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
         }
 
@@ -111,7 +111,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 this.realm,
                 new UsernamePasswordCallbackHandler(username, password));
         try {
-            logger.debug("Attempting authentication for: {}", username);
+            logger.debug("Attempting authentication for: [{}]", username);
             lc.login();
         } finally {
             lc.logout();

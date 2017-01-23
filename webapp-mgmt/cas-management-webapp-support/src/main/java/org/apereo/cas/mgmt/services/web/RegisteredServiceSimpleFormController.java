@@ -66,7 +66,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
             
             final RegisteredService svcToUse = this.registeredServiceFactory.createRegisteredService(service);
             final RegisteredService newSvc = this.servicesManager.save(svcToUse);
-            logger.info("Saved changes to service {}", svcToUse.getId());
+            logger.info("Saved changes to service [{}]", svcToUse.getId());
 
             final Map<String, Object> model = new HashMap<>();
             model.put("id", newSvc.getId());

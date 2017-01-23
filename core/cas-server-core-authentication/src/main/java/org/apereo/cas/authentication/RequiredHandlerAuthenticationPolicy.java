@@ -58,7 +58,7 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
             return false;
         }
 
-        LOGGER.debug("Examining authentication successes for authentication handler {}", this.requiredHandlerName);
+        LOGGER.debug("Examining authentication successes for authentication handler [{}]", this.requiredHandlerName);
         if (StringUtils.isNotBlank(this.requiredHandlerName)) {
             credsOk = authn.getSuccesses().keySet()
                     .stream()
@@ -67,7 +67,7 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
                     .isPresent();
 
             if (!credsOk) {
-                LOGGER.warn("Required authentication handler {} is not present in the list of recorded successful authentications",
+                LOGGER.warn("Required authentication handler [{}] is not present in the list of recorded successful authentications",
                         this.requiredHandlerName);
                 return false;
             }

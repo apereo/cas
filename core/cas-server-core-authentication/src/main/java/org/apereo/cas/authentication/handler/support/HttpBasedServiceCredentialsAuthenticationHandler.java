@@ -44,7 +44,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
 
-        logger.debug("Attempting to authenticate {}", httpCredential);
+        logger.debug("Attempting to authenticate [{}]", httpCredential);
         final URL callbackUrl = httpCredential.getCallbackUrl();
         if (!this.httpClient.isValidEndPoint(callbackUrl)) {
             throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");
