@@ -54,12 +54,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
         final Map<String, Object> principalAttributes = getCasPrincipalAttributes(model, registeredService);
         attributes.putAll(principalAttributes);
 
-        logger.debug("Processed response principal attributes from the output model to be {}", principalAttributes.keySet());
+        logger.debug("Processed response principal attributes from the output model to be [{}]", principalAttributes.keySet());
         if (this.releaseProtocolAttributes) {
             logger.debug("CAS is configured to release protocol-level attributes. Processing...");
             final Map<String, Object> protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
             attributes.putAll(protocolAttributes);
-            logger.debug("Processed response protocol/authentication attributes from the output model to be {}", protocolAttributes.keySet());
+            logger.debug("Processed response protocol/authentication attributes from the output model to be [{}]", protocolAttributes.keySet());
         }
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
@@ -121,7 +121,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
         logger.debug("Beginning to encode attributes for the response");
         final Map<String, Object> encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
 
-        logger.debug("Encoded attributes for the response are {}", encodedAttributes);
+        logger.debug("Encoded attributes for the response are [{}]", encodedAttributes);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
         final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());
@@ -135,7 +135,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
                         .append(StringEscapeUtils.escapeXml10(value.toString().trim()))
                         .append("</cas:".concat(k).concat(">"))
                         .toString();
-                logger.debug("Formatted attribute for the response: {}", fmt);
+                logger.debug("Formatted attribute for the response: [{}]", fmt);
                 formattedAttributes.add(fmt);
             });
         });

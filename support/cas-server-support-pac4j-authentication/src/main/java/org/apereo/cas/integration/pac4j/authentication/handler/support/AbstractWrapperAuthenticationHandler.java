@@ -47,7 +47,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
         CommonHelper.assertNotNull("profileCreator", this.profileCreator);
 
         final C credentials = convertToPac4jCredentials((I) credential);
-        logger.debug("credentials: {}", credentials);
+        logger.debug("credentials: [{}]", credentials);
 
         try {
             final Authenticator authenticator = getAuthenticator(credential);
@@ -63,7 +63,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             authenticator.validate(credentials, getWebContext());
 
             final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
-            logger.debug("profile: {}", profile);
+            logger.debug("profile: [{}]", profile);
 
             return createResult(new ClientCredential(credentials), profile);
         } catch (final Exception e) {

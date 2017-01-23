@@ -63,7 +63,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
         final Map<String, String> cachedAttributesToEncode = initialize(newEncodedAttributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, this.cipherExecutor, registeredService);
-            logger.debug("[{}] encoded attributes are available for release to [{}]: {}", 
+            logger.debug("[{}] encoded attributes are available for release to [{}]: [{}]", 
                     newEncodedAttributes.size(), registeredService, newEncodedAttributes.keySet());
         } else {
             logger.debug("Service [{}] is not found/enabled in the service registry so no encoding has taken place.", registeredService);

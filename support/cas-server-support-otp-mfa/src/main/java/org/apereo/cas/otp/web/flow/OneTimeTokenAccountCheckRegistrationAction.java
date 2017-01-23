@@ -45,7 +45,7 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
             final String keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
             requestContext.getFlowScope().put("key", keyAccount);
             requestContext.getFlowScope().put("keyUri", keyUri);
-            LOGGER.debug("Registration key URI is {}", keyUri);
+            LOGGER.debug("Registration key URI is [{}]", keyUri);
             return new EventFactorySupport().event(this, "register");
         }
         return success();

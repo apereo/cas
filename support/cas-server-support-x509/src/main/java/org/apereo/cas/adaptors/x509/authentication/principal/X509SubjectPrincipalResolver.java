@@ -91,7 +91,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        logger.debug("Resolving principal for {}", certificate);
+        logger.debug("Resolving principal for [{}]", certificate);
         final StringBuffer sb = new StringBuffer();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<>();

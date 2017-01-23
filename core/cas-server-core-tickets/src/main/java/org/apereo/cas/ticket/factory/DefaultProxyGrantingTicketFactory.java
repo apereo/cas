@@ -79,9 +79,9 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     protected String produceTicketIdentifier() {
         String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode proxy-granting ticket {}", pgtId);
+            LOGGER.debug("Attempting to encode proxy-granting ticket [{}]", pgtId);
             pgtId = this.cipherExecutor.encode(pgtId);
-            LOGGER.debug("Encoded proxy-granting ticket id {}", pgtId);
+            LOGGER.debug("Encoded proxy-granting ticket id [{}]", pgtId);
         }
         return pgtId;
     }

@@ -32,7 +32,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
             resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
-        logger.debug("Stored authentication trust record for {}", record);
+        logger.debug("Stored authentication trust record for [{}]", record);
         record.setKey(generateKey(record));
         return setInternal(record);
     }

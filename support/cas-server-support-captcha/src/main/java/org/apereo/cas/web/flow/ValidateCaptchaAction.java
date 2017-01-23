@@ -61,19 +61,19 @@ public class ValidateCaptchaAction extends AbstractAction {
 
             final String postParams = "secret=" + recaptchaProperties.getSecret() + "&response=" + gRecaptchaResponse;
 
-            LOGGER.debug("Sending 'POST' request to URL: {}", obj);
+            LOGGER.debug("Sending 'POST' request to URL: [{}]", obj);
             con.setDoOutput(true);
             try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
                 wr.writeBytes(postParams);
                 wr.flush();
             }
             final int responseCode = con.getResponseCode();
-            LOGGER.debug("Response Code: {}", responseCode);
+            LOGGER.debug("Response Code: [{}]", responseCode);
 
             if (responseCode == HttpStatus.OK.value()) {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                     final String response = in.lines().collect(Collectors.joining());
-                    LOGGER.debug("Google captcha response received: {}", response);
+                    LOGGER.debug("Google captcha response received: [{}]", response);
                     final JsonNode node = READER.readTree(response);
                     if (node.has("success") && node.get("success").booleanValue()) {
                         return null;
