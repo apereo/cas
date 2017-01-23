@@ -104,11 +104,15 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String decode(final Serializable value) {
-        final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
-        if (encoded != null && encoded.length > 0) {
-            return decryptValue(new String(encoded, StandardCharsets.UTF_8));
+        try {
+            final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
+            if (encoded != null && encoded.length > 0) {
+                return decryptValue(new String(encoded, StandardCharsets.UTF_8));
+            }
+            return null;
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
-        return null;
     }
 
     /**
@@ -118,7 +122,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @return the key
      */
     private static Key prepareJsonWebTokenKey(final String secret) {
-
         try {
             final Map<String, Object> keys = new HashMap<>(2);
             keys.put("kty", "oct");
