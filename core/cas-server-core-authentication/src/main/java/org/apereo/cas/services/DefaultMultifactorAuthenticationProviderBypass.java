@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +27,9 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
 
     private final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass;
 
-    private final transient TicketRegistrySupport ticketRegistrySupport;
 
-    public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass,
-                                                          final TicketRegistrySupport ticketRegistrySupport) {
+    public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass) {
         this.bypass = bypass;
-        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 
     @Override
