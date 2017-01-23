@@ -74,12 +74,12 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         final String remoteIp = getRemoteIp(context);
-        logger.debug("Current user IP {}", remoteIp);
+        logger.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {
-            logger.info("Spnego should be activated for {}", remoteIp);
+            logger.info("Spnego should be activated for [{}]", remoteIp);
             return yes();
         }
-        logger.info("Spnego should is skipped for {}", remoteIp);
+        logger.info("Spnego should is skipped for [{}]", remoteIp);
         return no();
     }
 
@@ -111,11 +111,11 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     protected boolean ipPatternMatches(final String remoteIp) {
         final Matcher matcher = this.ipsToCheckPattern.matcher(remoteIp);
         if (matcher.find()) {
-            logger.debug("Remote IP address {} should be checked based on the defined pattern {}",
+            logger.debug("Remote IP address [{}] should be checked based on the defined pattern [{}]",
                     remoteIp, this.ipsToCheckPattern.pattern());
             return true;
         }
-        logger.debug("No pattern or remote IP defined, or pattern does not match remote IP [{}]",
+        logger.debug("No pattern or remote IP defined, or pattern does not match remote IP [[{}]]",
                 remoteIp);
         return false;
     }
@@ -131,7 +131,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     private String getRemoteIp(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         String userAddress = request.getRemoteAddr();
-        logger.debug("Remote Address = {}", userAddress);
+        logger.debug("Remote Address = [{}]", userAddress);
 
         if (StringUtils.isNotBlank(this.alternativeRemoteHostAttribute)) {
 
@@ -188,11 +188,11 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         try {
             t.join(this.timeout);
         } catch (final InterruptedException e) {
-            logger.debug("Threaded lookup failed.  Defaulting to IP {}.", remoteIp, e);
+            logger.debug("Threaded lookup failed.  Defaulting to IP [{}].", remoteIp, e);
         }
 
         final String remoteHostName = revDNS.get();
-        logger.debug("Found remote host name {}.", remoteHostName);
+        logger.debug("Found remote host name [{}].", remoteHostName);
 
         return StringUtils.isNotEmpty(remoteHostName) ? remoteHostName : remoteIp;
     }

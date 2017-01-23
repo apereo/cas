@@ -85,7 +85,7 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
                     LOGGER.debug("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
                     return rService.getTheme();
                 } else {
-                    LOGGER.warn("Custom theme {} for service {} cannot be located. Falling back to default theme...",
+                    LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...",
                             rService.getTheme(), rService);
                 }
             }

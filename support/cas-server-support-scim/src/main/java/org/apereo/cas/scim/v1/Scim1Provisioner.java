@@ -49,7 +49,7 @@ public class Scim1Provisioner implements ScimProvisioner {
         try {
             final Resources<UserResource> resources = endpoint.query("userName eq \"" + p.getId() + "\"");
             if (resources.getItemsPerPage() == 0) {
-                LOGGER.debug("User {} not found", p.getId());
+                LOGGER.debug("User [{}] not found", p.getId());
                 return false;
             }
 

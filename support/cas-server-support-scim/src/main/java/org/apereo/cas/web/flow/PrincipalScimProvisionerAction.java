@@ -41,9 +41,9 @@ public class PrincipalScimProvisionerAction extends AbstractAction {
             return success();
         }
         final Principal p = authentication.getPrincipal();
-        LOGGER.debug("Starting to provision principal {}", p);
+        LOGGER.debug("Starting to provision principal [{}]", p);
         final boolean res = this.scimProvisioner.create(p, c);
-        LOGGER.debug("Provisioning of principal {} did{}execute successfully", p, BooleanUtils.toString(res, StringUtils.EMPTY, " not "));
+        LOGGER.debug("Provisioning of principal [{}] did{}execute successfully", p, BooleanUtils.toString(res, StringUtils.EMPTY, " not "));
         return success();
     }
 }

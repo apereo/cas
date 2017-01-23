@@ -227,7 +227,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             if (proxyingService != null) {
                 logger.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
-                    logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
+                    logger.warn("Found proxying service [{}], but it is not authorized to fulfill the proxy attempt made by [{}]",
                             proxyingService.getId(), service.getId());
                     throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
                             + registeredService.getId());

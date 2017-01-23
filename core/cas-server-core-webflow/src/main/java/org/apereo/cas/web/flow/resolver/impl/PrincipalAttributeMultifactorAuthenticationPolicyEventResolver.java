@@ -65,7 +65,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
 
         final Principal principal = authentication.getPrincipal();
         if (attributeNames.isEmpty()) {
-            logger.debug("Attribute name to determine event is not configured for {}", principal.getId());
+            logger.debug("Attribute name to determine event is not configured for [{}]", principal.getId());
             return null;
         }
 
@@ -79,7 +79,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
         final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(providerMap.values());
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
             final MultifactorAuthenticationProvider provider = providers.iterator().next();
-            logger.debug("Found a single multifactor provider {} in the application context", provider);
+            logger.debug("Found a single multifactor provider [{}] in the application context", provider);
             return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
                     input -> input != null && input.matches(globalPrincipalAttributeValueRegex));
         }

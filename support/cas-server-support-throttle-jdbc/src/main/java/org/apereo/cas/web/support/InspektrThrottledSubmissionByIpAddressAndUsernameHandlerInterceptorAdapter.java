@@ -69,7 +69,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         if (this.dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(this.dataSource);
         } else {
-            logger.warn("No data source is defined for {}. Ignoring the construction of JDBC template", this.getName());
+            logger.warn("No data source is defined for [{}]. Ignoring the construction of JDBC template", this.getName());
         }
     }
 
@@ -94,7 +94,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             // Compute rate in submissions/sec between last two authn failures and compare with threshold
             return NUMBER_OF_MILLISECONDS_IN_SECOND / (failures.get(0).getTime() - failures.get(1).getTime()) > getThresholdRate();
         }
-        logger.warn("No data source is defined for {}. Ignoring threshold checking", this.getName());
+        logger.warn("No data source is defined for [{}]. Ignoring threshold checking", this.getName());
         return false;
     }
 
@@ -128,7 +128,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                     auditPointRuntimeInfo);
             this.auditTrailManager.record(context);
         } else {
-            logger.warn("No data source is defined for {}. Ignoring audit record-keeping", this.getName());
+            logger.warn("No data source is defined for [{}]. Ignoring audit record-keeping", this.getName());
         }
     }
 

@@ -59,7 +59,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
                 .forEach(duo -> {
                     final String id = duo.getId();
                     try {
-                        logger.debug("Activating multifactor trusted authentication for webflow {}", id);
+                        logger.debug("Activating multifactor trusted authentication for webflow [{}]", id);
                         final FlowDefinitionRegistry registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
                         registerMultifactorTrustedAuthentication(registry);
                     } catch (final Exception e) {

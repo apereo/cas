@@ -76,10 +76,10 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         final String openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.ASSOCIATE)) {
-            LOGGER.info("Handling request. openid.mode : {}", openIdMode);
+            LOGGER.info("Handling request. openid.mode : [{}]", openIdMode);
             return true;
         }
-        LOGGER.info("Cannot handle request. openid.mode : {}", openIdMode);
+        LOGGER.info("Cannot handle request. openid.mode : [{}]", openIdMode);
         return false;
     }
 }

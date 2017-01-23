@@ -103,7 +103,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         logger.debug("Hazelcast instance lock acquired");
 
         try {
-            logger.debug("Setting up the paging predicate with page size of {}", this.pageSize);
+            logger.debug("Setting up the paging predicate with page size of [{}]", this.pageSize);
             final PagingPredicate pagingPredicate = new PagingPredicate(this.pageSize);
 
             logger.debug("Retrieving the initial collection of tickets from Hazelcast instance...");
@@ -129,7 +129,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     @PreDestroy
     public void shutdown() {
         try {
-            logger.info("Shutting down Hazelcast instance {}", this.hazelcastInstance.getConfig().getInstanceName());
+            logger.info("Shutting down Hazelcast instance [{}]", this.hazelcastInstance.getConfig().getInstanceName());
             this.hazelcastInstance.shutdown();
         } catch (final Throwable e) {
             logger.debug(e.getMessage());

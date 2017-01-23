@@ -57,7 +57,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
             final DuoDirectCredential c = DuoDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(c).getKey()) {
                 final Principal principal = c.getAuthentication().getPrincipal();
-                logger.debug("Duo has successfully authenticated {}", principal.getId());
+                logger.debug("Duo has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>());
             }
         } catch (final Exception e) {
