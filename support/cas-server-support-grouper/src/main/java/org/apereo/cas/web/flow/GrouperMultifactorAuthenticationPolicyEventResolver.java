@@ -71,7 +71,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
         final Principal principal = authentication.getPrincipal();
         final List<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal.getId());
         if (results.isEmpty()) {
-            logger.debug("No groups could be found for {} to resolve events for MFA", principal);
+            logger.debug("No groups could be found for [{}] to resolve events for MFA", principal);
             return null;
         }
 
@@ -100,10 +100,10 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
                         buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
                 return Collections.singleton(event);
             }
-            logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
+            logger.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
             return null;
         }
-        logger.debug("No multifactor provider could be found based on {}'s Grouper groups", principal.getId());
+        logger.debug("No multifactor provider could be found based on [{}]'s Grouper groups", principal.getId());
         return null;
     }
 

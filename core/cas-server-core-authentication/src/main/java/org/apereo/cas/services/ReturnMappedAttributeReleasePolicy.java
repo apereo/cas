@@ -89,24 +89,24 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             final Matcher matcherFile = FILE_GROOVY_PATTERN.matcher(mappedAttributeName);
 
             if (matcherInline.find()) {
-                LOGGER.debug("Found inline groovy script to execute for attribute mapping {}", entry[0]);
+                LOGGER.debug("Found inline groovy script to execute for attribute mapping [{}]", entry[0]);
                 final Object result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
                 if (result != null) {
-                    LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
+                    LOGGER.debug("Mapped attribute [{}] to [{}] from script", entry[0], result);
                     attributesToRelease.put(entry[0].toString(), result);
                 } else {
-                    LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
+                    LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", entry[0]);
                 }
             } else if (matcherFile.find()) {
                 try {
-                    LOGGER.debug("Found groovy script to execute for attribute mapping {}", entry[0]);
+                    LOGGER.debug("Found groovy script to execute for attribute mapping [{}]", entry[0]);
                     final String script = FileUtils.readFileToString(new File(matcherFile.group(1)), StandardCharsets.UTF_8);
                     final Object result = getGroovyAttributeValue(script, resolvedAttributes);
                     if (result != null) {
-                        LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
+                        LOGGER.debug("Mapped attribute [{}] to [{}] from script", entry[0], result);
                         attributesToRelease.put(entry[0].toString(), result);
                     } else {
-                        LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
+                        LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", entry[0]);
                     }
                 } catch (final IOException e) {
                     LOGGER.error(e.getMessage(), e);

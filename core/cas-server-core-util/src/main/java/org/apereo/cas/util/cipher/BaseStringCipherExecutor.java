@@ -73,7 +73,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (StringUtils.isBlank(secretKeyToUse)) {
             logger.warn("Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key");
             secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
-            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS settings.",
+            logger.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
                     secretKeyToUse, ENCRYPTION_KEY_SIZE);
         }
 
@@ -81,7 +81,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (StringUtils.isBlank(signingKeyToUse)) {
             logger.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
             signingKeyToUse = EncodingUtils.generateJsonWebKey(SIGNING_KEY_SIZE);
-            logger.warn("Generated signing key {} of size {}. The generated key MUST be added to CAS settings.",
+            logger.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
                     signingKeyToUse, SIGNING_KEY_SIZE);
         }
 

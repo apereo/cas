@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -138,5 +139,13 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             logger.error("An error has occurred while reading the subject alternative name value", e);
         }
         return null;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .toString();
     }
 }

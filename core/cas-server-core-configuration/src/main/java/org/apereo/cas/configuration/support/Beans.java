@@ -234,7 +234,7 @@ public final class Beans {
 
         if (type.contains(".")) {
             try {
-                LOGGER.debug("Configuration indicates use of a custom password encoder {}", type);
+                LOGGER.debug("Configuration indicates use of a custom password encoder [{}]", type);
                 final Class<PasswordEncoder> clazz = (Class<PasswordEncoder>) Class.forName(type);
                 return clazz.newInstance();
             } catch (final Exception e) {
@@ -247,14 +247,14 @@ public final class Beans {
         final PasswordEncoderProperties.PasswordEncoderTypes encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
         switch (encoderType) {
             case DEFAULT:
-                LOGGER.debug("Creating default password encoder with encoding alg {} and character encoding {}",
+                LOGGER.debug("Creating default password encoder with encoding alg [{}] and character encoding [{}]",
                         properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
                 return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
             case STANDARD:
                 LOGGER.debug("Creating standard password encoder with the secret defined in the configuration");
                 return new StandardPasswordEncoder(properties.getSecret());
             case BCRYPT:
-                LOGGER.debug("Creating BCRYPT password encoder given the strength {} and secret in the configuration",
+                LOGGER.debug("Creating BCRYPT password encoder given the strength [{}] and secret in the configuration",
                         properties.getStrength());
                 return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
@@ -325,7 +325,7 @@ public final class Beans {
      * @return the connection config
      */
     public static ConnectionConfig newConnectionConfig(final AbstractLdapProperties l) {
-        LOGGER.debug("Creating LDAP connection configuration for {}", l.getLdapUrl());
+        LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
         cc.setUseSSL(l.isUseSsl());
@@ -411,7 +411,7 @@ public final class Beans {
      * @return the pool config
      */
     public static PoolConfig newPoolConfig(final AbstractLdapProperties l) {
-        LOGGER.debug("Creating LDAP connection pool configuration for {}", l.getLdapUrl());
+        LOGGER.debug("Creating LDAP connection pool configuration for [{}]", l.getLdapUrl());
         final PoolConfig pc = new PoolConfig();
         pc.setMinPoolSize(l.getMinPoolSize());
         pc.setMaxPoolSize(l.getMaxPoolSize());
@@ -428,7 +428,7 @@ public final class Beans {
      * @return the connection factory
      */
     public static DefaultConnectionFactory newConnectionFactory(final AbstractLdapProperties l) {
-        LOGGER.debug("Creating LDAP connection factory for {}", l.getLdapUrl());
+        LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = newConnectionConfig(l);
         final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
         if (l.getProviderClass() != null) {
@@ -472,7 +472,7 @@ public final class Beans {
                 cp.setValidator(new CompareValidator(compareRequest));
                 break;
             case "none":
-                LOGGER.debug("No validator is configured for the LDAP connection pool of {}", l.getLdapUrl());
+                LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
                 break;
             case "search":
             default:
@@ -489,7 +489,7 @@ public final class Beans {
 
         cp.setFailFastInitialize(l.isFailFast());
 
-        LOGGER.debug("Initializing ldap connection pool for {} and bindDn {}", l.getLdapUrl(), l.getBindDn());
+        LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", l.getLdapUrl(), l.getBindDn());
         cp.initialize();
         return cp;
     }

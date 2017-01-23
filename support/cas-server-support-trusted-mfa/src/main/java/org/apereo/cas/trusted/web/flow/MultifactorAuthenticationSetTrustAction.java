@@ -46,7 +46,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
 
         final String principal = c.getPrincipal().getId();
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
-            LOGGER.debug("Attempt to store trusted authentication record for {}", principal);
+            LOGGER.debug("Attempt to store trusted authentication record for [{}]", principal);
             final MultifactorAuthenticationTrustRecord record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                     MultifactorAuthenticationTrustUtils.generateGeography());
 
@@ -57,9 +57,9 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
                 }
             }
             storage.set(record);
-            LOGGER.debug("Saved trusted authentication record for {} under {}", principal, record.getName());
+            LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
         }
-        LOGGER.debug("Trusted authentication session exists for {}", principal);
+        LOGGER.debug("Trusted authentication session exists for [{}]", principal);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
                 c,
                 trustedProperties.getAuthenticationContextAttribute());

@@ -1,15 +1,19 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -57,10 +61,10 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public Principal resolve(final Credential credential, final Principal principal) {
-        final List<Principal> principals = new ArrayList<>();
+        final Set<Principal> principals = new HashSet<>();
         for (final PrincipalResolver resolver : chain) {
             if (resolver.supports(credential)) {
-                LOGGER.debug("Invoking principal resolver {}", resolver.getClass().getSimpleName());
+                LOGGER.debug("Invoking principal resolver {}", resolver);
                 final Principal p = resolver.resolve(credential, principal);
                 if (p != null) {
                     principals.add(p);
@@ -76,9 +80,9 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         final Map<String, Object> attributes = new HashMap<>();
         principals.forEach(p -> {
             if (p != null) {
-                LOGGER.debug("Resolved principal {}", p);
+                LOGGER.debug("Resolved principal [{}]", p);
                 if (p.getAttributes() != null && !p.getAttributes().isEmpty()) {
-                    LOGGER.debug("Adding attributes {} for the final principal", p.getAttributes());
+                    LOGGER.debug("Adding attributes [{}] for the final principal", p.getAttributes());
                     attributes.putAll(p.getAttributes());
                 }
             }
@@ -86,13 +90,14 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
 
         final long count = principals.stream().map(Principal::getId).distinct().collect(Collectors.toSet()).size();
         if (count > 1) {
-            throw new PrincipalException("Resolved principals by the chain are not unique",
+            throw new PrincipalException("Resolved principals by the chain are not unique because principal resolvers have produced CAS principals "
+                    + "with different identifiers which typically is the result of a configuration issue.",
                     Collections.emptyMap(),
                     Collections.emptyMap());
         }
-        final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
+        final String principalId = principal != null ? principal.getId() : principals.iterator().next().getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
-        LOGGER.debug("Final principal constructed by the chain of resolvers is {}", finalPrincipal);
+        LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;
     }
 
@@ -106,5 +111,19 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     @Override
     public boolean supports(final Credential credential) {
         return this.chain.get(0).supports(credential);
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("chain", chain)
+                .toString();
+    }
+
+    @Override
+    public IPersonAttributeDao getAttributeRepository() {
+        final MergingPersonAttributeDaoImpl dao = new MergingPersonAttributeDaoImpl();
+        dao.setPersonAttributeDaos(this.chain.stream().map(PrincipalResolver::getAttributeRepository).collect(Collectors.toList()));
+        return dao;
     }
 }
