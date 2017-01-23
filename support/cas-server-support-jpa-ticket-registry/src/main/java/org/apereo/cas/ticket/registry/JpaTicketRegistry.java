@@ -111,7 +111,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
             return this.entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
-            logger.error("Error getting ticket {} from registry.", ticketId, e);
+            logger.error("Error getting ticket [{}] from registry.", ticketId, e);
         }
         return null;
     }

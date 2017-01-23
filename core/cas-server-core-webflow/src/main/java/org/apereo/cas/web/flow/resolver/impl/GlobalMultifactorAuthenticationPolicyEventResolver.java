@@ -58,10 +58,10 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         }
         final String mfaId = globalProviderId;
         if (StringUtils.isBlank(mfaId)) {
-            logger.debug("No value could be found for request parameter {}", mfaId);
+            logger.debug("No value could be found for request parameter [{}]", mfaId);
             return null;
         }
-        logger.debug("Attempting to globally activate {}", mfaId);
+        logger.debug("Attempting to globally activate [{}]", mfaId);
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
@@ -81,10 +81,10 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
                         buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
                 return Collections.singleton(event);
             }
-            logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
+            logger.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
             return null;
         }
-        logger.warn("No multifactor provider could be found for {}", mfaId);
+        logger.warn("No multifactor provider could be found for [{}]", mfaId);
         throw new AuthenticationException();
     }
 

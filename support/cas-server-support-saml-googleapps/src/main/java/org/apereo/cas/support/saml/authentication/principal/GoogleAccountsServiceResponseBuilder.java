@@ -180,7 +180,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         this.samlObjectBuilder.marshalSamlXmlObject(response, writer);
 
         final String result = writer.toString();
-        LOGGER.debug("Generated Google SAML response: {}", result);
+        LOGGER.debug("Generated Google SAML response: [{}]", result);
         return result;
     }
 
@@ -194,7 +194,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @param skewAllowance Number of seconds to allow for variance.
      */
     public void setSkewAllowance(final int skewAllowance) {
-        LOGGER.debug("Using {} seconds as skew allowance.", skewAllowance);
+        LOGGER.debug("Using [{}] seconds as skew allowance.", skewAllowance);
         this.skewAllowance = skewAllowance;
     }
 
@@ -220,10 +220,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         }
 
         bean.setAlgorithm(this.keyAlgorithm);
-        LOGGER.debug("Loading Google Apps private key from {} with key algorithm {}",
+        LOGGER.debug("Loading Google Apps private key from [{}] with key algorithm [{}]",
                 bean.getLocation(), bean.getAlgorithm());
         bean.afterPropertiesSet();
-        LOGGER.debug("Creating Google Apps private key instance via {}", this.publicKeyLocation);
+        LOGGER.debug("Creating Google Apps private key instance via [{}]", this.publicKeyLocation);
         this.privateKey = bean.getObject();
     }
 
@@ -248,10 +248,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         }
 
         bean.setAlgorithm(this.keyAlgorithm);
-        LOGGER.debug("Loading Google Apps public key from {} with key algorithm {}",
+        LOGGER.debug("Loading Google Apps public key from [{}] with key algorithm [{}]",
                 bean.getResource(), bean.getAlgorithm());
         bean.afterPropertiesSet();
-        LOGGER.debug("Creating Google Apps public key instance via {}", this.publicKeyLocation);
+        LOGGER.debug("Creating Google Apps public key instance via [{}]", this.publicKeyLocation);
         this.publicKey = bean.getObject();
     }
 

@@ -49,7 +49,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
         final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
                 .addAttribute(attributeName, Boolean.TRUE)
                 .build();
-        logger.debug("Updated authentication to remember risk-based authn via {}", attributeName);
+        logger.debug("Updated authentication to remember risk-based authn via [{}]", attributeName);
         authentication.update(newAuthn);
         return new AuthenticationRiskContingencyResponse(new Event(this, id));
     }

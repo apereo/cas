@@ -174,13 +174,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public ActionState createActionState(final Flow flow, final String name, final Action... actions) {
         if (containsFlowState(flow, name)) {
-            logger.debug("Flow {} already contains a definition for state id [{}]", flow.getId(), name);
+            logger.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), name);
             return (ActionState) flow.getTransitionableState(name);
         }
         final ActionState actionState = new ActionState(flow, name);
         logger.debug("Created action state [{}]", actionState.getId());
         actionState.getActionList().addAll(actions);
-        logger.debug("Added action to the action state {} list of actions: [{}]", actionState.getId(), actionState.getActionList());
+        logger.debug("Added action to the action state [{}] list of actions: [{}]", actionState.getId(), actionState.getActionList());
         return actionState;
     }
 

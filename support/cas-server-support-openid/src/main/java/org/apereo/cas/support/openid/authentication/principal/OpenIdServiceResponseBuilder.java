@@ -87,15 +87,15 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
         try {
             if (associated && associationValid) {
                 assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
-                LOGGER.debug("Validated openid ticket {} for {}", ticketId, service);
+                LOGGER.debug("Validated openid ticket [{}] for [{}]", ticketId, service);
             } else if (!associated) {
-                LOGGER.debug("Responding to non-associated mode. Service ticket {} must be validated by the RP", ticketId);
+                LOGGER.debug("Responding to non-associated mode. Service ticket [{}] must be validated by the RP", ticketId);
             } else {
                 LOGGER.warn("Association does not exist or is not valid");
                 successFullAuthentication = false;
             }
         } catch (final AbstractTicketException e) {
-            LOGGER.error("Could not validate ticket : {}", e.getMessage(), e);
+            LOGGER.error("Could not validate ticket : [{}]", e.getMessage(), e);
             successFullAuthentication = false;
         }
         final String id = determineIdentity(service, assertion);
@@ -141,7 +141,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                                                    final ParameterList parameterList) {
         final Message response = serverManager.authResponse(parameterList, id, id, successFullAuthentication, true);
         parameters.putAll(response.getParameterMap());
-        LOGGER.debug("Parameters passed for the OpenID response are {}", parameters.keySet());
+        LOGGER.debug("Parameters passed for the OpenID response are [{}]", parameters.keySet());
         return buildRedirect(service, parameters);
     }
 
@@ -163,7 +163,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                 }
             }
         } catch (final MessageException e) {
-            LOGGER.error("Message exception : {}", e.getMessage(), e);
+            LOGGER.error("Message exception : [{}]", e.getMessage(), e);
         }
         return null;
     }

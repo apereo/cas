@@ -34,17 +34,17 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
     public boolean verify(final RequestContext requestContext, final Credential credential) {
         final Principal principal = getPrincipal(requestContext);
         final Map<String, Object> attributes = principal.getAttributes();
-        logger.debug("Principal attributes found for {} are {}", principal.getId(), attributes);
+        logger.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
 
         if (attributes != null && attributes.containsKey(this.aupAttributeName)) {
             final Object value = attributes.get(this.aupAttributeName);
-            logger.debug("Evaluating attribute value {} found for {}", value, this.aupAttributeName);
+            logger.debug("Evaluating attribute value [{}] found for [{}]", value, this.aupAttributeName);
             if (value.toString().equalsIgnoreCase(Boolean.TRUE.toString())) {
                 return true;
             }
         }
 
-        logger.warn("Usage policy has not been accepted by {}", principal.getId());
+        logger.warn("Usage policy has not been accepted by [{}]", principal.getId());
         return false;
     }
 

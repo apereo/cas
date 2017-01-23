@@ -43,7 +43,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
                 ? ticket.getExpirationPolicy().getTimeToLive()
                 : ticket.getExpirationPolicy().getTimeToIdle();
 
-        logger.debug("Adding ticket {} to cache store to live {} seconds and stay idle for [{}]",
+        logger.debug("Adding ticket [{}] to cache store to live [{}] seconds and stay idle for [{}]",
                 ticket.getId(), ticket.getExpirationPolicy().getTimeToLive(), idleTime);
 
         this.cache.put(ticket.getId(), ticket,

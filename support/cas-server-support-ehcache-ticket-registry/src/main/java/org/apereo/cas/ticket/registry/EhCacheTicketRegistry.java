@@ -57,7 +57,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         }
         element.setTimeToLive(aliveValue);
 
-        logger.debug("Adding ticket {} to the cache {} to live {} seconds and stay idle for {} seconds",
+        logger.debug("Adding ticket [{}] to the cache [{}] to live [{}] seconds and stay idle for [{}] seconds",
                 ticket.getId(), this.ehcacheTicketsCache.getName(), aliveValue, idleValue);
         this.ehcacheTicketsCache.put(element);
     }
@@ -72,12 +72,12 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
         if (ticket == null) {
-            logger.debug("Ticket {} cannot be retrieved from the cache", ticketId);
+            logger.debug("Ticket [{}] cannot be retrieved from the cache", ticketId);
             return true;
         }
 
         if (this.ehcacheTicketsCache.remove(ticket.getId())) {
-            logger.debug("Ticket {} is removed", ticket.getId());
+            logger.debug("Ticket [{}] is removed", ticket.getId());
         }
         return true;
     }
@@ -108,7 +108,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToLive());
         
         if (element.isExpired(config) || ticket.isExpired()) {
-            logger.debug("Ticket {} has expired", ticket.getId());
+            logger.debug("Ticket [{}] has expired", ticket.getId());
             this.ehcacheTicketsCache.evictExpiredElements();
             this.ehcacheTicketsCache.flush();
             return null;

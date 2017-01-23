@@ -42,7 +42,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     @PostConstruct
     public void afterPropertiesSet() {
         this.thresholdRate = (double) this.failureThreshold / (double) this.failureRangeInSeconds;
-        logger.debug("Calculated threshold rate as {}", this.thresholdRate);
+        logger.debug("Calculated threshold rate as [{}]", this.thresholdRate);
     }
 
     @Override
@@ -75,7 +75,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
                                  && response.getStatus() != HttpStatus.SC_OK;
 
         if (recordEvent) {
-            logger.debug("Recording submission failure for {}", request.getRequestURI());
+            logger.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
         }
     }
@@ -102,8 +102,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      * @param request the request
      */
     protected void recordThrottle(final HttpServletRequest request) {
-        logger.warn("Throttling submission from {}. More than {} failed login attempts within {} seconds. "
-                + "Authentication attempt exceeds the failure threshold {}",
+        logger.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
+                + "Authentication attempt exceeds the failure threshold [{}]",
                 request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
                 this.failureThreshold);
     }

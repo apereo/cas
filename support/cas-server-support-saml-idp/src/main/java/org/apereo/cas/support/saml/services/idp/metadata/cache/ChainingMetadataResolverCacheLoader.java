@@ -211,10 +211,10 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         final File backupDirectory = new File(md.getLocation().getFile(), "metadata-backups");
         final File backupFile = new File(backupDirectory, metadataResource.getFilename());
 
-        logger.debug("Metadata backup directory is designated to be {}", backupDirectory.getCanonicalPath());
+        logger.debug("Metadata backup directory is designated to be [{}]", backupDirectory.getCanonicalPath());
         FileUtils.forceMkdir(backupDirectory);
 
-        logger.debug("Metadata backup file will be at {}", backupFile.getCanonicalPath());
+        logger.debug("Metadata backup file will be at [{}]", backupFile.getCanonicalPath());
         FileUtils.forceMkdirParent(backupFile);
 
         final HttpClientMultithreadedDownloader downloader =

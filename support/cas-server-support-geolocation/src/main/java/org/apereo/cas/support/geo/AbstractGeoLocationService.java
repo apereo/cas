@@ -18,11 +18,11 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
 
     @Override
     public GeoLocationResponse locate(final String clientIp, final GeoLocationRequest location) {
-        LOGGER.debug("Attempting to find geolocation for {}", clientIp);
+        LOGGER.debug("Attempting to find geolocation for [{}]", clientIp);
         GeoLocationResponse loc = locate(clientIp);
 
         if (loc == null && location != null) {
-            LOGGER.debug("Attempting to find geolocation for {}", location);
+            LOGGER.debug("Attempting to find geolocation for [{}]", location);
 
             if (StringUtils.isNotBlank(location.getLatitude()) && StringUtils.isNotBlank(location.getLongitude())) {
                 loc = locate(Double.valueOf(location.getLatitude()), Double.valueOf(location.getLongitude()));

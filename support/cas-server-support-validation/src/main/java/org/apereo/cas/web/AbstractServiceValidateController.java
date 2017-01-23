@@ -125,7 +125,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(final Assertion assertion,
                                                                                                        final HttpServletRequest request) {
         // find the RegisteredService for this Assertion
-        logger.debug("Locating the primary authentication associated with this service request {}", assertion.getService());
+        logger.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         final RegisteredService service = this.servicesManager.findServiceBy(assertion.getService());
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
 
@@ -169,7 +169,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         final AuthenticationResult authenticationResult =
                 this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
         final TicketGrantingTicket proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId, authenticationResult);
-        logger.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
+        logger.debug("Generated proxy-granting ticket [[{}]] off of service ticket [{}] and credential [{}]",
                 proxyGrantingTicketId.getId(), serviceTicketId, credential);
 
         return proxyGrantingTicketId;

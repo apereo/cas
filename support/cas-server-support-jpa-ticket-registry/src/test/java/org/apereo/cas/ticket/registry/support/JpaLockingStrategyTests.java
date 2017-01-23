@@ -246,7 +246,7 @@ public class JpaLockingStrategyTests {
                 try {
                     final Object result = method.invoke(jpaLock, args);
                     jpaLock.entityManager.flush();
-                    logger.debug("Performed {} on {}", method.getName(), jpaLock);
+                    logger.debug("Performed [{}] on [{}]", method.getName(), jpaLock);
                     return result;
                     // Force result of transaction to database
                 } catch (final Exception e) {
