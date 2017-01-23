@@ -3,6 +3,7 @@ package org.apereo.cas.web.view;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -92,7 +93,8 @@ public class Cas30ResponseView extends Cas20ResponseView {
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute, Collections.singleton(contextProvider));
         }
-
+        filteredAuthenticationAttributes.remove(Authentication.AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED);
+        
         return filteredAuthenticationAttributes;
     }
 
