@@ -75,8 +75,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         try {
             return getTickets().stream().filter(TicketGrantingTicket.class::isInstance).count();
         } catch (final Throwable t) {
-            logger.trace("sessionCount() operation is not implemented by the ticket registry instance {}. "
-                            + "Message is: {} Returning unknown as {}",
+            logger.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
+                            + "Message is: [{}] Returning unknown as [{}]",
                     this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
@@ -87,8 +87,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         try {
             return getTickets().stream().filter(ServiceTicket.class::isInstance).count();
         } catch (final Throwable t) {
-            logger.trace("serviceTicketCount() operation is not implemented by the ticket registry instance {}. "
-                            + "Message is: {} Returning unknown as {}",
+            logger.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
+                            + "Message is: [{}] Returning unknown as [[{}]]",
                     this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
@@ -109,7 +109,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
         if (ticket instanceof TicketGrantingTicket) {
             if (ticket instanceof ProxyGrantingTicket) {
-                logger.debug("Removing proxy-granting ticket [{}]", ticketId);
+                logger.debug("Removing proxy-granting ticket [[{}]]", ticketId);
             }
 
             logger.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
@@ -239,12 +239,12 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return null;
         }
 
-        logger.info("Attempting to decode {}", result);
+        logger.info("Attempting to decode [{}]", result);
         final EncodedTicket encodedTicket = (EncodedTicket) result;
 
         final Ticket ticket = SerializationUtils.decodeAndSerializeObject(
                 encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
-        logger.info("Decoded {}", ticket);
+        logger.info("Decoded [{}]", ticket);
         return ticket;
     }
 

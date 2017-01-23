@@ -50,7 +50,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
                     new IllegalArgumentException("Invalid token " + tokenCredential.getToken()));
         }
         final int otp = Integer.parseInt(tokenCredential.getToken());
-        logger.debug("Received OTP {}", otp);
+        logger.debug("Received OTP [{}]", otp);
 
         final RequestContext context = RequestContextHolder.getRequestContext();
         if (context == null) {
@@ -62,7 +62,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         }
         final String uid = authentication.getPrincipal().getId();
 
-        logger.debug("Received principal id {}", uid);
+        logger.debug("Received principal id [{}]", uid);
         final String secKey = this.credentialRepository.getSecret(uid);
         if (StringUtils.isBlank(secKey)) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");

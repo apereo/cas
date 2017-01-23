@@ -42,7 +42,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             this.client.delete(redisKey);
             return true;
         } catch (final Exception e) {
-            logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);
+            logger.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId, e);
         }
         return false;
     }
@@ -52,14 +52,14 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticket) {
         Assert.notNull(this.client, "No redis client is defined.");
         try {
-            logger.debug("Adding ticket {}", ticket);
+            logger.debug("Adding ticket [{}]", ticket);
             final String redisKey = this.getTicketRedisKey(ticket.getId());
             // Encode first, then add
             final Ticket encodeTicket = this.encodeTicket(ticket);
             this.client.boundValueOps(redisKey)
                     .set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
         } catch (final Exception e) {
-            logger.error("Failed to add {}", ticket);
+            logger.error("Failed to add [{}]", ticket);
         }
     }
 
@@ -74,7 +74,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 return decodeTicket(t);
             }
         } catch (final Exception e) {
-            logger.error("Failed fetching {} ", ticketId, e);
+            logger.error("Failed fetching [{}] ", ticketId, e);
         }
         return null;
     }
@@ -101,13 +101,13 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         Assert.notNull(this.client, "No redis client is defined.");
         try {
-            logger.debug("Updating ticket {}", ticket);
+            logger.debug("Updating ticket [{}]", ticket);
             final Ticket encodeTicket = this.encodeTicket(ticket);
             final String redisKey = this.getTicketRedisKey(ticket.getId());
             this.client.boundValueOps(redisKey).set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {
-            logger.error("Failed to update {}", ticket);
+            logger.error("Failed to update [{}]", ticket);
         }
         return null;
     }

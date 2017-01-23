@@ -46,13 +46,13 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     public void clean() {
         try {
             if (!isCleanerEnabled) {
-                LOGGER.trace("Ticket registry cleaner is disabled for {}. No cleaner processes will run.",
+                LOGGER.trace("Ticket registry cleaner is disabled for [{}]. No cleaner processes will run.",
                         this.ticketRegistry.getClass().getSimpleName());
                 return;
             }
 
             if (!isCleanerSupported()) {
-                LOGGER.trace("Ticket registry cleaner is not supported by {}. No cleaner processes will run.",
+                LOGGER.trace("Ticket registry cleaner is not supported by [{}]. No cleaner processes will run.",
                         getClass().getSimpleName());
                 return;
             }

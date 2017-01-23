@@ -36,10 +36,10 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
                 .distinct()
                 .collect(Collectors.toSet());
 
-        logger.info("Found {} expired records", results.size());
+        logger.info("Found [{}] expired records", results.size());
         if (!results.isEmpty()) {
             results.forEach(entry -> storage.invalidate(entry.getKey()));
-            logger.info("Invalidated and removed {} expired records", results.size());
+            logger.info("Invalidated and removed [{}] expired records", results.size());
         }
     }
 

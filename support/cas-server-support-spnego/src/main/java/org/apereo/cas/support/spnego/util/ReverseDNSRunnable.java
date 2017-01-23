@@ -42,7 +42,7 @@ public class ReverseDNSRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            LOGGER.debug("Attempting to resolve {}", this.ipAddress);
+            LOGGER.debug("Attempting to resolve [{}]", this.ipAddress);
             final InetAddress address = InetAddress.getByName(this.ipAddress);
             set(address.getCanonicalHostName());
         } catch (final UnknownHostException e) {
@@ -56,7 +56,7 @@ public class ReverseDNSRunnable implements Runnable {
      * @param hostName the resolved hostname
      */
     public synchronized void set(final String hostName) {
-        LOGGER.trace("ReverseDNS -- Found hostName: {}.", hostName);
+        LOGGER.trace("ReverseDNS -- Found hostName: [{}].", hostName);
         this.hostName = hostName;
     }
 

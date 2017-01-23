@@ -35,7 +35,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         final String requestId;
 
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
-            logger.debug("Request does not specify a {} or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
+            logger.debug("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
             return null;
         }
 
@@ -63,8 +63,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             requestId = null;
         }
 
-        logger.debug("Request Body: {}", requestBody);
-        logger.debug("Extracted ArtifactId: {}. extracted Request Id: {}", artifactId, requestId);
+        logger.debug("Request Body: [{}]", requestBody);
+        logger.debug("Extracted ArtifactId: [{}]. extracted Request Id: [{}]", artifactId, requestId);
 
         return new SamlService(id, service, artifactId, requestId);
     }

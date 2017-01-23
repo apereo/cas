@@ -63,7 +63,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
-        logger.debug("Adding ticket {} to the cache [{}]", ticket.getId(), this.ticketIgniteCache.getName());
+        logger.debug("Adding ticket [{}] to the cache [{}]", ticket.getId(), this.ticketIgniteCache.getName());
         this.ticketIgniteCache.withExpiryPolicy(new ExpiryPolicy() {
             @Override
             public Duration getExpiryForCreation() {

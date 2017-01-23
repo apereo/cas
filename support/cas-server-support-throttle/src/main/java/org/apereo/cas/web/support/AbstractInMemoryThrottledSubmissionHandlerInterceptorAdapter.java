@@ -48,13 +48,13 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         logger.info("Beginning audit cleanup...");
 
         final Set<Entry<String, ZonedDateTime>> keys = this.ipMap.entrySet();
-        logger.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
+        logger.debug("Decrementing counts for throttler.  Starting key count: [{}]", keys.size());
 
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
         for (final Iterator<Entry<String, ZonedDateTime>> iter = keys.iterator(); iter.hasNext();) {
             final Entry<String, ZonedDateTime> entry = iter.next();
             if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
-                logger.trace("Removing entry for key {}", entry.getKey());
+                logger.trace("Removing entry for key [{}]", entry.getKey());
                 iter.remove();
             }
         }

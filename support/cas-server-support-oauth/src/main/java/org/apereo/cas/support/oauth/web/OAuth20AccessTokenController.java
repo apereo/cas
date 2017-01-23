@@ -147,7 +147,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             getTicketRegistry().addTicket(refreshToken);
         }
 
-        logger.debug("access token: {} / timeout: {} / refresh token: {}", accessToken,
+        logger.debug("access token: [{}] / timeout: [{}] / refresh token: [{}]", accessToken,
                 casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
 
         this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
@@ -170,7 +170,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         final OAuthToken token = getTicketRegistry().getTicket(codeParameter, OAuthToken.class);
         // token should not be expired
         if (token == null || token.isExpired()) {
-            logger.error("Code or refresh token expired: {}", token);
+            logger.error("Code or refresh token expired: [{}]", token);
             if (token != null) {
                 getTicketRegistry().deleteTicket(token.getId());
             }
@@ -244,14 +244,14 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
      * @return whether the grant type is supported
      */
     private boolean checkGrantTypes(final String type, final OAuthGrantType... expectedTypes) {
-        logger.debug("Grant type: {}", type);
+        logger.debug("Grant type: [{}]", type);
 
         for (final OAuthGrantType expectedType : expectedTypes) {
             if (isGrantType(type, expectedType)) {
                 return true;
             }
         }
-        logger.error("Unsupported grant type: {}", type);
+        logger.error("Unsupported grant type: [{}]", type);
         return false;
     }
 

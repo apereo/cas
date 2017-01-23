@@ -101,7 +101,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     final NtlmPasswordAuthentication ntlm = new NtlmPasswordAuthentication(
                             type3.getDomain(), type3.getUser(), challenge,
                             lmResponse, ntResponse);
-                    logger.debug("Trying to authenticate {} with domain controller", type3.getUser());
+                    logger.debug("Trying to authenticate [{}] with domain controller", type3.getUser());
                     try {
                         SmbSession.logon(dc, ntlm);
                         ntlmCredential.setPrincipal(this.principalFactory.createPrincipal(type3.getUser()));
@@ -111,7 +111,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     }
                     break;
                 default:
-                    logger.debug("Unknown type: {}", src[NTLM_TOKEN_TYPE_FIELD_INDEX]);
+                    logger.debug("Unknown type: [{}]", src[NTLM_TOKEN_TYPE_FIELD_INDEX]);
             }
         } catch (final Exception e) {
             throw new FailedLoginException(e.getMessage());

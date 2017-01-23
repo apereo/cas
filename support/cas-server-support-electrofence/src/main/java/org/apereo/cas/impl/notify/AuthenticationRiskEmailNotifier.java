@@ -35,7 +35,7 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
 
         if (this.mailSender == null || StringUtils.isBlank(mail.getText()) || StringUtils.isBlank(mail.getFrom())
                 || StringUtils.isBlank(mail.getSubject()) || !principal.getAttributes().containsKey(mail.getAttributeName())) {
-            logger.debug("Could not send email {} because either no addresses could be found or email settings are not configured.",
+            logger.debug("Could not send email [{}] because either no addresses could be found or email settings are not configured.",
                     principal.getId());
             return;
         }

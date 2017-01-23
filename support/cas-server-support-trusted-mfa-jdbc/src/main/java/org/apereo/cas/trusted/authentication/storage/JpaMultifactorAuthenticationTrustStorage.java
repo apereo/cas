@@ -47,7 +47,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
                     MultifactorAuthenticationTrustRecord.class)
                     .setParameter("date", onOrBefore)
                     .executeUpdate();
-            logger.info("Found and removed {} records", count);
+            logger.info("Found and removed [{}] records", count);
         } catch (final NoResultException e) {
             logger.info("No trusted authentication records could be found");
         }
@@ -61,7 +61,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
                             MultifactorAuthenticationTrustRecord.class).setParameter("date", onOrAfterDate).getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
-            logger.info("No trusted authentication records could be found for {}", onOrAfterDate);
+            logger.info("No trusted authentication records could be found for [{}]", onOrAfterDate);
         }
         return Collections.emptySet();
     }
@@ -74,7 +74,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
                             MultifactorAuthenticationTrustRecord.class).setParameter("principal", principal).getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
-            logger.info("No trusted authentication records could be found for {}", principal);
+            logger.info("No trusted authentication records could be found for [{}]", principal);
         }
         return Collections.emptySet();
     }

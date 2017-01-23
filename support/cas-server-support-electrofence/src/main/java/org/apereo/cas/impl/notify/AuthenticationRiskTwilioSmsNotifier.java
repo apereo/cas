@@ -26,7 +26,7 @@ public class AuthenticationRiskTwilioSmsNotifier extends BaseAuthenticationRiskN
 
         if (StringUtils.isBlank(sms.getText()) || StringUtils.isBlank(sms.getFrom())
                 || !principal.getAttributes().containsKey(sms.getAttributeName())) {
-            logger.debug("Could not send sms {} because either no phones could be found or sms settings are not configured.",
+            logger.debug("Could not send sms [{}] because either no phones could be found or sms settings are not configured.",
                     principal.getId());
             return;
         }

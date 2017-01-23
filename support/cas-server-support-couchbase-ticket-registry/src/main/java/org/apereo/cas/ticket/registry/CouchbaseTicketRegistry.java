@@ -61,12 +61,12 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
         logger.info("Setting up Couchbase Ticket Registry instance");
         System.setProperty("com.couchbase.queryEnabled", Boolean.toString(isQueryEnabled));
-        logger.debug("Setting up indexes on document {} and views {}", UTIL_DOCUMENT, ALL_VIEWS);
+        logger.debug("Setting up indexes on document [{}] and views [{}]", UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
 
         logger.info("Initializing Couchbase...");
         this.couchbase.initialize();
-        logger.info("Initialized Couchbase bucket {}", this.couchbase.bucket().name());
+        logger.info("Initialized Couchbase bucket [{}]", this.couchbase.bucket().name());
 
     }
 

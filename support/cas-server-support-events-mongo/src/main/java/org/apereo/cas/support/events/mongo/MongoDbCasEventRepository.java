@@ -28,12 +28,12 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
         Assert.notNull(this.mongoTemplate);
 
         if (dropCollection) {
-            logger.debug("Dropping database collection: {}", this.collectionName);
+            logger.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            logger.debug("Creating database collection: {}", this.collectionName);
+            logger.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
     }

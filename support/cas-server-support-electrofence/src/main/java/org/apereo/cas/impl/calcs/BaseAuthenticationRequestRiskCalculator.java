@@ -49,7 +49,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
             return new AuthenticationRiskScore(HIGHEST_RISK_SCORE);
         }
         final AuthenticationRiskScore score = new AuthenticationRiskScore(calculateScore(request, authentication, service, events));
-        logger.debug("Calculated authentication risk score by {} is {}", getClass().getSimpleName(), score);
+        logger.debug("Calculated authentication risk score by [{}] is [{}]", getClass().getSimpleName(), score);
         return score;
     }
     
@@ -77,7 +77,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      */
     protected Collection<CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
         final String type = CasTicketGrantingTicketCreatedEvent.class.getName();
-        logger.debug("Retrieving events of type {} for {}", type, principal);
+        logger.debug("Retrieving events of type [{}] for [{}]", type, principal);
         
         final ZonedDateTime date = ZonedDateTime.now()
                 .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());

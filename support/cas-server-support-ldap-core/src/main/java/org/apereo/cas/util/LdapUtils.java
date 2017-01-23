@@ -233,7 +233,7 @@ public final class LdapUtils {
                 final ModifyOperation operation = new ModifyOperation(modifyConnection);
                 final Response response = operation.execute(new ModifyRequest(currentDn,
                         new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
-                LOGGER.debug("Result code {}, message: [{}]", response.getResult(), response.getMessage());
+                LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
 
@@ -242,7 +242,7 @@ public final class LdapUtils {
             final Response response = operation.execute(new PasswordModifyRequest(currentDn,
                     StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
                     new Credential(newPassword)));
-            LOGGER.debug("Result code {}, message: [{}]", response.getResult(), response.getMessage());
+            LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);

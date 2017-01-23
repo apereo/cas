@@ -65,11 +65,11 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
                 this.warnAttributeName);
         boolean matches = false;
         if (attribute != null) {
-            logger.debug("Found warning attribute {} with value {}",
+            logger.debug("Found warning attribute [{}] with value [{}]",
                     attribute.getName(), attribute.getStringValue());
             matches = this.warningAttributeValue.equals(attribute.getStringValue());
         }
-        logger.debug("matches={}, displayWarningOnMatch={}", matches,
+        logger.debug("matches=[{}], displayWarningOnMatch=[{}]", matches,
                 this.displayWarningOnMatch);
         if (this.displayWarningOnMatch == matches) {
             super.handleWarning(warning, response, configuration, messages);

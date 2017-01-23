@@ -42,7 +42,7 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
         final MongoClientURI uri = new MongoClientURI(this.mongoHostUri);
         final MongoClient client = new MongoClient(uri);
-        LOGGER.info("Connected to MongoDb instance @ {} using database [{}]",
+        LOGGER.info("Connected to MongoDb instance @ [{}] using database [{}]",
                 uri.getHosts(), uri.getDatabase());
 
         final MongoAuthenticator mongoAuthenticator = new MongoAuthenticator(client, this.attributes);

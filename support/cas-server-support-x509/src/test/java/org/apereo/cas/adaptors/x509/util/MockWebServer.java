@@ -157,7 +157,7 @@ public class MockWebServer {
                     out.write(buffer, 0, count);
                 }
             }
-            logger.debug("Wrote response for resource {} for [{}]",
+            logger.debug("Wrote response for resource [{}] for [{}]",
                     resource.getFilename(),
                     resource.contentLength());
 

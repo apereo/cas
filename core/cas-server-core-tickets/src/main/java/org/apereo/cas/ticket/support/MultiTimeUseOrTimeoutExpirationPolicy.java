@@ -65,12 +65,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     @Override
     public boolean isExpired(final TicketState ticketState) {
         if (ticketState == null) {
-            LOGGER.debug("Ticket state is null for {}", this.getClass().getSimpleName());
+            LOGGER.debug("Ticket state is null for [{}]", this.getClass().getSimpleName());
             return true;
         }
         final long countUses = ticketState.getCountOfUses();
         if (countUses >= this.numberOfUses) {
-            LOGGER.debug("Ticket usage count {} is greater than or equal to {}", countUses, this.numberOfUses);
+            LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]", countUses, this.numberOfUses);
             return true;
         }
 

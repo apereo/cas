@@ -155,7 +155,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<MessageDescriptor> messages) {
 
 
-        logger.debug("Handling warning {}", warning);
+        logger.debug("Handling warning [{}]", warning);
         if (warning == null) {
             logger.debug("Account state warning not defined");
             return;
@@ -164,7 +164,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
         final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
         logger.debug(
-                "Password expires in {} days. Expiration warning threshold is {} days.",
+                "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
                 ttl,
                 configuration.getPasswordWarningNumberOfDays());
         if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {
