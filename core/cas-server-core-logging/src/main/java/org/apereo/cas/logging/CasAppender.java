@@ -24,13 +24,13 @@ import org.springframework.util.Assert;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Plugin(name="CasAppender", category="Core", elementType="appender", printObject=true)
+@Plugin(name = "CasAppender", category = "Core", elementType = "appender", printObject = true)
 public class CasAppender extends AbstractAppender {
     private static final long serialVersionUID = 3744758323628847477L;
-    
+
     private Configuration config;
     private AppenderRef appenderRef;
-    
+
     /**
      * Instantiates a new Cas appender.
      *
@@ -42,11 +42,11 @@ public class CasAppender extends AbstractAppender {
         super(name, null, PatternLayout.createDefaultLayout());
         Assert.notNull(config, "Log configuration cannot be null");
         Assert.notNull(config, "Appender reference configuration cannot be null");
-        
+
         this.config = config;
         this.appenderRef = appenderRef;
     }
-    
+
     @Override
     public void append(final LogEvent logEvent) {
         final String messageModified = TicketIdSanitizationUtils.sanitize(logEvent.getMessage().getFormattedMessage());
@@ -67,7 +67,7 @@ public class CasAppender extends AbstractAppender {
                 .setThrownProxy(logEvent.getThrownProxy())
                 .setThrown(logEvent.getThrown())
                 .setTimeMillis(logEvent.getTimeMillis()).build();
-        
+
         final String refName = this.appenderRef.getRef();
         if (StringUtils.isNotBlank(refName)) {
             final Appender appender = this.config.getAppender(refName);
@@ -90,7 +90,7 @@ public class CasAppender extends AbstractAppender {
      * @return the cas appender
      */
     @PluginFactory
-    public static CasAppender build(@PluginAttribute("name") final String name, 
+    public static CasAppender build(@PluginAttribute("name") final String name,
                                     @PluginElement("AppenderRef") final AppenderRef appenderRef,
                                     @PluginConfiguration final Configuration config) {
         return new CasAppender(name, config, appenderRef);
