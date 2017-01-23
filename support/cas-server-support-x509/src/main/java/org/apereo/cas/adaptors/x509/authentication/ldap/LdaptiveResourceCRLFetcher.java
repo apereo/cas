@@ -102,7 +102,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     protected X509CRL fetchCRLFromLdap(final Object r) throws CertificateException, IOException, CRLException {
         try {
             final String ldapURL = r.toString();
-            logger.debug("Fetching CRL from ldap {}", ldapURL);
+            logger.debug("Fetching CRL from ldap [{}]", ldapURL);
 
             final Response<SearchResult> result = performLdapSearch(ldapURL);
             if (result.getResultCode() == ResultCode.SUCCESS) {

@@ -122,14 +122,14 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
             if (et != null) {
                 if (ZonedDateTime.now().isAfter(et)) {
-                    LOGGER.warn("Service access not allowed because it ended at {}. Now is {}", this.endingDateTime, ZonedDateTime.now());
+                    LOGGER.warn("Service access not allowed because it ended at [{}]. Now is [{}]", this.endingDateTime, ZonedDateTime.now());
                     return false;
                 }
             } else {
                 final LocalDateTime etLocal = DateTimeUtils.localDateTimeOf(this.endingDateTime);
                 if (etLocal != null) {
                     if (LocalDateTime.now().isAfter(etLocal)) {
-                        LOGGER.warn("Service access not allowed because it ended at {}. Now is {}", this.endingDateTime, LocalDateTime.now());
+                        LOGGER.warn("Service access not allowed because it ended at [{}]. Now is [{}]", this.endingDateTime, LocalDateTime.now());
                         return false;
                     }
                 }
@@ -148,14 +148,14 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
             final ZonedDateTime st = DateTimeUtils.zonedDateTimeOf(this.startingDateTime);
             if (st != null) {
                 if (ZonedDateTime.now().isBefore(st)) {
-                    LOGGER.warn("Service access not allowed because it starts at {}. Zoned now is {}", this.startingDateTime, ZonedDateTime.now());
+                    LOGGER.warn("Service access not allowed because it starts at [{}]. Zoned now is [{}]", this.startingDateTime, ZonedDateTime.now());
                     return false;
                 }
             } else {
                 final LocalDateTime stLocal = DateTimeUtils.localDateTimeOf(this.startingDateTime);
                 if (stLocal != null) {
                     if (LocalDateTime.now().isBefore(stLocal)) {
-                        LOGGER.warn("Service access not allowed because it starts at {}. Local now is {}", this.startingDateTime, ZonedDateTime.now());
+                        LOGGER.warn("Service access not allowed because it starts at [{}]. Local now is [{}]", this.startingDateTime, ZonedDateTime.now());
                         return false;
                     }
                 }

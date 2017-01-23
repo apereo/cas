@@ -38,9 +38,9 @@ public class OAuth20Validator {
      */
     public boolean checkParameterExist(final HttpServletRequest request, final String name) {
         final String parameter = request.getParameter(name);
-        logger.debug("{}: {}", name, parameter);
+        logger.debug("[{}]: [{}]", name, parameter);
         if (StringUtils.isBlank(parameter)) {
-            logger.error("Missing: {}", name);
+            logger.error("Missing: [{}]", name);
             return false;
         }
         return true;
@@ -58,7 +58,7 @@ public class OAuth20Validator {
         }
 
         final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-        logger.debug("Check registered service: {}", registeredService);
+        logger.debug("Check registered service: [{}]", registeredService);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             return true;
@@ -76,9 +76,9 @@ public class OAuth20Validator {
      */
     public boolean checkCallbackValid(final RegisteredService registeredService, final String redirectUri) {
         final String registeredServiceId = registeredService.getServiceId();
-        logger.debug("Found: {} vs redirectUri: {}", registeredService, redirectUri);
+        logger.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
-            logger.error("Unsupported {}: {} for registeredServiceId: {}", OAuthConstants.REDIRECT_URI, redirectUri, registeredServiceId);
+            logger.error("Unsupported [{}]: [{}] for registeredServiceId: [{}]", OAuthConstants.REDIRECT_URI, redirectUri, registeredServiceId);
             return false;
         }
         return true;
@@ -92,9 +92,9 @@ public class OAuth20Validator {
      * @return whether the secret is valid
      */
     public boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret) {
-        logger.debug("Found: {} in secret check", registeredService);
+        logger.debug("Found: [{}] in secret check", registeredService);
         if (!StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
-            logger.error("Wrong client secret for service: {}", registeredService);
+            logger.error("Wrong client secret for service: [{}]", registeredService);
             return false;
         }
         return true;

@@ -74,7 +74,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
             return null;
         }
-        LOGGER.debug("Building an authentication result for authentication {} and service {}", authentication, service);
+        LOGGER.debug("Building an authentication result for authentication [{}] and service [{}]", authentication, service);
         final DefaultAuthenticationResult res = new DefaultAuthenticationResult(authentication, service);
         res.setCredentialProvided(authentication.isCredentialProvided());
         return res;

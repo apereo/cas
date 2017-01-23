@@ -66,10 +66,10 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
                 accessToken = authHeader.substring(OAuthConstants.BEARER_TOKEN.length() + 1);
             }
         }
-        logger.debug("{}: {}", OAuthConstants.ACCESS_TOKEN, accessToken);
+        logger.debug("[{}]: [{}]", OAuthConstants.ACCESS_TOKEN, accessToken);
 
         if (StringUtils.isBlank(accessToken)) {
-            logger.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
+            logger.error("Missing [{}]", OAuthConstants.ACCESS_TOKEN);
             final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
             map.add(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
             final String value = OAuthUtils.jsonify(map);
@@ -78,7 +78,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
         final AccessToken accessTokenTicket = getTicketRegistry().getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-            logger.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
+            logger.error("Expired access token: [{}]", OAuthConstants.ACCESS_TOKEN);
             final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
             map.add(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
             final String value = OAuthUtils.jsonify(map);

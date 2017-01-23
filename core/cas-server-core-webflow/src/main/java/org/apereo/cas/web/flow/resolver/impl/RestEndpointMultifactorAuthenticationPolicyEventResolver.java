@@ -63,7 +63,7 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
 
         final Principal principal = authentication.getPrincipal();
         if (StringUtils.isBlank(restEndpoint)) {
-            logger.debug("Rest endpoint to determine event is not configured for {}", principal.getId());
+            logger.debug("Rest endpoint to determine event is not configured for [{}]", principal.getId());
             return null;
         }
 
@@ -76,23 +76,23 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
 
         final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
 
-        logger.debug("Contacting {} to inquire about {}", restEndpoint, principal.getId());
+        logger.debug("Contacting [{}] to inquire about [{}]", restEndpoint, principal.getId());
         final RestTemplate restTemplate = new RestTemplate();
         final ResponseEntity<String> responseEntity = restTemplate.postForEntity(restEndpoint, principal.getId(), String.class);
         if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
             final String results = responseEntity.getBody();
             if (StringUtils.isNotBlank(results)) {
-                logger.debug("Result returned from the rest endpoint is {}", results);
+                logger.debug("Result returned from the rest endpoint is [{}]", results);
                 final MultifactorAuthenticationProvider restProvider = flattenedProviders.stream()
                         .filter(p -> p.matches(results))
                         .findFirst()
                         .orElse(null);
 
                 if (restProvider != null) {
-                    logger.debug("Found multifactor authentication provider {}", restProvider.getId());
+                    logger.debug("Found multifactor authentication provider [{}]", restProvider.getId());
                     return Collections.singleton(new Event(this, restProvider.getId()));
                 }
-                logger.debug("No multifactor authentication provider could be matched against {}", results);
+                logger.debug("No multifactor authentication provider could be matched against [{}]", results);
                 return Collections.emptySet();
             }
         }

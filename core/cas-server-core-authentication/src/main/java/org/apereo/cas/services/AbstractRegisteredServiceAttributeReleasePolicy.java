@@ -77,18 +77,18 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     @Override
     public Map<String, Object> getAttributes(final Principal p) {
-        LOGGER.debug("Locating principal attributes for {}", p.getId());
+        LOGGER.debug("Locating principal attributes for [{}]", p.getId());
         final Map<String, Object> principalAttributes = this.principalAttributesRepository == null
                 ? p.getAttributes() : this.principalAttributesRepository.getAttributes(p);
-        LOGGER.debug("Found principal attributes {} for {}", principalAttributes, p.getId());
+        LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, p.getId());
 
-        LOGGER.debug("Calling attribute policy {} to process attributes for {}", getClass().getSimpleName(), p.getId());
+        LOGGER.debug("Calling attribute policy [{}] to process attributes for [{}]", getClass().getSimpleName(), p.getId());
         final Map<String, Object> policyAttributes = getAttributesInternal(principalAttributes);
-        LOGGER.debug("Attribute policy {} allows release of {} for {}", getClass().getSimpleName(), policyAttributes, p.getId());
+        LOGGER.debug("Attribute policy [{}] allows release of [{}] for [{}]", getClass().getSimpleName(), policyAttributes, p.getId());
 
         LOGGER.debug("Checking default attribute policy attributes");
         final Map<String, Object> defaultAttributes = getReleasedByDefaultAttributes(p, principalAttributes);
-        LOGGER.debug("Default attributes found to be released are {}", defaultAttributes);
+        LOGGER.debug("Default attributes found to be released are [{}]", defaultAttributes);
 
         LOGGER.debug("Attempting to merge policy attributes and default attributes");
         final Map<String, Object> attributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -114,7 +114,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * @return the map
      */
     protected Map<String, Object> returnFinalAttributesCollection(final Map<String, Object> attributesToRelease) {
-        LOGGER.debug("Final collection of attributes allowed are: {}", attributesToRelease);
+        LOGGER.debug("Final collection of attributes allowed are: [{}]", attributesToRelease);
         return attributesToRelease;
     }
 
@@ -132,12 +132,12 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.debug("Located application context. Retrieving default attributes for release, if any");
             final CasConfigurationProperties props = ctx.getAutowireCapableBeanFactory().getBean(CasConfigurationProperties.class);
             final Set<String> defaultAttrs = props.getAuthn().getAttributeRepository().getDefaultAttributesToRelease();
-            LOGGER.debug("Default attributes for release are: {}", defaultAttrs);
+            LOGGER.debug("Default attributes for release are: [{}]", defaultAttrs);
 
             final Map<String, Object> defaultAttributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             defaultAttrs.stream().forEach(key -> {
                 if (attributes.containsKey(key)) {
-                    LOGGER.debug("Found and added default attribute for release: {}", key);
+                    LOGGER.debug("Found and added default attribute for release: [{}]", key);
                     defaultAttributesToRelease.put(key, attributes.get(key));
                 }
             });

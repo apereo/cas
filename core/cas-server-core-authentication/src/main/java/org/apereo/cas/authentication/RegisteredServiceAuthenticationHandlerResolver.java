@@ -48,27 +48,27 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
                 throw new UnauthorizedSsoServiceException();
             }
             if (!registeredService.getRequiredHandlers().isEmpty()) {
-                logger.debug("Authentication transaction requires {} for service {}", registeredService.getRequiredHandlers(), service);
+                logger.debug("Authentication transaction requires [{}] for service [{}]", registeredService.getRequiredHandlers(), service);
                 final Set<AuthenticationHandler> handlerSet = new LinkedHashSet<>(candidateHandlers);
-                logger.info("Candidate authentication handlers examined this transaction are {}", handlerSet);
+                logger.info("Candidate authentication handlers examined this transaction are [{}]", handlerSet);
 
                 final Iterator<AuthenticationHandler> it = handlerSet.iterator();
                 while (it.hasNext()) {
                     final AuthenticationHandler handler = it.next();
                     if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler)
                             && !registeredService.getRequiredHandlers().contains(handler.getName())) {
-                        logger.debug("Authentication handler {} is not required for this transaction and is removed", handler.getName());
+                        logger.debug("Authentication handler [{}] is not required for this transaction and is removed", handler.getName());
                         it.remove();
                     }
                 }
-                logger.debug("Authentication handlers for this transaction are {}", handlerSet);
+                logger.debug("Authentication handlers for this transaction are [{}]", handlerSet);
                 return handlerSet;
             } else {
                 logger.debug("No specific authentication handlers are required for this transaction");
             }
         }
 
-        logger.debug("Authentication handlers used for this transaction are {}", candidateHandlers);
+        logger.debug("Authentication handlers used for this transaction are [[{}]]", candidateHandlers);
         return candidateHandlers;
     }
 }

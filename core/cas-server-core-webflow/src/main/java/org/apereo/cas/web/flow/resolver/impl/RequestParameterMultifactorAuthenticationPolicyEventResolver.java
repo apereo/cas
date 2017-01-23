@@ -66,7 +66,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
             if (providerMap == null || providerMap.isEmpty()) {
-                logger.error("No multifactor authentication providers are available in the application context to satisfy {}", (Object[]) values);
+                logger.error("No multifactor authentication providers are available in the application context to satisfy [{}]", (Object[]) values);
                 throw new AuthenticationException();
             }
 
@@ -79,18 +79,19 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
                             buildEventAttributeMap(authentication.getPrincipal(), service, provider));
                     return Collections.singleton(event);
                 }
-                logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
+                logger.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
                 return null;
             } else {
-                logger.warn("No multifactor provider could be found for request parameter {}", (Object[]) values);
+                logger.warn("No multifactor provider could be found for request parameter [{}]", (Object[]) values);
                 throw new AuthenticationException();
             }
         }
-        logger.debug("No value could be found for request parameter {}", mfaRequestParameter);
+        logger.debug("No value could be found for request parameter [{}]", mfaRequestParameter);
         return null;
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+    @Audit(action = "AUTHENTICATION_EVENT", 
+            actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
