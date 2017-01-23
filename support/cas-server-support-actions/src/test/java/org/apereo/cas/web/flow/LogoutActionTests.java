@@ -9,7 +9,6 @@ import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,11 +35,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     private static final String COOKIE_TGC_ID = "CASTGC";
 
     private LogoutAction logoutAction;
-
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
-
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
+    
     private InMemoryServiceRegistry serviceRegistryDao;
 
     private DefaultServicesManager serviceManager;
@@ -63,12 +58,9 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final LocalAttributeMap flowScope = new LocalAttributeMap();
         when(this.requestContext.getFlowScope()).thenReturn(flowScope);
 
-        this.warnCookieGenerator = new CookieRetrievingCookieGenerator("test", "", 2, false, null);
         this.serviceRegistryDao = new InMemoryServiceRegistry();
         this.serviceManager = new DefaultServicesManager(serviceRegistryDao);
         this.serviceManager.load();
-
-        this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator(COOKIE_TGC_ID, "", 2, false, null);
 
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, false);
     }

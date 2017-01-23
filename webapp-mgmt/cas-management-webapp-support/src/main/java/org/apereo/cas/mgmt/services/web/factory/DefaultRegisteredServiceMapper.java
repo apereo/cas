@@ -23,8 +23,6 @@ import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.Map;
@@ -37,8 +35,6 @@ import java.util.Set;
  * @since 4.2
  */
 public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceMapper.class);
-
     @Override
     public void mapRegisteredService(final RegisteredService svc, final RegisteredServiceEditBean.ServiceData bean) {
         bean.setAssignedId(Long.toString(svc.getId()));

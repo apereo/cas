@@ -95,8 +95,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration implements Authe
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getAuthy().getBypass(),
-                ticketRegistrySupport);
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getAuthy().getBypass());
     }
 
     @Bean

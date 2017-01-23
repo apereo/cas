@@ -1,6 +1,5 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.J2EContext;
@@ -26,11 +25,9 @@ public class SAML2ClientLogoutAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SAML2ClientLogoutAction.class);
 
     private final Clients clients;
-    private final HttpClient httpClient;
 
-    public SAML2ClientLogoutAction(final Clients clients, final HttpClient httpClient) {
+    public SAML2ClientLogoutAction(final Clients clients) {
         this.clients = clients;
-        this.httpClient = httpClient;
     }
 
     @Override

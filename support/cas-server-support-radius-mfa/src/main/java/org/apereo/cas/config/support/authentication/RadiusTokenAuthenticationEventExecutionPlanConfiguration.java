@@ -64,8 +64,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
     @RefreshScope
     public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getRadius().getBypass(),
-                ticketRegistrySupport
+                casProperties.getAuthn().getMfa().getRadius().getBypass()
         );
     }
 
