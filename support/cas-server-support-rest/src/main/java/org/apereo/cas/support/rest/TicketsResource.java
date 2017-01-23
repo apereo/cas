@@ -119,7 +119,7 @@ public class TicketsResource {
                     .collect(Collectors.toList());
             final Map<String, List<String>> errorsMap = new HashMap<>();
             errorsMap.put("authentication_exceptions", authnExceptions);
-            LOGGER.error("{} Caused by: {}", e.getMessage(), authnExceptions, e);
+            LOGGER.error("[{}] Caused by: [{}]", e.getMessage(), authnExceptions, e);
             try {
                 return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
             } catch (final JsonProcessingException exception) {
