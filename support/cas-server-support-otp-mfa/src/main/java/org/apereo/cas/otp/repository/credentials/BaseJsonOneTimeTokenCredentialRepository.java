@@ -67,7 +67,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
                 c = new TreeSet<>();
             }
             
-            logger.debug("Found {} account(s) and added google authenticator account for [{}]", c.size(), userName);
+            logger.debug("Found [{}] account(s) and added google authenticator account for [{}]", c.size(), userName);
             c.add(account);
 
             logger.debug("Saving google authenticator accounts back to the JSON file at [{}]", this.location.getFile());

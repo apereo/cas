@@ -70,7 +70,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         if (sendPasswordResetEmailToAccount(to, url)) {
             return success();
         }
-        LOGGER.error("Failed to notify account {}", to);
+        LOGGER.error("Failed to notify account [{}]", to);
         return error();
     }
 

@@ -505,7 +505,7 @@ public abstract class AbstractSamlProfileHandlerController {
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
 
-        logger.debug("Fetching saml metadata adaptor for {}", issuer);
+        logger.debug("Fetching saml metadata adaptor for [{}]", issuer);
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
                         registeredService, authnRequest);

@@ -87,7 +87,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         
         final Conditions conditions = this.samlObjectBuilder.newConditions(issuedAt, service.getId(), this.skewAllowance);
         assertion.setConditions(conditions);
-        logger.debug("Built assertion conditions for issuer [{}] and service {{}} ", this.issuer, service.getId());
+        logger.debug("Built assertion conditions for issuer [{}] and service [{}] ", this.issuer, service.getId());
         
         final Subject subject = this.samlObjectBuilder.newSubject(principal.getId());
         logger.debug("Built subject for principal [{}]", principal);
@@ -101,7 +101,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         }
 
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
-        logger.debug("Set response status code to {}", response.getStatus());
+        logger.debug("Set response status code to [{}]", response.getStatus());
         
         response.getAssertions().add(assertion);
     }

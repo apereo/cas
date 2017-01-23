@@ -80,7 +80,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         
         final Set<Event> providerFound = checkRequireMultifactorProvidersForRequest(context, service, authentication);
         if (providerFound != null && !providerFound.isEmpty()) {
-            logger.warn("Found multifactor authentication providers {} required for this authentication event", providerFound);
+            logger.warn("Found multifactor authentication providers [{}] required for this authentication event", providerFound);
             return providerFound;
         }
         
@@ -140,7 +140,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
     private boolean checkUserAgentOrClientIp(final String clientIp, final String agent, final String mfaMethod, final String pattern) {
         if (agent.matches(pattern) || clientIp.matches(pattern)) {
-            logger.debug("Current user agent [{}] at [{}] matches the provided pattern {} for "
+            logger.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
                          + "adaptive authentication and is required to use [{}]",
                         agent, clientIp, pattern, mfaMethod);
 

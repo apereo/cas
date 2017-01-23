@@ -69,7 +69,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
     protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents, final Authentication authentication, final RegisteredService registeredService,
                                                final HttpServletRequest request, final RequestContext context) {
         logger.debug("Collection of resolved events for this authentication sequence are:");
-        resolveEvents.forEach(e -> logger.debug("Event id [{}] resolved from {}", e.getId(), e.getSource().getClass().getName()));
+        resolveEvents.forEach(e -> logger.debug("Event id [{}] resolved from [{}]", e.getId(), e.getSource().getClass().getName()));
         final Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> pair =
                 filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService);
         WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
@@ -103,7 +103,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
         // remove events that are not supported by providers.
         resolveEvents.removeIf(e -> flattenedProviders.stream().filter(p -> p.supports(e, authentication, registeredService)).count() == 0);
 
-        logger.debug("Finalized set of resolved events are {}", resolveEvents);
+        logger.debug("Finalized set of resolved events are [{}]", resolveEvents);
         return Pair.of(resolveEvents, flattenedProviders);
     }
 }

@@ -40,7 +40,7 @@ public final class RadiusUtils {
                                                                             final boolean failoverOnAuthenticationFailure,
                                                                             final boolean failoverOnException) throws Exception {
         for (final RadiusServer radiusServer : servers) {
-            LOGGER.debug("Attempting to authenticate {} at {}", username, radiusServer);
+            LOGGER.debug("Attempting to authenticate [{}] at [{}]", username, radiusServer);
             try {
                 final RadiusResponse response = radiusServer.authenticate(username, password);
                 if (response != null) {

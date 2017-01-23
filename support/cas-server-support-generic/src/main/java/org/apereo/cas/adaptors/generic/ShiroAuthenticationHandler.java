@@ -136,7 +136,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
             if (shiroResource != null && shiroResource.exists()) {
                 final String location = shiroResource.getURI().toString();
-                logger.debug("Loading Shiro configuration from {}", location);
+                logger.debug("Loading Shiro configuration from [{}]", location);
 
                 final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
                 final SecurityManager securityManager = factory.getInstance();
