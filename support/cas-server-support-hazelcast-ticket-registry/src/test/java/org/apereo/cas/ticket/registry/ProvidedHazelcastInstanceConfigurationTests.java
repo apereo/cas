@@ -82,7 +82,7 @@ public class ProvidedHazelcastInstanceConfigurationTests {
 
     @After
     public void shutdownHz() {
-        LOGGER.info("Shutting down hazelcast instance {}", this.hzInstance.getConfig().getInstanceName());
+        LOGGER.info("Shutting down hazelcast instance [{}]", this.hzInstance.getConfig().getInstanceName());
         this.hzInstance.shutdown();
         while (this.hzInstance.getLifecycleService().isRunning()) {
             LOGGER.info("Waiting for instances to shut down");

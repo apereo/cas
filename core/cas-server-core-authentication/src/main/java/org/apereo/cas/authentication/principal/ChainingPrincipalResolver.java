@@ -64,7 +64,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         final Set<Principal> principals = new HashSet<>();
         for (final PrincipalResolver resolver : chain) {
             if (resolver.supports(credential)) {
-                LOGGER.debug("Invoking principal resolver {}", resolver);
+                LOGGER.debug("Invoking principal resolver [{}]", resolver);
                 final Principal p = resolver.resolve(credential, principal);
                 if (p != null) {
                     principals.add(p);

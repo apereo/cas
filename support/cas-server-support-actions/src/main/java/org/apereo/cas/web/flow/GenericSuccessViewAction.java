@@ -82,7 +82,7 @@ public class GenericSuccessViewAction extends AbstractAction {
             logger.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());
             logger.debug(e.getMessage(), e);
         }
-        logger.warn("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}", NullPrincipal.class.getSimpleName());
+        logger.warn("In the absence of valid TGT, the authentication principal cannot be determined. Returning [{}]", NullPrincipal.class.getSimpleName());
         return NullPrincipal.getInstance();
     }
 }

@@ -39,7 +39,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
             if (groovyFile.exists()) {
                 final Class<?> groovyClass = loader.parseClass(groovyFile);
                 final GroovyObject groovyObject = (GroovyObject) groovyClass.newInstance();
-                LOGGER.debug("Created groovy object instance from class {}", groovyFile.getCanonicalPath());
+                LOGGER.debug("Created groovy object instance from class [{}]", groovyFile.getCanonicalPath());
                 final Object[] args = {attributes, LOGGER};
                 LOGGER.debug("Executing groovy script's run method, with parameters [{}]", args);
                 final Map<String, Object> personAttributesMap = (Map<String, Object>) groovyObject.invokeMethod("run", args);

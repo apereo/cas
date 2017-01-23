@@ -160,8 +160,8 @@ public class AuthenticationExceptionHandler {
         }
 
         // we don't recognize this exception
-        logger.trace("Unable to translate errors of the authentication exception {}. "
-                + "Returning {} by default...", e, UNKNOWN);
+        logger.trace("Unable to translate errors of the authentication exception [{}]"
+                + "Returning [{}]", e, UNKNOWN);
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return UNKNOWN;
@@ -184,8 +184,8 @@ public class AuthenticationExceptionHandler {
         // find the first error in the error list that matches the handlerErrors
         final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
                 .map(Class::getSimpleName).findFirst().orElseGet(() -> {
-                    logger.error("Unable to translate handler errors of the authentication exception {}. "
-                            + "Returning {} by default...", e, UNKNOWN);
+                    logger.error("Unable to translate handler errors of the authentication exception [{}]"
+                            + "Returning [{}]", e, UNKNOWN);
                     return UNKNOWN;
                 });
 
