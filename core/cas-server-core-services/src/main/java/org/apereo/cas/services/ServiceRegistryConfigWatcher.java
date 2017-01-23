@@ -53,7 +53,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
             this.serviceRegistryDao = serviceRegistryDao;
             this.watcher = FileSystems.getDefault().newWatchService();
             final WatchEvent.Kind[] kinds = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
-            LOGGER.debug("Created service registry watcher for events of type {}", (Object[]) kinds);
+            LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) kinds);
             this.serviceRegistryDao.getWatchableResource().register(this.watcher, kinds);
             
             this.applicationEventPublisher = eventPublisher;

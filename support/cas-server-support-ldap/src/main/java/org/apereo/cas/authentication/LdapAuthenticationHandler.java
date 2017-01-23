@@ -271,7 +271,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (this.principalAttributeMap != null && !this.principalAttributeMap.isEmpty()) {
             final Set<String> attrs = this.principalAttributeMap.keySet();
             attributes.addAll(attrs);
-            logger.debug("Configured to retrieve principal attribute collection of {}", attrs);
+            logger.debug("Configured to retrieve principal attribute collection of [{}]", attrs);
         }
         if (this.additionalAttributes != null && !this.additionalAttributes.isEmpty()) {
             attributes.addAll(this.additionalAttributes);

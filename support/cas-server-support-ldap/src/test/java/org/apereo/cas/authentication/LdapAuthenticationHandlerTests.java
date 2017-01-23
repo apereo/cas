@@ -67,7 +67,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        LOGGER.debug("Running {}", LdapAuthenticationHandlerTests.class.getSimpleName());
+        LOGGER.debug("Running [{}]", LdapAuthenticationHandlerTests.class.getSimpleName());
         initDirectoryServer();
     }
 

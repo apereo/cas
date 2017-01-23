@@ -134,7 +134,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
                     return Reason.fromCode(code);
                 }
             } catch (final Exception e) {
-                LOGGER.trace("An exception occurred when resolving extension value: {}", e.getMessage());
+                LOGGER.trace("An exception occurred when resolving extension value: [{}]", e.getMessage());
             }
         }
         return null;

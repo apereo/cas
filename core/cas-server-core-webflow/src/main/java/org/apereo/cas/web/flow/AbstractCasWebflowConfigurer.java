@@ -118,7 +118,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             if (casProperties.getWebflow().isAutoconfigure()) {
                 doInitialize();
             } else {
-                logger.warn("Webflow auto-configuration is disabled. CAS will not modify the webflow via {}", getClass().getName());
+                logger.warn("Webflow auto-configuration is disabled. CAS will not modify the webflow via [{}]", getClass().getName());
             }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
@@ -152,7 +152,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         if (found) {
             return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         }
-        logger.error("Could not find flow definition {}. Available flow definition ids are {}", FLOW_ID_LOGIN,
+        logger.error("Could not find flow definition {}. Available flow definition ids are [{}]", FLOW_ID_LOGIN,
                 this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
         return null;
     }
@@ -174,13 +174,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public ActionState createActionState(final Flow flow, final String name, final Action... actions) {
         if (containsFlowState(flow, name)) {
-            logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), name);
+            logger.debug("Flow {} already contains a definition for state id [{}]", flow.getId(), name);
             return (ActionState) flow.getTransitionableState(name);
         }
         final ActionState actionState = new ActionState(flow, name);
-        logger.debug("Created action state {}", actionState.getId());
+        logger.debug("Created action state [{}]", actionState.getId());
         actionState.getActionList().addAll(actions);
-        logger.debug("Added action to the action state {} list of actions: {}", actionState.getId(), actionState.getActionList());
+        logger.debug("Added action to the action state {} list of actions: [{}]", actionState.getId(), actionState.getActionList());
         return actionState;
     }
 
@@ -189,7 +189,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
                                              final String thenStateId, final String elseStateId) {
         if (containsFlowState(flow, id)) {
-            logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
+            logger.debug("Flow {} already contains a definition for state id [{}]", flow.getId(), id);
             return (DecisionState) flow.getTransitionableState(id);
         }
 
@@ -210,7 +210,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void setStartState(final Flow flow, final String state) {
         flow.setStartState(state);
         final TransitionableState startState = getStartState(flow);
-        logger.debug("Start state is now set to {}", startState.getId());
+        logger.debug("Start state is now set to [{}]", startState.getId());
     }
 
     @Override
@@ -237,7 +237,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final ParserContext ctx = new FluentParserContext();
         final Expression action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
         final EvaluateAction newAction = new EvaluateAction(action, null);
-        logger.debug("Created evaluate action for expression {}", action.getExpressionString());
+        logger.debug("Created evaluate action for expression [{}]", action.getExpressionString());
         return newAction;
     }
 
@@ -269,7 +269,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         try {
             final Transition transition = createTransition(criteriaOutcome, targetState);
             state.getTransitionSet().add(transition);
-            logger.debug("Added transition {} to the state {}", transition.getId(), state.getId());
+            logger.debug("Added transition {} to the state [{}]", transition.getId(), state.getId());
             return transition;
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);

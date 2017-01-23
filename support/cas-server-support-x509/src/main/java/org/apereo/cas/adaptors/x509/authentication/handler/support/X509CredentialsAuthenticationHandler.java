@@ -158,7 +158,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         boolean hasTrustedIssuer = false;
         for (int i = certificates.length - 1; i >= 0; i--) {
             final X509Certificate certificate = certificates[i];
-            logger.debug("Evaluating {}", CertUtils.toString(certificate));
+            logger.debug("Evaluating [{}]", CertUtils.toString(certificate));
 
             validate(certificate);
 

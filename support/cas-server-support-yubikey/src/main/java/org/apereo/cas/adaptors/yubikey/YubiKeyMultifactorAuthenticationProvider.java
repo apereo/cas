@@ -33,12 +33,12 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
         try {
             final String[] endpoints = this.yubiKeyAuthenticationHandler.getClient().getWsapiUrls();
             for (final String endpoint : endpoints) {
-                logger.debug("Pinging YubiKey API endpoint at {}", endpoint);
+                logger.debug("Pinging YubiKey API endpoint at [{}]", endpoint);
                 final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));
                 final String message = msg != null ? msg.getMessage() : null;
                 if (StringUtils.isNotBlank(message)) {
                     final String response = EncodingUtils.urlDecode(message);
-                    logger.debug("Received YubiKey ping response {}", response);
+                    logger.debug("Received YubiKey ping response [{}]", response);
                     return true;
                 }
             }

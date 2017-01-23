@@ -107,7 +107,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
         // get client
         final String clientName = request.getParameter(this.clients.getClientNameParameter());
-        LOGGER.debug("clientName: {}", clientName);
+        LOGGER.debug("clientName: [{}]", clientName);
 
         if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
             return stopWebflow();
@@ -116,13 +116,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         if (StringUtils.isNotBlank(clientName)) {
             // get client
             final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            LOGGER.debug("Client: {}", client);
+            LOGGER.debug("Client: [{}]", client);
 
             // get credentials
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
-                LOGGER.debug("Retrieved credentials: {}", credentials);
+                LOGGER.debug("Retrieved credentials: [{}]", credentials);
             } catch (final Exception e) {
                 LOGGER.debug("The request requires http action", e);
                 return stopWebflow();
@@ -131,7 +131,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
-            LOGGER.debug("Retrieve service: {}", service);
+            LOGGER.debug("Retrieve service: [{}]", service);
             if (service != null) {
                 request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             }
@@ -161,7 +161,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             final Set<ProviderLoginPageConfiguration> urls = context.getFlowScope().get(PAC4J_URLS, Set.class);
             if (urls != null && urls.size() == 1) {
                 final ProviderLoginPageConfiguration cfg = urls.stream().findFirst().get();
-                LOGGER.debug("Auto-redirecting to client url {}", cfg.getRedirectUrl());
+                LOGGER.debug("Auto-redirecting to client url [{}]", cfg.getRedirectUrl());
                 response.sendRedirect(cfg.getRedirectUrl());
                 final ExternalContext externalContext = context.getExternalContext();
                 externalContext.recordResponseComplete();
@@ -187,7 +187,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
         // save parameters in web session
         final WebApplicationService service = WebUtils.getService(context);
-        LOGGER.debug("save service: {}", service);
+        LOGGER.debug("save service: [{}]", service);
         session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         saveRequestParameter(request, session, this.themeParamName);
         saveRequestParameter(request, session, this.localParamName);

@@ -99,7 +99,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
         if (enableWatcher) {
 
-            LOGGER.info("Watching service registry directory at {}", configDirectory);
+            LOGGER.info("Watching service registry directory at [{}]", configDirectory);
 
             this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, eventPublisher);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
@@ -167,7 +167,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         c.stream().filter(file -> file.length() > 0).forEach(file -> {
             final RegisteredService service = load(file);
             if (service == null) {
-                LOGGER.warn("Could not load service definition from file {}", file);
+                LOGGER.warn("Could not load service definition from file [{}]", file);
                 errorCount[0]++;
             } else {
                 if (temp.containsKey(service.getId())) {
@@ -215,7 +215,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceSerializer.from(in);
         } catch (final Exception e) {
-            LOGGER.error("Error reading configuration file {}", file.getName(), e);
+            LOGGER.error("Error reading configuration file [{}]", file.getName(), e);
         }
         return null;
     }

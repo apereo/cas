@@ -36,14 +36,14 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     protected void renderMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                            final HttpServletResponse response) throws Exception {
         try {
-            logger.debug("Preparing the output model [{}] to render view {}", model.keySet(), getClass().getSimpleName());
+            logger.debug("Preparing the output model [{}] to render view [{}]", model.keySet(), getClass().getSimpleName());
             prepareMergedOutputModel(model, request, response);
             logger.debug("Prepared output model with objects [{}]. Now rendering view...", model.keySet().toArray());
 
             if (this.view != null) {
                 this.view.render(model, request, response);
             } else {
-                logger.warn("No view is available to render the output for {}", this.getClass().getName());
+                logger.warn("No view is available to render the output for [{}]", this.getClass().getName());
             }
         } catch (final Exception e) {
             throw Throwables.propagate(e);

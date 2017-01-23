@@ -138,12 +138,12 @@ public class MockWebServer {
             try {
                 this.serverSocket.close();
             } catch (final IOException e) {
-                logger.trace("Exception when closing the server socket: {}", e.getMessage());
+                logger.trace("Exception when closing the server socket: [{}]", e.getMessage());
             }
         }
 
         private void writeResponse(final Socket socket) throws IOException {
-            logger.debug("Socket response for resource {}", resource.getFilename());
+            logger.debug("Socket response for resource [{}]", resource.getFilename());
             final OutputStream out = socket.getOutputStream();
             out.write(STATUS_LINE.getBytes());
             out.write(header("Content-Length", this.resource.contentLength()));
@@ -157,7 +157,7 @@ public class MockWebServer {
                     out.write(buffer, 0, count);
                 }
             }
-            logger.debug("Wrote response for resource {} for {}",
+            logger.debug("Wrote response for resource {} for [{}]",
                     resource.getFilename(),
                     resource.contentLength());
 

@@ -44,7 +44,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        LOGGER.debug("Running {}", PersonDirectoryPrincipalResolverLdaptiveTests.class.getSimpleName());
+        LOGGER.debug("Running [{}]", PersonDirectoryPrincipalResolverLdaptiveTests.class.getSimpleName());
         initDirectoryServer();
     }
 

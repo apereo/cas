@@ -33,14 +33,14 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     @Override
     protected TokenCredentials convertToPac4jCredentials(final BasicIdentifiableCredential casCredential)
             throws GeneralSecurityException, PreventedException {
-        logger.debug("CAS credentials: {}", casCredential);
+        logger.debug("CAS credentials: [{}]", casCredential);
 
         final String id = this.principalNameTransformer.transform(casCredential.getId());
         if (id == null) {
             throw new AccountNotFoundException("Id is null.");
         }
         final TokenCredentials credentials = new TokenCredentials(id, getClass().getSimpleName());
-        logger.debug("pac4j credentials: {}", credentials);
+        logger.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }
 

@@ -50,7 +50,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
 
         final String username = credential.getUsername();
         try {
-            logger.debug("Executing SQL query {}", sql);
+            logger.debug("Executing SQL query [{}]", sql);
 
             final int count = getJdbcTemplate().queryForObject(sql, Integer.class, username, credential.getPassword());
             if (count == 0) {

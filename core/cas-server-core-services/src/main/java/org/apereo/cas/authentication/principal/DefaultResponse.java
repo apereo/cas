@@ -127,7 +127,7 @@ public class DefaultResponse implements Response {
         }
         m.appendTail(sb);
         if (hasNonPrintable) {
-            LOGGER.warn("The following redirect URL has been sanitized and may be sign of attack:\n{}", url);
+            LOGGER.warn("The following redirect URL has been sanitized and may be sign of attack:\n[{}]", url);
         }
         return sb.toString();
     }

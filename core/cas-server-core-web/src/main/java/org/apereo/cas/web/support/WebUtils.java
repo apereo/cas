@@ -670,7 +670,7 @@ public final class WebUtils {
         try {
             return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         } catch (final Exception e) {
-            LOGGER.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class);
+            LOGGER.warn("Could not locate beans of type [{}]", MultifactorAuthenticationProvider.class);
         }
         return Collections.emptyMap();
     }

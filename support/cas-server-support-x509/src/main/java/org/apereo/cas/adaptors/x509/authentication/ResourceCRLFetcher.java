@@ -34,7 +34,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
     public Collection<X509CRL> fetch(final Collection<Resource> crls) throws IOException, CRLException, CertificateException {
         final Set<X509CRL> results = new HashSet<>();
         for (final Resource r : crls) {
-            logger.debug("Fetching CRL data from {}", r);
+            logger.debug("Fetching CRL data from [{}]", r);
             try(InputStream ins = r.getInputStream()) {
                 final X509CRL crl = (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
                 if (crl != null) {
@@ -76,7 +76,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
         if (!results.isEmpty()) {
             return results.iterator().next();
         }
-        logger.warn("Unable to fetch {}", crl);
+        logger.warn("Unable to fetch [{}]", crl);
         return null;
     }
 

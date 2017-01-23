@@ -70,11 +70,11 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         if (cert == null) {
             throw new IllegalArgumentException("Certificate cannot be null.");
         }
-        logger.debug("Evaluating certificate revocation status for {}", CertUtils.toString(cert));
+        logger.debug("Evaluating certificate revocation status for [{}]", CertUtils.toString(cert));
         final Collection<X509CRL> crls = getCRLs(cert);
 
         if (crls == null || crls.isEmpty()) {
-            logger.warn("CRL data is not available for {}", CertUtils.toString(cert));
+            logger.warn("CRL data is not available for [{}]", CertUtils.toString(cert));
             this.unavailableCRLPolicy.apply(null);
             return;
         }
@@ -83,7 +83,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         final List<X509CRLEntry> revokedCrls = new ArrayList<>();
 
         crls.stream().filter(CertUtils::isExpired).forEach(crl -> {
-            logger.warn("CRL data expired on {}", crl.getNextUpdate());
+            logger.warn("CRL data expired on [{}]", crl.getNextUpdate());
             expiredCrls.add(crl);
         });
 

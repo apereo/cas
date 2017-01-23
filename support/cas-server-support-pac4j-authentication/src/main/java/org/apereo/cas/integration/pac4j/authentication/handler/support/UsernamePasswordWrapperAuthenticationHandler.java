@@ -49,7 +49,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
     @Override
     protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential)
             throws GeneralSecurityException, PreventedException {
-        logger.debug("CAS credentials: {}", casCredential);
+        logger.debug("CAS credentials: [{}]", casCredential);
 
         final String username = this.principalNameTransformer.transform(casCredential.getUsername());
         if (username == null) {
@@ -57,7 +57,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
         }
         final String password = this.passwordEncoder.encode(casCredential.getPassword());
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password, getClass().getSimpleName());
-        logger.debug("pac4j credentials: {}", credentials);
+        logger.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }
 
