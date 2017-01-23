@@ -119,14 +119,14 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         if (resolver.supports(credential)) {
             try {
                 final Principal p = resolver.resolve(credential, principal);
-                logger.debug("{} resolved {} from {}", resolver, p, credential);
+                logger.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
-                logger.error("{} failed to resolve principal from {}", resolver, credential, e);
+                logger.error("[{}] failed to resolve principal from [{}]", resolver, credential, e);
             }
         } else {
             logger.warn(
-                    "{} is configured to use {} but it does not support {}, which suggests a configuration problem.",
+                    "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
                     handlerName,
                     resolver,
                     credential);
@@ -153,7 +153,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         addAuthenticationMethodAttribute(builder, authentication);
 
-        logger.info("Authenticated principal [{}] with attributes {} via credentials {}.",
+        logger.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
                 principal.getId(), principal.getAttributes(), transaction.getCredentials());
         populateAuthenticationMetadataAttributes(builder, transaction.getCredentials());
 
@@ -189,19 +189,19 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         principal = result.getPrincipal();
 
         if (resolver == null) {
-            logger.debug("No principal resolution is configured for {}. Falling back to handler principal {}",
+            logger.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]",
                     handler.getName(),
                     principal);
         } else {
             principal = resolvePrincipal(handler.getName(), resolver, credential, principal);
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
-                    logger.warn("Principal resolution handled by {} produced a null principal for: {}"
+                    logger.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
                                     + "CAS is configured to treat principal resolution failures as fatal.",
                             resolver.getClass().getSimpleName(), credential);
                     throw new UnresolvedPrincipalException();
                 }
-                logger.warn("Principal resolution handled by {} produced a null principal. "
+                logger.warn("Principal resolution handled by [{}] produced a null principal. "
                         + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
                         + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
             }
