@@ -201,16 +201,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
                 final String name = StringUtils.remove(client.getName(), "Client");
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
-                LOGGER.debug("{} -> {}", name, redirectionUrl);
+                LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
                 urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
             } catch (final HttpAction e) {
                 if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
-                    LOGGER.debug("Authentication request was denied from the provider {}", client.getName());
+                    LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
                 } else {
                     LOGGER.warn(e.getMessage(), e);
                 }
             } catch (final Exception e) {
-                LOGGER.error("Cannot process client {}", client, e);
+                LOGGER.error("Cannot process client [{}]", client, e);
             }
         }
         if (!urls.isEmpty()) {
@@ -278,7 +278,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
             model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
 
-            LOGGER.debug("Delegation request has failed. Details are {}", model);
+            LOGGER.debug("Delegation request has failed. Details are [{}]", model);
             return Optional.of(new ModelAndView("casPac4jStopWebflow", model));
         }
         return Optional.empty();
