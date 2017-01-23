@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -26,6 +27,7 @@ public class DefaultAuthentication implements Authentication {
 
     /** UID for serializing. */
     private static final long serialVersionUID = 3206127526058061391L;
+
 
     /** Authentication date stamp. */
     private ZonedDateTime authenticationDate;
@@ -186,6 +188,14 @@ public class DefaultAuthentication implements Authentication {
         return Collections.emptyMap();
     }
 
+    @JsonIgnore
+    @Override
+    public boolean isCredentialProvided() {
+        return this.attributes != null
+                && this.attributes.containsKey(AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED)
+                && (Boolean) this.attributes.get(AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED);
+    }
+    
     @Override
     public void update(final Authentication authn) {
         this.attributes.putAll(authn.getAttributes());
