@@ -265,7 +265,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         logger.debug("Initializing LDAP attribute configuration...");
         if (StringUtils.isNotBlank(this.principalIdAttribute)) {
-            logger.debug("Configured to retrieve principal id attribute {}", this.principalIdAttribute);
+            logger.debug("Configured to retrieve principal id attribute [{}]", this.principalIdAttribute);
             attributes.add(this.principalIdAttribute);
         }
         if (this.principalAttributeMap != null && !this.principalAttributeMap.isEmpty()) {
@@ -275,17 +275,17 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         if (this.additionalAttributes != null && !this.additionalAttributes.isEmpty()) {
             attributes.addAll(this.additionalAttributes);
-            logger.debug("Configured to retrieve additional attributes {}", this.additionalAttributes);
+            logger.debug("Configured to retrieve additional attributes [{}]", this.additionalAttributes);
         }
         final List<String> authenticatorAttributes = Arrays.asList(authenticator.getReturnAttributes());
-        logger.debug("Filtering authentication entry attributes {} based on authenticator attributes {}",
+        logger.debug("Filtering authentication entry attributes [{}] based on authenticator attributes [{}]",
                 authenticatedEntryAttributes, authenticatorAttributes);
         attributes.removeIf(p -> authenticatorAttributes.contains(p));
 
         if (!attributes.isEmpty()) {
             this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
         }
-        logger.debug("LDAP authentication entry attributes for the authentication request are {}",
+        logger.debug("LDAP authentication entry attributes for the authentication request are [{}]",
                 (Object[]) this.authenticatedEntryAttributes);
     }
 }
