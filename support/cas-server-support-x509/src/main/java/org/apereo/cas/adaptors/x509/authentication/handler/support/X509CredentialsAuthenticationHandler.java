@@ -292,7 +292,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         if (pattern != null) {
             final String name = principal.getName();
             final boolean result = pattern.matcher(name).matches();
-            logger.debug("{} matches {} == {}", pattern.pattern(), name, result);
+            logger.debug("[{}] matches [{}] == [{}]", pattern.pattern(), name, result);
             return result;
         }
         return true;
