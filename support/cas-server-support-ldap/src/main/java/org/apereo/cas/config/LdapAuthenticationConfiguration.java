@@ -265,7 +265,7 @@ public class LdapAuthenticationConfiguration {
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
-        resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
+        resolver.setConnectionFactory(factory);
         resolver.setUserFilter(l.getUserFilter());
         return new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
     }
@@ -341,7 +341,7 @@ public class LdapAuthenticationConfiguration {
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
             ldapAuthenticationHandlers().forEach(handler -> {
                 final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-                LOGGER.debug("Ldap authentication for {} is to chain principal resolvers for attribute resolution", handler.getName());
+                LOGGER.debug("Ldap authentication for [{}] is to chain principal resolvers for attribute resolution", handler.getName());
                 resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
                 plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
             });
