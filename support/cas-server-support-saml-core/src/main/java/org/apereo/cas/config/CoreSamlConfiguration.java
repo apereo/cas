@@ -79,9 +79,7 @@ public class CoreSamlConfiguration {
      */
     @Bean(name = "shibboleth.OpenSAMLConfig")
     public OpenSamlConfigBean openSamlConfigBean() {
-        final OpenSamlConfigBean bean = new OpenSamlConfigBean();
-        bean.setParserPool(parserPool());
-        return bean;
+        return new OpenSamlConfigBean(parserPool());
     }
 
     /**
