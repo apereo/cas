@@ -254,16 +254,16 @@ public final class Beans {
                 LOGGER.debug("Creating standard password encoder with the secret defined in the configuration");
                 return new StandardPasswordEncoder(properties.getSecret());
             case BCRYPT:
-			LOGGER.debug("Creating BCRYPT password encoder given the strength [{}] and secret in the configuration",
-			        properties.getStrength());
-			if (properties.getSecret() == null || properties.getSecret().isEmpty()) {
-				LOGGER.debug("BCRYPT without secret word");
-				return new BCryptPasswordEncoder(properties.getStrength());
-			} else {
-				LOGGER.debug("BCRYPT uses secret word");
-				return new BCryptPasswordEncoder(properties.getStrength(),
-						new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
-			}
+            LOGGER.debug("Creating BCRYPT password encoder given the strength [{}] and secret in the configuration",
+                    properties.getStrength());
+            if (properties.getSecret() == null || properties.getSecret().isEmpty()) {
+                LOGGER.debug("BCRYPT without secret word");
+	            return new BCryptPasswordEncoder(properties.getStrength());
+	        } else {
+	            LOGGER.debug("BCRYPT uses secret word");
+	            return new BCryptPasswordEncoder(properties.getStrength(),
+	                    new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
+	       }
             case NONE:
             default:
                 LOGGER.debug("No password encoder shall be created");
