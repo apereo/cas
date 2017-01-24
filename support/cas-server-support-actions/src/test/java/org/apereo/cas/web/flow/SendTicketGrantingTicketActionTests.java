@@ -74,10 +74,12 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void verifyTgtToSet() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "127.0.0.1"));
-        
-        final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("127.0.0.1");
+        request.setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+
+        final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addHeader("User-Agent", "Test");
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("test");
@@ -93,10 +95,12 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void verifyTgtToSetRemovingOldTgt() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "127.0.0.1"));
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("127.0.0.1");
+        request.setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("User-Agent", "Test");
 
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);

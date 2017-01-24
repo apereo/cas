@@ -293,8 +293,11 @@ public class LdapAuthenticationConfiguration {
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getDnFormat())) {
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
+        }
         final PooledConnectionFactory factory = Beans.newPooledConnectionFactory(l);
-        final FormatDnResolver resolver = new FormatDnResolver(l.getBaseDn());
+        final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
         final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
 
         if (l.isEnhanceWithEntryResolver()) {
