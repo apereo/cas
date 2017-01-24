@@ -34,7 +34,7 @@ public class OpenSamlConfigBean {
 
     /**
      * Instantiates the config bean.
-     * @param parserPool
+     * @param parserPool the parser pool
      */
     public OpenSamlConfigBean(final ParserPool parserPool) {
         this.parserPool = parserPool;
