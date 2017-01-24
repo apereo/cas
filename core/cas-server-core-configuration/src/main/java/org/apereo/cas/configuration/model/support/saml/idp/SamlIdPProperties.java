@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
-import org.apereo.cas.util.ResourceUtils;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
