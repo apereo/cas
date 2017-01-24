@@ -24,6 +24,7 @@ import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
+import org.ldaptive.pool.PooledConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,16 +223,18 @@ public class LdapAuthenticationConfiguration {
     }
 
     private static Authenticator getSaslAuthenticator(final LdapAuthenticationProperties l) {
+        final PooledConnectionFactory factory = Beans.newPooledConnectionFactory(l);
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
-        resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
+        resolver.setConnectionFactory(factory);
         resolver.setUserFilter(l.getUserFilter());
-        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
     }
 
     private static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final LdapAuthenticationProperties l) {
+        final PooledConnectionFactory factory = Beans.newPooledConnectionFactory(l);
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
@@ -241,22 +244,27 @@ public class LdapAuthenticationConfiguration {
 
         final Authenticator auth;
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
-            auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+            auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
         } else {
-            auth = new Authenticator(resolver, getPooledCompareAuthenticationHandler(l));
+            auth = new Authenticator(resolver, getPooledCompareAuthenticationHandler(l, factory));
         }
+
         if (l.isEnhanceWithEntryResolver()) {
-            auth.setEntryResolver(Beans.newSearchEntryResolver(l));
+            auth.setEntryResolver(Beans.newSearchEntryResolver(l, factory));
         }
         return auth;
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
-        final FormatDnResolver resolver = new FormatDnResolver(l.getBaseDn());
-        final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        if (StringUtils.isBlank(l.getDnFormat())) {
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
+        }
+        final PooledConnectionFactory factory = Beans.newPooledConnectionFactory(l);
+        final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
+        final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
 
         if (l.isEnhanceWithEntryResolver()) {
-            authenticator.setEntryResolver(Beans.newSearchEntryResolver(l));
+            authenticator.setEntryResolver(Beans.newSearchEntryResolver(l, factory));
         }
         return authenticator;
     }
@@ -265,23 +273,26 @@ public class LdapAuthenticationConfiguration {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
         }
+        final PooledConnectionFactory factory = Beans.newPooledConnectionFactory(l);
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
-        final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
+
         if (l.isEnhanceWithEntryResolver()) {
-            authn.setEntryResolver(Beans.newSearchEntryResolver(l));
+            authn.setEntryResolver(Beans.newSearchEntryResolver(l, factory));
         }
         return authn;
     }
 
-    private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final LdapAuthenticationProperties l) {
-        final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler(Beans.newPooledConnectionFactory(l));
+    private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final LdapAuthenticationProperties l,
+                                                                                      final PooledConnectionFactory factory) {
+        final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler(factory);
         handler.setAuthenticationControls(new PasswordPolicyControl());
         return handler;
     }
 
-    private static PooledCompareAuthenticationHandler getPooledCompareAuthenticationHandler(final LdapAuthenticationProperties l) {
-        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(
-                Beans.newPooledConnectionFactory(l));
+    private static PooledCompareAuthenticationHandler getPooledCompareAuthenticationHandler(final LdapAuthenticationProperties l,
+                                                                                            final PooledConnectionFactory factory) {
+        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(factory);
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
     }

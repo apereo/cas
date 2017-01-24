@@ -250,15 +250,17 @@ public class Beans {
     /**
      * New dn resolver entry resolver.
      *
-     * @param l the ldap settings
+     * @param l       the ldap settings
+     * @param factory the factory
      * @return the entry resolver
      */
-    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l) {
+    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l,
+                                                       final PooledConnectionFactory factory) {
         final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getUserFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
-        entryResolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
+        entryResolver.setConnectionFactory(factory);
         return entryResolver;
     }
 
