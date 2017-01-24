@@ -2,9 +2,9 @@ package org.apereo.cas.configuration.model.core.web.security;
 
 import org.springframework.core.io.Resource;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * This is {@link AdminPagesSecurityProperties}.
@@ -13,9 +13,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class AdminPagesSecurityProperties {
-
     private String ip = "127\\.0\\.0\\.1|0:0:0:0:0:0:0:1";
-    private Set<String> adminRoles = new HashSet<>(Collections.singleton("ROLE_ADMIN"));
+    private List<String> adminRoles = new ArrayList<>(Collections.singletonList("ROLE_ADMIN"));
     private String loginUrl;
     private String service;
     private Resource users;
@@ -37,11 +36,11 @@ public class AdminPagesSecurityProperties {
         this.ip = ip;
     }
 
-    public Set<String> getAdminRoles() {
+    public List<String> getAdminRoles() {
         return adminRoles;
     }
 
-    public void setAdminRoles(final Set<String> adminRoles) {
+    public void setAdminRoles(final List<String> adminRoles) {
         this.adminRoles = adminRoles;
     }
 

@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
@@ -37,12 +38,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @EnableScheduling
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
-    
-
     protected static final String IP_ADDRESS = "1.2.3.4";
-
-    protected static final ClientInfo CLIENT_INFO = new ClientInfo(IP_ADDRESS, IP_ADDRESS);
-
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -51,7 +47,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     
     @Before
     public void setUp() throws Exception {
-        ClientInfoHolder.setClientInfo(CLIENT_INFO);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr(IP_ADDRESS);
+        request.setLocalAddr(IP_ADDRESS);
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
     }
 
     @After

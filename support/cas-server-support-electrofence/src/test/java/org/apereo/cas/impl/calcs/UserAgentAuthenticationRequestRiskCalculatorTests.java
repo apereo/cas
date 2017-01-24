@@ -113,7 +113,10 @@ public class UserAgentAuthenticationRequestRiskCalculatorTests {
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)");
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "107.181.69.221"));
+
+        request.setRemoteAddr("107.181.69.221");
+        request.setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getThreshold()));
     }

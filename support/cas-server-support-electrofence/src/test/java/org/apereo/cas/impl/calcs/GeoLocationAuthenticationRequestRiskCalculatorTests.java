@@ -105,8 +105,10 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     public void verifyTestWhenAuthnEventsFoundForUser() {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "107.181.69.221"));
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("107.181.69.221");
+        request.setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }
