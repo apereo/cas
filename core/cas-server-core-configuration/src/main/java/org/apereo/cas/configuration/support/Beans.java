@@ -260,7 +260,7 @@ public final class Beans {
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
             case NONE:
             default:
-                LOGGER.debug("No password encoder shall be created");
+                LOGGER.debug("No password encoder shall be created given the requested encoder type [{}]", type);
                 return NoOpPasswordEncoder.getInstance();
         }
     }
