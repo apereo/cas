@@ -48,8 +48,17 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.ad.extended.FastBindOperation;
+import org.ldaptive.ad.handler.ObjectGuidHandler;
+import org.ldaptive.ad.handler.ObjectSidHandler;
+import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
+import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.PooledSearchEntryResolver;
+import org.ldaptive.handler.CaseChangeEntryHandler;
+import org.ldaptive.handler.DnAttributeEntryHandler;
+import org.ldaptive.handler.MergeAttributeEntryHandler;
+import org.ldaptive.handler.RecursiveEntryHandler;
+import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.CompareValidator;
 import org.ldaptive.pool.ConnectionPool;
@@ -82,6 +91,7 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -302,7 +312,7 @@ public final class Beans {
 
     /**
      * New dn resolver entry resolver.
-     *
+     * Creates the necessary search entry resolver.
      * @param l       the ldap settings
      * @param factory the factory
      * @return the entry resolver
@@ -314,6 +324,57 @@ public final class Beans {
         entryResolver.setUserFilter(l.getUserFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
+
+        final List<SearchEntryHandler> handlers = new ArrayList<>();
+        l.getSearchEntryHandlers().forEach(h -> {
+            switch (h.getType()) {
+                case CASE_CHANGE:
+                    final CaseChangeEntryHandler eh = new CaseChangeEntryHandler();
+                    eh.setAttributeNameCaseChange(h.getCasChange().getAttributeNameCaseChange());
+                    eh.setAttributeNames(h.getCasChange().getAttributeNames());
+                    eh.setAttributeValueCaseChange(h.getCasChange().getAttributeValueCaseChange());
+                    eh.setDnCaseChange(h.getCasChange().getDnCaseChange());
+                    handlers.add(eh);
+                    break;
+                case DN_ATTRIBUTE_ENTRY:
+                    final DnAttributeEntryHandler ehd = new DnAttributeEntryHandler();
+                    ehd.setAddIfExists(h.getDnAttribute().isAddIfExists());
+                    ehd.setDnAttributeName(h.getDnAttribute().getDnAttributeName());
+                    handlers.add(ehd);
+                    break;
+                case MERGE:
+                    final MergeAttributeEntryHandler ehm = new MergeAttributeEntryHandler();
+                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames());
+                    ehm.setMergeAttributeName(h.getMergeAttribute().getMergeAttributeName());
+                    handlers.add(ehm);
+                    break;
+                case OBJECT_GUID:
+                    handlers.add(new ObjectGuidHandler());
+                    break;
+                case OBJECT_SID:
+                    handlers.add(new ObjectSidHandler());
+                    break;
+                case PRIMARY_GROUP:
+                    final PrimaryGroupIdHandler ehp = new PrimaryGroupIdHandler();
+                    ehp.setBaseDn(h.getPrimaryGroupId().getBaseDn());
+                    ehp.setGroupFilter(h.getPrimaryGroupId().getGroupFilter());
+                    handlers.add(ehp);
+                    break;
+                case RANGE_ENTRY:
+                    handlers.add(new RangeEntryHandler());
+                    break;
+                case RECURSIVE_ENTRY:
+                    handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(), h.getRecursive().getMergeAttributes()));
+                    break;
+                default:
+                    break;
+            }
+        });
+        
+        if (!handlers.isEmpty()) {
+            LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
+            entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
+        }
         return entryResolver;
     }
 

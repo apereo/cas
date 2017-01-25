@@ -55,6 +55,8 @@ The index `[0]` is meant to be incremented by the adopter to allow for distinct 
 If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
 Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
 
+<div class="alert alert-info"><strong>Keep It Simple</strong><p>If you do not know or cannot tell what a setting does, you do not need it.</p></div>
+
 ### Time Unit of Measure
 
 All CAS settings that deal with time units, unless noted otherwise,
@@ -1154,6 +1156,25 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 
 # cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 # cas.authn.ldap[0].allowMultipleDns=false
+
+# cas.authn.ldap[0].searchEntryHandlers[0].type=CASE_CHANGE|DN_ATTRIBUTE_ENTRY|MERGE|OBJECT_GUID|OBJECT_SID|PRIMARY_GROUP|RANGE_ENTRY|RECURSIVE_ENTRY
+
+# cas.authn.ldap[0].searchEntryHandlers[0].caseChange.dnCaseChange=NONE|LOWER|UPPER
+# cas.authn.ldap[0].searchEntryHandlers[0].caseChange.attributeNameCaseChange=NONE|LOWER|UPPER
+# cas.authn.ldap[0].searchEntryHandlers[0].caseChange.attributeValueCaseChange=NONE|LOWER|UPPER
+# cas.authn.ldap[0].searchEntryHandlers[0].caseChange.attributeNames=
+
+# cas.authn.ldap[0].searchEntryHandlers[0].dnAttribute.dnAttributeName=entryDN
+# cas.authn.ldap[0].searchEntryHandlers[0].dnAttribute.addIfExists=false
+
+# cas.authn.ldap[0].searchEntryHandlers[0].primaryGroupId.groupFilter=(&(objectClass=group)(objectSid={0}))
+# cas.authn.ldap[0].searchEntryHandlers[0].primaryGroupId.baseDn=
+
+# cas.authn.ldap[0].searchEntryHandlers[0].mergeAttribute.mergeAttributeName=
+# cas.authn.ldap[0].searchEntryHandlers[0].mergeAttribute.attribueNames=
+
+# cas.authn.ldap[0].searchEntryHandlers[0].recursive.searchAttribute=
+# cas.authn.ldap[0].searchEntryHandlers[0].recursive.mergeAttributes=
 
 # cas.authn.ldap[0].name=
 # cas.authn.ldap[0].order=0
@@ -2658,7 +2679,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.serviceRegistry.initFromJson=false
 ```
 
-### Resource-based Service Registry
+### Resource-based (JSON/YAML) Service Registry
 
 If the underlying service registry is using local system resources
 to locate service definitions, decide how those resources should be found.
