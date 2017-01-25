@@ -760,15 +760,6 @@ ext.libraries = [
                 dependencies.create("junit:junit:$junitVersion") {
                     force = true
                 },
-                dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("org.ldaptive:ldaptive-unboundid:$ldaptiveVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.unboundid", module: "unboundid-ldapsdk")
-                    force = true
-                },
                 dependencies.create("com.github.fakemongo:fongo:$fongoVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
@@ -838,6 +829,19 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.ldaptive:ldaptive-beans:$ldaptiveVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.ldaptive:ldaptive-unboundid:$ldaptiveVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.unboundid", module: "unboundid-ldapsdk")
+                    force = true
+                },
+                dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.ldaptive:ldaptive-apache:$ldaptiveVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
