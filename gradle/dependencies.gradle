@@ -843,6 +843,9 @@ ext.libraries = [
                 },
                 dependencies.create("org.ldaptive:ldaptive-apache:$ldaptiveVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-pool", module: "commons-pool")
+                    exclude(group: "xml-apis", module: "xml-apis")
                     force = true
                 }
         ],
