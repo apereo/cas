@@ -72,8 +72,7 @@ public class LdapAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-
+    
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
     public PrincipalFactory ldapPrincipalFactory() {
