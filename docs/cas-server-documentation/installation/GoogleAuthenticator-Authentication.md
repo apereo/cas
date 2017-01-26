@@ -21,7 +21,7 @@ Support is enabled by including the following module in the overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator).
 
 ## Token Repository
 
@@ -49,6 +49,7 @@ Registration records and tokens may be kept inside a database instance via the f
 ```
 
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-jpa).
 
 ### MongoDb
 
@@ -62,9 +63,13 @@ Registration records and tokens may be kept inside a mongo db instance, via the 
 </dependency>
 ```
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-mongodb).
+
 ### JSON
 
 Registration records may also be kept inside a single JSON file for all users.
 The behavior is only activated when a path to a JSON data store file is provided,
 and otherwise CAS may fallback to keeping records in memory. This feature is mostly
 useful during development and for demo purposes.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-json).

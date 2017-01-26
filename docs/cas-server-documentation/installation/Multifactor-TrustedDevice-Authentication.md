@@ -3,7 +3,7 @@ layout: default
 title: CAS - Trusted Device Multifactor Authentication
 ---
 
-# MFA Trusted Device/Browser 
+# MFA Trusted Device/Browser
 
 <div class="alert alert-warning"><strong>Achtung, liebe Leser</strong><p>This feature swings more towards the experimental.</p></div>
 
@@ -13,7 +13,7 @@ objective is for CAS to remember that decision for a configurable period of time
 is either forcefully revoked or considered expired.
 
 Trusting a device during an MFA workflow would mean that the ultimate decision is remembered for that **user** of that **location**
-of that **device**. These keys are combined together securely and assigned to the final decision. 
+of that **device**. These keys are combined together securely and assigned to the final decision.
 
 Before deployment, you should consider the following:
 
@@ -24,7 +24,7 @@ Before deployment, you should consider the following:
 - How is a trusted authentication session communicated back to an application?
 
 Note that enabling this feature by default means it's globally applied to all in the case if you have multiple MFA providers turned on.
-This can be optionally disabled and applied only to a selected set of providers. 
+This can be optionally disabled and applied only to a selected set of providers.
 
 ## Configuration
 
@@ -40,12 +40,12 @@ Support is provided via the following module:
 
 ## Settings
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-trusted-devicebrowser).
 
 ## Authentication Context
 
 If an MFA request is bypassed due to a trusted authentication decision, applications will receive a special attribute as part of
-the validation payload that indicates this behavior. Applications must further account for the scenario where they ask for an MFA 
+the validation payload that indicates this behavior. Applications must further account for the scenario where they ask for an MFA
 mode and yet don't receive confirmation of it in the response given the authentication session was trusted and MFA bypassed.
 
 ## Storage
@@ -54,7 +54,7 @@ User decisions must be remembered and processed later on subsequent requests.
 
 ### Default
 
-If you do nothing, by default records are kept inside the runtime memory and cached for a configurable amount of time. 
+If you do nothing, by default records are kept inside the runtime memory and cached for a configurable amount of time.
 This is most useful if you have a very small deployment with a small user base or if you simply wish to demo the functionality.
 
 ### JDBC
@@ -72,6 +72,8 @@ Support is provided via the following module:
 ```
 
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-storage).
+
 
 ### Mongo
 
@@ -87,6 +89,9 @@ Support is provided via the following module:
 </dependency>
 ```
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-storage).
+
+
 ### REST
 
 If you wish to completely delegate the management, verification and persistence of user decisions, you may design a REST API
@@ -101,6 +106,8 @@ Support is provided via the following module:
     <version>${cas.version}</version>
 </dependency>
 ```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-storage).
 
 #### Retrieve Trusted Records
 
@@ -133,7 +140,7 @@ curl -H "Content-Type: application/json" -X POST -d '${json}' ${endpointUrl}
 ```
 
 `POST` data will match the following block:
- 
+
 ```json
 {
     "principal": "...",
@@ -145,5 +152,3 @@ curl -H "Content-Type: application/json" -X POST -d '${json}' ${endpointUrl}
 ```
 
 Response payload shall produce a `200` http status code to indicate a successful operation.
-
-

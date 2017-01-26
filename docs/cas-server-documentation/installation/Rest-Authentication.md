@@ -7,7 +7,7 @@ title: CAS - REST Authentication
 
 <div class="alert alert-warning"><strong>Be Careful</strong><p>This documentation describes
 how to delegate and submit authentication requests to a remote REST endpoint. It has nothing
-to do with the native CAS REST API, whose configuration and caveats are 
+to do with the native CAS REST API, whose configuration and caveats are
 <a href="../protocol/REST-Protocol.html">documented here</a>.</p></div>
 
 REST authentication is enabled by including the following dependencies in the WAR overlay:
@@ -22,7 +22,7 @@ REST authentication is enabled by including the following dependencies in the WA
 
 This allows the CAS server to reach to a remote REST endpoint via a `POST` for verification of credentials.
 Credentials are passed via an `Authorization` header whose value is `Basic XYZ` where XYZ is a
-Base64 encoded version of the credentials. 
+Base64 encoded version of the credentials.
 
 The response that is returned must be accompanied by a `200`
 status code where the body should contain `id` and `attributes` fields, the latter being optional,
@@ -34,4 +34,4 @@ which represent the authenticated principal for CAS:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-authentication).

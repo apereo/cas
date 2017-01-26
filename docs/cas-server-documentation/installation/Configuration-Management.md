@@ -6,7 +6,7 @@ title: CAS - Configuration Management
 # Configuration Management
 
 The core foundations of CAS that deal with configuration management, settings and replication of changes
-across multiple CAS nodes are all entirely handled automatically via the 
+across multiple CAS nodes are all entirely handled automatically via the
 [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) project. The strategies listed below
 present a very flexible and powerful way to manage CAS configuration for production deployments, by
 allowing the CAS adopter to **ONLY** keep track of settings required for their specific deployment concerns
@@ -19,11 +19,11 @@ YAML and Properties syntax in any of the below strategies used.</p></div>
 
 ## Overview
 
-CAS allows you to externalize your configuration so you can work with the same CAS instance in 
-different environments. You can use properties files, YAML files, environment variables and 
+CAS allows you to externalize your configuration so you can work with the same CAS instance in
+different environments. You can use properties files, YAML files, environment variables and
 command-line arguments to externalize configuration.
 
-CAS uses a very particular order that is designed to allow sensible overriding of values, 
+CAS uses a very particular order that is designed to allow sensible overriding of values,
 properties are considered in the following order:
 
 1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
@@ -38,21 +38,21 @@ properties are considered in the following order:
 
 All CAS settings can be overridden via the above outlined strategies.
 
-<div class="alert alert-info"><strong>Managing Configuration</strong><p>In order to manage 
-the CAS configuration, you should configure access 
+<div class="alert alert-info"><strong>Managing Configuration</strong><p>In order to manage
+the CAS configuration, you should configure access
 to <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
 ## Configuration Server
 
-CAS provides a built-in configuration server that is responsible for bootstrapping the configuration 
-environment and loading of externalized settings in a distributed system. You may have a central 
-place to manage external properties for CAS nodes across all environments. As your CAS deployment 
-moves through the deployment pipeline from dev to test and into production you can manage the configuration 
-between those environments and be certain that applications have everything they need to run when they migrate. 
-The default implementation of the server storage backend uses git so it easily supports labelled versions 
-of configuration environments, as well as being accessible to a wide range of tooling for managing the content. 
-Note that CAS also is a client of its own configuration, because not only it has to manage and control 
-CAS settings, it also needs to contact the configuration server to retrieve and use those settings. 
+CAS provides a built-in configuration server that is responsible for bootstrapping the configuration
+environment and loading of externalized settings in a distributed system. You may have a central
+place to manage external properties for CAS nodes across all environments. As your CAS deployment
+moves through the deployment pipeline from dev to test and into production you can manage the configuration
+between those environments and be certain that applications have everything they need to run when they migrate.
+The default implementation of the server storage backend uses git so it easily supports labelled versions
+of configuration environments, as well as being accessible to a wide range of tooling for managing the content.
+Note that CAS also is a client of its own configuration, because not only it has to manage and control
+CAS settings, it also needs to contact the configuration server to retrieve and use those settings.
 
 The configuration server is controlled and defined by the `src/main/resources/bootstrap.properties` file.
 
@@ -64,16 +64,16 @@ The following endpoints are secured and exposed by the configuration server's `/
 | `/decrypt`           | Accepts a `POST` to decrypt CAS configuration settings.
 | `/cas/default`       | Describes what the configuration server knows about the `default` settings profile.
 | `/cas/native`        | Describes what the configuration server knows about the `native` settings profile.
-| `/bus/refresh`       | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.      | 
+| `/bus/refresh`       | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.      |
 | `/bus/env`           | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
 
 ## Auto Configuration Strategy
 
-To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
 
-Note that CAS in most if not all cases will attempt to auto-configure the context based on the declaration 
+Note that CAS in most if not all cases will attempt to auto-configure the context based on the declaration
 and presence of feature-specific dedicated modules. This generally SHOULD relieve the deployer
-from manually massaging the application context via XML configuration files. 
+from manually massaging the application context via XML configuration files.
 
 The idea is twofold:
 
@@ -83,29 +83,29 @@ The idea is twofold:
 CAS will automatically take care of injecting appropriate beans and other components into the runtime application context,
 Depending on the presence of a module and/or its settings configured by the deployer.
 
-<div class="alert alert-info"><strong>No XML</strong><p>Again, the entire point of 
+<div class="alert alert-info"><strong>No XML</strong><p>Again, the entire point of
 the auto-configuration strategy is ensure deployers aren't swimming in a sea of XML files
 configuring beans and such. CAS should take care of it all. If you find an instance where
 this claim does not hold, consider that a "bug" and file a feature request.</p></div>
 
 ## Profiles
 
-Various profiles exist to determine how CAS should retrieve properties and settings. 
+Various profiles exist to determine how CAS should retrieve properties and settings.
 
 ### Embedded
 
-By default, all CAS settings and configuration is controlled via the embedded `application.properties` file. 
+By default, all CAS settings and configuration is controlled via the embedded `application.properties` file.
 
 ### Native
 
-CAS is also configured by default to load a `cas.properties` or `cas.yml` file from an external location that is `/etc/cas/config`. 
-This location is constantly monitored by CAS to detect external changes. Note that this location simply needs to 
-exist, and does not require any special permissions or structure. The name of the configuration file that goes inside this 
-directory needs to match the `spring.application.name` (i.e. `cas.properties`). 
+CAS is also configured by default to load a `cas.properties` or `cas.yml` file from an external location that is `/etc/cas/config`.
+This location is constantly monitored by CAS to detect external changes. Note that this location simply needs to
+exist, and does not require any special permissions or structure. The name of the configuration file that goes inside this
+directory needs to match the `spring.application.name` (i.e. `cas.properties`).
 
-If you want to use additional configuration files, they need to have the 
+If you want to use additional configuration files, they need to have the
 form `application-<profile>.properties` or `application-<profile>.yml`.
-A file named `application.properties` or `application.yml` will be included by default. The profile specific 
+A file named `application.properties` or `application.yml` will be included by default. The profile specific
 files can be activated by using the `spring.profiles.include` configuration option,
 controlled via the `src/main/resources/bootstrap.properties` file:
 
@@ -125,13 +125,13 @@ You could have just as well used a `cas.yml` file to host the changes.
 
 ### Default
 
-CAS is also able to handle git-based repositories that host CAS configuration. 
+CAS is also able to handle git-based repositories that host CAS configuration.
 Such repositories can either be local to the CAS
-deployment, or they could be on the cloud in form of GitHub/BitBucket. Access to 
+deployment, or they could be on the cloud in form of GitHub/BitBucket. Access to
 cloud-based repositories can either be in form of a
-username/password, or via SSH so as long the appropriate keys are configured in the 
+username/password, or via SSH so as long the appropriate keys are configured in the
 CAS deployment environment which is really no different
-than how one would normally access a git repository via SSH. 
+than how one would normally access a git repository via SSH.
 
 ```properties
 # spring.profiles.active=default
@@ -141,7 +141,7 @@ than how one would normally access a git repository via SSH.
 # spring.cloud.config.server.git.password=
 ```
 
-Needless to say, the repositories could use both YAML and Properties syntax to host configuration files. 
+Needless to say, the repositories could use both YAML and Properties syntax to host configuration files.
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>Again, in all of the above strategies,
 an adopter is encouraged to only keep and maintain properties needed for their particular deployment. It is
@@ -155,7 +155,7 @@ as a default.</p></div>
 CAS is also able to locate properties entirely from a MongoDb instance.
 
 Support is provided via the following dependency:
-                                                    
+
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
@@ -164,7 +164,7 @@ Support is provided via the following dependency:
 </dependency>
 ```
 
-Note that to access and review the collection of CAS properties, 
+Note that to access and review the collection of CAS properties,
 you will need to use [the CAS administrative interfaces](Monitoring-Statistics.html), or you may
 also use your own native tooling for MongoDB to configure and inject settings.
 
@@ -175,15 +175,15 @@ MongoDb documents are required to be found in the collection `MongoDbProperty`, 
     "id": "kfhf945jegnsd45sdg93452",
     "name": "the-setting-name",
     "value": "the-setting-value"
-} 
+}
 ```
 
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#mongodb).
 
 ### HashiCorp Vault
 
-CAS is also able to use [Vault](https://www.vaultproject.io/) to 
+CAS is also able to use [Vault](https://www.vaultproject.io/) to
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).
 
 ## Securing Settings
@@ -192,14 +192,14 @@ To learn how sensitive CAS settings can be secured via encryption, [please revie
 
 ## Reloading Changes
 
-To lean more about CAS allows you to reload configuration changes, 
+To lean more about CAS allows you to reload configuration changes,
 please [review this guide](Configuration-Management-Reload.html).
 
 ## Clustered Deployments
 
-CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html) 
-to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a 
-distributed system with a lightweight message broker. This can then be used to broadcast state 
+CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html)
+to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a
+distributed system with a lightweight message broker. This can then be used to broadcast state
 changes (e.g. configuration changes) or other management instructions.
 
 To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Management-Clustered.html).

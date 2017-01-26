@@ -24,7 +24,7 @@ for reloads. CAS should be smart enough to reload the appropriate configuration,
 ends up using that setting. All is fair game, as the entire CAS web application inclusive of all modules and all
 relevant settings is completely and utterly reloadable. </p></div>
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#cloud-configuration-bus).
 
 ## Reload Strategy
 

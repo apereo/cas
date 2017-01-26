@@ -5,8 +5,6 @@ title: CAS - Adaptive Risk-based Authentication
 
 # Risk-based Authentication
 
-<div class="alert alert-warning"><strong>Achtung, liebe Leser</strong><p>This feature swings more towards the experimental.</p></div>
-
 Risk-based authentication allows CAS to detect suspicious and seemingly-fraudulent authentication requests based on past user behavior
 and collected authentication events, statistics, etc. Once and *after* primary authentication where the principal is identified,
 the authentication transaction is analyzed via a number of configurable criteria and fences to determine how *risky* the attempt may be.
@@ -18,13 +16,13 @@ Simply put, the story told is:
 
 >If an authentication request is at least [X%] risky, take action to mitigate that risk.
 
-The functionality of this feature is **ENTIRELY** dependant upon collected statistics and authentication events in the past.
+The functionality of this feature is **ENTIRELY** dependent upon collected statistics and authentication events in the past.
 Without data, there is nothing to analyze and no risk to detect.
 
 Note that evaluation of attempts and mitigation of risks are all recorded in the audit log.
 
 <div class="alert alert-info"><strong>Adaptive Authentication</strong><p>
-If you need to preemptively evaluate authentication attempts based on various characterisitcs of the request,
+If you need to preemptively evaluate authentication attempts based on various characteristics of the request,
 you may be interested in <a href="Configuring-Adaptive-Authentication.html">this guide</a> instead.</p></div>
 
 ## Risk Calculation
@@ -92,7 +90,7 @@ Support is enabled by including the following dependency in the overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#risk-based-authentication).
 
 ### SMS Messaging
 
@@ -110,6 +108,8 @@ To learn more, [visit this site](https://www.twilio.com/).
 </dependency>
 ```
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#twillio).
+
 #### TextMagic
 
 To learn more, [visit this site](https://www.textmagic.com/).
@@ -121,6 +121,8 @@ To learn more, [visit this site](https://www.textmagic.com/).
     <version>${cas.version}</version>
 </dependency>
 ```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#textmagic).
 
 ### Remember
 

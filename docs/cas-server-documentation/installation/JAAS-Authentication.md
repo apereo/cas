@@ -10,13 +10,13 @@ authentication and authorization API. JAAS is configured via externalized plain 
 Using JAAS with CAS allows modification of the authentication process without having to rebuild and redeploy CAS
 and allows for PAM-style multi-module "stacked" authentication.
 
-
 ## Configuration
+
 JAAS components are provided in the CAS core module and require no additional dependencies to use.
 The JAAS handler delegates to the built-in JAAS subsystem to perform authentication according to the
 directives in the JAAS config file.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jaas-authentication).
 
 ## JAAS Configuration File
 
