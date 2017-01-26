@@ -21,10 +21,10 @@ key/value store that accepts `String` keys and CAS ticket objects as values. The
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#redis-ticket-regisry).
 
 ### Eviction Policy
 
 Redis manages the internal eviction policy of cached objects via its time-alive settings.
-The timeout is the ticket's `timeToLive` value. So you need to ensure the cache is alive long enough to support the 
-individual expiration policy of tickets, and let CAS clean the tickets as part of its own cleaner if necessary. 
+The timeout is the ticket's `timeToLive` value. So you need to ensure the cache is alive long enough to support the
+individual expiration policy of tickets, and let CAS clean the tickets as part of its own cleaner if necessary.

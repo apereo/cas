@@ -5,8 +5,8 @@ title: CAS - OAuth Authentication
 
 # OAuth/OpenID Authentication
 
-<div class="alert alert-info"><strong>CAS as OAuth Server</strong><p>This page specifically describes how to enable 
-OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with 
+<div class="alert alert-info"><strong>CAS as OAuth Server</strong><p>This page specifically describes how to enable
+OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with
 other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
 ## Configuration
@@ -21,18 +21,19 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+
 After enabling OAuth support, the following endpoints will be available:
 
 * **/cas/oauth2.0/authorize**  
 It's the url to call to authorize the user: the CAS login page will be displayed and the user will login.
 
 * **/cas/oauth2.0/accessToken**  
-It's the url to call to get an access token. The returned format will be plain text by default, but it can be JSON 
+It's the url to call to get an access token. The returned format will be plain text by default, but it can be JSON
 if set so in the management webapp per OAuth client.
 
 * **/cas/oauth2.0/profile**  
 It's the url to call to get the profile of the authorized user. The response is in JSON format with all attributes of the user.
-
 
 ## Grant types
 
@@ -40,7 +41,6 @@ The following types are supported; they allow you to get an access token represe
 With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
 
 `/cas/oauth2.0/profile?access_token=ACCESS_TOKEN` returns the user profile.
-
 
 ### Authorization Code
 
@@ -67,10 +67,10 @@ The resource owner password credentials grant type allows the OAuth client to di
 
 ### Refresh Token
 
-The refresh token grant type retrieves a new access token from a refresh token (emitted for a previous access token), 
+The refresh token grant type retrieves a new access token from a refresh token (emitted for a previous access token),
 when this previous access token is expired
 
-- `/cas/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access 
+- `/cas/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access
 token
 
 To get refresh tokens, the OAuth client must be configured to return refresh tokens (`generateRefreshToken` property).
@@ -97,7 +97,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 ## OAuth Expiration Policy
 
 The expiration policy for OAuth tokens is controlled by CAS settings and properties.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
 
 ## Server Configuration
 

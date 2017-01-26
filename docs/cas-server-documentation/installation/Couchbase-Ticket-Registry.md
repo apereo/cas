@@ -15,14 +15,14 @@ Couchbase integration is enabled by including the following dependency in the WA
 ```
 
 
-[Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on 
-[Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this 
-registry is to leverage the capability of Couchbase 
+[Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on
+[Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this
+registry is to leverage the capability of Couchbase
 server to provide high availability to CAS.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#couchbase-ticket-registry).
 
 The Couchbase integration currently assumes that the ticket registries are stored
 in their own buckets. You may optionally set passwords for the buckets and optionally configure
@@ -34,7 +34,7 @@ so in reality the bucket property must also be set.
 
 ## Expiration Policy
 
-You will need to remember that every document in Couchbase contains the `expiry` property. 
+You will need to remember that every document in Couchbase contains the `expiry` property.
 An expiration time-to-live value of `0` means that no expiration is set at all.
 The expiration time starts when the document has been successfully stored on the server,
 not when the document was created on the CAS server. In practice, the delta should be very very negligible.

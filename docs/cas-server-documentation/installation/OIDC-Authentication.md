@@ -5,7 +5,7 @@ title: CAS - OIDC Authentication
 
 # OpenID Connect Authentication
 
-Allow CAS to act as an OpenId Connect Provider (OP). 
+Allow CAS to act as an OpenId Connect Provider (OP).
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -66,7 +66,7 @@ OpenID Connect clients can be registered with CAS as such:
 
 ## Settings
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
 
 ## Server Configuration
 
@@ -77,7 +77,7 @@ accordinngly.
 
 ## Claims
 
-OpenID connect claims are simply treated as normal CAS attributes that need to 
+OpenID connect claims are simply treated as normal CAS attributes that need to
 be [resolved and released](../integration/Attribute-Release-Policies.html).
 
 ## Authentication Context Class
@@ -112,5 +112,5 @@ file is similar to the following:
 }
 ```
 
-A JWKS can be generated using [this tool](https://mkjwk.org/) 
+A JWKS can be generated using [this tool](https://mkjwk.org/)
 or [this tool](http://connect2id.com/products/nimbus-jose-jwt/generator).
