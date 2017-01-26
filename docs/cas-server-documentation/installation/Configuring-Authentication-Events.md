@@ -23,22 +23,23 @@ The following metadata is captured and recorded by the event machinery when enab
 | `clientIpAddress`                          | Client IP address
 | `serverIpAddress`                          | Server IP address
 | `agent`                                    | User-Agent of the browser
-| `geoLatitude`                              | Geo Latitude of authentication request's origin 
+| `geoLatitude`                              | Geo Latitude of authentication request's origin
 | `geoLongitude`                             | Geo Longitude of authentication request's origin
 | `geoAccuracy`                              | Accuracy measure of the location
 | `geoTimestamp`                             | Timestamp of the geo location request
 
 ## GeoLocation
-CAS attempts to record the geolocation properties of the authentication requests, by allowing the browser to ask for user's consent. 
-Should consent not be granted or geolocation not supported by the browser, CAS will ignore the geolocation data when it attempts to 
-record the event. 
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+CAS attempts to record the geolocation properties of the authentication requests, by allowing the browser to ask for user's consent.
+Should consent not be granted or geolocation not supported by the browser, CAS will ignore the geolocation data when it attempts to
+record the event. To learn more, please [review this guide](GeoTracking-Authentication-Requests.html).
 
 ## Configuration
+
 The following storage backends are available for consumption of events:
 
 ### MongoDb
+
 Stores authentication events into a MongoDb NoSQL database.
 
 ```xml
@@ -49,7 +50,7 @@ Stores authentication events into a MongoDb NoSQL database.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-events).
 
 ### JPA
 Stores authentication events into a RDBMS.
@@ -62,4 +63,4 @@ Stores authentication events into a RDBMS.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-events).
