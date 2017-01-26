@@ -72,4 +72,4 @@ class cas {
 
 ### Settings
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html##groovy-shell).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#groovy-shell).

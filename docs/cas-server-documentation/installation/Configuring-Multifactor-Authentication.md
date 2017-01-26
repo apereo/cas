@@ -183,7 +183,7 @@ Note that in addition to the above options, some multifactor authentication prov
 may also skip and bypass the authentication request in the event that the authenticated principal does not quite "qualify"
 for multifactor authentication. See the documentation for each specific provider to learn more.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html##multifactor-authentication).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
 Note that ticket validation requests shall successfully go through if multifactor authentication is
 bypassed for the given provider. In such cases, no authentication context is passed back to the application and

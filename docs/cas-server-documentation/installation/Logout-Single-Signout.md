@@ -49,7 +49,7 @@ contacted, and this may disrupt user experience negatively if those applications
 As an example, if user has logged into a portal application and an email application, logging out of one through SLO will
 also destroy the user session in the other which could mean data loss if the application is not carefully managing its session and user activity.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html##single-logout).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#single-logout).
 
 ### Back Channel
 

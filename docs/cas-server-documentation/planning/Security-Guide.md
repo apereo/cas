@@ -161,7 +161,7 @@ Protocol tickets that are issued by CAS may optionally go through a signing/encr
 CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check
 to ensure tickets in transit to other applications are not tampered with and remain to be authentic. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html##protocol-ticket-security).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#protocol-ticket-security).
 
 
 ### Ticket Registry Encryption
