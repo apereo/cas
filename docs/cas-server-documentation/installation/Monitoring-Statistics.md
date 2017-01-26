@@ -32,7 +32,7 @@ The following endpoints are secured and available:
 
 ## Security
 
-The `/status` endpoint is always protected by an IP pattern. The other administrative 
+The `/status` endpoint is always protected by an IP pattern. The other administrative
 endpoints however can optionally be protected by the CAS server.
 Failing to secure these endpoints via a CAS instance will have CAS fallback onto the IP range.
 
@@ -40,12 +40,12 @@ If you decide to protect other administrative endpoints via CAS itself, you will
 a reference to the list of authorized users in the CAS configuration. You may also enforce authorization
 rules via [Service-based Access Strategy](Configuring-Service-Access-Strategy.html) features of CAS.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#admin-status-endpoints).
 
 ## Monitors
 
-Monitors allow you to watch the internal state of a given CAS component. 
-See [this guide](Configuring-Monitoring.html) for more info. 
+Monitors allow you to watch the internal state of a given CAS component.
+See [this guide](Configuring-Monitoring.html) for more info.
 
 ## Metrics
 
@@ -100,13 +100,13 @@ type=GAUGE, name=jvm.memory.heap.max, value=1062338560
 type=GAUGE, name=jvm.memory.heap.usage, value=0.09121857348376773
 type=GAUGE, name=jvm.memory.heap.used, value=96905008
 
-type=METER, name=org.apereo.cas.DefaultCentralAuthenticationService.CREATE_TICKET_GRANTING_TICKET_METER, count=0, 
+type=METER, name=org.apereo.cas.DefaultCentralAuthenticationService.CREATE_TICKET_GRANTING_TICKET_METER, count=0,
 mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond
 
-type=METER, name=org.apereo.cas.DefaultCentralAuthenticationService.DESTROY_TICKET_GRANTING_TICKET_METER, 
+type=METER, name=org.apereo.cas.DefaultCentralAuthenticationService.DESTROY_TICKET_GRANTING_TICKET_METER,
 count=0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond
 
-type=TIMER, name=org.apereo.cas.DefaultCentralAuthenticationService.GRANT_SERVICE_TICKET_TIMER, count=0, 
-min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0, 
+type=TIMER, name=org.apereo.cas.DefaultCentralAuthenticationService.GRANT_SERVICE_TICKET_TIMER, count=0,
+min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0,
 mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
 ```

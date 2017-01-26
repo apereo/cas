@@ -19,7 +19,7 @@ The following settings are shared by all attribute release policies:
 may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
 
 CAS makes a distinction between attributes that convey metadata about the authentication event versus
-those that contain personally identifiable data for the authenticated principal. 
+those that contain personally identifiable data for the authenticated principal.
 
 ## Authentication Attributes
 
@@ -30,15 +30,15 @@ or attributes that are specific to CAS which may describe the type of credential
 authentication handlers, date/time of the authentication, etc.
 
 Releasing authentication attributes to service providers and applications can be
-controlled to some extent. To learn more and see the relevant list of CAS properties, 
-please [review this guide](Configuration-Properties.html).
- 
+controlled to some extent. To learn more and see the relevant list of CAS properties,
+please [review this guide](Configuration-Properties.html#authentication-attributes).
+
 
 ## Principal Attributes
 
 Principal attributes typically convey personally identifiable data about the authenticated user,
-such as address, last name, etc. Release policies are available in CAS and documented below 
-to explicitly control the collection 
+such as address, last name, etc. Release policies are available in CAS and documented below
+to explicitly control the collection
 of attributes that may be authorized for release to a given application.
 
 ### Default
@@ -48,7 +48,7 @@ basis and is always combined with attributes produced by the specific release po
 rules to always release `givenName` and `cn` to every application, and additionally allow other specific principal attributes for only some
 applications per their attribute release policy.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#default-bundle).
 
 ### Return All
 
@@ -133,7 +133,7 @@ release `affiliation` and `group` to the web application configured.
 
 ### Inline Groovy Attributes
 
-Principal attributes that are mapped may produce their values from an inline groovy script. As an example, if you currently 
+Principal attributes that are mapped may produce their values from an inline groovy script. As an example, if you currently
 have resolved a `uid` attribute with a value of `piper`, you could then consider the following:
 
 ```json
