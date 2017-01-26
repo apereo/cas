@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +59,14 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
 
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
+        logger.debug("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
+                CasProtocolConstants.PARAMETER_RENEW,
+                BooleanUtils.toStringYesNo(this.renew),
+                BooleanUtils.toStringYesNo(assertion.isFromNewLogin()));
+        
         boolean satisfied = isSatisfiedByInternal(assertion);
         if (!satisfied) {
-            logger.warn("[{}] is not satisfied by the produced assertion", getClass().getSimpleName());
+            logger.warn("[{}] is not internally satisfied by the produced assertion", getClass().getSimpleName());
             return false;
         }
         satisfied = !this.renew || assertion.isFromNewLogin();
@@ -69,6 +75,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
                     getClass().getSimpleName(), CasProtocolConstants.PARAMETER_RENEW);
             return false;
         }
+        logger.debug("Validation specification is satisfied by the produced assertion");
         return true;
     }
 
