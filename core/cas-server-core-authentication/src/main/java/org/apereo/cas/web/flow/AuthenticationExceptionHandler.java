@@ -1,11 +1,6 @@
 package org.apereo.cas.web.flow;
 
-
-import org.apereo.cas.authentication.AccountDisabledException;
-import org.apereo.cas.authentication.AccountPasswordMustChangeException;
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.InvalidLoginLocationException;
-import org.apereo.cas.authentication.InvalidLoginTimeException;
+import org.apereo.cas.authentication.*;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -15,12 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +37,7 @@ public class AuthenticationExceptionHandler {
     /**
      * Default list of errors this class knows how to handle.
      */
-    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new HashSet<>();
+    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new LinkedHashSet<>();
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -115,7 +105,7 @@ public class AuthenticationExceptionHandler {
             Need to do this copy as we have the errors field pointing to DEFAULT_ERROR_LIST statically,
             so not to mutate it.
          */
-        this.errors = new HashSet<>(this.errors);
+        this.errors = new LinkedHashSet<>(this.errors);
         this.errors.addAll(nonNullErrors);
     }
 
