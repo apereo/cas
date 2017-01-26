@@ -12,10 +12,12 @@ from `London, UK` to be considered suspicious, or you may want to block requests
 
 ## Configuration
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#adaptive-authentication).
+
 To enable adaptive authentication, you will need to allow CAS to geo-locate authentication requests.
 To learn more, please [see this guide](GeoTracking-Authentication-Requests.html)
 
 # Risk-based Authentication
 
-CAS is able to track and examine authentication requests for suspicious behavior. 
+CAS is able to track and examine authentication requests for suspicious behavior.
 To learn more, please [see this guide](Configuring-RiskBased-Authentication.html).
