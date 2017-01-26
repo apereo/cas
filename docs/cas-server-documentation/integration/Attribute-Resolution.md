@@ -130,7 +130,7 @@ CAS overlay to be able to resolve dependencies:
 </repositories>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#shibboleth-attribute-resolver).
 
 <div class="alert alert-warning"><strong>Connector Compatibility</strong><p>Note that at this time given LDAP library compatibilities between CAS and Shibboleth,
 the LDAP data connector is not quite supported by CAS.</p></div>
