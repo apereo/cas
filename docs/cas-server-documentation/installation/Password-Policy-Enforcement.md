@@ -49,7 +49,7 @@ may receive a secure link with a time-based expiration policy at their registere
 will allow the user to provide answers to his/her pre-defined security questions, which if successfully done,
 will allow the user to next reset their password and login again.
 
-This functionality needs to be explicitly enabled in CAS settings. You may also specify a pattern for accepted passwords. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+This functionality needs to be explicitly enabled in CAS settings. You may also specify a pattern for accepted passwords. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#password-management).
 
 ### LDAP
 

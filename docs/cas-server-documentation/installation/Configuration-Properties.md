@@ -3040,7 +3040,7 @@ when shared with client applications on outgoing calls.
 # cas.ticket.security.signingKey=
 ```
 
-## Service Ticket
+## Service Tickets Behavior
 
 Controls the expiration policy of service tickets, as well as other properties
 applicable to STs.
@@ -3052,20 +3052,20 @@ applicable to STs.
 # cas.ticket.st.timeToKillInSeconds=10
 ```
 
-## Proxy Granting Ticket
+## Proxy Granting Tickets Behavior
 
 ```properties
 # cas.ticket.pgt.maxLength=50
 ```
 
-## Proxy Tickets
+## Proxy Tickets Behavior
 
 ```properties
 # cas.ticket.pt.timeToKillInSeconds=10
 # cas.ticket.pt.numberOfUses=1
 ```
 
-## Ticket Granting Ticket
+## Ticket Granting Tickets Behavior
 
 ```properties
 # cas.ticket.tgt.onlyTrackMostRecentSession=true

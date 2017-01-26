@@ -26,3 +26,5 @@ Automatic support for database drivers includes:
 6. Sybase
 
 All other drivers need to be manually added to the build configuration.
+
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#hibernate--jdbc).

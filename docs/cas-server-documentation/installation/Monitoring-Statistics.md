@@ -60,7 +60,7 @@ Supported metrics include:
 ### Metric Refresh Interval
 
 The metrics reporting interval can be configured via CAS properties.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#metrics--performance-stats).
 
 ### Loggers
 
