@@ -26,9 +26,9 @@ a back-end [REST-based] service that is also protected by CAS. The scenario usua
 - Application A on the backend needs to contact a service S to produce data.
 - Service S itself is protected by CAS itself.
 
-Because A contacts S via a server-to-service method where no browser is involved, 
-service would not be able to recognize that an SSO session already exists. In these cases,
-application A needs to exercise proxying in order to obtain a ticket for service S. The ticket
+Because A contacts service S via a server-to-service method where no browser is involved, 
+service S would not be able to recognize that an SSO session already exists. In these cases,
+application A needs to exercise proxying in order to obtain a proxy ticket for service S. The proxy ticket
 is passed to the relevant endpoint of service S so it can retrieve and validate it via CAS 
 and finally produce a response.
 
