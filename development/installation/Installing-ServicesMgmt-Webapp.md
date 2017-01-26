@@ -17,8 +17,8 @@ share the <strong>same</strong> service registry configuration for CAS services.
 
 A sample overlay for the services management webapp is provided
  here: [https://github.com/Apereo/cas-services-management-overlay](https://github.com/apereo/cas-services-management-overlay)
- 
- To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+ To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
 
 ## Services Registry
 
@@ -26,17 +26,17 @@ The [persistence storage](Service-Management.html) for services **MUST** be the 
 
 ## Authentication Method
 
-Access to the management webapp is by default configured to authenticate against a CAS server. 
+Access to the management webapp is by default configured to authenticate against a CAS server.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Authorization
 
-Learn how to control access to the management web application. 
+Learn how to control access to the management web application.
 
 ### Static List of Users
 
-By default, access is limited to a static list of users whose credentials may be 
-specified in a `user-details.properties` file that should be available on the runtime classpath. 
+By default, access is limited to a static list of users whose credentials may be
+specified in a `user-details.properties` file that should be available on the runtime classpath.
 
 ### Attribute
 

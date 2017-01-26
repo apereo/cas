@@ -120,7 +120,6 @@ via its own private key. Since the attribute is base64 encoded by default, it ne
 decryption can occur. Here's a sample code snippet:
 
 ```java
-
 final Map<?, ?> attributes = ...
 final String encodedPgt = (String) attributes.get("proxyGrantingTicket");
 final PrivateKey privateKey = ...

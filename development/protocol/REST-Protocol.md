@@ -28,7 +28,7 @@ Support is enabled by including the following to the overlay:
 </dependency>
 ```
 
-REST support is currently provided internally by 
+REST support is currently provided internally by
 the [Spring framework](http://spring.io/guides/gs/rest-service/).
 
 ## Request a Ticket Granting Ticket
@@ -75,7 +75,7 @@ sent, it will send the 415 Unsupported Media Type.
 
 ## Logout
 
-Destroy the SSO session by removing the issued ticket: 
+Destroy the SSO session by removing the issued ticket:
 
 ```bash
 DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
@@ -121,7 +121,7 @@ the authenticated principal that submits the request must be authorized with a
 pre-configured role name and value that is designated in the CAS configuration
 via the CAS properties.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#rest-api).
 
 ```bash
 POST /cas/v1/services/add/{TGT id} HTTP/1.0
@@ -159,7 +159,7 @@ client.destroyTicketGrantingTicket(context, profile);
 
 ## Throttling
 
-To understand how to throttling works in CAS, 
+To understand how to throttling works in CAS,
 please review [the available options](../installation/Configuring-Authentication-Throttling.html).
 
 By default, throttling REST requests is turned off.

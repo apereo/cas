@@ -417,7 +417,8 @@ By default, the execution order is the following but can be adjusted per source:
 2. JDBC
 3. JSON
 4. Groovy
-5. Static Stub
+5. Shibboleth
+6. Static Stub
 
 Note that if no other attribute source is defined and if attributes are not directly retrieved
 as part of primary authentication, then a stub/static source will be created
@@ -563,6 +564,15 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].pool.maxIdleTime=1000
 # cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
 ```
+
+### Shibboleth Attribute Resolver
+
+To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
+
+```properties
+# cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
+```
+
 
 ### Default Bundle
 
@@ -736,6 +746,7 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 # cas.authn.adaptive.risk.response.sms.text=
 # cas.authn.adaptive.risk.response.sms.attributeName=phone
 ```
+
 ## Sms Messaging
 
 ### Twillio
@@ -752,7 +763,9 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 # cas.textMagic.token=
 ```
 
-## GoogleMaps GeoTracking
+## GeoTracking
+
+### GoogleMaps GeoTracking
 
 Used to geo-profile authentication events.
 
@@ -764,7 +777,7 @@ Used to geo-profile authentication events.
 # cas.googleMaps.googleAppsEngine=false
 ```
 
-## Maxmind GeoTracking
+### Maxmind GeoTracking
 
 Used to geo-profile authentication events.
 
@@ -1859,17 +1872,6 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.bypass.credentialClassType=UsernamePassword.+
 ```
 
-## Authentication Exceptions
-
-Map custom authentication exceptions in the CAS webflow and link them to custom messages defined in message bundles.
-
-To learn more about this topic, [please review this guide](Webflow-Customization-Exceptions.html).
-
-
-```properties
-# cas.authn.exceptions.exceptions=value1,value2,...
-```
-
 ## SAML Core
 
 Control core SAML functionality within CAS.
@@ -2346,13 +2348,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.messageBundle.baseNames=classpath:custom_messages,classpath:messages
 ```
 
-## Shibboleth Attribute Resolver
 
-To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
-
-```properties
-# cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
-```
 
 ## Audits
 
@@ -2370,7 +2366,7 @@ To learn more about this topic, [please review this guide](Audits.html).
 # cas.audit.useServerHostAddress=false
 ```
 
-### Database
+### Database Audits
 
 Store audit logs inside a database.
 
@@ -2398,7 +2394,6 @@ Store audit logs inside a database.
 # cas.audit.jdbc.pool.maxIdleTime=1000
 # cas.audit.jdbc.pool.maxWait=2000
 ```
-
 
 ## Monitoring
 
@@ -2431,7 +2426,7 @@ Decide how CAS should monitor the internal state of various cache storage servic
 # cas.monitor.warn.evictionThreshold=0
 ```
 
-### Database
+### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used
 for authentication or attribute retrieval.
@@ -2524,53 +2519,6 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.theme.defaultThemeName=cas-theme-default
 ```
 
-## Acceptable Usage Policy
-
-Decide how CAS should attempt to determine whether AUP is accepted.
-To learn more about this topic, [please review this guide](User-Interface-Customization-AUP.html).
-
-
-```properties
-# cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
-```
-
-### LDAP
-
-If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
-
-```properties
-# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.acceptableUsagePolicy.ldap.connectionStrategy=
-# cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
-# cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
-# cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
-# cas.acceptableUsagePolicy.ldap.bindCredential=Password
-# cas.acceptableUsagePolicy.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
-# cas.acceptableUsagePolicy.ldap.connectTimeout=5000
-# cas.acceptableUsagePolicy.ldap.trustCertificates=
-# cas.acceptableUsagePolicy.ldap.keystore=
-# cas.acceptableUsagePolicy.ldap.keystorePassword=
-# cas.acceptableUsagePolicy.ldap.keystoreType=JKS|JCEKS|PKCS12
-# cas.acceptableUsagePolicy.ldap.minPoolSize=3
-# cas.acceptableUsagePolicy.ldap.maxPoolSize=10
-# cas.acceptableUsagePolicy.ldap.validateOnCheckout=true
-# cas.acceptableUsagePolicy.ldap.validatePeriodically=true
-# cas.acceptableUsagePolicy.ldap.validatePeriod=600
-# cas.acceptableUsagePolicy.ldap.failFast=true
-# cas.acceptableUsagePolicy.ldap.idleTime=500
-# cas.acceptableUsagePolicy.ldap.prunePeriod=600
-# cas.acceptableUsagePolicy.ldap.blockWaitTime=5000
-# cas.acceptableUsagePolicy.ldap.useSsl=true
-# cas.acceptableUsagePolicy.ldap.useStartTls=false
-
-# cas.acceptableUsagePolicy.ldap.validator.type=NONE|SEARCH|COMPARE
-# cas.acceptableUsagePolicy.ldap.validator.baseDn=
-# cas.acceptableUsagePolicy.ldap.validator.searchFilter=(objectClass=*)
-# cas.acceptableUsagePolicy.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
-# cas.acceptableUsagePolicy.ldap.validator.attributeName=objectClass
-# cas.acceptableUsagePolicy.ldap.validator.attributeValues=top
-# cas.acceptableUsagePolicy.ldap.validator.dn=
-```
 
 ## Events
 
@@ -2582,7 +2530,7 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 # cas.events.trackGeolocation=false
 ```
 
-### Database
+### Database Events
 
 Decide how CAS should store authentication events inside a database instance.
 
@@ -2610,7 +2558,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.pool.maxWait=2000
 ```
 
-### MongoDb
+### MongoDb Events
 
 Decide how CAS should store authentication events inside a MongoDb instance.
 
@@ -2619,7 +2567,6 @@ Decide how CAS should store authentication events inside a MongoDb instance.
 # cas.events.mongodb.dropCollection=false
 # cas.events.mongodb.collection=MongoDbCasEventRepository
 ```
-
 
 ## Http Web Requests
 
@@ -3093,7 +3040,7 @@ when shared with client applications on outgoing calls.
 # cas.ticket.security.signingKey=
 ```
 
-## Service Ticket
+## Service Tickets Behavior
 
 Controls the expiration policy of service tickets, as well as other properties
 applicable to STs.
@@ -3105,20 +3052,20 @@ applicable to STs.
 # cas.ticket.st.timeToKillInSeconds=10
 ```
 
-## Proxy Granting Ticket
+## Proxy Granting Tickets Behavior
 
 ```properties
 # cas.ticket.pgt.maxLength=50
 ```
 
-## Proxy Tickets
+## Proxy Tickets Behavior
 
 ```properties
 # cas.ticket.pt.timeToKillInSeconds=10
 # cas.ticket.pt.numberOfUses=1
 ```
 
-## Ticket Granting Ticket
+## Ticket Granting Tickets Behavior
 
 ```properties
 # cas.ticket.tgt.onlyTrackMostRecentSession=true
@@ -3275,6 +3222,64 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # cas.webflow.encryption.key=
 
 # cas.webflow.alg=AES
+```
+
+### Authentication Exceptions
+
+Map custom authentication exceptions in the CAS webflow and link them to custom messages defined in message bundles.
+
+To learn more about this topic, [please review this guide](Webflow-Customization-Exceptions.html).
+
+```properties
+# cas.authn.exceptions.exceptions=value1,value2,...
+```
+
+### Acceptable Usage Policy
+
+Decide how CAS should attempt to determine whether AUP is accepted.
+To learn more about this topic, [please review this guide](User-Interface-Customization-AUP.html).
+
+
+```properties
+# cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
+```
+
+#### LDAP
+
+If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
+
+```properties
+# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.acceptableUsagePolicy.ldap.connectionStrategy=
+# cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
+# cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
+# cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.acceptableUsagePolicy.ldap.bindCredential=Password
+# cas.acceptableUsagePolicy.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.acceptableUsagePolicy.ldap.connectTimeout=5000
+# cas.acceptableUsagePolicy.ldap.trustCertificates=
+# cas.acceptableUsagePolicy.ldap.keystore=
+# cas.acceptableUsagePolicy.ldap.keystorePassword=
+# cas.acceptableUsagePolicy.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.acceptableUsagePolicy.ldap.minPoolSize=3
+# cas.acceptableUsagePolicy.ldap.maxPoolSize=10
+# cas.acceptableUsagePolicy.ldap.validateOnCheckout=true
+# cas.acceptableUsagePolicy.ldap.validatePeriodically=true
+# cas.acceptableUsagePolicy.ldap.validatePeriod=600
+# cas.acceptableUsagePolicy.ldap.failFast=true
+# cas.acceptableUsagePolicy.ldap.idleTime=500
+# cas.acceptableUsagePolicy.ldap.prunePeriod=600
+# cas.acceptableUsagePolicy.ldap.blockWaitTime=5000
+# cas.acceptableUsagePolicy.ldap.useSsl=true
+# cas.acceptableUsagePolicy.ldap.useStartTls=false
+
+# cas.acceptableUsagePolicy.ldap.validator.type=NONE|SEARCH|COMPARE
+# cas.acceptableUsagePolicy.ldap.validator.baseDn=
+# cas.acceptableUsagePolicy.ldap.validator.searchFilter=(objectClass=*)
+# cas.acceptableUsagePolicy.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.acceptableUsagePolicy.ldap.validator.attributeName=objectClass
+# cas.acceptableUsagePolicy.ldap.validator.attributeValues=top
+# cas.acceptableUsagePolicy.ldap.validator.dn=
 ```
 
 

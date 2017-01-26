@@ -20,7 +20,7 @@ authentication requests into a geo-location.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#googlemaps-geotracking).
 
 ## Maxmind
 
@@ -35,4 +35,4 @@ authentication requests into a geo-location.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#maxmind-geotracking).
