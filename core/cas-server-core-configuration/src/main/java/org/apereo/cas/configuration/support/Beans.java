@@ -141,7 +141,7 @@ public final class Beans {
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
             bean.setAutoCommit(jpaProperties.isAutocommit());
             bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
-            bean.setValidationTimeout(jpaProperties.getPool().getMaxWait());
+            bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
             return bean;
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
