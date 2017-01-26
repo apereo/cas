@@ -17,6 +17,7 @@ import org.springframework.binding.message.MessageContext;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,8 +39,7 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 public class AuthenticationExceptionHandler {
-
-
+    
     private static final String UNKNOWN = "UNKNOWN";
 
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
@@ -47,7 +47,7 @@ public class AuthenticationExceptionHandler {
     /**
      * Default list of errors this class knows how to handle.
      */
-    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new HashSet<>();
+    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new LinkedHashSet<>();
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
