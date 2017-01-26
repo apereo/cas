@@ -5,7 +5,7 @@ title: CAS - User Interface Customization
 
 # Views
 
-The views are found at `src/main/resources/templates`. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+The views are found at `src/main/resources/templates`. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#views).
 
 ## Warning Before Accessing Application
 
