@@ -45,7 +45,7 @@ layout: null
     *   [Remember Me](/$version/installation/Configuring-LongTerm-Authentication.html)
     *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)
     *   [MongoDb](/$version/installation/MongoDb-Authentication.html)
-    *   [Pac4j](/$version/installation/Pac4j-Authentication.html)
+    *   [Pac4J](/$version/installation/Pac4j-Authentication.html)
     *   [Whitelist](/$version/installation/Whitelist-Authentication.html)
     *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
     *   [Proxy Authentication](/$version/installation/Configuring-Proxy-Authentication.html)
@@ -62,6 +62,7 @@ layout: null
     *   [SSO Session Cookie](/$version/installation/Configuring-SSO-Session-Cookie.html)
     *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
+    *   [Password Management](/$version/installation/Password-Management.html)
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
         *   [ADFS](/$version/integration/ADFS-Integration.html)
 
