@@ -14,7 +14,7 @@ public class ConnectionPoolingProperties {
     private String maxIdleTime = "PT1S";
     private String maxWait = "PT2S";
     private boolean suspension;
-    private long timeoutMillis;
+    private long timeoutMillis = 1_000;
     
     public long getTimeoutMillis() {
         return timeoutMillis;
