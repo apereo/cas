@@ -11,24 +11,25 @@ The following endpoints are secured and available:
 |-----------------------------------|------------------------------------------
 | `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management.
 | `/status`                         | [Monitor CAS status and other underlying components](Configuring-Monitoring.html).
-| `/status/autoconfig`              | Describes how the application context is auto-configured.
-| `/status/beans`                   | Displays all application context Spring beans.
+| `/status/autoconfig`              | Describes how the CAS application context is auto-configured.
+| `/status/beans`                   | Displays all CAS application context **internal** Spring beans.
 | `/status/configprops`             | List of **internal** configuration properties.
-| `/status/dump`                    | Produces a thread dump.
+| `/status/dump`                    | Produces a thread dump for the running CAS server.
 | `/status/env`                     | Produces a collection of all application properties.
-| `/status/health`                  | General health of the system.
-| `/status/info`                    | CAS version information.
+| `/status/health`                  | Reports back general health status of the system, produced by various monitors.
+| `/status/info`                    | CAS version information and other system traits.
 | `/status/metrics`                 | Runtime metrics and stats.
-| `/status/stats`                   | Visual representation of CAS statistics.
+| `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
 | `/status/logging`                 | Monitor CAS logs in a streaming fashion, and review the audit log.
 | `/status/config`                  | Visual representation of **CAS** application properties and configuration.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
 | `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
 | `/status/restart`                 | Restart the application via a `POST`. Disabled by default.
-| `/status/refresh`                 | Refresh the application configuration via a `POST`.
-| `/status/ssosessions`             | Report of active SSO sessions and authentications.
+| `/status/refresh`                 | Refresh the application configuration via a `POST` to let components reload and recognize new values.
+| `/status/ssosessions`             | Report of active SSO sessions and authentications. Examine attributes, services and administratively log users out.
 | `/status/trustedDevs`             | When enabled, reports on the [registered trusted devices/browsers](Multifactor-TrustedDevice-Authentication.html).
 | `/status/authnEvents`             | When enabled, report on the [events captured by CAS](Configuring-Authentication-Events.html).
+| `/status/attrresolution`          | Examine resolution of user attributes via [CAS attribute resolution](../integration/Attribute-Resolution.html).
 
 ## Security
 
