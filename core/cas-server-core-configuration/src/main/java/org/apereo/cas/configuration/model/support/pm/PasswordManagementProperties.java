@@ -107,10 +107,18 @@ public class PasswordManagementProperties {
     }
     
     public static class Ldap extends AbstractLdapProperties {
-        
+        private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>();
         private String baseDn;
         private String userFilter;
         private LdapType type = LdapType.AD;
+        
+        public Map<String, String> getSecurityQuestionsAttributes() {
+            return securityQuestionsAttributes;
+        }
+
+        public void setSecurityQuestionsAttributes(final Map<String, String> s) {
+            this.securityQuestionsAttributes = s;
+        }
         
         public String getBaseDn() {
             return baseDn;
@@ -145,7 +153,7 @@ public class PasswordManagementProperties {
         private String subject = "Password Reset";
         private String from;
         private String emailAttribute = "mail";
-        private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>();
+        private boolean securityQuestionsEnabled = true;
         
         private float expirationMinutes = 1;
 
@@ -167,14 +175,6 @@ public class PasswordManagementProperties {
 
         public void setSecurity(final SigningEncryptionProperties security) {
             this.security = security;
-        }
-
-        public Map<String, String> getSecurityQuestionsAttributes() {
-            return securityQuestionsAttributes;
-        }
-
-        public void setSecurityQuestionsAttributes(final Map<String, String> s) {
-            this.securityQuestionsAttributes = s;
         }
 
         public String getText() {
@@ -207,6 +207,14 @@ public class PasswordManagementProperties {
 
         public void setExpirationMinutes(final float expirationMinutes) {
             this.expirationMinutes = expirationMinutes;
+        }
+
+        public boolean isSecurityQuestionsEnabled() {
+            return securityQuestionsEnabled;
+        }
+
+        public void setSecurityQuestionsEnabled(final boolean securityQuestionsEnabled) {
+            this.securityQuestionsEnabled = securityQuestionsEnabled;
         }
     }
 }

@@ -29,6 +29,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -37,6 +38,7 @@ import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 
 /**
@@ -64,6 +66,10 @@ public class PasswordManagementConfiguration {
     @Autowired
     @Qualifier("loginFlowExecutor")
     private FlowExecutor loginFlowExecutor;
+
+    @Autowired(required = false)
+    @Qualifier("mailSender")
+    private JavaMailSender mailSender;
 
     @RefreshScope
     @Bean
@@ -128,8 +134,7 @@ public class PasswordManagementConfiguration {
             if (StringUtils.isNotBlank(pm.getJdbc().getSqlChangePassword())
                     && StringUtils.isNotBlank(pm.getJdbc().getSqlFindEmail())
                     && StringUtils.isNotBlank(pm.getJdbc().getUrl())
-                    && StringUtils.isNotBlank(pm.getJdbc().getUser())
-                    && StringUtils.isNotBlank(pm.getJdbc().getSqlSecurityQuestions())) {
+                    && StringUtils.isNotBlank(pm.getJdbc().getUser())) {
                 return new JdbcPasswordManagementService(passwordManagementCipherExecutor(),
                         casProperties.getServer().getPrefix(),
                         casProperties.getAuthn().getPm(),
@@ -177,6 +182,13 @@ public class PasswordManagementConfiguration {
     @Bean
     public PasswordValidator passwordValidator() {
         return new PasswordValidator();
+    }
+    
+    @PostConstruct
+    public void init() {
+        if (this.mailSender == null) {
+            LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers, etc");
+        }
     }
 }
 

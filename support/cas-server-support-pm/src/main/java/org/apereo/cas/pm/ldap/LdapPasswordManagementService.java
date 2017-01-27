@@ -117,7 +117,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             if (LdapUtils.containsResultEntry(response)) {
                 final LdapEntry entry = response.getResult().getEntry();
-                final Map<String, String> qs = passwordManagementProperties.getReset().getSecurityQuestionsAttributes();
+                final Map<String, String> qs = passwordManagementProperties.getLdap().getSecurityQuestionsAttributes();
                 qs.forEach((k, v) -> {
                     final LdapAttribute q = entry.getAttribute(k);
                     final LdapAttribute a = entry.getAttribute(v);

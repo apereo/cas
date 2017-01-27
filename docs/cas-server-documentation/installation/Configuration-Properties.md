@@ -3378,9 +3378,6 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.from=
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.emailAttribute=mail
-# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion1=attrAnswer1
-# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion2=attrAnswer2
-# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion3=attrAnswer3
 
 # Used to sign/encrypt the password-reset link
 # cas.authn.pm.reset.security.encryptionKey=
@@ -3395,7 +3392,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
-### LDAP
+### LDAP Password Management
 
 ```properties
 # cas.authn.pm.ldap.type=GENERIC|AD|FreeIPA|EDirectory
@@ -3424,6 +3421,10 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.blockWaitTime=5000
 # cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
+# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
+# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion2=attrAnswer2
+# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion3=attrAnswer3
+
 # cas.authn.pm.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.pm.ldap.validator.baseDn=
 # cas.authn.pm.ldap.validator.searchFilter=(objectClass=*)
@@ -3433,7 +3434,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.validator.dn=
 ```
 
-### JDBC
+### JDBC Password Management
 
 ```properties
 # cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
