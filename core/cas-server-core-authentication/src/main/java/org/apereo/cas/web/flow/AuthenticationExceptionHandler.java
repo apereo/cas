@@ -16,7 +16,6 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +38,8 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 public class AuthenticationExceptionHandler {
-    
+
+
     private static final String UNKNOWN = "UNKNOWN";
 
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
@@ -115,7 +115,7 @@ public class AuthenticationExceptionHandler {
             Need to do this copy as we have the errors field pointing to DEFAULT_ERROR_LIST statically,
             so not to mutate it.
          */
-        this.errors = new HashSet<>(this.errors);
+        this.errors = new LinkedHashSet<>(this.errors);
         this.errors.addAll(nonNullErrors);
     }
 
