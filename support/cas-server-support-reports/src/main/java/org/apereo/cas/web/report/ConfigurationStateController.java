@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
