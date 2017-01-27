@@ -66,7 +66,7 @@ SERVER IP ADDRESS: ...
 Certain number of characters are left at the trailing end of the ticket id to assist with
 troubleshooting and diagnostics.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
 
 ## AsyncLoggers Shutdown with Tomcat
 

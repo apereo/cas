@@ -51,7 +51,7 @@ This feature is enabled via the following module:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow).
 
 ### Redis Session Replication
 
@@ -68,7 +68,7 @@ This feature is enabled via the following module:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow).
 
 ### MongoDb Session Replication
 
@@ -85,4 +85,4 @@ This feature is enabled via the following module:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow).

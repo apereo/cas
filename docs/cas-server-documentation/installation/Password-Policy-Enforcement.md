@@ -28,7 +28,7 @@ fully explaining the nature of the problem.
 
 The translation of LDAP errors into CAS workflow is all
 handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate). To see the relevant list of CAS properties,
-please [review this guide](Configuration-Properties.html).
+please [review this guide](Configuration-Properties.html#ldap-authentication).
 
 ### Account Expiration Notification
 
@@ -45,9 +45,9 @@ To learn more about this topic, please [review this guide](Password-Management.h
 ### LDAP
 
 The updated password may be stored inside an LDAP server.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-password-management).
 
 ### JDBC
 
 The updated password may be stored inside a database.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-password-management).

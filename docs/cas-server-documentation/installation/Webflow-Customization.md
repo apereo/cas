@@ -58,7 +58,7 @@ sake of establishing an SSO session without logging in to any CAS-reliant servic
 As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
 and instead presents a message when users visit CAS directly without specifying a service.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#global-sso-behavior).
 
 
 ## Acceptable Usage Policy

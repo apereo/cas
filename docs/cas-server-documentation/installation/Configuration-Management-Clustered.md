@@ -22,7 +22,7 @@ of CAS settings in a shared (git) repository (or better yet, inside a private Gi
 where you make a change in one place and it's broadcasted to all nodes. This model removes the need for 
 synchronizing changes across disks and CAS nodes.  
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
 
 The transport mechanism for the bus to broadcast events is handled via one of the following components.
 

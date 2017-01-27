@@ -47,4 +47,4 @@ In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
 all other services, MUST be authorized and registered with CAS.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#views).

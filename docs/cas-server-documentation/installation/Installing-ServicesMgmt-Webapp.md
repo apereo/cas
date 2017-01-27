@@ -27,7 +27,7 @@ The [persistence storage](Service-Management.html) for services **MUST** be the 
 ## Authentication Method
 
 Access to the management webapp is by default configured to authenticate against a CAS server.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
 
 ## Authorization
 
@@ -55,4 +55,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
