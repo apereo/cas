@@ -21,9 +21,9 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ## LDAP
 
 The updated password may be stored inside an LDAP server.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-password-management).
 
 ## JDBC
 
 The updated password may be stored inside a database.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-password-management).
