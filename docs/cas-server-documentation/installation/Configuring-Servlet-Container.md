@@ -6,8 +6,7 @@ title: CAS - Overlay Installation
 # Servlet Container Configuration
 
 A number of container options are available to deploy CAS. The [WAR Overlay](Maven-Overlay-Installation.html) guide
-describes how to build and deploy CAS.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+describes how to build and deploy CAS. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#embedded-tomcat).
 
 ## Embedded
 
