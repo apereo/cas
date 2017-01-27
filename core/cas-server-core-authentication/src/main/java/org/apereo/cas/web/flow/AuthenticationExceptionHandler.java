@@ -16,7 +16,6 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +38,7 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 public class AuthenticationExceptionHandler {
+
 
     private static final String UNKNOWN = "UNKNOWN";
 
