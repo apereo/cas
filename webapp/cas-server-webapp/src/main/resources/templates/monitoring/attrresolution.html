@@ -26,16 +26,7 @@
 <div layout:fragment="content">
     <h1 th:text="#{cas.attrresolutionview.pagetitle}"/>
     <div class="box fl-panel" id="login">
-        <table id="attributesTable" class="display table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Attribute</th>
-                <th>Value(s)</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        
         <form method="post" id="fm1" class="fm-v clearfix">
             <div class="row fl-controls-left">
                 <label for="uid" class="fl-label" th:utext="#{cas.attrresolutionview.label.uid}"/>
@@ -56,7 +47,17 @@
                        type="submit"/>
             </div>
         </form>
-
+        <div class="alert alert-info" id="status"></div>
+        <table id="attributesTable" class="display table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Attribute</th>
+                <th>Value(s)</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
 
     </div>
 
