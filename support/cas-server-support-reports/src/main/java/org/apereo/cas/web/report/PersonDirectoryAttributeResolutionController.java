@@ -1,6 +1,5 @@
 package org.apereo.cas.web.report;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;

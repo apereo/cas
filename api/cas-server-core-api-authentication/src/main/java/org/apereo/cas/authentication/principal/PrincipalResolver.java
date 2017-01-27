@@ -22,12 +22,14 @@ public interface PrincipalResolver {
     /**
      * Resolves a principal from the given credential using an arbitrary strategy.
      * Assumes no principal is already resolved by the authentication subsystem, etc.
+     *
      * @param credential Source credential.
+     * @return the principal
      */
     default Principal resolve(Credential credential) {
         return resolve(credential, null);
     }
-    
+
     /**
      * Resolves a principal from the given credential using an arbitrary strategy.
      *
