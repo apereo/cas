@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
+
+<head>
+    <title th:text="#{cas.attrresolutionview.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+
+    <div id="trustedDevices">
+        <h1 th:text="#{cas.attrresolutionview.pagetitle}"/>
+
+        <div class="box fl-panel" id="login">
+
+            <form method="post" id="fm1" class="fm-v clearfix">
+                <div class="row fl-controls-left">
+                    <label for="uid" class="fl-label" th:utext="#{cas.attrresolutionview.label.uid}"/>
+
+                    <input type="text" class="required" size="25" tabindex="0"
+                           id="uid"
+                           autocomplete="off"/>
+                    <div>
+                        <p/>
+                    </div>
+                    <input class="btn btn-success" name="_eventId_submit" accesskey="l"
+                           th:value="#{cas.attrresolutionview.button.submit}" tabindex="1" type="submit"/>
+                </div>
+            </form>
+        </div>
+        
+        <div th:replace="fragments/footerButtons"/>
+    </div>
+
+
+</div>
+</body>
+</html>

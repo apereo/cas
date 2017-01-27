@@ -1,4 +1,4 @@
-package org.apereo.cas.web.report;
+package org.apereo.cas.web.report.util;
 
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-final class ControllerUtils {
+public final class ControllerUtils {
     private ControllerUtils() {
     }
 

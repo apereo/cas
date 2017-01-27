@@ -15,6 +15,7 @@ import org.apereo.cas.web.report.DashboardController;
 import org.apereo.cas.web.report.HealthCheckController;
 import org.apereo.cas.web.report.ConfigurationStateController;
 import org.apereo.cas.web.report.LoggingConfigController;
+import org.apereo.cas.web.report.PersonDirectoryAttributeResolutionController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
 import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.TrustedDevicesController;
@@ -71,6 +72,11 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return new DashboardController();
     }
 
+    @Bean
+    public PersonDirectoryAttributeResolutionController personDirectoryAttributeResolutionController() {
+        return new PersonDirectoryAttributeResolutionController();
+    }
+    
     @RefreshScope
     @Bean
     public ConfigurationStateController internalConfigController() {

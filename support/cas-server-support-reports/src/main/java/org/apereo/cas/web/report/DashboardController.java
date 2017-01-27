@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.EndpointProperties;
 import org.springframework.boot.actuate.endpoint.ShutdownEndpoint;

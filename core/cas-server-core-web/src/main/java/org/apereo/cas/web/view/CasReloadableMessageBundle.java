@@ -67,24 +67,4 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
         this.basenames = basenames;
         super.setBasenames(basenames);
     }
-
-    @Override
-    public void setDefaultEncoding(final String defaultEncoding) {
-        super.setDefaultEncoding(defaultEncoding);
-    }
-
-    @Override
-    public void setCacheSeconds(final int cacheSeconds) {
-        super.setCacheSeconds(cacheSeconds);
-    }
-
-    @Override
-    public void setFallbackToSystemLocale(final boolean fallbackToSystemLocale) {
-        super.setFallbackToSystemLocale(fallbackToSystemLocale);
-    }
-
-    @Override
-    public void setUseCodeAsDefaultMessage(final boolean useCodeAsDefaultMessage) {
-        super.setUseCodeAsDefaultMessage(useCodeAsDefaultMessage);
-    }
 }
