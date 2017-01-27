@@ -63,7 +63,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final Map map = jdbcTemplate.queryForMap(passwordManagementProperties.getJdbc().getSqlSecurityQuestions(), String.class, username);
+        final Map map = jdbcTemplate.queryForMap(passwordManagementProperties.getJdbc().getSqlSecurityQuestions(), username);
         LOGGER.debug("Found [{}] security questions for [{}]", map.size(), username);
         return map;
     }
