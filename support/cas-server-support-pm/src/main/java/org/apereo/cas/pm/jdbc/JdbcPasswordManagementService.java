@@ -31,7 +31,8 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor, final String issuer,
+    public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor, 
+                                         final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
                                          final DataSource dataSource) {
         super(cipherExecutor, issuer, passwordManagementProperties);
