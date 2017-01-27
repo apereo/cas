@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -47,9 +48,10 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         if (this.mailSender == null) {
-            LOGGER.warn("Mail settings are not defined");
+            LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers");
             return error();
         }
+        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
         final String username = request.getParameter("username");
         if (StringUtils.isBlank(username)) {
@@ -67,6 +69,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         final String url = casProperties.getServer().getPrefix()
                 .concat('/' + FLOW_ID_PASSWORD_RESET + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
         
+        LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url,
+                pm.getReset().getExpirationMinutes());
         if (sendPasswordResetEmailToAccount(to, url)) {
             return success();
         }
