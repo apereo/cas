@@ -88,7 +88,7 @@ session identifier maps to a servlet session that can subsequently be destroyed 
 
 ### Turning Off Single Logout
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#single-logout).
 
 ### Single Logout Per Service
 

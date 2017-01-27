@@ -53,8 +53,8 @@ Please [see this guide](Configuring-Principal-Resolution.html) more full details
 
 Authentication handlers that generally deal with username-password credentials
 can be configured to transform the user id prior to executing the authentication sequence.
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+Each authentication strategy in CAS provides settings to properly transform the principal.
+Refer to the relevant settings for the authentication strategy at hand to learn more.
 
 ## Long Term Authentication
 
