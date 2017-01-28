@@ -7,6 +7,8 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 4.2
  */
 public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleAccountsService> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceFactory.class);
     
     private GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder;
 
@@ -33,7 +36,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
                 request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
 
         if (StringUtils.isBlank(xmlRequest)) {
-            logger.trace("SAML AuthN request not found in the request");
+            LOGGER.trace("SAML AuthN request not found in the request");
             return null;
         }
 
