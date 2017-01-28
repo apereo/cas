@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public abstract class AbstractCasEventRepository implements CasEventRepository {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasEventRepository.class);
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type) {

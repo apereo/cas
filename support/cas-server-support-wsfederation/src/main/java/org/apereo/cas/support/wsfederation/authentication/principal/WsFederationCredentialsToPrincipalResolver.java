@@ -33,22 +33,22 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
         final WsFederationCredential wsFedCredentials = (WsFederationCredential) credentials;
 
         final Map<String, List<Object>> attributes = wsFedCredentials.getAttributes();
-        logger.debug("Credential attributes provided are: [{}]", attributes);
+        LOGGER.debug("Credential attributes provided are: [{}]", attributes);
 
         final String idAttribute = this.configuration.getIdentityAttribute();
         if (attributes.containsKey(idAttribute)) {
-            logger.debug("Extracting principal id from attribute [{}]", this.configuration.getIdentityAttribute());
+            LOGGER.debug("Extracting principal id from attribute [{}]", this.configuration.getIdentityAttribute());
 
             final List<Object> idAttributeAsList = attributes.get(this.configuration.getIdentityAttribute());
             if (idAttributeAsList.size() > 1) {
-                logger.warn("Found multiple values for id attribute [{}].", idAttribute);
+                LOGGER.warn("Found multiple values for id attribute [{}].", idAttribute);
             }
             final String principalId = idAttributeAsList.get(0).toString();
-            logger.debug("Principal Id extracted from credentials: [{}]", principalId);
+            LOGGER.debug("Principal Id extracted from credentials: [{}]", principalId);
             return principalId;
         }
 
-        logger.warn("Credential attributes do not include an attribute for [{}]. "
+        LOGGER.warn("Credential attributes do not include an attribute for [{}]. "
                 + "This will prohibit CAS to construct a meaningful authenticated principal. "
                 + "Examine the released claims and ensure [{}] is allowed", idAttribute, idAttribute);
         return null;

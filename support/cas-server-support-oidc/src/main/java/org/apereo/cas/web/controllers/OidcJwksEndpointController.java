@@ -17,6 +17,8 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -37,7 +39,8 @@ import java.nio.charset.StandardCharsets;
  * @since 5.0.0
  */
 public class OidcJwksEndpointController extends BaseOAuthWrapperController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OidcJwksEndpointController.class);
+    
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -88,7 +91,7 @@ public class OidcJwksEndpointController extends BaseOAuthWrapperController {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

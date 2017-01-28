@@ -28,6 +28,8 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,7 +46,8 @@ import java.util.Optional;
  * @since 3.5.0
  */
 public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
+    
     /**
      * The code factory instance.
      */
@@ -83,7 +86,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final ProfileManager manager = new ProfileManager(context);
 
         if (!verifyAuthorizeRequest(request) || !isRequestAuthenticated(manager, context)) {
-            logger.error("Authorize request verification fails");
+            LOGGER.error("Authorize request verification fails");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
@@ -92,7 +95,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
@@ -116,7 +119,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                                                        final String clientId) throws Exception {
         final Optional<UserProfile> profile = manager.get(true);
         if (profile == null || !profile.isPresent()) {
-            logger.error("Unexpected null profile from profile manager");
+            LOGGER.error("Unexpected null profile from profile manager");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
@@ -127,12 +130,12 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService, authentication);
         } catch (final UnauthorizedServiceException | PrincipalException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
         final String redirectUri = context.getRequestParameter(OAuthConstants.REDIRECT_URI);
-        logger.debug("Authorize request verification successful for client [{}] with redirect uri [{}]",
+        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]",
                 clientId, redirectUri);
 
         final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
@@ -142,7 +145,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         } else {
             callbackUrl = buildCallbackUrlForImplicitResponseType(context, authentication, service, redirectUri);
         }
-        logger.debug("callbackUrl: [{}]", callbackUrl);
+        LOGGER.debug("callbackUrl: [{}]", callbackUrl);
         return OAuthUtils.redirectTo(callbackUrl);
     }
 
@@ -155,7 +158,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
 
         final AccessToken accessToken = generateAccessToken(service, authentication, context);
-        logger.debug("Generated Oauth access token: [{}]", accessToken);
+        LOGGER.debug("Generated Oauth access token: [{}]", accessToken);
 
         final URIBuilder builder = new URIBuilder(redirectUri);
         final StringBuilder stringBuilder = new StringBuilder();
@@ -192,7 +195,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                                                                     final String redirectUri) {
 
         final OAuthCode code = this.oAuthCodeFactory.create(service, authentication);
-        logger.debug("Generated OAuth code: [{}]", code);
+        LOGGER.debug("Generated OAuth code: [{}]", code);
         getTicketRegistry().addTicket(code);
 
         final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
@@ -241,14 +244,14 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @return whether the response type is supported
      */
     private boolean checkResponseTypes(final String type, final OAuthResponseType... expectedTypes) {
-        logger.debug("Response type: [{}]", type);
+        LOGGER.debug("Response type: [{}]", type);
 
         for (final OAuthResponseType expectedType : expectedTypes) {
             if (isResponseType(type, expectedType)) {
                 return true;
             }
         }
-        logger.error("Unsupported response type: [{}]", type);
+        LOGGER.error("Unsupported response type: [{}]", type);
         return false;
     }
 
