@@ -24,8 +24,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.0.0
  */
 public class TicketGrantingTicketCheckAction extends AbstractAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketCheckAction.class);
-    
     /**
      * TGT does not exist event ID={@value}.
      **/
@@ -40,6 +38,8 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      * TGT valid event ID={@value}.
      **/
     public static final String VALID = "valid";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketCheckAction.class);
 
     private CentralAuthenticationService centralAuthenticationService;
 

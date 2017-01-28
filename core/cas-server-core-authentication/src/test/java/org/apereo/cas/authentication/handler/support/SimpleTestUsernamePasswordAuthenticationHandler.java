@@ -35,6 +35,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTestUsernamePasswordAuthenticationHandler.class);
 
     /**
      * Default mapping of special usernames to exceptions raised when that user attempts authentication.
@@ -44,8 +45,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
 
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTestUsernamePasswordAuthenticationHandler.class);
-    
+
     /**
      * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
      */
