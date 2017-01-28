@@ -15,7 +15,7 @@ import java.net.URL;
  * @since 5.0.0
  */
 public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutServiceLogoutUrlBuilder {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSingleLogoutServiceLogoutUrlBuilder.class);
 
     @Override
     public URL determineLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) {
@@ -24,7 +24,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutS
             final URL serviceLogoutUrl = registeredService.getLogoutUrl();
 
             if (serviceLogoutUrl != null) {
-                logger.debug("Logout request will be sent to [{}] for service [{}]",
+                LOGGER.debug("Logout request will be sent to [{}] for service [{}]",
                         serviceLogoutUrl, singleLogoutService);
                 logoutUrl = serviceLogoutUrl;
             }

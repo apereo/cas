@@ -74,7 +74,7 @@ import java.util.List;
  * @since 5.0.0
  */
 public class SamlObjectSigner {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlObjectSigner.class);
 
     /**
      * The Override signature reference digest methods.
@@ -126,7 +126,7 @@ public class SamlObjectSigner {
                                            final HttpServletResponse response,
                                            final HttpServletRequest request) throws SamlException {
         try {
-            logger.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
+            LOGGER.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
             final MessageContext<T> outboundContext = new MessageContext<>();
             prepareOutboundContext(samlObject, adaptor, outboundContext);
             prepareSecurityParametersContext(adaptor, outboundContext);
@@ -148,11 +148,11 @@ public class SamlObjectSigner {
      */
     protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext)
             throws Exception {
-        logger.debug("Attempting to sign the outbound SAML message...");
+        LOGGER.debug("Attempting to sign the outbound SAML message...");
         final SAMLOutboundProtocolMessageSigningHandler handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.setSignErrorResponses(casProperties.getAuthn().getSamlIdp().getResponse().isSignError());
         handler.invoke(outboundContext);
-        logger.debug("Signed SAML message successfully");
+        LOGGER.debug("Signed SAML message successfully");
     }
 
     /**
@@ -214,7 +214,7 @@ public class SamlObjectSigner {
                                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                  final MessageContext<T> outboundContext) throws SamlException {
 
-        logger.debug("Outbound saml object to use is [{}]", samlObject.getClass().getName());
+        LOGGER.debug("Outbound saml object to use is [{}]", samlObject.getClass().getName());
         outboundContext.setMessage(samlObject);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundContext, adaptor);
     }
@@ -232,14 +232,14 @@ public class SamlObjectSigner {
             criteria.add(new SignatureSigningConfigurationCriterion(getSignatureSigningConfiguration()));
             criteria.add(new RoleDescriptorCriterion(descriptor));
             final SAMLMetadataSignatureSigningParametersResolver resolver = new SAMLMetadataSignatureSigningParametersResolver();
-            logger.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
+            LOGGER.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
 
             final SignatureSigningParameters params = resolver.resolveSingle(criteria);
             if (params == null) {
                 throw new SAMLException("No signature signing parameter is available");
             }
 
-            logger.debug("Created signature signing parameters."
+            LOGGER.debug("Created signature signing parameters."
                             + "\nSignature algorithm: [{}]"
                             + "\nSignature canonicalization algorithm: [{}]"
                             + "\nSignature reference digest methods: [{}]",
@@ -274,8 +274,8 @@ public class SamlObjectSigner {
             config.setBlacklistMerge(true);
         }
 
-        logger.debug("Signature validation blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
-        logger.debug("Signature validation whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.debug("Signature validation blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.debug("Signature validation whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
 
         return config;
     }
@@ -311,11 +311,11 @@ public class SamlObjectSigner {
         if (StringUtils.isNotBlank(samlIdp.getAlgs().getOverrideSignatureCanonicalizationAlgorithm())) {
             config.setSignatureCanonicalizationAlgorithm(samlIdp.getAlgs().getOverrideSignatureCanonicalizationAlgorithm());
         }
-        logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
-        logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
-        logger.debug("Signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
-        logger.debug("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
-        logger.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
+        LOGGER.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
+        LOGGER.debug("Signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
+        LOGGER.debug("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         final PrivateKey privateKey = getSigningPrivateKey();
         final X509Certificate certificate = getSigningCertificate();
@@ -323,7 +323,7 @@ public class SamlObjectSigner {
         final List<Credential> creds = new ArrayList<>();
         creds.add(new BasicX509Credential(certificate, privateKey));
         config.setSigningCredentials(creds);
-        logger.debug("Signature signing credentials configured");
+        LOGGER.debug("Signature signing credentials configured");
 
         return config;
     }
@@ -336,7 +336,7 @@ public class SamlObjectSigner {
      */
     protected X509Certificate getSigningCertificate() throws Exception {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
-        logger.debug("Locating signature signing certificate file from [{}]", samlIdp.getMetadata().getSigningCertFile());
+        LOGGER.debug("Locating signature signing certificate file from [{}]", samlIdp.getMetadata().getSigningCertFile());
         return SamlUtils.readCertificate(new FileSystemResource(samlIdp.getMetadata().getSigningCertFile().getFile()));
     }
 
@@ -352,7 +352,7 @@ public class SamlObjectSigner {
         privateKeyFactoryBean.setLocation(new FileSystemResource(samlIdp.getMetadata().getSigningKeyFile().getFile()));
         privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating signature signing key file from [{}]", samlIdp.getMetadata().getSigningKeyFile());
+        LOGGER.debug("Locating signature signing key file from [{}]", samlIdp.getMetadata().getSigningKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 
@@ -374,31 +374,31 @@ public class SamlObjectSigner {
         final BasicRoleDescriptorResolver roleDescriptorResolver = new BasicRoleDescriptorResolver(metadataResolver);
         roleDescriptorResolver.initialize();
 
-        logger.debug("Validating signature for [{}]", profileRequest.getClass().getName());
+        LOGGER.debug("Validating signature for [{}]", profileRequest.getClass().getName());
 
         final Signature signature = profileRequest.getSignature();
         if (signature != null) {
             final SAMLSignatureProfileValidator validator = new SAMLSignatureProfileValidator();
-            logger.debug("Validating profile signature for [{}] via [{}]...", profileRequest.getIssuer(), validator.getClass().getSimpleName());
+            LOGGER.debug("Validating profile signature for [{}] via [{}]...", profileRequest.getIssuer(), validator.getClass().getSimpleName());
             validator.validate(signature);
-            logger.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
+            LOGGER.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
 
             final Credential credential = getSigningCredential(roleDescriptorResolver, profileRequest);
             if (credential == null) {
                 throw new SamlException("Signing credential for validation could not be resolved");
             }
 
-            logger.debug("Validating signature using credentials for [{}]", credential.getEntityId());
+            LOGGER.debug("Validating signature using credentials for [{}]", credential.getEntityId());
             SignatureValidator.validate(signature, credential);
-            logger.info("Successfully validated the request signature.");
+            LOGGER.info("Successfully validated the request signature.");
 
         } else {
             final SAML2HTTPRedirectDeflateSignatureSecurityHandler handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
             final SAMLPeerEntityContext peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
             peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
-            logger.debug("Validating request signature for [{}] via [{}]...", peer.getEntityId(), handler.getClass().getSimpleName());
+            LOGGER.debug("Validating request signature for [{}] via [{}]...", peer.getEntityId(), handler.getClass().getSimpleName());
 
-            logger.debug("Resolving role descriptor for [{}]", peer.getEntityId());
+            LOGGER.debug("Resolving role descriptor for [{}]", peer.getEntityId());
 
             final RoleDescriptor roleDescriptor = roleDescriptorResolver.resolveSingle(
                     new CriteriaSet(new EntityIdCriterion(peer.getEntityId()),
@@ -407,21 +407,21 @@ public class SamlObjectSigner {
             final SAMLProtocolContext protocol = context.getSubcontext(SAMLProtocolContext.class, true);
             protocol.setProtocol(SAMLConstants.SAML20P_NS);
 
-            logger.debug("Building security parameters context for signature validation of [{}]", peer.getEntityId());
+            LOGGER.debug("Building security parameters context for signature validation of [{}]", peer.getEntityId());
             final SecurityParametersContext secCtx = context.getSubcontext(SecurityParametersContext.class, true);
             final SignatureValidationParameters validationParams = new SignatureValidationParameters();
 
             if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
                 validationParams.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
-                logger.debug("Validation override blacklisted algorithms are [{}]", this.overrideWhiteListedAlgorithms);
+                LOGGER.debug("Validation override blacklisted algorithms are [{}]", this.overrideWhiteListedAlgorithms);
             }
 
             if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
                 validationParams.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
-                logger.debug("Validation override whitelisted algorithms are [{}]", this.overrideWhiteListedAlgorithms);
+                LOGGER.debug("Validation override whitelisted algorithms are [{}]", this.overrideWhiteListedAlgorithms);
             }
 
-            logger.debug("Resolving signing credentials for [{}]", peer.getEntityId());
+            LOGGER.debug("Resolving signing credentials for [{}]", peer.getEntityId());
             final Credential credential = getSigningCredential(roleDescriptorResolver, profileRequest);
             if (credential == null) {
                 throw new SamlException("Signing credential for validation could not be resolved");
@@ -434,12 +434,12 @@ public class SamlObjectSigner {
             secCtx.setSignatureValidationParameters(validationParams);
 
             handler.setHttpServletRequest(request);
-            logger.debug("Initializing [{}] to execute signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
+            LOGGER.debug("Initializing [{}] to execute signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
             handler.initialize();
 
-            logger.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
+            LOGGER.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
             handler.invoke(context);
-            logger.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
+            LOGGER.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
         }
     }
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -34,8 +35,18 @@ public class AuthenticationContextAttributeMetaDataPopulator implements Authenti
         }
     }
 
+    
     @Override
     public boolean supports(final Credential credential) {
         return this.authenticationHandler.supports(credential);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("authenticationContextAttribute", authenticationContextAttribute)
+                .append("authenticationHandler", authenticationHandler)
+                .append("provider", provider)
+                .toString();
     }
 }
