@@ -209,7 +209,7 @@ class SampleGroovyPersonAttributeDao {
         def currentAttributes = args[0]
         def logger = args[1]
 
-        logger.debug("Current attributes received are {}", currentAttributes)
+        LOGGER.debug("Current attributes received are {}", currentAttributes)
         return[username:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
     }
 }
