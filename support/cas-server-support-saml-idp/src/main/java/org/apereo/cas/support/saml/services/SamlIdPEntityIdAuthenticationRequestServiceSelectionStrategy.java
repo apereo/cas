@@ -30,7 +30,7 @@ public class SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy implem
     @Override
     public Service resolveServiceFrom(final Service service) {
         final String entityId = getEntityIdAsParameter(service).get().getValue();
-        logger.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
+        LOGGER.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
         return this.webApplicationServiceFactory.createService(entityId);
     }
 

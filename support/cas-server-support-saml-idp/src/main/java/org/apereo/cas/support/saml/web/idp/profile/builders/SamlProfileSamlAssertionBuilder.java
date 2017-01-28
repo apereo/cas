@@ -14,6 +14,8 @@ import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +34,8 @@ import java.util.List;
  */
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {
     private static final long serialVersionUID = -3945938960014421135L;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSamlAssertionBuilder.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -97,10 +100,10 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         try {
             if (service.isSignAssertions()) {
-                logger.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
+                LOGGER.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
                 this.samlObjectSigner.encode(assertion, service, adaptor, response, request);
             } else {
-                logger.debug("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
+                LOGGER.debug("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
             }
         } catch (final Exception e) {
             throw new SamlException("Unable to marshall assertion for signing", e);
