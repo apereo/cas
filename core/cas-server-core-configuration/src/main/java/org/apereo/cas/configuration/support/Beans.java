@@ -609,8 +609,8 @@ public final class Beans {
      * @return the cipher executor
      */
     public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry, final boolean forceIfBlankKeys) {
-        if ((StringUtils.isNotBlank(registry.getEncryption().getKey())
-                && StringUtils.isNotBlank(registry.getEncryption().getKey()))
+        if (StringUtils.isNotBlank(registry.getEncryption().getKey())
+                && StringUtils.isNotBlank(registry.getEncryption().getKey())
                 || forceIfBlankKeys) {
             return new DefaultTicketCipherExecutor(
                     registry.getEncryption().getKey(),
