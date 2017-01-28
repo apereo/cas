@@ -42,11 +42,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private static final String KEY_USAGE_OID = "2.5.29.15";
 
-    /**
-     * Instance of Logging.
-     */
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(X509CredentialsAuthenticationHandler.class);
+    
     /**
      * The compiled pattern supplied by the deployer.
      */

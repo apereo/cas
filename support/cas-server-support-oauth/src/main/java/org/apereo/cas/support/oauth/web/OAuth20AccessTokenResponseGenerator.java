@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseGenerator {
 
     private static final JsonFactory JSON_FACTORY = new JsonFactory(new ObjectMapper().findAndRegisterModules());
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenResponseGenerator.class);
+    
     /**
      * The Resource loader.
      */

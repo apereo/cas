@@ -31,8 +31,8 @@ import java.util.Map;
  */
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonDirectoryPrincipalResolver.class);
+    
     /**
      * Repository of principal attributes to be retrieved.
      */
@@ -80,11 +80,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Principal currentPrincipal) {
-        logger.debug("Attempting to resolve a principal...");
+        LOGGER.debug("Attempting to resolve a principal...");
 
         String principalId = extractPrincipalId(credential);
         if (StringUtils.isBlank(principalId)) {
-            logger.debug("Principal id [{}] could not be found", principalId);
+            LOGGER.debug("Principal id [{}] could not be found", principalId);
             return null;
         }
 
@@ -92,21 +92,21 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             principalId = principalNameTransformer.transform(principalId);
         }
         
-        logger.debug("Creating principal for [{}]", principalId);
+        LOGGER.debug("Creating principal for [{}]", principalId);
         final Map<String, List<Object>> attributes = retrievePersonAttributes(principalId, credential);
 
         if (attributes == null || attributes.isEmpty()) {
-            logger.debug("Principal id [{}] did not specify any attributes", principalId);
+            LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
 
             if (!this.returnNullIfNoAttributes) {
-                logger.debug("Returning the principal with id [{}] without any attributes", principalId);
+                LOGGER.debug("Returning the principal with id [{}] without any attributes", principalId);
                 return this.principalFactory.createPrincipal(principalId);
             }
-            logger.debug("[{}] is configured to return null if no attributes are found for [{}]",
+            LOGGER.debug("[{}] is configured to return null if no attributes are found for [{}]",
                     this.getClass().getName(), principalId);
             return null;
         }
-        logger.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
+        LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
 
         final Pair<String, Map<String, Object>> pair = convertPersonAttributesToPrincipal(principalId, attributes);
         return this.principalFactory.createPrincipal(pair.getKey(), pair.getValue());
@@ -126,14 +126,14 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         attributes.entrySet().stream().forEach(entry -> {
             final String key = entry.getKey();
 
-            logger.debug("Found attribute [{}]", key);
+            LOGGER.debug("Found attribute [{}]", key);
             final List<Object> values = entry.getValue();
             if (StringUtils.isNotBlank(this.principalAttributeName) && key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
-                    logger.debug("[{}] is empty, using [{}] for principal", this.principalAttributeName, extractedPrincipalId);
+                    LOGGER.debug("[{}] is empty, using [{}] for principal", this.principalAttributeName, extractedPrincipalId);
                 } else {
                     principalId[0] = values.get(0).toString();
-                    logger.debug(
+                    LOGGER.debug(
                             "Found principal attribute value [{}]; removing [{}] from attribute map.",
                             extractedPrincipalId,
                             this.principalAttributeName);

@@ -1,6 +1,8 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -12,7 +14,8 @@ import java.util.Arrays;
  * @since 3.5.1
  */
 public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheStatus> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCacheMonitor.class);
+    
     /**
      * CAS properties.
      */
@@ -37,7 +40,7 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
                     .forEach(code -> overall[0] = code);
             status = new CacheStatus(overall[0], null, statistics);
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             status = new CacheStatus(e);
         }
         return status;

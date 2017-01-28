@@ -1,6 +1,8 @@
 package org.apereo.cas.monitor;
 
 import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -14,7 +16,8 @@ import java.util.concurrent.ExecutorService;
  * @since 3.5.1
  */
 public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcDataSourceMonitor.class);
+    
     private JdbcTemplate jdbcTemplate;
     private final String validationQuery;
 
@@ -32,7 +35,7 @@ public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
         if (dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(dataSource);
         } else {
-            logger.debug("No data source is defined to monitor");
+            LOGGER.debug("No data source is defined to monitor");
         }
         this.validationQuery = validationQuery;
     }

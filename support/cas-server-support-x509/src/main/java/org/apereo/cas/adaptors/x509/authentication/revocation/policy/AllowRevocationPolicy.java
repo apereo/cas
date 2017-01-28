@@ -13,10 +13,10 @@ import java.security.GeneralSecurityException;
  * @since 3.4.6
  */
 public class AllowRevocationPolicy implements RevocationPolicy<Void> {
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AllowRevocationPolicy.class);
     
     @Override
     public void apply(final Void data) throws GeneralSecurityException {
-        logger.info("Continuing since AllowRevocationPolicy is in effect.");
+        LOGGER.info("Continuing since AllowRevocationPolicy is in effect.");
     }
 }

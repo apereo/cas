@@ -12,9 +12,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<S> {
 
-    /** Logger instance. */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractNamedMonitor.class);
+    
     /** Monitor name. */
     protected final String name;
 

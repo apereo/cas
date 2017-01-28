@@ -3,6 +3,8 @@ package org.apereo.cas.impl.notify;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.core.authentication.RiskBasedAuthenticationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,7 +19,8 @@ import javax.mail.internet.MimeMessage;
  * @since 5.1.0
  */
 public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotifier {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationRiskEmailNotifier.class);
+    
     /**
      * Only activated via boot if properties are defined.
      * May not always want to send email.
@@ -35,7 +38,7 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
 
         if (this.mailSender == null || StringUtils.isBlank(mail.getText()) || StringUtils.isBlank(mail.getFrom())
                 || StringUtils.isBlank(mail.getSubject()) || !principal.getAttributes().containsKey(mail.getAttributeName())) {
-            logger.debug("Could not send email [{}] because either no addresses could be found or email settings are not configured.",
+            LOGGER.debug("Could not send email [{}] because either no addresses could be found or email settings are not configured.",
                     principal.getId());
             return;
         }
@@ -59,7 +62,7 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
             }
             this.mailSender.send(message);
         } catch (final Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            LOGGER.error(ex.getMessage(), ex);
         }
     }
 }

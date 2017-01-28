@@ -36,8 +36,7 @@ public class SpnegoCredential implements Credential, Serializable {
             (byte) 'M', CHAR_S_BYTE, CHAR_S_BYTE,
             (byte) 'P', (byte) 0};
 
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoCredential.class);
     /**
      * The SPNEGO Init Token.
      */
@@ -162,7 +161,7 @@ public class SpnegoCredential implements Credential, Serializable {
             }
             return source.read();
         } catch (final IOException e) {
-            logger.warn("Could not consume the byte array source", e);
+            LOGGER.warn("Could not consume the byte array source", e);
             return null;
         }
     }

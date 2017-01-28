@@ -90,11 +90,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static final long serialVersionUID = -6833230731146922780L;
     private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
 
-    /**
-     * Logger instance.
-     **/
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSamlObjectBuilder.class);
+    
     /**
      * The Config bean.
      */
@@ -200,19 +197,19 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                                                   final Object attributeValue, 
                                                   final List<XMLObject> attributeList) {
         if (attributeValue == null) {
-            logger.debug("Skipping over SAML attribute [{}] since it has no value", attributeName);
+            LOGGER.debug("Skipping over SAML attribute [{}] since it has no value", attributeName);
             return;
         }
 
-        logger.debug("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
+        LOGGER.debug("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
         if (attributeValue instanceof Collection<?>) {
             final Collection<?> c = (Collection<?>) attributeValue;
-            logger.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
+            LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
             for (final Object value : c) {
                 attributeList.add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
             }
         } else {
-            logger.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
+            LOGGER.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
             attributeList.add(newAttributeValue(attributeValue, AttributeValue.DEFAULT_ELEMENT_NAME));
         }
     }
@@ -429,7 +426,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
             return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
         } catch (final Exception e) {
-            logger.trace(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
             return null;
         }
     }
