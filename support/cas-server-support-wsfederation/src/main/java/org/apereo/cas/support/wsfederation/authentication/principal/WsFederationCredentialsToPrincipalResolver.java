@@ -19,8 +19,7 @@ import java.util.Map;
  */
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    private final transient Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
     private WsFederationConfiguration configuration;
 
     /**

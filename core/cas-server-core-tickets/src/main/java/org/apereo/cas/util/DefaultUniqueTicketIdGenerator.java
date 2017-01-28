@@ -6,8 +6,6 @@ import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.NumericGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
@@ -21,12 +19,7 @@ import org.slf4j.LoggerFactory;
  * @since 3.0.0
  */
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
-
-    /**
-     * The logger instance.
-     */
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
     /**
      * The numeric generator to generate the static part of the id.
      */
