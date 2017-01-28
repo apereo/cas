@@ -207,6 +207,14 @@ public class Beans {
             case STANDARD:
                 return new StandardPasswordEncoder(properties.getSecret());
             default:
+                LOGGER.debug("Creating BCRYPT password encoder given the strength [{}] and secret in the configuration",
+                        properties.getStrength());
+                if (StringUtils.isBlank(properties.getSecret())) {
+                    LOGGER.debug("Creating BCRYPT encoder without secret");
+                    return new BCryptPasswordEncoder(properties.getStrength());
+                }
+
+                LOGGER.debug("Creating BCRYPT encoder with secret");
                 return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
         }
