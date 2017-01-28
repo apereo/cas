@@ -18,6 +18,8 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -35,7 +37,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RankedAuthenticationProviderWebflowEventResolver.class);
+    
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
     private final AuthenticationContextValidator authenticationContextValidator;
 
@@ -59,17 +62,17 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         final RegisteredService service = WebUtils.getRegisteredService(context);
 
         if (service == null) {
-            logger.debug("No service is available to determine event for principal");
+            LOGGER.debug("No service is available to determine event for principal");
             return resumeFlow();
         }
 
         if (StringUtils.isBlank(tgt)) {
-            logger.trace("TGT is blank; proceed with flow normally.");
+            LOGGER.trace("TGT is blank; proceed with flow normally.");
             return resumeFlow();
         }
         final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(tgt);
         if (authentication == null) {
-            logger.trace("TGT has no authentication and is blank; proceed with flow normally.");
+            LOGGER.trace("TGT has no authentication and is blank; proceed with flow normally.");
             return resumeFlow();
         }
 
@@ -80,7 +83,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
 
         final Event event = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
         if (event == null) {
-            logger.trace("Request does not indicate a requirement for authentication policy; proceed with flow normally.");
+            LOGGER.trace("Request does not indicate a requirement for authentication policy; proceed with flow normally.");
             return resumeFlow();
         }
 
@@ -89,14 +92,14 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
-            logger.debug("Returning webflow event as [{}]", id);
+            LOGGER.debug("Returning webflow event as [{}]", id);
             return Collections.singleton(event);
         }
 
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getKey()) {
-            logger.debug("Authentication context is successfully validated by [{}] for service [{}]", id, service);
+            LOGGER.debug("Authentication context is successfully validated by [{}] for service [{}]", id, service);
             return resumeFlow();
         }
 
@@ -104,7 +107,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return Collections.singleton(validateEventIdForMatchingTransitionInContext(id, context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, result.getValue().get())));
         }
-        logger.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
+        LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
         return Collections.singleton(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
     }
 

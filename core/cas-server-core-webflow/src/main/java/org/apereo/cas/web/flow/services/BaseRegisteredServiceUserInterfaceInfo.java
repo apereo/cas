@@ -120,7 +120,7 @@ public abstract class BaseRegisteredServiceUserInterfaceInfo implements Serializ
                 return items.iterator().next().getWidth();
             }
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
         return DEFAULT_IMAGE_SIZE;
     }
@@ -137,7 +137,7 @@ public abstract class BaseRegisteredServiceUserInterfaceInfo implements Serializ
                 return items.iterator().next().getHeight();
             }
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
         return DEFAULT_IMAGE_SIZE;
     }
@@ -154,7 +154,7 @@ public abstract class BaseRegisteredServiceUserInterfaceInfo implements Serializ
                 return new URL(items.iterator().next().getUrl());
             }
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
         return this.registeredService.getLogo();
     }
