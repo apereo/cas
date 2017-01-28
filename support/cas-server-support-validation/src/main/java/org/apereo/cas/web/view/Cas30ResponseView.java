@@ -92,9 +92,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
         final String contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute, Collections.singleton(contextProvider));
-        }
-        filteredAuthenticationAttributes.remove(Authentication.AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED);
-        
+        }        
         return filteredAuthenticationAttributes;
     }
 
