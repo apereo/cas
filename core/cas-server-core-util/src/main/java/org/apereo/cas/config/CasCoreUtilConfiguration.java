@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.config.support.CasConfigurationEmbeddedValueResolver;
+import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -34,6 +35,12 @@ public class CasCoreUtilConfiguration {
     public MessageInterpolator messageInterpolator() {
         return new SpringAwareMessageMessageInterpolator();
     }
+
+    @Bean
+    public CommunicationsManager communicationsManager() {
+        return new CommunicationsManager();
+    }
+
     
     @PostConstruct
     public void init() {

@@ -4,18 +4,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.*;
@@ -35,19 +32,19 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired(required = false)
-    @Qualifier("mailSender")
-    private JavaMailSender mailSender;
+    private final CommunicationsManager communicationsManager;
 
     private PasswordManagementService passwordManagementService;
 
-    public SendPasswordResetInstructionsAction(final PasswordManagementService passwordManagementService) {
+    public SendPasswordResetInstructionsAction(final CommunicationsManager communicationsManager, 
+                                               final PasswordManagementService passwordManagementService) {
+        this.communicationsManager = communicationsManager;
         this.passwordManagementService = passwordManagementService;
     }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        if (this.mailSender == null) {
+        if (!communicationsManager.isMailSenderDefined()) {
             LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers");
             return error();
         }
@@ -86,23 +83,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * @return true/false
      */
     protected boolean sendPasswordResetEmailToAccount(final String to, final String url) {
-        try {
-            final MimeMessage message = this.mailSender.createMimeMessage();
-            final MimeMessageHelper helper = new MimeMessageHelper(message);
-            helper.setTo(to);
-            final String text = String.format(casProperties.getAuthn().getPm().getReset().getText(), url);
-            helper.setText(text);
-            helper.setSubject(casProperties.getAuthn().getPm().getReset().getSubject());
-
-            if (StringUtils.isNotBlank(casProperties.getAuthn().getPm().getReset().getFrom())) {
-                helper.setFrom(casProperties.getAuthn().getPm().getReset().getFrom());
-            }
-            helper.setPriority(1);
-            this.mailSender.send(message);
-            return true;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
+        final PasswordManagementProperties.Reset reset = casProperties.getAuthn().getPm().getReset();
+        final String text = String.format(reset.getText(), url);
+        return this.communicationsManager.email(text, reset.getFrom(), reset.getSubject(), to, null, null);
     }
 }

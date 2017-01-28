@@ -26,6 +26,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
@@ -65,6 +66,10 @@ public class ElectronicFenceConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElectronicFenceConfiguration.class);
 
     @Autowired
+    @Qualifier("communicationsManager")
+    private CommunicationsManager communicationsManager;
+    
+    @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -98,7 +103,7 @@ public class ElectronicFenceConfiguration {
     @Autowired
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -114,14 +119,14 @@ public class ElectronicFenceConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationRiskNotifier authenticationRiskEmailNotifier() {
-        return new AuthenticationRiskEmailNotifier();
+        return new AuthenticationRiskEmailNotifier(communicationsManager);
     }
 
     @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
     @Bean
     @RefreshScope
     public AuthenticationRiskNotifier authenticationRiskSmsNotifier() {
-        return new AuthenticationRiskTwilioSmsNotifier();
+        return new AuthenticationRiskTwilioSmsNotifier(communicationsManager);
     }
 
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")

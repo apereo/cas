@@ -19,6 +19,7 @@ import org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction;
 import org.apereo.cas.pm.web.flow.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.VerifySecurityQuestionsAction;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -57,6 +57,10 @@ public class PasswordManagementConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("communicationsManager")
+    private CommunicationsManager communicationsManager;
+
+    @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
@@ -66,10 +70,6 @@ public class PasswordManagementConfiguration {
     @Autowired
     @Qualifier("loginFlowExecutor")
     private FlowExecutor loginFlowExecutor;
-
-    @Autowired(required = false)
-    @Qualifier("mailSender")
-    private JavaMailSender mailSender;
 
     @RefreshScope
     @Bean
@@ -155,7 +155,7 @@ public class PasswordManagementConfiguration {
     @Bean
     public Action sendPasswordResetInstructionsAction(@Qualifier("passwordChangeService")
                                                       final PasswordManagementService passwordManagementService) {
-        return new SendPasswordResetInstructionsAction(passwordManagementService);
+        return new SendPasswordResetInstructionsAction(communicationsManager, passwordManagementService);
     }
 
     @Bean
@@ -183,12 +183,17 @@ public class PasswordManagementConfiguration {
     public PasswordValidator passwordValidator() {
         return new PasswordValidator();
     }
-    
+
     @PostConstruct
     public void init() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
-        if (this.mailSender == null && pm.isEnabled()) {
-            LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers, etc");
+        if (pm.isEnabled()) {
+            if (!communicationsManager.isMailSenderDefined()) {
+                LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers, etc");
+            }
+            if (!communicationsManager.isSmsSenderDefined()) {
+                LOGGER.warn("CAS is unable to send password-reset sms messages given no settings are defined to account for sms providers, etc");
+            }
         }
     }
 }
