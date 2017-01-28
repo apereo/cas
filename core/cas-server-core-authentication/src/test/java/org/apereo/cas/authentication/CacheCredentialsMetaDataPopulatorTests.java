@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.metadata.CacheCredentialsMetaDataPopulator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,5 +1,10 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.metadata;
 
+import org.apereo.cas.authentication.AuthenticationBuilder;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 
 /**

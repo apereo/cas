@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
 
-import org.apereo.cas.authentication.AccountDisabledException;
-import org.apereo.cas.authentication.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
+import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.InvalidLoginLocationException;
-import org.apereo.cas.authentication.InvalidLoginTimeException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;

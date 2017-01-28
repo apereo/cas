@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;

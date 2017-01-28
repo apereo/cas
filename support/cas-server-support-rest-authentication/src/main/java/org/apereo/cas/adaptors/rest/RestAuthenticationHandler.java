@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.rest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AccountDisabledException;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;

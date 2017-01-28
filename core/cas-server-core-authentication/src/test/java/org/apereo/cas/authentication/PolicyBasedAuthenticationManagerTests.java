@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;

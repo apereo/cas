@@ -3,9 +3,9 @@ package org.apereo.cas.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.EchoingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
-import org.apereo.cas.authentication.principal.ChainingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -72,7 +72,7 @@ public class LdapAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
     public PrincipalFactory ldapPrincipalFactory() {
@@ -341,9 +341,7 @@ public class LdapAuthenticationConfiguration {
     public class LdapAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
         private boolean isAttributeRepositorySourceDefined() {
-            return personDirectoryPrincipalResolver.getAttributeRepository() != null
-                    && personDirectoryPrincipalResolver.getAttributeRepository().getAvailableQueryAttributes() != null
-                    && !personDirectoryPrincipalResolver.getAttributeRepository().getAvailableQueryAttributes().isEmpty();
+           
         }
 
         @Override

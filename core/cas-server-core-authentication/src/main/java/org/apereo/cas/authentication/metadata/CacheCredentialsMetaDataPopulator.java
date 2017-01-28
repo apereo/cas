@@ -1,5 +1,9 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.metadata;
 
+import org.apereo.cas.authentication.AuthenticationBuilder;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
