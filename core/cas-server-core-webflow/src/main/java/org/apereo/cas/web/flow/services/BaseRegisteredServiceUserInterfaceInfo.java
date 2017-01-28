@@ -21,8 +21,8 @@ public abstract class BaseRegisteredServiceUserInterfaceInfo implements Serializ
     private static final int DEFAULT_IMAGE_SIZE = 32;
     private static final long serialVersionUID = -2416684486715358748L;
 
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseRegisteredServiceUserInterfaceInfo.class);
+    
     /** the registered service. **/
     protected final transient RegisteredService registeredService;
 

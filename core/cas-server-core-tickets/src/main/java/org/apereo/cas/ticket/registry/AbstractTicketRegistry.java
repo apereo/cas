@@ -31,8 +31,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTicketRegistry.class);
+    
     /**
      * The cipher executor for ticket objects.
      */

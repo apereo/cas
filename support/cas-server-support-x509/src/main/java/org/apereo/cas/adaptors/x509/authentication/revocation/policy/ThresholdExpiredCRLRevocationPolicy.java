@@ -19,8 +19,7 @@ import java.time.ZonedDateTime;
  */
 public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
 
-    /** Logger instance. */
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThresholdExpiredCRLRevocationPolicy.class);
     
     /** Expired threshold period in seconds after which expired CRL data is rejected. */
     private final int threshold;

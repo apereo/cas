@@ -23,9 +23,8 @@ public abstract class AbstractManagementController {
     /** Ajax request header value to examine for exceptions. */
     private static final String AJAX_REQUEST_HEADER_VALUE = "XMLHttpRequest";
 
-    /** Logger instance. */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractManagementController.class);
+    
     /** Instance of ServicesManager. */
     protected final ServicesManager servicesManager;
 

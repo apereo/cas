@@ -62,8 +62,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasWebflowEventResolver.class);
+    
     /**
      * CAS event publisher.
      */

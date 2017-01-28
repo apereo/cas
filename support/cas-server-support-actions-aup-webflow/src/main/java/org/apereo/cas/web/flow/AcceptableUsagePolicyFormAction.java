@@ -17,13 +17,12 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.1
  */
 public class AcceptableUsagePolicyFormAction extends AbstractAction {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AcceptableUsagePolicyFormAction.class);
+    
     /**
      * Event id to signal the policy needs to be accepted.
      **/
     private static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
-    
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private AcceptableUsagePolicyRepository repository;
 

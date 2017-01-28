@@ -26,11 +26,8 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
      */
     protected ServicesManager servicesManager;
 
-    /**
-     * The Logger.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProtocolAttributeEncoder.class);
+    
     private RegisteredServiceCipherExecutor cipherExecutor;
     
     /**
