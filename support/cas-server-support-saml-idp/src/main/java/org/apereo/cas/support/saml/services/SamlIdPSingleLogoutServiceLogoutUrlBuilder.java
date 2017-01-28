@@ -8,6 +8,8 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.jasig.cas.client.util.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 
@@ -18,7 +20,8 @@ import java.net.URL;
  * @since 5.0.0
  */
 public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLogoutServiceLogoutUrlBuilder {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPSingleLogoutServiceLogoutUrlBuilder.class);
+    
     /**
      * The Services manager.
      */
@@ -57,7 +60,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
             }
 
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return super.determineLogoutUrl(registeredService, singleLogoutService);
     }

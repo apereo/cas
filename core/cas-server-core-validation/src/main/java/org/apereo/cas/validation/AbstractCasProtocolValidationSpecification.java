@@ -18,8 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Scope(value = "prototype")
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasProtocolValidationSpecification.class);
 
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;
@@ -59,23 +58,23 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
 
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
-        logger.debug("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
+        LOGGER.debug("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
                 CasProtocolConstants.PARAMETER_RENEW,
                 BooleanUtils.toStringYesNo(this.renew),
                 BooleanUtils.toStringYesNo(assertion.isFromNewLogin()));
         
         boolean satisfied = isSatisfiedByInternal(assertion);
         if (!satisfied) {
-            logger.warn("[{}] is not internally satisfied by the produced assertion", getClass().getSimpleName());
+            LOGGER.warn("[{}] is not internally satisfied by the produced assertion", getClass().getSimpleName());
             return false;
         }
         satisfied = !this.renew || assertion.isFromNewLogin();
         if (!satisfied) {
-            logger.warn("[{}] is to enforce the [{}] CAS protocol behavior, yet the assertion is not issued from a new login",
+            LOGGER.warn("[{}] is to enforce the [{}] CAS protocol behavior, yet the assertion is not issued from a new login",
                     getClass().getSimpleName(), CasProtocolConstants.PARAMETER_RENEW);
             return false;
         }
-        logger.debug("Validation specification is satisfied by the produced assertion");
+        LOGGER.debug("Validation specification is satisfied by the produced assertion");
         return true;
     }
 

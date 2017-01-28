@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -19,7 +20,7 @@ import java.util.Set;
  * @since 4.0.0
  */
 public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDataPopulator {
-
+    
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         Set<String> successes = builder.getSuccesses().keySet();
@@ -30,8 +31,15 @@ public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDat
         builder.mergeAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, successes);
     }
 
+    
     @Override
     public boolean supports(final Credential credential) {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .toString();
     }
 }

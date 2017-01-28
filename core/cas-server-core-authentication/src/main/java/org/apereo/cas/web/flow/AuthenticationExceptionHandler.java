@@ -49,7 +49,7 @@ public class AuthenticationExceptionHandler {
      */
     private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new LinkedHashSet<>();
 
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationExceptionHandler.class);
 
     /*
      * Order is important here; We want the account policy exceptions to be handled
@@ -160,7 +160,7 @@ public class AuthenticationExceptionHandler {
         }
 
         // we don't recognize this exception
-        logger.trace("Unable to translate errors of the authentication exception [{}]"
+        LOGGER.trace("Unable to translate errors of the authentication exception [{}]"
                 + "Returning [{}]", e, UNKNOWN);
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
@@ -184,7 +184,7 @@ public class AuthenticationExceptionHandler {
         // find the first error in the error list that matches the handlerErrors
         final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
                 .map(Class::getSimpleName).findFirst().orElseGet(() -> {
-                    logger.error("Unable to translate handler errors of the authentication exception [{}]"
+                    LOGGER.error("Unable to translate handler errors of the authentication exception [{}]"
                             + "Returning [{}]", e, UNKNOWN);
                     return UNKNOWN;
                 });

@@ -44,8 +44,7 @@ import java.util.List;
  * @since 5.0.0
  */
 public class SamlObjectEncrypter {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlObjectEncrypter.class);
     /**
      * The Override data encryption algorithms.
      */
@@ -94,17 +93,17 @@ public class SamlObjectEncrypter {
                                      final HttpServletResponse response,
                                      final HttpServletRequest request) throws SamlException {
         try {
-            logger.debug("Attempting to encrypt [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
+            LOGGER.debug("Attempting to encrypt [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
             final Credential credential = getKeyEncryptionCredential(adaptor.getEntityId(), adaptor, service);
 
             final KeyEncryptionParameters keyEncParams = getKeyEncryptionParameters(samlObject, service, adaptor, credential);
-            logger.debug("Key encryption algorithm for [{}] is [{}]", keyEncParams.getRecipient(), keyEncParams.getAlgorithm());
+            LOGGER.debug("Key encryption algorithm for [{}] is [{}]", keyEncParams.getRecipient(), keyEncParams.getAlgorithm());
 
             final DataEncryptionParameters dataEncParams = getDataEncryptionParameters(samlObject, service, adaptor);
-            logger.debug("Data encryption algorithm for [{}] is [{}]", adaptor.getEntityId(), dataEncParams.getAlgorithm());
+            LOGGER.debug("Data encryption algorithm for [{}] is [{}]", adaptor.getEntityId(), dataEncParams.getAlgorithm());
 
             final Encrypter encrypter = getEncrypter(samlObject, service, adaptor, keyEncParams, dataEncParams);
-            logger.debug("Attempting to encrypt [{}] for [{}] with key placement of [{}]",
+            LOGGER.debug("Attempting to encrypt [{}] for [{}] with key placement of [{}]",
                     samlObject.getClass().getName(), adaptor.getEntityId(), encrypter.getKeyPlacement());
 
             return encrypter.encrypt(samlObject);
@@ -197,17 +196,17 @@ public class SamlObjectEncrypter {
             config.setKeyTransportEncryptionAlgorithms(this.overrideKeyEncryptionAlgorithms);
         }
 
-        logger.debug("Encryption blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
-        logger.debug("Encryption key algorithms: [{}]", config.getKeyTransportEncryptionAlgorithms());
-        logger.debug("Signature data algorithms: [{}]", config.getDataEncryptionAlgorithms());
-        logger.debug("Encryption whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.debug("Encryption blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.debug("Encryption key algorithms: [{}]", config.getKeyTransportEncryptionAlgorithms());
+        LOGGER.debug("Signature data algorithms: [{}]", config.getDataEncryptionAlgorithms());
+        LOGGER.debug("Encryption whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
 
         final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
 
         final PrivateKey privateKey = getEncryptionPrivateKey();
         final X509Certificate certificate = getEncryptionCertificate();
         final Credential encryptionCredential = new BasicX509Credential(certificate, privateKey);
-        logger.debug("Created encryption credential");
+        LOGGER.debug("Created encryption credential");
 
         final StaticKeyInfoCredentialResolver keyinfoResolver = new StaticKeyInfoCredentialResolver(encryptionCredential);
         kekCredentialResolver.setKeyInfoCredentialResolver(keyinfoResolver);
@@ -224,7 +223,7 @@ public class SamlObjectEncrypter {
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         criteriaSet.add(new UsageCriterion(UsageType.ENCRYPTION));
 
-        logger.debug("Attempting to resolve the encryption key for entity id [{}]", peerEntityId);
+        LOGGER.debug("Attempting to resolve the encryption key for entity id [{}]", peerEntityId);
         return kekCredentialResolver.resolveSingle(criteriaSet);
     }
 
@@ -236,7 +235,7 @@ public class SamlObjectEncrypter {
      */
     protected X509Certificate getEncryptionCertificate() throws Exception {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        logger.debug("Locating encryption certificate file from [{}]", idp.getMetadata().getEncryptionCertFile());
+        LOGGER.debug("Locating encryption certificate file from [{}]", idp.getMetadata().getEncryptionCertFile());
         return SamlUtils.readCertificate(idp.getMetadata().getEncryptionCertFile());
     }
 
@@ -252,7 +251,7 @@ public class SamlObjectEncrypter {
         privateKeyFactoryBean.setLocation(idp.getMetadata().getEncryptionKeyFile());
         privateKeyFactoryBean.setAlgorithm(idp.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating encryption key file from [{}]", idp.getMetadata().getEncryptionKeyFile());
+        LOGGER.debug("Locating encryption key file from [{}]", idp.getMetadata().getEncryptionKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 

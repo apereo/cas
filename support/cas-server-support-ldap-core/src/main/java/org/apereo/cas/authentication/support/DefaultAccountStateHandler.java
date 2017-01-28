@@ -50,11 +50,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
      */
     protected Map<AccountState.Error, LoginException> errorMap;
 
-    /**
-     * Logger instance.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAccountStateHandler.class);
     private Map<String, Class<LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>();
 
     /**
@@ -95,13 +91,13 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             throws LoginException {
 
         if (!this.attributesToErrorMap.isEmpty() && response.getResult()) {
-            logger.debug("Handling policy based on pre-defined attributes");
+            LOGGER.debug("Handling policy based on pre-defined attributes");
             handlePolicyAttributes(response);
         }
 
         final AccountState state = response.getAccountState();
         if (state == null) {
-            logger.debug("Account state not defined. Returning empty list of messages.");
+            LOGGER.debug("Account state not defined. Returning empty list of messages.");
             return Collections.emptyList();
         }
         final List<MessageDescriptor> messages = new ArrayList<>();
@@ -129,12 +125,12 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<MessageDescriptor> messages)
             throws LoginException {
 
-        logger.debug("Handling error [{}]", error);
+        LOGGER.debug("Handling error [{}]", error);
         final LoginException ex = this.errorMap.get(error);
         if (ex != null) {
             throw ex;
         }
-        logger.debug("No LDAP error mapping defined for [{}]", error);
+        LOGGER.debug("No LDAP error mapping defined for [{}]", error);
     }
 
 
@@ -155,15 +151,15 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<MessageDescriptor> messages) {
 
 
-        logger.debug("Handling warning [{}]", warning);
+        LOGGER.debug("Handling warning [{}]", warning);
         if (warning == null) {
-            logger.debug("Account state warning not defined");
+            LOGGER.debug("Account state warning not defined");
             return;
         }
 
         final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
         final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
-        logger.debug(
+        LOGGER.debug(
                 "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
                 ttl,
                 configuration.getPasswordWarningNumberOfDays());

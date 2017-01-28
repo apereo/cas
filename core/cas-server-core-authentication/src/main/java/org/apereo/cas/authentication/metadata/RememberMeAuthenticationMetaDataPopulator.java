@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.Credential;
@@ -28,8 +29,15 @@ public class RememberMeAuthenticationMetaDataPopulator implements Authentication
         }
     }
 
+    
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof RememberMeCredential;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .toString();
     }
 }
