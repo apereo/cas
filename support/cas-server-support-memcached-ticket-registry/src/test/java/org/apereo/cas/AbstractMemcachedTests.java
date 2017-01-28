@@ -12,6 +12,7 @@ import de.flapdoodle.embed.memcached.distribution.Version;
 import de.flapdoodle.embed.process.config.store.IDownloadConfig;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.Socket;
 
