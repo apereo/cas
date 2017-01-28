@@ -77,9 +77,8 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreUtilConfiguration.class})
 @ContextConfiguration(locations = "classpath:/openid-config.xml")
 public class AbstractOpenIdTests {
-
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOpenIdTests.class);
+    
     @Autowired
     @Qualifier("serverManager")
     protected ServerManager serverManager;

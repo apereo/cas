@@ -68,10 +68,11 @@ public class CommunicationsManager {
      * @param attribute the attribute
      * @param text      the text
      * @param from      the from
+     * @return the boolean
      */
     public boolean sms(final Principal principal,
-                    final String attribute,
-                    final String text, final String from) {
+                       final String attribute,
+                       final String text, final String from) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
             final String to = CollectionUtils.toCollection(principal.getAttributes().get(attribute)).iterator().next().toString();
             return sms(from, to, text);
@@ -129,6 +130,7 @@ public class CommunicationsManager {
      * @param from the from
      * @param to   the to
      * @param text the text
+     * @return the boolean
      */
     public boolean sms(final String from, final String to, final String text) {
         if (!isSmsSenderDefined() || StringUtils.isBlank(text) || StringUtils.isBlank(from)) {

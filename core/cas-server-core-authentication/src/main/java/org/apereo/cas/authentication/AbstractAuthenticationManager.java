@@ -31,11 +31,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
-    /**
-     * Log instance for logging events, errors, warnings, etc.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAuthenticationManager.class);
+    
     /**
      * Plan to execute the authentication transaction.
      */

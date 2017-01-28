@@ -44,11 +44,8 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
 
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
-    /**
-     * Instance of logging for subclasses.
-     */
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTestUsernamePasswordAuthenticationHandler.class);
+    
     /**
      * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
      */

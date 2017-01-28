@@ -39,8 +39,8 @@ import static org.junit.Assert.*;
 @EnableScheduling
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
     protected static final String IP_ADDRESS = "1.2.3.4";
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThrottledSubmissionHandlerInterceptorAdapterTests.class);
+    
     @Autowired
     @Qualifier("authenticationThrottle")
     protected ThrottledSubmissionHandlerInterceptor throttle;
