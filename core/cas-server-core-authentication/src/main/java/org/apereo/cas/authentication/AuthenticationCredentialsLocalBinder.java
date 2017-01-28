@@ -14,21 +14,20 @@ import static java.util.stream.Collectors.joining;
  * CAS protocol events e.g. <code>AbstractAuthenticationManager</code>, <code>CentralAuthenticationServiceImpl</code>, etc.
  * <p>
  * The clearing of this state at the end of a thread execution path is the responsibility
- * of <code>CurrentCredentialsAndAuthenticationClearingFilter</code>
+ * of <code>AuthenticationCredentialsLocalBinderClearingFilter</code>
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class CurrentCredentialsAndAuthentication {
+public class AuthenticationCredentialsLocalBinder {
 
     private static final ThreadLocal<Authentication> CURRENT_AUTHENTICATION = new ThreadLocal<>();
 
     private static final ThreadLocal<String[]> CURRENT_CREDENTIAL_IDS = new ThreadLocal<>();
 
-    protected CurrentCredentialsAndAuthentication() {
+    protected AuthenticationCredentialsLocalBinder() {
     }
-
-
+    
     /**
      * Bind credentials to ThreadLocal.
      *

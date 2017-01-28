@@ -1,6 +1,6 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.authentication.CurrentCredentialsAndAuthentication;
+import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,7 +17,7 @@ import java.io.IOException;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class CurrentCredentialsAndAuthenticationClearingFilter implements Filter {
+public class AuthenticationCredentialsLocalBinderClearingFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest servletRequest,
@@ -28,7 +28,7 @@ public class CurrentCredentialsAndAuthenticationClearingFilter implements Filter
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
-            CurrentCredentialsAndAuthentication.clear();
+            AuthenticationCredentialsLocalBinder.clear();
         }
     }
 
