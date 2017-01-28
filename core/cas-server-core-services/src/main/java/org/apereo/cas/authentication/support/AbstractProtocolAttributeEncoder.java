@@ -20,14 +20,14 @@ import java.util.Map;
  * @since 4.1.0
  */
 public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttributeEncoder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProtocolAttributeEncoder.class);
 
     /**
      * The Services manager.
      */
     protected ServicesManager servicesManager;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProtocolAttributeEncoder.class);
-    
+
     private RegisteredServiceCipherExecutor cipherExecutor;
     
     /**
