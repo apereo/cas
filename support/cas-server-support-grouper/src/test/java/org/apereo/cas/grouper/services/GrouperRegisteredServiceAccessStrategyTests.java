@@ -31,7 +31,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
             strategy.setRequiredAttributes(requiredAttributes);
             strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) RegisteredServiceTestUtils.getTestAttributes());
         } else {
-            logger.info("[{}] is not configured. Skipping tests", resource.getFilename());
+            LOGGER.info("[{}] is not configured. Skipping tests", resource.getFilename());
         }
     }
 }
