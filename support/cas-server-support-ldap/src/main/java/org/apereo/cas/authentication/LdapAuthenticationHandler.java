@@ -12,6 +12,8 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
@@ -42,7 +44,8 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapAuthenticationHandler.class);
+    
     /**
      * Mapping of LDAP attribute name to principal attribute name.
      */
@@ -144,35 +147,35 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                                                                  final String originalPassword) throws GeneralSecurityException, PreventedException {
         final AuthenticationResponse response;
         try {
-            logger.debug("Attempting LDAP authentication for [{}]. Authenticator pre-configured attributes are [{}], "
+            LOGGER.debug("Attempting LDAP authentication for [{}]. Authenticator pre-configured attributes are [{}], "
                             + "additional requested attributes for this authentication request are [{}]",
                     upc, authenticator.getReturnAttributes(), authenticatedEntryAttributes);
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
                     new org.ldaptive.Credential(upc.getPassword()), authenticatedEntryAttributes);
             response = authenticator.authenticate(request);
         } catch (final LdapException e) {
-            logger.trace(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
             throw new PreventedException("Unexpected LDAP error", e);
         }
-        logger.debug("LDAP response: [{}]", response);
+        LOGGER.debug("LDAP response: [{}]", response);
 
         final List<MessageDescriptor> messageList;
         final LdapPasswordPolicyConfiguration ldapPasswordPolicyConfiguration = (LdapPasswordPolicyConfiguration) super.getPasswordPolicyConfiguration();
         if (ldapPasswordPolicyConfiguration != null) {
-            logger.debug("Applying password policy to [{}]", response);
+            LOGGER.debug("Applying password policy to [{}]", response);
             messageList = ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(response, ldapPasswordPolicyConfiguration);
         } else {
-            logger.debug("No ldap password policy configuration is defined");
+            LOGGER.debug("No ldap password policy configuration is defined");
             messageList = Collections.emptyList();
         }
 
         if (response.getResult()) {
-            logger.debug("LDAP response returned a result. Creating the final LDAP principal");
+            LOGGER.debug("LDAP response returned a result. Creating the final LDAP principal");
             return createHandlerResult(upc, createPrincipal(upc.getUsername(), response.getLdapEntry()), messageList);
         }
 
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
-            logger.warn("DN resolution failed. [{}]", response.getMessage());
+            LOGGER.warn("DN resolution failed. [{}]", response.getMessage());
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
         throw new FailedLoginException("Invalid credentials");
@@ -188,7 +191,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws LoginException On security policy errors related to principal creation.
      */
     protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws LoginException {
-        logger.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]",
+        LOGGER.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]",
                 username, ldapEntry.getDn(), ldapEntry.getAttributeNames());
         final String id = getLdapPrincipalIdentifier(username, ldapEntry);
 
@@ -196,24 +199,24 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         for (final Map.Entry<String, String> ldapAttr : this.principalAttributeMap.entrySet()) {
             final LdapAttribute attr = ldapEntry.getAttribute(ldapAttr.getKey());
             if (attr != null) {
-                logger.debug("Found principal attribute: [{}]", attr);
+                LOGGER.debug("Found principal attribute: [{}]", attr);
                 final String principalAttrName = ldapAttr.getValue();
                 if (attr.size() > 1) {
-                    logger.debug("Principal attribute: [{}] is multivalued", attr);
+                    LOGGER.debug("Principal attribute: [{}] is multivalued", attr);
                     attributeMap.put(principalAttrName, attr.getStringValues());
                 } else {
                     attributeMap.put(principalAttrName, attr.getStringValue());
                 }
             } else {
-                logger.warn("Requested LDAP attribute [{}] could not be found on the resolved LDAP entry for [{}]",
+                LOGGER.warn("Requested LDAP attribute [{}] could not be found on the resolved LDAP entry for [{}]",
                         ldapAttr.getKey(), ldapEntry.getDn());
             }
         }
         final String dnAttribute = getName().concat(".").concat(username);
-        logger.debug("Recording principal DN attribute as [{}]", dnAttribute);
+        LOGGER.debug("Recording principal DN attribute as [{}]", dnAttribute);
 
         attributeMap.put(dnAttribute, ldapEntry.getDn());
-        logger.debug("Created LDAP principal for id [{}] and [{}] attributes", id, attributeMap.size());
+        LOGGER.debug("Created LDAP principal for id [{}] and [{}] attributes", id, attributeMap.size());
         return this.principalFactory.createPrincipal(id, attributeMap);
     }
 
@@ -231,7 +234,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (StringUtils.isNotBlank(this.principalIdAttribute)) {
             final LdapAttribute principalAttr = ldapEntry.getAttribute(this.principalIdAttribute);
             if (principalAttr == null || principalAttr.size() == 0) {
-                logger.warn("The principal id attribute [{}] is not found. CAS cannot construct the final authenticated principal "
+                LOGGER.warn("The principal id attribute [{}] is not found. CAS cannot construct the final authenticated principal "
                                 + "if it's unable to locate the attribute that is designated as the principal id. "
                                 + "Attributes available on the LDAP entry are [{}]. Since principal id attribute is not available, CAS will "
                                 + "fallback to construct the principal based on the provided user id: [{}]",
@@ -243,13 +246,13 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 if (!this.allowMultiplePrincipalAttributeValues) {
                     throw new LoginException("Multiple principal values are not allowed: " + principalAttr);
                 }
-                logger.warn("Found multiple values for principal id attribute: [{}]. Using first value=[{}].", principalAttr, principalAttr.getStringValue());
+                LOGGER.warn("Found multiple values for principal id attribute: [{}]. Using first value=[{}].", principalAttr, principalAttr.getStringValue());
             }
-            logger.debug("Retrieved principal id attribute [{}]", principalAttr.getStringValue());
+            LOGGER.debug("Retrieved principal id attribute [{}]", principalAttr.getStringValue());
             return principalAttr.getStringValue();
         }
 
-        logger.debug("Principal id attribute is not defined. Using the default provided user id [{}]", username);
+        LOGGER.debug("Principal id attribute is not defined. Using the default provided user id [{}]", username);
         return username;
     }
 
@@ -263,29 +266,29 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
          */
         final Set<String> attributes = new HashSet<>();
 
-        logger.debug("Initializing LDAP attribute configuration...");
+        LOGGER.debug("Initializing LDAP attribute configuration...");
         if (StringUtils.isNotBlank(this.principalIdAttribute)) {
-            logger.debug("Configured to retrieve principal id attribute [{}]", this.principalIdAttribute);
+            LOGGER.debug("Configured to retrieve principal id attribute [{}]", this.principalIdAttribute);
             attributes.add(this.principalIdAttribute);
         }
         if (this.principalAttributeMap != null && !this.principalAttributeMap.isEmpty()) {
             final Set<String> attrs = this.principalAttributeMap.keySet();
             attributes.addAll(attrs);
-            logger.debug("Configured to retrieve principal attribute collection of [{}]", attrs);
+            LOGGER.debug("Configured to retrieve principal attribute collection of [{}]", attrs);
         }
         if (this.additionalAttributes != null && !this.additionalAttributes.isEmpty()) {
             attributes.addAll(this.additionalAttributes);
-            logger.debug("Configured to retrieve additional attributes [{}]", this.additionalAttributes);
+            LOGGER.debug("Configured to retrieve additional attributes [{}]", this.additionalAttributes);
         }
         final List<String> authenticatorAttributes = Arrays.asList(authenticator.getReturnAttributes());
-        logger.debug("Filtering authentication entry attributes [{}] based on authenticator attributes [{}]",
+        LOGGER.debug("Filtering authentication entry attributes [{}] based on authenticator attributes [{}]",
                 authenticatedEntryAttributes, authenticatorAttributes);
         attributes.removeIf(p -> authenticatorAttributes.contains(p));
 
         if (!attributes.isEmpty()) {
             this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
         }
-        logger.debug("LDAP authentication entry attributes for the authentication request are [{}]",
+        LOGGER.debug("LDAP authentication entry attributes for the authentication request are [{}]",
                 (Object[]) this.authenticatedEntryAttributes);
     }
 }
