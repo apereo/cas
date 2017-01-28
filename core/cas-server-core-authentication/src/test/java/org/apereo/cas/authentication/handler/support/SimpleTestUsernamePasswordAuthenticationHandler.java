@@ -62,7 +62,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
     
     @PostConstruct
     private void init() {
-        logger.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",
+        LOGGER.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",
                 this.getClass().getName());
     }
     
@@ -82,17 +82,17 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
         } else if (exception instanceof RuntimeException) {
             throw (RuntimeException) exception;
         } else if (exception != null) {
-            logger.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",
+            LOGGER.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",
                     exception.getClass().getName(),
                     exception);
         }
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
-            logger.debug("User [{}] was successfully authenticated.", username);
+            LOGGER.debug("User [{}] was successfully authenticated.", username);
             return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential),
                     this.principalFactory.createPrincipal(username));
         }
-        logger.debug("User [{}] failed authentication", username);
+        LOGGER.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();
     }
 
