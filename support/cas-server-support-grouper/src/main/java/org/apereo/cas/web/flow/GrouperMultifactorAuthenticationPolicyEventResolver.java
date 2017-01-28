@@ -85,7 +85,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
         final GrouperGroupField groupField = GrouperGroupField.valueOf(grouperField);
 
         final Set<String> values = results.stream()
-                .map((wsGetGroupsResult) -> Stream.of(wsGetGroupsResult.getWsGroups()))
+                .map(wsGetGroupsResult -> Stream.of(wsGetGroupsResult.getWsGroups()))
                 .flatMap(Function.identity())
                 .map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
                 .collect(Collectors.toSet());
