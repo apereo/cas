@@ -877,7 +877,7 @@ To learn more about this topic, [please review this guide](Blacklist-Authenticat
 
 To learn more about this topic, [please review this guide](Database-Authentication.html).
 
-### Query
+### Query Database Authentication
 
 Authenticates a user by comparing the user password (which can be encoded with a password encoder)
 against the password on record determined by a configurable database query.
@@ -915,7 +915,7 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].principalTransformation.prefix=
 ```
 
-### Search
+### Search Database Authentication
 
 Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
 
@@ -954,7 +954,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].principalTransformation.prefix=
 ```
 
-### Bind
+### Bind Database Authentication
 
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
@@ -990,7 +990,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
-### Encode
+### Encode Database Authentication
 
 A JDBC querying handler that will pull back the password and the private salt value for a user and validate the encoded
 password using the public salt value. Assumes everything is inside the same database table. Supports settings for
@@ -1331,6 +1331,15 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.validator.dn=
 ```
 
+### NTLM Authentication
+
+```properties
+# cas.authn.ntlm.includePattern=
+# cas.authn.ntlm.loadBalance=true
+# cas.authn.ntlm.domainController=
+# cas.authn.ntlm.name=
+```
+
 ## JAAS Authentication
 
 To learn more about this topic, [please review this guide](JAAS-Authentication.html).
@@ -1427,7 +1436,8 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 
 ### CRL Fetching / Revocation
 
-CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability in the revocation machinery built into the JSSE.
+CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability 
+in the revocation machinery built into the JSSE.
 
 Available policies cover the following events:
 
@@ -1548,14 +1558,6 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.shiro.principalTransformation.prefix=
 ```
 
-## NTLM Authentication
-
-```properties
-# cas.authn.ntlm.includePattern=
-# cas.authn.ntlm.loadBalance=true
-# cas.authn.ntlm.domainController=
-# cas.authn.ntlm.name=
-```
 
 ## Trusted Authentication
 
