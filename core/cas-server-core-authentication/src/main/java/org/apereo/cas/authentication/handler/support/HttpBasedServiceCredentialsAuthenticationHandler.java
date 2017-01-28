@@ -29,9 +29,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    /** Log instance. */
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpBasedServiceCredentialsAuthenticationHandler.class);
+    
     /** Instance of Apache Commons HttpClient. */
     private HttpClient httpClient;
 

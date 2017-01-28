@@ -23,8 +23,8 @@ import java.util.Set;
  * @since 5.1.0
  */
 public abstract class BaseAuthenticationRiskContingencyPlan implements AuthenticationRiskContingencyPlan {
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseAuthenticationRiskContingencyPlan.class);
+    
     /**
      * CAS properties.
      */

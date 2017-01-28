@@ -18,8 +18,8 @@ import java.util.Iterator;
  * @since 5.0.0
  */
 public class FirstMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(FirstMultifactorAuthenticationProviderSelector.class);
+    
     @Override
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                                      final RegisteredService service, final Principal principal) {

@@ -77,7 +77,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(locations = {"classpath:/core.properties"})
 public abstract class AbstractCentralAuthenticationServiceTests {
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCentralAuthenticationServiceTests.class);
     
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;

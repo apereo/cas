@@ -76,8 +76,8 @@ import java.util.Optional;
  */
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasWebflowConfigurer.class);
+    
     /**
      * The logout flow definition registry.
      */

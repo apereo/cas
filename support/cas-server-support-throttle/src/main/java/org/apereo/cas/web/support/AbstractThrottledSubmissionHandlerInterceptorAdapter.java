@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
 
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThrottledSubmissionHandlerInterceptorAdapter.class);
+    
     private final int failureThreshold;
     private final int failureRangeInSeconds;
     private final String usernameParameter;

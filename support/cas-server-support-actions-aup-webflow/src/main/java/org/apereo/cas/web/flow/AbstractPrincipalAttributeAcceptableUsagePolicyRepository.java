@@ -20,8 +20,8 @@ import java.util.Map;
 public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1883808902502739L;
 
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPrincipalAttributeAcceptableUsagePolicyRepository.class);
+    
     /**
      * Single-valued attribute in LDAP that describes whether the policy
      * has been accepted. Its value must match either TRUE/FALSE.

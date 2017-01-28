@@ -30,8 +30,8 @@ public abstract class AbstractMemcachedTests {
     private static MemcachedExecutable MEMCACHED_EXECUTABLE;
     private static MemcachedProcess MEMCACHED;
 
-    protected transient Logger logger = getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMemcachedTests.class);
+    
     public static void bootstrap() {
         try {
             final MemcachedStarter runtime = MemcachedStarter.getInstance(

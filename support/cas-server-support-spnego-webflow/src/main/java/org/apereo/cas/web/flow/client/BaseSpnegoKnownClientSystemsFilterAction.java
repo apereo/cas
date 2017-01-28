@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
  */
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseSpnegoKnownClientSystemsFilterAction.class);
+    
     /** Pattern of ip addresses to check. **/
     private Pattern ipsToCheckPattern;
 

@@ -22,8 +22,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     private static final long serialVersionUID = 4789727148134156909L;
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMultifactorAuthenticationProvider.class);
+    
     private MultifactorAuthenticationProviderBypass bypassEvaluator;
 
     private String globalFailureMode;

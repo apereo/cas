@@ -19,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class GatewayServicesManagementCheck extends AbstractAction {
 
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(GatewayServicesManagementCheck.class);
     
     private ServicesManager servicesManager;
 

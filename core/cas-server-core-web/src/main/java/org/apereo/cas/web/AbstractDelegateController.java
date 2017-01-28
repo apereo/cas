@@ -20,8 +20,8 @@ public abstract class AbstractDelegateController implements ApplicationContextAw
 
     /** Application context. */
     protected ApplicationContext applicationContext;
-    
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDelegateController.class);
     
     /**
      * Determine if a AbstractDelegateController subclass can handle the current request.
