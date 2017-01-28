@@ -747,7 +747,21 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 # cas.authn.adaptive.risk.response.sms.attributeName=phone
 ```
 
+## Email Submissions
+
+```properties
+# spring.mail.host=
+# spring.mail.port=
+# spring.mail.username=
+# spring.mail.password=
+# spring.mail.testConnection=true
+# spring.mail.properties.mail.smtp.auth=true
+# spring.mail.properties.mail.smtp.starttls.enable=true
+```
+
 ## SMS Messaging
+
+To learn more about this topic, [please review this guide](SMS-Messaging-Configuration.html).
 
 ### Twillio
 
@@ -764,6 +778,8 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 ```
 
 ## GeoTracking
+
+To learn more about this topic, [please review this guide](GeoTracking-Authentication-Requests.html).
 
 ### GoogleMaps GeoTracking
 
@@ -3384,14 +3400,6 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # Used to sign/encrypt the password-reset link
 # cas.authn.pm.reset.security.encryptionKey=
 # cas.authn.pm.reset.security.signingKey=
-
-# spring.mail.host=
-# spring.mail.port=
-# spring.mail.username=
-# spring.mail.password=
-# spring.mail.testConnection=true
-# spring.mail.properties.mail.smtp.auth=true
-# spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
 ### LDAP Password Management
