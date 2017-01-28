@@ -29,6 +29,8 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +46,8 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHandlerController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdPInitiatedProfileHandlerController.class);
+    
     /**
      * Instantiates a new idp-init saml profile handler controller.
      *
@@ -104,7 +107,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         // The name (i.e., the entity ID) of the service provider.
         final String providerId = CommonUtils.safeGetParameter(request, SamlIdPConstants.PROVIDER_ID);
         if (StringUtils.isBlank(providerId)) {
-            logger.warn("No providerId parameter given in unsolicited SSO authentication request.");
+            LOGGER.warn("No providerId parameter given in unsolicited SSO authentication request.");
             throw new MessageDecodingException("No providerId parameter given in unsolicited SSO authentication request.");
         }
 
@@ -118,7 +121,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
             shire = adaptor.getAssertionConsumerService().getLocation();
         }
         if (StringUtils.isBlank(shire)) {
-            logger.warn("Unable to resolve SP ACS URL for AuthnRequest construction for entityID: [{}]", providerId);
+            LOGGER.warn("Unable to resolve SP ACS URL for AuthnRequest construction for entityID: [{}]", providerId);
             throw new MessageDecodingException("Unable to resolve SP ACS URL for AuthnRequest construction");
         }
 

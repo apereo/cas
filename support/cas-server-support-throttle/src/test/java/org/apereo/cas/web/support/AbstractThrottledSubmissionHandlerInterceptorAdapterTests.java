@@ -78,7 +78,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         loginUnsuccessfully("mog", "1.2.3.4");
 
         for (int i = 0; i < trials; i++) {
-            logger.debug("Waiting for [{}] ms", period);
+            LOGGER.debug("Waiting for [{}] ms", period);
             Thread.sleep(period);
             
             final MockHttpServletResponse status = loginUnsuccessfully("mog", "1.2.3.4");

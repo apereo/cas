@@ -22,6 +22,8 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +38,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SSOPostProfileCallbackHandlerController.class);
+    
     /**
      * Instantiates a new idp-sso post saml profile handler controller.
      *
@@ -101,17 +104,17 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK)
     protected void handleCallbackProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
 
-        logger.info("Received SAML callback profile request [{}]", request.getRequestURI());
+        LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         final AuthnRequest authnRequest = retrieveSamlAuthenticationRequestFromHttpRequest(request);
         if (authnRequest == null) {
-            logger.error("Can not validate the request because the original Authn request can not be found.");
+            LOGGER.error("Can not validate the request because the original Authn request can not be found.");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
-            logger.error("Can not validate the request because no [{}] is provided via the request",
+            LOGGER.error("Can not validate the request because no [{}] is provided via the request",
                     CasProtocolConstants.PARAMETER_TICKET);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
@@ -138,7 +141,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
     private MessageContext<SAMLObject> bindRelayStateParameter(final HttpServletRequest request) {
         final MessageContext<SAMLObject> messageContext = new MessageContext<>();
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        logger.debug("RelayState is [{}]", relayState);
+        LOGGER.debug("RelayState is [{}]", relayState);
         SAMLBindingSupport.setRelayState(messageContext, relayState);
         return messageContext;
     }
@@ -151,7 +154,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
         final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(this.serverPrefix);
         validator.setRenew(authnRequest.isForceAuthn());
         final String serviceUrl = constructServiceUrl(request, response, pair);
-        logger.debug("Created service url for validation: [{}]", serviceUrl);
+        LOGGER.debug("Created service url for validation: [{}]", serviceUrl);
         final Assertion assertion = validator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
         return assertion;
