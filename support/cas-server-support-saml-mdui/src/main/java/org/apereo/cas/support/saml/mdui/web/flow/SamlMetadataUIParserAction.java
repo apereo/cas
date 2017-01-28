@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link SamlMetadataUIParserAction} that attempts to parse
- * the mdui extension block for a SAML SP from the provided metadata locations.
+ * the MDUI extension block for a SAML SP from the provided metadata locations.
  * The result is put into the flow request context. The entity id parameter is
  * specified by default at {@link org.apereo.cas.support.saml.SamlProtocolConstants#PARAMETER_ENTITY_ID}.
  * <p>This action is best suited to be invoked when the CAS login page
