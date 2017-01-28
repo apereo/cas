@@ -17,6 +17,8 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
@@ -38,8 +40,8 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver
-        implements CasDelegatingWebflowEventResolver {
+public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InitialAuthenticationAttemptWebflowEventResolver.class);
 
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
 
@@ -71,7 +73,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             final Service service = WebUtils.getService(context);
             if (service != null) {
 
-                logger.debug("Locating service [{}] in service registry to determine authentication policy", service);
+                LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
@@ -93,7 +95,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         } catch (final Exception e) {
             Event event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             }
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
@@ -142,7 +144,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             return null;
         }
 
-        logger.debug(ex.getMessage(), ex);
+        LOGGER.debug(ex.getMessage(), ex);
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }
 }
