@@ -295,7 +295,7 @@ var loggingDashboard = (function () {
     var changeLogLevel = function (newLevel, el) {
         /**
          * POST - /cas/status/logging/updateLoggerLevel
-         * Allows you to change the log level for given logger. Parameters are:
+         * Allows you to change the log level for given LOGGER. Parameters are:
          * loggerName, loggerLevel, additive (true/false)
          */
         var table = $('#loggersTable').DataTable();
