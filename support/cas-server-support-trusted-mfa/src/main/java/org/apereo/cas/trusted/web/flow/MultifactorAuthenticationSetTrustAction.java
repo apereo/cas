@@ -2,7 +2,7 @@ package org.apereo.cas.trusted.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.CurrentCredentialsAndAuthentication;
+import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -42,7 +42,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
             return error();
         }
 
-        CurrentCredentialsAndAuthentication.bindCurrent(c);
+        AuthenticationCredentialsLocalBinder.bindCurrent(c);
 
         final String principal = c.getPrincipal().getId();
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
