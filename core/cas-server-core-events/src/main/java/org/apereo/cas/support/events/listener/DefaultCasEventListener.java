@@ -53,7 +53,7 @@ public class DefaultCasEventListener {
      */
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-        LOGGER.info("CAS is ready to process requests at [{}]", event.getTimestamp());
+        LOGGER.info("CAS is ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
     }
 
     /**

@@ -45,12 +45,11 @@ import java.util.Map;
  * @since 4.0.0
  */
 public class DefaultAccountStateHandler implements AccountStateHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAccountStateHandler.class);
     /**
      * Map of account state error to CAS authentication exception.
      */
     protected Map<AccountState.Error, LoginException> errorMap;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAccountStateHandler.class);
     private Map<String, Class<LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>();
 
     /**
