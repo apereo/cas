@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.junit.Test;
 
 import java.util.Arrays;

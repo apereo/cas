@@ -2,9 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulator;
-import org.apereo.cas.authentication.SuccessfulHandlerMetaDataPopulator;
-import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.CacheCredentialsMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;

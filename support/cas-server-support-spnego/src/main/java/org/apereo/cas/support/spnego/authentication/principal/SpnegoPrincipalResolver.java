@@ -2,7 +2,7 @@ package org.apereo.cas.support.spnego.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a

@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication.principal;
+package org.apereo.cas.authentication.metadata;
 
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;

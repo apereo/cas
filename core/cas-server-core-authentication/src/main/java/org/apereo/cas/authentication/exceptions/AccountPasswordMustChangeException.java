@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.exceptions;
 
 import javax.security.auth.login.CredentialExpiredException;
 
