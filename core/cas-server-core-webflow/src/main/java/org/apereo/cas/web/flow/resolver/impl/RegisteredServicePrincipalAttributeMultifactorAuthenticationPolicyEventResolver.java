@@ -15,6 +15,8 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -33,7 +35,8 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver.class);
+    
     public RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver(
             final AuthenticationSystemSupport authenticationSystemSupport, final CentralAuthenticationService centralAuthenticationService,
             final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
@@ -50,13 +53,13 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyE
 
         final RegisteredServiceMultifactorPolicy policy = service != null ? service.getMultifactorPolicy() : null;
         if (policy == null || service.getMultifactorPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
-            logger.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
+            LOGGER.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
             return null;
         }
 
         if (StringUtils.isBlank(policy.getPrincipalAttributeNameTrigger())
                 || StringUtils.isBlank(policy.getPrincipalAttributeValueToMatch())) {
-            logger.debug("Authentication policy does not define a principal attribute and/or value to trigger multifactor authentication");
+            LOGGER.debug("Authentication policy does not define a principal attribute and/or value to trigger multifactor authentication");
             return null;
         }
 
