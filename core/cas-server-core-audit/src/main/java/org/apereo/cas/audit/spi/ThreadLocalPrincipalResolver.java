@@ -25,13 +25,13 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
 
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Object returnValue) {
-        LOGGER.debug("Resolving principal at audit point [{}]", auditTarget);
+        LOGGER.trace("Resolving principal at audit point [{}]", auditTarget);
         return getCurrentPrincipal();
     }
 
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Exception exception) {
-        LOGGER.debug("Resolving principal at audit point [{}] with thrown exception [{}]", auditTarget, exception);
+        LOGGER.trace("Resolving principal at audit point [{}] with thrown exception [{}]", auditTarget, exception);
         return getCurrentPrincipal();
     }
 
@@ -45,6 +45,6 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
         if (principal == null) {
             principal = CurrentCredentialsAndAuthentication.getCurrentCredentialIdsAsString();
         }
-        return (principal != null) ? principal : UNKNOWN_USER;
+        return principal != null ? principal : UNKNOWN_USER;
     }
 }

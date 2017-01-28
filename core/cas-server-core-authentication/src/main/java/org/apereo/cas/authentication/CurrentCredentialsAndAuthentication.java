@@ -62,7 +62,7 @@ public class CurrentCredentialsAndAuthentication {
      * @return credential ids String representation
      */
     public static String getCurrentCredentialIdsAsString() {
-        return (getCurrentCredentialIds() != null) ? Arrays.stream(getCurrentCredentialIds()).collect(joining(", ")) : null;
+        return getCurrentCredentialIds() != null ? Arrays.stream(getCurrentCredentialIds()).collect(joining(", ")) : null;
     }
 
     /**

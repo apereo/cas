@@ -286,7 +286,7 @@ public final class LdapUtils {
      */
     public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory, final LdapEntry entry) {
         final Map<String, Set<String>> attributes = entry.getAttributes().stream()
-                .collect(Collectors.toMap(LdapAttribute::getName, (ldapAttribute) -> new HashSet<>(ldapAttribute.getStringValues())));
+                .collect(Collectors.toMap(LdapAttribute::getName, ldapAttribute -> new HashSet<>(ldapAttribute.getStringValues())));
 
         return executeModifyOperation(currentDn, connectionFactory, attributes);
     }

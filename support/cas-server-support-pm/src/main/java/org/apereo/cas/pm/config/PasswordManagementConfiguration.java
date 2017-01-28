@@ -186,7 +186,8 @@ public class PasswordManagementConfiguration {
     
     @PostConstruct
     public void init() {
-        if (this.mailSender == null) {
+        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
+        if (this.mailSender == null && pm.isEnabled()) {
             LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers, etc");
         }
     }
