@@ -17,6 +17,8 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -30,7 +32,8 @@ import java.security.GeneralSecurityException;
  * @since 3.1
  */
 public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(NtlmAuthenticationHandler.class);
+    
     private static final int NBT_ADDRESS_TYPE = 0x1C;
     private static final int NTLM_TOKEN_TYPE_FIELD_INDEX = 8;
     private static final int NTLM_TOKEN_TYPE_ONE = 1;
@@ -86,22 +89,22 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
             switch (src[NTLM_TOKEN_TYPE_FIELD_INDEX]) {
                 case NTLM_TOKEN_TYPE_ONE:
-                    logger.debug("Type 1 received");
+                    LOGGER.debug("Type 1 received");
                     final Type1Message type1 = new Type1Message(src);
                     final Type2Message type2 = new Type2Message(type1,
                             challenge, null);
-                    logger.debug("Type 2 returned. Setting next token.");
+                    LOGGER.debug("Type 2 returned. Setting next token.");
                     ntlmCredential.setNextToken(type2.toByteArray());
                     break;
                 case NTLM_TOKEN_TYPE_THREE:
-                    logger.debug("Type 3 received");
+                    LOGGER.debug("Type 3 received");
                     final Type3Message type3 = new Type3Message(src);
                     final byte[] lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
                     final byte[] ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
                     final NtlmPasswordAuthentication ntlm = new NtlmPasswordAuthentication(
                             type3.getDomain(), type3.getUser(), challenge,
                             lmResponse, ntResponse);
-                    logger.debug("Trying to authenticate [{}] with domain controller", type3.getUser());
+                    LOGGER.debug("Trying to authenticate [{}] with domain controller", type3.getUser());
                     try {
                         SmbSession.logon(dc, ntlm);
                         ntlmCredential.setPrincipal(this.principalFactory.createPrincipal(type3.getUser()));
@@ -111,7 +114,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     }
                     break;
                 default:
-                    logger.debug("Unknown type: [{}]", src[NTLM_TOKEN_TYPE_FIELD_INDEX]);
+                    LOGGER.debug("Unknown type: [{}]", src[NTLM_TOKEN_TYPE_FIELD_INDEX]);
             }
         } catch (final Exception e) {
             throw new FailedLoginException(e.getMessage());
