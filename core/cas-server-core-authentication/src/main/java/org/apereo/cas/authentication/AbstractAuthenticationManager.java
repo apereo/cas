@@ -117,13 +117,13 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         if (resolver.supports(credential)) {
             try {
                 final Principal p = resolver.resolve(credential, principal);
-                logger.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
+                LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
-                logger.error("[{}] failed to resolve principal from [{}]", resolver, credential, e);
+                LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential, e);
             }
         } else {
-            logger.warn(
+            LOGGER.warn(
                     "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
                     handlerName,
                     resolver,
@@ -151,7 +151,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         addAuthenticationMethodAttribute(builder, authentication);
 
-        logger.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
+        LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
                 principal.getId(), principal.getAttributes(), transaction.getCredentials());
         populateAuthenticationMetadataAttributes(builder, transaction.getCredentials());
 
@@ -181,25 +181,25 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         final HandlerResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
-        logger.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
+        LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         principal = result.getPrincipal();
 
         if (resolver == null) {
-            logger.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]",
+            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]",
                     handler.getName(),
                     principal);
         } else {
             principal = resolvePrincipal(handler.getName(), resolver, credential, principal);
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
-                    logger.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
+                    LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
                                     + "CAS is configured to treat principal resolution failures as fatal.",
                             resolver.getClass().getSimpleName(), credential);
                     throw new UnresolvedPrincipalException();
                 }
-                logger.warn("Principal resolution handled by [{}] produced a null principal. "
+                LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
                         + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
                         + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
             }
@@ -207,7 +207,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         if (principal != null) {
             builder.setPrincipal(principal);
         }
-        logger.debug("Final principal resolved for this authentication event is [{}]", principal);
+        LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
         publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
 
