@@ -94,35 +94,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ### SMS Messaging
 
-Users may be notified of risky authentication attempts via text messages via the below options.
-
-#### Twillio
-
-To learn more, [visit this site](https://www.twilio.com/).
-
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-twillio</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#twillio).
-
-#### TextMagic
-
-To learn more, [visit this site](https://www.textmagic.com/).
-
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-textmagic</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#textmagic).
+Users may be notified of risky authentication attempts via text messages.
+To learn more about available options, please [see this guide](SMS-Messaging-Configuration.html).
 
 ### Remember
 
