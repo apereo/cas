@@ -66,8 +66,8 @@ import java.util.TreeSet;
  */
 @Controller
 public abstract class AbstractSamlProfileHandlerController {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSamlProfileHandlerController.class);
+    
     /**
      * Authentication support to handle credentials and authn subsystem calls.
      */
