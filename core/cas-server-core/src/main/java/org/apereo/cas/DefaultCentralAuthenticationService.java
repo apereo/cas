@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.CurrentCredentialsAndAuthentication;
+import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.PrincipalException;
@@ -110,7 +110,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             final TicketGrantingTicket ticket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
 
-            CurrentCredentialsAndAuthentication.bindCurrent(ticket.getAuthentication());
+            AuthenticationCredentialsLocalBinder.bindCurrent(ticket.getAuthentication());
 
             final List<LogoutRequest> logoutRequests = this.logoutManager.performLogout(ticket);
             this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
@@ -149,7 +149,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Authentication latestAuthentication = authentications.get(authentications.size() - 1);
-        CurrentCredentialsAndAuthentication.bindCurrent(latestAuthentication);
+        AuthenticationCredentialsLocalBinder.bindCurrent(latestAuthentication);
         final Principal principal = latestAuthentication.getPrincipal();
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
         final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service,
@@ -196,7 +196,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         final List<Authentication> authentications = proxyGrantingTicketObject.getChainedAuthentications();
         final Authentication authentication = authentications.get(authentications.size() - 1);
-        CurrentCredentialsAndAuthentication.bindCurrent(authentication);
+        AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
 
         final Principal principal = authentication.getPrincipal();
         final ProxyTicketFactory factory = this.ticketFactory.get(ProxyTicket.class);
@@ -223,7 +223,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException {
 
-        CurrentCredentialsAndAuthentication.bindCurrent(authenticationResult.getAuthentication());
+        AuthenticationCredentialsLocalBinder.bindCurrent(authenticationResult.getAuthentication());
 
         final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
@@ -321,7 +321,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             builder.setPrincipal(modifiedPrincipal);
 
             final Authentication finalAuthentication = builder.build();
-            CurrentCredentialsAndAuthentication.bindCurrent(finalAuthentication);
+            AuthenticationCredentialsLocalBinder.bindCurrent(finalAuthentication);
 
             final Assertion assertion = new ImmutableAssertion(
                     finalAuthentication,
@@ -354,7 +354,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         final Authentication authentication = authenticationResult.getAuthentication();
         final Service service = authenticationResult.getService();
-        CurrentCredentialsAndAuthentication.bindCurrent(authentication);
+        AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
 
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);

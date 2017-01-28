@@ -144,7 +144,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     @Metered(name = "AUTHENTICATE_METER")
     @Counted(name = "AUTHENTICATE_COUNT", monotonic = true)
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
-        CurrentCredentialsAndAuthentication.bindCurrent(transaction.getCredentials());
+        AuthenticationCredentialsLocalBinder.bindCurrent(transaction.getCredentials());
         final AuthenticationBuilder builder = authenticateInternal(transaction);
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
@@ -159,7 +159,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         populateAuthenticationMetadataAttributes(builder, transaction.getCredentials());
 
         final Authentication a = builder.build();
-        CurrentCredentialsAndAuthentication.bindCurrent(a);
+        AuthenticationCredentialsLocalBinder.bindCurrent(a);
         return a;
     }
 
