@@ -2,6 +2,8 @@ package org.apereo.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 
 import org.springframework.web.util.CookieGenerator;
@@ -24,7 +26,8 @@ import java.lang.reflect.Method;
  *
  */
 public class CookieRetrievingCookieGenerator extends CookieGenerator {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CookieRetrievingCookieGenerator.class);
+    
     private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
 
     /** The maximum age the cookie should be remembered for.
@@ -93,7 +96,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
                 if (setHttpOnlyMethod != null) {
                     cookie.setHttpOnly(true);
                 } else {
-                    logger.debug("Cookie cannot be marked as HttpOnly; container is not using servlet 3.0.");
+                    LOGGER.debug("Cookie cannot be marked as HttpOnly; container is not using servlet 3.0.");
                 }
             }
             response.addCookie(cookie);
@@ -111,7 +114,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
             final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(request, getCookieName());
             return cookie == null ? null : this.casCookieValueManager.obtainCookieValue(cookie, request);
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
         return null;
     }

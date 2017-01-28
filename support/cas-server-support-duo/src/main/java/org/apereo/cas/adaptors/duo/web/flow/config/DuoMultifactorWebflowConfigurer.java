@@ -7,6 +7,8 @@ import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DynamicFlowModelBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -35,7 +37,8 @@ import java.util.LinkedList;
  * @since 5.0.0
  */
 public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DuoMultifactorWebflowConfigurer.class);
+    
     private final VariegatedMultifactorAuthenticationProvider provider;
 
     public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -59,11 +62,11 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
                 .forEach(duo -> {
                     final String id = duo.getId();
                     try {
-                        logger.debug("Activating multifactor trusted authentication for webflow [{}]", id);
+                        LOGGER.debug("Activating multifactor trusted authentication for webflow [{}]", id);
                         final FlowDefinitionRegistry registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
                         registerMultifactorTrustedAuthentication(registry);
                     } catch (final Exception e) {
-                        logger.error("Failed to register multifactor trusted authentication for " + id, e);
+                        LOGGER.error("Failed to register multifactor trusted authentication for " + id, e);
                     }
                 });
     }
