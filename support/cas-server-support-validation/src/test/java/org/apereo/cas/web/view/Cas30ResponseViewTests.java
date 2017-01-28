@@ -13,6 +13,8 @@ import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
@@ -45,7 +47,8 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @TestPropertySource(properties = "cas.clearpass.cacheCredential=true")
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cas30ResponseViewTests.class);
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -131,13 +134,13 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             factory.setSingleton(false);
             final PrivateKey privateKey = factory.getObject();
 
-            logger.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
+            LOGGER.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
             final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
 
-            logger.debug("Decoding value [{}]", cred);
+            LOGGER.debug("Decoding value [{}]", cred);
             final byte[] cred64 = EncodingUtils.decodeBase64(cred);
 
-            logger.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
+            LOGGER.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
             final byte[] cipherData = cipher.doFinal(cred64);
