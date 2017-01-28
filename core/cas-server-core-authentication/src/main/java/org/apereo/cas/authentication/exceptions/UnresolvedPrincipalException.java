@@ -1,4 +1,7 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.exceptions;
+
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.PrincipalException;
 
 import java.util.Collections;
 import java.util.Map;

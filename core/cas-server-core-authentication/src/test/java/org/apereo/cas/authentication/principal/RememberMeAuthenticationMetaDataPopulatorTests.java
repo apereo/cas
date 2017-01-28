@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

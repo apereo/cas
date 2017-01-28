@@ -1,6 +1,8 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.policy;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

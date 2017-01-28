@@ -2,8 +2,10 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.BeforeClass;

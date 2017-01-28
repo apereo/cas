@@ -1,5 +1,8 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.policy;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
+import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
 

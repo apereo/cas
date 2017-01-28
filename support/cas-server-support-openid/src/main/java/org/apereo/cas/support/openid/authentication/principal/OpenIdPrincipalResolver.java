@@ -1,7 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.Credential;
 
 /**

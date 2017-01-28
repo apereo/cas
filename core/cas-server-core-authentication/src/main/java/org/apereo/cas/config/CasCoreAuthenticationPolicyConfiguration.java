@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AllAuthenticationPolicy;
-import org.apereo.cas.authentication.AnyAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.NotPreventedAuthenticationPolicy;
-import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicy;
-import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;

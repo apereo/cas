@@ -1,5 +1,7 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.exceptions;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Principal;
 
 /**
