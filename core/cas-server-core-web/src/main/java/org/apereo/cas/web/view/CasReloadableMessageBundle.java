@@ -49,14 +49,14 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
             foundCode = IntStream.range(0, this.basenames.length).filter(i -> {
                 final String filename = this.basenames[i] + '_' + locale;
 
-                logger.debug("Examining language bundle [{}] for the code [{}]", filename, code);
+                logger.trace("Examining language bundle [{}] for the code [{}]", filename, code);
                 final PropertiesHolder holder = this.getProperties(filename);
                 return holder != null && holder.getProperties() != null
                         && holder.getProperty(code) != null;
             }).findFirst().isPresent();
 
             if (!foundCode) {
-                logger.debug("The code [{}] cannot be found in the language bundle for the locale [{}]", code, locale);
+                logger.trace("The code [{}] cannot be found in the language bundle for the locale [{}]", code, locale);
             }
         }
         return super.getMessageInternal(code, args, locale);
