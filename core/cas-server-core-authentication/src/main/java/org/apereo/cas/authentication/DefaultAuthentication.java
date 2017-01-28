@@ -185,14 +185,7 @@ public class DefaultAuthentication implements Authentication {
         builder.append(CollectionUtils.wrap(this.failures), other.getFailures());
         return builder.isEquals();
     }
-
-    @JsonIgnore
-    @Override
-    public boolean isCredentialProvided() {
-        return this.attributes != null
-                && this.attributes.containsKey(AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED)
-                && (Boolean) this.attributes.get(AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED);
-    }
+    
 
     @Override
     public void update(final Authentication authn) {
