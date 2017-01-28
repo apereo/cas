@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -28,7 +30,8 @@ import java.security.GeneralSecurityException;
  * @since 5.0.0
  */
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorAuthenticationHandler.class);
+    
     private final IGoogleAuthenticator googleAuthenticatorInstance;
     private final OneTimeTokenRepository tokenRepository;
     private final OneTimeTokenCredentialRepository credentialRepository;
@@ -50,7 +53,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
                     new IllegalArgumentException("Invalid token " + tokenCredential.getToken()));
         }
         final int otp = Integer.parseInt(tokenCredential.getToken());
-        logger.debug("Received OTP [{}]", otp);
+        LOGGER.debug("Received OTP [{}]", otp);
 
         final RequestContext context = RequestContextHolder.getRequestContext();
         if (context == null) {
@@ -62,7 +65,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         }
         final String uid = authentication.getPrincipal().getId();
 
-        logger.debug("Received principal id [{}]", uid);
+        LOGGER.debug("Received principal id [{}]", uid);
         final String secKey = this.credentialRepository.getSecret(uid);
         if (StringUtils.isBlank(secKey)) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");

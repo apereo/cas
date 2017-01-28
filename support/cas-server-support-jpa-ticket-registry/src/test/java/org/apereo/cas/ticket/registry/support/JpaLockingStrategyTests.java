@@ -86,7 +86,7 @@ public class JpaLockingStrategyTests {
             lock.release();
             assertNull(getOwner(appId));
         } catch (final Exception e) {
-            logger.debug("testAcquireAndRelease produced an error", e);
+            LOGGER.debug("testAcquireAndRelease produced an error", e);
             fail("testAcquireAndRelease failed");
         }
     }
@@ -111,7 +111,7 @@ public class JpaLockingStrategyTests {
             lock.release();
             assertNull(getOwner(appId));
         } catch (final Exception e) {
-            logger.debug("testLockExpiration produced an error", e);
+            LOGGER.debug("testLockExpiration produced an error", e);
             fail("testLockExpiration failed");
         }
     }
@@ -131,7 +131,7 @@ public class JpaLockingStrategyTests {
             lock.release();
             assertNull(getOwner(appId));
         } catch (final Exception e) {
-            logger.debug("testNonReentrantBehavior produced an error", e);
+            LOGGER.debug("testNonReentrantBehavior produced an error", e);
             fail("testNonReentrantBehavior failed.");
         }
     }
@@ -145,7 +145,7 @@ public class JpaLockingStrategyTests {
         try {
             testConcurrency(executor, Arrays.asList(getConcurrentLocks("concurrent-new")));
         } catch (final Exception e) {
-            logger.debug("testConcurrentAcquireAndRelease produced an error", e);
+            LOGGER.debug("testConcurrentAcquireAndRelease produced an error", e);
             fail("testConcurrentAcquireAndRelease failed.");
         } finally {
             executor.shutdownNow();
@@ -164,7 +164,7 @@ public class JpaLockingStrategyTests {
         try {
             testConcurrency(executor, Arrays.asList(locks));
         } catch (final Exception e) {
-            logger.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
+            LOGGER.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
             fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");
         } finally {
             executor.shutdownNow();
@@ -247,7 +247,7 @@ public class JpaLockingStrategyTests {
                 try {
                     final Object result = method.invoke(jpaLock, args);
                     jpaLock.entityManager.flush();
-                    logger.debug("Performed [{}] on [{}]", method.getName(), jpaLock);
+                    LOGGER.debug("Performed [{}] on [{}]", method.getName(), jpaLock);
                     return result;
                     // Force result of transaction to database
                 } catch (final Exception e) {
@@ -272,7 +272,7 @@ public class JpaLockingStrategyTests {
             try {
                 return lock.acquire();
             } catch (final Exception e) {
-                logger.debug("[{}] failed to acquire lock", lock, e);
+                LOGGER.debug("[{}] failed to acquire lock", lock, e);
                 return false;
             }
         }
@@ -293,7 +293,7 @@ public class JpaLockingStrategyTests {
                 lock.release();
                 return true;
             } catch (final Exception e) {
-                logger.debug("[{}] failed to release lock", lock, e);
+                LOGGER.debug("[{}] failed to release lock", lock, e);
                 return false;
             }
         }

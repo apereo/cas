@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 
 import javax.security.auth.login.FailedLoginException;
@@ -21,6 +23,7 @@ import java.security.GeneralSecurityException;
  * @since 3.0.0
  */
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchModeSearchDatabaseAuthenticationHandler.class);
     
     private final String fieldUser;
     private final String fieldPassword;
@@ -50,7 +53,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
 
         final String username = credential.getUsername();
         try {
-            logger.debug("Executing SQL query [{}]", sql);
+            LOGGER.debug("Executing SQL query [{}]", sql);
 
             final int count = getJdbcTemplate().queryForObject(sql, Integer.class, username, credential.getPassword());
             if (count == 0) {
