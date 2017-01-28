@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apache.shiro.util.Assert;
+import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.services.ServicesManager;
