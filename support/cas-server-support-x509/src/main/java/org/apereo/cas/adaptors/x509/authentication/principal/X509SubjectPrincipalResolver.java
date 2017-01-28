@@ -7,6 +7,8 @@ import org.cryptacular.x509.dn.NameReader;
 import org.cryptacular.x509.dn.RDN;
 import org.cryptacular.x509.dn.RDNSequence;
 import org.cryptacular.x509.dn.StandardAttributeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -25,7 +27,8 @@ import java.util.regex.Pattern;
  * @since 3.4.4
  */
 public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(X509SubjectPrincipalResolver.class);
+    
     /**
      * Pattern used to extract attribute names from descriptor.
      */
@@ -91,7 +94,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        logger.debug("Resolving principal for [{}]", certificate);
+        LOGGER.debug("Resolving principal for [{}]", certificate);
         final StringBuffer sb = new StringBuffer();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<>();
