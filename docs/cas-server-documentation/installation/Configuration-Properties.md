@@ -493,7 +493,7 @@ class SampleGroovyPersonAttributeDao {
         def casProperties = args[2]
         def casApplicationContext = args[3]
 
-        LOGGER.debug("[{}]: The received uid is {}", this.class.simpleName, uid)
+        logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
         return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
     }
 }
