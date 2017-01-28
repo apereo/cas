@@ -13,6 +13,8 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.UserProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +29,8 @@ import java.security.GeneralSecurityException;
  */
 @SuppressWarnings("unchecked")
 public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientAuthenticationHandler.class);
+    
     private final Clients clients;
 
     public ClientAuthenticationHandler(final Clients clients) {
@@ -43,15 +46,15 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         try {
             final ClientCredential clientCredentials = (ClientCredential) credential;
-            logger.debug("clientCredentials  [{}]", clientCredentials);
+            LOGGER.debug("clientCredentials  [{}]", clientCredentials);
 
             final Credentials credentials = clientCredentials.getCredentials();
             final String clientName = credentials.getClientName();
-            logger.debug("clientName:  [{}]", clientName);
+            LOGGER.debug("clientName:  [{}]", clientName);
 
             // get client
             final Client client = this.clients.findClient(clientName);
-            logger.debug("client: [{}]", client);
+            LOGGER.debug("client: [{}]", client);
 
             // web context
             final HttpServletRequest request = WebUtils.getHttpServletRequest();
@@ -60,7 +63,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
             // get user profile
             final UserProfile userProfile = client.getUserProfile(credentials, webContext);
-            logger.debug("userProfile: [{}]", userProfile);
+            LOGGER.debug("userProfile: [{}]", userProfile);
             return createResult(clientCredentials, userProfile);
         } catch (final HttpAction e) {
             throw new PreventedException(e);

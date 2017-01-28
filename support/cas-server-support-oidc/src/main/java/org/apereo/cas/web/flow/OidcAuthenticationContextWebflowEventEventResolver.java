@@ -15,6 +15,8 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.util.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -34,7 +36,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthenticationContextWebflowEventEventResolver.class);
+    
     public OidcAuthenticationContextWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,
                                                               final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
@@ -52,7 +55,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
         if (service == null || authentication == null) {
-            logger.debug("No service or authentication is available to determine event for principal");
+            LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
 
@@ -67,19 +70,19 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
             }
         }
         if (StringUtils.isBlank(acr)) {
-            logger.debug("No ACR provided in the authentication request");
+            LOGGER.debug("No ACR provided in the authentication request");
             return null;
         }
         final Set<String> values = org.springframework.util.StringUtils.commaDelimitedListToSet(acr);
         if (values.isEmpty()) {
-            logger.debug("No ACR provided in the authentication request");
+            LOGGER.debug("No ACR provided in the authentication request");
             return null;
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            logger.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
+            LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
             throw new AuthenticationException();
         }
 
@@ -91,7 +94,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         if (provider.isPresent()) {
             return Collections.singleton(new Event(this, provider.get().getId()));
         }
-        logger.warn("The requested authentication class [{}] cannot be satisfied by any of the MFA providers available", values);
+        LOGGER.warn("The requested authentication class [{}] cannot be satisfied by any of the MFA providers available", values);
         throw new AuthenticationException();
     }
 }

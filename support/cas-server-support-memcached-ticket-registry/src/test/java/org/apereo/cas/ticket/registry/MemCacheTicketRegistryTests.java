@@ -18,6 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -35,9 +37,9 @@ import static org.junit.Assert.*;
  */
 @RunWith(Parameterized.class)
 public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemCacheTicketRegistryTests.class);
+    
     private MemCacheTicketRegistry registry;
-
     private final String registryBean;
 
     public MemCacheTicketRegistryTests(final String beanName) {
@@ -54,7 +56,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
     public void setUp() throws IOException {
         final boolean environmentOk = isMemcachedListening();
         if (!environmentOk) {
-            logger.warn("Aborting test since no memcached server is available on localhost.");
+            LOGGER.warn("Aborting test since no memcached server is available on localhost.");
         }
         Assume.assumeTrue(environmentOk);
         final ApplicationContext context = new ClassPathXmlApplicationContext("/ticketRegistry-test.xml");
