@@ -9,6 +9,8 @@ import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Arrays;
@@ -25,7 +27,8 @@ import java.util.Collections;
  * @since 4.2
  */
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapAcceptableUsagePolicyRepository.class);
+    
     private static final long serialVersionUID = 1600024683199961892L;
 
     private ConnectionFactory connectionFactory;
@@ -48,11 +51,11 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
                 currentDn = response.getResult().getEntry().getDn();
             }
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         if (StringUtils.isNotBlank(currentDn)) {
-            logger.debug("Updating [{}]", currentDn);
+            LOGGER.debug("Updating [{}]", currentDn);
             return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,
                     Collections.singletonMap(this.aupAttributeName,
                             Collections.singleton(Boolean.TRUE.toString())));
