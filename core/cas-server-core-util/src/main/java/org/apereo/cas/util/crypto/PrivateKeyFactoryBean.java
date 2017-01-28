@@ -55,7 +55,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
             final KeyPair kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
             return kp.getPrivate();
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
             return null;
         }
     }

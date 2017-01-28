@@ -6,6 +6,8 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
  * @since 4.1
  */
 public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttributeEncoder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasProtocolAttributeEncoder.class);
     
     /**
      * Instantiates a new Default cas attribute encoder.
@@ -94,14 +97,14 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                            final RegisteredService registeredService) {
         final String cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
-            logger.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
+            LOGGER.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
             final String encodedValue = cipher.encode(cachedAttribute, registeredService);
             if (StringUtils.isNotBlank(encodedValue)) {
                 attributes.put(cachedAttributeName, encodedValue);
-                logger.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
+                LOGGER.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
             }
         } else {
-            logger.debug("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
+            LOGGER.debug("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
         }
     }
 
@@ -117,17 +120,17 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
     private void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
                                                     final RegisteredService registeredService) {
-        logger.debug("Sanitizing attribute names in preparation of the final validation response");
+        LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
 
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
                 .filter(s -> s.contains(":"))
                 .map(s -> Pair.of(s.replace(':', '_'), attributes.get(s)))
                 .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
-            logger.debug("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
+            LOGGER.debug("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
             attrs.forEach(p -> {
-                logger.debug("Sanitized attribute name to be [{}]", p.getKey());
+                LOGGER.debug("Sanitized attribute name to be [{}]", p.getKey());
                 attributes.put(p.getKey(), p.getValue());
             });
         }

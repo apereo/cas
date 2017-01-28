@@ -25,7 +25,7 @@ public class FirstMultifactorAuthenticationProviderSelector implements Multifact
                                                      final RegisteredService service, final Principal principal) {
         final Iterator<MultifactorAuthenticationProvider> it = providers.iterator();
         final MultifactorAuthenticationProvider provider = it.next();
-        logger.debug("Selected the first provider [{}] for service [{}] out of [{}] providers", provider, service, providers.size());
+        LOGGER.debug("Selected the first provider [{}] for service [{}] out of [{}] providers", provider, service, providers.size());
         return provider;
     }
 }
