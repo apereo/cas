@@ -24,16 +24,18 @@ public class TextMagicSmsSender implements SmsSender {
     }
 
     @Override
-    public void send(final String from, final String to, final String message) {
+    public boolean send(final String from, final String to, final String message) {
         try {
             final TMNewMessage m = this.client.getResource(TMNewMessage.class);
             m.setText(message);
             m.setPhones(Arrays.asList(new String[]{to}));
             m.setFrom(from);
             m.send();
+            return true;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        return false;
     }
 }
 
