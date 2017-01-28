@@ -60,10 +60,8 @@ public class CasPersonDirectoryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-
-    @ConditionalOnMissingBean(name = "attributeRepository")
-    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao attributeRepository() {
+    @Bean
+    public List<IPersonAttributeDao> attributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
 
         addLdapAttributeRepository(list);
@@ -72,7 +70,13 @@ public class CasPersonDirectoryConfiguration {
         addGroovyAttributeRepository(list);
         addStubAttributeRepositoryIfNothingElse(list);
         OrderComparator.sort(list);
-        return composeMergedAndCachedAttributeRepositories(list);
+        return list;
+    }
+
+    @ConditionalOnMissingBean(name = "attributeRepository")
+    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
+    public IPersonAttributeDao attributeRepository() {
+        return composeMergedAndCachedAttributeRepositories(attributeRepositories());
     }
 
     private void addJsonAttributeRepository(final List<IPersonAttributeDao> list) {
