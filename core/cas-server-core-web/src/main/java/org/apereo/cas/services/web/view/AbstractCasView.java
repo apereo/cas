@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
  * @since 3.1
  */
 public abstract class AbstractCasView extends AbstractView {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasView.class);
 
     /**
      * Indicate whether this view will be generating the success response or not.
@@ -50,11 +51,7 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final ServicesManager servicesManager;
 
-    /**
-     * Logger instance.
-     **/
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
     /**
      * authentication context attribute name.
      */
@@ -360,18 +357,18 @@ public abstract class AbstractCasView extends AbstractView {
                                                                        final RegisteredService service,
                                                                        final boolean doesAttributePolicyAllow) {
         if (StringUtils.isNotBlank(attributeValue)) {
-            logger.debug("Obtained [{}] as an authentication attribute", attributeName);
+            LOGGER.debug("Obtained [{}] as an authentication attribute", attributeName);
 
             if (doesAttributePolicyAllow) {
-                logger.debug("Obtained [{}] is passed to the CAS validation payload", attributeName);
+                LOGGER.debug("Obtained [{}] is passed to the CAS validation payload", attributeName);
                 attributes.put(attributeName, Collections.singleton(attributeValue));
             } else {
-                logger.debug("Attribute release policy for [{}] does not authorize the release of [{}]",
+                LOGGER.debug("Attribute release policy for [{}] does not authorize the release of [{}]",
                         service.getServiceId(), attributeName);
                 attributes.remove(attributeName);
             }
         } else {
-            logger.trace("[{}] is not available and will not be released to the validation response.", attributeName);
+            LOGGER.trace("[{}] is not available and will not be released to the validation response.", attributeName);
         }
     }
 

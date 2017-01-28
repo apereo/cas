@@ -11,6 +11,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An abstraction that encapsulates interaction with Duo 2fa authentication service via its public API.
@@ -22,7 +24,7 @@ import org.json.JSONObject;
  * @since 4.2
  */
 public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicDuoAuthenticationService.class);
     private static final long serialVersionUID = -6690808348975271382L;
 
     /**
@@ -57,12 +59,12 @@ public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService 
             final Http request = buildHttpPostAuthRequest();
             signHttpAuthRequest(request, p.getId());
             final JSONObject result = (JSONObject) request.executeRequest();
-            logger.debug("Duo authentication response: [{}]", result);
+            LOGGER.debug("Duo authentication response: [{}]", result);
             if ("allow".equalsIgnoreCase(result.getString("result"))) {
                 return Pair.of(Boolean.TRUE, crds.getId());
             }
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return Pair.of(Boolean.FALSE, crds.getId());
     }
@@ -73,7 +75,7 @@ public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService 
             throw new IllegalArgumentException("No signed request token was passed to verify");
         }
 
-        logger.debug("Calling DuoWeb.verifyResponse with signed request token '[{}]'", signedRequestToken);
+        LOGGER.debug("Calling DuoWeb.verifyResponse with signed request token '[{}]'", signedRequestToken);
         final String result = DuoWeb.verifyResponse(duoProperties.getDuoIntegrationKey(),
                 duoProperties.getDuoSecretKey(),
                 duoProperties.getDuoApplicationKey(), signedRequestToken);

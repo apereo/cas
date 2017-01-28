@@ -14,6 +14,8 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.context.HttpConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,8 @@ import java.util.Map;
  * @since 3.5.0
  */
 public class OAuth20ProfileController extends BaseOAuthWrapperController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
+    
     private static final String ID = "id";
     private static final String ATTRIBUTES = "attributes";
 
@@ -66,10 +69,10 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
                 accessToken = authHeader.substring(OAuthConstants.BEARER_TOKEN.length() + 1);
             }
         }
-        logger.debug("[{}]: [{}]", OAuthConstants.ACCESS_TOKEN, accessToken);
+        LOGGER.debug("[{}]: [{}]", OAuthConstants.ACCESS_TOKEN, accessToken);
 
         if (StringUtils.isBlank(accessToken)) {
-            logger.error("Missing [{}]", OAuthConstants.ACCESS_TOKEN);
+            LOGGER.error("Missing [{}]", OAuthConstants.ACCESS_TOKEN);
             final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
             map.add(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
             final String value = OAuthUtils.jsonify(map);
@@ -78,7 +81,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
         final AccessToken accessTokenTicket = getTicketRegistry().getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-            logger.error("Expired access token: [{}]", OAuthConstants.ACCESS_TOKEN);
+            LOGGER.error("Expired access token: [{}]", OAuthConstants.ACCESS_TOKEN);
             final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
             map.add(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
             final String value = OAuthUtils.jsonify(map);

@@ -47,6 +47,8 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
@@ -67,7 +69,8 @@ import java.util.Map;
  */
 @Transactional(transactionManager = "ticketTransactionManager")
 public class DefaultCentralAuthenticationService extends AbstractCentralAuthenticationService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCentralAuthenticationService.class);
+    
     private static final long serialVersionUID = -8943828074939533986L;
 
     /**
@@ -106,9 +109,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     @Override
     public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         try {
-            logger.debug("Removing ticket [{}] from registry...", ticketGrantingTicketId);
+            LOGGER.debug("Removing ticket [{}] from registry...", ticketGrantingTicketId);
             final TicketGrantingTicket ticket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-            logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
+            LOGGER.debug("Ticket found. Processing logout requests and then deleting the ticket...");
 
             AuthenticationCredentialsLocalBinder.bindCurrent(ticket.getAuthentication());
 
@@ -119,7 +122,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             return logoutRequests;
         } catch (final InvalidTicketException e) {
-            logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
+            LOGGER.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
         }
         return Collections.emptyList();
     }
@@ -157,7 +160,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
-        logger.info("Granted ticket [{}] for service [{}] and principal [{}]",
+        LOGGER.info("Granted ticket [{}] for service [{}] and principal [{}]",
                 serviceTicket.getId(), service.getId(), principal.getId());
 
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
@@ -205,7 +208,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         this.ticketRegistry.updateTicket(proxyGrantingTicketObject);
         this.ticketRegistry.addTicket(proxyTicket);
 
-        logger.info("Granted ticket [{}] for service [{}] for user [{}]",
+        LOGGER.info("Granted ticket [{}] for service [{}] for user [{}]",
                 proxyTicket.getId(), service.getId(), principal.getId());
 
         doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, proxyTicket));
@@ -228,7 +231,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null || serviceTicket.isExpired()) {
-            logger.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
+            LOGGER.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
 
@@ -238,7 +241,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 .ensurePrincipalAccessIsAllowedForService(serviceTicket, authenticationResult, registeredService);
 
         if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
-            logger.warn("ServiceManagement: Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
+            LOGGER.warn("ServiceManagement: Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
             throw new UnauthorizedProxyingException();
         }
 
@@ -246,7 +249,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final ProxyGrantingTicketFactory factory = this.ticketFactory.get(ProxyGrantingTicket.class);
         final ProxyGrantingTicket proxyGrantingTicket = factory.create(serviceTicket, authentication);
 
-        logger.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
+        LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
         this.ticketRegistry.addTicket(proxyGrantingTicket);
 
         doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, proxyGrantingTicket));
@@ -266,14 +269,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
 
         if (!isTicketAuthenticityVerified(serviceTicketId)) {
-            logger.info("Service ticket [{}] is not a valid ticket issued by CAS.", serviceTicketId);
+            LOGGER.info("Service ticket [{}] is not a valid ticket issued by CAS.", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
 
         final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
-            logger.info("Service ticket [{}] does not exist.", serviceTicketId);
+            LOGGER.info("Service ticket [{}] does not exist.", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
 
@@ -285,12 +288,12 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
              */
             synchronized (serviceTicket) {
                 if (serviceTicket.isExpired()) {
-                    logger.info("ServiceTicket [{}] has expired.", serviceTicketId);
+                    LOGGER.info("ServiceTicket [{}] has expired.", serviceTicketId);
                     throw new InvalidTicketException(serviceTicketId);
                 }
 
                 if (!serviceTicket.isValidFor(service)) {
-                    logger.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
+                    LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
                             serviceTicketId, serviceTicket.getService().getId(), service);
                     throw new UnrecognizableServiceForServiceTicketValidationException(serviceTicket.getService());
                 }
@@ -299,7 +302,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             final Service selectedService = resolveServiceFromAuthenticationRequest(service);
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
-            logger.debug("Located registered service definition [{}] from [{}] to handle validation request",
+            LOGGER.debug("Located registered service definition [{}] from [{}] to handle validation request",
                     registeredService, selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
@@ -309,7 +312,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             final Principal principal = authentication.getPrincipal();
 
             final RegisteredServiceAttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
-            logger.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
+            LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
 
             @SuppressWarnings("unchecked")
             final Map<String, Object> attributesToRelease = attributePolicy != null
