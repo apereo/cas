@@ -31,7 +31,7 @@ authentication handlers, date/time of the authentication, etc.
 
 Releasing authentication attributes to service providers and applications can be
 controlled to some extent. To learn more and see the relevant list of CAS properties, 
-please [review this guide](Configuration-Properties.html).
+please [review this guide](../installation/Configuration-Properties.html).
  
 
 ## Principal Attributes
@@ -48,7 +48,7 @@ basis and is always combined with attributes produced by the specific release po
 rules to always release `givenName` and `cn` to every application, and additionally allow other specific principal attributes for only some
 applications per their attribute release policy.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 ### Return All
 
