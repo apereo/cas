@@ -283,7 +283,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final List<String> authenticatorAttributes = Arrays.asList(authenticator.getReturnAttributes());
         LOGGER.debug("Filtering authentication entry attributes [{}] based on authenticator attributes [{}]",
                 authenticatedEntryAttributes, authenticatorAttributes);
-        attributes.removeIf(p -> authenticatorAttributes.contains(p));
+        attributes.removeIf(authenticatorAttributes::contains);
 
         if (!attributes.isEmpty()) {
             this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);

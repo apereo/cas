@@ -6,7 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
-import org.apereo.cas.web.flow.services.BaseRegisteredServiceUserInterfaceInfo;
+import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -43,10 +43,7 @@ public class OidcRegisteredServiceUIAction extends AbstractAction implements Ser
 
             if (registeredService instanceof OidcRegisteredService) {
                 final OidcRegisteredService oauthService = OidcRegisteredService.class.cast(registeredService);
-                WebUtils.putServiceUserInterfaceMetadata(requestContext,
-                        new BaseRegisteredServiceUserInterfaceInfo(oauthService) {
-                            private static final long serialVersionUID = 8663361558750245112L;
-                        });
+                WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
             }
         }
         return success();
