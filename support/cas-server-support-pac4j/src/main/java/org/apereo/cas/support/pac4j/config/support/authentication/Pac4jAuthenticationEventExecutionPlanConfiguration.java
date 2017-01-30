@@ -13,13 +13,14 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.apereo.cas.support.pac4j.web.flow.SAML2ClientLogoutAction;
-import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,13 +42,10 @@ import java.util.Map;
  */
 @Configuration("pac4jAuthenticationEventExecutionPlanConfiguration")
 public class Pac4jAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jAuthenticationEventExecutionPlanConfiguration.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
     
     @Autowired
     @Qualifier("servicesManager")
@@ -180,6 +178,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         if (allClients.isEmpty()) {
             throw new IllegalArgumentException("At least one client must be defined");
         }
+
+        LOGGER.debug("The following clients are built: [{}]", allClients);
         return new Clients(casProperties.getServer().getLoginUrl(), allClients);
     }
 

@@ -11,22 +11,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * This is {@link BaseRegisteredServiceUserInterfaceInfo}.
+ * This is {@link DefaultRegisteredServiceUserInterfaceInfo}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BaseRegisteredServiceUserInterfaceInfo implements Serializable {
+public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
 
     private static final int DEFAULT_IMAGE_SIZE = 32;
     private static final long serialVersionUID = -2416684486715358748L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseRegisteredServiceUserInterfaceInfo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceUserInterfaceInfo.class);
     
     /** the registered service. **/
     protected final transient RegisteredService registeredService;
 
-    public BaseRegisteredServiceUserInterfaceInfo(final RegisteredService registeredService) {
+    public DefaultRegisteredServiceUserInterfaceInfo(final RegisteredService registeredService) {
         this.registeredService = registeredService;
     }
 

@@ -44,7 +44,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public void registerAuthenticationHandlerWithPrincipalResolver(final Map<AuthenticationHandler, PrincipalResolver> plan) {
-        plan.forEach((k, v) -> registerAuthenticationHandlerWithPrincipalResolver(k, v));
+        plan.forEach(this::registerAuthenticationHandlerWithPrincipalResolver);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public void registerMetadataPopulators(final Collection<AuthenticationMetaDataPopulator> populators) {
-        populators.forEach(p -> registerMetadataPopulator(p));
+        populators.forEach(this::registerMetadataPopulator);
     }
 
     @Override
