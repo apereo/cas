@@ -86,6 +86,8 @@ Here is a generated metadata file as an example:
 </EntityDescriptor>
 ```
 
+### Server Configuration
+
 <div class="alert alert-info"><strong>Server Configuration</strong><p>If you have deployed CAS in an external application server/servlet container
 (i.e. Apache Tomcat) you will need to make sure
 that the server is adjusted to handle large-enough <code>HttpHeaderSize</code> and <code>HttpPostSize</code> values (i.e. 2097152).
