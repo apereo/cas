@@ -79,6 +79,13 @@ Here is a generated metadata file as an example:
 </EntityDescriptor>
 ```
 
+### Server Configuration
+
+<div class="alert alert-info"><strong>Server Configuration</strong><p>If you have deployed CAS in an external application server/servlet container
+(i.e. Apache Tomcat) you will need to make sure
+that the server is adjusted to handle large-enough <code>HttpHeaderSize</code> and <code>HttpPostSize</code> values (i.e. 2097152).
+The embedded container that ships with CAS handles this automatically.</p></div>
+
 Note that CAS metadata endpoints for various bindings are typically available under `/cas/idp/...`. If you 
 mean you use an existing metadata file whose binding endpoints begin with `/idp/...`, you may need to deploy
 CAS at the root context path so it's able to respond to those requests. (i.e. `https://sso.example.org/cas/login` becomes
