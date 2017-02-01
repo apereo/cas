@@ -54,7 +54,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
             final String password = credentials == null ? null : credentials.toString();
             final AuthenticationRequest request = new AuthenticationRequest(username,
                     new org.ldaptive.Credential(password), ReturnAttributes.ALL.value());
-            final Authenticator authenticator = Beans.newLdapAuthenticator(adminPagesSecurityProperties.getLdap());
+            final Authenticator authenticator = Beans.newLdaptiveAuthenticator(adminPagesSecurityProperties.getLdap());
             final AuthenticationResponse response = authenticator.authenticate(request);
             LOGGER.debug("LDAP response: [{}]", response);
 

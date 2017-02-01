@@ -82,7 +82,7 @@ public class LdapUserAttributesToRolesAuthorizationGenerator implements Authoriz
             LOGGER.debug("Attempting to get details for user [{}].", username);
             final Response<SearchResult> response = this.userSearchExecutor.search(
                     this.connectionFactory,
-                    Beans.newSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
+                    Beans.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
                             Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Arrays.asList(username)));
 
             LOGGER.debug("LDAP user search response: [{}]", response);

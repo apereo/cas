@@ -61,7 +61,7 @@ public class JpaTicketRegistryConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
-        return Beans.newEntityManagerFactoryBean(
+        return Beans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                         Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaTicketRegistryContext",

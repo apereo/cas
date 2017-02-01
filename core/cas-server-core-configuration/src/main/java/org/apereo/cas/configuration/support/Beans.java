@@ -188,8 +188,8 @@ public final class Beans {
      * @param jpaProperties the jpa properties
      * @return the local container entity manager factory bean
      */
-    public static LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigDataHolder config,
-                                                                                     final AbstractJpaProperties jpaProperties) {
+    public static LocalContainerEntityManagerFactoryBean newHibernateEntityManagerFactoryBean(final JpaConfigDataHolder config,
+                                                                                              final AbstractJpaProperties jpaProperties) {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
@@ -330,8 +330,8 @@ public final class Beans {
      * @param factory the factory
      * @return the entry resolver
      */
-    public static EntryResolver newSearchEntryResolver(final AbstractLdapAuthenticationProperties l,
-                                                       final PooledConnectionFactory factory) {
+    public static EntryResolver newLdaptiveSearchEntryResolver(final AbstractLdapAuthenticationProperties l,
+                                                               final PooledConnectionFactory factory) {
         final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getUserFilter());
@@ -398,7 +398,7 @@ public final class Beans {
      * @param l the ldap properties
      * @return the connection config
      */
-    public static ConnectionConfig newConnectionConfig(final AbstractLdapProperties l) {
+    public static ConnectionConfig newLdaptiveConnectionConfig(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
@@ -484,7 +484,7 @@ public final class Beans {
      * @param l the ldap properties
      * @return the pool config
      */
-    public static PoolConfig newPoolConfig(final AbstractLdapProperties l) {
+    public static PoolConfig newLdaptivePoolConfig(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection pool configuration for [{}]", l.getLdapUrl());
         final PoolConfig pc = new PoolConfig();
         pc.setMinPoolSize(l.getMinPoolSize());
@@ -501,9 +501,9 @@ public final class Beans {
      * @param l the l
      * @return the connection factory
      */
-    public static DefaultConnectionFactory newConnectionFactory(final AbstractLdapProperties l) {
+    public static DefaultConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
-        final ConnectionConfig cc = newConnectionConfig(l);
+        final ConnectionConfig cc = newLdaptiveConnectionConfig(l);
         final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
         if (l.getProviderClass() != null) {
             try {
@@ -522,9 +522,9 @@ public final class Beans {
      * @param l the l
      * @return the connection pool
      */
-    public static ConnectionPool newBlockingConnectionPool(final AbstractLdapProperties l) {
-        final DefaultConnectionFactory bindCf = newConnectionFactory(l);
-        final PoolConfig pc = newPoolConfig(l);
+    public static ConnectionPool newLdaptiveBlockingConnectionPool(final AbstractLdapProperties l) {
+        final DefaultConnectionFactory bindCf = newLdaptiveConnectionFactory(l);
+        final PoolConfig pc = newLdaptivePoolConfig(l);
         final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
 
         cp.setBlockWaitTime(newDuration(l.getBlockWaitTime()));
@@ -574,8 +574,8 @@ public final class Beans {
      * @param l the ldap properties
      * @return the pooled connection factory
      */
-    public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
-        final ConnectionPool cp = newBlockingConnectionPool(l);
+    public static PooledConnectionFactory newLdaptivePooledConnectionFactory(final AbstractLdapProperties l) {
+        final ConnectionPool cp = newLdaptiveBlockingConnectionPool(l);
         return new PooledConnectionFactory(cp);
     }
 
@@ -640,7 +640,7 @@ public final class Beans {
      * @param filter the filter
      * @return the search request
      */
-    public static SearchRequest newSearchRequest(final String baseDn, final SearchFilter filter) {
+    public static SearchRequest newLdaptiveSearchRequest(final String baseDn, final SearchFilter filter) {
         final SearchRequest sr = new SearchRequest(baseDn, filter);
         sr.setBinaryAttributes(ReturnAttributes.ALL_USER.value());
         sr.setReturnAttributes(ReturnAttributes.ALL_USER.value());
@@ -655,8 +655,8 @@ public final class Beans {
      * @param filterQuery the query filter
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newSearchFilter(final String filterQuery) {
-        return newSearchFilter(filterQuery, Collections.emptyList());
+    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery) {
+        return newLdaptiveSearchFilter(filterQuery, Collections.emptyList());
     }
 
     /**
@@ -667,8 +667,8 @@ public final class Beans {
      * @param params      the username
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newSearchFilter(final String filterQuery, final List<String> params) {
-        return newSearchFilter(filterQuery, LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, params);
+    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final List<String> params) {
+        return newLdaptiveSearchFilter(filterQuery, LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, params);
     }
 
     /**
@@ -680,7 +680,7 @@ public final class Beans {
      * @param params      the username
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
+    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(filterQuery);
         if (params != null) {
@@ -697,17 +697,17 @@ public final class Beans {
     }
 
     /**
-     * New search executor search executor.
+     * New search executor.
      *
      * @param baseDn      the base dn
      * @param filterQuery the filter query
      * @param params      the params
      * @return the search executor
      */
-    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final List<String> params) {
+    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery, final List<String> params) {
         final SearchExecutor executor = new SearchExecutor();
         executor.setBaseDn(baseDn);
-        executor.setSearchFilter(newSearchFilter(filterQuery, params));
+        executor.setSearchFilter(newLdaptiveSearchFilter(filterQuery, params));
         executor.setReturnAttributes(ReturnAttributes.ALL.value());
         executor.setSearchScope(SearchScope.SUBTREE);
         return executor;
@@ -720,8 +720,8 @@ public final class Beans {
      * @param filterQuery the filter query
      * @return the search executor
      */
-    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery) {
-        return newSearchExecutor(baseDn, filterQuery, Collections.emptyList());
+    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery) {
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, Collections.emptyList());
     }
 
     /**
@@ -787,7 +787,7 @@ public final class Beans {
      * @param l the ldap settings.
      * @return the authenticator
      */
-    public static Authenticator newLdapAuthenticator(final AbstractLdapAuthenticationProperties l) {
+    public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties l) {
         if (l.getType() == AbstractLdapAuthenticationProperties.AuthenticationTypes.AD) {
             LOGGER.debug("Creating active directory authenticator for [{}]", l.getLdapUrl());
             return getActiveDirectoryAuthenticator(l);
@@ -810,7 +810,7 @@ public final class Beans {
     }
 
     private static Authenticator getSaslAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        final PooledConnectionFactory factory = Beans.newPooledConnectionFactory(l);
+        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
@@ -821,12 +821,12 @@ public final class Beans {
     }
 
     private static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        final PooledConnectionFactory factory = Beans.newPooledConnectionFactory(l);
+        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
-        resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
+        resolver.setConnectionFactory(Beans.newLdaptivePooledConnectionFactory(l));
         resolver.setUserFilter(l.getUserFilter());
 
         final Authenticator auth;
@@ -837,7 +837,7 @@ public final class Beans {
         }
 
         if (l.isEnhanceWithEntryResolver()) {
-            auth.setEntryResolver(Beans.newSearchEntryResolver(l, factory));
+            auth.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, factory));
         }
         return auth;
     }
@@ -846,12 +846,12 @@ public final class Beans {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
         }
-        final PooledConnectionFactory factory = Beans.newPooledConnectionFactory(l);
+        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
         final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
 
         if (l.isEnhanceWithEntryResolver()) {
-            authenticator.setEntryResolver(Beans.newSearchEntryResolver(l, factory));
+            authenticator.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, factory));
         }
         return authenticator;
     }
@@ -860,12 +860,12 @@ public final class Beans {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
         }
-        final PooledConnectionFactory factory = Beans.newPooledConnectionFactory(l);
+        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
         final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
 
         if (l.isEnhanceWithEntryResolver()) {
-            authn.setEntryResolver(Beans.newSearchEntryResolver(l, factory));
+            authn.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, factory));
         }
         return authn;
     }
