@@ -27,6 +27,11 @@ public class CasWebApplicationSecurityConfiguration extends GlobalAuthentication
         if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getJdbc().getQuery())) {
             auth.apply(new CasJdbcUserDetailsManagerConfigurer(casProperties.getAdminPagesSecurity()));
         }
+        if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLdap().getBaseDn())
+                && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLdap().getLdapUrl())
+                && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLdap().getUserFilter())) {
+            auth.apply(new CasJdbcUserDetailsManagerConfigurer(casProperties.getAdminPagesSecurity()));
+        }
     }
 
 }
