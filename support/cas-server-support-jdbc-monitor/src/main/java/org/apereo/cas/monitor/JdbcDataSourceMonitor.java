@@ -20,7 +20,7 @@ public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
     
     private JdbcTemplate jdbcTemplate;
     private final String validationQuery;
-
+            
     /**
      * Creates a new instance that monitors the given data source.
      *
@@ -30,7 +30,8 @@ public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
      * @param validationQuery validation query used to monitor the data source. The validation query
      *                        should return at least one result; otherwise results are ignored.
      */
-    public JdbcDataSourceMonitor(final ExecutorService executorService, final int maxWait, final DataSource dataSource, final String validationQuery) {
+    public JdbcDataSourceMonitor(final ExecutorService executorService, final int maxWait,
+                                 final DataSource dataSource, final String validationQuery) {
         super(JdbcDataSourceMonitor.class.getSimpleName(), executorService, maxWait);
         if (dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(dataSource);

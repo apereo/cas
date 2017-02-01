@@ -192,6 +192,10 @@ server.port=8443
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
+server.max-http-header-size=2097152
+server.use-forward-headers=true
+server.connection-timeout=20000
+
 # server.ssl.ciphers=
 # server.ssl.clientAuth=
 # server.ssl.enabled=
@@ -210,7 +214,7 @@ server.tomcat.accesslog.enabled=true
 server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
 server.tomcat.accesslog.suffix=.log
 
-server.tomcat.maxHttpHeaderSize=20971520
+server.tomcat.maxHttpPostSize=20971520
 server.tomcat.maxThreads=5
 server.tomcat.portHeader=X-Forwarded-Port
 server.tomcat.protocolHeader=X-Forwarded-Proto
@@ -229,7 +233,6 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.http.port=8080
 # cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
 # cas.server.http.enabled=true
-# cas.server.connectionTimeout=20000
 
 # cas.server.ajp.secure=false
 # cas.server.ajp.enabled=false
@@ -294,6 +297,8 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 ```properties
 # endpoints.enabled=true
 # endpoints.sensitive=true
+
+# management.security.enabled=true
 # management.contextPath=/status
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
@@ -3229,6 +3234,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # spring.data.mongodb.database=prod
 
 # Manage session storage via Redis
+# spring.session.store-type=redis
 # spring.redis.host=localhost
 # spring.redis.password=secret
 # spring.redis.port=6379
