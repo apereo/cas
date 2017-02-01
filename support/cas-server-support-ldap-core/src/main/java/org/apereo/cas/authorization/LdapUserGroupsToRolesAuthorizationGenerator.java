@@ -72,7 +72,7 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends LdapUserAttribu
             LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
             final Response<SearchResult> response = this.groupSearchExecutor.search(
                     this.connectionFactory,
-                    Beans.newSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
+                    Beans.newLdaptiveSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
                             Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Arrays.asList(userEntry.getDn())));
             LOGGER.debug("LDAP role search response: [{}]", response);
             final SearchResult groupResult = response.getResult();

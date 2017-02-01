@@ -45,10 +45,10 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     public String findEmail(final String username) {
         try {
             final PasswordManagementProperties.Ldap ldap = passwordManagementProperties.getLdap();
-            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(),
+            final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldap.getUserFilter(),
                     Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     Arrays.asList(username));
-            final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
+            final ConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(ldap);
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             if (LdapUtils.containsResultEntry(response)) {
                 final LdapEntry entry = response.getResult().getEntry();
@@ -79,10 +79,10 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             final PasswordManagementProperties.Ldap ldap = passwordManagementProperties.getLdap();
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
 
-            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(),
+            final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldap.getUserFilter(),
                     Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     Arrays.asList(c.getId()));
-            final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
+            final ConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(ldap);
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
 
             if (LdapUtils.containsResultEntry(response)) {
@@ -110,10 +110,10 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
         try {
             final PasswordManagementProperties.Ldap ldap = passwordManagementProperties.getLdap();
-            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(),
+            final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldap.getUserFilter(),
                     Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     Arrays.asList(username));
-            final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
+            final ConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(ldap);
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             if (LdapUtils.containsResultEntry(response)) {
                 final LdapEntry entry = response.getResult().getEntry();
