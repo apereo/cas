@@ -54,5 +54,5 @@ import org.junit.runners.Suite;
         WebApplicationServiceFactoryTests.class,
         RegisteredServiceJsonSerializerTests.class,
         DefaultCasAttributeEncoderTests.class})
-public class AllTestsSuite {
+public class AllServicesTestsSuite {
 }

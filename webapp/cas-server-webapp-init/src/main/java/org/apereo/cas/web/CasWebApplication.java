@@ -53,7 +53,7 @@ import java.util.Collections;
 @EnableConfigServer
 @EnableAsync
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
 public class CasWebApplication {
     /**

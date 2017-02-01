@@ -1867,8 +1867,8 @@ ext.libraries = [
                 }
         ],
 
-        springsecurity          : [
-                dependencies.create("org.springframework.security:spring-security-core:$springSecurityVersion") {
+        springsecuritywebconfig : [
+                dependencies.create("org.springframework.security:spring-security-config:$springSecurityVersion") {
                     exclude(group: "aopalliance", module: "aopalliance")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework", module: "spring-beans")
@@ -1884,7 +1884,26 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
-                dependencies.create("org.springframework.security:spring-security-config:$springSecurityVersion") {
+                dependencies.create("org.springframework.security:spring-security-web:$springSecurityVersion") {
+                    exclude(group: "aopalliance", module: "aopalliance")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-jdbc")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "javax.annotation", module: "jsr250-api")
+                    exclude(group: "net.sf.ehcache", module: "ehcache")
+                    exclude(group: "org.aspectj", module: "aspectjrt")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        springsecurity          : [
+                dependencies.create("org.springframework.security:spring-security-core:$springSecurityVersion") {
                     exclude(group: "aopalliance", module: "aopalliance")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework", module: "spring-beans")

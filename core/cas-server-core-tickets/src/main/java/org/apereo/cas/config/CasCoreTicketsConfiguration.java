@@ -57,6 +57,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
 import java.util.Map;
 
@@ -70,9 +71,9 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 @AutoConfigureAfter(value = {CasCoreUtilConfiguration.class, CasCoreTicketIdGeneratorsConfiguration.class})
-public class CasCoreTicketsConfiguration {
+public class CasCoreTicketsConfiguration implements TransactionManagementConfigurer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreTicketsConfiguration.class);
 
@@ -288,5 +289,10 @@ public class CasCoreTicketsConfiguration {
         }
         LOGGER.warn("Ticket-granting ticket expiration policy is set to ALWAYS expire tickets.");
         return new AlwaysExpiresExpirationPolicy();
+    }
+
+    @Override
+    public PlatformTransactionManager annotationDrivenTransactionManager() {
+        return ticketTransactionManager();
     }
 }
