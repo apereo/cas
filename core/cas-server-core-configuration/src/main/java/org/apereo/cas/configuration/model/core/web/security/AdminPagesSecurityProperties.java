@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class AdminPagesSecurityProperties {
     private String ip = "127\\.0\\.0\\.1|0:0:0:0:0:0:0:1";
-    private List<String> adminRoles = new ArrayList<>(Arrays.asList("ROLE_ADMIN", "ROLE_ACTUATOR"));
+    private List<String> adminRoles = Arrays.asList("ROLE_ADMIN", "ROLE_ACTUATOR");
     private String loginUrl;
     private String service;
     private Resource users;
