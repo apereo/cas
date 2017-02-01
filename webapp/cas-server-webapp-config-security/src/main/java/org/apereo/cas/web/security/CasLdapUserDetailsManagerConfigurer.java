@@ -59,7 +59,7 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
 
     private AuthorizationGenerator<CommonProfile> build() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(ldapAuthz);
+        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(adminPagesSecurityProperties.getLdap());
 
         if (StringUtils.isNotBlank(ldapAuthz.getGroupFilter()) && StringUtils.isNotBlank(ldapAuthz.getGroupAttribute())) {
             return new LdapUserGroupsToRolesAuthorizationGenerator(connectionFactory,
@@ -117,16 +117,22 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
                     final LdapEntry entry = response.getLdapEntry();
 
                     final CommonProfile profile = new CommonProfile();
-                    profile.setId(entry.getDn());
+                    profile.setId(username);
                     entry.getAttributes().forEach(a -> profile.addAttribute(a.getName(), a.getStringValues()));
 
+                    LOGGER.debug("Collected user profile [{}]", profile);
+
                     this.authorizationGenerator.generate(profile);
+                    LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
+
                     final Collection<GrantedAuthority> authorities = new ArrayList<>();
                     authorities.addAll(profile.getAttributes().entrySet()
                             .stream().map(e -> new SimpleGrantedAuthority(e.getValue().toString())).collect(Collectors.toList()));
                     authorities.addAll(profile.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+                    LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
 
                     final RequireAnyRoleAuthorizer authorizer = new RequireAnyRoleAuthorizer(adminPagesSecurityProperties.getAdminRoles());
+                    LOGGER.debug("Executing authorization for expected admin roles [{}]", authorizer.getElements());
 
                     final J2EContext context = new J2EContext(
                             WebUtils.getHttpServletRequestFromRequestAttributes(),
@@ -135,6 +141,8 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
                     if (authorizer.isAllAuthorized(context, Arrays.asList(profile))) {
                         return new UsernamePasswordAuthenticationToken(username, password, authorities);
                     }
+                    LOGGER.warn("User [{}] is not authorized to access the requested resource allowed to roles [{}]",
+                            username, authorizer.getElements());
                 }
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
