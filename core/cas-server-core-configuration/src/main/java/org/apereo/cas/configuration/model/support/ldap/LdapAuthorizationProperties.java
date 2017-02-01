@@ -9,10 +9,12 @@ import org.apache.commons.lang3.StringUtils;
  * @since 5.0.0
  */
 
-public class LdapAuthorizationProperties extends AbstractLdapProperties {
-    /** Default role prefix. */
+public class LdapAuthorizationProperties {
+    /**
+     * Default role prefix.
+     */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
-    
+
     private String roleAttribute = "uugid";
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
     private boolean allowMultipleResults;
@@ -20,7 +22,7 @@ public class LdapAuthorizationProperties extends AbstractLdapProperties {
     private String groupAttribute;
     private String groupPrefix = StringUtils.EMPTY;
     private String groupFilter;
-    
+
     private String baseDn;
     private String searchFilter;
 
