@@ -298,11 +298,14 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # endpoints.enabled=true
 # endpoints.sensitive=true
 
-# management.security.enabled=true
-# management.contextPath=/status
+management.contextPath=/status
+management.security.enabled=true
+management.security.roles=ACTUATOR,ADMIN
+management.security.sessions=if_required
 
 # Each of the below endpoints can either be disabled
-# or can be marked as 'sensitive' to enable authentication.
+# or can be individually marked as 'sensitive' (or not) 
+# to enable authentication.
 
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
