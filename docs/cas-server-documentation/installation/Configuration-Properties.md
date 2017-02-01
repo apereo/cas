@@ -389,6 +389,14 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.jdbc.idleTimeout=5000
 ```
 
+#### LDAP
+
+
+```properties
+
+```
+
+
 ## Web Application Session
 
 Control the web application session behavior.
