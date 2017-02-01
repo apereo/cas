@@ -209,7 +209,7 @@ public class CasPersonDirectoryConfiguration {
                 final LdaptivePersonAttributeDao ldapDao = new LdaptivePersonAttributeDao();
 
                 LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
-                ldapDao.setConnectionFactory(Beans.newPooledConnectionFactory(ldap));
+                ldapDao.setConnectionFactory(Beans.newLdaptivePooledConnectionFactory(ldap));
                 ldapDao.setBaseDN(ldap.getBaseDn());
 
                 LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getUserFilter());

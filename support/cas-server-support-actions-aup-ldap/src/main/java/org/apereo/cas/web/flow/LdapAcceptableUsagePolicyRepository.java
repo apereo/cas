@@ -72,7 +72,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      */
     private Response<SearchResult> searchForId(final String id) throws LdapException {
 
-        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter,
+        final SearchFilter filter = Beans.newLdaptiveSearchFilter(this.searchFilter,
                 Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 Arrays.asList(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);

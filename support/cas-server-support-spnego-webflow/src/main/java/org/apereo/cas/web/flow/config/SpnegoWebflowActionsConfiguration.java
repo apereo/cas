@@ -95,11 +95,11 @@ public class SpnegoWebflowActionsConfiguration {
     @RefreshScope
     public Action ldapSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(spnegoProperties.getLdap());
-        final SearchFilter filter = Beans.newSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
+        final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
+        final SearchFilter filter = Beans.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
                 "host", Collections.emptyList());
 
-        final SearchRequest searchRequest = Beans.newSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
+        final SearchRequest searchRequest = Beans.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
         return new LdapSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(), 
                 spnegoProperties.getAlternativeRemoteHostAttribute(),
                 spnegoProperties.getDnsTimeout(), 

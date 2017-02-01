@@ -40,7 +40,7 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
 
     private AuthorizationGenerator<CommonProfile> build() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(adminPagesSecurityProperties.getLdap());
+        final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(adminPagesSecurityProperties.getLdap());
 
         if (StringUtils.isNotBlank(ldapAuthz.getGroupFilter()) && StringUtils.isNotBlank(ldapAuthz.getGroupAttribute())) {
             return new LdapUserGroupsToRolesAuthorizationGenerator(connectionFactory,
@@ -61,12 +61,12 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
 
     private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        return Beans.newSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter());
+        return Beans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter());
     }
 
     private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        return Beans.newSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getGroupFilter());
+        return Beans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getGroupFilter());
     }
 
     @Override

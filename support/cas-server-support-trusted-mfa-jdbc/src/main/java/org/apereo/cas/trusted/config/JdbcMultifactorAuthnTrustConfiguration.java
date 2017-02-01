@@ -60,7 +60,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                Beans.newEntityManagerFactoryBean(
+                Beans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaMfaTrustedAuthnVendorAdapter(),
                                 "jpaMfaTrustedAuthnContext",
