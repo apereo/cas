@@ -17,6 +17,7 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -59,6 +60,20 @@ public class HazelcastTicketRegistryConfiguration {
                 hz.getPageSize());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
+    }
+
+    /**
+     * This bean is created to make sure the DefaultTicketRegistry is not created and scheduled
+     * @return
+     */
+    @Bean(name = "ticketRegistryCleaner")
+    @RefreshScope
+    public TicketRegistryCleaner ticketRegistryCleaner() {
+        return new TicketRegistryCleaner() {
+            @Override
+            public void clean() {
+            }
+        };
     }
 
     @Bean
@@ -135,6 +150,29 @@ public class HazelcastTicketRegistryConfiguration {
 
             final Map<String, MapConfig> mapConfigs = new HashMap<>();
             mapConfigs.put(hz.getMapName(), mapConfig);
+
+            final MapConfig mapConfigSTs = new MapConfig().setName("service_tickets")
+                                .setMaxIdleSeconds((int)casProperties.getTicket().getSt().getTimeToKillInSeconds())
+                                .setBackupCount(cluster.getBackupCount())
+                                .setAsyncBackupCount(cluster.getAsyncBackupCount())
+                                .setEvictionPolicy(evictionPolicy)
+                                .setMaxSizeConfig(new MaxSizeConfig()
+                                        .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(
+                                                cluster.getMaxSizePolicy()))
+                                        .setSize(cluster.getMaxHeapSizePercentage()));
+            mapConfigs.put("service_tickets",mapConfigSTs);
+
+            final MapConfig mapConfigUsers = new MapConfig().setName("users")
+                                .setMaxIdleSeconds(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds())
+                                .setBackupCount(cluster.getBackupCount())
+                                .setAsyncBackupCount(cluster.getAsyncBackupCount())
+                                .setEvictionPolicy(evictionPolicy)
+                                .setMaxSizeConfig(new MaxSizeConfig()
+                                        .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(
+                                                cluster.getMaxSizePolicy()))
+                                        .setSize(cluster.getMaxHeapSizePercentage()));
+
+            mapConfigs.put("users", mapConfig);
 
             // Finally aggregate all those config into the main Config
             config.setMapConfigs(mapConfigs).setNetworkConfig(networkConfig);

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
         LOGGER.debug("Locating hazelcast map [{}] from instance [{}]...", hz.getMapName(), hz.getCluster().getInstanceName());
         final IMap map = instance.getMap(hz.getMapName());
         LOGGER.debug("Starting to collect hazelcast statistics...");
-        statsList.add(new HazelcastStatistics(map));
+        statsList.add(new HazelcastStatistics(map,hz.getCluster().getMembers().size()));
 
         return statsList.toArray(new CacheStatistics[statsList.size()]);
     }
@@ -45,9 +46,11 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
         private static final int PERCENTAGE_VALUE = 100;
 
         private IMap map;
+        private int clusterSize;
 
-        protected HazelcastStatistics(final IMap map) {
+        protected HazelcastStatistics(final IMap map, final int clusterSize) {
             this.map = map;
+            this.clusterSize = clusterSize;
         }
 
         @Override
@@ -88,6 +91,9 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
 
             builder.append("Creation time: ")
                     .append(localMapStats.getCreationTime())
+                    .append(", ")
+                    .append("Cluseter size: ")
+                    .append(clusterSize)
                     .append(", ")
                     .append("Owned entry count: ")
                     .append(localMapStats.getOwnedEntryCount())
@@ -130,5 +136,13 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
                         .append(localMapStats.getNearCacheStats().getMisses());
             }
         }
+
+        public String toString() {
+            final StringBuilder builder = new StringBuilder();
+            this.toString(builder);
+            return builder.toString();
+        }
     }
+
+
 }

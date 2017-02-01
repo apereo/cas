@@ -4,6 +4,7 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
+import org.apereo.cas.monitor.Status;
 import org.apereo.cas.util.JsonUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -50,7 +51,7 @@ public class HealthCheckController {
 
         final Callable<HealthStatus> asyncTask = () -> {
             final HealthStatus healthStatus = healthCheckMonitor.observe();
-            response.setStatus(healthStatus.getCode().value());
+            response.setStatus(Status.OK.getCode().value());
             
             if (StringUtils.equals(request.getParameter("format"), "json")) {
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);

@@ -4,9 +4,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.CentralAuthenticationService;;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,28 +93,11 @@ public class StatisticsController implements ServletContextAware {
     public Map<String, Object> getTicketStats(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) {
         final Map<String, Object> model = new HashMap<>();
 
-        int unexpiredTgts = 0;
-        int unexpiredSts = 0;
+        TicketRegistry tr = this.centralAuthenticationService.getTicketRegistry();
+        int unexpiredTgts = (int)tr.sessionCount();
+        int unexpiredSts = (int)tr.serviceTicketCount();
         int expiredTgts = 0;
         int expiredSts = 0;
-
-        final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(ticket -> true);
-
-        for (final Ticket ticket : tickets) {
-            if (ticket instanceof ServiceTicket) {
-                if (ticket.isExpired()) {
-                    expiredSts++;
-                } else {
-                    unexpiredSts++;
-                }
-            } else {
-                if (ticket.isExpired()) {
-                    expiredTgts++;
-                } else {
-                    unexpiredTgts++;
-                }
-            }
-        }
 
         model.put("unexpiredTgts", unexpiredTgts);
         model.put("unexpiredSts", unexpiredSts);
