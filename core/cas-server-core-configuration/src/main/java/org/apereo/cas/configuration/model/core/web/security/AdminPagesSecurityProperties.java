@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
@@ -19,6 +22,16 @@ public class AdminPagesSecurityProperties {
     private String service;
     private Resource users;
     private boolean actuatorEndpointsEnabled;
+
+    private Jdbc jdbc = new Jdbc();
+
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(final Jdbc jdbc) {
+        this.jdbc = jdbc;
+    }
 
     public boolean isActuatorEndpointsEnabled() {
         return actuatorEndpointsEnabled;
@@ -66,5 +79,37 @@ public class AdminPagesSecurityProperties {
 
     public void setUsers(final Resource users) {
         this.users = users;
+    }
+
+    public class Jdbc extends AbstractJpaProperties {
+        private String rolePrefix;
+        private String query;
+
+        @NestedConfigurationProperty
+        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+        public String getRolePrefix() {
+            return rolePrefix;
+        }
+
+        public void setRolePrefix(final String rolePrefix) {
+            this.rolePrefix = rolePrefix;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(final String query) {
+            this.query = query;
+        }
+
+        public PasswordEncoderProperties getPasswordEncoder() {
+            return passwordEncoder;
+        }
+
+        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+        }
     }
 }
