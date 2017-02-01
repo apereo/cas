@@ -36,19 +36,17 @@ public class CasCoreAuthenticationConfiguration {
     
     @Autowired
     private CasConfigurationProperties casProperties;
-
-
-
+    
     @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
-    public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier("authenticationManager")
+    public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier("casAuthenticationManager")
                                                                                     final AuthenticationManager authenticationManager) {
         return new DefaultAuthenticationTransactionManager(authenticationManager);
     }
 
-    @ConditionalOnMissingBean(name = "authenticationManager")
+    @ConditionalOnMissingBean(name = "casAuthenticationManager")
     @Autowired
     @Bean
-    public AuthenticationManager authenticationManager(@Qualifier("authenticationPolicy")
+    public AuthenticationManager casAuthenticationManager(@Qualifier("authenticationPolicy")
                                                        final AuthenticationPolicy authenticationPolicy,
                                                        @Qualifier("registeredServiceAuthenticationHandlerResolver")
                                                        final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,

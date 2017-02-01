@@ -19,9 +19,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-        classes = {JpaEventsConfiguration.class, AopAutoConfiguration.class, RefreshAutoConfiguration.class})
-@EnableTransactionManagement
+@SpringBootTest(classes = {JpaEventsConfiguration.class,
+        AopAutoConfiguration.class,
+        RefreshAutoConfiguration.class})
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 

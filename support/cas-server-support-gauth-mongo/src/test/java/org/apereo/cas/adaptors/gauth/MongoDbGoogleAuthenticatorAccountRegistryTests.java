@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
                 AopAutoConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 RefreshAutoConfiguration.class})
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
 @EnableScheduling

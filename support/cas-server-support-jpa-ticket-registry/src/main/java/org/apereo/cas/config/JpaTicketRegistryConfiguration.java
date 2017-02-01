@@ -34,7 +34,7 @@ import javax.sql.DataSource;
  */
 @Configuration("jpaTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class JpaTicketRegistryConfiguration {
 
     @Autowired
