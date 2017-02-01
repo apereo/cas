@@ -45,6 +45,7 @@ import static org.junit.Assert.*;
 public class QueryDatabaseAuthenticationHandlerTests {
 
     private static final String SQL = "SELECT * FROM casusers where username=?";
+    private static final String PASSWORD_FIELD = "password";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -59,12 +60,12 @@ public class QueryDatabaseAuthenticationHandlerTests {
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
 
-        s.execute(getSqlInsertStatementToCreateUserAccount(0, "false", "false"));
+        s.execute(getSqlInsertStatementToCreateUserAccount(0, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
         for (int i = 0; i < 10; i++) {
-            s.execute(getSqlInsertStatementToCreateUserAccount(i, "false", "false"));
+            s.execute(getSqlInsertStatementToCreateUserAccount(i, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
         }
-        s.execute(getSqlInsertStatementToCreateUserAccount(20, "true", "false"));
-        s.execute(getSqlInsertStatementToCreateUserAccount(21, "false", "true"));
+        s.execute(getSqlInsertStatementToCreateUserAccount(20, Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+        s.execute(getSqlInsertStatementToCreateUserAccount(21, Boolean.FALSE.toString(), Boolean.TRUE.toString()));
 
         c.close();
     }
@@ -106,7 +107,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, "password", null, null);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, PASSWORD_FIELD, null, null);
         q.setDataSource(this.dataSource);
 
         this.thrown.expect(AccountNotFoundException.class);
@@ -117,7 +118,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyPasswordInvalid() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, "password", null, null);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, PASSWORD_FIELD, null, null);
         q.setDataSource(this.dataSource);
         this.thrown.expect(FailedLoginException.class);
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"));
@@ -125,7 +126,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyMultipleRecords() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, "password", null, null);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, PASSWORD_FIELD, null, null);
         q.setDataSource(this.dataSource);
         this.thrown.expect(FailedLoginException.class);
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
@@ -133,7 +134,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyBadQuery() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL.replace("*", "error"), "password", null, null);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL.replace("*", "error"), PASSWORD_FIELD, null, null);
         q.setDataSource(this.dataSource);
         this.thrown.expect(PreventedException.class);
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
@@ -141,27 +142,29 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifySuccess() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, "password", null, null);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, PASSWORD_FIELD, null, null);
         q.setDataSource(this.dataSource);
         assertNotNull(q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3")));
     }
 
     @Test
     public void verifyFindUserAndExpired() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, "password", "expired", null);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, PASSWORD_FIELD, "expired", null);
         q.setDataSource(this.dataSource);
         this.thrown.expect(AccountPasswordMustChangeException.class);
         this.thrown.expectMessage("Password has expired");
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20"));
+        fail("Shouldn't get here");
     }
 
     @Test
     public void verifyFindUserAndDisabled() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, "password", null, "disabled");
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(SQL, PASSWORD_FIELD, null, "disabled");
         q.setDataSource(this.dataSource);
         this.thrown.expect(AccountDisabledException.class);
         this.thrown.expectMessage("Account has been disabled");
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21"));
+        fail("Shouldn't get here");
     }
 
     /**
@@ -174,7 +177,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     public void verifyBCryptFail() throws Exception {
         final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
         final String sql = SQL.replace("*", "'" + encoder.encode("pswbc1") + "' password");
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(sql, "password", null, null);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(sql, PASSWORD_FIELD, null, null);
         q.setDataSource(this.dataSource);
         q.setPasswordEncoder(encoder);
         this.thrown.expect(FailedLoginException.class);
@@ -189,7 +192,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     public void verifyBCryptSuccess() throws Exception {
         final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, new SecureRandom("secret2".getBytes(StandardCharsets.UTF_8)));
         final String sql = SQL.replace("*", "'" + encoder.encode("pswbc2") + "' password");
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(sql, "password", null, null);
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler(sql, PASSWORD_FIELD, null, null);
         q.setDataSource(this.dataSource);
 
         q.setPasswordEncoder(encoder);

@@ -122,7 +122,7 @@ public class JdbcAuthenticationProperties {
             return fieldPassword;
         }
 
-        public void setFieldPassword(String fieldPassword) {
+        public void setFieldPassword(final String fieldPassword) {
             this.fieldPassword = fieldPassword;
         }
 
@@ -130,7 +130,7 @@ public class JdbcAuthenticationProperties {
             return fieldExpired;
         }
 
-        public void setFieldExpired(String fieldExpired) {
+        public void setFieldExpired(final String fieldExpired) {
             this.fieldExpired = fieldExpired;
         }
 
@@ -138,7 +138,7 @@ public class JdbcAuthenticationProperties {
             return fieldDisabled;
         }
 
-        public void setFieldDisabled(String fieldDisabled) {
+        public void setFieldDisabled(final String fieldDisabled) {
             this.fieldDisabled = fieldDisabled;
         }
     }
@@ -361,7 +361,7 @@ public class JdbcAuthenticationProperties {
             return expiredFieldName;
         }
 
-        public void setExpiredFieldName(String expiredFieldName) {
+        public void setExpiredFieldName(final String expiredFieldName) {
             this.expiredFieldName = expiredFieldName;
         }
 
@@ -369,7 +369,7 @@ public class JdbcAuthenticationProperties {
             return disabledFieldName;
         }
 
-        public void setDisabledFieldName(String disabledFieldName) {
+        public void setDisabledFieldName(final String disabledFieldName) {
             this.disabledFieldName = disabledFieldName;
         }
 

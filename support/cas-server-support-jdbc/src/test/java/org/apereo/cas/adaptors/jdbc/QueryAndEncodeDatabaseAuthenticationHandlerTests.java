@@ -53,6 +53,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final String PASSWORD_FIELD_NAME = "password";
     private static final String EXPIRED_FIELD_NAME = "expired";
     private static final String DISABLED_FIELD_NAME = "disabled";
+    private static final String NUM_ITERATIONS_FIELD_NAME = "numIterations";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -67,12 +68,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
 
-        s.execute(getSqlInsertStatementToCreateUserAccount(0, "false", "false"));
+        s.execute(getSqlInsertStatementToCreateUserAccount(0, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
         for (int i = 0; i < 10; i++) {
-            s.execute(getSqlInsertStatementToCreateUserAccount(i, "false", "false"));
+            s.execute(getSqlInsertStatementToCreateUserAccount(i, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
         }
-        s.execute(getSqlInsertStatementToCreateUserAccount(20, "true", "false"));
-        s.execute(getSqlInsertStatementToCreateUserAccount(21, "false", "true"));
+        s.execute(getSqlInsertStatementToCreateUserAccount(20, Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+        s.execute(getSqlInsertStatementToCreateUserAccount(21, Boolean.FALSE.toString(), Boolean.TRUE.toString()));
 
         c.close();
     }
@@ -136,7 +137,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationSuccessful() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", null, null, "numIterations", 0, STATIC_SALT);
+                "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
         q.setDataSource(dataSource);
 
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
@@ -149,31 +150,33 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationWithExpiredField() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", EXPIRED_FIELD_NAME, null, "numIterations", 0, STATIC_SALT);
+                "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
         q.setDataSource(dataSource);
 
         this.thrown.expect(AccountPasswordMustChangeException.class);
         this.thrown.expectMessage("Password has expired");
 
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user20"));
+        fail("Shouldn't get here");
     }
 
     @Test
     public void verifyAuthenticationWithDisabledField() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", null, DISABLED_FIELD_NAME, "numIterations", 0, STATIC_SALT);
+                "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
         q.setDataSource(dataSource);
 
         this.thrown.expect(AccountDisabledException.class);
         this.thrown.expectMessage("Account has been disabled");
 
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user21"));
+        fail("Shouldn't get here");
     }
 
     @Test
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", null, null, "numIterations", 0, STATIC_SALT);
+                "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
         q.setDataSource(dataSource);
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
