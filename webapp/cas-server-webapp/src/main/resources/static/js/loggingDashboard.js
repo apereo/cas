@@ -68,6 +68,8 @@ var alertHandler = (function () {
     var create = function (message, state) {
         //console.log('create the alert');
         alertContainer.html('<div class="alert alert-' + state + ' alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>' + message + '</span></div>')
+
+        alertContainer.delay(2000).fadeOut('slow');
     };
 
     var destroy = function () {
@@ -300,19 +302,21 @@ var loggingDashboard = (function () {
          */
         var table = $('#loggersTable').DataTable();
         var data = table.row($(el).closest('tr')[0]).data();
+        
+        if ( newLevel != data.level) {
+            var cell = table.cell($(el).closest('td')[0]);
 
-        var cell = table.cell($(el).closest('td')[0]);
-
-        var jqxhr = $.post(urls.updateLevel, {
-            loggerName: data.name,
-            loggerLevel: newLevel,
-            additive: data.additive
-        }, function () {
-            cell.data(newLevel).draw();
-            alertHandler.show('Successfully changed.', 'success');
-        }).fail(function () {
-            alertHandler.show('Error saving change.  Please try again', 'danger');
-        });
+            var jqxhr = $.post(urls.updateLevel, {
+                loggerName: data.name,
+                loggerLevel: newLevel,
+                additive: data.additive
+            }, function () {
+                cell.data(newLevel).draw();
+                alertHandler.show('Successfully changed.', 'success');
+            }).fail(function () {
+                alertHandler.show('Error saving change.  Please try again', 'danger');
+            });
+        }
     };
 
     // initialization *******
