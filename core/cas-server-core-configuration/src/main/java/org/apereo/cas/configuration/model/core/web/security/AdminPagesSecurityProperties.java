@@ -2,13 +2,13 @@ package org.apereo.cas.configuration.model.core.web.security;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class AdminPagesSecurityProperties {
     private String ip = "127\\.0\\.0\\.1|0:0:0:0:0:0:0:1";
-    private List<String> adminRoles = new ArrayList<>(Collections.singletonList("ROLE_ADMIN"));
+    private List<String> adminRoles = new ArrayList<>(Arrays.asList("ROLE_ADMIN", "ROLE_ACTUATOR"));
     private String loginUrl;
     private String service;
     private Resource users;
@@ -92,11 +92,18 @@ public class AdminPagesSecurityProperties {
         this.ldap = ldap;
     }
 
-    public class Ldap extends LdapAuthenticationProperties {
+    public class Ldap extends AbstractLdapAuthenticationProperties {
         @NestedConfigurationProperty
         private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 
+        /**
+         * Gets ldap authz.
+         *
+         * @return the ldap authz
+         */
         public LdapAuthorizationProperties getLdapAuthz() {
+            ldapAuthz.setBaseDn(getBaseDn());
+            ldapAuthz.setSearchFilter(getUserFilter());
             return ldapAuthz;
         }
 
