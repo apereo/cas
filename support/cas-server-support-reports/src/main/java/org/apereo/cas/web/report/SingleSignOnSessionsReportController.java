@@ -120,7 +120,7 @@ public class SingleSignOnSessionsReportController {
      * @param option the option
      * @return the sso sessions
      */
-    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option, String user) {
+    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option, final String user) {
         final Collection<Map<String, Object>> activeSessions = new ArrayList<>();
         final ISOStandardDateFormat dateFormat = new ISOStandardDateFormat();
 
@@ -167,10 +167,10 @@ public class SingleSignOnSessionsReportController {
      */
     private Collection<Ticket> getNonExpiredTicketGrantingTickets(final String user) {
         return this.centralAuthenticationService.getTickets(user,ticket -> {
-                if (ticket instanceof TicketGrantingTicketImpl) {
-                    return !ticket.isExpired();
-                }
-                return false;
+            if (ticket instanceof TicketGrantingTicketImpl) {
+                return !ticket.isExpired();
+            }
+            return false;
         });
     }
 

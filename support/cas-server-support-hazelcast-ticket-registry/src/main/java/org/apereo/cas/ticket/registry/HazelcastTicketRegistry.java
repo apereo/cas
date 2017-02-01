@@ -81,21 +81,21 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
          */
         this.tgts.addLocalEntryListener(new EntryRemovedListener<String,Ticket>() {
             @Override
-            public void entryRemoved(EntryEvent<String,Ticket> entryEvent) {
+            public void entryRemoved(final EntryEvent<String,Ticket> entryEvent) {
                 String user = ((TicketGrantingTicket)entryEvent.getOldValue()).getAuthentication().getPrincipal().getId();
                 removeTGTfromUser(user,entryEvent.getKey());
             }
         });
         this.tgts.addLocalEntryListener(new EntryExpiredListener<String,Ticket>() {
             @Override
-            public void entryExpired(EntryEvent<String,Ticket> entryEvent) {
+            public void entryExpired(final EntryEvent<String,Ticket> entryEvent) {
                 String user = ((TicketGrantingTicket)entryEvent.getOldValue()).getAuthentication().getPrincipal().getId();
                 removeTGTfromUser(user,entryEvent.getKey());
             }
         });
         this.tgts.addLocalEntryListener(new EntryAddedListener<String,Ticket>() {
             @Override
-            public void entryAdded(EntryEvent<String, Ticket> entryEvent) {
+            public void entryAdded(final EntryEvent<String, Ticket> entryEvent) {
                 String user = ((TicketGrantingTicket)entryEvent.getValue()).getAuthentication().getPrincipal().getId();
                 addTGTtoUser(user,entryEvent.getKey());
             }
@@ -137,7 +137,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
      *
      * @param ticket a ticket
      */
-    private void addTGT(Ticket ticket) {
+    private void addTGT(final Ticket ticket) {
         LOGGER.debug("Adding TGT [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
         final Ticket encTicket = encodeTicket(ticket);
         this.tgts.set(encTicket.getId(), encTicket, ticket.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS);
@@ -159,18 +159,18 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         return get(ticketId, ticketId.matches(ticketTypeRegEx) ? this.tgts : this.sts);
     }
 
-    private Ticket get(final String ticketId, IMap<String,Ticket> map) {
+    private Ticket get(final String ticketId, final IMap<String,Ticket> map) {
         final String encTicketId = encodeTicketId(ticketId);
         final Ticket ticket = decodeTicket(map.get(encTicketId));
         return ticket;
-        }
+    }
 
-    private Ticket remove(final String ticketId, IMap<String,Ticket> map) {
+    private Ticket remove(final String ticketId, final IMap<String,Ticket> map) {
         String encTicketId = encodeTicketId(ticketId);
         return map.remove(encTicketId);
     }
 
-    private void addTGTtoUser(String user, String ticketId) {
+    private void addTGTtoUser(final String user, final String ticketId) {
         String encodedUser = encodeTicketId(user);
         String encodedTicketId = encodeTicketId(ticketId);
         Set<String> tgtSet = this.users.get(encodedUser);
@@ -182,7 +182,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         this.users.set(encodedUser,tgtSet);
     }
 
-    private void removeTGTfromUser(String user, String ticketId) {
+    private void removeTGTfromUser(final String user, final String ticketId) {
         String encodedUser = encodeTicketId(user);
         String encodedTicketId = encodeTicketId(ticketId);
         Set<String> tgtSet = this.users.get(encodedUser);
@@ -240,7 +240,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         return tgts.values().stream().limit(100).collect(Collectors.toList());
     }
 
-    public Collection<Ticket> getTicketsByUser(String user) {
+    public Collection<Ticket> getTicketsByUser(final String user) {
         final Collection<Ticket> collection = new HashSet<>();
 
         users.keySet(key -> ((String)key.getKey()).matches(user)).stream().limit(100).forEach(usr -> {

@@ -279,7 +279,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
     }
 
-    public Collection<Ticket> getTicketsByUser(String user) {
+    public Collection<Ticket> getTicketsByUser(final String user) {
         return Collections.EMPTY_LIST;
     }
 }

@@ -172,7 +172,7 @@ public class HazelcastTicketRegistryConfiguration {
                                                 cluster.getMaxSizePolicy()))
                                         .setSize(cluster.getMaxHeapSizePercentage()));
 
-            mapConfigs.put("users", mapConfig);
+            mapConfigs.put("users", mapConfigUsers);
 
             // Finally aggregate all those config into the main Config
             config.setMapConfigs(mapConfigs).setNetworkConfig(networkConfig);

@@ -98,7 +98,7 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Collection<Ticket> getTicketsByUser(String user) {
+    public Collection<Ticket> getTicketsByUser(final String user) {
         return Collections.unmodifiableCollection(this.cache.values());
     }
 
