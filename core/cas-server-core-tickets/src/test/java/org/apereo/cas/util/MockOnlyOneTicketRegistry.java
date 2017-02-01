@@ -71,5 +71,7 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public long userCount() { return 1; }
+    public long userCount() {
+        return 1;
+    }
 }
