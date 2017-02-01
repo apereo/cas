@@ -300,8 +300,26 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 
 # management.security.enabled=true
 # management.contextPath=/status
+
+# Each of the below endpoints can either be disabled
+# or can be marked as 'sensitive' to enable authentication.
+
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
+# endpoints.autoconfig.enabled=true
+# endpoints.beans.enabled=true
+# endpoints.bus.enabled=true
+# endpoints.configprops.enabled=true
+# endpoints.dump.enabled=true
+# endpoints.env.enabled=true
+# endpoints.health.enabled=true
+# endpoints.features.enabled=true
+# endpoints.info.enabled=true
+# endpoints.loggers.enabled=true
+# endpoints.logfile.enabled=true
+# endpoints.trace.enabled=true
+# endpoints.docs.enabled=false
+# endpoints.heapdump.enabled=true
 
 # IP address may be enough to protect all endpoints.
 # If you wish to protect the admin pages via CAS itself, configure the rest.
@@ -325,6 +343,25 @@ The format of the file is as such:
 - `casuser`: This is the authenticated user id received from CAS
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
 - `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
+
+### Admin Status Endpoints With Spring Security
+
+Status endpoints may also be secured by Spring Security. You can define the authentication scheme/paths via the below settings.
+
+```properties
+security.basic.authorize-mode=none|role|authenticated
+security.basic.enabled=true
+security.basic.path=/cas/status/**
+security.basic.realm=CAS
+
+# security.ignored[0]=/**
+security.filter-order=0
+security.require-ssl=true
+security.sessions=if_required
+security.user.name=<predefined-userid>
+security.user.password=<predefined-password>
+security.user.role=ACTUATOR
+```
 
 ## Web Application Session
 

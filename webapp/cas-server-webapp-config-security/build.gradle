@@ -1,0 +1,10 @@
+description = "Apereo CAS Web Application Security Configuration"
+dependencies {
+    compile libraries.spring
+    compile libraries.springboot
+    compile libraries.springcloud
+    compile libraries.groovy
+    compile libraries.hibernate
+    compile libraries.springsecurity
+    compile libraries.springsecuritywebconfig
+}

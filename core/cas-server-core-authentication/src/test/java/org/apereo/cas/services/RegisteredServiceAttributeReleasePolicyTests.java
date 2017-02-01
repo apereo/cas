@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {AopAutoConfiguration.class, RefreshAutoConfiguration.class})
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
