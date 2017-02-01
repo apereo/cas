@@ -26,6 +26,8 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,12 +48,12 @@ import java.util.Optional;
  * @since 3.5.0
  */
 public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
     private RefreshTokenFactory refreshTokenFactory;
-
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     public OAuth20AccessTokenController(final ServicesManager servicesManager,
@@ -80,7 +82,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 
         if (!verifyAccessTokenRequest(request, response)) {
-            logger.error("Access token request verification fails");
+            LOGGER.error("Access token request verification fails");
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST);
         }
 
@@ -112,7 +114,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
             final OAuthToken token = getToken(request, parameterName);
             if (token == null) {
-                logger.error("No token found for authorization_code or refresh_token grant types");
+                LOGGER.error("No token found for authorization_code or refresh_token grant types");
                 return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
             }
             service = token.getService();
@@ -135,7 +137,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                         registeredService, authentication);
             } catch (final Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
             }
         }
@@ -147,7 +149,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             getTicketRegistry().addTicket(refreshToken);
         }
 
-        logger.debug("access token: {} / timeout: {} / refresh token: {}", accessToken,
+        LOGGER.debug("access token: [{}] / timeout: [{}] / refresh token: [{}]", accessToken,
                 casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
 
         this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
@@ -170,7 +172,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         final OAuthToken token = getTicketRegistry().getTicket(codeParameter, OAuthToken.class);
         // token should not be expired
         if (token == null || token.isExpired()) {
-            logger.error("Code or refresh token expired: {}", token);
+            LOGGER.error("Code or refresh token expired: [{}]", token);
             if (token != null) {
                 getTicketRegistry().deleteTicket(token.getId());
             }
@@ -244,14 +246,14 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
      * @return whether the grant type is supported
      */
     private boolean checkGrantTypes(final String type, final OAuthGrantType... expectedTypes) {
-        logger.debug("Grant type: {}", type);
+        LOGGER.debug("Grant type: [{}]", type);
 
         for (final OAuthGrantType expectedType : expectedTypes) {
             if (isGrantType(type, expectedType)) {
                 return true;
             }
         }
-        logger.error("Unsupported grant type: {}", type);
+        LOGGER.error("Unsupported grant type: [{}]", type);
         return false;
     }
 

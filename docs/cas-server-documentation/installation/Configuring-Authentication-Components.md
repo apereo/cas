@@ -27,21 +27,23 @@ if not satisfied.
 
 There is an implicit security policy that requires at least one handler to successfully authenticate a credential.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-policy).
 
 ### Authentication Sequence
 
-At runtime, CAS maintains a collection of authentication handlers/strategies that typically execute one after another. Each CAS module that presents a form of authentication strategy will simply insert itself into this collection at bootstrap time. At the end of this process, the result of all authentication transactions is collected and optionally processed by an authentication policy where success/failure of certain strategies/sources may be taken into account to fully satisfy the authentication requirements. The collection of authentication handlers tries to preserve order in a rather more deterministic way. The idea is that adopters can assign an `order` value to an authentication handler thereby explicitly positioning it in the collection and controlling its execution sequence. 
+At runtime, CAS maintains a collection of authentication handlers/strategies that typically execute one after another. Each CAS module that presents a form of authentication strategy will simply insert itself into this collection at bootstrap time. At the end of this process, the result of all authentication transactions is collected and optionally processed by an authentication policy where success/failure of certain strategies/sources may be taken into account to fully satisfy the authentication requirements. The collection of authentication handlers tries to preserve order in a rather more deterministic way. The idea is that adopters can assign an `order` value to an authentication handler thereby explicitly positioning it in the collection and controlling its execution sequence.
 
 
 ## Authentication Handlers
 
-There are a variety of authentication handlers and schemes supported by CAS. Use the menu to navigate around the site and choose. 
+There are a variety of authentication handlers and schemes supported by CAS. Use the menu to navigate around the site and choose.
 
 <div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
 use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
-configured via the static authencation handler, and <strong>MUST</strong> be removed from the configuration 
+configured via the static authencation handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#accept-users-authentication).
 
 ## Principal Resolution
 
@@ -51,8 +53,8 @@ Please [see this guide](Configuring-Principal-Resolution.html) more full details
 
 Authentication handlers that generally deal with username-password credentials
 can be configured to transform the user id prior to executing the authentication sequence.
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+Each authentication strategy in CAS provides settings to properly transform the principal.
+Refer to the relevant settings for the authentication strategy at hand to learn more.
 
 ## Long Term Authentication
 

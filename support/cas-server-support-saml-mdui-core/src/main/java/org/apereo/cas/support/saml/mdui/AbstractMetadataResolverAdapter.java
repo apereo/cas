@@ -34,9 +34,8 @@ import java.util.Set;
  * @since 4.1.0
  */
 public abstract class AbstractMetadataResolverAdapter implements MetadataResolverAdapter {
-    /** Logger instance. */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMetadataResolverAdapter.class);
+    
     /** Metadata resources along with filters to perform validation. */
     protected Map<Resource, MetadataFilterChain> metadataResources;
 
@@ -78,7 +77,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @throws IOException if stream cannot be read
      */
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
-        logger.debug("Locating metadata resource from input stream.");
+        LOGGER.debug("Locating metadata resource from input stream.");
         if (!resource.exists() || !resource.isReadable()) {
             throw new FileNotFoundException("Resource does not exist or is unreadable");
         }
@@ -117,7 +116,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             final Set<Map.Entry<Resource, MetadataFilterChain>> entries = this.metadataResources.entrySet();
             for (final Map.Entry<Resource, MetadataFilterChain> entry : entries) {
                 final Resource resource = entry.getKey();
-                logger.debug("Loading [{}]", resource.getFilename());
+                LOGGER.debug("Loading [{}]", resource.getFilename());
                 loadMetadataFromResource(entry.getValue(), resource, entityId);
             }
         } catch (final Exception ex) {
@@ -136,7 +135,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
                                           final Resource resource, final String entityId) {
 
         try (InputStream in = getResourceInputStream(resource, entityId)) {
-            logger.debug("Parsing [{}]", resource.getFilename());
+            LOGGER.debug("Parsing [{}]", resource.getFilename());
             
             if (in.available() > 0) {
                 final Document document = this.configBean.getParserPool().parse(in);
@@ -146,14 +145,14 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
                 synchronized (this.lock) {
                     this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
                     this.metadataResolver.setResolvers(resolvers);
-                    logger.info("Collected metadata from [{}] resource(s). Initializing aggregate resolver...",
+                    LOGGER.info("Collected metadata from [{}] resource(s). Initializing aggregate resolver...",
                             resolvers.size());
                     this.metadataResolver.initialize();
-                    logger.info("Metadata aggregate initialized successfully with size {}.", resolvers.size());
+                    LOGGER.info("Metadata aggregate initialized successfully with size [{}].", resolvers.size());
                 }
             }
         } catch (final Exception e) {
-            logger.warn("Could not retrieve input stream from resource. Moving on...", e);
+            LOGGER.warn("Could not retrieve input stream from resource. Moving on...", e);
         }
     }
 
@@ -179,12 +178,12 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         if (metadataFilterChain != null) {
             metadataProvider.setMetadataFilter(metadataFilterChain);
         }
-        logger.debug("Initializing metadata resolver for [{}]", resource.getURL());
+        LOGGER.debug("Initializing metadata resolver for [{}]", resource.getURL());
 
         try {
             metadataProvider.initialize();
         } catch (final ComponentInitializationException ex) {
-            logger.warn("Could not initialize metadata resolver. Resource will be ignored", ex);
+            LOGGER.warn("Could not initialize metadata resolver. Resource will be ignored", ex);
         }
         resolvers.add(metadataProvider);
         return resolvers;

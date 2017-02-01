@@ -23,6 +23,8 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +39,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SLOPostProfileHandlerController.class);
+    
     /**
      * Instantiates a new slo saml profile handler controller.
      *
@@ -117,7 +120,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
         if (singleLogoutCallbacksDisabled) {
-            logger.info("Processing SAML IdP SLO requests is disabled");
+            LOGGER.info("Processing SAML IdP SLO requests is disabled");
             return;
         }
 

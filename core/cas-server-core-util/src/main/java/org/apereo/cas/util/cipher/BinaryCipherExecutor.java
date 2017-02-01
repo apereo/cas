@@ -8,6 +8,8 @@ import org.apache.shiro.crypto.CipherService;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +24,8 @@ import java.util.Map;
  * @since 4.2
  */
 public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BinaryCipherExecutor.class);
+    
     /** Secret key IV algorithm. Default is {@code AES}. */
     private String secretKeyAlgorithm = "AES";
 
@@ -44,17 +47,17 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
 
         String signingKeyToUse = signingSecretKey;
         if (StringUtils.isBlank(signingKeyToUse)) {
-            logger.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
+            LOGGER.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
             signingKeyToUse = generateOctetJsonWebKeyOfSize(signingKeySize);
-            logger.warn("Generated signing key {} of size {}. The generated key MUST be added to CAS settings.",
+            LOGGER.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
                     signingKeyToUse, signingKeySize);
         }
         setSigningKey(signingKeyToUse);
 
         if (StringUtils.isBlank(encryptionSecretKey)) {
-            logger.warn("No encryption key is defined. CAS will attempt to auto-generate keys");
+            LOGGER.warn("No encryption key is defined. CAS will attempt to auto-generate keys");
             this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(encryptionKeySize);
-            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS settings.",
+            LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
                     this.encryptionSecretKey, encryptionKeySize);
         } else {
             this.encryptionSecretKey = encryptionSecretKey;
@@ -75,7 +78,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
             final byte[] result = cipher.encrypt(value, key.getEncoded()).getBytes();
             return sign(result);
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
     }
@@ -90,7 +93,6 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
             final byte[] result = cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
             return result;
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
     }
@@ -101,7 +103,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
             final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
             return params.get("k").toString();
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
     }

@@ -55,6 +55,8 @@ The index `[0]` is meant to be incremented by the adopter to allow for distinct 
 If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
 Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
 
+<div class="alert alert-info"><strong>Keep It Simple</strong><p>If you do not know or cannot tell what a setting does, you do not need it.</p></div>
+
 ### Time Unit of Measure
 
 All CAS settings that deal with time units, unless noted otherwise,
@@ -415,7 +417,8 @@ By default, the execution order is the following but can be adjusted per source:
 2. JDBC
 3. JSON
 4. Groovy
-5. Static Stub
+5. Shibboleth
+6. Static Stub
 
 Note that if no other attribute source is defined and if attributes are not directly retrieved
 as part of primary authentication, then a stub/static source will be created
@@ -490,7 +493,7 @@ class SampleGroovyPersonAttributeDao {
         def casProperties = args[2]
         def casApplicationContext = args[3]
 
-        logger.debug("[{}]: The received uid is {}", this.class.simpleName, uid)
+        logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
         return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
     }
 }
@@ -561,6 +564,15 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].pool.maxIdleTime=1000
 # cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
 ```
+
+### Shibboleth Attribute Resolver
+
+To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
+
+```properties
+# cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
+```
+
 
 ### Default Bundle
 
@@ -734,7 +746,22 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 # cas.authn.adaptive.risk.response.sms.text=
 # cas.authn.adaptive.risk.response.sms.attributeName=phone
 ```
-## Sms Messaging
+
+## Email Submissions
+
+```properties
+# spring.mail.host=
+# spring.mail.port=
+# spring.mail.username=
+# spring.mail.password=
+# spring.mail.testConnection=true
+# spring.mail.properties.mail.smtp.auth=true
+# spring.mail.properties.mail.smtp.starttls.enable=true
+```
+
+## SMS Messaging
+
+To learn more about this topic, [please review this guide](SMS-Messaging-Configuration.html).
 
 ### Twillio
 
@@ -750,7 +777,11 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 # cas.textMagic.token=
 ```
 
-## GoogleMaps GeoTracking
+## GeoTracking
+
+To learn more about this topic, [please review this guide](GeoTracking-Authentication-Requests.html).
+
+### GoogleMaps GeoTracking
 
 Used to geo-profile authentication events.
 
@@ -762,7 +793,7 @@ Used to geo-profile authentication events.
 # cas.googleMaps.googleAppsEngine=false
 ```
 
-## Maxmind GeoTracking
+### Maxmind GeoTracking
 
 Used to geo-profile authentication events.
 
@@ -862,7 +893,7 @@ To learn more about this topic, [please review this guide](Blacklist-Authenticat
 
 To learn more about this topic, [please review this guide](Database-Authentication.html).
 
-### Query
+### Query Database Authentication
 
 Authenticates a user by comparing the user password (which can be encoded with a password encoder)
 against the password on record determined by a configurable database query.
@@ -900,7 +931,7 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].principalTransformation.prefix=
 ```
 
-### Search
+### Search Database Authentication
 
 Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
 
@@ -939,7 +970,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].principalTransformation.prefix=
 ```
 
-### Bind
+### Bind Database Authentication
 
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
@@ -975,7 +1006,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
-### Encode
+### Encode Database Authentication
 
 A JDBC querying handler that will pull back the password and the private salt value for a user and validate the encoded
 password using the public salt value. Assumes everything is inside the same database table. Supports settings for
@@ -1155,6 +1186,25 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 # cas.authn.ldap[0].allowMultipleDns=false
 
+# cas.authn.ldap[0].searchEntryHandlers[0].type=CASE_CHANGE|DN_ATTRIBUTE_ENTRY|MERGE|OBJECT_GUID|OBJECT_SID|PRIMARY_GROUP|RANGE_ENTRY|RECURSIVE_ENTRY
+
+# cas.authn.ldap[0].searchEntryHandlers[0].caseChange.dnCaseChange=NONE|LOWER|UPPER
+# cas.authn.ldap[0].searchEntryHandlers[0].caseChange.attributeNameCaseChange=NONE|LOWER|UPPER
+# cas.authn.ldap[0].searchEntryHandlers[0].caseChange.attributeValueCaseChange=NONE|LOWER|UPPER
+# cas.authn.ldap[0].searchEntryHandlers[0].caseChange.attributeNames=
+
+# cas.authn.ldap[0].searchEntryHandlers[0].dnAttribute.dnAttributeName=entryDN
+# cas.authn.ldap[0].searchEntryHandlers[0].dnAttribute.addIfExists=false
+
+# cas.authn.ldap[0].searchEntryHandlers[0].primaryGroupId.groupFilter=(&(objectClass=group)(objectSid={0}))
+# cas.authn.ldap[0].searchEntryHandlers[0].primaryGroupId.baseDn=
+
+# cas.authn.ldap[0].searchEntryHandlers[0].mergeAttribute.mergeAttributeName=
+# cas.authn.ldap[0].searchEntryHandlers[0].mergeAttribute.attribueNames=
+
+# cas.authn.ldap[0].searchEntryHandlers[0].recursive.searchAttribute=
+# cas.authn.ldap[0].searchEntryHandlers[0].recursive.mergeAttributes=
+
 # cas.authn.ldap[0].name=
 # cas.authn.ldap[0].order=0
 
@@ -1176,6 +1226,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].validator.attributeValues=top
 # cas.authn.ldap[0].validator.dn=
 
+# cas.authn.ldap[0].passwordPolicy.type=GENERIC|AD|FreeIPA|EDirectory
 # cas.authn.ldap[0].passwordPolicy.enabled=true
 # cas.authn.ldap[0].passwordPolicy.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
 # cas.authn.ldap[0].passwordPolicy.loginFailures=5
@@ -1296,6 +1347,15 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.validator.dn=
 ```
 
+### NTLM Authentication
+
+```properties
+# cas.authn.ntlm.includePattern=
+# cas.authn.ntlm.loadBalance=true
+# cas.authn.ntlm.domainController=
+# cas.authn.ntlm.name=
+```
+
 ## JAAS Authentication
 
 To learn more about this topic, [please review this guide](JAAS-Authentication.html).
@@ -1392,7 +1452,8 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 
 ### CRL Fetching / Revocation
 
-CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability in the revocation machinery built into the JSSE.
+CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability 
+in the revocation machinery built into the JSSE.
 
 Available policies cover the following events:
 
@@ -1513,14 +1574,6 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.shiro.principalTransformation.prefix=
 ```
 
-## NTLM Authentication
-
-```properties
-# cas.authn.ntlm.includePattern=
-# cas.authn.ntlm.loadBalance=true
-# cas.authn.ntlm.domainController=
-# cas.authn.ntlm.name=
-```
 
 ## Trusted Authentication
 
@@ -1837,17 +1890,6 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.bypass.credentialClassType=UsernamePassword.+
 ```
 
-## Authentication Exceptions
-
-Map custom authentication exceptions in the CAS webflow and link them to custom messages defined in message bundles.
-
-To learn more about this topic, [please review this guide](Webflow-Customization-Exceptions.html).
-
-
-```properties
-# cas.authn.exceptions.exceptions=value1,value2,...
-```
-
 ## SAML Core
 
 Control core SAML functionality within CAS.
@@ -1875,7 +1917,7 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 
 # cas.authn.samlIdp.metadata.cacheExpirationMinutes=30
 # cas.authn.samlIdp.metadata.failFast=true
-# cas.authn.samlIdp.metadata.location=/etc/cas/saml
+# cas.authn.samlIdp.metadata.location=file:/etc/cas/saml
 # cas.authn.samlIdp.metadata.privateKeyAlgName=RSA
 # cas.authn.samlIdp.metadata.requireValidMetadata=true
 
@@ -2324,13 +2366,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.messageBundle.baseNames=classpath:custom_messages,classpath:messages
 ```
 
-## Shibboleth Attribute Resolver
 
-To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
-
-```properties
-# cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
-```
 
 ## Audits
 
@@ -2348,7 +2384,7 @@ To learn more about this topic, [please review this guide](Audits.html).
 # cas.audit.useServerHostAddress=false
 ```
 
-### Database
+### Database Audits
 
 Store audit logs inside a database.
 
@@ -2376,7 +2412,6 @@ Store audit logs inside a database.
 # cas.audit.jdbc.pool.maxIdleTime=1000
 # cas.audit.jdbc.pool.maxWait=2000
 ```
-
 
 ## Monitoring
 
@@ -2409,7 +2444,7 @@ Decide how CAS should monitor the internal state of various cache storage servic
 # cas.monitor.warn.evictionThreshold=0
 ```
 
-### Database
+### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used
 for authentication or attribute retrieval.
@@ -2502,53 +2537,6 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.theme.defaultThemeName=cas-theme-default
 ```
 
-## Acceptable Usage Policy
-
-Decide how CAS should attempt to determine whether AUP is accepted.
-To learn more about this topic, [please review this guide](User-Interface-Customization-AUP.html).
-
-
-```properties
-# cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
-```
-
-### LDAP
-
-If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
-
-```properties
-# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.acceptableUsagePolicy.ldap.connectionStrategy=
-# cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
-# cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
-# cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
-# cas.acceptableUsagePolicy.ldap.bindCredential=Password
-# cas.acceptableUsagePolicy.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
-# cas.acceptableUsagePolicy.ldap.connectTimeout=5000
-# cas.acceptableUsagePolicy.ldap.trustCertificates=
-# cas.acceptableUsagePolicy.ldap.keystore=
-# cas.acceptableUsagePolicy.ldap.keystorePassword=
-# cas.acceptableUsagePolicy.ldap.keystoreType=JKS|JCEKS|PKCS12
-# cas.acceptableUsagePolicy.ldap.minPoolSize=3
-# cas.acceptableUsagePolicy.ldap.maxPoolSize=10
-# cas.acceptableUsagePolicy.ldap.validateOnCheckout=true
-# cas.acceptableUsagePolicy.ldap.validatePeriodically=true
-# cas.acceptableUsagePolicy.ldap.validatePeriod=600
-# cas.acceptableUsagePolicy.ldap.failFast=true
-# cas.acceptableUsagePolicy.ldap.idleTime=500
-# cas.acceptableUsagePolicy.ldap.prunePeriod=600
-# cas.acceptableUsagePolicy.ldap.blockWaitTime=5000
-# cas.acceptableUsagePolicy.ldap.useSsl=true
-# cas.acceptableUsagePolicy.ldap.useStartTls=false
-
-# cas.acceptableUsagePolicy.ldap.validator.type=NONE|SEARCH|COMPARE
-# cas.acceptableUsagePolicy.ldap.validator.baseDn=
-# cas.acceptableUsagePolicy.ldap.validator.searchFilter=(objectClass=*)
-# cas.acceptableUsagePolicy.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
-# cas.acceptableUsagePolicy.ldap.validator.attributeName=objectClass
-# cas.acceptableUsagePolicy.ldap.validator.attributeValues=top
-# cas.acceptableUsagePolicy.ldap.validator.dn=
-```
 
 ## Events
 
@@ -2560,7 +2548,7 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 # cas.events.trackGeolocation=false
 ```
 
-### Database
+### Database Events
 
 Decide how CAS should store authentication events inside a database instance.
 
@@ -2588,7 +2576,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.pool.maxWait=2000
 ```
 
-### MongoDb
+### MongoDb Events
 
 Decide how CAS should store authentication events inside a MongoDb instance.
 
@@ -2597,7 +2585,6 @@ Decide how CAS should store authentication events inside a MongoDb instance.
 # cas.events.mongodb.dropCollection=false
 # cas.events.mongodb.collection=MongoDbCasEventRepository
 ```
-
 
 ## Http Web Requests
 
@@ -2657,7 +2644,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.serviceRegistry.initFromJson=false
 ```
 
-### Resource-based Service Registry
+### Resource-based (JSON/YAML) Service Registry
 
 If the underlying service registry is using local system resources
 to locate service definitions, decide how those resources should be found.
@@ -3071,7 +3058,7 @@ when shared with client applications on outgoing calls.
 # cas.ticket.security.signingKey=
 ```
 
-## Service Ticket
+## Service Tickets Behavior
 
 Controls the expiration policy of service tickets, as well as other properties
 applicable to STs.
@@ -3083,20 +3070,20 @@ applicable to STs.
 # cas.ticket.st.timeToKillInSeconds=10
 ```
 
-## Proxy Granting Ticket
+## Proxy Granting Tickets Behavior
 
 ```properties
 # cas.ticket.pgt.maxLength=50
 ```
 
-## Proxy Tickets
+## Proxy Tickets Behavior
 
 ```properties
 # cas.ticket.pt.timeToKillInSeconds=10
 # cas.ticket.pt.numberOfUses=1
 ```
 
-## Ticket Granting Ticket
+## Ticket Granting Tickets Behavior
 
 ```properties
 # cas.ticket.tgt.onlyTrackMostRecentSession=true
@@ -3255,6 +3242,64 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # cas.webflow.alg=AES
 ```
 
+### Authentication Exceptions
+
+Map custom authentication exceptions in the CAS webflow and link them to custom messages defined in message bundles.
+
+To learn more about this topic, [please review this guide](Webflow-Customization-Exceptions.html).
+
+```properties
+# cas.authn.exceptions.exceptions=value1,value2,...
+```
+
+### Acceptable Usage Policy
+
+Decide how CAS should attempt to determine whether AUP is accepted.
+To learn more about this topic, [please review this guide](User-Interface-Customization-AUP.html).
+
+
+```properties
+# cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
+```
+
+#### LDAP
+
+If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
+
+```properties
+# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.acceptableUsagePolicy.ldap.connectionStrategy=
+# cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
+# cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
+# cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.acceptableUsagePolicy.ldap.bindCredential=Password
+# cas.acceptableUsagePolicy.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.acceptableUsagePolicy.ldap.connectTimeout=5000
+# cas.acceptableUsagePolicy.ldap.trustCertificates=
+# cas.acceptableUsagePolicy.ldap.keystore=
+# cas.acceptableUsagePolicy.ldap.keystorePassword=
+# cas.acceptableUsagePolicy.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.acceptableUsagePolicy.ldap.minPoolSize=3
+# cas.acceptableUsagePolicy.ldap.maxPoolSize=10
+# cas.acceptableUsagePolicy.ldap.validateOnCheckout=true
+# cas.acceptableUsagePolicy.ldap.validatePeriodically=true
+# cas.acceptableUsagePolicy.ldap.validatePeriod=600
+# cas.acceptableUsagePolicy.ldap.failFast=true
+# cas.acceptableUsagePolicy.ldap.idleTime=500
+# cas.acceptableUsagePolicy.ldap.prunePeriod=600
+# cas.acceptableUsagePolicy.ldap.blockWaitTime=5000
+# cas.acceptableUsagePolicy.ldap.useSsl=true
+# cas.acceptableUsagePolicy.ldap.useStartTls=false
+
+# cas.acceptableUsagePolicy.ldap.validator.type=NONE|SEARCH|COMPARE
+# cas.acceptableUsagePolicy.ldap.validator.baseDn=
+# cas.acceptableUsagePolicy.ldap.validator.searchFilter=(objectClass=*)
+# cas.acceptableUsagePolicy.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.acceptableUsagePolicy.ldap.validator.attributeName=objectClass
+# cas.acceptableUsagePolicy.ldap.validator.attributeValues=top
+# cas.acceptableUsagePolicy.ldap.validator.dn=
+```
+
 
 ## REST API
 
@@ -3321,6 +3366,20 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
+## Provisioning
+
+### SCIM
+
+Provision the authenticated CAS principal via SCIM.
+
+```properties
+# cas.scim.version=2
+# cas.scim.target=
+# cas.scim.oauthToken=
+# cas.scim.username=
+# cas.scim.password=
+```
+
 ## Password Management
 
 Allow the user to update their account password, etc in-place.
@@ -3337,27 +3396,16 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.from=
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.emailAttribute=mail
-# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion1=attrAnswer1
-# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion2=attrAnswer2
-# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion3=attrAnswer3
 
 # Used to sign/encrypt the password-reset link
 # cas.authn.pm.reset.security.encryptionKey=
 # cas.authn.pm.reset.security.signingKey=
-
-# spring.mail.host=
-# spring.mail.port=
-# spring.mail.username=
-# spring.mail.password=
-# spring.mail.testConnection=true
-# spring.mail.properties.mail.smtp.auth=true
-# spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
-### LDAP
+### LDAP Password Management
 
 ```properties
-# cas.authn.pm.ldap.type=GENERIC|AD
+# cas.authn.pm.ldap.type=GENERIC|AD|FreeIPA|EDirectory
 # cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.pm.ldap.connectionStrategy=
 # cas.authn.pm.ldap.useSsl=true
@@ -3383,6 +3431,10 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.blockWaitTime=5000
 # cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
+# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
+# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion2=attrAnswer2
+# cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion3=attrAnswer3
+
 # cas.authn.pm.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.pm.ldap.validator.baseDn=
 # cas.authn.pm.ldap.validator.searchFilter=(objectClass=*)
@@ -3391,3 +3443,34 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.validator.attributeValues=top
 # cas.authn.pm.ldap.validator.dn=
 ```
+
+### JDBC Password Management
+
+```properties
+# cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
+# cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
+# cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
+
+# cas.authn.pm.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.pm.jdbc.isolateInternalQueries=false
+# cas.authn.pm.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.pm.jdbc.failFast=true
+# cas.authn.pm.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.pm.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.pm.jdbc.leakThreshold=10
+# cas.authn.pm.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.pm.jdbc.batchSize=1
+# cas.authn.pm.jdbc.user=sa
+# cas.authn.pm.jdbc.ddlAuto=create-drop
+# cas.authn.pm.jdbc.maxAgeDays=180
+# cas.authn.pm.jdbc.password=
+# cas.authn.pm.jdbc.autocommit=false
+# cas.authn.pm.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.pm.jdbc.idleTimeout=5000
+
+# cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.pm.jdbc.passwordEncoder.characterEncoding=
+# cas.authn.pm.jdbc.passwordEncoder.encodingAlgorithm=
+# cas.authn.pm.jdbc.passwordEncoder.secret=
+# cas.authn.pm.jdbc.passwordEncoder.strength=16
+````

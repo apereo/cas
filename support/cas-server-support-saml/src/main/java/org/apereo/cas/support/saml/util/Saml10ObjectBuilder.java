@@ -25,6 +25,8 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.StatusMessage;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +43,8 @@ import java.util.Map;
  * @since 4.1
  */
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Saml10ObjectBuilder.class);
+    
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
     private static final long serialVersionUID = -4711012620700270554L;
 
@@ -199,7 +202,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         attrStatement.setSubject(subject);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
+                LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
             final Attribute attribute = newSamlObject(Attribute.class);

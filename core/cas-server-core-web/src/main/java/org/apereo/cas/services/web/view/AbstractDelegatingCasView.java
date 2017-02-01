@@ -3,6 +3,8 @@ package org.apereo.cas.services.web.view;
 import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,8 @@ import java.util.Map;
  * @since 4.1.0
  */
 public abstract class AbstractDelegatingCasView extends AbstractCasView {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDelegatingCasView.class);
+    
     /**
      * View to delegate.
      */
@@ -36,14 +40,14 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     protected void renderMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                            final HttpServletResponse response) throws Exception {
         try {
-            logger.debug("Preparing the output model [{}] to render view {}", model.keySet(), getClass().getSimpleName());
+            LOGGER.debug("Preparing the output model [{}] to render view [{}]", model.keySet(), getClass().getSimpleName());
             prepareMergedOutputModel(model, request, response);
-            logger.debug("Prepared output model with objects [{}]. Now rendering view...", model.keySet().toArray());
+            LOGGER.debug("Prepared output model with objects [{}]. Now rendering view...", model.keySet().toArray());
 
             if (this.view != null) {
                 this.view.render(model, request, response);
             } else {
-                logger.warn("No view is available to render the output for {}", this.getClass().getName());
+                LOGGER.warn("No view is available to render the output for [{}]", this.getClass().getName());
             }
         } catch (final Exception e) {
             throw Throwables.propagate(e);

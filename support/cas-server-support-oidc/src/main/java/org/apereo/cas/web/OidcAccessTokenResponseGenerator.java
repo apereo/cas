@@ -26,6 +26,8 @@ import org.jose4j.lang.JoseException;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +44,8 @@ import java.util.UUID;
  * @since 5.0.0
  */
 public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OidcAccessTokenResponseGenerator.class);
+    
     private final String issuer;
     private final int skew;
     private final Resource jwksFile;
@@ -139,7 +142,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
 
         final String jsonClaims = claims.toJson();
         jws.setPayload(jsonClaims);
-        logger.debug("Generated claims are {}", jsonClaims);
+        LOGGER.debug("Generated claims are [{}]", jsonClaims);
 
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
         jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
@@ -153,10 +156,10 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
             } else {
                 jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
             }
-            logger.debug("Signing id token with key id header value {}", jws.getKeyIdHeaderValue());
+            LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
             jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
         }
-        logger.debug("Signing id token with algorithm {}", jws.getAlgorithmHeaderValue());
+        LOGGER.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
         return jws.getCompactSerialization();
     }
 
@@ -171,15 +174,15 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         JsonWebKeySet jsonWebKeySet = null;
         try {
             if (StringUtils.isNotBlank(service.getJwks())) {
-                logger.debug("Loading JWKS from {}", service.getJwks());
+                LOGGER.debug("Loading JWKS from [{}]", service.getJwks());
                 final Resource resource = this.resourceLoader.getResource(service.getJwks());
                 jsonWebKeySet = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
             }
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         } finally {
             if (jsonWebKeySet == null) {
-                logger.debug("Loading default JWKS from {}", this.jwksFile);
+                LOGGER.debug("Loading default JWKS from [{}]", this.jwksFile);
 
                 if (this.jwksFile != null) {
                     final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);

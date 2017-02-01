@@ -68,14 +68,14 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
         this.cache.put(id, attributes);
-        LOGGER.debug("Cached attributes for {}", id);
+        LOGGER.debug("Cached attributes for [{}]", id);
     }
 
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
         try {
             return this.cache.get(p.getId(), () -> {
-                LOGGER.debug("No cached attributes could be found for {}", p.getId());
+                LOGGER.debug("No cached attributes could be found for [{}]", p.getId());
                 return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             });
         } catch (final Exception e) {

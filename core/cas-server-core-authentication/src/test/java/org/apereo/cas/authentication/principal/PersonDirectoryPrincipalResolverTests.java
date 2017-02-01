@@ -2,8 +2,10 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -106,8 +108,6 @@ public class PersonDirectoryPrincipalResolverTests {
         chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
 
         this.thrown.expect(PrincipalException.class);
-        this.thrown.expectMessage("Resolved principals by the chain are not unique");
-
         chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                 CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap("attr1", "value")));
     }

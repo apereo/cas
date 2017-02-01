@@ -9,7 +9,7 @@ import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorTokenCredentialRepository;
-import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -90,7 +90,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(
                 googleAuthenticatorInstance(),
-                oneTimeTokenAuthenticatorTokenRepository);
+                oneTimeTokenAuthenticatorTokenRepository,
+                googleAuthenticatorAccountRegistry);
         h.setPrincipalFactory(googlePrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setName(casProperties.getAuthn().getMfa().getGauth().getName());
@@ -101,8 +102,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @RefreshScope
     public MultifactorAuthenticationProviderBypass googleBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getGauth().getBypass(),
-                ticketRegistrySupport
+                casProperties.getAuthn().getMfa().getGauth().getBypass()
         );
     }
 

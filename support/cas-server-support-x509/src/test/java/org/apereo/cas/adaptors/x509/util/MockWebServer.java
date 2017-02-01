@@ -22,8 +22,8 @@ import org.springframework.core.io.Resource;
  */
 public class MockWebServer {
 
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MockWebServer.class);
+    
     /** Request handler. */
     private Worker worker;
 
@@ -62,7 +62,7 @@ public class MockWebServer {
         try {
             this.workerThread.join();
         } catch (final InterruptedException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -89,8 +89,8 @@ public class MockWebServer {
         /** Response buffer size. */
         private static final int BUFFER_SIZE = 2048;
 
-        private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+        private static final Logger LOGGER = LoggerFactory.getLogger(Worker.class);
+        
         /** Run flag. */
         private boolean running;
 
@@ -126,10 +126,10 @@ public class MockWebServer {
                     writeResponse(this.serverSocket.accept());
                     Thread.sleep(500);
                 } catch (final SocketException e) {
-                    logger.debug("Stopping on socket close.");
+                    LOGGER.debug("Stopping on socket close.");
                     this.running = false;
                 } catch (final Exception e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
@@ -138,12 +138,12 @@ public class MockWebServer {
             try {
                 this.serverSocket.close();
             } catch (final IOException e) {
-                logger.trace("Exception when closing the server socket: {}", e.getMessage());
+                LOGGER.trace("Exception when closing the server socket: [{}]", e.getMessage());
             }
         }
 
         private void writeResponse(final Socket socket) throws IOException {
-            logger.debug("Socket response for resource {}", resource.getFilename());
+            LOGGER.debug("Socket response for resource [{}]", resource.getFilename());
             final OutputStream out = socket.getOutputStream();
             out.write(STATUS_LINE.getBytes());
             out.write(header("Content-Length", this.resource.contentLength()));
@@ -157,7 +157,7 @@ public class MockWebServer {
                     out.write(buffer, 0, count);
                 }
             }
-            logger.debug("Wrote response for resource {} for {}",
+            LOGGER.debug("Wrote response for resource [{}] for [{}]",
                     resource.getFilename(),
                     resource.contentLength());
 

@@ -49,9 +49,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     private int usageCount;
 
     private boolean expired;
-
-    private Service proxiedBy;
-
+    
     private Map<String, Service> services = new HashMap<>();
 
     private Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
@@ -95,7 +93,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     @Override
     public Service getProxiedBy() {
-        return this.proxiedBy;
+        return null;
     }
 
     @Override

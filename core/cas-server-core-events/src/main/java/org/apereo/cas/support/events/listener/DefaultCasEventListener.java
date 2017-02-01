@@ -53,7 +53,7 @@ public class DefaultCasEventListener {
      */
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-        LOGGER.info("CAS is ready to process requests at {}", event.getTimestamp());
+        LOGGER.info("CAS is ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
     }
 
     /**
@@ -63,7 +63,7 @@ public class DefaultCasEventListener {
      */
     @EventListener
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
-        LOGGER.debug("Received event {}", event);
+        LOGGER.debug("Received event [{}]", event);
         rebindCasConfigurationProperties();
     }
 
@@ -74,7 +74,7 @@ public class DefaultCasEventListener {
      */
     @EventListener
     public void handleRefreshEvent(final RefreshRemoteApplicationEvent event) {
-        LOGGER.debug("Received event {}", event);
+        LOGGER.debug("Received event [{}]", event);
         rebindCasConfigurationProperties();
     }
 
@@ -85,12 +85,12 @@ public class DefaultCasEventListener {
         final Map<String, CasConfigurationProperties> map =
                 this.applicationContext.getBeansOfType(CasConfigurationProperties.class);
         final String name = map.keySet().iterator().next();
-        LOGGER.debug("Reloading CAS configuration via {}", name);
+        LOGGER.debug("Reloading CAS configuration via [{}]", name);
         final Object e = this.applicationContext.getBean(name);
         this.binder.postProcessBeforeInitialization(e, name);
         final Object bean = this.applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
         this.applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
-        LOGGER.info("Reloaded CAS configuration {}", name);
+        LOGGER.info("Reloaded CAS configuration [{}]", name);
     }
 
     /**

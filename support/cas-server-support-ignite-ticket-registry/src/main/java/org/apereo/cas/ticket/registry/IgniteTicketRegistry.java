@@ -12,6 +12,8 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.ssl.SslContextFactory;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.ticket.Ticket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -39,7 +41,8 @@ import static java.util.stream.Collectors.toList;
  * @since 5.0.0`
  */
 public class IgniteTicketRegistry extends AbstractTicketRegistry {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(IgniteTicketRegistry.class);
+    
     private final IgniteConfiguration igniteConfiguration;
     private final IgniteProperties properties;
 
@@ -63,7 +66,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
-        logger.debug("Adding ticket {} to the cache {}", ticket.getId(), this.ticketIgniteCache.getName());
+        LOGGER.debug("Adding ticket [{}] to the cache [{}]", ticket.getId(), this.ticketIgniteCache.getName());
         this.ticketIgniteCache.withExpiryPolicy(new ExpiryPolicy() {
             @Override
             public Duration getExpiryForCreation() {
@@ -110,7 +113,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
         final Ticket ticket = this.ticketIgniteCache.get(ticketId);
         if (ticket == null) {
-            logger.debug("No ticket by id [{}] is found in the registry", ticketId);
+            LOGGER.debug("No ticket by id [{}] is found in the registry", ticketId);
             return null;
         }
         return decodeTicket(ticket);
@@ -187,14 +190,14 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
      */
     @PostConstruct
     public void init() {
-        logger.info("Setting up Ignite Ticket Registry...");
+        LOGGER.info("Setting up Ignite Ticket Registry...");
 
         configureSecureTransport();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("igniteConfiguration.cacheConfiguration={}", (Object[]) this.igniteConfiguration.getCacheConfiguration());
-            logger.debug("igniteConfiguration.getDiscoverySpi={}", this.igniteConfiguration.getDiscoverySpi());
-            logger.debug("igniteConfiguration.getSslContextFactory={}", this.igniteConfiguration.getSslContextFactory());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("igniteConfiguration.cacheConfiguration=[{}]", (Object[]) this.igniteConfiguration.getCacheConfiguration());
+            LOGGER.debug("igniteConfiguration.getDiscoverySpi=[{}]", this.igniteConfiguration.getDiscoverySpi());
+            LOGGER.debug("igniteConfiguration.getSslContextFactory=[{}]", this.igniteConfiguration.getSslContextFactory());
         }
 
         if (Ignition.state() == IgniteState.STOPPED) {

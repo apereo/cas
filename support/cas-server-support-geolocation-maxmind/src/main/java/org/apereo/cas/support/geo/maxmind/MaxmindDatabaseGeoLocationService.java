@@ -59,7 +59,7 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
                 final CountryResponse response = this.countryDatabaseReader.country(address);
                 location.addAddress(response.getCountry().getName());
             }
-            LOGGER.debug("Geo location for {} is calculated as {}", address, location);
+            LOGGER.debug("Geo location for [{}] is calculated as [{}]", address, location);
             return location;
         } catch (final AddressNotFoundException e) {
             LOGGER.info(e.getMessage(), e);
@@ -81,7 +81,7 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
 
     @Override
     public GeoLocationResponse locate(final Double latitude, final Double longitude) {
-        LOGGER.warn("Geolocating an address by latitude/longitude {}/{} is not supported", latitude, longitude);
+        LOGGER.warn("Geolocating an address by latitude/longitude [{}]/[{}] is not supported", latitude, longitude);
         return null;
     }
 }

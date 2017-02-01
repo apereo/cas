@@ -2,6 +2,8 @@ package org.apereo.cas.support.events.mongo;
 
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -17,7 +19,8 @@ import java.util.Collection;
  * @since 5.0.0
  */
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbCasEventRepository.class);
+    
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
@@ -28,12 +31,12 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
         Assert.notNull(this.mongoTemplate);
 
         if (dropCollection) {
-            logger.debug("Dropping database collection: {}", this.collectionName);
+            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            logger.debug("Creating database collection: {}", this.collectionName);
+            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
     }

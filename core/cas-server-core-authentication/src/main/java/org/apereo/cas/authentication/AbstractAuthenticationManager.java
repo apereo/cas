@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -30,11 +31,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
-    /**
-     * Log instance for logging events, errors, warnings, etc.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAuthenticationManager.class);
+    
     /**
      * Plan to execute the authentication transaction.
      */
@@ -119,14 +117,14 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         if (resolver.supports(credential)) {
             try {
                 final Principal p = resolver.resolve(credential, principal);
-                logger.debug("{} resolved {} from {}", resolver, p, credential);
+                LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
-                logger.error("{} failed to resolve principal from {}", resolver, credential, e);
+                LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential, e);
             }
         } else {
-            logger.warn(
-                    "{} is configured to use {} but it does not support {}, which suggests a configuration problem.",
+            LOGGER.warn(
+                    "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
                     handlerName,
                     resolver,
                     credential);
@@ -143,7 +141,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     @Metered(name = "AUTHENTICATE_METER")
     @Counted(name = "AUTHENTICATE_COUNT", monotonic = true)
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
-        CurrentCredentialsAndAuthentication.bindCurrent(transaction.getCredentials());
+        AuthenticationCredentialsLocalBinder.bindCurrent(transaction.getCredentials());
         final AuthenticationBuilder builder = authenticateInternal(transaction);
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
@@ -153,12 +151,12 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         addAuthenticationMethodAttribute(builder, authentication);
 
-        logger.info("Authenticated principal [{}] with attributes {} via credentials {}.",
+        LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
                 principal.getId(), principal.getAttributes(), transaction.getCredentials());
         populateAuthenticationMetadataAttributes(builder, transaction.getCredentials());
 
         final Authentication a = builder.build();
-        CurrentCredentialsAndAuthentication.bindCurrent(a);
+        AuthenticationCredentialsLocalBinder.bindCurrent(a);
         return a;
     }
 
@@ -183,25 +181,25 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         final HandlerResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
-        logger.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
+        LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         principal = result.getPrincipal();
 
         if (resolver == null) {
-            logger.debug("No principal resolution is configured for {}. Falling back to handler principal {}",
+            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]",
                     handler.getName(),
                     principal);
         } else {
             principal = resolvePrincipal(handler.getName(), resolver, credential, principal);
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
-                    logger.warn("Principal resolution handled by {} produced a null principal for: {}"
+                    LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
                                     + "CAS is configured to treat principal resolution failures as fatal.",
                             resolver.getClass().getSimpleName(), credential);
                     throw new UnresolvedPrincipalException();
                 }
-                logger.warn("Principal resolution handled by {} produced a null principal. "
+                LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
                         + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
                         + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
             }
@@ -209,7 +207,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         if (principal != null) {
             builder.setPrincipal(principal);
         }
-        logger.debug("Final principal resolved for this authentication event is [{}]", principal);
+        LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
         publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
 

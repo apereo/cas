@@ -19,7 +19,7 @@ import java.util.Optional;
 public class SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy implements AuthenticationRequestServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy.class);
     
     private ServiceFactory webApplicationServiceFactory;
 
@@ -30,7 +30,7 @@ public class SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy implem
     @Override
     public Service resolveServiceFrom(final Service service) {
         final String entityId = getEntityIdAsParameter(service).get().getValue();
-        logger.debug("Located entity id {} from service authentication request at {}", entityId, service.getId());
+        LOGGER.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
         return this.webApplicationServiceFactory.createService(entityId);
     }
 

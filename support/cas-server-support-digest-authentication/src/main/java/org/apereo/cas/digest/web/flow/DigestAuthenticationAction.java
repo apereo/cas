@@ -66,7 +66,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
                 return null;
             }
 
-            LOGGER.debug("Received digest authentication request from credentials {} ", credentials);
+            LOGGER.debug("Received digest authentication request from credentials [{}] ", credentials);
             final String serverResponse = credentials.calculateServerDigest(true,
                     this.credentialRetriever.findCredential(credentials.getUsername(), this.realm));
 

@@ -99,7 +99,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
         if (enableWatcher) {
 
-            LOGGER.info("Watching service registry directory at {}", configDirectory);
+            LOGGER.info("Watching service registry directory at [{}]", configDirectory);
 
             this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, eventPublisher);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
@@ -167,7 +167,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         c.stream().filter(file -> file.length() > 0).forEach(file -> {
             final RegisteredService service = load(file);
             if (service == null) {
-                LOGGER.warn("Could not load service definition from file {}", file);
+                LOGGER.warn("Could not load service definition from file [{}]", file);
                 errorCount[0]++;
             } else {
                 if (temp.containsKey(service.getId())) {
@@ -183,7 +183,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         if (errorCount[0] == 0) {
             this.serviceMap = temp;
         } else {
-            LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are "
+            LOGGER.warn("[{}] errors encountered when loading service definitions. New definitions are not loaded until errors are "
                     + "corrected", errorCount[0]);
         }
         return new ArrayList(this.serviceMap.values());
@@ -215,7 +215,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceSerializer.from(in);
         } catch (final Exception e) {
-            LOGGER.error("Error reading configuration file {}", file.getName(), e);
+            LOGGER.error("Error reading configuration file [{}]", file.getName(), e);
         }
         return null;
     }
@@ -258,7 +258,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
             LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
             return svcFile;
         } catch (final IOException e) {
-            LOGGER.warn("Service file name {} is invalid; Examine for illegal characters in the name.", fileName);
+            LOGGER.warn("Service file name [{}] is invalid; Examine for illegal characters in the name.", fileName);
             throw new IllegalArgumentException(e);
         }
     }

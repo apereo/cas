@@ -14,6 +14,8 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -36,7 +38,8 @@ import static org.springframework.util.StringUtils.*;
  * @since 5.1.0
  */
 public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver.class);
+    
     private final String globalAuthenticationAttributeValueRegex;
     private final Set<String> attributeNames;
 
@@ -61,26 +64,26 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
         final Authentication authentication = WebUtils.getAuthentication(context);
 
         if (service == null || authentication == null) {
-            logger.debug("No service or authentication is available to determine event for principal");
+            LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
 
         if (attributeNames.isEmpty()) {
-            logger.debug("Authentication attribute name to determine event is not configured");
+            LOGGER.debug("Authentication attribute name to determine event is not configured");
             return null;
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            logger.error("No multifactor authentication providers are available in the application context");
+            LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
         }
 
         final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(providerMap.values());
         if (providers.size() == 1 && StringUtils.isNotBlank(globalAuthenticationAttributeValueRegex)) {
             final MultifactorAuthenticationProvider provider = providers.iterator().next();
-            logger.debug("Found a single multifactor provider {} in the application context", provider);
+            LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
             return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
                     input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));
         }

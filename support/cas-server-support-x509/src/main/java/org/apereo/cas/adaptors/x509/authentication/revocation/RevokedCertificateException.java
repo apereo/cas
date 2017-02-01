@@ -25,7 +25,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8827788431199129708L;
 
-    /** The logger. */
+    /** The LOGGER. */
     private static final Logger LOGGER = LoggerFactory.getLogger(RevokedCertificateException.class);
 
     /** CRL revocation reason codes per RFC 3280. */
@@ -134,7 +134,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
                     return Reason.fromCode(code);
                 }
             } catch (final Exception e) {
-                LOGGER.trace("An exception occurred when resolving extension value: {}", e.getMessage());
+                LOGGER.trace("An exception occurred when resolving extension value: [{}]", e.getMessage());
             }
         }
         return null;

@@ -42,11 +42,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private static final String KEY_USAGE_OID = "2.5.29.15";
 
-    /**
-     * Instance of Logging.
-     */
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(X509CredentialsAuthenticationHandler.class);
+    
     /**
      * The compiled pattern supplied by the deployer.
      */
@@ -158,7 +155,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         boolean hasTrustedIssuer = false;
         for (int i = certificates.length - 1; i >= 0; i--) {
             final X509Certificate certificate = certificates[i];
-            logger.debug("Evaluating {}", CertUtils.toString(certificate));
+            LOGGER.debug("Evaluating [{}]", CertUtils.toString(certificate));
 
             validate(certificate);
 
@@ -170,17 +167,17 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             // >=0 when this is a CA cert and -1 when it's not
             final int pathLength = certificate.getBasicConstraints();
             if (pathLength < 0) {
-                logger.debug("Found valid client certificate");
+                LOGGER.debug("Found valid client certificate");
                 clientCert = certificate;
             } else {
-                logger.debug("Found valid CA certificate");
+                LOGGER.debug("Found valid CA certificate");
             }
         }
         if (hasTrustedIssuer && clientCert != null) {
             x509Credential.setCertificate(clientCert);
             return new DefaultHandlerResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
         }
-        logger.warn("Either client certificate could not be determined, or a trusted issuer could not be located");
+        LOGGER.warn("Either client certificate could not be determined, or a trusted issuer could not be located");
         throw new FailedLoginException();
     }
 
@@ -225,19 +222,19 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * @return true, if  valid key usage
      */
     private boolean isValidKeyUsage(final X509Certificate certificate) {
-        logger.debug("Checking certificate keyUsage extension");
+        LOGGER.debug("Checking certificate keyUsage extension");
         final boolean[] keyUsage = certificate.getKeyUsage();
         if (keyUsage == null) {
-            logger.warn("Configuration specifies checkKeyUsage but keyUsage extension not found in certificate.");
+            LOGGER.warn("Configuration specifies checkKeyUsage but keyUsage extension not found in certificate.");
             return !this.requireKeyUsage;
         }
 
         final boolean valid;
         if (isCritical(certificate, KEY_USAGE_OID) || this.requireKeyUsage) {
-            logger.debug("KeyUsage extension is marked critical or required by configuration.");
+            LOGGER.debug("KeyUsage extension is marked critical or required by configuration.");
             valid = keyUsage[0];
         } else {
-            logger.debug(
+            LOGGER.debug(
                     "KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
             valid = true;
         }
@@ -292,7 +289,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         if (pattern != null) {
             final String name = principal.getName();
             final boolean result = pattern.matcher(name).matches();
-            logger.debug("{} matches {} == {}", pattern.pattern(), name, result);
+            LOGGER.debug("[{}] matches [{}] == [{}]", pattern.pattern(), name, result);
             return result;
         }
         return true;

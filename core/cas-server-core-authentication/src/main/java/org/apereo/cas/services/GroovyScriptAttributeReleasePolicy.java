@@ -39,17 +39,17 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
             if (groovyFile.exists()) {
                 final Class<?> groovyClass = loader.parseClass(groovyFile);
                 final GroovyObject groovyObject = (GroovyObject) groovyClass.newInstance();
-                LOGGER.debug("Created groovy object instance from class {}", groovyFile.getCanonicalPath());
+                LOGGER.debug("Created groovy object instance from class [{}]", groovyFile.getCanonicalPath());
                 final Object[] args = {attributes, LOGGER};
-                LOGGER.debug("Executing groovy script's run method, with parameters {}", args);
+                LOGGER.debug("Executing groovy script's run method, with parameters [{}]", args);
                 final Map<String, Object> personAttributesMap = (Map<String, Object>) groovyObject.invokeMethod("run", args);
-                LOGGER.debug("Final set of attributes determined by the script are {}", personAttributesMap);
+                LOGGER.debug("Final set of attributes determined by the script are [{}]", personAttributesMap);
                 return personAttributesMap;
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        LOGGER.warn("Groovy script {} does not exist, or cannot be loaded", groovyScript);
+        LOGGER.warn("Groovy script [{}] does not exist, or cannot be loaded", groovyScript);
         return new HashMap<>();
     }
 }

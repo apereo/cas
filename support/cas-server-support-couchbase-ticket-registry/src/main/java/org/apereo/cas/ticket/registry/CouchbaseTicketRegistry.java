@@ -16,6 +16,8 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
@@ -40,13 +42,11 @@ import java.util.stream.StreamSupport;
  * @since 4.2.0
  */
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseTicketRegistry.class);
+    
     private static final long MAX_EXP_TIME_IN_DAYS = 30;
-
     private static final String END_TOKEN = "\u02ad";
-
     private static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
-
     private static final View ALL_TICKETS_VIEW = DefaultView.create(
             VIEW_NAME_ALL_TICKETS,
             "function(d,m) {emit(m.id);}",
@@ -59,64 +59,64 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     public CouchbaseTicketRegistry(final CouchbaseClientFactory couchbase, final boolean isQueryEnabled) {
         this.couchbase = couchbase;
 
-        logger.info("Setting up Couchbase Ticket Registry instance");
+        LOGGER.info("Setting up Couchbase Ticket Registry instance");
         System.setProperty("com.couchbase.queryEnabled", Boolean.toString(isQueryEnabled));
-        logger.debug("Setting up indexes on document {} and views {}", UTIL_DOCUMENT, ALL_VIEWS);
+        LOGGER.debug("Setting up indexes on document [{}] and views [{}]", UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
 
-        logger.info("Initializing Couchbase...");
+        LOGGER.info("Initializing Couchbase...");
         this.couchbase.initialize();
-        logger.info("Initialized Couchbase bucket {}", this.couchbase.bucket().name());
+        LOGGER.info("Initialized Couchbase bucket [{}]", this.couchbase.bucket().name());
 
     }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        logger.debug("Updating ticket {}", ticket);
+        LOGGER.debug("Updating ticket [{}]", ticket);
         try {
             final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticket), ticket);
 
-            logger.debug("Upserting document {} into couchbase bucket {}", document.id(), this.couchbase.bucket().name());
+            LOGGER.debug("Upserting document [{}] into couchbase bucket [{}]", document.id(), this.couchbase.bucket().name());
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
-            logger.error("Failed updating {}: {}", ticket, e);
+            LOGGER.error("Failed updating [{}]: [{}]", ticket, e);
         }
         return ticket;
     }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        logger.debug("Adding ticket {}", ticketToAdd);
+        LOGGER.debug("Adding ticket [{}]", ticketToAdd);
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            logger.debug("Created document for ticket {}. Upserting into bucket {}", ticketToAdd, this.couchbase.bucket().name());
+            LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, this.couchbase.bucket().name());
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
-            logger.error("Failed adding {}: {}", ticketToAdd, e);
+            LOGGER.error("Failed adding [{}]: [{}]", ticketToAdd, e);
         }
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
         try {
-            logger.debug("Locating ticket id {}", ticketId);
+            LOGGER.debug("Locating ticket id [{}]", ticketId);
             final String encTicketId = encodeTicketId(ticketId);
             if (encTicketId == null) {
-                logger.debug("Ticket id {} could not be found", ticketId);
+                LOGGER.debug("Ticket id [{}] could not be found", ticketId);
                 return null;
             }
 
             final SerializableDocument document = this.couchbase.bucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
-                logger.debug("Got ticket {} from the registry.", t);
+                LOGGER.debug("Got ticket [{}] from the registry.", t);
                 return t;
             }
-            logger.debug("Ticket {} not found in the registry.", encTicketId);
+            LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
             return null;
         } catch (final Exception e) {
-            logger.error("Failed fetching {}: {}", ticketId, e);
+            LOGGER.error("Failed fetching [{}]: [{}]", ticketId, e);
             return null;
         }
     }
@@ -127,7 +127,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     @PreDestroy
     public void destroy() {
         try {
-            logger.debug("Shutting down Couchbase");
+            LOGGER.debug("Shutting down Couchbase");
             this.couchbase.shutdown();
         } catch (final Exception e) {
             throw Throwables.propagate(e);
@@ -136,7 +136,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        logger.debug("getTickets() isn't supported. Returning empty list");
+        LOGGER.debug("getTickets() isn't supported. Returning empty list");
         return new ArrayList<>();
     }
 
@@ -152,11 +152,11 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        logger.debug("Deleting ticket {}", ticketId);
+        LOGGER.debug("Deleting ticket [{}]", ticketId);
         try {
             return this.couchbase.bucket().remove(ticketId) != null;
         } catch (final Exception e) {
-            logger.error("Failed deleting {}: {}", ticketId, e);
+            LOGGER.error("Failed deleting [{}]: [{}]", ticketId, e);
             return false;
         }
     }
@@ -212,15 +212,15 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         if (iterator.hasNext()) {
             final ViewRow res = iterator.next();
             final Integer count = (Integer) res.value();
-            logger.debug("Found {} rows", count);
+            LOGGER.debug("Found [{}] rows", count);
             return count;
         }
-        logger.debug("No rows could be found by the query iterator.");
+        LOGGER.debug("No rows could be found by the query iterator.");
         return 0;
     }
 
     private ViewResult getViewResultIteratorForPrefixedTickets(final String prefix) {
-        logger.debug("Running query on document {} and view {} with prefix {}",
+        LOGGER.debug("Running query on document [{}] and view [{}] with prefix [{}]",
                 UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
         return this.couchbase.bucket().query(
                 ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
@@ -239,7 +239,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private int getTimeToLive(final Ticket ticket) {
         final int expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
         if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
-            logger.warn("Any expiration time larger than {} days in seconds is considered absolute (as in a Unix time stamp) "
+            LOGGER.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "
                     + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
 
         }

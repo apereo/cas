@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -25,6 +27,7 @@ import java.util.regex.Pattern;
  * @since 3.1
  */
 public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JcifsSpnegoAuthenticationHandler.class);
     
     private Authentication authentication;
     private boolean principalWithDomainName;
@@ -49,13 +52,13 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
             synchronized (this) {
                 this.authentication.reset();
                 
-                logger.debug("Processing SPNEGO authentication");
+                LOGGER.debug("Processing SPNEGO authentication");
                 this.authentication.process(spnegoCredential.getInitToken());
                 
                 principal = this.authentication.getPrincipal();
-                logger.debug("Authenticated SPNEGO principal {}", principal.getName());
+                LOGGER.debug("Authenticated SPNEGO principal [{}]", principal.getName());
 
-                logger.debug("Retrieving the next token for authentication");
+                LOGGER.debug("Retrieving the next token for authentication");
                 nextToken = this.authentication.getNextToken();
             }
         } catch (final jcifs.spnego.AuthenticationException e) {
@@ -64,18 +67,18 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
 
         // evaluate jcifs response
         if (nextToken != null) {
-            logger.debug("Setting nextToken in credential");
+            LOGGER.debug("Setting nextToken in credential");
             spnegoCredential.setNextToken(nextToken);
         } else {
-            logger.debug("nextToken is null");
+            LOGGER.debug("nextToken is null");
         }
 
         boolean success = false;
         if (principal != null) {
             if (spnegoCredential.isNtlm()) {
-                logger.debug("NTLM Credential is valid for user [{}]", principal.getName());
+                LOGGER.debug("NTLM Credential is valid for user [{}]", principal.getName());
             } else {
-                logger.debug("Kerberos Credential is valid for user [{}]", principal.getName());
+                LOGGER.debug("Kerberos Credential is valid for user [{}]", principal.getName());
             }
             spnegoCredential.setPrincipal(getPrincipal(principal.getName(), spnegoCredential.isNtlm()));
             success = true;

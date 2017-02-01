@@ -261,13 +261,13 @@ public class CasCoreTicketsConfiguration {
         }
 
         if (tgt.getTimeout().getMaxTimeToLiveInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout of {} seconds",
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout of [{}] seconds",
                     tgt.getTimeout().getMaxTimeToLiveInSeconds());
             return new TimeoutExpirationPolicy(tgt.getTimeout().getMaxTimeToLiveInSeconds());
         }
 
         if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of {}/{} seconds",
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of [{}]/[{}] seconds",
                     tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
             return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
         }
@@ -282,7 +282,7 @@ public class CasCoreTicketsConfiguration {
         }
 
         if (tgt.getHardTimeout().getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout of {} seconds",
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout of [{}] seconds",
                     tgt.getHardTimeout().getTimeToKillInSeconds());
             return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
         }

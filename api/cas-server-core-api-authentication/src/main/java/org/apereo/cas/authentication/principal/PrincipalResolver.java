@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.services.persondir.IPersonAttributeDao;
 
 /**
  * Resolves a {@link Principal} from a {@link Credential} using an arbitrary strategy.
@@ -20,6 +21,17 @@ public interface PrincipalResolver {
 
     /**
      * Resolves a principal from the given credential using an arbitrary strategy.
+     * Assumes no principal is already resolved by the authentication subsystem, etc.
+     *
+     * @param credential Source credential.
+     * @return the principal
+     */
+    default Principal resolve(Credential credential) {
+        return resolve(credential, null);
+    }
+
+    /**
+     * Resolves a principal from the given credential using an arbitrary strategy.
      *
      * @param credential Source credential.
      * @param principal  A principal that may have been produced during the authentication process. May be null.
@@ -35,4 +47,12 @@ public interface PrincipalResolver {
      * @return True if credential is supported, false otherwise.
      */
     boolean supports(Credential credential);
+
+    /**
+     * Gets attribute repository, if any.
+     *
+     * @return the attribute repository or null.
+     * @since 5.1
+     */
+    IPersonAttributeDao getAttributeRepository();
 }

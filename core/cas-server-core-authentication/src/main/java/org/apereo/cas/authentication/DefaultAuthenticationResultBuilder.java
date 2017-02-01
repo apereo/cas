@@ -71,11 +71,10 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     public AuthenticationResult build(final Service service) {
         final Authentication authentication = buildAuthentication();
         if (authentication == null) {
-            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning "
-                    + "null");
+            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
             return null;
         }
-        LOGGER.debug("Building an authentication result for authentication {} and service {}", authentication, service);
+        LOGGER.debug("Building an authentication result for authentication [{}] and service [{}]", authentication, service);
         final DefaultAuthenticationResult res = new DefaultAuthenticationResult(authentication, service);
         res.setCredentialProvided(this.providedCredential != null);
         return res;
@@ -110,9 +109,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     private static void buildAuthenticationHistory(final Set<Authentication> authentications,
-                                            final Map<String, Object> authenticationAttributes,
-                                            final Map<String, Object> principalAttributes,
-                                            final AuthenticationBuilder authenticationBuilder) {
+                                                   final Map<String, Object> authenticationAttributes,
+                                                   final Map<String, Object> principalAttributes,
+                                                   final AuthenticationBuilder authenticationBuilder) {
 
         LOGGER.debug("Collecting authentication history based on [{}] authentication events", authentications.size());
         authentications.stream().forEach(authn -> {
@@ -145,8 +144,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                 }
             });
 
-            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result",
-                    authenticationAttributes);
+            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
             authenticationBuilder.addSuccesses(authn.getSuccesses())
                     .addFailures(authn.getFailures())
@@ -161,9 +159,5 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      */
     private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
         return this.principalElectionStrategy.nominate(Collections.unmodifiableSet(authentications), principalAttributes);
-    }
-    
-    public void setPrincipalElectionStrategy(final PrincipalElectionStrategy principalElectionStrategy) {
-        this.principalElectionStrategy = principalElectionStrategy;
     }
 }

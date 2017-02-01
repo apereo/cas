@@ -16,6 +16,8 @@ import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.CommonHelper;
 import org.pac4j.core.util.InitializableObject;
 import org.pac4j.core.util.InitializableWebObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import javax.security.auth.login.FailedLoginException;
@@ -32,6 +34,8 @@ import java.security.GeneralSecurityException;
 public abstract class AbstractWrapperAuthenticationHandler<I extends Credential, C extends Credentials>
         extends AbstractPac4jAuthenticationHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWrapperAuthenticationHandler.class);
+    
     /**
      * The pac4j profile creator used for authentication.
      */
@@ -47,7 +51,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
         CommonHelper.assertNotNull("profileCreator", this.profileCreator);
 
         final C credentials = convertToPac4jCredentials((I) credential);
-        logger.debug("credentials: {}", credentials);
+        LOGGER.debug("credentials: [{}]", credentials);
 
         try {
             final Authenticator authenticator = getAuthenticator(credential);
@@ -63,11 +67,11 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             authenticator.validate(credentials, getWebContext());
 
             final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
-            logger.debug("profile: {}", profile);
+            LOGGER.debug("profile: [{}]", profile);
 
             return createResult(new ClientCredential(credentials), profile);
         } catch (final Exception e) {
-            logger.error("Failed to validate credentials", e);
+            LOGGER.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());
         }
     }

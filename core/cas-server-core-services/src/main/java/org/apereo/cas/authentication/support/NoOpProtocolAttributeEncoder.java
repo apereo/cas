@@ -16,11 +16,11 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class NoOpProtocolAttributeEncoder implements ProtocolAttributeEncoder {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(NoOpProtocolAttributeEncoder.class);
     
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
-        logger.warn("Attributes are not encoded via {}. Total of {} attributes will be returned for service {}", 
+        LOGGER.warn("Attributes are not encoded via [{}]. Total of [{}] attributes will be returned for service [{}]", 
                 this.getClass().getSimpleName(), attributes.size(), service);
         return new HashMap<>(attributes);
     }

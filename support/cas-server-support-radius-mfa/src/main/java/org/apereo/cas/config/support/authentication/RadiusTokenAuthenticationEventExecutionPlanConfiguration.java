@@ -6,7 +6,7 @@ import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -64,8 +64,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
     @RefreshScope
     public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getRadius().getBypass(),
-                ticketRegistrySupport
+                casProperties.getAuthn().getMfa().getRadius().getBypass()
         );
     }
 

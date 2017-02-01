@@ -5,8 +5,8 @@ title: CAS - Configuring SSO Session Cookie
 
 # SSO Session Cookie
 
-A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. This cookie maintains login 
-state for the client, and while it is valid, the client can present it to CAS in lieu of primary credentials. 
+A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. This cookie maintains login
+state for the client, and while it is valid, the client can present it to CAS in lieu of primary credentials.
 Services can opt out of single sign-on through the `renew` parameter. See the [CAS Protocol](../protocol/CAS-Protocol.html) for more info.
 
 The cookie value is linked to the active ticket-granting ticket, the remote IP address that initiated the request
@@ -22,7 +22,7 @@ to appropriate decrypt and encrypt the cookie value and will prevent successful 
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ticket-granting-cookie).
 
 The cookie has the following properties:
 
@@ -39,7 +39,7 @@ WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Secret key for signing is
 WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Generated signing key XYZ of size ... . The generated key MUST be added to CAS settings.>
 ```
 
-You should then grab each generated key for encryption and signing, and put them inside your cas properties for each now-enabled 
+You should then grab each generated key for encryption and signing, and put them inside your cas properties for each now-enabled
 setting.
 
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
@@ -47,7 +47,7 @@ If you wish you manually generate keys, you may [use the following tool](https:/
 ### Disable Encryption
 
 If you wish to turn off cookie encryption, see the relevant list of CAS properties
-and [review this guide](Configuration-Properties.html).
+and [review this guide](Configuration-Properties.html#ticket-granting-cookie).
 
 ## Cookie Generation for Renewed Authentications
 
@@ -63,13 +63,13 @@ Plausibly, a CAS adopter may want this behavior to be different, such that loggi
 via CAS either does not create a CAS SSO session and the SSO session it creates is not honored for authenticating subsequently
 to an SSO-participating application. This might better match user expectations.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#global-sso-behavior).
 
 # SSO Warning Session Cookie
 
-A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page. 
+A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page.
 The cookie is used later to warn and prompt
 the user before a service ticket is generated and access to the service application is granted.
 The cookie is controlled via:
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#warning-cookie).

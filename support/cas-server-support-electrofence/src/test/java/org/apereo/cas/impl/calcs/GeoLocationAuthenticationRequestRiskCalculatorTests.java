@@ -20,7 +20,6 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredService;
@@ -87,10 +86,7 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     @Autowired
     @Qualifier("authenticationRiskEvaluator")
     private AuthenticationRiskEvaluator authenticationRiskEvaluator;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     @Before
     public void prepTest() {
         MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);
@@ -109,8 +105,10 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     public void verifyTestWhenAuthnEventsFoundForUser() {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "107.181.69.221"));
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("107.181.69.221");
+        request.setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }

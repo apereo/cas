@@ -2,6 +2,8 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import com.google.common.cache.LoadingCache;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -14,7 +16,8 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryMultifactorAuthenticationTrustStorage.class);
+    
     private LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;
 
     public InMemoryMultifactorAuthenticationTrustStorage(final LoadingCache<String, MultifactorAuthenticationTrustRecord> st) {
@@ -36,10 +39,10 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
                 .distinct()
                 .collect(Collectors.toSet());
 
-        logger.info("Found {} expired records", results.size());
+        LOGGER.info("Found [{}] expired records", results.size());
         if (!results.isEmpty()) {
             results.forEach(entry -> storage.invalidate(entry.getKey()));
-            logger.info("Invalidated and removed {} expired records", results.size());
+            LOGGER.info("Invalidated and removed [{}] expired records", results.size());
         }
     }
 

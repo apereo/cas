@@ -14,7 +14,7 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
-import org.apereo.cas.authentication.AccountDisabledException;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -22,6 +22,8 @@ import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.util.ResourceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountLockedException;
@@ -38,7 +40,8 @@ import java.util.Set;
  * @since 4.2
  */
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShiroAuthenticationHandler.class);
+    
     private final Set<String> requiredRoles;
     private final Set<String> requiredPermissions;
 
@@ -136,13 +139,13 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
             if (shiroResource != null && shiroResource.exists()) {
                 final String location = shiroResource.getURI().toString();
-                logger.debug("Loading Shiro configuration from {}", location);
+                LOGGER.debug("Loading Shiro configuration from [{}]", location);
 
                 final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
                 final SecurityManager securityManager = factory.getInstance();
                 SecurityUtils.setSecurityManager(securityManager);
             } else {
-                logger.debug("Shiro configuration is not defined");
+                LOGGER.debug("Shiro configuration is not defined");
             }
         } catch (final Exception e) {
             throw Throwables.propagate(e);

@@ -6,7 +6,7 @@ import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationRequestBuilder;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.azure.web.flow.AzureAuthenticatorGenerateTokenAction;
-import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -96,8 +96,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
     @RefreshScope
     public MultifactorAuthenticationProviderBypass azureBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getAzure().getBypass(),
-                ticketRegistrySupport
+                casProperties.getAuthn().getMfa().getAzure().getBypass()
         );
     }
 

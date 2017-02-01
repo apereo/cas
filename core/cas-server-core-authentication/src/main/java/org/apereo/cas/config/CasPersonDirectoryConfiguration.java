@@ -60,10 +60,8 @@ public class CasPersonDirectoryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    
-    @ConditionalOnMissingBean(name = "attributeRepository")
-    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao attributeRepository() {
+    @Bean
+    public List<IPersonAttributeDao> attributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
 
         addLdapAttributeRepository(list);
@@ -72,7 +70,13 @@ public class CasPersonDirectoryConfiguration {
         addGroovyAttributeRepository(list);
         addStubAttributeRepositoryIfNothingElse(list);
         OrderComparator.sort(list);
-        return composeMergedAndCachedAttributeRepositories(list);
+        return list;
+    }
+
+    @ConditionalOnMissingBean(name = "attributeRepository")
+    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
+    public IPersonAttributeDao attributeRepository() {
+        return composeMergedAndCachedAttributeRepositories(attributeRepositories());
     }
 
     private void addJsonAttributeRepository(final List<IPersonAttributeDao> list) {
@@ -81,7 +85,7 @@ public class CasPersonDirectoryConfiguration {
             if (r != null) {
                 final JsonBackedComplexStubPersonAttributeDao dao = new JsonBackedComplexStubPersonAttributeDao(r);
                 dao.setOrder(json.getOrder());
-                LOGGER.debug("Configured JSON attribute sources from [{}]", r);
+                LOGGER.debug("Configured JSON attribute sources from [[{}]]", r);
                 list.add(dao);
             }
         });
@@ -132,17 +136,18 @@ public class CasPersonDirectoryConfiguration {
         impl.setCachedPersonAttributesDao(mergingDao);
 
         if (list.isEmpty()) {
-            LOGGER.debug("No attribute repository sources are available to merge together.");
+            LOGGER.debug("No attribute repository sources are available/defined to merge together.");
         } else {
-            LOGGER.debug("Configured attribute repository sources to merge together: {}", list);
-            LOGGER.debug("Configured cache expiration policy for merging attribute sources to be {} minute(s)",
+            LOGGER.debug("Configured attribute repository sources to merge together: [{}]", list);
+            LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
                     casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
         }
         return impl;
     }
 
     private void addStubAttributeRepositoryIfNothingElse(final List<IPersonAttributeDao> list) {
-        if (!casProperties.getAuthn().getAttributeRepository().getAttributes().isEmpty() && list.isEmpty()) {
+        final Map<String, String> attrs = casProperties.getAuthn().getAttributeRepository().getAttributes();
+        if (!attrs.isEmpty() && list.isEmpty()) {
             final boolean foundAttrs = casProperties.getAuthn().getLdap().stream().filter(p ->
                     p.getPrincipalAttributeList() != null && !p.getPrincipalAttributeList().isEmpty()
                             || p.getAdditionalAttributes() != null && !p.getAdditionalAttributes().isEmpty()
@@ -151,12 +156,12 @@ public class CasPersonDirectoryConfiguration {
             if (foundAttrs) {
                 LOGGER.debug("Found attributes which are resolved from authentication sources. Static attributes are ignored");
             } else {
-                LOGGER.warn("Found and added static attributes {} to the attribute repository",
-                        casProperties.getAuthn().getAttributeRepository().getAttributes().keySet());
+                LOGGER.warn("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
                 list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
             }
         } else {
-            LOGGER.debug("No attributes are defined for attribute repositories, or other attribute repository sources are defined");
+            LOGGER.debug("No attributes are defined for attribute repositories or other attribute repository sources are defined. "
+                    + "Stub attribute repository for static attributes will not be created.");
         }
     }
 
@@ -167,25 +172,25 @@ public class CasPersonDirectoryConfiguration {
                 final AbstractJdbcPersonAttributeDao jdbcDao;
 
                 if (jdbc.isSingleRow()) {
-                    LOGGER.debug("Configured single-row JDBC attribute repository for {}", jdbc.getUrl());
+                    LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new SingleRowJdbcPersonAttributeDao(
                             Beans.newHickariDataSource(jdbc),
                             jdbc.getSql()
                     );
                 } else {
-                    LOGGER.debug("Configured multi-row JDBC attribute repository for {}", jdbc.getUrl());
+                    LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new MultiRowJdbcPersonAttributeDao(
                             Beans.newHickariDataSource(jdbc),
                             jdbc.getSql()
                     );
-                    LOGGER.debug("Configured multi-row JDBC column mappings for {} are {}", jdbc.getUrl(), jdbc.getColumnMappings());
+                    LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
                     ((MultiRowJdbcPersonAttributeDao) jdbcDao).setNameValueColumnMappings(jdbc.getColumnMappings());
                 }
 
                 jdbcDao.setQueryAttributeMapping(Collections.singletonMap("username", jdbc.getUsername()));
                 final Map<String, String> mapping = attrs.getAttributes();
                 if (mapping != null && !mapping.isEmpty()) {
-                    LOGGER.debug("Configured result attribute mapping for {} to be {}", jdbc.getUrl(), attrs.getAttributes());
+                    LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", jdbc.getUrl(), attrs.getAttributes());
                     jdbcDao.setResultAttributeMapping(mapping);
                 }
                 jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
@@ -203,26 +208,26 @@ public class CasPersonDirectoryConfiguration {
             if (StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())) {
                 final LdaptivePersonAttributeDao ldapDao = new LdaptivePersonAttributeDao();
 
-                LOGGER.debug("Configured LDAP attribute source for {} and baseDn {}", ldap.getLdapUrl(), ldap.getBaseDn());
+                LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
                 ldapDao.setConnectionFactory(Beans.newPooledConnectionFactory(ldap));
                 ldapDao.setBaseDN(ldap.getBaseDn());
 
-                LOGGER.debug("LDAP attributes are fetched from {} via filter {}", ldap.getLdapUrl(), ldap.getUserFilter());
+                LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getUserFilter());
                 ldapDao.setSearchFilter(ldap.getUserFilter());
 
                 final SearchControls constraints = new SearchControls();
                 if (attrs.getAttributes() != null && !attrs.getAttributes().isEmpty()) {
-                    LOGGER.debug("Configured result attribute mapping for {} to be {}", ldap.getLdapUrl(), attrs.getAttributes());
+                    LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", ldap.getLdapUrl(), attrs.getAttributes());
                     ldapDao.setResultAttributeMapping(attrs.getAttributes());
                     final String[] attributes = attrs.getAttributes().keySet().toArray(new String[attrs.getAttributes().keySet().size()]);
                     constraints.setReturningAttributes(attributes);
                 } else {
-                    LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for {}", ldap.getLdapUrl());
+                    LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for [{}]", ldap.getLdapUrl());
                     constraints.setReturningAttributes(null);
                 }
 
                 if (ldap.isSubtreeSearch()) {
-                    LOGGER.debug("Configured subtree searching for {}", ldap.getLdapUrl());
+                    LOGGER.debug("Configured subtree searching for [{}]", ldap.getLdapUrl());
                     constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
                 }
                 constraints.setDerefLinkFlag(true);
@@ -230,7 +235,7 @@ public class CasPersonDirectoryConfiguration {
 
                 ldapDao.setOrder(ldap.getOrder());
 
-                LOGGER.debug("Initializing LDAP attribute source for {}", ldap.getLdapUrl());
+                LOGGER.debug("Initializing LDAP attribute source for [{}]", ldap.getLdapUrl());
                 ldapDao.initialize();
 
                 list.add(ldapDao);
@@ -254,10 +259,10 @@ public class CasPersonDirectoryConfiguration {
                 if (!a.isEmpty()) {
                     final Map<String, List<Object>> results = new HashMap<>();
                     final Map<String, Object> attrs = getAttributesForUser(a.get(0).toString());
-                    LOGGER.debug("Groovy-based attributes found are {}", attrs);
+                    LOGGER.debug("Groovy-based attributes found are [{}]", attrs);
                     attrs.forEach((k, v) -> {
                         final List<Object> values = new ArrayList<>(CollectionUtils.toCollection(v));
-                        LOGGER.debug("Adding Groovy-based attribute {} with value(s) {}", k, values);
+                        LOGGER.debug("Adding Groovy-based attribute [{}] with value(s) [{}]", k, values);
                         results.put(k, values);
                     });
                     return results;
@@ -276,13 +281,13 @@ public class CasPersonDirectoryConfiguration {
                         final File groovyFile = groovy.getConfig().getLocation().getFile();
                         if (groovyFile.exists()) {
                             final Class<?> groovyClass = loader.parseClass(groovyFile);
-                            LOGGER.debug("Loaded groovy class {} from script {}", groovyClass.getSimpleName(), groovyFile.getCanonicalPath());
+                            LOGGER.debug("Loaded groovy class [{}] from script [{}]", groovyClass.getSimpleName(), groovyFile.getCanonicalPath());
                             final GroovyObject groovyObject = (GroovyObject) groovyClass.newInstance();
-                            LOGGER.debug("Created groovy object instance from class {}", groovyFile.getCanonicalPath());
+                            LOGGER.debug("Created groovy object instance from class [{}]", groovyFile.getCanonicalPath());
                             final Object[] args = {uid, LOGGER, casProperties, applicationContext};
-                            LOGGER.debug("Executing groovy script's run method, with parameters {}", args);
+                            LOGGER.debug("Executing groovy script's run method, with parameters [{}]", args);
                             final Map<String, Object> personAttributesMap = (Map<String, Object>) groovyObject.invokeMethod("run", args);
-                            LOGGER.debug("Creating person attributes with the username {} and attributes {}", uid, personAttributesMap);
+                            LOGGER.debug("Creating person attributes with the username [{}] and attributes [{}]", uid, personAttributesMap);
                             finalAttributes.putAll(personAttributesMap);
                         }
                     }

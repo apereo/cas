@@ -3,7 +3,7 @@ package org.apereo.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
@@ -53,11 +53,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     private static final long serialVersionUID = -7572316677901391166L;
 
-    /**
-     * Log instance for logging events, info, warnings, errors, etc.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCentralAuthenticationService.class);
+    
     /**
      * Application event publisher.
      */
@@ -143,7 +140,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected void doPublishEvent(final ApplicationEvent e) {
         if (applicationEventPublisher != null) {
-            logger.debug("Publishing {}", e);
+            LOGGER.debug("Publishing [{}]", e);
             this.applicationEventPublisher.publishEvent(e);
         }
     }
@@ -221,25 +218,25 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                                                   final RegisteredService registeredService) {
         final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
-            logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
+            LOGGER.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
             final RegisteredService proxyingService = this.servicesManager.findServiceBy(proxiedBy);
 
             if (proxyingService != null) {
-                logger.debug("Located proxying service [{}] in the service registry", proxyingService);
+                LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
-                    logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
+                    LOGGER.warn("Found proxying service [{}], but it is not authorized to fulfill the proxy attempt made by [{}]",
                             proxyingService.getId(), service.getId());
                     throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
                             + registeredService.getId());
                 }
             } else {
-                logger.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
+                LOGGER.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
                         service.getId(), registeredService.getId());
                 throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
                         + registeredService.getId());
             }
         } else {
-            logger.trace("TGT is not proxied by another service");
+            LOGGER.trace("TGT is not proxied by another service");
         }
     }
 
@@ -253,14 +250,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected void verifyTicketState(final Ticket ticket, final String id, final Class clazz) {
         if (ticket == null) {
-            logger.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", id,
+            LOGGER.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", id,
                     clazz != null ? clazz.getSimpleName() : "unspecified");
             throw new InvalidTicketException(id);
         }
         synchronized (ticket) {
             if (ticket.isExpired()) {
                 this.ticketRegistry.deleteTicket(id);
-                logger.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
+                LOGGER.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
                 throw new InvalidTicketException(id);
             }
         }
@@ -296,7 +293,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected boolean isTicketAuthenticityVerified(final String ticketId) {
         if (this.cipherExecutor != null) {
-            logger.debug("Attempting to decode service ticket {} to verify authenticity", ticketId);
+            LOGGER.debug("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
             return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
         }
         return !StringUtils.isEmpty(ticketId);

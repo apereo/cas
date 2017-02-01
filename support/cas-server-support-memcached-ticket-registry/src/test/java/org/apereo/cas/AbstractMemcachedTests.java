@@ -12,6 +12,7 @@ import de.flapdoodle.embed.memcached.distribution.Version;
 import de.flapdoodle.embed.process.config.store.IDownloadConfig;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.Socket;
 
@@ -30,8 +31,8 @@ public abstract class AbstractMemcachedTests {
     private static MemcachedExecutable MEMCACHED_EXECUTABLE;
     private static MemcachedProcess MEMCACHED;
 
-    protected transient Logger logger = getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMemcachedTests.class);
+    
     public static void bootstrap() {
         try {
             final MemcachedStarter runtime = MemcachedStarter.getInstance(

@@ -73,14 +73,14 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
         final Principal principal = authentication.getPrincipal();
         final DuoUserAccountAuthStatus acct = this.duoAuthenticationService.getDuoUserAccountAuthStatus(principal.getId());
-        LOGGER.debug("Found duo user account status {} for {}", acct, principal);
+        LOGGER.debug("Found duo user account status [{}] for [{}]", acct, principal);
 
         if (acct == DuoUserAccountAuthStatus.ALLOW) {
-            LOGGER.debug("Account status is set for allow/bypass for {}", principal);
+            LOGGER.debug("Account status is set for allow/bypass for [{}]", principal);
             return false;
         }
         if (acct == DuoUserAccountAuthStatus.DENY) {
-            LOGGER.warn("Account status is set to deny access to {}", principal);
+            LOGGER.warn("Account status is set to deny access to [{}]", principal);
         }
 
         return true;

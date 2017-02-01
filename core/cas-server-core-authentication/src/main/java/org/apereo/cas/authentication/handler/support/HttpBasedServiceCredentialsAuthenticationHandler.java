@@ -29,9 +29,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    /** Log instance. */
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpBasedServiceCredentialsAuthenticationHandler.class);
+    
     /** Instance of Apache Commons HttpClient. */
     private HttpClient httpClient;
 
@@ -39,12 +38,12 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
         if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(httpCredential.getCallbackUrl())) {
-            logger.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
+            LOGGER.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
                     httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
 
-        logger.debug("Attempting to authenticate {}", httpCredential);
+        LOGGER.debug("Attempting to authenticate [{}]", httpCredential);
         final URL callbackUrl = httpCredential.getCallbackUrl();
         if (!this.httpClient.isValidEndPoint(callbackUrl)) {
             throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");

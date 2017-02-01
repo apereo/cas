@@ -45,7 +45,7 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
                 builder.addParameter("username", principal);
                 final URL url = builder.build().toURL();
                 final HttpMessage message = client.sendMessageToEndPoint(url);
-                LOGGER.debug("Message received from {} is {}", url, message);
+                LOGGER.debug("Message received from [{}] is [{}]", url, message);
                 return message != null && StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes)
                         .contains(String.valueOf(message.getResponseCode()));
             }

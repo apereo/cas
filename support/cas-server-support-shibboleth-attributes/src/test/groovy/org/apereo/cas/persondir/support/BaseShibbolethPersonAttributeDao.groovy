@@ -63,18 +63,4 @@ abstract class BaseShibbolethPersonAttributeDao extends Specification {
         then:
         thrown(RuntimeException)
     }
-
-    @Unroll
-    def "check to make sure that all the bad methods just throw exceptions"() {
-        when:
-        b ? iPersonAttributeDao."${a}"(b) : iPersonAttributeDao."${a}"()
-        then:
-        thrown(c)
-        where:
-        a                                    | b            | c
-        'getPeople'                          | [:]          | UnsupportedOperationException
-        'getPeopleWithMultivaluedAttributes' | [:]          | UnsupportedOperationException
-        'getPossibleUserAttributeNames'      | null         | UnsupportedOperationException
-        'getAvailableQueryAttributes'        | null         | UnsupportedOperationException
-    }
 }

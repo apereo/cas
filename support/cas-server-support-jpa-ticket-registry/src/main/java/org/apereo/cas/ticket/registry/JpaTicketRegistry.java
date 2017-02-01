@@ -11,6 +11,8 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +35,8 @@ import java.util.List;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class JpaTicketRegistry extends AbstractTicketRegistry {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistry.class);
+    
     private static final String TABLE_OAUTH_TICKETS = OAuthCodeImpl.class.getSimpleName();
     private static final String TABLE_SERVICE_TICKETS = ServiceTicketImpl.class.getSimpleName();
     private static final String TABLE_TICKET_GRANTING_TICKETS = TicketGrantingTicketImpl.class.getSimpleName();
@@ -50,14 +53,14 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         this.entityManager.merge(ticket);
-        logger.debug("Updated ticket [{}].", ticket);
+        LOGGER.debug("Updated ticket [{}].", ticket);
         return ticket;
     }
 
     @Override
     public void addTicket(final Ticket ticket) {
         this.entityManager.persist(ticket);
-        logger.debug("Added ticket [{}] to registry.", ticket);
+        LOGGER.debug("Added ticket [{}] to registry.", ticket);
     }
 
     /**
@@ -69,11 +72,11 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public boolean removeTicket(final Ticket ticket) {
         try {
             final ZonedDateTime creationDate = ticket.getCreationTime();
-            logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
+            LOGGER.debug("Removing Ticket [{}] created: [{}]", ticket, creationDate.toString());
             this.entityManager.remove(ticket);
             return true;
         } catch (final Exception e) {
-            logger.error("Error removing {} from registry.", ticket.getId(), e);
+            LOGGER.error("Error removing [{}] from registry.", ticket.getId(), e);
         }
         return false;
     }
@@ -111,7 +114,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
             return this.entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
-            logger.error("Error getting ticket {} from registry.", ticketId, e);
+            LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
         }
         return null;
     }

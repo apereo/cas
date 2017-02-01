@@ -21,34 +21,46 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class DefaultAuthentication implements Authentication {
 
-    /** UID for serializing. */
     private static final long serialVersionUID = 3206127526058061391L;
 
-    /** Authentication date stamp. */
+    /**
+     * Authentication date stamp.
+     */
     private ZonedDateTime authenticationDate;
 
-    /** List of metadata about credentials presented at authentication. */
+    /**
+     * List of metadata about credentials presented at authentication.
+     */
     private List<CredentialMetaData> credentials;
 
-    /** Authenticated principal. */
+    /**
+     * Authenticated principal.
+     */
     private Principal principal;
 
-    /** Authentication metadata attributes. */
+    /**
+     * Authentication metadata attributes.
+     */
     private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
-    /** Map of handler name to handler authentication success event. */
+    /**
+     * Map of handler name to handler authentication success event.
+     */
     private Map<String, HandlerResult> successes;
 
-    /** Map of handler name to handler authentication failure cause. */
+    /**
+     * Map of handler name to handler authentication failure cause.
+     */
     private Map<String, Class<? extends Exception>> failures;
 
-    /** No-arg constructor for serialization support. */
+    /**
+     * No-arg constructor for serialization support.
+     */
     private DefaultAuthentication() {
         this.authenticationDate = null;
         this.credentials = null;
@@ -61,10 +73,10 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Creates a new instance with the given data.
      *
-     * @param date Non-null authentication date.
-     * @param principal Non-null authenticated principal.
+     * @param date       Non-null authentication date.
+     * @param principal  Non-null authenticated principal.
      * @param attributes Nullable map of authentication metadata.
-     * @param successes Non-null map of authentication successes containing at least one entry.
+     * @param successes  Non-null map of authentication successes containing at least one entry.
      */
     public DefaultAuthentication(
             final ZonedDateTime date,
@@ -88,12 +100,12 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Creates a new instance with the given data.
      *
-     * @param date Non-null authentication date.
+     * @param date        Non-null authentication date.
      * @param credentials Non-null list of credential metadata containing at least one entry.
-     * @param principal Non-null authenticated principal.
-     * @param attributes Nullable map of authentication metadata.
-     * @param successes Non-null map of authentication successes containing at least one entry.
-     * @param failures Nullable map of authentication failures.
+     * @param principal   Non-null authenticated principal.
+     * @param attributes  Nullable map of authentication metadata.
+     * @param successes   Non-null map of authentication successes containing at least one entry.
+     * @param failures    Nullable map of authentication failures.
      */
     public DefaultAuthentication(
             final ZonedDateTime date,
@@ -172,7 +184,7 @@ public class DefaultAuthentication implements Authentication {
         builder.append(CollectionUtils.wrap(this.failures), other.getFailures());
         return builder.isEquals();
     }
-
+    
 
     @Override
     public void update(final Authentication authn) {

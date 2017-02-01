@@ -17,6 +17,8 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,8 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWrapperController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OidcDynamicClientRegistrationEndpointController.class);
+    
     private StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer;
     private RandomStringGenerator clientIdGenerator;
     private RandomStringGenerator clientSecretGenerator;
@@ -72,7 +76,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
                                                                                 final HttpServletResponse response) throws Exception {
         try {
             final OidcClientRegistrationRequest registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
-            logger.debug("Received client registration request {}", registrationRequest);
+            LOGGER.debug("Received client registration request [{}]", registrationRequest);
 
             final OidcRegisteredService registeredService = new OidcRegisteredService();
             registeredService.setName(registrationRequest.getClientName());
@@ -99,7 +103,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
             getServicesManager().save(registeredService);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             final Map<String, String> map = new HashMap<>();
             map.put("error", "invalid_client_metadata");
             map.put("error_message", e.getMessage());

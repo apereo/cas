@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -29,7 +31,8 @@ import java.security.GeneralSecurityException;
  * @since 4.1
  */
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(YubiKeyAuthenticationHandler.class);
+    
     private final YubiKeyAccountRegistry registry;
     private final YubicoClient client;
 
@@ -48,7 +51,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
         this.client = YubicoClient.getClient(clientId, secretKey);
 
         if (this.registry == null) {
-            logger.warn("No YubiKey account registry is defined. All credentials are considered "
+            LOGGER.warn("No YubiKey account registry is defined. All credentials are considered "
                             + "eligible for YubiKey authentication. Consider providing an account registry implementation via [{}]",
                     YubiKeyAccountRegistry.class.getName());
         }
@@ -65,7 +68,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
         final String otp = yubiKeyCredential.getToken();
 
         if (!YubicoClient.isValidOTPFormat(otp)) {
-            logger.debug("Invalid OTP format [{}]", otp);
+            LOGGER.debug("Invalid OTP format [{}]", otp);
             throw new AccountNotFoundException("OTP format is invalid");
         }
 
@@ -74,7 +77,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
         final String publicId = YubicoClient.getPublicId(otp);
         if (this.registry != null
                 && !this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
-            logger.debug("YubiKey public id [{}] is not registered for user [{}]", publicId, uid);
+            LOGGER.debug("YubiKey public id [{}] is not registered for user [{}]", publicId, uid);
             throw new AccountNotFoundException("YubiKey id is not recognized in registry");
         }
 
@@ -82,12 +85,12 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             final VerificationResponse response = this.client.verify(otp);
             final ResponseStatus status = response.getStatus();
             if (status.compareTo(ResponseStatus.OK) == 0) {
-                logger.debug("YubiKey response status {} at {}", status, response.getTimestamp());
+                LOGGER.debug("YubiKey response status [{}] at [{}]", status, response.getTimestamp());
                 return createHandlerResult(yubiKeyCredential, this.principalFactory.createPrincipal(uid), null);
             }
             throw new FailedLoginException("Authentication failed with status: " + status);
         } catch (final YubicoVerificationException | YubicoValidationFailure e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
     }

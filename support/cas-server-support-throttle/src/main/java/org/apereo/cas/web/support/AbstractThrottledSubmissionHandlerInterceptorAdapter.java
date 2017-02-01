@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
 
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThrottledSubmissionHandlerInterceptorAdapter.class);
+    
     private final int failureThreshold;
     private final int failureRangeInSeconds;
     private final String usernameParameter;
@@ -42,7 +42,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     @PostConstruct
     public void afterPropertiesSet() {
         this.thresholdRate = (double) this.failureThreshold / (double) this.failureRangeInSeconds;
-        logger.debug("Calculated threshold rate as {}", this.thresholdRate);
+        LOGGER.debug("Calculated threshold rate as [{}]", this.thresholdRate);
     }
 
     @Override
@@ -75,7 +75,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
                                  && response.getStatus() != HttpStatus.SC_OK;
 
         if (recordEvent) {
-            logger.debug("Recording submission failure for {}", request.getRequestURI());
+            LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
         }
     }
@@ -102,8 +102,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      * @param request the request
      */
     protected void recordThrottle(final HttpServletRequest request) {
-        logger.warn("Throttling submission from {}. More than {} failed login attempts within {} seconds. "
-                + "Authentication attempt exceeds the failure threshold {}",
+        LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
+                + "Authentication attempt exceeds the failure threshold [{}]",
                 request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
                 this.failureThreshold);
     }
@@ -120,6 +120,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
     @Override
     public void decrement() {
-        logger.debug("Throttling is not activated for this interceptor adapter");
+        LOGGER.debug("Throttling is not activated for this interceptor adapter");
     }
 }

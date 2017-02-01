@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +24,8 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     private static final long serialVersionUID = 610105280927740076L;
 
-    /**
-     * Logger instance.
-     **/
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
+    
     /**
      * The id of the service.
      */
@@ -105,10 +103,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
             final String thisUrl = URLDecoder.decode(this.id, StandardCharsets.UTF_8.name());
             final String serviceUrl = URLDecoder.decode(service.getId(), StandardCharsets.UTF_8.name());
 
-            logger.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
+            LOGGER.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
             return thisUrl.equalsIgnoreCase(serviceUrl);
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
     }
@@ -176,5 +174,18 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
                 .append(loggedOutAlready)
                 .append(format)
                 .toHashCode();
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("originalUrl", originalUrl)
+                .append("artifactId", artifactId)
+                .append("principal", principal)
+                .append("loggedOutAlready", loggedOutAlready)
+                .append("format", format)
+                .toString();
     }
 }

@@ -19,7 +19,7 @@ import java.util.Collection;
 public abstract class AbstractLdapTests {
     protected static InMemoryTestLdapDirectoryServer DIRECTORY;
 
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractLdapTests.class);
     
     public static synchronized void initDirectoryServer(final InputStream ldifFile) throws IOException {
         try {

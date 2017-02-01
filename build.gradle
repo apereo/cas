@@ -53,6 +53,7 @@ buildscript {
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.gradle:build-scan-plugin:1.0"
         classpath "org.ajoberstar:grgit:1.1.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
@@ -63,9 +64,10 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
+	
 
     if (project.name == "cas-server-support-bom") {
-        println "Skipping pom generation for [$project.name], letting it create <dependency-management> entries."
+        println "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
     } else {
         apply from: rootProject.file("gradle/maven.gradle")
     }
@@ -100,7 +102,7 @@ subprojects {
     task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {
         doLast {}
     }
-
+	apply plugin: "kotlin"
     apply plugin: "java"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
@@ -109,8 +111,7 @@ subprojects {
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-
-
+	
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries;

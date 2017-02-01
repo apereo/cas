@@ -16,11 +16,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
-    /**
-     * Instance of logging for subclasses.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAuthenticationHandler.class);
+    
     /**
      * Factory to create the principal type.
      **/

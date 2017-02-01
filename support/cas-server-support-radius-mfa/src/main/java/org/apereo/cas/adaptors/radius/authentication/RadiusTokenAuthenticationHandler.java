@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -27,7 +29,8 @@ import java.util.Optional;
  * @since 5.0.0
  */
 public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RadiusTokenAuthenticationHandler.class);
+    
     private List<RadiusServer> servers;
     private boolean failoverOnException;
     private boolean failoverOnAuthenticationFailure;
@@ -39,7 +42,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
 
-        logger.debug("Using {}", getClass().getSimpleName());
+        LOGGER.debug("Using [{}]", getClass().getSimpleName());
     }
 
     @Override
@@ -77,17 +80,17 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     public boolean canPing() {
         final String uidPsw = getClass().getSimpleName();
         for (final RadiusServer server : this.servers) {
-            logger.debug("Attempting to ping RADIUS server {} via simulating an authentication request. If the server responds "
+            LOGGER.debug("Attempting to ping RADIUS server [{}] via simulating an authentication request. If the server responds "
                     + "successfully, mock authentication will fail correctly.", server);
             try {
                 server.authenticate(uidPsw, uidPsw);
             } catch (final TimeoutException | SocketTimeoutException e) {
 
-                logger.debug("Server {} is not available", server);
+                LOGGER.debug("Server [{}] is not available", server);
                 continue;
 
             } catch (final Exception e) {
-                logger.debug("Pinging RADIUS server was successful. Response {}", e.getMessage());
+                LOGGER.debug("Pinging RADIUS server was successful. Response [{}]", e.getMessage());
             }
             return true;
         }

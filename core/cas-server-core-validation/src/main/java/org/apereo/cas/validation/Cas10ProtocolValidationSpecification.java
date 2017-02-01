@@ -1,5 +1,8 @@
 package org.apereo.cas.validation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Validation specification for the CAS 1.0 protocol. This specification checks
  * for the presence of renew=true and if requested, succeeds only if ticket
@@ -11,7 +14,8 @@ package org.apereo.cas.validation;
  * @since 3.0.0
  */
 public class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cas10ProtocolValidationSpecification.class);
+    
     /**
      * Instantiates a new cas10 protocol validation specification.
      */
@@ -30,7 +34,7 @@ public class Cas10ProtocolValidationSpecification extends AbstractCasProtocolVal
 
     @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
-        logger.debug("Number of chained authentications in the assertion {}", assertion.getChainedAuthentications().size());
+        LOGGER.debug("Number of chained authentications in the assertion [{}]", assertion.getChainedAuthentications().size());
         return assertion.getChainedAuthentications().size() == 1;
     }
 }

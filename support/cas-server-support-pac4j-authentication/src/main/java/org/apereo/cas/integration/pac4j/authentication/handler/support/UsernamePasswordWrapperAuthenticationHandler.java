@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -22,7 +24,8 @@ import java.security.GeneralSecurityException;
  */
 public class UsernamePasswordWrapperAuthenticationHandler
         extends AbstractWrapperAuthenticationHandler<UsernamePasswordCredential, UsernamePasswordCredentials> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(UsernamePasswordWrapperAuthenticationHandler.class);
+    
     /**
      * The underlying pac4j authenticator.
      */
@@ -49,7 +52,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
     @Override
     protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential)
             throws GeneralSecurityException, PreventedException {
-        logger.debug("CAS credentials: {}", casCredential);
+        LOGGER.debug("CAS credentials: [{}]", casCredential);
 
         final String username = this.principalNameTransformer.transform(casCredential.getUsername());
         if (username == null) {
@@ -57,7 +60,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
         }
         final String password = this.passwordEncoder.encode(casCredential.getPassword());
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password, getClass().getSimpleName());
-        logger.debug("pac4j credentials: {}", credentials);
+        LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }
 

@@ -10,6 +10,7 @@ import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.NamedPersonImpl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,21 +54,21 @@ public class ShibbolethPersonAttributeDao extends BasePersonAttributeDao {
 
     @Override
     public Set<IPersonAttributes> getPeople(final Map<String, Object> query) {
-        throw new UnsupportedOperationException();
+        return Collections.emptySet();
     }
 
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query) {
-        throw new UnsupportedOperationException();
+        return Collections.emptySet();
     }
 
     @Override
     public Set<String> getPossibleUserAttributeNames() {
-        throw new UnsupportedOperationException();
+        return Collections.emptySet();
     }
 
     @Override
     public Set<String> getAvailableQueryAttributes() {
-        throw new UnsupportedOperationException();
+        return Collections.emptySet();
     }
 }

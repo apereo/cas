@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -24,7 +26,8 @@ import java.util.Collection;
  * @since 4.2
  */
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DuoAuthenticationHandler.class);
+    
     private VariegatedMultifactorAuthenticationProvider provider;
 
     public DuoAuthenticationHandler(final VariegatedMultifactorAuthenticationProvider provider) {
@@ -45,7 +48,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         if (credential instanceof DuoDirectCredential) {
-            logger.debug("Attempting to directly authenticate credential against Duo");
+            LOGGER.debug("Attempting to directly authenticate credential against Duo");
             return authenticateDuoApiCredential(credential);
         }
         return authenticateDuoCredential(credential);
@@ -57,11 +60,11 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
             final DuoDirectCredential c = DuoDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(c).getKey()) {
                 final Principal principal = c.getAuthentication().getPrincipal();
-                logger.debug("Duo has successfully authenticated {}", principal.getId());
+                LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>());
             }
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         throw new FailedLoginException("Duo authentication has failed");
     }
@@ -76,13 +79,13 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
             final DuoAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
             final String duoVerifyResponse = duoAuthenticationService.authenticate(duoCredential).getValue();
-            logger.debug("Response from Duo verify: [{}]", duoVerifyResponse);
+            LOGGER.debug("Response from Duo verify: [{}]", duoVerifyResponse);
             final String primaryCredentialsUsername = duoCredential.getUsername();
 
             final boolean isGoodAuthentication = duoVerifyResponse.equals(primaryCredentialsUsername);
 
             if (isGoodAuthentication) {
-                logger.info("Successful Duo authentication for [{}]", primaryCredentialsUsername);
+                LOGGER.info("Successful Duo authentication for [{}]", primaryCredentialsUsername);
 
                 final Principal principal = this.principalFactory.createPrincipal(duoVerifyResponse);
                 return createHandlerResult(credential, principal, new ArrayList<>());
@@ -91,7 +94,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
                     + primaryCredentialsUsername + " does not match Duo response: " + duoVerifyResponse);
 
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new FailedLoginException(e.getMessage());
         }
     }

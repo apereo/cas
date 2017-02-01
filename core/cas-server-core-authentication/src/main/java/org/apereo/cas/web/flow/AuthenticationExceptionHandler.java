@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
 
-import org.apereo.cas.authentication.AccountDisabledException;
-import org.apereo.cas.authentication.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
+import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.InvalidLoginLocationException;
-import org.apereo.cas.authentication.InvalidLoginTimeException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -16,7 +16,7 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -47,9 +47,9 @@ public class AuthenticationExceptionHandler {
     /**
      * Default list of errors this class knows how to handle.
      */
-    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new HashSet<>();
+    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new LinkedHashSet<>();
 
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationExceptionHandler.class);
 
     /*
      * Order is important here; We want the account policy exceptions to be handled
@@ -115,7 +115,7 @@ public class AuthenticationExceptionHandler {
             Need to do this copy as we have the errors field pointing to DEFAULT_ERROR_LIST statically,
             so not to mutate it.
          */
-        this.errors = new HashSet<>(this.errors);
+        this.errors = new LinkedHashSet<>(this.errors);
         this.errors.addAll(nonNullErrors);
     }
 
@@ -160,8 +160,8 @@ public class AuthenticationExceptionHandler {
         }
 
         // we don't recognize this exception
-        logger.trace("Unable to translate errors of the authentication exception {}. "
-                + "Returning {} by default...", e, UNKNOWN);
+        LOGGER.trace("Unable to translate errors of the authentication exception [{}]"
+                + "Returning [{}]", e, UNKNOWN);
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return UNKNOWN;
@@ -184,8 +184,8 @@ public class AuthenticationExceptionHandler {
         // find the first error in the error list that matches the handlerErrors
         final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
                 .map(Class::getSimpleName).findFirst().orElseGet(() -> {
-                    logger.error("Unable to translate handler errors of the authentication exception {}. "
-                            + "Returning {} by default...", e, UNKNOWN);
+                    LOGGER.error("Unable to translate handler errors of the authentication exception [{}]"
+                            + "Returning [{}]", e, UNKNOWN);
                     return UNKNOWN;
                 });
 

@@ -17,12 +17,12 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2.0
  */
 public abstract class AbstractDelegateController implements ApplicationContextAware {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDelegateController.class);
 
     /** Application context. */
     protected ApplicationContext applicationContext;
-    
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
+
     /**
      * Determine if a AbstractDelegateController subclass can handle the current request.
      * @param request the current request

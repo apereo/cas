@@ -6,7 +6,7 @@ import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProv
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
-import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -95,7 +95,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
                     final BasicDuoAuthenticationService s = new BasicDuoAuthenticationService(duo, httpClient);
                     final DefaultDuoMultifactorAuthenticationProvider pWeb = new DefaultDuoMultifactorAuthenticationProvider(s);
                     pWeb.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-                    pWeb.setBypassEvaluator(new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass(), ticketRegistrySupport));
+                    pWeb.setBypassEvaluator(new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass()));
                     pWeb.setOrder(duo.getRank());
                     pWeb.setId(duo.getId());
 
@@ -131,7 +131,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         if (!duos.isEmpty()) {
             final String name = duos.get(0).getName();
             if (duos.size() > 1) {
-                LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after {}", name);
+                LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after [{}]", name);
             }
             h.setName(name);
         } else {

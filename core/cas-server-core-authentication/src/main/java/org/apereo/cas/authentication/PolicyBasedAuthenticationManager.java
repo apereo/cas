@@ -1,9 +1,12 @@
 package org.apereo.cas.authentication;
 
 import org.apache.shiro.util.Assert;
+import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.services.ServicesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.GeneralSecurityException;
 import java.util.Collection;
@@ -45,7 +48,8 @@ import java.util.Set;
  * @since 4.0.0
  */
 public class PolicyBasedAuthenticationManager extends AbstractAuthenticationManager {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyBasedAuthenticationManager.class);
+    
     /**
      * Authentication security policy.
      */
@@ -101,7 +105,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
         final Set<AuthenticationHandler> handlerSet = getAuthenticationHandlersForThisTransaction(transaction);
         Assert.notNull(handlerSet, "Resolved authentication handlers for this transaction cannot be null");
         if (handlerSet.isEmpty()) {
-            logger.warn("Resolved authentication handlers for this transaction are empty");
+            LOGGER.warn("Resolved authentication handlers for this transaction are empty");
         }
 
         final boolean success = credentials.stream().anyMatch(credential -> {
@@ -112,11 +116,11 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
                             return this.authenticationPolicy.isSatisfiedBy(builder.build());
                         } catch (final GeneralSecurityException e) {
-                            logger.info("{} failed authenticating {}", handler.getName(), credential);
-                            logger.debug("{} exception details: {}", handler.getName(), e.getMessage());
+                            LOGGER.info("[{}] failed authenticating [{}]", handler.getName(), credential);
+                            LOGGER.debug("[{}] exception details: [{}]", handler.getName(), e.getMessage());
                             builder.addFailure(handler.getName(), e.getClass());
                         } catch (final PreventedException e) {
-                            logger.error("{}: {}  (Details: {})", handler.getName(), e.getMessage(), e.getCause().getMessage());
+                            LOGGER.error("[{}]: [{}]  (Details: [{}])", handler.getName(), e.getMessage(), e.getCause().getMessage());
                             builder.addFailure(handler.getName(), e.getClass());
                         }
                         return false;
@@ -126,7 +130,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
                 return true;
             }
 
-            logger.warn("Authentication has failed. Credentials may be incorrect or CAS cannot find authentication handler that "
+            LOGGER.warn("Authentication has failed. Credentials may be incorrect or CAS cannot find authentication handler that "
                             + "supports [{}] of type [{}], which suggests a configuration problem.",
                     credential, credential.getClass().getSimpleName());
             return false;
@@ -152,7 +156,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
         if (builder.getSuccesses().isEmpty()) {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
-        logger.debug("Executing authentication policy {}", this.authenticationPolicy);
+        LOGGER.debug("Executing authentication policy [{}]", this.authenticationPolicy);
         if (!this.authenticationPolicy.isSatisfiedBy(builder.build())) {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }

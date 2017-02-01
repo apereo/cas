@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class CouchbaseClientFactory {
 
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseClientFactory.class);
+    
     private Cluster cluster;
     private Bucket bucket;
     private List<View> views;
@@ -66,13 +66,13 @@ public class CouchbaseClientFactory {
      */
     public void initialize() {
         try {
-            logger.debug("Trying to connect to couchbase bucket {}", this.bucketName);
+            LOGGER.debug("Trying to connect to couchbase bucket [{}]", this.bucketName);
 
             this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
 
             this.bucket = this.cluster.openBucket(this.bucketName, this.password, this.timeout, TimeUnit.SECONDS);
 
-            logger.info("Connected to Couchbase bucket {}.", this.bucketName);
+            LOGGER.info("Connected to Couchbase bucket [{}]", this.bucketName);
 
             if (this.views != null) {
                 doEnsureIndexes(this.designDocument, this.views);
@@ -126,10 +126,10 @@ public class CouchbaseClientFactory {
      * @param views the views to ensure exists in the database.
      */
     private void doEnsureIndexes(final String documentName, final List<View> views) {
-        logger.debug("Ensure that indexes exist in bucket {}.", this.bucket.name());
+        LOGGER.debug("Ensure that indexes exist in bucket [{}]", this.bucket.name());
         final DesignDocument newDocument = DesignDocument.create(documentName, views);
         if (!newDocument.equals(this.bucket.bucketManager().getDesignDocument(documentName))) {
-            logger.warn("Missing indexes in bucket {} for document {}, creating new.", this.bucket.name(), documentName);
+            LOGGER.warn("Missing indexes in bucket [{}] for document [{}]", this.bucket.name(), documentName);
             this.bucket.bucketManager().upsertDesignDocument(newDocument);
         }
     }

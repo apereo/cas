@@ -16,6 +16,8 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
@@ -32,7 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
         extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseSamlProfileSamlResponseBuilder.class);
+    
     /**
      * The Saml object encoder.
      */
@@ -90,7 +93,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                     final T finalResponse) {
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        logger.debug("RelayState is [{}]", relayState);
+        LOGGER.debug("RelayState is [{}]", relayState);
         return encode(service, finalResponse, response, adaptor, relayState);
     }
 
@@ -181,12 +184,12 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         try {
             if (service.isEncryptAssertions()) {
-                logger.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
+                LOGGER.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
                 final EncryptedAssertion encryptedAssertion =
                         this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
                 return encryptedAssertion;
             }
-            logger.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
+            LOGGER.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
             return assertion;
         } catch (final Exception e) {
             throw new SamlException("Unable to marshall assertion for encryption", e);

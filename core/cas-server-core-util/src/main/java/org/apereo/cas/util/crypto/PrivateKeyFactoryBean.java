@@ -41,27 +41,27 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     protected PrivateKey createInstance() throws Exception {
         PrivateKey key = readPemPrivateKey();
         if (key == null) {
-            LOGGER.debug("{} is not in PEM format. Trying next...", this.location.getFile());
+            LOGGER.debug("[{}] is not in PEM format. Trying next...", this.location.getFile());
             key = readDERPrivateKey();
         }
         return key;
     }
 
     private PrivateKey readPemPrivateKey() throws Exception {
-        LOGGER.debug("Attempting to read {} as PEM", this.location.getFile());
+        LOGGER.debug("Attempting to read [{}] as PEM", this.location.getFile());
         try (BufferedReader br = new BufferedReader(new FileReader(this.location.getFile()))) {
             final PEMParser pp = new PEMParser(br);
             final PEMKeyPair pemKeyPair = (PEMKeyPair) pp.readObject();
             final KeyPair kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
             return kp.getPrivate();
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
             return null;
         }
     }
 
     private PrivateKey readDERPrivateKey() throws Exception {
-        LOGGER.debug("Attempting to read {} as DER", this.location.getFile());
+        LOGGER.debug("Attempting to read [{}] as DER", this.location.getFile());
         try (InputStream privKey = this.location.getInputStream()) {
             final byte[] bytes = new byte[privKey.available()];
             privKey.read(bytes);

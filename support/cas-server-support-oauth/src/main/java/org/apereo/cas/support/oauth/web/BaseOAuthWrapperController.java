@@ -40,8 +40,8 @@ import java.util.Map;
  */
 @Controller
 public abstract class BaseOAuthWrapperController {
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
+    
     private ServicesManager servicesManager;
 
     private TicketRegistry ticketRegistry;

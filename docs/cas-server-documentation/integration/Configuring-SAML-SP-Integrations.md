@@ -32,7 +32,7 @@ The following SAML SP integrations are provided by CAS:
 <a href="https://www.collegeboard.org/powerfaids/net-partner"><img src="https://cloud.githubusercontent.com/assets/1205228/22052570/47abea6a-dd60-11e6-85a0-387c3c2ce8e7.png" height="48" width="140"></a> <a href="https://msdn.microsoft.com/en-us/library/azure/dn641269.aspx"><img src="https://cloud.githubusercontent.com/assets/1205228/22053102/d64da904-dd63-11e6-8a68-977526634b9d.png" height="48" width="140"></a> <a href="https://asana.com/guide/help/premium/authentication#gl-saml"><img src="https://cloud.githubusercontent.com/assets/1205228/22052569/478b8c16-dd60-11e6-82f4-e292243ff076.png" height="48" width="140"></a> <a href="https://onlinehelp.tableau.com/current/server/en-us/saml_requ.htm"><img src="https://cloud.githubusercontent.com/assets/1205228/22052586/480cffc6-dd60-11e6-939c-1ceb34f3186d.png" height="48" width="140"></a> <a href="https://help.evernote.com/hc/en-us/articles/209005217-How-to-configure-SSO-for-your-business"><img src="https://cloud.githubusercontent.com/assets/1205228/22052577/47d6b6e6-dd60-11e6-810e-dd875bf25d17.png" height="48" width="140"></a> 
 </div>
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).
 
 <div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong><p>If you have developed a recipe for integrating
 with a SAML service provider, consider contributing that recipe to the project so its configuration

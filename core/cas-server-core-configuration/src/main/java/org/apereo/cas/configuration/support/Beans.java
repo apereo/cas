@@ -48,8 +48,17 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.ad.extended.FastBindOperation;
+import org.ldaptive.ad.handler.ObjectGuidHandler;
+import org.ldaptive.ad.handler.ObjectSidHandler;
+import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
+import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.PooledSearchEntryResolver;
+import org.ldaptive.handler.CaseChangeEntryHandler;
+import org.ldaptive.handler.DnAttributeEntryHandler;
+import org.ldaptive.handler.MergeAttributeEntryHandler;
+import org.ldaptive.handler.RecursiveEntryHandler;
+import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.CompareValidator;
 import org.ldaptive.pool.ConnectionPool;
@@ -82,6 +91,7 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -131,7 +141,7 @@ public final class Beans {
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
             bean.setAutoCommit(jpaProperties.isAutocommit());
             bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
-            bean.setValidationTimeout(jpaProperties.getPool().getMaxWait());
+            bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
             return bean;
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
@@ -234,7 +244,7 @@ public final class Beans {
 
         if (type.contains(".")) {
             try {
-                LOGGER.debug("Configuration indicates use of a custom password encoder {}", type);
+                LOGGER.debug("Configuration indicates use of a custom password encoder [{}]", type);
                 final Class<PasswordEncoder> clazz = (Class<PasswordEncoder>) Class.forName(type);
                 return clazz.newInstance();
             } catch (final Exception e) {
@@ -247,20 +257,26 @@ public final class Beans {
         final PasswordEncoderProperties.PasswordEncoderTypes encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
         switch (encoderType) {
             case DEFAULT:
-                LOGGER.debug("Creating default password encoder with encoding alg {} and character encoding {}",
+                LOGGER.debug("Creating default password encoder with encoding alg [{}] and character encoding [{}]",
                         properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
                 return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
             case STANDARD:
                 LOGGER.debug("Creating standard password encoder with the secret defined in the configuration");
                 return new StandardPasswordEncoder(properties.getSecret());
             case BCRYPT:
-                LOGGER.debug("Creating BCRYPT password encoder given the strength {} and secret in the configuration",
+                LOGGER.debug("Creating BCRYPT password encoder given the strength [{}] and secret in the configuration",
                         properties.getStrength());
+                if (StringUtils.isBlank(properties.getSecret())) {
+                    LOGGER.debug("Creating BCRYPT encoder without secret");
+                    return new BCryptPasswordEncoder(properties.getStrength());
+                }
+
+                LOGGER.debug("Creating BCRYPT encoder with secret");
                 return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
             case NONE:
             default:
-                LOGGER.debug("No password encoder shall be created");
+                LOGGER.debug("No password encoder shall be created given the requested encoder type [{}]", type);
                 return NoOpPasswordEncoder.getInstance();
         }
     }
@@ -302,16 +318,69 @@ public final class Beans {
 
     /**
      * New dn resolver entry resolver.
-     *
-     * @param l the ldap settings
+     * Creates the necessary search entry resolver.
+     * @param l       the ldap settings
+     * @param factory the factory
      * @return the entry resolver
      */
-    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l) {
+    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l,
+                                                       final PooledConnectionFactory factory) {
         final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getUserFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
-        entryResolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
+        entryResolver.setConnectionFactory(factory);
+
+        final List<SearchEntryHandler> handlers = new ArrayList<>();
+        l.getSearchEntryHandlers().forEach(h -> {
+            switch (h.getType()) {
+                case CASE_CHANGE:
+                    final CaseChangeEntryHandler eh = new CaseChangeEntryHandler();
+                    eh.setAttributeNameCaseChange(h.getCasChange().getAttributeNameCaseChange());
+                    eh.setAttributeNames(h.getCasChange().getAttributeNames());
+                    eh.setAttributeValueCaseChange(h.getCasChange().getAttributeValueCaseChange());
+                    eh.setDnCaseChange(h.getCasChange().getDnCaseChange());
+                    handlers.add(eh);
+                    break;
+                case DN_ATTRIBUTE_ENTRY:
+                    final DnAttributeEntryHandler ehd = new DnAttributeEntryHandler();
+                    ehd.setAddIfExists(h.getDnAttribute().isAddIfExists());
+                    ehd.setDnAttributeName(h.getDnAttribute().getDnAttributeName());
+                    handlers.add(ehd);
+                    break;
+                case MERGE:
+                    final MergeAttributeEntryHandler ehm = new MergeAttributeEntryHandler();
+                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames());
+                    ehm.setMergeAttributeName(h.getMergeAttribute().getMergeAttributeName());
+                    handlers.add(ehm);
+                    break;
+                case OBJECT_GUID:
+                    handlers.add(new ObjectGuidHandler());
+                    break;
+                case OBJECT_SID:
+                    handlers.add(new ObjectSidHandler());
+                    break;
+                case PRIMARY_GROUP:
+                    final PrimaryGroupIdHandler ehp = new PrimaryGroupIdHandler();
+                    ehp.setBaseDn(h.getPrimaryGroupId().getBaseDn());
+                    ehp.setGroupFilter(h.getPrimaryGroupId().getGroupFilter());
+                    handlers.add(ehp);
+                    break;
+                case RANGE_ENTRY:
+                    handlers.add(new RangeEntryHandler());
+                    break;
+                case RECURSIVE_ENTRY:
+                    handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(), h.getRecursive().getMergeAttributes()));
+                    break;
+                default:
+                    break;
+            }
+        });
+        
+        if (!handlers.isEmpty()) {
+            LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
+            entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
+        }
         return entryResolver;
     }
 
@@ -323,6 +392,7 @@ public final class Beans {
      * @return the connection config
      */
     public static ConnectionConfig newConnectionConfig(final AbstractLdapProperties l) {
+        LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
         cc.setUseSSL(l.isUseSsl());
@@ -408,6 +478,7 @@ public final class Beans {
      * @return the pool config
      */
     public static PoolConfig newPoolConfig(final AbstractLdapProperties l) {
+        LOGGER.debug("Creating LDAP connection pool configuration for [{}]", l.getLdapUrl());
         final PoolConfig pc = new PoolConfig();
         pc.setMinPoolSize(l.getMinPoolSize());
         pc.setMaxPoolSize(l.getMaxPoolSize());
@@ -424,6 +495,7 @@ public final class Beans {
      * @return the connection factory
      */
     public static DefaultConnectionFactory newConnectionFactory(final AbstractLdapProperties l) {
+        LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = newConnectionConfig(l);
         final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
         if (l.getProviderClass() != null) {
@@ -467,7 +539,7 @@ public final class Beans {
                 cp.setValidator(new CompareValidator(compareRequest));
                 break;
             case "none":
-                LOGGER.debug("No validator is configured for the LDAP connection pool of {}", l.getLdapUrl());
+                LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
                 break;
             case "search":
             default:
@@ -484,7 +556,7 @@ public final class Beans {
 
         cp.setFailFastInitialize(l.isFailFast());
 
-        LOGGER.debug("Initializing ldap connection pool for {} and bindDn {}", l.getLdapUrl(), l.getBindDn());
+        LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", l.getLdapUrl(), l.getBindDn());
         cp.initialize();
         return cp;
     }
@@ -537,8 +609,8 @@ public final class Beans {
      * @return the cipher executor
      */
     public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry, final boolean forceIfBlankKeys) {
-        if ((StringUtils.isNotBlank(registry.getEncryption().getKey())
-                && StringUtils.isNotBlank(registry.getEncryption().getKey()))
+        if (StringUtils.isNotBlank(registry.getEncryption().getKey())
+                && StringUtils.isNotBlank(registry.getEncryption().getKey())
                 || forceIfBlankKeys) {
             return new DefaultTicketCipherExecutor(
                     registry.getEncryption().getKey(),

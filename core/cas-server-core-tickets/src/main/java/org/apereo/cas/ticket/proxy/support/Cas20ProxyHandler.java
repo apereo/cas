@@ -71,11 +71,11 @@ public class Cas20ProxyHandler implements ProxyHandler {
                 .append(proxyGrantingTicketId);
 
         if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
-            LOGGER.debug("Sent ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
+            LOGGER.debug("Sent ProxyIou of [{}] for service: [{}]", proxyIou, serviceCredentials);
             return proxyIou;
         }
 
-        LOGGER.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
+        LOGGER.debug("Failed to send ProxyIou of [{}] for service: [{}]", proxyIou, serviceCredentials);
         return null;
     }
     

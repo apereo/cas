@@ -1,0 +1,69 @@
+package org.apereo.cas.web.report;
+
+import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * This is {@link PersonDirectoryAttributeResolutionController}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.0.0
+ */
+@Controller("PersonDirectoryAttributeResolutionController")
+@RequestMapping("/status/attrresolution")
+public class PersonDirectoryAttributeResolutionController {
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+    
+    /**
+     * Handle request.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
+    @GetMapping
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return new ModelAndView("monitoring/attrresolution");
+    }
+
+    /**
+     * Resolve principal attributes map.
+     *
+     * @param uid     the uid
+     * @param request the request
+     * @return the map
+     * @throws Exception the exception
+     */
+    @PostMapping(value = "/resolveattrs")
+    @ResponseBody
+    public Map<String, Object> resolvePrincipalAttributes(@RequestParam final String uid, final HttpServletRequest request) throws Exception {
+        final Principal p = personDirectoryPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
+        final Map<String, Object> map = new LinkedHashMap<>();
+        map.put("uid", p.getId());
+        map.put("attributes", p.getAttributes());
+        return map;
+    }
+}

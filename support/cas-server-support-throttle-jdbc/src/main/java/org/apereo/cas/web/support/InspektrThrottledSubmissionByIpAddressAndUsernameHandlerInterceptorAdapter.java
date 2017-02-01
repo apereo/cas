@@ -6,6 +6,8 @@ import org.apereo.inspektr.audit.AuditPointRuntimeInfo;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +31,8 @@ import java.util.List;
  * @since 3.3.5
  */
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter.class);
+    
     private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 
     private static final String INSPEKTR_ACTION = "THROTTLED_LOGIN_ATTEMPT";
@@ -69,7 +72,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         if (this.dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(this.dataSource);
         } else {
-            logger.warn("No data source is defined for {}. Ignoring the construction of JDBC template", this.getName());
+            LOGGER.warn("No data source is defined for [{}]. Ignoring the construction of JDBC template", this.getName());
         }
     }
 
@@ -94,7 +97,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             // Compute rate in submissions/sec between last two authn failures and compare with threshold
             return NUMBER_OF_MILLISECONDS_IN_SECOND / (failures.get(0).getTime() - failures.get(1).getTime()) > getThresholdRate();
         }
-        logger.warn("No data source is defined for {}. Ignoring threshold checking", this.getName());
+        LOGGER.warn("No data source is defined for [{}]. Ignoring threshold checking", this.getName());
         return false;
     }
 
@@ -128,7 +131,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                     auditPointRuntimeInfo);
             this.auditTrailManager.record(context);
         } else {
-            logger.warn("No data source is defined for {}. Ignoring audit record-keeping", this.getName());
+            LOGGER.warn("No data source is defined for [{}]. Ignoring audit record-keeping", this.getName());
         }
     }
 

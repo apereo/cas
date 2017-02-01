@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -63,7 +63,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass yubikeyBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getYubikey().getBypass(), ticketRegistrySupport);
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getYubikey().getBypass());
     }
 
     @ConditionalOnMissingBean(name = "yubikeyPrincipalFactory")

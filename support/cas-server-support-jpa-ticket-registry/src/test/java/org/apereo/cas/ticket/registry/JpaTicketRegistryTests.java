@@ -64,9 +64,8 @@ public class JpaTicketRegistryTests {
 
     private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
 
-    /** Logger instance. */
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistryTests.class);
+    
     @Autowired
     @Qualifier("ticketTransactionManager")
     private PlatformTransactionManager txManager;
@@ -170,7 +169,7 @@ public class JpaTicketRegistryTests {
                 assertNotNull(result.get());
             }
         } catch (final Exception e) {
-            logger.error("testConcurrentServiceTicketGeneration produced an error", e);
+            LOGGER.error("testConcurrentServiceTicketGeneration produced an error", e);
             fail("testConcurrentServiceTicketGeneration failed.");
         } finally {
             executor.shutdownNow();

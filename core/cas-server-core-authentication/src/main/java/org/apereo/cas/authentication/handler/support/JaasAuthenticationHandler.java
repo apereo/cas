@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.security.auth.callback.Callback;
@@ -54,6 +56,7 @@ import java.util.Set;
  * @since 3.0.0
  */
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JaasAuthenticationHandler.class);
     
     /**
      * System property key to specify kerb5 realm.
@@ -96,11 +99,11 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             throws GeneralSecurityException, PreventedException {
 
         if (this.kerberosKdcSystemProperty != null) {
-            logger.debug("Configured kerberos system property {} to {}", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
+            LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
         }
         if (this.kerberosRealmSystemProperty != null) {
-            logger.debug("Setting kerberos system property {} to {}", SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
+            LOGGER.debug("Setting kerberos system property [{}] to [{}]", SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
             System.setProperty(SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
         }
 
@@ -111,7 +114,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 this.realm,
                 new UsernamePasswordCallbackHandler(username, password));
         try {
-            logger.debug("Attempting authentication for: {}", username);
+            LOGGER.debug("Attempting authentication for: [{}]", username);
             lc.login();
         } finally {
             lc.logout();

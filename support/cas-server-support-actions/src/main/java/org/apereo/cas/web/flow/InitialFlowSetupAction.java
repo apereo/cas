@@ -112,17 +112,17 @@ public class InitialFlowSetupAction extends AbstractAction {
         final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
         if (StringUtils.isBlank(this.warnCookieGenerator.getCookiePath())) {
-            LOGGER.info("Setting path for cookies for warn cookie generator to: {} ", cookiePath);
+            LOGGER.info("Setting path for cookies for warn cookie generator to: [{}] ", cookiePath);
             this.warnCookieGenerator.setCookiePath(cookiePath);
         } else {
-            LOGGER.debug("Warning cookie path is set to {} and path {}", this.warnCookieGenerator.getCookieDomain(),
+            LOGGER.debug("Warning cookie path is set to [{}] and path [{}]", this.warnCookieGenerator.getCookieDomain(),
                     this.warnCookieGenerator.getCookiePath());
         }
         if (StringUtils.isBlank(this.ticketGrantingTicketCookieGenerator.getCookiePath())) {
-            LOGGER.debug("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
+            LOGGER.debug("Setting path for cookies for TGC cookie generator to: [{}] ", cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
         } else {
-            LOGGER.debug("TGC cookie path is set to {} and path {}", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
+            LOGGER.debug("TGC cookie path is set to [{}] and path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
                     this.ticketGrantingTicketCookieGenerator.getCookiePath());
         }
     }

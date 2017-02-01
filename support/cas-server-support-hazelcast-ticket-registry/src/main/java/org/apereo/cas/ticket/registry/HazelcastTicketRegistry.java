@@ -5,6 +5,8 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.query.PagingPredicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.Ticket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -28,7 +30,8 @@ import java.util.stream.Collectors;
  * @since 4.1.0
  */
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements Closeable {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastTicketRegistry.class);
+    
     private IMap<String, Ticket> registry;
 
     private HazelcastInstance hazelcastInstance;
@@ -53,7 +56,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
      */
     @PostConstruct
     public void init() {
-        logger.info("Setting up Hazelcast Ticket Registry instance {} with name {}", this.hazelcastInstance, registry.getName());
+        LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}] with name [{}]", this.hazelcastInstance, registry.getName());
     }
 
     @Override
@@ -64,7 +67,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public void addTicket(final Ticket ticket) {
-        logger.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
+        LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
         final Ticket encTicket = encodeTicket(ticket);
         this.registry.set(encTicket.getId(), encTicket, ticket.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS);
     }
@@ -97,16 +100,16 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     public Collection<Ticket> getTickets() {
         final Collection<Ticket> collection = new HashSet<>();
 
-        logger.debug("Attempting to acquire lock from Hazelcast instance...");
+        LOGGER.debug("Attempting to acquire lock from Hazelcast instance...");
         final Lock lock = this.hazelcastInstance.getLock(getClass().getName());
         lock.lock();
-        logger.debug("Hazelcast instance lock acquired");
+        LOGGER.debug("Hazelcast instance lock acquired");
 
         try {
-            logger.debug("Setting up the paging predicate with page size of {}", this.pageSize);
+            LOGGER.debug("Setting up the paging predicate with page size of [{}]", this.pageSize);
             final PagingPredicate pagingPredicate = new PagingPredicate(this.pageSize);
 
-            logger.debug("Retrieving the initial collection of tickets from Hazelcast instance...");
+            LOGGER.debug("Retrieving the initial collection of tickets from Hazelcast instance...");
             Collection<Ticket> entrySet = this.registry.values(pagingPredicate);
 
             while (!entrySet.isEmpty()) {
@@ -116,7 +119,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
                 entrySet = this.registry.values(pagingPredicate);
             }
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         } finally {
             lock.unlock();
         }
@@ -129,10 +132,10 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     @PreDestroy
     public void shutdown() {
         try {
-            logger.info("Shutting down Hazelcast instance {}", this.hazelcastInstance.getConfig().getInstanceName());
+            LOGGER.info("Shutting down Hazelcast instance [{}]", this.hazelcastInstance.getConfig().getInstanceName());
             this.hazelcastInstance.shutdown();
         } catch (final Throwable e) {
-            logger.debug(e.getMessage());
+            LOGGER.debug(e.getMessage());
         }
     }
 

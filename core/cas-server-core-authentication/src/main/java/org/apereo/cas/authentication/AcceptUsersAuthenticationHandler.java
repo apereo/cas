@@ -2,6 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -26,7 +28,8 @@ import java.util.Map;
  * @since 3.0.0
  */
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AcceptUsersAuthenticationHandler.class);
+    
     /**
      * The list of users we will accept.
      */
@@ -59,7 +62,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         final String cachedPassword = this.users.get(username);
 
         if (cachedPassword == null) {
-            logger.debug("{} was not found in the map.", username);
+            LOGGER.debug("[{}] was not found in the map.", username);
             throw new AccountNotFoundException(username + " not found in backing map.");
         }
 

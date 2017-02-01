@@ -14,9 +14,8 @@ import java.nio.charset.StandardCharsets;
  * @since 4.2
  */
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
-    /** Logger instance. */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCipherExecutor.class);
+    
     private AesKey signingKey;
 
     /**

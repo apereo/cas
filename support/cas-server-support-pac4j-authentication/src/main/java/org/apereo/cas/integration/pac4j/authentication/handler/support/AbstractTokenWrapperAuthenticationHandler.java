@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.core.credentials.TokenCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
@@ -17,7 +19,8 @@ import java.security.GeneralSecurityException;
  */
 public abstract class AbstractTokenWrapperAuthenticationHandler extends
         AbstractWrapperAuthenticationHandler<BasicIdentifiableCredential, TokenCredentials> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTokenWrapperAuthenticationHandler.class);
+    
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
@@ -33,14 +36,14 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     @Override
     protected TokenCredentials convertToPac4jCredentials(final BasicIdentifiableCredential casCredential)
             throws GeneralSecurityException, PreventedException {
-        logger.debug("CAS credentials: {}", casCredential);
+        LOGGER.debug("CAS credentials: [{}]", casCredential);
 
         final String id = this.principalNameTransformer.transform(casCredential.getId());
         if (id == null) {
             throw new AccountNotFoundException("Id is null.");
         }
         final TokenCredentials credentials = new TokenCredentials(id, getClass().getSimpleName());
-        logger.debug("pac4j credentials: {}", credentials);
+        LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }
 

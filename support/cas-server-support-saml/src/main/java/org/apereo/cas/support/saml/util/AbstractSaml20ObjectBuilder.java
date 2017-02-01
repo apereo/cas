@@ -28,6 +28,8 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
@@ -44,6 +46,8 @@ import java.util.Map;
  * @since 4.1
  */
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSaml20ObjectBuilder.class);
+    
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
     private static final long serialVersionUID = -4325127376598205277L;
 
@@ -181,7 +185,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
+                LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
             final Attribute attribute = newAttribute(setFriendlyName, e, configuredNameFormats);
@@ -213,7 +217,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
             final String nameFormat = configuredNameFormats.get(attribute.getName());
-            logger.debug("Found name format {} for attribute {}", nameFormat, attribute.getName());
+            LOGGER.debug("Found name format [{}] for attribute [{}]", nameFormat, attribute.getName());
             switch (nameFormat.trim().toLowerCase()) {
                 case "basic":
                     attribute.setNameFormat(Attribute.BASIC);
@@ -228,12 +232,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                     attribute.setNameFormat(nameFormat);
                     break;
             }
-            logger.debug("Attribute {} is assigned the name format of {}", attribute.getName(), attribute.getNameFormat());
+            LOGGER.debug("Attribute [{}] is assigned the name format of [{}]", attribute.getName(), attribute.getNameFormat());
         } else {
-            logger.debug("Skipped name format, as no name formats are defined or none is found for attribute {}", attribute.getName());
+            LOGGER.debug("Skipped name format, as no name formats are defined or none is found for attribute [{}]", attribute.getName());
         }
 
-        logger.debug("Attribute {} has {} value(s)", attribute.getName(), attribute.getAttributeValues().size());
+        LOGGER.debug("Attribute [{}] has [{}] value(s)", attribute.getName(), attribute.getAttributeValues().size());
         return attribute;
     }
 
