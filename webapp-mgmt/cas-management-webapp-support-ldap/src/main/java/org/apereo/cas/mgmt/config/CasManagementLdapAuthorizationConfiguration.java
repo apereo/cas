@@ -31,8 +31,8 @@ public class CasManagementLdapAuthorizationConfiguration {
     @RefreshScope
     @Bean
     public AuthorizationGenerator authorizationGenerator() {
-        final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdapAuthz();
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(ldapAuthz);
+        final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdap().getLdapAuthz();
+        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(casProperties.getMgmt().getLdap());
 
         if (StringUtils.isNotBlank(ldapAuthz.getGroupFilter()) && StringUtils.isNotBlank(ldapAuthz.getGroupAttribute())) {
             return new LdapUserGroupsToRolesAuthorizationGenerator(connectionFactory,
@@ -52,12 +52,12 @@ public class CasManagementLdapAuthorizationConfiguration {
     }
 
     private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
-        final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdapAuthz();
+        final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdap().getLdapAuthz();
         return Beans.newSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter());
     }
 
     private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
-        final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdapAuthz();
+        final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdap().getLdapAuthz();
         return Beans.newSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getGroupFilter());
     }
 }
