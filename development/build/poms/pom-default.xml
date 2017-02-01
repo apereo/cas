@@ -1669,7 +1669,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>1.5.0.RC1</version>
+      <version>1.5.1.RELEASE</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -1809,7 +1809,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>4.3.5.RELEASE</version>
+      <version>4.3.6.RELEASE</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
