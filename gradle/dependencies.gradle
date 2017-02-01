@@ -635,7 +635,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        kotlin           : [
+        kotlin                  : [
                 dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") {
                     force = true
                 },
@@ -646,7 +646,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        unboundidscim : [
+        unboundidscim           : [
                 dependencies.create("com.unboundid.product.scim2:scim2-sdk-client:$unboundidScim2Version") {
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
@@ -1867,22 +1867,40 @@ ext.libraries = [
                 }
         ],
 
-        springsecurity          : dependencies.create("org.springframework.security:spring-security-core:$springSecurityVersion") {
-            exclude(group: "aopalliance", module: "aopalliance")
-            exclude(group: "org.springframework", module: "spring-aop")
-            exclude(group: "org.springframework", module: "spring-beans")
-            exclude(group: "org.springframework", module: "spring-context")
-            exclude(group: "org.springframework", module: "spring-core")
-            exclude(group: "org.springframework", module: "spring-expression")
-            exclude(group: "org.springframework", module: "spring-jdbc")
-            exclude(group: "org.springframework", module: "spring-tx")
-            exclude(group: "commons-logging", module: "commons-logging")
-            exclude(group: "javax.annotation", module: "jsr250-api")
-            exclude(group: "net.sf.ehcache", module: "ehcache")
-            exclude(group: "org.aspectj", module: "aspectjrt")
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            force = true
-        },
+        springsecurity          : [
+                dependencies.create("org.springframework.security:spring-security-core:$springSecurityVersion") {
+                    exclude(group: "aopalliance", module: "aopalliance")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-jdbc")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "javax.annotation", module: "jsr250-api")
+                    exclude(group: "net.sf.ehcache", module: "ehcache")
+                    exclude(group: "org.aspectj", module: "aspectjrt")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.springframework.security:spring-security-config:$springSecurityVersion") {
+                    exclude(group: "aopalliance", module: "aopalliance")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-jdbc")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "javax.annotation", module: "jsr250-api")
+                    exclude(group: "net.sf.ehcache", module: "ehcache")
+                    exclude(group: "org.aspectj", module: "aspectjrt")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
 
         validationapi           : dependencies.create("javax.validation:validation-api:$javaxValidationVersion"),
         xmlapis                 : dependencies.create("xml-apis:xml-apis:$xmlapisVersion") {
