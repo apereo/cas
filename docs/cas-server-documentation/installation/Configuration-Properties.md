@@ -349,11 +349,6 @@ The format of the file is as such:
 Status endpoints may also be secured by Spring Security. You can define the authentication scheme/paths via the below settings.
 
 ```properties
-security.basic.authorize-mode=none|role|authenticated
-security.basic.enabled=true
-security.basic.path=/cas/status/**
-security.basic.realm=CAS
-
 # security.ignored[0]=/**
 security.filter-order=0
 security.require-ssl=true
@@ -361,6 +356,37 @@ security.sessions=if_required
 security.user.name=<predefined-userid>
 security.user.password=<predefined-password>
 security.user.role=ACTUATOR
+```
+
+#### Basic AuthN
+
+```properties
+security.basic.authorize-mode=none|role|authenticated
+security.basic.enabled=true
+security.basic.path=/cas/status/**
+security.basic.realm=CAS
+```
+
+#### JDBC
+
+```properties
+# cas.adminPagesSecurity.jdbc.query=SELECT username,password,enabled FROM users WHERE username=?
+# cas.adminPagesSecurity.jdbc.healthQuery=
+# cas.adminPagesSecurity.jdbc.isolateInternalQueries=false
+# cas.adminPagesSecurity.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.adminPagesSecurity.jdbc.failFast=true
+# cas.adminPagesSecurity.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.adminPagesSecurity.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.adminPagesSecurity.jdbc.leakThreshold=10
+# cas.adminPagesSecurity.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.adminPagesSecurity.jdbc.batchSize=1
+# cas.adminPagesSecurity.jdbc.user=sa
+# cas.adminPagesSecurity.jdbc.ddlAuto=create-drop
+# cas.adminPagesSecurity.jdbc.maxAgeDays=180
+# cas.adminPagesSecurity.jdbc.password=
+# cas.adminPagesSecurity.jdbc.autocommit=false
+# cas.adminPagesSecurity.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.adminPagesSecurity.jdbc.idleTimeout=5000
 ```
 
 ## Web Application Session
@@ -585,7 +611,7 @@ the following settings are then relevant:
 
 # cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table WHERE {0}
 # cas.authn.attributeRepository.jdbc[0].username=uid
-# cas.authn.attributeRepository.jdbc[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.attributeRepository.jdbc[0].healthQuery=
 # cas.authn.attributeRepository.jdbc[0].isolateInternalQueries=false
 # cas.authn.attributeRepository.jdbc[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.attributeRepository.jdbc[0].failFast=true
@@ -709,7 +735,7 @@ same IP address.
 
 ```properties
 # cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
-# cas.authn.throttle.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.throttle.jdbc.healthQuery=
 # cas.authn.throttle.jdbc.isolateInternalQueries=false
 # cas.authn.throttle.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.throttle.jdbc.failFast=true
@@ -942,7 +968,7 @@ against the password on record determined by a configurable database query.
 
 ```properties
 # cas.authn.jdbc.query[0].sql=SELECT password FROM table WHERE name=?
-# cas.authn.jdbc.query[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.query[0].healthQuery=
 # cas.authn.jdbc.query[0].isolateInternalQueries=false
 # cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.jdbc.query[0].failFast=true
@@ -981,7 +1007,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].fieldUser=
 # cas.authn.jdbc.search[0].tableUsers=
 # cas.authn.jdbc.search[0].fieldPassword=
-# cas.authn.jdbc.search[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.search[0].healthQuery=
 # cas.authn.jdbc.search[0].isolateInternalQueries=false
 # cas.authn.jdbc.search[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.jdbc.search[0].failFast=true
@@ -1017,7 +1043,7 @@ Searches for a user record by querying against a username and password; the user
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
 ```properties
-# cas.authn.jdbc.bind[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.bind[0].healthQuery=
 # cas.authn.jdbc.bind[0].isolateInternalQueries=false
 # cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.jdbc.bind[0].failFast=true
@@ -1066,7 +1092,7 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].sql=
 # cas.authn.jdbc.encode[0].algorithmName=
 # cas.authn.jdbc.encode[0].passwordFieldName=password
-# cas.authn.jdbc.encode[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.encode[0].healthQuery=
 # cas.authn.jdbc.encode[0].isolateInternalQueries=false
 # cas.authn.jdbc.encode[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.jdbc.encode[0].failFast=true
@@ -1693,7 +1719,7 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 ### JDBC Storage
 
 ```properties
-# cas.authn.mfa.trusted.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.mfa.trusted.jpa.healthQuery=
 # cas.authn.mfa.trusted.jpa.isolateInternalQueries=false
 # cas.authn.mfa.trusted.jpa.url=jdbc:hsqldb:mem:cas-jdbc-storage
 # cas.authn.mfa.trusted.jpa.failFast=true
@@ -1787,7 +1813,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 #### Google Authenticator JPA
 
 ```properties
-# cas.authn.mfa.gauth.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.mfa.gauth.jpa.database.healthQuery=
 # cas.authn.mfa.gauth.jpa.database.isolateInternalQueries=false
 # cas.authn.mfa.gauth.jpa.database.url=jdbc:hsqldb:mem:cas-gauth
 # cas.authn.mfa.gauth.jpa.database.failFast=true
@@ -2431,7 +2457,7 @@ To learn more about this topic, [please review this guide](Audits.html).
 Store audit logs inside a database.
 
 ```properties
-# cas.audit.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.audit.jdbc.healthQuery=
 # cas.audit.jdbc.isolateInternalQueries=false
 # cas.audit.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.audit.jdbc.failFast=true
@@ -2494,7 +2520,7 @@ for authentication or attribute retrieval.
 ```properties
 # cas.monitor.jdbc.validationQuery=SELECT 1
 # cas.monitor.jdbc.maxWait=5000
-# cas.monitor.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.monitor.jdbc.healthQuery=
 # cas.monitor.jdbc.isolateInternalQueries=false
 # cas.monitor.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.monitor.jdbc.failFast=true
@@ -2595,7 +2621,7 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 Decide how CAS should store authentication events inside a database instance.
 
 ```properties
-# cas.events.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.events.jpa.healthQuery=
 # cas.events.jpa.isolateInternalQueries=false
 # cas.events.jpa.url=jdbc:hsqldb:mem:cas-events
 # cas.events.jpa.failFast=true
@@ -2781,7 +2807,7 @@ Control how CAS services should be found inside a database instance.
 To learn more about this topic, [please review this guide](JPA-Service-Management.html)
 
 ```properties
-# cas.serviceRegistry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.serviceRegistry.jpa.healthQuery=
 # cas.serviceRegistry.jpa.isolateInternalQueries=false
 # cas.serviceRegistry.jpa.url=jdbc:hsqldb:mem:cas-service-registry
 # cas.serviceRegistry.jpa.failFast=true
@@ -2825,7 +2851,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
-# cas.ticket.registry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.ticket.registry.jpa.healthQuery=
 # cas.ticket.registry.jpa.isolateInternalQueries=false
 # cas.ticket.registry.jpa.url=jdbc:hsqldb:mem:cas-ticket-registry
 # cas.ticket.registry.jpa.failFast=true
@@ -3494,7 +3520,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
 # cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
 
-# cas.authn.pm.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.pm.jdbc.healthQuery=
 # cas.authn.pm.jdbc.isolateInternalQueries=false
 # cas.authn.pm.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.pm.jdbc.failFast=true
