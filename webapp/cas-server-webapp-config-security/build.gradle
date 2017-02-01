@@ -1,5 +1,6 @@
 description = "Apereo CAS Web Application Security Configuration"
 dependencies {
+    
     compile libraries.spring
     compile libraries.springboot
     compile libraries.springcloud
@@ -7,4 +8,8 @@ dependencies {
     compile libraries.hibernate
     compile libraries.springsecurity
     compile libraries.springsecuritywebconfig
+
+    compile project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-services")
+    runtime project(":support:cas-server-support-jdbc-drivers")
 }
