@@ -52,6 +52,38 @@ h3 {
   margin-top: 50px;
 }
 
+.img-cloud {
+  text-align: center;
+  a {
+    display: inline-block;
+    margin: 15px;
+
+    img {
+      display: inline;
+    }
+
+  }
+}
+
+/**
+ * Flexbox implementation:
+.img-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+
+  a {
+    margin: 15px;
+    flex-grow: 1;
+    flex-basis: 15%;
+    align-self: center;
+  }
+}
+ */
+
+
 .header-link {
   position: absolute;
   left: -0.5em;
