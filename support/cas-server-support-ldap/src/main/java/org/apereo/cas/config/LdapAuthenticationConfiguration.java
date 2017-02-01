@@ -88,7 +88,7 @@ public class LdapAuthenticationConfiguration {
                 .forEach(l -> {
                     final Map<String, String> attributes = buildPrincipalAttributeMap(l);
                     LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
-                    final Authenticator authenticator = Beans.newLdapAuthenticator(l);
+                    final Authenticator authenticator = Beans.newLdaptiveAuthenticator(l);
                     authenticator.setReturnAttributes(attributes.keySet().toArray(new String[]{}));
                     LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
                             attributes.keySet(), l.getLdapUrl(), l.getBaseDn());

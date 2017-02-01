@@ -57,7 +57,7 @@ public class JpaEventsConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                Beans.newEntityManagerFactoryBean(
+                Beans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaEventVendorAdapter(),
                                 "jpaEventRegistryContext",
