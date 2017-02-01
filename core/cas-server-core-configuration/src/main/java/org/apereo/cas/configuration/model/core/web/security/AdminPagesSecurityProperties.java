@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperti
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
