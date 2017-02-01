@@ -75,7 +75,7 @@
                         <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.stats}"></span>
                     </a>
                 </li>
-                <li>
+                <li th:if="${environmentEndpointEnabled}">
                     <a th:href="@{/status/config}" class="casTooltip">Config Panel
                         <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.configpanel}"></span>
                     </a>
