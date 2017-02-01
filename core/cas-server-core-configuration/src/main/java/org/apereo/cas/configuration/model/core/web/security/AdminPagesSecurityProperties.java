@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.core.web.security;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
@@ -24,6 +26,7 @@ public class AdminPagesSecurityProperties {
     private boolean actuatorEndpointsEnabled;
 
     private Jdbc jdbc = new Jdbc();
+    private Ldap ldap = new Ldap();
 
     public Jdbc getJdbc() {
         return jdbc;
@@ -79,6 +82,27 @@ public class AdminPagesSecurityProperties {
 
     public void setUsers(final Resource users) {
         this.users = users;
+    }
+
+    public Ldap getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final Ldap ldap) {
+        this.ldap = ldap;
+    }
+
+    public class Ldap extends LdapAuthenticationProperties {
+        @NestedConfigurationProperty
+        private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
+
+        public LdapAuthorizationProperties getLdapAuthz() {
+            return ldapAuthz;
+        }
+
+        public void setLdapAuthz(final LdapAuthorizationProperties ldapAuthz) {
+            this.ldapAuthz = ldapAuthz;
+        }
     }
 
     public class Jdbc extends AbstractJpaProperties {
