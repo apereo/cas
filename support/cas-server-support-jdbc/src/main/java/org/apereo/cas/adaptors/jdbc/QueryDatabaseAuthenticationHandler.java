@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -31,11 +32,13 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private final String sql;
     private final String fieldPassword;
     private final String fieldExpired;
+    private final String fieldDisabled;
     
-    public QueryDatabaseAuthenticationHandler(final String sql, final String fieldPassword, final String fieldExpired) {
+    public QueryDatabaseAuthenticationHandler(final String sql, final String fieldPassword, final String fieldExpired, final String fieldDisabled) {
         this.sql = sql;
-        this.fieldPassword=fieldPassword;
-        this.fieldExpired=fieldExpired;
+        this.fieldPassword = fieldPassword;
+        this.fieldExpired = fieldExpired;
+        this.fieldDisabled = fieldDisabled;
     }
 
     @Override
@@ -56,6 +59,12 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             if (StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword)
                 || StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
+            }
+            if (StringUtils.isNotBlank(this.fieldDisabled)){
+                final Object dbDisabled = dbFields.get(this.fieldDisabled);
+                if (dbDisabled != null && (Boolean.TRUE.equals(toBoolean(dbDisabled.toString())) || dbDisabled.equals(Integer.valueOf(1)))){
+                    throw new AccountDisabledException("Account has been disabled");
+                }
             }
             if (StringUtils.isNotBlank(this.fieldExpired)){
                 final Object dbExpired = dbFields.get(this.fieldExpired);

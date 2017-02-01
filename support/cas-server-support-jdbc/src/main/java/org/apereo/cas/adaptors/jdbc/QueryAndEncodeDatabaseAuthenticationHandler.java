@@ -9,6 +9,7 @@ import org.apache.shiro.crypto.hash.ConfigurableHashService;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -63,7 +64,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     /**
      * The Expired field name.
      */
-    protected String expiredFieldName = "expired";
+    protected String expiredFieldName;
+
+    /**
+     * The Expired field name.
+     */
+    protected String disabledFieldName;
 
     /**
      * The Number of iterations field name.
@@ -96,6 +102,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                                                        final String passwordFieldName,
                                                        final String saltFieldName,
                                                        final String expiredFieldName,
+                                                       final String disabledFieldName,
                                                        final String numberOfIterationsFieldName,
                                                        final long numberOfIterations,
                                                        final String staticSalt) {
@@ -104,6 +111,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         this.passwordFieldName = passwordFieldName;
         this.saltFieldName = saltFieldName;
         this.expiredFieldName = expiredFieldName;
+        this.disabledFieldName = disabledFieldName;
         this.numberOfIterationsFieldName = numberOfIterationsFieldName;
         this.numberOfIterations = numberOfIterations;
         this.staticSalt = staticSalt;
@@ -130,6 +138,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                 final Object dbExpired = values.get(this.expiredFieldName);
                 if (dbExpired != null && (Boolean.TRUE.equals(toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))){
                     throw new AccountPasswordMustChangeException("Password has expired");
+                }
+            }
+            if (StringUtils.isNotBlank(this.disabledFieldName)){
+                final Object dbDisabled = values.get(this.disabledFieldName);
+                if (dbDisabled != null && (Boolean.TRUE.equals(toBoolean(dbDisabled.toString())) || dbDisabled.equals(Integer.valueOf(1)))){
+                    throw new AccountDisabledException("Account has been disabled");
                 }
             }
             return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), null);

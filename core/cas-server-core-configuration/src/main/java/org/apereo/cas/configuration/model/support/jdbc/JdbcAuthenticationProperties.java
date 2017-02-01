@@ -57,6 +57,7 @@ public class JdbcAuthenticationProperties {
         private String credentialCriteria;
         private String fieldPassword;
         private String fieldExpired;
+        private String fieldDisabled;
 
         @NestedConfigurationProperty
         private PrincipalTransformationProperties principalTransformation =
@@ -131,6 +132,14 @@ public class JdbcAuthenticationProperties {
 
         public void setFieldExpired(String fieldExpired) {
             this.fieldExpired = fieldExpired;
+        }
+
+        public String getFieldDisabled() {
+            return fieldDisabled;
+        }
+
+        public void setFieldDisabled(String fieldDisabled) {
+            this.fieldDisabled = fieldDisabled;
         }
     }
 
@@ -277,6 +286,7 @@ public class JdbcAuthenticationProperties {
         private String passwordFieldName = "password";
         private String saltFieldName = "salt";
         private String expiredFieldName;
+        private String disabledFieldName;
         private String numberOfIterationsFieldName = "numIterations";
         private long numberOfIterations;
         private String staticSalt;
@@ -353,6 +363,14 @@ public class JdbcAuthenticationProperties {
 
         public void setExpiredFieldName(String expiredFieldName) {
             this.expiredFieldName = expiredFieldName;
+        }
+
+        public String getDisabledFieldName() {
+            return disabledFieldName;
+        }
+
+        public void setDisabledFieldName(String disabledFieldName) {
+            this.disabledFieldName = disabledFieldName;
         }
 
         public String getNumberOfIterationsFieldName() {
