@@ -1,35 +1,44 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
 import com.google.common.base.Throwables;
-import net.shibboleth.idp.installer.metadata.MetadataGenerator;
-import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.util.ArrayList;
+import java.io.StringWriter;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
- * A metadata generator based on the Shibboleth IdP's {@link MetadataGenerator}.
+ * A metadata generator based on a predefined template.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ShibbolethIdpMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
-    private static final String URI_SUBJECT_ALTNAME_POSTFIX = "idp/metadata";
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethIdpMetadataAndCertificatesGenerationService.class);
+public class TemplatedMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
+    private static final String URI_SUBJECT_ALTNAME_POSTFIX = "/idp/metadata";
+
+    private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
+    private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TemplatedMetadataAndCertificatesGenerationService.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     /**
      * Initializes a new Generate saml metadata.
@@ -93,6 +102,19 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         }
     }
 
+    private String getIdPEndpointUrl() {
+        return casProperties.getServer().getPrefix().concat("/idp");
+    }
+
+    private String getIdPHostName() {
+        try {
+            final URL url = new URL(casProperties.getServer().getPrefix());
+            return url.getHost();
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
     /**
      * Build self signed encryption cert.
      *
@@ -101,10 +123,10 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
     protected void buildSelfSignedEncryptionCert() throws Exception {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
         final SelfSignedCertificateGenerator generator = new SelfSignedCertificateGenerator();
-        generator.setHostName(idp.getHostName());
+        generator.setHostName(getIdPHostName());
         generator.setCertificateFile(idp.getMetadata().getEncryptionCertFile().getFile());
         generator.setPrivateKeyFile(idp.getMetadata().getEncryptionKeyFile().getFile());
-        generator.setURISubjectAltNames(Arrays.asList(idp.getHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(Arrays.asList(getIdPHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 
@@ -116,10 +138,10 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
     protected void buildSelfSignedSigningCert() throws Exception {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
         final SelfSignedCertificateGenerator generator = new SelfSignedCertificateGenerator();
-        generator.setHostName(idp.getHostName());
+        generator.setHostName(getIdPHostName());
         generator.setCertificateFile(idp.getMetadata().getSigningCertFile().getFile());
         generator.setPrivateKeyFile(idp.getMetadata().getSigningKeyFile().getFile());
-        generator.setURISubjectAltNames(Arrays.asList(idp.getHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(Arrays.asList(getIdPHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 
@@ -131,33 +153,25 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
      */
     protected void buildMetadataGeneratorParameters() throws Exception {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        final MetadataGenerator generator = new MetadataGenerator(idp.getMetadata().getMetadataFile());
-        final MetadataGeneratorParameters parameters = new MetadataGeneratorParameters();
+        final Resource template = this.resourceLoader.getResource("classpath:/template-idp-metadata.xml");
 
-        parameters.setEncryptionCert(idp.getMetadata().getEncryptionCertFile().getFile());
-        parameters.setSigningCert(idp.getMetadata().getSigningCertFile().getFile());
+        String signingKey = FileUtils.readFileToString(idp.getMetadata().getSigningCertFile().getFile(), StandardCharsets.UTF_8);
+        signingKey = StringUtils.remove(signingKey, BEGIN_CERTIFICATE);
+        signingKey = StringUtils.remove(signingKey, END_CERTIFICATE).trim();
+        
+        String encryptionKey = FileUtils.readFileToString(idp.getMetadata().getEncryptionCertFile().getFile(), StandardCharsets.UTF_8);
+        encryptionKey = StringUtils.remove(encryptionKey, BEGIN_CERTIFICATE);
+        encryptionKey = StringUtils.remove(encryptionKey, END_CERTIFICATE).trim();
 
-        final List<List<String>> signing = new ArrayList<>(2);
-        List<String> value = parameters.getBackchannelCert();
-        if (null != value) {
-            signing.add(value);
+        try (StringWriter writer = new StringWriter()) {
+            IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
+            final String metadata = writer.toString()
+                    .replace("${entityId}", idp.getEntityId())
+                    .replace("${scope}", idp.getScope())
+                    .replace("${idpEndpointUrl}", getIdPEndpointUrl())
+                    .replace("${encryptionKey}", encryptionKey)
+                    .replace("${signingKey}", signingKey);
+            FileUtils.write(idp.getMetadata().getMetadataFile(), metadata, StandardCharsets.UTF_8);
         }
-        value = parameters.getSigningCert();
-        if (null != value) {
-            signing.add(value);
-        }
-        generator.setSigningCerts(signing);
-        value = parameters.getEncryptionCert();
-        if (null != value) {
-            generator.setEncryptionCerts(Collections.singletonList(value));
-        }
-
-        generator.setDNSName(idp.getHostName());
-        generator.setEntityID(idp.getEntityId());
-        generator.setScope(idp.getScope());
-        generator.setSAML2AttributeQueryCommented(true);
-        generator.setSAML2LogoutCommented(false);
-
-        generator.generate();
     }
 }

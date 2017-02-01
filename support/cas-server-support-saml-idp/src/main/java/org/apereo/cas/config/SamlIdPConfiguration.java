@@ -17,7 +17,7 @@ import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIAction;
 import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIWebflowConfigurer;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlMetadataController;
-import org.apereo.cas.support.saml.web.idp.metadata.ShibbolethIdpMetadataAndCertificatesGenerationService;
+import org.apereo.cas.support.saml.web.idp.metadata.TemplatedMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.profile.ECPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SLOPostProfileHandlerController;
@@ -202,7 +202,7 @@ public class SamlIdPConfiguration {
 
     @Bean
     public SamlIdpMetadataAndCertificatesGenerationService shibbolethIdpMetadataAndCertificatesGenerationService() {
-        return new ShibbolethIdpMetadataAndCertificatesGenerationService();
+        return new TemplatedMetadataAndCertificatesGenerationService();
     }
 
     @Bean
