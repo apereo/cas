@@ -4,12 +4,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.Map;
+
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 
 /**
  * Class that if provided a query that returns a password (parameter of query
@@ -25,9 +29,13 @@ import java.security.GeneralSecurityException;
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
     
     private final String sql;
+    private final String fieldPassword;
+    private final String fieldExpired;
     
-    public QueryDatabaseAuthenticationHandler(final String sql) {
+    public QueryDatabaseAuthenticationHandler(final String sql, final String fieldPassword, final String fieldExpired) {
         this.sql = sql;
+        this.fieldPassword=fieldPassword;
+        this.fieldExpired=fieldExpired;
     }
 
     @Override
@@ -42,11 +50,18 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         final String username = credential.getUsername();
         final String password = credential.getPassword();
         try {
-            final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
+            final Map<String, Object> dbFields = getJdbcTemplate().queryForMap(this.sql, username);
+            final String dbPassword = (String)dbFields.get(this.fieldPassword);
 
             if (StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword)
                 || StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
+            }
+            if (StringUtils.isNotBlank(this.fieldExpired)){
+                final Object dbExpired = dbFields.get(this.fieldExpired);
+                if (dbExpired != null && (Boolean.TRUE.equals(toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))){
+                    throw new AccountPasswordMustChangeException("Password has expired");
+                }
             }
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {

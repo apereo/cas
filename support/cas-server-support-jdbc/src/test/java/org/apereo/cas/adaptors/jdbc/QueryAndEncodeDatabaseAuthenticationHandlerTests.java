@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
 import org.junit.Before;
@@ -49,6 +50,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final int NUM_ITERATIONS = 5;
     private static final String STATIC_SALT = "STATIC_SALT";
     private static final String PASSWORD_FIELD_NAME = "password";
+    private static final String EXPIRED_FIELD_NAME = "expired";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -63,20 +65,21 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
 
-        s.execute(getSqlInsertStatementToCreateUserAccount(0));
+        s.execute(getSqlInsertStatementToCreateUserAccount(0, "false"));
         for (int i = 0; i < 10; i++) {
-            s.execute(getSqlInsertStatementToCreateUserAccount(i));
+            s.execute(getSqlInsertStatementToCreateUserAccount(i, "false"));
         }
+        s.execute(getSqlInsertStatementToCreateUserAccount(20, "true"));
 
         c.close();
     }
 
-    private static String getSqlInsertStatementToCreateUserAccount(final int i) {
+    private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired) {
         final String psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
 
         return String.format(
-                "insert into users (username, password, salt, numIterations) values('%s', '%s', '%s', %s);",
-                "user" + i, psw, "salt" + i, NUM_ITERATIONS);
+                "insert into users (username, password, salt, numIterations, expired) values('%s', '%s', '%s', %s, '%s');",
+                "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired);
     }
 
     @After
@@ -94,7 +97,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", "ops", 0, "");
+                "salt", null, "ops", 0, "");
         q.setDataSource(dataSource);
 
         this.thrown.expect(AccountNotFoundException.class);
@@ -106,7 +109,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationInvalidSql() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql("makesNoSenseInSql"),
-                PASSWORD_FIELD_NAME, "salt", "ops", 0, "");
+                PASSWORD_FIELD_NAME, "salt", null, "ops", 0, "");
         q.setDataSource(dataSource);
 
         this.thrown.expect(PreventedException.class);
@@ -118,7 +121,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationMultipleAccounts() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", "ops", 0, "");
+                "salt", null, "ops", 0, "");
         q.setDataSource(dataSource);
 
         this.thrown.expect(FailedLoginException.class);
@@ -130,7 +133,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationSuccessful() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", "numIterations", 0, STATIC_SALT);
+                "salt", null, "numIterations", 0, STATIC_SALT);
         q.setDataSource(dataSource);
 
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
@@ -141,9 +144,21 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     }
 
     @Test
+    public void verifyAuthenticationWithExpiredField() throws Exception {
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
+                "salt", EXPIRED_FIELD_NAME, "numIterations", 0, STATIC_SALT);
+        q.setDataSource(dataSource);
+
+        this.thrown.expect(AccountPasswordMustChangeException.class);
+        this.thrown.expectMessage("Password has expired");
+
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user20"));
+    }
+
+    @Test
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
-                "salt", "numIterations", 0, STATIC_SALT);
+                "salt", null, "numIterations", 0, STATIC_SALT);
         q.setDataSource(dataSource);
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
@@ -196,6 +211,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         private String username;
         private String password;
         private String salt;
+        private String expired;
         private long numIterations;
     }
 }
