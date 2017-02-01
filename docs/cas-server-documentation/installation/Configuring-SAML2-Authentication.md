@@ -41,11 +41,6 @@ This endpoint will display the CAS IdP SAML2 metadata upon receiving a GET reque
 it will be displayed. If metadata is absent, one will be generated automatically.
 CAS configuration below dictates where metadata files/keys will be generated and stored.
 
-<div class="alert alert-info"><strong>Review Metadata</strong><p>Due to the way CAS handles the generation of metadata via external
-libraries, the generated metadata MUST be reviewed and massaged slightly to match the CAS configuration and to account for
-endpoints and bindings that may be of interest to the deployment, such as ECP. All other elements MUST be
-removed.</p></div>
-
 Here is a generated metadata file as an example:
 
 ```xml
