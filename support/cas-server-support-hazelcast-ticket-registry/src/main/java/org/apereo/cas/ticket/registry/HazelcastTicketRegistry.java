@@ -47,9 +47,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     private int pageSize;
 
-    private final String ticketTypeRegEx = "^(" + TicketGrantingTicket.PREFIX + "-" +
-                                           "|" + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX + "-" +
-                                           "|" + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + "-" +
+    private final String ticketTypeRegEx = "^(" + TicketGrantingTicket.PREFIX  +
+                                           "|" + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX  +
+                                           "|" + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX  +
                                            ").*$";
 
     /**

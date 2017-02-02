@@ -67,7 +67,7 @@ public class HazelcastTicketRegistryReplicationTests {
         this.hzTicketRegistry1.addTicket(newTestSt(tgt));
 
         col = hzTicketRegistry2.getTickets();
-        assertEquals(2, col.size());
+        assertEquals(1, col.size());
         assertEquals(1, hzTicketRegistry2.serviceTicketCount());
         assertEquals(1, hzTicketRegistry2.sessionCount());
     }
