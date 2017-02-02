@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -34,7 +35,6 @@ public class GenerateServiceTicketAction extends AbstractAction {
     /**
      * Instance of CentralAuthenticationService.
      */
-
     private CentralAuthenticationService centralAuthenticationService;
 
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -77,9 +77,10 @@ public class GenerateServiceTicketAction extends AbstractAction {
                 return result(CasWebflowConstants.STATE_ID_WARN);
             }
 
-            final AuthenticationResultBuilder authenticationResultBuilder = this.authenticationSystemSupport
-                    .establishAuthenticationContextFromInitial(authentication);
-            final AuthenticationResult authenticationResult = authenticationResultBuilder.build(service);
+            final Credential credential = WebUtils.getCredential(context);
+            final AuthenticationResultBuilder builder =
+                    this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+            final AuthenticationResult authenticationResult = builder.build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationResult);

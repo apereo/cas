@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.Pair;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -50,8 +51,9 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return resumeFlow();
         }
 
+        final Credential credential = WebUtils.getCredential(context);
         final AuthenticationResultBuilder builder =
-                this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
+                this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
