@@ -33,6 +33,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     private boolean allowMultiplePrincipalAttributeValues;
     private List additionalAttributes = new ArrayList();
 
+    private boolean allowMissingPrincipalAttributeValue = true;
 
     private Integer order;
     
@@ -106,5 +107,13 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
 
     public void setCredentialCriteria(final String credentialCriteria) {
         this.credentialCriteria = credentialCriteria;
+    }
+
+    public boolean isAllowMissingPrincipalAttributeValue() {
+        return allowMissingPrincipalAttributeValue;
+    }
+
+    public void setAllowMissingPrincipalAttributeValue(final boolean allowMissingPrincipalAttributeValue) {
+        this.allowMissingPrincipalAttributeValue = allowMissingPrincipalAttributeValue;
     }
 }
