@@ -332,6 +332,13 @@ public final class Beans {
      */
     public static EntryResolver newLdaptiveSearchEntryResolver(final AbstractLdapAuthenticationProperties l,
                                                                final PooledConnectionFactory factory) {
+        if (StringUtils.isBlank(l.getBaseDn())) {
+            throw new IllegalArgumentException("To create a search entry resolver, base dn cannot be empty/blank ");
+        }
+        if (StringUtils.isBlank(l.getUserFilter())) {
+            throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
+        }
+
         final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getUserFilter());
@@ -399,6 +406,10 @@ public final class Beans {
      * @return the connection config
      */
     public static ConnectionConfig newLdaptiveConnectionConfig(final AbstractLdapProperties l) {
+        if (StringUtils.isBlank(l.getLdapUrl())) {
+            throw new IllegalArgumentException("LDAP url cannot be empty/blank");
+        }
+        
         LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
@@ -431,19 +442,25 @@ public final class Beans {
         }
 
         if (l.getTrustCertificates() != null) {
+            LOGGER.debug("Creating LDAP SSL configuration via trust certificates [{}]", l.getTrustCertificates());
             final X509CredentialConfig cfg = new X509CredentialConfig();
             cfg.setTrustCertificates(l.getTrustCertificates());
             cc.setSslConfig(new SslConfig(cfg));
+
         } else if (l.getKeystore() != null) {
+            LOGGER.debug("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
             final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
             cfg.setKeyStore(l.getKeystore());
             cfg.setKeyStorePassword(l.getKeystorePassword());
             cfg.setKeyStoreType(l.getKeystoreType());
             cc.setSslConfig(new SslConfig(cfg));
         } else {
+            LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore [{}]");
             cc.setSslConfig(new SslConfig());
         }
         if (l.getSaslMechanism() != null) {
+            LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
+
             final BindConnectionInitializer bc = new BindConnectionInitializer();
             final SaslConfig sc;
             switch (l.getSaslMechanism()) {
@@ -471,8 +488,10 @@ public final class Beans {
             bc.setBindSaslConfig(sc);
             cc.setConnectionInitializer(bc);
         } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
+            LOGGER.debug("Creating LDAP fast-bind connection initializer");
             cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
+            LOGGER.debug("Creating LDAP bind connection initializer via [{}]", l.getBindDn());
             cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
         }
         return cc;
@@ -810,6 +829,13 @@ public final class Beans {
     }
 
     private static Authenticator getSaslAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getBaseDn())) {
+            throw new IllegalArgumentException("Base dn cannot be empty/blank for authenticated/anonymous authentication");
+        }
+        if (StringUtils.isBlank(l.getUserFilter())) {
+            throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
+        }
+
         final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
@@ -821,6 +847,12 @@ public final class Beans {
     }
 
     private static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getBaseDn())) {
+            throw new IllegalArgumentException("Base dn cannot be empty/blank for authenticated/anonymous authentication");
+        }
+        if (StringUtils.isBlank(l.getUserFilter())) {
+            throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
+        }
         final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
