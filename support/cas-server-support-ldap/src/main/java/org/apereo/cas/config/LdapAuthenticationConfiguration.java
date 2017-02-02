@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
 import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
@@ -168,16 +169,8 @@ public class LdapAuthenticationConfiguration {
                 LOGGER.warn("Skipping ldap authentication entry since no type is defined");
                 return false;
             }
-            if (StringUtils.isBlank(l.getBaseDn())) {
-                LOGGER.warn("Skipping ldap authentication entry since no baseDn is defined");
-                return false;
-            }
             if (StringUtils.isBlank(l.getLdapUrl())) {
                 LOGGER.warn("Skipping ldap authentication entry since no ldap url is defined");
-                return false;
-            }
-            if (StringUtils.isBlank(l.getUserFilter())) {
-                LOGGER.warn("Skipping ldap authentication entry since no user filter is defined");
                 return false;
             }
             return true;
