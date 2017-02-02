@@ -44,7 +44,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {
                     throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + c.getUsername());
                 }
-                return createHandlerResult(c, this.principalFactory.createPrincipal(principalFromRest.getId()), new ArrayList<>());
+                return createHandlerResult(c, this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes()), new ArrayList<>());
             }
         } catch (final HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
