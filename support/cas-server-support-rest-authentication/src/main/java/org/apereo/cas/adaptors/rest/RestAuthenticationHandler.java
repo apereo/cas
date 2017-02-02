@@ -45,7 +45,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                             + c.getUsername());
                 }
                 return createHandlerResult(c,
-                        this.principalFactory.createPrincipal(principalFromRest.getId()),
+                        this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes()),
                         new ArrayList<>());
             }
         } catch (final HttpClientErrorException e) {
