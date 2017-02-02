@@ -3,14 +3,15 @@ package org.apereo.cas.support.oauth.web;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
     private static final JsonFactory JSON_FACTORY = new JsonFactory(new ObjectMapper().findAndRegisterModules());
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenResponseGenerator.class);
-    
+
     /**
      * The Resource loader.
      */
@@ -42,7 +43,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
      */
     @Autowired
     protected CasConfigurationProperties casProperties;
-    
+
     @Override
     public void generate(final HttpServletRequest request,
                          final HttpServletResponse response,
@@ -54,13 +55,14 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            try(JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(response.getWriter())) {
+            try (JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(response.getWriter())) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                         refreshTokenId, timeout, service, registeredService);
                 jsonGenerator.writeEndObject();
             } catch (final Exception e) {
-                throw new IllegalArgumentException(e);
+                LOGGER.error(e.getMessage(), e);
+                throw Throwables.propagate(e);
             }
         } else {
             generateTextInternal(request, response, accessTokenId, refreshTokenId, timeout);

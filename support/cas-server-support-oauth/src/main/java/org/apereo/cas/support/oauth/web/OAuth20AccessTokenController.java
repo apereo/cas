@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -49,7 +50,7 @@ import java.util.Optional;
  */
 public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -79,85 +80,90 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
      */
     @PostMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL)
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+        try {
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 
-        if (!verifyAccessTokenRequest(request, response)) {
-            LOGGER.error("Access token request verification fails");
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST);
-        }
-
-        final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
-        final Service service;
-        final Authentication authentication;
-
-        final boolean generateRefreshToken;
-        final OAuthRegisteredService registeredService;
-
-        final J2EContext context = new J2EContext(request, response);
-        final ProfileManager manager = new ProfileManager(context);
-
-        if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE) || isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
-            final Optional<UserProfile> profile = manager.get(true);
-            final String clientId = profile.get().getId();
-            registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
-
-            // we generate a refresh token if requested by the service but not from a refresh token
-            generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken()
-                    && isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE);
-
-            final String parameterName;
-            if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
-                parameterName = OAuthConstants.CODE;
-            } else {
-                parameterName = OAuthConstants.REFRESH_TOKEN;
+            if (!verifyAccessTokenRequest(request, response)) {
+                LOGGER.error("Access token request verification fails");
+                return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST);
             }
 
-            final OAuthToken token = getToken(request, parameterName);
-            if (token == null) {
-                LOGGER.error("No token found for authorization_code or refresh_token grant types");
-                return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
-            }
-            service = token.getService();
-            authentication = token.getAuthentication();
+            final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
+            final Service service;
+            final Authentication authentication;
 
-        } else {
-            final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-            registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
-            generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
+            final boolean generateRefreshToken;
+            final OAuthRegisteredService registeredService;
 
-            try {
-                // resource owner password grant type
-                final Optional<OAuthUserProfile> profile = manager.get(true);
-                if (!profile.isPresent()) {
-                    throw new UnauthorizedServiceException("Oauth user profile cannot be determined");
+            final J2EContext context = new J2EContext(request, response);
+            final ProfileManager manager = new ProfileManager(context);
+
+            if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE) || isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
+                final Optional<UserProfile> profile = manager.get(true);
+                final String clientId = profile.get().getId();
+                registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
+
+                // we generate a refresh token if requested by the service but not from a refresh token
+                generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken()
+                        && isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE);
+
+                final String parameterName;
+                if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
+                    parameterName = OAuthConstants.CODE;
+                } else {
+                    parameterName = OAuthConstants.REFRESH_TOKEN;
                 }
-                service = createService(registeredService);
-                authentication = createAuthentication(profile.get(), registeredService, context);
 
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                        registeredService, authentication);
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
+                final OAuthToken token = getToken(request, parameterName);
+                if (token == null) {
+                    LOGGER.error("No token found for authorization_code or refresh_token grant types");
+                    return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
+                }
+                service = token.getService();
+                authentication = token.getAuthentication();
+
+            } else {
+                final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+                registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
+                generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
+
+                try {
+                    // resource owner password grant type
+                    final Optional<OAuthUserProfile> profile = manager.get(true);
+                    if (!profile.isPresent()) {
+                        throw new UnauthorizedServiceException("Oauth user profile cannot be determined");
+                    }
+                    service = createService(registeredService);
+                    authentication = createAuthentication(profile.get(), registeredService, context);
+
+                    RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+                            registeredService, authentication);
+                } catch (final Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                    return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
+                }
             }
+
+            final AccessToken accessToken = generateAccessToken(service, authentication, context);
+            RefreshToken refreshToken = null;
+            if (generateRefreshToken) {
+                refreshToken = this.refreshTokenFactory.create(service, authentication);
+                getTicketRegistry().addTicket(refreshToken);
+            }
+
+            LOGGER.debug("access token: [{}] / timeout: [{}] / refresh token: [{}]", accessToken,
+                    casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
+
+            this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
+                    accessToken, refreshToken,
+                    casProperties.getTicket().getTgt().getTimeToKillInSeconds());
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            return null;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw Throwables.propagate(e);
         }
-
-        final AccessToken accessToken = generateAccessToken(service, authentication, context);
-        RefreshToken refreshToken = null;
-        if (generateRefreshToken) {
-            refreshToken = this.refreshTokenFactory.create(service, authentication);
-            getTicketRegistry().addTicket(refreshToken);
-        }
-
-        LOGGER.debug("access token: [{}] / timeout: [{}] / refresh token: [{}]", accessToken,
-                casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
-
-        this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
-                accessToken, refreshToken,
-                casProperties.getTicket().getTgt().getTimeToKillInSeconds());
-
-        response.setStatus(HttpServletResponse.SC_OK);
-        return null;
     }
 
     /**
