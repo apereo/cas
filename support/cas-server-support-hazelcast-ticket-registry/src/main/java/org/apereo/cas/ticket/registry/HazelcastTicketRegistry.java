@@ -156,6 +156,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public Ticket getTicket(final String ticketId) {
+        if (ticketId == null) {
+            return null;
+        }
         return get(ticketId, ticketId.matches(ticketTypeRegEx) ? this.tgts : this.sts);
     }
 
@@ -178,7 +181,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
             tgtSet = new HashSet<>();
         }
         tgtSet.add(encodedTicketId);
-        LOGGER.info("Added tgt [{}] to user [{}], tgts size now [{}]",ticketId,user,tgtSet.size());
+        LOGGER.debug("Added tgt [{}] to user [{}], tgts size now [{}]",ticketId,user,tgtSet.size());
         this.users.set(encodedUser,tgtSet);
     }
 
@@ -188,7 +191,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         Set<String> tgtSet = this.users.get(encodedUser);
         if(tgtSet != null && !tgtSet.isEmpty()) {
             tgtSet.remove(encodedTicketId);
-            LOGGER.info("Removed tgt [{}] from user [{}], tgt size now [{}]",ticketId,user,tgtSet.size());
+            LOGGER.debug("Removed tgt [{}] from user [{}], tgt size now [{}]",ticketId,user,tgtSet.size());
             if (tgtSet.isEmpty()) {
                 this.users.remove(encodedUser);
             } else {
@@ -237,7 +240,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public Collection<Ticket> getTickets() {
-        return tgts.values().stream().limit(100).collect(Collectors.toList());
+        final Collection<Ticket> tickets = tgts.values().stream().limit(100).collect(Collectors.toList());
+        tickets.addAll(sts.values());
+        return tickets;
     }
 
     public Collection<Ticket> getTicketsByUser(final String user) {
