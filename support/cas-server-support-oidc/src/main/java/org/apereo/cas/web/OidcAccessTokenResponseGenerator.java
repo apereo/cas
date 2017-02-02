@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.OidcConstants;
@@ -138,29 +139,42 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
      * @throws JoseException the jose exception
      */
     protected String signIdTokenClaim(final OidcRegisteredService svc, final Optional<JsonWebKeySet> jwks, final JwtClaims claims) throws JoseException {
-        final JsonWebSignature jws = new JsonWebSignature();
+        try {
+            LOGGER.debug("Attempting to sign id token generated for service [{}]", svc);
+            final JsonWebSignature jws = new JsonWebSignature();
 
-        final String jsonClaims = claims.toJson();
-        jws.setPayload(jsonClaims);
-        LOGGER.debug("Generated claims are [{}]", jsonClaims);
+            final String jsonClaims = claims.toJson();
+            jws.setPayload(jsonClaims);
+            LOGGER.debug("Generated claims are [{}]", jsonClaims);
 
-        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
-        jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
+            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
+            jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
 
-        if (svc.isSignIdToken() && jwks.isPresent() && !jwks.get().getJsonWebKeys().isEmpty()) {
-            final RsaJsonWebKey jsonWebKey = (RsaJsonWebKey) jwks.get().getJsonWebKeys().get(0);
-            jws.setKey(jsonWebKey.getPrivateKey());
-            jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-            if (StringUtils.isBlank(jsonWebKey.getKeyId())) {
-                jws.setKeyIdHeaderValue(UUID.randomUUID().toString());
-            } else {
-                jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
+            if (svc.isSignIdToken() && jwks.isPresent() && !jwks.get().getJsonWebKeys().isEmpty()) {
+                LOGGER.debug("Service [{}] is set to sign id tokens", svc);
+
+                final RsaJsonWebKey jsonWebKey = (RsaJsonWebKey) jwks.get().getJsonWebKeys().get(0);
+                LOGGER.debug("Found JSON web key to sign the id token: [{}]", jsonWebKey);
+                if (jsonWebKey.getPrivateKey() == null) {
+                    throw new IllegalArgumentException("JSON web key used to sign the id token has no associated private key");
+                }
+
+                jws.setKey(jsonWebKey.getPrivateKey());
+                jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
+                if (StringUtils.isBlank(jsonWebKey.getKeyId())) {
+                    jws.setKeyIdHeaderValue(UUID.randomUUID().toString());
+                } else {
+                    jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
+                }
+                LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
+                jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
             }
-            LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
-            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+            LOGGER.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
+            return jws.getCompactSerialization();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw Throwables.propagate(e);
         }
-        LOGGER.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
-        return jws.getCompactSerialization();
     }
 
     /**
@@ -190,7 +204,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
                 }
             }
         }
-        return jsonWebKeySet != null ? Optional.of(jsonWebKeySet) : Optional.empty();
+        return jsonWebKeySet != null && !jsonWebKeySet.getJsonWebKeys().isEmpty() ? Optional.of(jsonWebKeySet) : Optional.empty();
     }
 }
 
