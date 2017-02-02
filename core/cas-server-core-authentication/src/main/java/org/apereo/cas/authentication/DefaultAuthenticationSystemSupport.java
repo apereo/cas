@@ -48,8 +48,10 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication) {
-        return new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication);
+    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication,
+                                                                                 final Credential credentials) {
+        return new DefaultAuthenticationResultBuilder(this.principalElectionStrategy)
+                .collect(authentication).collect(credentials);
     }
 
     @Override
