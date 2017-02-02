@@ -44,7 +44,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
 
     public RankedAuthenticationProviderWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                             final CentralAuthenticationService centralAuthenticationService,
-                                                            final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                            final ServicesManager servicesManager,
+                                                            final TicketRegistrySupport ticketRegistrySupport,
                                                             final CookieGenerator warnCookieGenerator,
                                                             final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
                                                             final MultifactorAuthenticationProviderSelector selector,
