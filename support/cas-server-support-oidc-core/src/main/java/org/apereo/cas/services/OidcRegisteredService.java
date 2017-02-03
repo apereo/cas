@@ -28,6 +28,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Column(updatable = true, insertable = true)
     private boolean signIdToken = true;
 
+    @Column(updatable = true, insertable = true)
+    private boolean implicit;
+
     public OidcRegisteredService() {
         setJsonFormat(Boolean.TRUE);
     }
@@ -46,6 +49,14 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     public void setJwks(final String jwks) {
         this.jwks = jwks;
+    }
+
+    public boolean isImplicit() {
+        return implicit;
+    }
+
+    public void setImplicit(final boolean implicit) {
+        this.implicit = implicit;
     }
 
     @Override
@@ -69,6 +80,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         return builder
                 .appendSuper(super.equals(obj))
                 .append(this.jwks, rhs.jwks)
+                .append(this.implicit, rhs.implicit)
                 .append(this.signIdToken, rhs.signIdToken)
                 .isEquals();
     }
@@ -79,6 +91,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
                 .appendSuper(super.hashCode())
                 .append(jwks)
                 .append(signIdToken)
+                .append(implicit)
                 .toHashCode();
     }
 
@@ -87,6 +100,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
                 .append("jwks", jwks)
+                .append("implicit", implicit)
                 .append("signIdToken", signIdToken)
                 .toString();
     }
@@ -97,6 +111,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         try {
             final OidcRegisteredService oidcService = (OidcRegisteredService) source;
             setJwks(oidcService.getJwks());
+            setImplicit(oidcService.isImplicit());
             setSignIdToken(oidcService.isSignIdToken());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
