@@ -43,7 +43,6 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
-
         String currentDn = null;
         try {
             final Response<SearchResult> response = searchForId(credential.getId());

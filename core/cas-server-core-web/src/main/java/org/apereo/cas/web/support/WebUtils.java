@@ -16,6 +16,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -481,6 +482,23 @@ public final class WebUtils {
      */
     public static void putAuthenticationResultBuilder(final AuthenticationResultBuilder builder, final RequestContext ctx) {
         ctx.getConversationScope().put(PARAMETER_AUTHENTICATION_RESULT_BUILDER, builder);
+    }
+
+    /**
+     * Gets the authenticated principal.
+     *
+     * @param requestContext        the request context
+     * @param ticketRegistrySupport the ticket registry support
+     * @return the principal
+     */
+    public static Principal getPrincipalFromRequestContext(final RequestContext requestContext,
+                                                           final TicketRegistrySupport ticketRegistrySupport) {
+        final String tgt = WebUtils.getTicketGrantingTicketId(requestContext);
+        if (StringUtils.isBlank(tgt)) {
+            throw new IllegalArgumentException("No ticket-granting ticket could be found in the context");
+        }
+
+        return ticketRegistrySupport.getAuthenticatedPrincipalFrom(tgt);
     }
 
     /**
