@@ -93,7 +93,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     @Autowired
-    public LoggingConfigController loggingConfigController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
+    public MvcEndpoint loggingConfigController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
         return new LoggingConfigController(auditTrailManager);
     }
 
@@ -140,7 +140,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
         @Autowired
         @Bean
-        public AuthenticationEventsController authenticationEventsController(@Qualifier("casEventRepository") final CasEventRepository eventRepository) {
+        public MvcEndpoint authenticationEventsController(@Qualifier("casEventRepository") final CasEventRepository eventRepository) {
             return new AuthenticationEventsController(eventRepository);
         }
     }

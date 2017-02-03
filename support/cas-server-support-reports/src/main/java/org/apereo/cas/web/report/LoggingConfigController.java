@@ -24,15 +24,14 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -54,9 +53,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Controller("loggingConfigController")
-@RequestMapping("/status/logging")
-public class LoggingConfigController {
+public class LoggingConfigController extends AbstractNamedMvcEndpoint {
     private static StringBuilder LOG_OUTPUT = new StringBuilder();
 
     private static final Object LOCK = new Object();
@@ -77,6 +74,7 @@ public class LoggingConfigController {
     private Resource logConfigurationFile;
 
     public LoggingConfigController(final DelegatingAuditTrailManager auditTrailManager) {
+        super("casloggingconfig", "/logging", true, true);
         this.auditTrailManager = auditTrailManager;
     }
 
