@@ -14,7 +14,6 @@ import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.util.CollectionUtils;
-import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.J2EContext;
