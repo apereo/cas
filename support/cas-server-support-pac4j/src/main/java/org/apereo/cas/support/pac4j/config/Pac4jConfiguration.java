@@ -196,6 +196,13 @@ public class Pac4jConfiguration {
         properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, casProperties.getAuthn().getPac4j().getOidc().getUseNonce());
     }
 
+    private void configureLinkedInClient(final Map<String, String> properties) {
+        properties.put(PropertiesConfigFactory.LINKEDIN_ID, casProperties.getAuthn().getPac4j().getLinkedIn().getId());
+        properties.put(PropertiesConfigFactory.LINKEDIN_SECRET, casProperties.getAuthn().getPac4j().getLinkedIn().getSecret());
+        properties.put(PropertiesConfigFactory.LINKEDIN_SCOPE, casProperties.getAuthn().getPac4j().getLinkedIn().getScope());
+        properties.put(PropertiesConfigFactory.LINKEDIN_FIELDS, casProperties.getAuthn().getPac4j().getLinkedIn().getFields());
+    }
+
     /**
      * Returning the built clients.
      *
@@ -220,6 +227,7 @@ public class Pac4jConfiguration {
         configureGoogleClient(properties);
         configureWindowsLiveClient(properties);
         configureYahooClient(properties);
+        configureLinkedInClient(properties);
 
         // add the new clients found via properties first
         final ConfigFactory configFactory = new PropertiesConfigFactory(properties);
