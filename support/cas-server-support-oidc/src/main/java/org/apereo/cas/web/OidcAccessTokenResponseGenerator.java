@@ -1,10 +1,8 @@
 package org.apereo.cas.web;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.google.common.base.Throwables;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.OidcTokenSigningService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -16,24 +14,17 @@ import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.util.CollectionUtils;
-import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jose4j.jwk.RsaJsonWebKey;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.jose4j.lang.JoseException;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,15 +37,17 @@ import java.util.UUID;
  */
 public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcAccessTokenResponseGenerator.class);
-    
+
     private final String issuer;
     private final int skew;
-    private final Resource jwksFile;
+    private final OidcTokenSigningService signingService;
 
-    public OidcAccessTokenResponseGenerator(final String issuer, final int skew, final Resource jwksFile) {
+    public OidcAccessTokenResponseGenerator(final String issuer,
+                                            final int skew,
+                                            final OidcTokenSigningService signingService) {
         this.issuer = issuer;
         this.skew = skew;
-        this.jwksFile = jwksFile;
+        this.signingService = signingService;
     }
 
     @Override
@@ -69,10 +62,12 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         final ProfileManager manager = new ProfileManager(context);
         final Optional<UserProfile> profile = manager.get(true);
 
+        LOGGER.debug("Attempting to produce claims for the id token [{}]", accessTokenId);
         final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeout,
                 oidcRegisteredService, profile.get(), context);
-        final Optional<JsonWebKeySet> jwks = buildJsonWebKeySet(oidcRegisteredService);
-        final String idToken = signIdTokenClaim(oidcRegisteredService, jwks, claims);
+        LOGGER.debug("Produce claims for the id token [{}] as [{}]", accessTokenId, claims);
+
+        final String idToken = this.signingService.signIdTokenClaim(oidcRegisteredService, claims);
         jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);
     }
 
@@ -96,7 +91,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setIssuer(this.issuer);
         claims.setAudience(service.getClientId());
-        
+
         final NumericDate expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeout);
         claims.setExpirationTime(expirationDate);
@@ -112,9 +107,9 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         if (authentication.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
             final Collection<Object> val = CollectionUtils.toCollection(
                     authentication.getAttributes().get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-            claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[] {}));
+            claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[]{}));
         }
-        
+
         claims.setClaim(OAuthConstants.STATE, authentication.getAttributes().get(OAuthConstants.STATE));
         claims.setClaim(OAuthConstants.NONCE, authentication.getAttributes().get(OAuthConstants.NONCE));
 
@@ -127,84 +122,6 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         }
 
         return claims;
-    }
-
-    /**
-     * Sign id token claim string.
-     *
-     * @param svc    the service
-     * @param jwks   the jwks
-     * @param claims the claims
-     * @return the string
-     * @throws JoseException the jose exception
-     */
-    protected String signIdTokenClaim(final OidcRegisteredService svc, final Optional<JsonWebKeySet> jwks, final JwtClaims claims) throws JoseException {
-        try {
-            LOGGER.debug("Attempting to sign id token generated for service [{}]", svc);
-            final JsonWebSignature jws = new JsonWebSignature();
-
-            final String jsonClaims = claims.toJson();
-            jws.setPayload(jsonClaims);
-            LOGGER.debug("Generated claims are [{}]", jsonClaims);
-
-            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
-            jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
-
-            if (svc.isSignIdToken() && jwks.isPresent() && !jwks.get().getJsonWebKeys().isEmpty()) {
-                LOGGER.debug("Service [{}] is set to sign id tokens", svc);
-
-                final RsaJsonWebKey jsonWebKey = (RsaJsonWebKey) jwks.get().getJsonWebKeys().get(0);
-                LOGGER.debug("Found JSON web key to sign the id token: [{}]", jsonWebKey);
-                if (jsonWebKey.getPrivateKey() == null) {
-                    throw new IllegalArgumentException("JSON web key used to sign the id token has no associated private key");
-                }
-
-                jws.setKey(jsonWebKey.getPrivateKey());
-                jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-                if (StringUtils.isBlank(jsonWebKey.getKeyId())) {
-                    jws.setKeyIdHeaderValue(UUID.randomUUID().toString());
-                } else {
-                    jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
-                }
-                LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
-                jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
-            }
-            LOGGER.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
-            return jws.getCompactSerialization();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw Throwables.propagate(e);
-        }
-    }
-
-    /**
-     * Build json web key set.
-     *
-     * @param service the service
-     * @return the json web key set
-     * @throws Exception the exception
-     */
-    protected Optional<JsonWebKeySet> buildJsonWebKeySet(final OidcRegisteredService service) throws Exception {
-        JsonWebKeySet jsonWebKeySet = null;
-        try {
-            if (StringUtils.isNotBlank(service.getJwks())) {
-                LOGGER.debug("Loading JWKS from [{}]", service.getJwks());
-                final Resource resource = this.resourceLoader.getResource(service.getJwks());
-                jsonWebKeySet = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
-            }
-        } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
-        } finally {
-            if (jsonWebKeySet == null) {
-                LOGGER.debug("Loading default JWKS from [{}]", this.jwksFile);
-
-                if (this.jwksFile != null) {
-                    final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
-                    jsonWebKeySet = new JsonWebKeySet(jsonJwks);
-                }
-            }
-        }
-        return jsonWebKeySet != null && !jsonWebKeySet.getJsonWebKeys().isEmpty() ? Optional.of(jsonWebKeySet) : Optional.empty();
     }
 }
 
