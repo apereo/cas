@@ -63,7 +63,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
 
         String acr = request.getParameter(OAuthConstants.ACR_VALUES);
         if (StringUtils.isBlank(acr)) {
-            final URIBuilder builderContext = new URIBuilder(context.getFlowExecutionUrl());
+            final URIBuilder builderContext = new URIBuilder(StringUtils.trimToEmpty(context.getFlowExecutionUrl()));
             final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
                     .stream().filter(p -> p.getName().equals(OAuthConstants.ACR_VALUES))
                     .findFirst();

@@ -80,12 +80,13 @@ public class GenerateServiceTicketAction extends AbstractAction {
             WebUtils.putRegisteredService(context, registeredService);
             WebUtils.putService(context, service);
 
-            if (!StringUtils.isEmpty(registeredService.getAccessStrategy().getUnauthorizedRedirectUrl())) {
-                LOGGER.debug("Registered service may redirect to [{}] for unauthorized access requests",
-                        registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+            if (registeredService != null) {
+                if (!StringUtils.isEmpty(registeredService.getAccessStrategy().getUnauthorizedRedirectUrl())) {
+                    LOGGER.debug("Registered service may redirect to [{}] for unauthorized access requests",
+                            registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+                }
+                WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
             }
-            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
-
             if (WebUtils.getWarningCookie(context)) {
                 LOGGER.debug("Warning cookie is present in the request context. Routing result to [{}] state", CasWebflowConstants.STATE_ID_WARN);
                 return result(CasWebflowConstants.STATE_ID_WARN);
@@ -121,6 +122,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
      * @param context the context
      * @return true, if gateway present
      */
+
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
                 .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
