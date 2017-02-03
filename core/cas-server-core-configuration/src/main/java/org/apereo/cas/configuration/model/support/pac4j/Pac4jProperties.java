@@ -23,6 +23,7 @@ public class Pac4jProperties {
     private Yahoo yahoo = new Yahoo();
     private Foursquare foursquare = new Foursquare();
     private WindowsLive windowsLive = new WindowsLive();
+    private LinkedIn linkedIn = new LinkedIn();
 
     public WindowsLive getWindowsLive() {
         return windowsLive;
@@ -100,6 +101,10 @@ public class Pac4jProperties {
         this.cas = cas;
     }
 
+    public void setLinkedIn(LinkedIn linkedIn) {
+        this.linkedIn = linkedIn;
+    }
+
     public Cas getCas() {
         return this.cas;
     }
@@ -118,6 +123,10 @@ public class Pac4jProperties {
 
     public Twitter getTwitter() {
         return this.twitter;
+    }
+
+    public LinkedIn getLinkedIn() {
+        return linkedIn;
     }
 
     public static class Facebook {
@@ -492,6 +501,45 @@ public class Pac4jProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+    }
+    
+    public static class LinkedIn {
+        private String id;
+        private String secret;
+        private String scope;
+        private String fields;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+
+        public String getScope() {
+            return this.scope;
+        }
+
+        public void setScope(final String scope) {
+            this.scope = scope;
+        }
+
+        public String getFields() {
+            return this.fields;
+        }
+
+        public void setFields(final String fields) {
+            this.fields = fields;
         }
     }
 }
