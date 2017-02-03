@@ -92,7 +92,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             }
         });
 
-        final long count = principals.stream().map(Principal::getId).distinct().collect(Collectors.toSet()).size();
+        final long count = principals.stream().map(p -> p.getId().trim().toLowerCase()).distinct().collect(Collectors.toSet()).size();
         if (count > 1) {
             throw new PrincipalException("Resolved principals by the chain are not unique because principal resolvers have produced CAS principals "
                     + "with different identifiers which typically is the result of a configuration issue.",

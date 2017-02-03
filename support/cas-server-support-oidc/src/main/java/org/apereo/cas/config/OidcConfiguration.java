@@ -6,6 +6,7 @@ import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.OidcTokenSigningService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -213,7 +214,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        return new OidcAccessTokenResponseGenerator(oidc.getIssuer(), oidc.getSkew(), oidc.getJwksFile());
+        return new OidcAccessTokenResponseGenerator(oidc.getIssuer(), oidc.getSkew(), oidcTokenSigningService());
     }
 
     @Bean
@@ -282,13 +283,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        return new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
+        return new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
+                centralAuthenticationService, servicesManager,
+                ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
+                multifactorAuthenticationProviderSelector);
     }
 
     @Bean
     public CasWebflowConfigurer oidcWebflowConfigurer() {
-        final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction());
+        final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction());
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         return cfg;
     }
@@ -297,6 +301,11 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public Action oidcRegisteredServiceUIAction() {
         return new OidcRegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationRequestServiceSelectionStrategy);
+    }
+
+    @Bean
+    public OidcTokenSigningService oidcTokenSigningService() {
+        return new OidcTokenSigningService(casProperties.getAuthn().getOidc().getJwksFile());
     }
 
     @Bean
