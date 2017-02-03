@@ -77,7 +77,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     }
 
     @Bean
-    public ConfigurationStateController internalConfigController() {
+    public MvcEndpoint internalConfigController() {
         return new ConfigurationStateController();
     }
 
