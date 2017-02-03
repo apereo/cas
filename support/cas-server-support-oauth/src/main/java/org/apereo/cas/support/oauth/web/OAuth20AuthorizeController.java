@@ -36,6 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -86,8 +88,10 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final ProfileManager manager = new ProfileManager(context);
 
         if (!verifyAuthorizeRequest(request) || !isRequestAuthenticated(manager, context)) {
-            LOGGER.error("Authorize request verification fails");
-            return new ModelAndView(OAuthConstants.ERROR_VIEW);
+            LOGGER.error("Authorize request verification failed");
+            final Map model = new HashMap<>();
+            model.put("rootCauseException", new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+            return new ModelAndView(OAuthConstants.ERROR_VIEW, model);
         }
 
         final String clientId = context.getRequestParameter(OAuthConstants.CLIENT_ID);
@@ -96,7 +100,9 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return new ModelAndView(OAuthConstants.ERROR_VIEW);
+            final Map model = new HashMap<>();
+            model.put("rootCauseException", new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+            return new ModelAndView(OAuthConstants.ERROR_VIEW, model);
         }
 
         final ModelAndView mv = this.consentApprovalViewResolver.resolve(context, registeredService);
