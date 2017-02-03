@@ -2,9 +2,9 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,8 +20,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Controller("internalConfigController")
-public class ConfigurationStateController {
+public class ConfigurationStateController extends AbstractNamedMvcEndpoint {
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 
@@ -31,6 +30,10 @@ public class ConfigurationStateController {
     @Autowired
     private ConfigServerProperties configServerProperties;
 
+    public ConfigurationStateController() {
+        super("configstate", "/config", true, true);
+    }
+
     /**
      * Handle request.
      *
@@ -39,8 +42,9 @@ public class ConfigurationStateController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping(value = "/status/config")
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @GetMapping
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
         ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);
