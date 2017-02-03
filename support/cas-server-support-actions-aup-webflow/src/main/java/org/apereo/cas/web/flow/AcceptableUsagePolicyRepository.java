@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
@@ -17,9 +19,9 @@ public interface AcceptableUsagePolicyRepository extends Serializable {
      *
      * @param requestContext the request context
      * @param credential     the credential
-     * @return true if policy is accepted.
+     * @return pair true if policy is accepted along with principal.
      */
-    boolean verify(RequestContext requestContext, Credential credential);
+    Pair<Boolean, Principal> verify(RequestContext requestContext, Credential credential);
 
     /**
      * Record the fact that the policy is accepted..
