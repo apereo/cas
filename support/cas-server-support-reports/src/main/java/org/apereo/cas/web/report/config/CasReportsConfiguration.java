@@ -21,6 +21,7 @@ import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.TrustedDevicesController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -71,7 +72,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     public DashboardController dashboardController() {
         return new DashboardController();
     }
-
+        
     @Bean
     public PersonDirectoryAttributeResolutionController personDirectoryAttributeResolutionController() {
         return new PersonDirectoryAttributeResolutionController();
@@ -84,7 +85,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     }
 
     @Bean
-    public HealthCheckController healthCheckController() {
+    public MvcEndpoint healthCheckController() {
         return new HealthCheckController(healthCheckMonitor, casProperties.getHttpClient().getAsyncTimeout());
     }
 
