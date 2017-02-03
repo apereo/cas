@@ -29,7 +29,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
     protected String aupAttributeName;
 
     /**
-     * Ticket registry support
+     * Ticket registry support.
      */
     protected TicketRegistrySupport ticketRegistrySupport;
 
