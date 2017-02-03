@@ -36,7 +36,8 @@ public class OidcAuthorizationRequestSupport {
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
 
-    public OidcAuthorizationRequestSupport(final CookieRetrievingCookieGenerator tgtCookieGenerator, final TicketRegistrySupport ticketRegistrySupport) {
+    public OidcAuthorizationRequestSupport(final CookieRetrievingCookieGenerator tgtCookieGenerator,
+                                           final TicketRegistrySupport ticketRegistrySupport) {
         this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;
         this.ticketRegistrySupport = ticketRegistrySupport;
     }
