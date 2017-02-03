@@ -98,6 +98,13 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public Collection<Ticket> getTicketsByUser(final String user) {
+        return Collections.unmodifiableCollection(this.cache.values());
+    }
+
+
+
+    @Override
     public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
         return ticket;

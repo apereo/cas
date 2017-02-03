@@ -64,15 +64,11 @@ function format ( d ) {
         '</tr>'+
         '<tr>'+
         '<td class="field-label active">Principal Attributes:</td>'+
-        '<td>' +
-        principalAttributes(d.principal_attributes) +
-        '</td>' +
+        '<td>' + principalAttributes(d.principal_attributes) + '</td>' +
         '</tr>'+
         '<tr>'+
         '<td class="field-label active">Authenticated Services:</td>'+
-        '<td>' +
-        authenticatedServices(d.authenticated_services);
-    '</td>' +
+        '<td>' + authenticatedServices(d.authenticated_services) + '</td>' +
     '</tr>'+
     '<tr>'+
     '<td class="field-label active">Ticket Granting Service:</td>'+
@@ -126,26 +122,16 @@ function alertUser(message, alertType) {
     }, 5000);
 }
 
-function removeSession( ticketId ) {
+function removeSession( tickets ) {
     var factory = {};
     factory.httpHeaders = {};
     factory.messages = {};
     factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
-
-    factory.ticketId = ticketId;
-
-
-    if (ticketId && (ticketId == 'ALL' || ticketId == 'PROXIED' || ticketId == 'DIRECT' ) ) {
+    factory.tickets = tickets;
         factory.url = urls.destroy.all
-        factory.data = { type: ticketId };
-        factory.messages.success = 'Removed <strong>' + ticketId + '</strong> tickets successfully.';
-        factory.messages.error = 'Could not remove <strong>' + ticketId + '</strong> tickets.';
-    } else {
-        factory.url = urls.destroy.single
-        factory.data = { ticketGrantingTicket: factory.ticketId };
-        factory.messages.success = 'Ticket is removed successfully.';
-        factory.messages.error = 'Ticket is not removed successfully.';
-    }
+    factory.data = { "tickets": factory.tickets };
+    factory.messages.success = 'Removed tickets successfully.';
+    factory.messages.error = 'Could not remove tickets.';
 
     $.ajax({
         type: 'post',
@@ -162,8 +148,6 @@ function removeSession( ticketId ) {
                 alertUser(factory.messages.error, 'danger');
             } else {
                 alertUser( factory.messages.success, 'success' );
-                // Reload the page
-                location.reload();
             }
         },
         error: function(xhr, status) {
@@ -179,7 +163,7 @@ var ssoSessions = (function () {
             "initComplete": function(settings, json) {
                 if (!json || json.activeSsoSessions.length == 0) {
                     $('#loadingMessage').hide();
-                    $('#no-cas-sessions').show();
+                    $('#no-cas-sessions').hide();
                 } else {
                     updateAdminPanels( json );
 
@@ -195,8 +179,23 @@ var ssoSessions = (function () {
             },
             "processing": true,
             "ajax": {
-                "url": urls.getSessions,
-                "dataSrc": "activeSsoSessions"
+                "url": urls.getSessions+"?user="+$('#user').val(),
+                "dataSrc": function(json) {
+                    if (!json || json.activeSsoSessions.length == 0) {
+                        $('#loadingMessage').hide();
+                        $('#no-cas-sessions').show();
+                        $("#cas-sessions").hide();
+                        return ""
+                    } else {
+                        updateAdminPanels( json );
+
+                        $('#loadingMessage').hide();
+                        $("#no-cas-sessions").hide();
+                        $("#cas-sessions").show();
+                        return json.activeSsoSessions;
+                    }// Reload the page
+                //location.reload();
+                }
             },
 
             columnDefs: [
@@ -269,7 +268,12 @@ var ssoSessions = (function () {
          */
         $('#removeAllSessionsButton').on('click', function(e) {
             e.preventDefault();
-            removeSession(this.value);
+            //removeSession(this.value);
+            var tgts = [];
+            $('#ssoSessions').DataTable().data().each(function(r) {
+               tgts.push(r.ticket_granting_ticket);
+            });
+            removeSession(tgts);
         });
 
         /**
@@ -277,7 +281,8 @@ var ssoSessions = (function () {
          */
         $(document).on('click', '#ssoSessions tbody tr td:last-child button.btn-danger', function (e) {
             e.preventDefault();
-            removeSession( this.value );
+            var tgts = [this.value];
+            removeSession(tgts);
         });
 
         /**
@@ -327,6 +332,13 @@ var ssoSessions = (function () {
             }
         } );
 
+        $('#refresh').on('click', function(e) {
+            $('#ssoSessions').DataTable().ajax.reload();
+        });
+
+        $('#user').on('change',function(e) {
+            $('#ssoSessions').DataTable().ajax.url(urls.getSessions+"?user="+$('#user').val()).load();
+        });
 
 
     };

@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
 
 import java.util.Collection;
@@ -111,6 +112,21 @@ public interface CentralAuthenticationService {
     Collection<Ticket> getTickets(Predicate<Ticket> predicate);
 
     /**
+     * Retrieve a collection of tickets from the underlying ticket registry.
+     * The retrieval operation must pass the predicate check that is solely
+     * used to filter the collection of tickets received. Implementations
+     * can use the predicate to request a collection of expired tickets,
+     * or tickets whose id matches a certain pattern, etc. The resulting
+     * collection will include ticktes that have been evaluated by the predicate.
+     *
+     * @param user the username to retrieve as regular expression
+     * @param predicate the predicate
+     * @return the tickets
+     * @since 5.1.0
+     */
+    Collection<Ticket> getTickets(String user, Predicate<Ticket> predicate);
+
+    /**
      * Grant a {@link ServiceTicket} that may be used to access the given service
      * by authenticating the given credentials.
      * The details of the security policy around credential authentication and the definition
@@ -186,4 +202,6 @@ public interface CentralAuthenticationService {
      */
     ProxyGrantingTicket createProxyGrantingTicket(String serviceTicketId, AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException;
+
+    TicketRegistry getTicketRegistry();
 }

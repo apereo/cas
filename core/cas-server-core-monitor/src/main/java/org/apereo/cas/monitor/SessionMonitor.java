@@ -37,6 +37,7 @@ public class SessionMonitor implements Monitor<SessionStatus> {
         try {
             final long sessionCount = this.registryState.sessionCount();
             final long ticketCount = this.registryState.serviceTicketCount();
+            final long userCount = this.registryState.userCount();
 
             if (sessionCount == Integer.MIN_VALUE || ticketCount == Integer.MIN_VALUE) {
                 return new SessionStatus(StatusCode.UNKNOWN,
@@ -63,6 +64,7 @@ public class SessionMonitor implements Monitor<SessionStatus> {
             } else {
                 msg.append(ticketCount).append(" service tickets.");
             }
+            msg.append(userCount).append(" unique users.");
             return new SessionStatus(code, msg.toString(), sessionCount, ticketCount);
         } catch (final Exception e) {
             return new SessionStatus(StatusCode.ERROR, e.getMessage());

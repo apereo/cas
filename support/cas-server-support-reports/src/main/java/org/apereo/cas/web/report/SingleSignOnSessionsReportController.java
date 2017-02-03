@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -118,11 +120,11 @@ public class SingleSignOnSessionsReportController {
      * @param option the option
      * @return the sso sessions
      */
-    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
+    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option, final String user) {
         final Collection<Map<String, Object>> activeSessions = new ArrayList<>();
         final ISOStandardDateFormat dateFormat = new ISOStandardDateFormat();
 
-        for (final Ticket ticket : getNonExpiredTicketGrantingTickets()) {
+        for (final Ticket ticket : getNonExpiredTicketGrantingTickets(user)) {
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
 
             if (option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null) {
@@ -163,8 +165,13 @@ public class SingleSignOnSessionsReportController {
      *
      * @return the non expired ticket granting tickets
      */
-    private Collection<Ticket> getNonExpiredTicketGrantingTickets() {
-        return this.centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
+    private Collection<Ticket> getNonExpiredTicketGrantingTickets(final String user) {
+        return this.centralAuthenticationService.getTickets(user,ticket -> {
+            if (ticket instanceof TicketGrantingTicketImpl) {
+                return !ticket.isExpired();
+            }
+            return false;
+        });
     }
 
     /**
@@ -175,13 +182,14 @@ public class SingleSignOnSessionsReportController {
      */
     @GetMapping(value = "/getSsoSessions")
     @ResponseBody
-    public WebAsyncTask<Map<String, Object>> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
+    public WebAsyncTask<Map<String, Object>> getSsoSessions(@RequestParam final String user,
+            @RequestParam(defaultValue = "ALL") final String type) {
 
         final Callable<Map<String, Object>> asyncTask = () -> {
             final Map<String, Object> sessionsMap = new HashMap<>(1);
             final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
 
-            final Collection<Map<String, Object>> activeSsoSessions = getActiveSsoSessions(option);
+            final Collection<Map<String, Object>> activeSsoSessions = getActiveSsoSessions(option, user);
             sessionsMap.put("activeSsoSessions", activeSsoSessions);
 
             long totalTicketGrantingTickets = 0;
@@ -246,20 +254,16 @@ public class SingleSignOnSessionsReportController {
     /**
      * Endpoint for destroying SSO Sessions.
      *
-     * @param type the type
+     * @param tickets list of tickets to destroy
      * @return result map
      */
     @PostMapping(value = "/destroySsoSessions")
     @ResponseBody
-    public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
+    public Map<String, Object> destroySsoSessions(@RequestParam(value="tickets[]") final List<String> tickets) {
         final Map<String, Object> sessionsMap = new HashMap<>();
         final Map<String, String> failedTickets = new HashMap<>();
 
-        final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
-        final Collection<Map<String, Object>> collection = getActiveSsoSessions(option);
-        for (final Map<String, Object> sso : collection) {
-            final String ticketGrantingTicket =
-                    sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString();
+        for (String ticketGrantingTicket : tickets) {
             try {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             } catch (final Exception e) {

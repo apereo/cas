@@ -25,8 +25,11 @@ public class MemoryStatus extends Status {
      *
      * @see #getCode()
      */
-    public MemoryStatus(final StatusCode code, final long free, final long total) {
-        super(code, String.format("%.2fMB free, %.2fMB total.", free / BYTES_PER_MB, total / BYTES_PER_MB));
+    public MemoryStatus(final StatusCode code, final long free, final long total, final long used) {
+        super(code, String.format("%.2fMB free (%.2f%%), %.2fMB used, %.2fMB total.", free / BYTES_PER_MB,
+                                                                             free * 100.0 / (double)total,
+                                                                             used / BYTES_PER_MB,
+                                                                             total / BYTES_PER_MB));
         this.freeMemory = free;
         this.totalMemory = total;
     }

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -94,6 +95,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                     this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
+    }
+
+    @Override
+    public long userCount() {
+        LOGGER.debug("userCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
+                this.getClass().getName(), Long.MIN_VALUE);
+        return Long.MIN_VALUE;
     }
 
     @Override
@@ -271,5 +279,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
     }
 
-
+    public Collection<Ticket> getTicketsByUser(final String user) {
+        return Collections.EMPTY_LIST;
+    }
 }

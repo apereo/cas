@@ -87,4 +87,12 @@ public interface TicketRegistry {
      */
     long serviceTicketCount();
 
+    /**
+     * Computes the number of unique users with valid TGTs in CAS
+     *
+     * @return Number of unique users logged into CAS
+     */
+    long userCount();
+
+    Collection<Ticket> getTicketsByUser(String user);
 }

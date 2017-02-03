@@ -189,6 +189,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public Collection<Ticket> getTickets(final String user, final Predicate<Ticket> predicate) {
+        return this.ticketRegistry.getTicketsByUser(user).stream()
+               .filter(predicate)
+               .collect(Collectors.toSet());
+    }
+
+
     /**
      * Gets the authentication satisfied by policy.
      *
@@ -303,4 +311,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
+
+    public TicketRegistry getTicketRegistry() {
+        return this.ticketRegistry;
+    }
+
 }
