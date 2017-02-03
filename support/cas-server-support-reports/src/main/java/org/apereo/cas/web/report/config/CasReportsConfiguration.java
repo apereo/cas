@@ -11,9 +11,9 @@ import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.report.AuthenticationEventsController;
+import org.apereo.cas.web.report.ConfigurationStateController;
 import org.apereo.cas.web.report.DashboardController;
 import org.apereo.cas.web.report.HealthCheckController;
-import org.apereo.cas.web.report.ConfigurationStateController;
 import org.apereo.cas.web.report.LoggingConfigController;
 import org.apereo.cas.web.report.PersonDirectoryAttributeResolutionController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
@@ -25,7 +25,6 @@ import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -58,7 +57,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     @Autowired
     @Qualifier("metrics")
     private MetricRegistry metricsRegistry;
@@ -67,18 +66,16 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Qualifier("healthCheckMetrics")
     private HealthCheckRegistry healthCheckRegistry;
 
-    @RefreshScope
     @Bean
-    public DashboardController dashboardController() {
+    public MvcEndpoint dashboardController() {
         return new DashboardController();
     }
-        
+
     @Bean
     public PersonDirectoryAttributeResolutionController personDirectoryAttributeResolutionController() {
         return new PersonDirectoryAttributeResolutionController();
     }
-    
-    @RefreshScope
+
     @Bean
     public ConfigurationStateController internalConfigController() {
         return new ConfigurationStateController();
@@ -94,7 +91,6 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return new SingleSignOnSessionsReportController(centralAuthenticationService);
     }
 
-    @RefreshScope
     @Bean
     @Autowired
     public LoggingConfigController loggingConfigController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
