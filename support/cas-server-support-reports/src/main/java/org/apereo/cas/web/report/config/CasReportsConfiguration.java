@@ -72,7 +72,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     }
 
     @Bean
-    public PersonDirectoryAttributeResolutionController personDirectoryAttributeResolutionController() {
+    public MvcEndpoint personDirectoryAttributeResolutionController() {
         return new PersonDirectoryAttributeResolutionController();
     }
 
@@ -87,7 +87,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     }
 
     @Bean
-    public SingleSignOnSessionsReportController singleSignOnSessionsReportController() {
+    public MvcEndpoint singleSignOnSessionsReportController() {
         return new SingleSignOnSessionsReportController(centralAuthenticationService);
     }
 
@@ -98,7 +98,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     }
 
     @Bean
-    public StatisticsController statisticsController() {
+    public MvcEndpoint statisticsController() {
         return new StatisticsController(centralAuthenticationService, metricsRegistry, healthCheckRegistry, casProperties.getHost().getName());
     }
 
@@ -126,7 +126,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
         @Autowired
         @Bean
-        public TrustedDevicesController trustedDevicesController(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+        public MvcEndpoint trustedDevicesController(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
             return new TrustedDevicesController(mfaTrustEngine);
         }
     }
