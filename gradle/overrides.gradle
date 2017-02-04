@@ -16,6 +16,7 @@ ext["springSessionVersion"] = "1.2.2.RELEASE"
 ext["hsqlVersion"] = "2.3.4"
 ext["httpCoreVersion"] = "4.4.4"
 ext["hikariVersion"] = "2.5.1"
+ext["groovyVersion"] = "2.4.8"
 
 ext["commons-beanutils.version"] = "1.8.3"
 ext["hazelcast.version"] = ext["hazelcastVersion"]
@@ -30,3 +31,4 @@ ext["spring-session.version"] = ext["springSessionVersion"]
 ext["hsqldb.version"] = ext["hsqlVersion"]
 ext["httpcore.version"] = ext["httpCoreVersion"]
 ext["hikaricp.version"] = ext["hikariVersion"]
+ext["groovy.version"] = ext["groovyVersion"]
