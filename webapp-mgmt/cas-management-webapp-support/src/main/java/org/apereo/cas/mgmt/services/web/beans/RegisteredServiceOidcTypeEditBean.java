@@ -9,6 +9,15 @@ public class RegisteredServiceOidcTypeEditBean extends RegisteredServiceOAuthTyp
     private static final long serialVersionUID = -378685014926798349L;
     private boolean signToken;
     private String jwks;
+    private boolean implicit;
+
+    public boolean isImplicit() {
+        return implicit;
+    }
+
+    public void setImplicit(final boolean implicit) {
+        this.implicit = implicit;
+    }
 
     public boolean isSignToken() {
         return signToken;
