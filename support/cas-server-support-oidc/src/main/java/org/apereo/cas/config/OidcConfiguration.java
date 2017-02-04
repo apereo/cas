@@ -182,7 +182,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
-        return new OidcCallbackAuthorizeViewResolver(oidcAuthorizationRequestSupport());
+        return new OidcCallbackAuthorizeViewResolver(oidcAuthorizationRequestSupport(), servicesManager);
     }
 
     @Bean
