@@ -271,6 +271,6 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
      * @return whether the grant type is the expected one
      */
     private static boolean isGrantType(final String type, final OAuthGrantType expectedType) {
-        return expectedType != null && expectedType.name().toLowerCase().equals(type);
+        return expectedType.name().equalsIgnoreCase(type);
     }
 }
