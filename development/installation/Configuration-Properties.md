@@ -192,9 +192,9 @@ server.port=8443
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
-server.maxHttpHeader-size=2097152
-server.useForwardHeaders=true
-server.connectionTimeout=20000
+server.max-http-header-size=2097152
+server.use-forward-headers=true
+server.connection-timeout=20000
 
 # server.ssl.ciphers=
 # server.ssl.clientAuth=
@@ -353,8 +353,8 @@ Status endpoints may also be secured by Spring Security. You can define the auth
 
 ```properties
 # security.ignored[0]=/**
-security.filterOrder=0
-security.requireSsl=true
+security.filter-order=0
+security.require-ssl=true
 security.sessions=if_required
 security.user.name=<predefined-userid>
 security.user.password=<predefined-password>
@@ -364,7 +364,7 @@ security.user.role=ACTUATOR
 #### Basic AuthN
 
 ```properties
-security.basic.authorizeMode=none|role|authenticated
+security.basic.authorize-mode=none|role|authenticated
 security.basic.enabled=true
 security.basic.path=/cas/status/**
 security.basic.realm=CAS
