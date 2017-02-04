@@ -7,12 +7,27 @@ package org.apereo.cas.support.oauth;
  * @since 5.0.0
  */
 public enum OAuthResponseType {
+
     /**
      * For authorization grant type.
      */
-    CODE,
+    CODE("code"),
     /**
      * For implicit grant type.
      */
-    TOKEN
+    TOKEN("token"),
+    /**
+     * For implicit grant type.
+     */
+    IDTOKEN_TOKEN("idtoken token");
+
+    private final String type;
+
+    OAuthResponseType(final String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
 }

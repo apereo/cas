@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * This controller is in charge of responding to the authorize call in OAuth v2 protocol.
@@ -49,7 +50,7 @@ import java.util.Optional;
  */
 public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
-    
+
     /**
      * The code factory instance.
      */
@@ -251,14 +252,11 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      */
     private boolean checkResponseTypes(final String type, final OAuthResponseType... expectedTypes) {
         LOGGER.debug("Response type: [{}]", type);
-
-        for (final OAuthResponseType expectedType : expectedTypes) {
-            if (isResponseType(type, expectedType)) {
-                return true;
-            }
+        final boolean checked = Stream.of(expectedTypes).anyMatch(t -> isResponseType(type, t));
+        if (!checked) {
+            LOGGER.error("Unsupported response type: [{}]", type);
         }
-        LOGGER.error("Unsupported response type: [{}]", type);
-        return false;
+        return checked;
     }
 
     /**
@@ -269,6 +267,6 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @return whether the response type is the expected one
      */
     private static boolean isResponseType(final String type, final OAuthResponseType expectedType) {
-        return expectedType != null && expectedType.name().toLowerCase().equals(type);
+        return expectedType.getType().equalsIgnoreCase(type);
     }
 }
