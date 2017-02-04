@@ -844,14 +844,6 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 # cas.authn.adaptive.risk.response.mfaProvider=
 # cas.authn.adaptive.risk.response.riskyAuthenticationAttribute=triggeredRiskBasedAuthentication
 
-# spring.mail.host=
-# spring.mail.username=
-# spring.mail.password=
-# spring.mail.port=
-# spring.mail.properties.mail.smtp.auth=true
-# spring.mail.protocol=smtp
-# spring.mail.test-connection=false
-
 # cas.authn.adaptive.risk.response.mail.from=
 # cas.authn.adaptive.risk.response.mail.text=
 # cas.authn.adaptive.risk.response.mail.subject=
