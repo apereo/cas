@@ -4,6 +4,7 @@ layout: null
 
 * [Planning](#planning)
     *   [Architecture](/$version/planning/Architecture.html)
+    *   [Getting Started](/$version/planning/Getting-Started.html)
     *   [Installation Requirements](/$version/planning/Installation-Requirements.html)
     *   [Security Guide](/$version/planning/Security-Guide.html)
     *   [High Availability Guide](/$version/planning/High-Availability-Guide.html)
@@ -126,8 +127,7 @@ layout: null
     *   [OIDC Protocol](/$version/protocol/OIDC-Protocol.html)
     *   [SAML Protocol](#samlprotocol)
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
-        *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
-        *   [Google Apps](/$version/integration/Google-Apps-Integration.html)  
+        *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html) 
     *   [REST Protocol](/$version/protocol/REST-Protocol.html)
 
 * [Integration](#appintegration)

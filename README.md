@@ -22,6 +22,7 @@ CAS is an open and well-documented authentication protocol. The primary implemen
 an open-source Java server component by the same name, hosted here. 
 
 ## Features
+
 The following features are supported by the CAS project:
 
 * CAS v1, v2 and v3 Protocol
@@ -31,15 +32,17 @@ The following features are supported by the CAS project:
 * Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Stormpath, Remote, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
 * Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID, OpenID Connect, CAS and more.
 * Authorization via ABAC, Time/Date, Internet2's Grouper and more.
-* HA clustered deployments via Hazelcast, Ehcache, JPA, Memcached, Apache Ignite, Couchbase and more.
-* Application registration backed by JSON, LDAP, JPA, Couchbase, MongoDb and more.
+* HA clustered deployments via Hazelcast, Ehcache, JPA, Memcached, Apache Ignite, MongoDb, Redis, Couchbase and more.
+* Application registration backed by JSON, LDAP, YAML, JPA, Couchbase, MongoDb and more.
 * Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator and more.
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
 * Global and per-application user interface theme and branding.
+* Password management and password policy enforcement.
 
 The foundations of CAS are built upon: Spring Framework, Spring Boot, Spring Cloud, Spring Session and Thymeleaf.
 
 ## Documentation [![Gitter](https://badges.gitter.im/Join Chat.svg)][casgitter]
+
 - [Documentation][wiki]
 - [Release Notes][releasenotes]
 - [Support] [cassupport]
