@@ -11,7 +11,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.OAuthGrantType;
+import org.apereo.cas.support.oauth.OAuthGrantTypes;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -98,17 +98,17 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
 
-            if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE) || isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
+            if (isGrantType(grantType, OAuthGrantTypes.AUTHORIZATION_CODE) || isGrantType(grantType, OAuthGrantTypes.REFRESH_TOKEN)) {
                 final Optional<UserProfile> profile = manager.get(true);
                 final String clientId = profile.get().getId();
                 registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
 
                 // we generate a refresh token if requested by the service but not from a refresh token
                 generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken()
-                        && isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE);
+                        && isGrantType(grantType, OAuthGrantTypes.AUTHORIZATION_CODE);
 
                 final String parameterName;
-                if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
+                if (isGrantType(grantType, OAuthGrantTypes.AUTHORIZATION_CODE)) {
                     parameterName = OAuthConstants.CODE;
                 } else {
                     parameterName = OAuthConstants.REFRESH_TOKEN;
@@ -202,7 +202,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
         // must have the right grant type
         final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
-        if (!checkGrantTypes(grantType, OAuthGrantType.AUTHORIZATION_CODE, OAuthGrantType.PASSWORD, OAuthGrantType.REFRESH_TOKEN)) {
+        if (!checkGrantTypes(grantType, OAuthGrantTypes.AUTHORIZATION_CODE, OAuthGrantTypes.PASSWORD, OAuthGrantTypes.REFRESH_TOKEN)) {
             return false;
         }
 
@@ -217,7 +217,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         final UserProfile uProfile = profile.get();
 
         // authorization code grant type
-        if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
+        if (isGrantType(grantType, OAuthGrantTypes.AUTHORIZATION_CODE)) {
             final String clientId = uProfile.getId();
             final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
             final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
@@ -227,7 +227,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
                     && getValidator().checkParameterExist(request, OAuthConstants.CODE)
                     && getValidator().checkCallbackValid(registeredService, redirectUri);
 
-        } else if (isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
+        } else if (isGrantType(grantType, OAuthGrantTypes.REFRESH_TOKEN)) {
             // refresh token grant type
             return uProfile instanceof OAuthClientProfile
                     && getValidator().checkParameterExist(request, OAuthConstants.REFRESH_TOKEN);
@@ -251,10 +251,10 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
      * @param expectedTypes the expected grant types
      * @return whether the grant type is supported
      */
-    private boolean checkGrantTypes(final String type, final OAuthGrantType... expectedTypes) {
+    private boolean checkGrantTypes(final String type, final OAuthGrantTypes... expectedTypes) {
         LOGGER.debug("Grant type: [{}]", type);
 
-        for (final OAuthGrantType expectedType : expectedTypes) {
+        for (final OAuthGrantTypes expectedType : expectedTypes) {
             if (isGrantType(type, expectedType)) {
                 return true;
             }
@@ -270,7 +270,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
      * @param expectedType the expected grant type
      * @return whether the grant type is the expected one
      */
-    private static boolean isGrantType(final String type, final OAuthGrantType expectedType) {
+    private static boolean isGrantType(final String type, final OAuthGrantTypes expectedType) {
         return expectedType.name().equalsIgnoreCase(type);
     }
 }
