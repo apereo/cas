@@ -17,12 +17,12 @@ CAS provides a friendly open source community that actively supports and contrib
 While the project is rooted in higher-ed open source, it has grown to an international audience spanning
 Fortune 500 companies and small special-purpose installations.
 
-
 ## Getting Started
 
 We recommend reading the following documentation in order to plan and execute a CAS deployment.
 
 * [Architecture](planning/Architecture.html)
+* [Getting Started](planning/Getting-Started.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Overlay Installation](installation/Maven-Overlay-Installation.html)
 * [Authentication](installation/Configuring-Authentication-Components.html)
