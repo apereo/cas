@@ -23,6 +23,8 @@ public class PasswordManagementProperties {
     
     private Ldap ldap = new Ldap();
     private Jdbc jdbc = new Jdbc();
+    private Rest rest = new Rest();
+
     private Reset reset = new Reset();
 
     public Reset getReset() {
@@ -47,6 +49,14 @@ public class PasswordManagementProperties {
 
     public void setPolicyPattern(final String policyPattern) {
         this.policyPattern = policyPattern;
+    }
+
+    public Rest getRest() {
+        return rest;
+    }
+
+    public void setRest(final Rest rest) {
+        this.rest = rest;
     }
 
     public Jdbc getJdbc() {
@@ -105,7 +115,37 @@ public class PasswordManagementProperties {
             this.passwordEncoder = passwordEncoder;
         }
     }
-    
+
+    public static class Rest {
+        private String endpointUrlEmail;
+        private String endpointUrlSecurityQuestions;
+        private String endpointUrlChange;
+
+        public String getEndpointUrlEmail() {
+            return endpointUrlEmail;
+        }
+
+        public void setEndpointUrlEmail(final String endpointUrlEmail) {
+            this.endpointUrlEmail = endpointUrlEmail;
+        }
+
+        public String getEndpointUrlSecurityQuestions() {
+            return endpointUrlSecurityQuestions;
+        }
+
+        public void setEndpointUrlSecurityQuestions(final String endpointUrlSecurityQuestions) {
+            this.endpointUrlSecurityQuestions = endpointUrlSecurityQuestions;
+        }
+
+        public String getEndpointUrlChange() {
+            return endpointUrlChange;
+        }
+
+        public void setEndpointUrlChange(final String endpointUrlChange) {
+            this.endpointUrlChange = endpointUrlChange;
+        }
+    }
+
     public static class Ldap extends AbstractLdapProperties {
         private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>();
         private String baseDn;
