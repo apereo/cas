@@ -6,6 +6,7 @@ import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.OidcServerDiscoverySettings;
 import org.apereo.cas.OidcTokenSigningService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -17,6 +18,8 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.OAuthGrantTypes;
+import org.apereo.cas.support.oauth.OAuthResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
@@ -69,6 +72,9 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -182,7 +188,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
-        return new OidcCallbackAuthorizeViewResolver(oidcAuthorizationRequestSupport(), servicesManager);
+        return new OidcCallbackAuthorizeViewResolver(oidcAuthorizationRequestSupport(), servicesManager,
+                oidcServerDiscoverySettings());
     }
 
     @Bean
@@ -260,8 +267,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public OidcWellKnownEndpointController oidcWellKnownController() {
-        return new OidcWellKnownEndpointController(servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
-                oidcPrincipalFactory(), webApplicationServiceFactory);
+        return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
+                oAuth20Validator, defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory,
+                oidcServerDiscoverySettings());
     }
 
     @RefreshScope
@@ -306,6 +315,32 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public OidcTokenSigningService oidcTokenSigningService() {
         return new OidcTokenSigningService(casProperties.getAuthn().getOidc().getJwksFile());
+    }
+
+    @RefreshScope
+    @Bean
+    public OidcServerDiscoverySettings oidcServerDiscoverySettings() {
+        final OidcServerDiscoverySettings discoveryProperties =
+                new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(),
+                        casProperties.getAuthn().getOidc().getIssuer());
+
+        discoveryProperties.setClaimsSupported(new ArrayList<>(OidcConstants.CLAIMS));
+        discoveryProperties.setScopesSupported(OidcConstants.SCOPES);
+        discoveryProperties.setResponseTypesSupported(
+                Arrays.asList(OAuthResponseTypes.CODE.getType(),
+                        OAuthResponseTypes.TOKEN.getType(),
+                        OAuthResponseTypes.IDTOKEN_TOKEN.getType()));
+
+        discoveryProperties.setSubjectTypesSupported(Arrays.asList("public", "pairwise"));
+        discoveryProperties.setClaimTypesSupported(Collections.singletonList("normal"));
+
+        discoveryProperties.setGrantTypesSupported(
+                Arrays.asList(OAuthGrantTypes.AUTHORIZATION_CODE.getType(),
+                        OAuthGrantTypes.PASSWORD.getType(),
+                        OAuthGrantTypes.REFRESH_TOKEN.getType()));
+
+        discoveryProperties.setIdTokenSigningAlgValuesSupported(Arrays.asList("none", "RS256"));
+        return discoveryProperties;
     }
 
     @Bean

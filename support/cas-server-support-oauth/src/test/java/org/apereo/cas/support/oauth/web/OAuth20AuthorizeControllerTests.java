@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.OAuthResponseType;
+import org.apereo.cas.support.oauth.OAuthResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCode;
@@ -148,7 +148,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseType.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseTypes.CODE.name().toLowerCase());
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -173,7 +173,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseType.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseTypes.CODE.name().toLowerCase());
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -219,7 +219,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseType.TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseTypes.TOKEN.name().toLowerCase());
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -265,7 +265,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseType.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseTypes.CODE.name().toLowerCase());
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -312,7 +312,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseType.TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseTypes.TOKEN.name().toLowerCase());
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -360,7 +360,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseType.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseTypes.CODE.name().toLowerCase());
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -407,7 +407,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseType.TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseTypes.TOKEN.name().toLowerCase());
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -454,7 +454,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseType.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseTypes.CODE.name().toLowerCase());
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);

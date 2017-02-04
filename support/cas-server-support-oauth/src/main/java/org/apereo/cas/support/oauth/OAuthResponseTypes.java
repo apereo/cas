@@ -6,7 +6,7 @@ package org.apereo.cas.support.oauth;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public enum OAuthResponseType {
+public enum OAuthResponseTypes {
 
     /**
      * For authorization grant type.
@@ -23,7 +23,7 @@ public enum OAuthResponseType {
 
     private final String type;
 
-    OAuthResponseType(final String type) {
+    OAuthResponseTypes(final String type) {
         this.type = type;
     }
 

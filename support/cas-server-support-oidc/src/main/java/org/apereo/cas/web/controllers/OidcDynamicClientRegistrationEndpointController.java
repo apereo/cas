@@ -9,8 +9,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuthGrantType;
-import org.apereo.cas.support.oauth.OAuthResponseType;
+import org.apereo.cas.support.oauth.OAuthGrantTypes;
+import org.apereo.cas.support.oauth.OAuthResponseTypes;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -127,10 +127,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
         clientResponse.setSubjectType("public");
         clientResponse.setTokenEndpointAuthMethod(registrationRequest.getTokenEndpointAuthMethod());
         clientResponse.setClientName(registeredService.getName());
-        clientResponse.setGrantTypes(Arrays.asList(OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase(),
-                OAuthGrantType.REFRESH_TOKEN.name().toLowerCase()));
+        clientResponse.setGrantTypes(Arrays.asList(OAuthGrantTypes.AUTHORIZATION_CODE.name().toLowerCase(),
+                OAuthGrantTypes.REFRESH_TOKEN.name().toLowerCase()));
         clientResponse.setRedirectUris(Collections.singletonList(registeredService.getServiceId()));
-        clientResponse.setResponseTypes(Collections.singletonList(OAuthResponseType.CODE.name().toLowerCase()));
+        clientResponse.setResponseTypes(Collections.singletonList(OAuthResponseTypes.CODE.name().toLowerCase()));
         return clientResponse;
     }
 }
