@@ -2,12 +2,13 @@ package org.apereo.cas.support.oauth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,13 +32,14 @@ public final class OAuthUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthUtils.class);
     private static final ObjectWriter WRITER = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
-    private OAuthUtils() {}
+    private OAuthUtils() {
+    }
 
     /**
      * Write to the output this error text and return a null view.
      *
      * @param response http response
-     * @param error error message
+     * @param error    error message
      * @return a null view
      */
     public static ModelAndView writeTextError(final HttpServletResponse response, final String error) {
@@ -47,8 +50,8 @@ public final class OAuthUtils {
      * Write to the output the text and return a null view.
      *
      * @param response http response
-     * @param text output text
-     * @param status status code
+     * @param text     output text
+     * @param status   status code
      * @return a null view
      */
     public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
@@ -73,8 +76,9 @@ public final class OAuthUtils {
 
     /**
      * Locate the requested instance of {@link OAuthRegisteredService} by the given clientId.
+     *
      * @param servicesManager the service registry DAO instance.
-     * @param clientId the client id by which the {@link OAuthRegisteredService} is to be located.
+     * @param clientId        the client id by which the {@link OAuthRegisteredService} is to be located.
      * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
      */
     public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager, final String clientId) {
@@ -87,6 +91,27 @@ public final class OAuthUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Produce unauthorized error view model and view.
+     *
+     * @return the model and view
+     */
+    public static ModelAndView produceUnauthorizedErrorView() {
+        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+    }
+
+    /**
+     * Produce error view model and view.
+     *
+     * @param e the e
+     * @return the model and view
+     */
+    public static ModelAndView produceErrorView(final Exception e) {
+        final Map model = new HashMap<>();
+        model.put("rootCauseException", e);
+        return new ModelAndView(OAuthConstants.ERROR_VIEW, model);
     }
 
     /**
