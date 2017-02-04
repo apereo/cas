@@ -13,7 +13,7 @@ and sustainable architecture and deployment.
 ## Collect Use Cases
 
 It is very important that you document, catalog and analyze your desired use cases and requirements prior to the deployment.
-Once you have a few ideas, please discuss and share those with the [CAS community](../Support.html)
+Once you have a few ideas, please discuss and share those with the [CAS community](/cas/Support.html)
 to learn about common trends, practices and patterns
 that may already have solved the same issues you face today. 
 
@@ -81,4 +81,4 @@ will likely lead to disastrous results in the long run.
 
 The [troubleshooting guide](../installation/Troubleshooting-Guide.html) might have some answers 
 for issues you may have run into and it generally tries to describe a strategy useful for troubleshooting
-and diagnostics. You may also seek assistance from the [CAS community](/Mailing-Lists.html).
+and diagnostics. You may also seek assistance from the [CAS community](/cas/Mailing-Lists.html).
