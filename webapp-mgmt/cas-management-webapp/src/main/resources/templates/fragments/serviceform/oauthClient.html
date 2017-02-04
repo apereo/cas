@@ -127,6 +127,16 @@
                         </label>
                     </div>
 
+                    <div class="checkbox" ng-show="serviceFormCtrl.serviceData.type=='oidc'">
+                        <label for="oidcImplicit">
+                            <input type="checkbox" id="oidcImplicit" ng-model="serviceFormCtrl.serviceData.oidc.implicit"/>
+                            <span th:remove="tag" th:text="#{services.form.label.oidc.implicit}"/>
+                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               th:title="#{services.form.tooltip.oidc.implicit}"></i>
+                        </label>
+                    </div>
 
                 </div>
             </div>
