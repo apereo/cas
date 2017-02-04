@@ -20,7 +20,8 @@ communicate with the CAS server using or or more supported protocols. CAS client
 ## Other Clients
 
 Other unofficial or incubating CAS clients may be [found here](https://wiki.jasig.org/display/CASC).
-
+Given the above projects are unofficial and not under direct maintenance of CAS,
+their availability and accuracy may vary.
 
 ## Framework Support
 
