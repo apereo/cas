@@ -239,7 +239,7 @@ to massage the CAS configuration to include the [Python modules](http://search.m
 Similar to the above option, the scripts need to design a `run` function
 that receives a list of parameters. The collection of current attributes in process
 as well as a logger object are passed to this function. The result must produce a
-map whose `key`s are attributes names and whose `value`s is a list of attribute values.
+map whose `key`s are attributes names and whose `value`s are a list of attribute values.
 
 ## Attribute Filters
 
