@@ -11,6 +11,7 @@ import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidator;
 import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 import org.apereo.cas.pm.ldap.LdapPasswordManagementService;
+import org.apereo.cas.pm.rest.RestPasswordManagementService;
 import org.apereo.cas.pm.web.flow.InitPasswordChangeAction;
 import org.apereo.cas.pm.web.flow.InitPasswordResetAction;
 import org.apereo.cas.pm.web.flow.PasswordChangeAction;
@@ -30,6 +31,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -139,6 +141,14 @@ public class PasswordManagementConfiguration {
                         casProperties.getServer().getPrefix(),
                         casProperties.getAuthn().getPm(),
                         Beans.newHickariDataSource(casProperties.getAuthn().getPm().getJdbc()));
+            }
+
+            if (StringUtils.isNotBlank(pm.getRest().getEndpointUrlChange())
+                    && StringUtils.isNotBlank(pm.getRest().getEndpointUrlEmail())) {
+                return new RestPasswordManagementService(passwordManagementCipherExecutor(),
+                        casProperties.getServer().getPrefix(),
+                        new RestTemplate(),
+                        casProperties.getAuthn().getPm());
             }
         }
 

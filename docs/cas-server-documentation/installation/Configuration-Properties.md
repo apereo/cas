@@ -3607,3 +3607,11 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.jdbc.passwordEncoder.secret=
 # cas.authn.pm.jdbc.passwordEncoder.strength=16
 ````
+
+### REST Password Management
+
+```properties
+# cas.authn.pm.rest.endpointUrlEmail=
+# cas.authn.pm.rest.endpointUrlSecurityQuestions=
+# cas.authn.pm.rest.endpointUrlChange=
+```
