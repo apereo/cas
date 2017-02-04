@@ -6,6 +6,7 @@ import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.OidcIdTokenGenerator;
 import org.apereo.cas.OidcServerDiscoverySettings;
 import org.apereo.cas.OidcTokenSigningService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -217,11 +218,19 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcCasClientRedirectActionBuilder(oidcAuthorizationRequestSupport());
     }
 
+    @RefreshScope
+    @Bean
+    public OidcIdTokenGenerator oidcIdTokenGenerator() {
+        final OidcProperties oidc = casProperties.getAuthn().getOidc();
+        return new OidcIdTokenGenerator(oidc.getIssuer(), oidc.getSkew(),
+                oidcTokenSigningService());
+    }
+
     @Bean
     @RefreshScope
     public AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        return new OidcAccessTokenResponseGenerator(oidc.getIssuer(), oidc.getSkew(), oidcTokenSigningService());
+        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator());
     }
 
     @Bean
@@ -286,7 +295,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcAuthorizeEndpointController(servicesManager,
                 ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory,
-                consentApprovalViewResolver());
+                consentApprovalViewResolver(), oidcIdTokenGenerator());
     }
 
     @RefreshScope
