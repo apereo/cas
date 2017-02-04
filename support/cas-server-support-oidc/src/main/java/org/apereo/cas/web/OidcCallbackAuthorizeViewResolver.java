@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import com.google.common.base.Throwables;
 import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
 import com.nimbusds.oauth2.sdk.ErrorObject;
@@ -12,6 +13,7 @@ import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponse;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser;
+import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.OidcServerDiscoverySettings;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -80,9 +82,16 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
     private boolean isRespondingToImplicit(final J2EContext ctx,
                                            final ProfileManager manager,
                                            final String resolvedUrl) {
-        final OidcRegisteredService service = getOidcRegisteredService(ctx);
-        return service != null && service.isImplicit()
-                && ctx.getRequestParameter(OAuthConstants.RESPONSE_TYPE).equalsIgnoreCase(OAuthResponseTypes.IDTOKEN_TOKEN.getType());
+        try {
+            final URIBuilder builder = new URIBuilder(resolvedUrl);
+            final boolean foundMatch = builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(OAuthConstants.RESPONSE_TYPE)
+                    && p.getValue().equalsIgnoreCase(OAuthResponseTypes.IDTOKEN_TOKEN.getType()));
+
+            final OidcRegisteredService service = getOidcRegisteredService(ctx);
+            return service != null && service.isImplicit() && foundMatch;
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     private OidcRegisteredService getOidcRegisteredService(final J2EContext ctx) {

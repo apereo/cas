@@ -238,7 +238,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
 
         return checkParameterExist
-                && checkResponseTypes(responseType, OAuthResponseTypes.CODE, OAuthResponseTypes.TOKEN)
+                && checkResponseTypes(responseType, OAuthResponseTypes.values())
                 && getValidator().checkServiceValid(registeredService)
                 && getValidator().checkCallbackValid(registeredService, redirectUri);
     }

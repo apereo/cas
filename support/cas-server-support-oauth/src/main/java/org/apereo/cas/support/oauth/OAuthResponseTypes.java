@@ -19,7 +19,7 @@ public enum OAuthResponseTypes {
     /**
      * For implicit grant type.
      */
-    IDTOKEN_TOKEN("idtoken token");
+    IDTOKEN_TOKEN("id_token token");
 
     private final String type;
 
