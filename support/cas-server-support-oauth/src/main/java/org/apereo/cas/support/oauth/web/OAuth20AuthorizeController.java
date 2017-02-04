@@ -13,7 +13,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.OAuthResponseType;
+import org.apereo.cas.support.oauth.OAuthResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
@@ -147,7 +147,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
         final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
         final String callbackUrl;
-        if (isResponseType(responseType, OAuthResponseType.CODE)) {
+        if (isResponseType(responseType, OAuthResponseTypes.CODE)) {
             callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri);
         } else {
             callbackUrl = buildCallbackUrlForImplicitResponseType(context, authentication, service, redirectUri);
@@ -238,7 +238,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
 
         return checkParameterExist
-                && checkResponseTypes(responseType, OAuthResponseType.CODE, OAuthResponseType.TOKEN)
+                && checkResponseTypes(responseType, OAuthResponseTypes.CODE, OAuthResponseTypes.TOKEN)
                 && getValidator().checkServiceValid(registeredService)
                 && getValidator().checkCallbackValid(registeredService, redirectUri);
     }
@@ -250,7 +250,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @param expectedTypes the expected response types
      * @return whether the response type is supported
      */
-    private boolean checkResponseTypes(final String type, final OAuthResponseType... expectedTypes) {
+    private boolean checkResponseTypes(final String type, final OAuthResponseTypes... expectedTypes) {
         LOGGER.debug("Response type: [{}]", type);
         final boolean checked = Stream.of(expectedTypes).anyMatch(t -> isResponseType(type, t));
         if (!checked) {
@@ -266,7 +266,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @param expectedType the expected response type
      * @return whether the response type is the expected one
      */
-    private static boolean isResponseType(final String type, final OAuthResponseType expectedType) {
+    private static boolean isResponseType(final String type, final OAuthResponseTypes expectedType) {
         return expectedType.getType().equalsIgnoreCase(type);
     }
 }
