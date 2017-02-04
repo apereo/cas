@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * This is {@link OAuth20AccessTokenResponseGenerator}.
@@ -55,7 +56,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            try (JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(response.getWriter())) {
+            try (JsonGenerator jsonGenerator = getResponseJsonGenerator(response)) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                         refreshTokenId, timeout, service, registeredService);
@@ -67,6 +68,17 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
         } else {
             generateTextInternal(request, response, accessTokenId, refreshTokenId, timeout);
         }
+    }
+
+    /**
+     * Gets response json generator.
+     *
+     * @param response the response
+     * @return the response json generator
+     * @throws IOException the io exception
+     */
+    protected JsonGenerator getResponseJsonGenerator(final HttpServletResponse response) throws IOException {
+        return JSON_FACTORY.createGenerator(response.getWriter());
     }
 
     /**
