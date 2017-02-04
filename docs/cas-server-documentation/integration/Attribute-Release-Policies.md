@@ -48,7 +48,7 @@ basis and is always combined with attributes produced by the specific release po
 rules to always release `givenName` and `cn` to every application, and additionally allow other specific principal attributes for only some
 applications per their attribute release policy.
 
-To see the relevant list of CAS properties, please [review this guide](../installationConfiguration-Properties.html#default-bundle).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#default-bundle).
 
 ### Return All
 
