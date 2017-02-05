@@ -5,12 +5,11 @@ import org.apereo.cas.OidcConstants;
 import org.apereo.cas.OidcIdTokenGenerator;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.OAuthResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcAccessTokenResponseGenerator.class);
     private final OidcIdTokenGenerator idTokenGenerator;
 
     public OidcAccessTokenResponseGenerator(final OidcIdTokenGenerator idTokenGenerator) {
@@ -33,15 +31,17 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
     protected void generateJsonInternal(final HttpServletRequest request, final HttpServletResponse response,
                                         final JsonGenerator jsonGenerator,
                                         final AccessToken accessTokenId,
-                                        final RefreshToken refreshTokenId, final long timeout,
+                                        final RefreshToken refreshTokenId,
+                                        final long timeout,
                                         final Service service,
-                                        final OAuthRegisteredService registeredService) throws Exception {
+                                        final OAuthRegisteredService registeredService,
+                                        final OAuthResponseTypes responseType) throws Exception {
 
         super.generateJsonInternal(request, response, jsonGenerator, accessTokenId,
-                refreshTokenId, timeout, service, registeredService);
+                refreshTokenId, timeout, service, registeredService, responseType);
         final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) registeredService;
         final String idToken = this.idTokenGenerator.generate(request, response, accessTokenId,
-                timeout, oidcRegisteredService);
+                timeout, responseType, oidcRegisteredService);
         jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);
     }
 

@@ -8,6 +8,7 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuthResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -52,14 +53,15 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                          final Service service,
                          final AccessToken accessTokenId,
                          final RefreshToken refreshTokenId,
-                         final long timeout) {
+                         final long timeout,
+                         final OAuthResponseTypes responseType) {
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             try (JsonGenerator jsonGenerator = getResponseJsonGenerator(response)) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
-                        refreshTokenId, timeout, service, registeredService);
+                        refreshTokenId, timeout, service, registeredService, responseType);
                 jsonGenerator.writeEndObject();
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -119,6 +121,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
      * @param timeout           the timeout
      * @param service           the service
      * @param registeredService the registered service
+     * @param responseType      the response type
      * @throws Exception the exception
      */
     protected void generateJsonInternal(final HttpServletRequest request,
@@ -128,7 +131,8 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final RefreshToken refreshTokenId,
                                         final long timeout,
                                         final Service service,
-                                        final OAuthRegisteredService registeredService) throws Exception {
+                                        final OAuthRegisteredService registeredService,
+                                        final OAuthResponseTypes responseType) throws Exception {
         jsonGenerator.writeStringField(OAuthConstants.ACCESS_TOKEN, accessTokenId.getId());
         jsonGenerator.writeStringField(OAuthConstants.TOKEN_TYPE, OAuthConstants.TOKEN_TYPE_BEARER);
         jsonGenerator.writeNumberField(OAuthConstants.EXPIRES_IN, timeout);
