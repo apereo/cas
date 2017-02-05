@@ -2224,14 +2224,16 @@ The signature location MUST BE the public key used to sign the metadata.
 
 ## OpenID Connect
 
-Allow CAS to become an OpenID Connect provider (OP).
-To learn more about this topic, [please review this guide](OIDC-Authentication.html).
+Allow CAS to become an OpenID Connect provider (OP). To learn more about this topic, [please review this guide](OIDC-Authentication.html).
 
 ```properties
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
 # cas.authn.oidc.skew=5
 # cas.authn.oidc.jwksFile=file:/keystore.jwks
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
+# cas.authn.oidc.subjectTypes=public,pairwise
+# cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
+# cas.authn.oidc.claims=sub,name,preferred_username,family_name,given_name,middle_name,given_name,profile,picture,nickname,website,zoneinfo,locale,updated_at,birthdate,email,email_verified,phone_number,phone_number_verified,address
 ```
 
 ## Pac4j Delegated AuthN
