@@ -3,6 +3,9 @@ package org.apereo.cas.configuration.model.support.oidc;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * This is {@link OidcProperties}.
  *
@@ -15,6 +18,37 @@ public class OidcProperties {
     private int skew = 5;
     private Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
     private String dynamicClientRegistrationMode;
+    private List<String> scopes = Arrays.asList("openid", "profile", "email", "address", "phone", "offline_access");
+    private List<String> claims = Arrays.asList("sub", "name", "preferred_username",
+            "family_name", "given_name", "middle_name", "given_name", "profile",
+            "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
+            "birthdate", "email", "email_verified", "phone_number",
+            "phone_number_verified", "address");
+    private List<String> subjectTypes = Arrays.asList("public", "pairwise");
+
+    public List<String> getSubjectTypes() {
+        return subjectTypes;
+    }
+
+    public void setSubjectTypes(final List<String> subjectTypes) {
+        this.subjectTypes = subjectTypes;
+    }
+
+    public List<String> getClaims() {
+        return claims;
+    }
+
+    public void setClaims(final List<String> claims) {
+        this.claims = claims;
+    }
+
+    public List<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(final List<String> scopes) {
+        this.scopes = scopes;
+    }
 
     public String getDynamicClientRegistrationMode() {
         return dynamicClientRegistrationMode;
