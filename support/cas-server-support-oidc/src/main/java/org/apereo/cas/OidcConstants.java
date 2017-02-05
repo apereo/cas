@@ -65,6 +65,11 @@ public interface OidcConstants {
     String CLAIM_AUTH_TIME = "auth_time";
 
     /**
+     * The access token hash.
+     */
+    String CLAIM_AT_HASH = "at_hash";
+    
+    /**
      * The Scopes.
      */
     List<String> SCOPES = Arrays.asList("openid", "profile", "email", "address", "phone", "offline_access");
