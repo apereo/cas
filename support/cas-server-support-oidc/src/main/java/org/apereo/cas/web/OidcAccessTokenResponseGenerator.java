@@ -2,7 +2,7 @@ package org.apereo.cas.web;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.OidcIdTokenGenerator;
+import org.apereo.cas.OidcIdTokenGeneratorService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuthResponseTypes;
@@ -21,14 +21,15 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
-    private final OidcIdTokenGenerator idTokenGenerator;
+    private final OidcIdTokenGeneratorService idTokenGenerator;
 
-    public OidcAccessTokenResponseGenerator(final OidcIdTokenGenerator idTokenGenerator) {
+    public OidcAccessTokenResponseGenerator(final OidcIdTokenGeneratorService idTokenGenerator) {
         this.idTokenGenerator = idTokenGenerator;
     }
 
     @Override
-    protected void generateJsonInternal(final HttpServletRequest request, final HttpServletResponse response,
+    protected void generateJsonInternal(final HttpServletRequest request,
+                                        final HttpServletResponse response,
                                         final JsonGenerator jsonGenerator,
                                         final AccessToken accessTokenId,
                                         final RefreshToken refreshTokenId,

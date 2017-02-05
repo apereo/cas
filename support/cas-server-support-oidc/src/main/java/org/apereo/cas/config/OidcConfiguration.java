@@ -6,7 +6,8 @@ import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.OidcIdTokenGenerator;
+import org.apereo.cas.OidcIdTokenGeneratorService;
+import org.apereo.cas.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.OidcServerDiscoverySettings;
 import org.apereo.cas.OidcTokenSigningService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -219,9 +220,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @Bean
-    public OidcIdTokenGenerator oidcIdTokenGenerator() {
+    public OidcIdTokenGeneratorService oidcIdTokenGenerator() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        return new OidcIdTokenGenerator(oidc.getIssuer(), oidc.getSkew(),
+        return new OidcIdTokenGeneratorService(oidc.getIssuer(), oidc.getSkew(),
                 oidcTokenSigningService());
     }
 
@@ -350,6 +351,11 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
         discoveryProperties.setIdTokenSigningAlgValuesSupported(Arrays.asList("none", "RS256"));
         return discoveryProperties;
+    }
+
+    @Bean
+    public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService() {
+        return new OidcJsonWebKeystoreGeneratorService(casProperties.getAuthn().getOidc());
     }
 
     @Bean
