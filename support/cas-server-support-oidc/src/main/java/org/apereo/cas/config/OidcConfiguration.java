@@ -73,7 +73,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -329,18 +328,19 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public OidcServerDiscoverySettings oidcServerDiscoverySettings() {
+        final OidcProperties oidc = casProperties.getAuthn().getOidc();
         final OidcServerDiscoverySettings discoveryProperties =
                 new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(),
-                        casProperties.getAuthn().getOidc().getIssuer());
+                        oidc.getIssuer());
 
-        discoveryProperties.setClaimsSupported(new ArrayList<>(OidcConstants.CLAIMS));
-        discoveryProperties.setScopesSupported(OidcConstants.SCOPES);
+        discoveryProperties.setClaimsSupported(oidc.getClaims());
+        discoveryProperties.setScopesSupported(oidc.getScopes());
         discoveryProperties.setResponseTypesSupported(
                 Arrays.asList(OAuthResponseTypes.CODE.getType(),
                         OAuthResponseTypes.TOKEN.getType(),
                         OAuthResponseTypes.IDTOKEN_TOKEN.getType()));
 
-        discoveryProperties.setSubjectTypesSupported(Arrays.asList("public", "pairwise"));
+        discoveryProperties.setSubjectTypesSupported(oidc.getSubjectTypes());
         discoveryProperties.setClaimTypesSupported(Collections.singletonList("normal"));
 
         discoveryProperties.setGrantTypesSupported(
@@ -354,9 +354,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
+        final OidcProperties oidc = casProperties.getAuthn().getOidc();
         final OidcConstants.DynamicClientRegistrationMode mode =
                 OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
-                        casProperties.getAuthn().getOidc().getDynamicClientRegistrationMode(),
+                        oidc.getDynamicClientRegistrationMode(),
                         OidcConstants.DynamicClientRegistrationMode.PROTECTED.name()));
 
         return new OidcHandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor,

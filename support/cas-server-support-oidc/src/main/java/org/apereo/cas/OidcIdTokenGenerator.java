@@ -137,7 +137,7 @@ public class OidcIdTokenGenerator {
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, generateAccessTokenHash(accessTokenId, service));
 
         principal.getAttributes().entrySet().stream()
-                .filter(entry -> OidcConstants.CLAIMS.contains(entry.getKey()))
+                .filter(entry -> casProperties.getAuthn().getOidc().getClaims().contains(entry.getKey()))
                 .forEach(entry -> claims.setClaim(entry.getKey(), entry.getValue()));
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
