@@ -31,13 +31,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * This is {@link OidcIdTokenGenerator}.
+ * This is {@link OidcIdTokenGeneratorService}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcIdTokenGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcIdTokenGenerator.class);
+public class OidcIdTokenGeneratorService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OidcIdTokenGeneratorService.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -46,9 +46,9 @@ public class OidcIdTokenGenerator {
     private final int skew;
     private final OidcTokenSigningService signingService;
 
-    public OidcIdTokenGenerator(final String issuer,
-                                final int skew,
-                                final OidcTokenSigningService signingService) {
+    public OidcIdTokenGeneratorService(final String issuer,
+                                       final int skew,
+                                       final OidcTokenSigningService signingService) {
         this.signingService = signingService;
         this.issuer = issuer;
         this.skew = skew;
