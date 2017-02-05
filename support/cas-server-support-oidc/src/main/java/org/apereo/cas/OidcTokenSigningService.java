@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -69,7 +70,7 @@ public class OidcTokenSigningService {
      * @return the string
      * @throws JoseException the jose exception
      */
-    public String signIdTokenClaim(final OidcRegisteredService svc, final JwtClaims claims)
+    public String signClaims(final OidcRegisteredService svc, final JwtClaims claims)
             throws JoseException {
         try {
             LOGGER.debug("Attempting to sign id token generated for service [{}]", svc);
@@ -105,7 +106,7 @@ public class OidcTokenSigningService {
                     jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
                 }
                 LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
-                jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+                jws.setAlgorithmHeaderValue(getJsonWebKeySigningAlgorithm());
 
                 LOGGER.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
             }
@@ -115,6 +116,29 @@ public class OidcTokenSigningService {
             LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
+    }
+
+    public String getJsonWebKeySigningAlgorithm() {
+        return AlgorithmIdentifiers.RSA_USING_SHA256;
+    }
+
+    /**
+     * Gets json web key.
+     *
+     * @param svc the svc
+     * @return the json web key
+     */
+    public JsonWebKey getJsonWebKey(final OidcRegisteredService svc) {
+        try {
+            final Optional<JsonWebKeySet> jwks = buildJsonWebKeySet(svc);
+            if (jwks.isPresent() && !jwks.get().getJsonWebKeys().isEmpty()) {
+                return getJsonSigningWebKeyFromJwks(jwks.get());
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+
     }
 
     private JsonWebKeySet buildJsonWebKeySet(final Resource resource) throws Exception {

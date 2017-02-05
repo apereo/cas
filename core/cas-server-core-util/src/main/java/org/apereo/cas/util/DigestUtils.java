@@ -19,6 +19,7 @@ public final class DigestUtils {
 
     /**
      * Computes hex encoded SHA512 digest.
+     *
      * @param data data to be hashed
      * @return sha-512 hash
      */
@@ -27,7 +28,18 @@ public final class DigestUtils {
     }
 
     /**
+     * Computes hex encoded SHA256 digest.
+     *
+     * @param data data to be hashed
+     * @return sha-256 hash
+     */
+    public static String sha256(final String data) {
+        return digest(MessageDigestAlgorithms.SHA_256, data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
      * Computes hex encoded SHA digest.
+     *
      * @param data data to be hashed
      * @return sha hash
      */
@@ -37,6 +49,7 @@ public final class DigestUtils {
 
     /**
      * Computes SHA digest.
+     *
      * @param data data to be hashed
      * @return sha hash
      */
@@ -46,7 +59,8 @@ public final class DigestUtils {
 
     /**
      * Computes hex encoded digest.
-     * @param alg Digest algorithm to use
+     *
+     * @param alg  Digest algorithm to use
      * @param data data to be hashed
      * @return hex encoded hash
      */
@@ -56,7 +70,8 @@ public final class DigestUtils {
 
     /**
      * Computes hex encoded digest.
-     * @param alg Digest algorithm to use
+     *
+     * @param alg  Digest algorithm to use
      * @param data data to be hashed
      * @return hex encoded hash
      */
@@ -66,13 +81,16 @@ public final class DigestUtils {
 
     /**
      * Computes digest.
-     * @param alg Digest algorithm to use
+     *
+     * @param alg  Digest algorithm to use
      * @param data data to be hashed
      * @return hash
      */
     public static byte[] rawDigest(final String alg, final byte[] data) {
         try {
-            return MessageDigest.getInstance(alg).digest(data);
+            final MessageDigest digest = MessageDigest.getInstance(alg);
+            digest.reset();
+            return digest.digest(data);
         } catch (final Exception cause) {
             throw new SecurityException(cause);
         }
