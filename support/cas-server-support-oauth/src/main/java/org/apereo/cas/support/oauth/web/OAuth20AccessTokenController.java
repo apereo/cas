@@ -12,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.OAuthGrantTypes;
+import org.apereo.cas.support.oauth.OAuthResponseTypes;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -36,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -154,9 +156,15 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             LOGGER.debug("access token: [{}] / timeout: [{}] / refresh token: [{}]", accessToken,
                     casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
 
+            final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
+            final OAuthResponseTypes type = Arrays.stream(OAuthResponseTypes.values())
+                    .filter(t -> t.getType().equalsIgnoreCase(responseType))
+                    .findFirst().orElse(OAuthResponseTypes.CODE);
+
             this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
                     accessToken, refreshToken,
-                    casProperties.getTicket().getTgt().getTimeToKillInSeconds());
+                    casProperties.getTicket().getTgt().getTimeToKillInSeconds(),
+                    type);
 
             response.setStatus(HttpServletResponse.SC_OK);
             return null;
