@@ -73,7 +73,7 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
 
     private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        return Beans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getGroupFilter(),
+        return Beans.newLdaptiveSearchExecutor(ldapAuthz.getGroupBaseDn(), ldapAuthz.getGroupFilter(),
                 Collections.emptyList(), Arrays.asList(ldapAuthz.getGroupAttribute()));
     }
 
