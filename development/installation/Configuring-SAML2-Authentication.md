@@ -143,8 +143,7 @@ SAML relying parties and services must be registered within the CAS service regi
 ```
 
 <div class="alert alert-info"><strong>Aggregated Metadata</strong><p>If metadata
-contains data for more than one relying party, (i.e. InCommon) those relying parties need to be defined by their entity id, explicitly via
-the <code>serviceId</code> field. </p></div>
+contains data for more than one relying party, (i.e. InCommon) those relying parties need to be defined by their entity id, explicitly via the <code>serviceId</code> field, given the field accepts regular expressions.</p></div>
 
 The following fields are available for SAML services:
 
@@ -185,6 +184,34 @@ Attribute name formats can be specified per relying party in the service registr
 
 You may also have the option to define attributes and their relevant name format globally
 via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
+
+### Attribute Release
+
+Attribute filtering and release policies are defined per SAML service.
+See [this guide](../integration/Attribute-Release-Policies.html) for more info.
+
+#### InCommon Research and Scholardship
+
+A specific attribute release policy is available to release the [attribute bundles](https://spaces.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
+needed for InCommon's Research and Scholarship service providers:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [{
+          "@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"
+      }]
+    ],
+  },
+  "metadataLocation": "path/to/incommon/metadata.xml"
+}
+```
 
 ### Name ID Selection
 
