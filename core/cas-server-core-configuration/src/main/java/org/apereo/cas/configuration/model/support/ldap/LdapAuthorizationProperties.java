@@ -22,9 +22,18 @@ public class LdapAuthorizationProperties {
     private String groupAttribute;
     private String groupPrefix = StringUtils.EMPTY;
     private String groupFilter;
+    private String groupBaseDn;
 
     private String baseDn;
     private String searchFilter;
+
+    public String getGroupBaseDn() {
+        return StringUtils.defaultIfBlank(groupBaseDn, this.baseDn);
+    }
+
+    public void setGroupBaseDn(final String groupBaseDn) {
+        this.groupBaseDn = groupBaseDn;
+    }
 
     public String getRoleAttribute() {
         return roleAttribute;
