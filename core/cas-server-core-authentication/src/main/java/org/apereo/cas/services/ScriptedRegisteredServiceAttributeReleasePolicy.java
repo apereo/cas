@@ -34,7 +34,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes) {
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes,
+                                                        final RegisteredService service) {
         try {
             String engineName = null;
             if (this.scriptFile.endsWith(".py")) {
