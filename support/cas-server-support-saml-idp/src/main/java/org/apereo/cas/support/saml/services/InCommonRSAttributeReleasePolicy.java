@@ -25,20 +25,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is {@link InCommonRSRegisteredServiceAttributeReleasePolicy}.
+ * This is {@link InCommonRSAttributeReleasePolicy}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class InCommonRSRegisteredServiceAttributeReleasePolicy extends ReturnAllowedAttributeReleasePolicy {
+public class InCommonRSAttributeReleasePolicy extends ReturnAllowedAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(InCommonRSRegisteredServiceAttributeReleasePolicy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InCommonRSAttributeReleasePolicy.class);
 
     private List<String> allowedAttributes = Arrays.asList("eduPersonPrincipalName",
             "eduPersonTargetedID", "email", "displayName", "givenName", "surname",
             "eduPersonScopedAffiliation");
 
-    public InCommonRSRegisteredServiceAttributeReleasePolicy() {
+    public InCommonRSAttributeReleasePolicy() {
         setAllowedAttributes(allowedAttributes);
     }
 

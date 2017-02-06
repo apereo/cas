@@ -8,7 +8,7 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.saml.services.InCommonRSRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public class SamlRegisteredServiceTests {
         service.setName("SAMLService");
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
-        final InCommonRSRegisteredServiceAttributeReleasePolicy policy = new InCommonRSRegisteredServiceAttributeReleasePolicy();
+        final InCommonRSAttributeReleasePolicy policy = new InCommonRSAttributeReleasePolicy();
         final ChainingAttributeReleasePolicy chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Collections.singletonList(policy));
         service.setAttributeReleasePolicy(chain);
