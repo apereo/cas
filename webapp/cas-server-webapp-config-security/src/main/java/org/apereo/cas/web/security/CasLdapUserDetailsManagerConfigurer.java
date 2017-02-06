@@ -20,7 +20,6 @@ import org.springframework.security.config.annotation.authentication.ProviderMan
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * This is {@link CasLdapUserDetailsManagerConfigurer}.
@@ -50,8 +49,6 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
             return new LdapUserGroupsToRolesAuthorizationGenerator(connectionFactory,
                     ldapAuthorizationGeneratorUserSearchExecutor(),
                     ldapAuthz.isAllowMultipleResults(),
-                    ldapAuthz.getRoleAttribute(),
-                    ldapAuthz.getRolePrefix(),
                     ldapAuthz.getGroupAttribute(),
                     ldapAuthz.getGroupPrefix(),
                     ldapAuthorizationGeneratorGroupSearchExecutor());

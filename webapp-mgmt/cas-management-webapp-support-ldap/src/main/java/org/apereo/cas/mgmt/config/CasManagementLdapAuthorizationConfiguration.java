@@ -38,8 +38,6 @@ public class CasManagementLdapAuthorizationConfiguration {
             return new LdapUserGroupsToRolesAuthorizationGenerator(connectionFactory,
                     ldapAuthorizationGeneratorUserSearchExecutor(),
                     ldapAuthz.isAllowMultipleResults(),
-                    ldapAuthz.getRoleAttribute(),
-                    ldapAuthz.getRolePrefix(),
                     ldapAuthz.getGroupAttribute(),
                     ldapAuthz.getGroupPrefix(),
                     ldapAuthorizationGeneratorGroupSearchExecutor());
