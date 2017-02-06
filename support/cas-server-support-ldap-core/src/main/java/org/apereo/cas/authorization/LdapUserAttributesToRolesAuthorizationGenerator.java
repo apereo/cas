@@ -136,7 +136,6 @@ public class LdapUserAttributesToRolesAuthorizationGenerator implements Authoriz
                                                  final String prefix) {
         ldapAttribute.getStringValues().forEach(value -> {
             profile.addRole(prefix.concat(value.toUpperCase()));
-            profile.addAttribute(ldapAttribute.getName(), value);
         });
     }
 }

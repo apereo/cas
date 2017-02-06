@@ -204,7 +204,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      */
     protected Assertion buildEcpCasAssertion(final Authentication authentication,
                                              final RegisteredService registeredService) {
-        final Map attributes = registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal());
+        final Map attributes = registeredService.getAttributeReleasePolicy()
+                .getAttributes(authentication.getPrincipal(), registeredService);
         final AttributePrincipal principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
                 null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),

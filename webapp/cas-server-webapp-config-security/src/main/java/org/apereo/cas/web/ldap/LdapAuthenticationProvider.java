@@ -71,8 +71,6 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
 
                 final Collection<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.addAll(profile.getAttributes().entrySet()
-                        .stream().map(e -> new SimpleGrantedAuthority(e.getValue().toString())).collect(Collectors.toList()));
                 authorities.addAll(profile.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
 
