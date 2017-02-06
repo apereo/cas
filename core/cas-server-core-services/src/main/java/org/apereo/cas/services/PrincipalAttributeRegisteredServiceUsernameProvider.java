@@ -146,7 +146,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
                                 service.getId());
                         return p.getAttributes();
                     }
-                    return registeredService.getAttributeReleasePolicy().getAttributes(p);
+                    return registeredService.getAttributeReleasePolicy().getAttributes(p, registeredService);
                 }
             }
 

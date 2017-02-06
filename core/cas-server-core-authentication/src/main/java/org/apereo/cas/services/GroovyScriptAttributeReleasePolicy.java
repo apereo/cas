@@ -32,7 +32,8 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes) {
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes,
+                                                        final RegisteredService service) {
         final ClassLoader parent = getClass().getClassLoader();
         try (GroovyClassLoader loader = new GroovyClassLoader(parent)) {
             final File groovyFile = ResourceUtils.getResourceFrom(this.groovyScript).getFile();

@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.junit.Before;
@@ -106,7 +107,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
 
-        final Map<String, Object> attr = policy.getAttributes(p);
+        final Map<String, Object> attr = policy.getAttributes(p, RegisteredServiceTestUtils.getRegisteredService("test"));
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey("attr3"));
 

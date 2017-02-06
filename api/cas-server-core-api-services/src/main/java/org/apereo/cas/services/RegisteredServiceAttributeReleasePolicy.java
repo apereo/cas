@@ -19,7 +19,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
     /**
      * Is authorized to release credential password?
      *
-     * @return true/false
+     * @return true /false
      */
     default boolean isAuthorizedToReleaseCredentialPassword() {
         return false;
@@ -28,7 +28,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
     /**
      * Is authorized to release proxy granting ticket?
      *
-     * @return true/false
+     * @return true /false
      */
     default boolean isAuthorizedToReleaseProxyGrantingTicket() {
         return false;
@@ -42,13 +42,12 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
     default void setAttributeFilter(RegisteredServiceAttributeFilter filter) {
     }
 
-    ;
-
     /**
      * Gets the attributes, having applied the filter.
      *
-     * @param p the principal that contains the resolved attributes
+     * @param p       the principal that contains the resolved attributes
+     * @param service the service
      * @return the attributes
      */
-    Map<String, Object> getAttributes(Principal p);
+    Map<String, Object> getAttributes(Principal p, RegisteredService service);
 }

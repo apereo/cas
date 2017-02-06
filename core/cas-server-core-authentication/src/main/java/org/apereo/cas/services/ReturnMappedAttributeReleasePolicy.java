@@ -72,7 +72,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attrs) {
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attrs,
+                                                        final RegisteredService service) {
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
 
@@ -121,7 +122,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     private static Object getGroovyAttributeValue(final String groovyScript,
-                                           final Map<String, Object> resolvedAttributes) {
+                                                  final Map<String, Object> resolvedAttributes) {
         try {
             final Binding binding = new Binding();
             final GroovyShell shell = new GroovyShell(binding);

@@ -316,7 +316,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             @SuppressWarnings("unchecked")
             final Map<String, Object> attributesToRelease = attributePolicy != null
-                    ? attributePolicy.getAttributes(principal) : new HashMap<>();
+                    ? attributePolicy.getAttributes(principal, registeredService) : new HashMap<>();
 
             final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService);
             final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);

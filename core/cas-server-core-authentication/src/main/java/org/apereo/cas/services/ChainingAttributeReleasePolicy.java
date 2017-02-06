@@ -27,9 +27,9 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     @Override
-    public Map<String, Object> getAttributes(final Principal p) {
+    public Map<String, Object> getAttributes(final Principal p, final RegisteredService service) {
         final Map<String, Object> attributes = new HashMap<>();
-        policies.forEach(policy -> attributes.putAll(policy.getAttributes(p)));
+        policies.forEach(policy -> attributes.putAll(policy.getAttributes(p, service)));
         return attributes;
     }
 }
