@@ -21,21 +21,28 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
      *
      * @return true/false
      */
-    boolean isAuthorizedToReleaseCredentialPassword();
+    default boolean isAuthorizedToReleaseCredentialPassword() {
+        return false;
+    }
 
     /**
      * Is authorized to release proxy granting ticket?
      *
      * @return true/false
      */
-    boolean isAuthorizedToReleaseProxyGrantingTicket();
+    default boolean isAuthorizedToReleaseProxyGrantingTicket() {
+        return false;
+    }
 
     /**
      * Sets the attribute filter.
      *
      * @param filter the new attribute filter
      */
-    void setAttributeFilter(RegisteredServiceAttributeFilter filter);
+    default void setAttributeFilter(RegisteredServiceAttributeFilter filter) {
+    }
+
+    ;
 
     /**
      * Gets the attributes, having applied the filter.
