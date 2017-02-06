@@ -2,6 +2,8 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.apereo.cas.web.security.CasJdbcUserDetailsManagerConfigurer;
 import org.apereo.cas.web.security.CasLdapUserDetailsManagerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,16 @@ public class CasWebApplicationSecurityConfiguration extends GlobalAuthentication
         if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getJdbc().getQuery())) {
             auth.apply(new CasJdbcUserDetailsManagerConfigurer(casProperties.getAdminPagesSecurity()));
         }
-        if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLdap().getBaseDn())
-                && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLdap().getLdapUrl())
-                && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLdap().getLdapAuthz().getRoleAttribute())
-                && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLdap().getUserFilter())) {
+        if (isLdapAuthorizationActive()) {
             auth.apply(new CasLdapUserDetailsManagerConfigurer<>(casProperties.getAdminPagesSecurity()));
         }
     }
 
+    private boolean isLdapAuthorizationActive() {
+        final AdminPagesSecurityProperties.Ldap ldap = casProperties.getAdminPagesSecurity().getLdap();
+        final LdapAuthorizationProperties authZ = ldap.getLdapAuthz();
+        return StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())
+                && StringUtils.isNotBlank(ldap.getUserFilter())
+                && (StringUtils.isNotBlank(authZ.getRoleAttribute()) || StringUtils.isNotBlank(authZ.getRoleAttribute()));
+    }
 }
