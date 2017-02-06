@@ -409,7 +409,7 @@ public final class Beans {
         if (StringUtils.isBlank(l.getLdapUrl())) {
             throw new IllegalArgumentException("LDAP url cannot be empty/blank");
         }
-        
+
         LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
@@ -724,10 +724,40 @@ public final class Beans {
      * @return the search executor
      */
     public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery, final List<String> params) {
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, ReturnAttributes.ALL.value());
+    }
+
+    /**
+     * New ldaptive search executor search executor.
+     *
+     * @param baseDn           the base dn
+     * @param filterQuery      the filter query
+     * @param params           the params
+     * @param returnAttributes the return attributes
+     * @return the search executor
+     */
+    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery,
+                                                           final List<String> params,
+                                                           final List<String> returnAttributes) {
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, returnAttributes.toArray(new String[]{}));
+    }
+
+    /**
+     * New ldaptive search executor search executor.
+     *
+     * @param baseDn           the base dn
+     * @param filterQuery      the filter query
+     * @param params           the params
+     * @param returnAttributes the return attributes
+     * @return the search executor
+     */
+    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery,
+                                                           final List<String> params,
+                                                           final String[] returnAttributes) {
         final SearchExecutor executor = new SearchExecutor();
         executor.setBaseDn(baseDn);
         executor.setSearchFilter(newLdaptiveSearchFilter(filterQuery, params));
-        executor.setReturnAttributes(ReturnAttributes.ALL.value());
+        executor.setReturnAttributes(returnAttributes);
         executor.setSearchScope(SearchScope.SUBTREE);
         return executor;
     }

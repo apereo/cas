@@ -18,6 +18,10 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.ProviderManagerBuilder;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This is {@link CasLdapUserDetailsManagerConfigurer}.
  *
@@ -42,7 +46,7 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
         final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(adminPagesSecurityProperties.getLdap());
 
-        if (StringUtils.isNotBlank(ldapAuthz.getGroupFilter()) && StringUtils.isNotBlank(ldapAuthz.getGroupAttribute())) {
+        if (isGroupBasedAuthorization()) {
             return new LdapUserGroupsToRolesAuthorizationGenerator(connectionFactory,
                     ldapAuthorizationGeneratorUserSearchExecutor(),
                     ldapAuthz.isAllowMultipleResults(),
@@ -59,14 +63,21 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
                 ldapAuthz.getRolePrefix());
     }
 
+    private boolean isGroupBasedAuthorization() {
+        final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
+        return StringUtils.isNotBlank(ldapAuthz.getGroupFilter()) && StringUtils.isNotBlank(ldapAuthz.getGroupAttribute());
+    }
+
     private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        return Beans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter());
+        return Beans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter(),
+                Collections.emptyList(), Arrays.asList(ldapAuthz.getRoleAttribute()));
     }
 
     private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
         final LdapAuthorizationProperties ldapAuthz = adminPagesSecurityProperties.getLdap().getLdapAuthz();
-        return Beans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getGroupFilter());
+        return Beans.newLdaptiveSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getGroupFilter(),
+                Collections.emptyList(), Arrays.asList(ldapAuthz.getGroupAttribute()));
     }
 
     @Override
