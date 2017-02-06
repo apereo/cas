@@ -13,7 +13,7 @@ and sustainable architecture and deployment.
 ## Collect Use Cases
 
 It is very important that you document, catalog and analyze your desired use cases and requirements prior to the deployment.
-Once you have a few ideas, please discuss and share those with the [CAS community](../Support.html)
+Once you have a few ideas, please discuss and share those with the [CAS community](/cas/Support.html)
 to learn about common trends, practices and patterns
 that may already have solved the same issues you face today. 
 
@@ -48,7 +48,7 @@ wish to contribute to the development of the project.
 
 It is **VERY IMPORTANT** that you try to get a functional baseline working before doing anything else.
 Avoid making ad-hoc changes right away to customize the deployment. Stick with the CAS-provided defaults
-and settings and make changes **one step at a time**. Keep track of your process and applied changes
+and settings and make changes **one step at a time**. Keep track of process and applied changes
 in source control and tag changes as you make progress. 
 
 ## Customize
@@ -67,7 +67,7 @@ Instead, try to warm up to the following suggestions:
 - Bug fixes and small improvements belong to the core CAS software. Not your deployment. Make every attempt to report issues, 
 contribute fixes and patches and work with the CAS community to solve issues once and for all.
 - Certain number of internal CAS components are made difficult to augment and modify. In most cases, this approach is
-done on purpose to steer your away from dangerous and needlessly complicated changes. If you come across a need
+done on purpose to steer you away from dangerous and needlessly complicated changes. If you come across a need
 and have a feature or use case in mind whose configuration and implementation requires modifications to the core internals
 of the software, discuss that with the CAS community and attempt to build the enhancement directly into the CAS software,
 rather than treating it as a snowflake.
@@ -81,4 +81,4 @@ will likely lead to disastrous results in the long run.
 
 The [troubleshooting guide](../installation/Troubleshooting-Guide.html) might have some answers 
 for issues you may have run into and it generally tries to describe a strategy useful for troubleshooting
-and diagnostics. You may also seek assistance from the [CAS community](/Mailing-Lists.html).
+and diagnostics. You may also seek assistance from the [CAS community](/cas/Mailing-Lists.html).
