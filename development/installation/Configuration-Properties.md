@@ -3277,6 +3277,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldap.ldapAuthz.groupAttribute=
 # cas.mgmt.ldap.ldapAuthz.groupPrefix=
 # cas.mgmt.ldap.ldapAuthz.groupFilter=
+# cas.mgmt.ldap.ldapAuthz.groupBaseDn=
 # cas.mgmt.ldap.ldapAuthz.rolePrefix=ROLE_
 # cas.mgmt.ldap.ldapAuthz.roleAttribute=uugid
 # cas.mgmt.ldap.ldapAuthz.searchFilter=cn={user}
