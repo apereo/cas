@@ -201,15 +201,15 @@ needed for InCommon's Research and Scholarship service providers:
   "serviceId": "entity-ids-allowed-via-regex",
   "name": "SAML",
   "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [ "java.util.ArrayList",
       [{
           "@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"
       }]
-    ],
-  },
-  "metadataLocation": "path/to/incommon/metadata.xml"
+    ]
+  }
 }
 ```
 
