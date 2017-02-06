@@ -829,9 +829,6 @@ public final class Beans {
     }
 
     private static Authenticator getSaslAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        if (StringUtils.isBlank(l.getBaseDn())) {
-            throw new IllegalArgumentException("Base dn cannot be empty/blank for authenticated/anonymous authentication");
-        }
         if (StringUtils.isBlank(l.getUserFilter())) {
             throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
         }
