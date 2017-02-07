@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.dynareg;
 
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 

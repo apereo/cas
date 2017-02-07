@@ -1,7 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.OidcServerDiscoverySettings;
+import org.apereo.cas.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;

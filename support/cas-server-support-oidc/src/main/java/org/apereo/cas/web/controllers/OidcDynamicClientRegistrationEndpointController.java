@@ -1,8 +1,8 @@
 package org.apereo.cas.web.controllers;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.OidcClientRegistrationRequest;
-import org.apereo.cas.OidcClientRegistrationResponse;
+import org.apereo.cas.dynareg.OidcClientRegistrationRequest;
+import org.apereo.cas.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;

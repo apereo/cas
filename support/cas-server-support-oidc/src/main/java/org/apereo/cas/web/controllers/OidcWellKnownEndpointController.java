@@ -1,7 +1,7 @@
 package org.apereo.cas.web.controllers;
 
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.OidcServerDiscoverySettings;
+import org.apereo.cas.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
