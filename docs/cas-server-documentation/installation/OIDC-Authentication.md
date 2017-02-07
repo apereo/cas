@@ -43,7 +43,9 @@ The current implementation provides support for:
 
 ## Register Clients
 
-### Statically                      w
+Clients can be registered with CAS in the following ways.
+
+### Statically 
 
 OpenID Connect clients can be *statically* registered with CAS as such:
 
@@ -61,7 +63,7 @@ OpenID Connect clients can be *statically* registered with CAS as such:
   "jwks": "...",
   "encryptIdToken": false,
   "idTokenEncryptionAlg": "...",
-  "idTokenEncryptionEncoding": "...",
+  "idTokenEncryptionEncoding": "..."
 }
 ```
 
