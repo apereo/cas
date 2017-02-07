@@ -9,10 +9,11 @@ import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorTokenCredentialRepository;
-import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.adaptors.gauth.repository.credentials.RestGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -26,7 +27,6 @@ import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.webflow.execution.Action;
 
 import java.util.concurrent.TimeUnit;
@@ -63,10 +64,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -152,6 +149,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
         if (gauth.getJson().getConfig().getLocation() != null) {
             return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getConfig().getLocation(), googleAuthenticatorInstance());
         }
+        if (StringUtils.isNotBlank(gauth.getRest().getEndpointUrl())) {
+            return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance(),
+                    new RestTemplate(), gauth);
+        }
         return new InMemoryGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance());
     }
 
@@ -173,7 +174,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
             plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
             plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
         }
-        
+
     }
 
     /**
