@@ -122,5 +122,6 @@ file is similar to the following:
 }
 ```
 
-A JWKS can be generated using [this tool](https://mkjwk.org/)
+CAS will attempt to auto-generate a keystore if it can'tt find one, but if you wish to generate one manually, 
+a JWKS can be generated using [this tool](https://mkjwk.org/)
 or [this tool](http://connect2id.com/products/nimbus-jose-jwt/generator).
