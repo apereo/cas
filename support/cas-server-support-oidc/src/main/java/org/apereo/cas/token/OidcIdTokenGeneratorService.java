@@ -1,6 +1,7 @@
-package org.apereo.cas;
+package org.apereo.cas.token;
 
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
