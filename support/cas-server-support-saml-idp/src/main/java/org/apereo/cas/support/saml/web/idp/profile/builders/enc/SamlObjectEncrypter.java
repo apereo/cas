@@ -2,10 +2,11 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
@@ -25,7 +26,14 @@ import org.opensaml.xmlsec.encryption.support.DataEncryptionParameters;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
 import org.opensaml.xmlsec.impl.BasicEncryptionConfiguration;
+import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
+import org.opensaml.xmlsec.keyinfo.impl.KeyInfoProvider;
 import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
+import org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.KeyInfoReferenceProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,7 +54,7 @@ import java.util.List;
  */
 public class SamlObjectEncrypter {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-        
+
     /**
      * The Override data encryption algorithms.
      */
@@ -68,7 +77,7 @@ public class SamlObjectEncrypter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
@@ -81,13 +90,14 @@ public class SamlObjectEncrypter {
      * @throws SamlException the saml exception
      */
     public EncryptedAssertion encode(final Assertion samlObject,
-                                           final SamlRegisteredService service,
-                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                           final HttpServletResponse response,
-                                           final HttpServletRequest request) throws SamlException {
+                                     final SamlRegisteredService service,
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                     final HttpServletResponse response,
+                                     final HttpServletRequest request) throws SamlException {
         try {
             logger.debug("Attempting to encrypt [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
             final Credential credential = getKeyEncryptionCredential(adaptor.getEntityId(), adaptor, service);
+            logger.info("Found encryption public key: [{}]", EncodingUtils.encodeBase64(credential.getPublicKey().getEncoded()));
 
             final KeyEncryptionParameters keyEncParams = getKeyEncryptionParameters(samlObject, service, adaptor, credential);
             logger.debug("Key encryption algorithm for [{}] is [{}]", keyEncParams.getRecipient(), keyEncParams.getAlgorithm());
@@ -196,17 +206,19 @@ public class SamlObjectEncrypter {
 
         final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
 
-        final PrivateKey privateKey = getEncryptionPrivateKey();
-        final X509Certificate certificate = getEncryptionCertificate();
-        final Credential encryptionCredential = new BasicX509Credential(certificate, privateKey);
-        logger.debug("Created encryption credential");
+        final List<KeyInfoProvider> providers = new ArrayList<>();
+        providers.add(new RSAKeyValueProvider());
+        providers.add(new DSAKeyValueProvider());
+        providers.add(new InlineX509DataProvider());
+        providers.add(new DEREncodedKeyValueProvider());
+        providers.add(new KeyInfoReferenceProvider());
 
-        final StaticKeyInfoCredentialResolver keyinfoResolver = new StaticKeyInfoCredentialResolver(encryptionCredential);
-        kekCredentialResolver.setKeyInfoCredentialResolver(keyinfoResolver);
+        final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(providers);
+        kekCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
 
         final BasicRoleDescriptorResolver roleDescriptorResolver = new BasicRoleDescriptorResolver(adaptor.getMetadataResolver());
         roleDescriptorResolver.initialize();
-
+        
         kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.initialize();
 
@@ -226,7 +238,7 @@ public class SamlObjectEncrypter {
      * @return the encryption certificate
      */
     protected X509Certificate getEncryptionCertificate() {
-        logger.debug("Locating encryption certificate file from [{}]", 
+        logger.debug("Locating encryption certificate file from [{}]",
                 casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile());
         return SamlUtils.readCertificate(new FileSystemResource(
                 casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile()));
