@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.token;
 
 import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
