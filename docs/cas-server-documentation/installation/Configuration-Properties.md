@@ -1843,6 +1843,12 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.json.config.location=file:/somewhere.json
 ```
 
+#### Google Authenticator Resr
+
+```properties
+# cas.authn.mfa.gauth.rest.endpointUrl=https://somewhere.gauth.com
+```
+
 #### Google Authenticator MongoDb
 
 ```properties

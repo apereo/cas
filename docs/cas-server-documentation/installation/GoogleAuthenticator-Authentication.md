@@ -65,6 +65,18 @@ Registration records and tokens may be kept inside a mongo db instance, via the 
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-mongodb).
 
+### REST
+
+Registration records may also be passed along to a REST endpoint.
+The behavior is only activated when an endpoint url is provided.
+
+| Method    | Headers             | Expected Response
+|-----------|--------------------------------------------------
+| `GET`     | `username`          | `200`. Secret key of the account in the body.
+| `POST`    | `username`, `validationCode`, `secretKey`, `scratchCodes` | `200`. `true/false` in the body.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-rest).
+
 ### JSON
 
 Registration records may also be kept inside a single JSON file for all users.
