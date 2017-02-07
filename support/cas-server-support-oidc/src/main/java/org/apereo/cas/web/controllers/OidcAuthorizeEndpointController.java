@@ -4,7 +4,7 @@ import com.google.common.base.Throwables;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.OidcIdTokenGeneratorService;
+import org.apereo.cas.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;

@@ -2,7 +2,7 @@ package org.apereo.cas.web;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.OidcIdTokenGeneratorService;
+import org.apereo.cas.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuthResponseTypes;
