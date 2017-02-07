@@ -44,11 +44,11 @@ public class OidcIdTokenGeneratorService {
 
     private final String issuer;
     private final int skew;
-    private final OidcTokenSigningService signingService;
+    private final OidcTokenSigningAndEncryptionService signingService;
 
     public OidcIdTokenGeneratorService(final String issuer,
                                        final int skew,
-                                       final OidcTokenSigningService signingService) {
+                                       final OidcTokenSigningAndEncryptionService signingService) {
         this.signingService = signingService;
         this.issuer = issuer;
         this.skew = skew;
@@ -84,7 +84,7 @@ public class OidcIdTokenGeneratorService {
                 oidcRegisteredService, profile.get(), context, responseType);
         LOGGER.debug("Produce claims for the id token [{}] as [{}]", accessTokenId, claims);
 
-        return this.signingService.signClaims(oidcRegisteredService, claims);
+        return this.signingService.encode(oidcRegisteredService, claims);
     }
 
     /**

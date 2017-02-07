@@ -9,10 +9,9 @@ import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.OidcIdTokenGeneratorService;
-import org.apereo.cas.OidcJsonWebKeystoreCacheLoader;
 import org.apereo.cas.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.OidcServerDiscoverySettings;
-import org.apereo.cas.OidcTokenSigningService;
+import org.apereo.cas.OidcTokenSigningAndEncryptionService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -20,6 +19,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
+import org.apereo.cas.jwks.OidcServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -230,7 +231,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public OidcIdTokenGeneratorService oidcIdTokenGenerator() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenGeneratorService(oidc.getIssuer(), oidc.getSkew(),
-                oidcTokenSigningService());
+                oidcTokenSigningAndEncryptionService());
     }
 
     @Bean
@@ -329,23 +330,41 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public OidcTokenSigningService oidcTokenSigningService() {
-        return new OidcTokenSigningService(oidcJsonWebKeystoreCache());
+    public OidcTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
+        final OidcProperties oidc = casProperties.getAuthn().getOidc();
+        return new OidcTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
+                oidcServiceJsonWebKeystoreCache(),
+                oidc.getIssuer());
     }
 
     @Bean
-    public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcJsonWebKeystoreCache() {
+    public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> cache =
                 CacheBuilder.newBuilder().maximumSize(1)
                         .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
-                        .build(oidcJsonWebKeystoreCacheLoader());
+                        .build(oidcServiceJsonWebKeystoreCacheLoader());
         return cache;
     }
 
     @Bean
-    public OidcJsonWebKeystoreCacheLoader oidcJsonWebKeystoreCacheLoader() {
-        return new OidcJsonWebKeystoreCacheLoader(casProperties.getAuthn().getOidc().getJwksFile());
+    public LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
+        final OidcProperties oidc = casProperties.getAuthn().getOidc();
+        final LoadingCache<String, Optional<RsaJsonWebKey>> cache =
+                CacheBuilder.newBuilder().maximumSize(1)
+                        .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
+                        .build(oidcDefaultJsonWebKeystoreCacheLoader());
+        return cache;
+    }
+
+    @Bean
+    public OidcDefaultJsonWebKeystoreCacheLoader oidcDefaultJsonWebKeystoreCacheLoader() {
+        return new OidcDefaultJsonWebKeystoreCacheLoader(casProperties.getAuthn().getOidc().getJwksFile());
+    }
+
+    @Bean
+    public OidcServiceJsonWebKeystoreCacheLoader oidcServiceJsonWebKeystoreCacheLoader() {
+        return new OidcServiceJsonWebKeystoreCacheLoader();
     }
 
     @RefreshScope
