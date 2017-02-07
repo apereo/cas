@@ -19,7 +19,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
-import org.springframework.cloud.endpoint.RefreshEndpoint;
+import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
@@ -44,8 +44,8 @@ public class DefaultCasEventListener {
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
 
-    @Autowired
-    private RefreshEndpoint refreshEndpoint;
+    @Autowired(required = false)
+    private ContextRefresher contextRefresher;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -95,10 +95,15 @@ public class DefaultCasEventListener {
      */
     @EventListener
     public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
+        if (this.contextRefresher == null) {
+            LOGGER.warn("Unable to refresh application context, since no refresher is available");
+            return;
+        }
+
         final File file = event.getFile().toFile();
         if (CONFIG_FILE_PATTERN.matcher(file.getName()).find()) {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
-            final Collection<String> keys = this.refreshEndpoint.invoke();
+            final Collection<String> keys = this.contextRefresher.refresh();
             LOGGER.debug("Refreshed the following settings: [{}].", keys);
             rebindCasConfigurationProperties();
             LOGGER.info("CAS finished rebinding configuration with new settings [{}]", keys);
