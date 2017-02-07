@@ -112,7 +112,8 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      * @param registeredService the registered service
      * @return the set
      */
-    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service, final RegisteredService registeredService) {
+    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context,
+                                                              final Service service, final RegisteredService registeredService) {
         return this.orderedResolvers.stream()
                 .filter(Objects::nonNull)
                 .map(resolver -> resolver.resolveSingle(context))

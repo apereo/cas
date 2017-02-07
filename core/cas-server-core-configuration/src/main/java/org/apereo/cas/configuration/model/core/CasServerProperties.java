@@ -4,8 +4,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import java.time.Duration;
-
 /**
  * This is {@link CasServerProperties}.
  *
@@ -14,7 +12,6 @@ import java.time.Duration;
  */
 public class CasServerProperties {
     
-    private String connectionTimeout = "PT20S";
     private Resource rewriteValveConfigLocation = new ClassPathResource("container/tomcat/rewrite.config");
     private String name = "https://cas.example.org:8443";
     private String prefix = name.concat("/cas");
@@ -76,14 +73,6 @@ public class CasServerProperties {
 
     public String getLogoutUrl() {
         return getPrefix().concat("/logout");
-    }
-
-    public void setConnectionTimeout(final String connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    public int getConnectionTimeout() {
-        return (int) Duration.parse(connectionTimeout).toMillis();
     }
 
     public static class Ajp {

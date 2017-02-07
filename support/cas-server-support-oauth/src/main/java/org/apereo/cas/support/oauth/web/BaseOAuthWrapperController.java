@@ -107,7 +107,7 @@ public abstract class BaseOAuthWrapperController {
                                                   final J2EContext context) {
         final Principal principal = this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
 
-        final Map<String, Object> newAttributes = service.getAttributeReleasePolicy().getAttributes(principal);
+        final Map<String, Object> newAttributes = service.getAttributeReleasePolicy().getAttributes(principal, service);
         final Principal newPrincipal = principalFactory.createPrincipal(profile.getId(), newAttributes);
 
         final String authenticator = profile.getClass().getCanonicalName();

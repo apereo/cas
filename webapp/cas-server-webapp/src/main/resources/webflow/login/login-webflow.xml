@@ -37,7 +37,7 @@
             <evaluate expression="samlMetadataUIParserAction" />
         </on-entry>
         -->
-        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
+        <transition on="submit" bind="true" validate="true" to="realSubmit" history="invalidate"/>
     </view-state>
 
     <action-state id="realSubmit">

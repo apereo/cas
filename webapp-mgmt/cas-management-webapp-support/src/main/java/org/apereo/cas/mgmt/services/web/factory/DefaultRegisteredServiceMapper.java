@@ -66,6 +66,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 final RegisteredServiceOidcTypeEditBean oidcBean = bean.getOidc();
                 oidcBean.setJwks(oidc.getJwks());
                 oidcBean.setSignToken(oidc.isSignIdToken());
+                oidcBean.setImplicit(oidc.isImplicit());
             }
 
         }
@@ -172,6 +173,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OIDC.toString())) {
                     ((OidcRegisteredService) regSvc).setJwks(data.getOidc().getJwks());
                     ((OidcRegisteredService) regSvc).setSignIdToken(data.getOidc().isSignToken());
+                    ((OidcRegisteredService) regSvc).setImplicit(data.getOidc().isImplicit());
                 }
             } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.SAML.toString())) {
                 regSvc = new SamlRegisteredService();

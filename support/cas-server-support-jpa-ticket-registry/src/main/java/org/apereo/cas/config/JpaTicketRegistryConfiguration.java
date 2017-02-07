@@ -34,7 +34,7 @@ import javax.sql.DataSource;
  */
 @Configuration("jpaTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class JpaTicketRegistryConfiguration {
 
     @Autowired
@@ -61,7 +61,7 @@ public class JpaTicketRegistryConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
-        return Beans.newEntityManagerFactoryBean(
+        return Beans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                         Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaTicketRegistryContext",

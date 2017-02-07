@@ -1,6 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +21,20 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class AcceptableUsagePolicyFormAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(AcceptableUsagePolicyFormAction.class);
-    
+
     /**
      * Event id to signal the policy needs to be accepted.
      **/
     private static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
-    
-    private AcceptableUsagePolicyRepository repository;
 
-    public AcceptableUsagePolicyFormAction(final AcceptableUsagePolicyRepository repository) {
+    private final AcceptableUsagePolicyRepository repository;
+
+    private final TicketRegistrySupport ticketRegistrySupport;
+
+    public AcceptableUsagePolicyFormAction(final AcceptableUsagePolicyRepository repository,
+                                           final TicketRegistrySupport ticketRegistrySupport) {
         this.repository = repository;
+        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 
     /**
@@ -38,9 +45,12 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
      * @param messageContext the message context
      * @return success if policy is accepted. {@link #EVENT_ID_MUST_ACCEPT} otherwise.
      */
-    public Event verify(final RequestContext context, final Credential credential,
+    public Event verify(final RequestContext context,
+                        final Credential credential,
                         final MessageContext messageContext) {
-        if (repository.verify(context, credential)) {
+        final Pair<Boolean, Principal> res = repository.verify(context, credential);
+        context.getFlowScope().put("principal", res.getValue());
+        if (res.getKey()) {
             return success();
         }
         return accept();

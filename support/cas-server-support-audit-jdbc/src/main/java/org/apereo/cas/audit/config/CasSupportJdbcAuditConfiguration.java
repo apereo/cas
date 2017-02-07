@@ -61,7 +61,7 @@ public class CasSupportJdbcAuditConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
-        return Beans.newEntityManagerFactoryBean(
+        return Beans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                         Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaInspektrAuditContext",

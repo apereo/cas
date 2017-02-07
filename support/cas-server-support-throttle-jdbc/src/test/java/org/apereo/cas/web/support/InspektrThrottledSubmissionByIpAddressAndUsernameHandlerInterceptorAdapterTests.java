@@ -71,7 +71,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
-    @Qualifier("authenticationManager")
+    @Qualifier("casAuthenticationManager")
     private AuthenticationManager authenticationManager;
 
     @Override

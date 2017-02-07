@@ -4,13 +4,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.EndpointProperties;
+import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
 import org.springframework.boot.actuate.endpoint.ShutdownEndpoint;
+import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
 import org.springframework.cloud.context.restart.RestartEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -26,8 +27,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller("dashboardController")
-public class DashboardController {
+public class DashboardController extends AbstractNamedMvcEndpoint {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -48,10 +48,17 @@ public class DashboardController {
     private EndpointProperties endpointProperties;
 
     @Autowired
+    private EnvironmentEndpoint environmentEndpoint;
+
+    @Autowired
     private Environment environment;
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    public DashboardController() {
+        super("casdashboard", "/dashboard", true, true);
+    }
 
     /**
      * Handle request internal model and view.
@@ -61,12 +68,14 @@ public class DashboardController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping("/status/dashboard")
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @GetMapping
+    public ModelAndView handle(final HttpServletRequest request,
+                               final HttpServletResponse response) throws Exception {
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
         ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);
         model.put("restartEndpointEnabled", restartEndpoint.isEnabled() && endpointProperties.getEnabled());
+        model.put("environmentEndpointEnabled", environmentEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("serverFunctionsEnabled",
                 (Boolean) model.get("restartEndpointEnabled") || (Boolean) model.get("shutdownEndpointEnabled"));

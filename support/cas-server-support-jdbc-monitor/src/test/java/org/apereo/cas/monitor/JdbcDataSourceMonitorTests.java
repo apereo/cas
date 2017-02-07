@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-public class DataSourceMonitorTests {
+public class JdbcDataSourceMonitorTests {
 
     private DataSource dataSource;
 

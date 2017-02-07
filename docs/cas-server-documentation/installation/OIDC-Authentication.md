@@ -21,12 +21,13 @@ To learn more about OpenId Connect, please [review this guide](http://openid.net
 
 The current implementation provides support for:
 
-- [Authorization Code workflow](http://openid.net/specs/openid-connect-basic-1_0.html)
+- [Authorization Code flow](http://openid.net/specs/openid-connect-basic-1_0.html)
+- [Implicit flow](https://openid.net/specs/openid-connect-implicit-1_0.html)
 - [Dynamic Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
 - Administration and registration of [OIDC clients](Service-Management.html).
 - Administration and registration of OIDC clients via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
-- Ability to [resolve and release claims](../integration/Attribute-Release-Policies.html).
-- Ability to configure an expiration policy for various tokens.
+- Ability to [resolve, map and release claims](../integration/Attribute-Release-Policies.html).
+- Ability to configure expiration policies for various tokens.
 
 ## Endpoints
 
@@ -42,7 +43,9 @@ The current implementation provides support for:
 
 ## Register Clients
 
-OpenID Connect clients can be registered with CAS as such:
+### Statically
+
+OpenID Connect clients can be *statically* registered with CAS as such:
 
 ```json
 {
@@ -51,6 +54,7 @@ OpenID Connect clients can be registered with CAS as such:
   "clientSecret": "secret",
   "serviceId" : "^<https://the-redirect-uri>",
   "signIdToken": true,
+  "implicit": false,
   "name": "OIDC",
   "id": 1000,
   "evaluationOrder": 100,
@@ -61,8 +65,13 @@ OpenID Connect clients can be registered with CAS as such:
 | Field                   | Description
 |-------------------------|------------------------------------------------------------------
 | `serviceId`             | The authorized redirect URI for this OIDC client.
+| `implicit`              | Whether the response produced for this service should be [implicit](https://openid.net/specs/openid-connect-implicit-1_0.html).
 | `signIdToken`           | Whether ID tokens should be signed. Default is `true`.
 | `jwks`                  | Path to the location of the keystore that holds the signing keys for this application. If none defined, defaults will be used.
+
+### Dynamically
+
+Clients applications may dynamically be registered with CAS for authentication. By default, CAS operates in a `PROTECTED` mode where the registration endpoint requires user authentication. This behavior may be relaxed via CAS settings to allow CAS to operate in an `OPEN` mode.
 
 ## Settings
 
@@ -72,25 +81,18 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 Remember that OpenID Connect features of CAS require session affinity (and optionally session replication),
 as the authorization responses throughout the login flow
-are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers
-accordinngly.
+are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers accordinngly.
 
 ## Claims
 
 OpenID connect claims are simply treated as normal CAS attributes that need to
-be [resolved and released](../integration/Attribute-Release-Policies.html).
+be [resolved, mapped and released](../integration/Attribute-Release-Policies.html).
 
 ## Authentication Context Class
 
 Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request,
 which is mostly taken into account by the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS.
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
-
-## Dynamic Registration
-
-Clients applications may dynamically be registered with CAS for authentication. By default, CAS operates in a `PROTECTED` mode
-where the registration endpoint requires user authentication. This behavior may be relaxed via CAS settings to allow CAS to operate
-in an `OPEN` mode.
 
 ## Keystores
 
@@ -102,9 +104,9 @@ file is similar to the following:
 {
   "keys": [
     {
-      "d": "eg5wj4Cfsp9gvIaorkdGgIKLSvWH5oitIMrLa5KGLIv7K7Iwi1_-otTORMSi8aKcqyBTGhNYT6-j23Q_dn6Ne6a87EOC5VUiz26y8_ZnovoCxH5nZtvEY8Y-RxhhmbQadm6zsK4o4bVQgn4ZNOCNQZiJUCozh79AedbbnzSSm9LhZlhnNP8hPEMnFp9EqVB0nNLG6vZ11KeSNvYng1LHBhqEhfloRuJV9vkWK8ekrpOQ6j2kdk0XRtryoS1DHVj_a_D7EG7CnjVx3zGSyf0B9JRViRVsKPVLGAtq7O0JiJZWMwIhOJBdviDu3Gi8ovD4yBOfQa_e86cqNmEnf7f2wQ",
+      "d": "...",
       "e": "AQAB",
-      "n": "k_2zfdFHTepOJYH3bCe7E_3bulz00qsDK7SBnK6aUbzby4xrXfzAQ6_Uxo3uttfFtx_WclfNF0hnkQW3V06LcY5CNQJm6WYrZ7EMuXmpPV6n9PEb5IHczG0ONwJVX_GykOUNPUuAig-B3XnjjyK8W8uwPv0oJzDcB3YIU5XEQBCrcJzefNUoOuT1pYBmJcCdnasUjRGsA-SsuGuaA82cDJNFT-mDenj6YpAZFrDyLHWHYgSsTxPhF-u7q4n3Xl4Zj2Vw2gDE5pXZHzsZS9U0Dn37bIWZWkI5sQoEh6x5P1fkWOIJw630qWMWChuKboaCmp08f7JBfvGQwNlVVgDmUw",
+      "n": "...",
       "kty": "RSA",
       "kid": "cas"
     }

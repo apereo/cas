@@ -40,11 +40,13 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
     
     public OidcAuthenticationContextWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,
-                                                              final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                              final ServicesManager servicesManager,
+                                                              final TicketRegistrySupport ticketRegistrySupport,
                                                               final CookieGenerator warnCookieGenerator,
                                                               final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
                                                               final MultifactorAuthenticationProviderSelector selector) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
+                ticketRegistrySupport, warnCookieGenerator,
                 authenticationSelectionStrategies, selector);
     }
 
@@ -61,7 +63,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
 
         String acr = request.getParameter(OAuthConstants.ACR_VALUES);
         if (StringUtils.isBlank(acr)) {
-            final URIBuilder builderContext = new URIBuilder(context.getFlowExecutionUrl());
+            final URIBuilder builderContext = new URIBuilder(StringUtils.trimToEmpty(context.getFlowExecutionUrl()));
             final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
                     .stream().filter(p -> p.getName().equals(OAuthConstants.ACR_VALUES))
                     .findFirst();

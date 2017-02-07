@@ -20,12 +20,12 @@ public abstract class AbstractJpaProperties {
     private String password = StringUtils.EMPTY;
     private String defaultCatalog;
     private String defaultSchema;
-    private String healthQuery = "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
-    private String idleTimeout = "PT5S";
+    private String healthQuery = StringUtils.EMPTY;
+    private String idleTimeout = "PT10M";
 
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
-    private int leakThreshold = 10;
+    private int leakThreshold = 3_000;
     private int batchSize = 1;
 
     private boolean failFast = true;

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.security.auth.login.AccountExpiredException;
+import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -44,7 +46,9 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {
                     throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + c.getUsername());
                 }
-                return createHandlerResult(c, this.principalFactory.createPrincipal(principalFromRest.getId()), new ArrayList<>());
+                return createHandlerResult(c,
+                        this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes()),
+                        new ArrayList<>());
             }
         } catch (final HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
@@ -56,6 +60,13 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new AccountNotFoundException("Could not locate account for " + c.getUsername());
             }
+            if (e.getStatusCode() == HttpStatus.LOCKED) {
+                throw new AccountLockedException("Could not authenticate locked account for " + c.getUsername());
+            }
+            if (e.getStatusCode() == HttpStatus.PRECONDITION_REQUIRED) {
+                throw new AccountExpiredException("Could not authenticate expired account for " + c.getUsername());
+            }
+
             throw new FailedLoginException("Rest endpoint returned an unknown status code "
                     + e.getStatusCode() + " for " + c.getUsername());
         }

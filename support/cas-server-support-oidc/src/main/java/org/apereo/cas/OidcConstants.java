@@ -1,11 +1,5 @@
 package org.apereo.cas;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 /**
  * This is {@link OidcConstants}.
  *
@@ -18,12 +12,17 @@ public interface OidcConstants {
      * Dnamic client registration mode.
      */
     enum DynamicClientRegistrationMode {
-        /** Registration is open to all. */
+        /**
+         * Registration is open to all.
+         */
         OPEN,
 
-        /** registration is protected for all. */
+        /**
+         * registration is protected for all.
+         */
         PROTECTED
     }
+
     /**
      * ACR passed in the id token.
      */
@@ -33,7 +32,7 @@ public interface OidcConstants {
      * Authentication method reference passed in the id token.
      */
     String AMR = "amr";
-    
+
     /**
      * The Authorization Server MUST NOT display any authentication or consent user interface pages.
      */
@@ -65,18 +64,9 @@ public interface OidcConstants {
     String CLAIM_AUTH_TIME = "auth_time";
 
     /**
-     * The Scopes.
+     * The access token hash.
      */
-    List<String> SCOPES = Arrays.asList("openid", "profile", "email", "address", "phone", "offline_access");
-
-    /**
-     * The Claims.
-     */
-    Set<String> CLAIMS = Stream.of(CLAIM_SUB, "name", CLAIM_PREFERRED_USERNAME,
-            "family_name", "given_name", "middle_name", "given_name", "profile",
-            "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
-            "birthdate", "email", "email_verified", "phone_number",
-            "phone_number_verified", "address").collect(Collectors.toSet());
+    String CLAIM_AT_HASH = "at_hash";
 
     /**
      * The id token.
