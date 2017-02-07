@@ -9,13 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
@@ -32,6 +32,7 @@ import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
  */
 public class ConfigurationDirectoryPathWatchService implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationDirectoryPathWatchService.class);
+    private static final long MONITOR_INTERVAL = 5_000;
 
     private final WatchService watcher;
     private final Path directory;
@@ -56,10 +57,7 @@ public class ConfigurationDirectoryPathWatchService implements Runnable {
      * Watch the directory for changes.
      */
     public void watch() {
-        final AtomicBoolean eventFired = new AtomicBoolean();
-
         while (true) {
-
             final WatchKey key;
             try {
                 key = watcher.take();
@@ -68,7 +66,7 @@ public class ConfigurationDirectoryPathWatchService implements Runnable {
                 return;
             }
 
-
+            long lastModified = 0;
             for (final WatchEvent<?> event : key.pollEvents()) {
                 final WatchEvent.Kind<?> kind = event.kind();
 
@@ -83,24 +81,24 @@ public class ConfigurationDirectoryPathWatchService implements Runnable {
                 try {
                     LOGGER.debug("Detected configuration change [{}]", kind.name());
                     final Path child = this.directory.resolve(filename);
-                    if (StringUtils.equalsIgnoreCase(StandardWatchEventKinds.ENTRY_CREATE.name(), kind.name()) && !eventFired.get()) {
-                        this.eventPublisher.publishEvent(new CasConfigurationCreatedEvent(this, child));
-                        eventFired.set(true);
+                    final File childFile = child.toFile();
+                    if (childFile.lastModified() - lastModified > MONITOR_INTERVAL) {
+                        if (StringUtils.equalsIgnoreCase(StandardWatchEventKinds.ENTRY_CREATE.name(), kind.name())) {
+                            this.eventPublisher.publishEvent(new CasConfigurationCreatedEvent(this, child));
+                        }
+                        if (StringUtils.equalsIgnoreCase(StandardWatchEventKinds.ENTRY_DELETE.name(), kind.name())) {
+                            this.eventPublisher.publishEvent(new CasConfigurationDeletedEvent(this, child));
+                        }
+                        if (StringUtils.equalsIgnoreCase(StandardWatchEventKinds.ENTRY_MODIFY.name(), kind.name())) {
+                            this.eventPublisher.publishEvent(new CasConfigurationModifiedEvent(this, child));
+                        }
                     }
-                    if (StringUtils.equalsIgnoreCase(StandardWatchEventKinds.ENTRY_DELETE.name(), kind.name()) && !eventFired.get()) {
-                        this.eventPublisher.publishEvent(new CasConfigurationDeletedEvent(this, child));
-                        eventFired.set(true);
-                    }
-                    if (StringUtils.equalsIgnoreCase(StandardWatchEventKinds.ENTRY_MODIFY.name(), kind.name()) && !eventFired.get()) {
-                        this.eventPublisher.publishEvent(new CasConfigurationModifiedEvent(this, child));
-                        eventFired.set(true);
-                    }
+                    lastModified = childFile.lastModified();
                 } catch (final Exception e) {
                     LOGGER.warn(e.getMessage(), e);
                     continue;
                 }
             }
-            eventFired.set(false);
             final boolean valid = key.reset();
             if (!valid) {
                 break;
