@@ -41,6 +41,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -78,6 +79,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = "cas.authn.adaptive.risk.geoLocation.enabled=true")
 @DirtiesContext
 @EnableScheduling
+@IfProfileValue(name = "geoLocationEnabled", value = "true")
 public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     @Autowired
     @Qualifier("casEventRepository")
