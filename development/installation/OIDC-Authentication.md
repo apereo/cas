@@ -43,7 +43,7 @@ The current implementation provides support for:
 
 ## Register Clients
 
-### Statically
+### Statically                      w
 
 OpenID Connect clients can be *statically* registered with CAS as such:
 
@@ -58,16 +58,22 @@ OpenID Connect clients can be *statically* registered with CAS as such:
   "name": "OIDC",
   "id": 1000,
   "evaluationOrder": 100,
-  "jwks": "..."
+  "jwks": "...",
+  "encryptIdToken": false,
+  "idTokenEncryptionAlg": "...",
+  "idTokenEncryptionEncoding": "...",
 }
 ```
 
-| Field                   | Description
-|-------------------------|------------------------------------------------------------------
-| `serviceId`             | The authorized redirect URI for this OIDC client.
-| `implicit`              | Whether the response produced for this service should be [implicit](https://openid.net/specs/openid-connect-implicit-1_0.html).
-| `signIdToken`           | Whether ID tokens should be signed. Default is `true`.
-| `jwks`                  | Path to the location of the keystore that holds the signing keys for this application. If none defined, defaults will be used.
+| Field                         | Description
+|-------------------------------|------------------------------------------------------------------
+| `serviceId`                   | The authorized redirect URI for this OIDC client.
+| `implicit`                    | Whether the response produced for this service should be [implicit](https://openid.net/specs/openid-connect-implicit-1_0.html).
+| `signIdToken`                 | Whether ID tokens should be signed. Default is `true`.
+| `jwks`                        | Resource path to the keystore location that holds the keys for this application.
+| `encryptIdToken`              | Whether ID tokens should be encrypted. Default is `false`.
+| `idTokenEncryptionAlg`        | The algorithm header value used to encrypt the id token.
+| `idTokenEncryptionEncoding`   | The algorithm method header value used to encrypt the id token.
 
 ### Dynamically
 
