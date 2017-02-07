@@ -18,22 +18,22 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * This is {@link OidcTokenSigningAndEncryptionService}.
+ * This is {@link OidcIdTokenSigningAndEncryptionService}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class OidcTokenSigningAndEncryptionService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcTokenSigningAndEncryptionService.class);
+public class OidcIdTokenSigningAndEncryptionService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OidcIdTokenSigningAndEncryptionService.class);
 
     private final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache;
     private final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
 
     private final String issuer;
 
-    public OidcTokenSigningAndEncryptionService(final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache,
-                                                final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
-                                                final String issuer) {
+    public OidcIdTokenSigningAndEncryptionService(final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache,
+                                                  final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
+                                                  final String issuer) {
         this.defaultJsonWebKeystoreCache = defaultJsonWebKeystoreCache;
         this.serviceJsonWebKeystoreCache = serviceJsonWebKeystoreCache;
         this.issuer = issuer;

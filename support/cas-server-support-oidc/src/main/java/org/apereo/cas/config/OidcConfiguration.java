@@ -4,14 +4,14 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.OidcCasClientRedirectActionBuilder;
-import org.apereo.cas.OidcClientRegistrationRequest;
-import org.apereo.cas.OidcClientRegistrationRequestSerializer;
+import org.apereo.cas.OidcIdTokenSigningAndEncryptionService;
+import org.apereo.cas.web.OidcCasClientRedirectActionBuilder;
+import org.apereo.cas.dynareg.OidcClientRegistrationRequest;
+import org.apereo.cas.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.OidcIdTokenGeneratorService;
-import org.apereo.cas.OidcJsonWebKeystoreGeneratorService;
-import org.apereo.cas.OidcServerDiscoverySettings;
-import org.apereo.cas.OidcTokenSigningAndEncryptionService;
+import org.apereo.cas.jwks.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -330,9 +330,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public OidcTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
+    public OidcIdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        return new OidcTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
+        return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
                 oidcServiceJsonWebKeystoreCache(),
                 oidc.getIssuer());
     }
