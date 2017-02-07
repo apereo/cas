@@ -44,11 +44,11 @@ public class OidcIdTokenGeneratorService {
 
     private final String issuer;
     private final int skew;
-    private final OidcTokenSigningAndEncryptionService signingService;
+    private final OidcIdTokenSigningAndEncryptionService signingService;
 
     public OidcIdTokenGeneratorService(final String issuer,
                                        final int skew,
-                                       final OidcTokenSigningAndEncryptionService signingService) {
+                                       final OidcIdTokenSigningAndEncryptionService signingService) {
         this.signingService = signingService;
         this.issuer = issuer;
         this.skew = skew;

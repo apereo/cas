@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.jwks;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
