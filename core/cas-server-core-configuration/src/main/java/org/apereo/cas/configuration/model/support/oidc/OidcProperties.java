@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class OidcProperties {
 
+    private int jwksCacheInMinutes = 60;
     private String issuer = "http://localhost:8080/cas/oidc";
     private int skew = 5;
     private Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
@@ -25,6 +26,14 @@ public class OidcProperties {
             "birthdate", "email", "email_verified", "phone_number",
             "phone_number_verified", "address");
     private List<String> subjectTypes = Arrays.asList("public", "pairwise");
+
+    public int getJwksCacheInMinutes() {
+        return jwksCacheInMinutes;
+    }
+
+    public void setJwksCacheInMinutes(final int jwksCacheInMinutes) {
+        this.jwksCacheInMinutes = jwksCacheInMinutes;
+    }
 
     public List<String> getSubjectTypes() {
         return subjectTypes;

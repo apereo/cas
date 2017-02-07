@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.OidcCasClientRedirectActionBuilder;
@@ -7,6 +9,7 @@ import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.OidcIdTokenGeneratorService;
+import org.apereo.cas.OidcJsonWebKeystoreCacheLoader;
 import org.apereo.cas.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.OidcServerDiscoverySettings;
 import org.apereo.cas.OidcTokenSigningService;
@@ -18,6 +21,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuthGrantTypes;
@@ -55,6 +59,7 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.jose4j.jwk.RsaJsonWebKey;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -77,6 +82,8 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -323,7 +330,22 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public OidcTokenSigningService oidcTokenSigningService() {
-        return new OidcTokenSigningService(casProperties.getAuthn().getOidc().getJwksFile());
+        return new OidcTokenSigningService(oidcJsonWebKeystoreCache());
+    }
+
+    @Bean
+    public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcJsonWebKeystoreCache() {
+        final OidcProperties oidc = casProperties.getAuthn().getOidc();
+        final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> cache =
+                CacheBuilder.newBuilder().maximumSize(1)
+                        .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
+                        .build(oidcJsonWebKeystoreCacheLoader());
+        return cache;
+    }
+
+    @Bean
+    public OidcJsonWebKeystoreCacheLoader oidcJsonWebKeystoreCacheLoader() {
+        return new OidcJsonWebKeystoreCacheLoader(casProperties.getAuthn().getOidc().getJwksFile());
     }
 
     @RefreshScope
