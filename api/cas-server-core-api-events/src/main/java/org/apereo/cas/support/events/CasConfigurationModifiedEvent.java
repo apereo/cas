@@ -22,4 +22,8 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
         super(source);
         this.file = file;
     }
+
+    public Path getFile() {
+        return file;
+    }
 }

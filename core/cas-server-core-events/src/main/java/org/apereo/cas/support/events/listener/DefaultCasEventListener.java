@@ -23,8 +23,10 @@ import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link DefaultCasEventListener} that attempts to consume CAS events
@@ -36,6 +38,8 @@ import java.util.Map;
  */
 public class DefaultCasEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasEventListener.class);
+
+    private static final Pattern CONFIG_FILE_PATTERN = Pattern.compile("\\.(properties|yml)", Pattern.CASE_INSENSITIVE);
 
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
@@ -91,10 +95,14 @@ public class DefaultCasEventListener {
      */
     @EventListener
     public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
-        LOGGER.debug("Received event [{}]. Refreshing CAS configuration...", event);
-        final Collection<String> keys = this.refreshEndpoint.invoke();
-        LOGGER.info("The following settings were refreshed/updated: [{}]. CAS will attempt to rebind it configuration...", keys);
-        rebindCasConfigurationProperties();
+        final File file = event.getFile().toFile();
+        if (CONFIG_FILE_PATTERN.matcher(file.getName()).find()) {
+            LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
+            final Collection<String> keys = this.refreshEndpoint.invoke();
+            LOGGER.debug("Refreshed the following settings: [{}].", keys);
+            rebindCasConfigurationProperties();
+            LOGGER.info("CAS finished rebinding configuration with new settings [{}]", keys);
+        }
     }
 
     /**
@@ -109,7 +117,7 @@ public class DefaultCasEventListener {
         this.binder.postProcessBeforeInitialization(e, name);
         final Object bean = this.applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
         this.applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
-        LOGGER.info("Reloaded CAS configuration [{}]", name);
+        LOGGER.debug("Reloaded CAS configuration [{}]", name);
     }
 
     /**
