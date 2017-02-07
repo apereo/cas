@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
@@ -57,6 +56,7 @@ public class ConfigurationDirectoryPathWatchService implements Runnable {
      * Watch the directory for changes.
      */
     public void watch() {
+        long lastModified = System.currentTimeMillis();
         while (true) {
             final WatchKey key;
             try {
@@ -66,7 +66,6 @@ public class ConfigurationDirectoryPathWatchService implements Runnable {
                 return;
             }
 
-            long lastModified = 0;
             for (final WatchEvent<?> event : key.pollEvents()) {
                 final WatchEvent.Kind<?> kind = event.kind();
 
@@ -77,12 +76,10 @@ public class ConfigurationDirectoryPathWatchService implements Runnable {
 
                 final WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 final Path filename = ev.context();
-
                 try {
-                    LOGGER.debug("Detected configuration change [{}]", kind.name());
                     final Path child = this.directory.resolve(filename);
-                    final File childFile = child.toFile();
-                    if (childFile.lastModified() - lastModified > MONITOR_INTERVAL) {
+                    if (System.currentTimeMillis() - lastModified >= MONITOR_INTERVAL) {
+                        LOGGER.debug("Detected configuration change [{}]", kind.name());
                         if (StringUtils.equalsIgnoreCase(StandardWatchEventKinds.ENTRY_CREATE.name(), kind.name())) {
                             this.eventPublisher.publishEvent(new CasConfigurationCreatedEvent(this, child));
                         }
@@ -92,8 +89,8 @@ public class ConfigurationDirectoryPathWatchService implements Runnable {
                         if (StringUtils.equalsIgnoreCase(StandardWatchEventKinds.ENTRY_MODIFY.name(), kind.name())) {
                             this.eventPublisher.publishEvent(new CasConfigurationModifiedEvent(this, child));
                         }
+                        lastModified = System.currentTimeMillis();
                     }
-                    lastModified = childFile.lastModified();
                 } catch (final Exception e) {
                     LOGGER.warn(e.getMessage(), e);
                     continue;
