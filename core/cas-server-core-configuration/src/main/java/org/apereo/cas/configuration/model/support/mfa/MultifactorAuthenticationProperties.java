@@ -894,10 +894,20 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private Mongodb mongodb = new Mongodb();
         private Jpa jpa = new Jpa();
         private Json json = new Json();
+        private Rest rest = new Rest();
+
         private Cleaner cleaner = new Cleaner();
         
         public GAuth() {
             setId("mfa-gauth");
+        }
+
+        public Rest getRest() {
+            return rest;
+        }
+
+        public void setRest(final Rest rest) {
+            this.rest = rest;
         }
 
         public Cleaner getCleaner() {
@@ -974,7 +984,19 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         public static class Json extends AbstractConfigProperties {
         }
-        
+
+        public static class Rest {
+            private String endpointUrl;
+
+            public String getEndpointUrl() {
+                return endpointUrl;
+            }
+
+            public void setEndpointUrl(final String endpointUrl) {
+                this.endpointUrl = endpointUrl;
+            }
+        }
+
         public static class Mongodb extends AbstractMongoClientProperties {
             private String tokenCollection;
             

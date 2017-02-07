@@ -19,7 +19,7 @@ import java.util.TreeSet;
  */
 public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseJsonOneTimeTokenCredentialRepository.class);
-    
+
     private final Resource location;
     private final StringSerializer<TreeSet<OneTimeTokenAccount>> serializer = new OneTimeAccountSerializer();
 
@@ -54,8 +54,8 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
 
     @Override
     public void save(final String userName, final String secretKey,
-                                    final int validationCode,
-                                    final List<Integer> scratchCodes) {
+                     final int validationCode,
+                     final List<Integer> scratchCodes) {
         try {
             LOGGER.debug("Storing google authenticator account for [{}]", userName);
             final OneTimeTokenAccount account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
@@ -70,7 +70,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
             } else {
                 c = new TreeSet<>();
             }
-            
+
             LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]", c.size(), userName);
             c.add(account);
 
