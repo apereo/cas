@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
@@ -36,9 +35,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
 
             final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-            final Transition success = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-            state.getTransitionSet().remove(success);
-            createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, EVENT_ID_START_X509);
+            createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, EVENT_ID_START_X509, true);
         }
     }
 }
