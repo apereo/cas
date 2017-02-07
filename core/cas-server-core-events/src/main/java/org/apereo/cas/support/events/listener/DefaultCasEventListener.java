@@ -2,6 +2,7 @@ package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.events.CasConfigurationModifiedEvent;
 import org.apereo.cas.support.events.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -18,9 +19,11 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -36,6 +39,9 @@ public class DefaultCasEventListener {
 
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
+
+    @Autowired
+    private RefreshEndpoint refreshEndpoint;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -75,6 +81,19 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleRefreshEvent(final RefreshRemoteApplicationEvent event) {
         LOGGER.debug("Received event [{}]", event);
+        rebindCasConfigurationProperties();
+    }
+
+    /**
+     * Handle configuration modified event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
+        LOGGER.debug("Received event [{}]. Refreshing CAS configuration...", event);
+        final Collection<String> keys = this.refreshEndpoint.invoke();
+        LOGGER.info("The following settings were refreshed/updated: [{}]. CAS will attempt to rebind it configuration...", keys);
         rebindCasConfigurationProperties();
     }
 
