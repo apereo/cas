@@ -69,6 +69,7 @@ dependencies {
     compile project(":core:cas-server-core-configuration")
 
     compile project(":support:cas-server-support-throttle")
+    compile project(":support:cas-server-support-configuration")
     compile project(":support:cas-server-support-geolocation")
     compile project(":support:cas-server-support-actions")
     compile project(":support:cas-server-support-cookie")
