@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -13,8 +14,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.Map;
-
-import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 
 /**
  * Class that if provided a query that returns a password (parameter of query
@@ -62,13 +61,13 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             }
             if (StringUtils.isNotBlank(this.fieldDisabled)) {
                 final Object dbDisabled = dbFields.get(this.fieldDisabled);
-                if (dbDisabled != null && (Boolean.TRUE.equals(toBoolean(dbDisabled.toString())) || dbDisabled.equals(Integer.valueOf(1)))) {
+                if (dbDisabled != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbDisabled.toString())) || dbDisabled.equals(Integer.valueOf(1)))) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
             if (StringUtils.isNotBlank(this.fieldExpired)) {
                 final Object dbExpired = dbFields.get(this.fieldExpired);
-                if (dbExpired != null && (Boolean.TRUE.equals(toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))) {
+                if (dbExpired != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
