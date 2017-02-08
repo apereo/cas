@@ -88,6 +88,11 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 }
 ```
 
+### Attribute Release
+
+Attribute/claim filtering and release policies are defined per SAML service.
+See [this guide](../integration/Attribute-Release-Policies.html) for more info.
+
 ## OAuth Expiration Policy
 
 The expiration policy for OAuth tokens is controlled by CAS settings and properties.
