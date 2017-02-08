@@ -31,7 +31,6 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -59,9 +58,6 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
     private ConsentApprovalViewResolver consentApprovalViewResolver;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     public OAuth20AuthorizeController(final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry,
                                       final OAuth20Validator validator,
@@ -69,8 +65,10 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                                       final PrincipalFactory principalFactory,
                                       final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                       final OAuthCodeFactory oAuthCodeFactory,
-                                      final ConsentApprovalViewResolver consentApprovalViewResolver) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+                                      final ConsentApprovalViewResolver consentApprovalViewResolver,
+                                      final CasConfigurationProperties casProperties) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
+                webApplicationServiceServiceFactory, casProperties);
         this.oAuthCodeFactory = oAuthCodeFactory;
         this.consentApprovalViewResolver = consentApprovalViewResolver;
     }

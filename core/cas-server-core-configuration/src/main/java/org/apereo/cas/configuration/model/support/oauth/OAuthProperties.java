@@ -62,6 +62,15 @@ public class OAuthProperties {
     public static class AccessToken {
         private String maxTimeToLiveInSeconds = "PT28800S";
         private String timeToKillInSeconds = "PT7200S";
+        private boolean releaseProtocolAttributes = true;
+
+        public boolean isReleaseProtocolAttributes() {
+            return releaseProtocolAttributes;
+        }
+
+        public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
+            this.releaseProtocolAttributes = releaseProtocolAttributes;
+        }
 
         public long getMaxTimeToLiveInSeconds() {
             return Beans.newDuration(maxTimeToLiveInSeconds).getSeconds();

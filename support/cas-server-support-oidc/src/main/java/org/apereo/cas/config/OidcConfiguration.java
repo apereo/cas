@@ -4,14 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.token.OidcIdTokenSigningAndEncryptionService;
-import org.apereo.cas.web.OidcCasClientRedirectActionBuilder;
-import org.apereo.cas.dynareg.OidcClientRegistrationRequest;
-import org.apereo.cas.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.token.OidcIdTokenGeneratorService;
-import org.apereo.cas.jwks.OidcJsonWebKeystoreGeneratorService;
-import org.apereo.cas.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -19,7 +12,11 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.dynareg.OidcClientRegistrationRequest;
+import org.apereo.cas.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
+import org.apereo.cas.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.jwks.OidcServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -37,12 +34,15 @@ import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.token.OidcIdTokenGeneratorService;
+import org.apereo.cas.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.web.OidcCallbackAuthorizeViewResolver;
+import org.apereo.cas.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.web.OidcSecurityInterceptor;
@@ -257,7 +257,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
         return new OidcAccessTokenEndpointController(
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
-                oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory, oidcAccessTokenResponseGenerator());
+                oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory,
+                oidcAccessTokenResponseGenerator(), casProperties);
     }
 
     @Bean
@@ -271,14 +272,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcDynamicClientRegistrationEndpointController(
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, clientRegistrationRequestSerializer(),
-                new DefaultRandomStringGenerator(), new DefaultRandomStringGenerator());
+                new DefaultRandomStringGenerator(),
+                new DefaultRandomStringGenerator(),
+                casProperties);
     }
 
     @RefreshScope
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
         return new OidcJwksEndpointController(servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
-                oidcPrincipalFactory(), webApplicationServiceFactory, casProperties.getAuthn().getOidc().getJwksFile());
+                oidcPrincipalFactory(), webApplicationServiceFactory, casProperties);
     }
 
     @RefreshScope
@@ -287,14 +290,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
                 oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
-                oidcServerDiscoverySettings());
+                oidcServerDiscoverySettings(), casProperties);
     }
 
     @RefreshScope
     @Bean
     public OidcProfileEndpointController oidcProfileController() {
-        return new OidcProfileEndpointController(servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
-                oidcPrincipalFactory(), webApplicationServiceFactory);
+        return new OidcProfileEndpointController(servicesManager, ticketRegistry, oAuth20Validator,
+                defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory,
+                casProperties);
     }
 
     @RefreshScope
@@ -303,7 +308,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcAuthorizeEndpointController(servicesManager,
                 ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory,
-                consentApprovalViewResolver(), oidcIdTokenGenerator());
+                consentApprovalViewResolver(), oidcIdTokenGenerator(),
+                casProperties);
     }
 
     @RefreshScope
