@@ -1,6 +1,7 @@
 package org.apereo.cas.web.controllers;
 
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -31,8 +32,10 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
                                            final AccessTokenFactory accessTokenFactory,
                                            final PrincipalFactory principalFactory,
                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                           final OidcServerDiscoverySettings discovery) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+                                           final OidcServerDiscoverySettings discovery,
+                                           final CasConfigurationProperties casProperties) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory,
+                principalFactory, webApplicationServiceServiceFactory, casProperties);
         this.discovery = discovery;
     }
 

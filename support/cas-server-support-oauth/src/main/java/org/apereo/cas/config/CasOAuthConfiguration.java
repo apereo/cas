@@ -274,7 +274,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20CallbackAuthorizeController callbackAuthorizeController() {
         return new OAuth20CallbackAuthorizeController(servicesManager, ticketRegistry,
                 oAuthValidator(), defaultAccessTokenFactory(), oauthPrincipalFactory(), webApplicationServiceFactory,
-                oauthSecConfig(), callbackController(), callbackAuthorizeViewResolver());
+                oauthSecConfig(), callbackController(), callbackAuthorizeViewResolver(),
+                casProperties);
     }
 
     @ConditionalOnMissingBean(name = "accessTokenController")
@@ -286,7 +287,9 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 oAuthValidator(), defaultAccessTokenFactory(),
                 oauthPrincipalFactory(),
                 webApplicationServiceFactory,
-                defaultRefreshTokenFactory(), accessTokenResponseGenerator()
+                defaultRefreshTokenFactory(),
+                accessTokenResponseGenerator(),
+                casProperties
         );
     }
 
@@ -295,7 +298,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20ProfileController profileController() {
         return new OAuth20ProfileController(servicesManager,
                 ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
-                oauthPrincipalFactory(), webApplicationServiceFactory);
+                oauthPrincipalFactory(), webApplicationServiceFactory, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "authorizeController")
@@ -304,7 +307,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20AuthorizeController(
                 servicesManager, ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
                 oauthPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory(),
-                consentApprovalViewResolver()
+                consentApprovalViewResolver(), casProperties
         );
     }
 

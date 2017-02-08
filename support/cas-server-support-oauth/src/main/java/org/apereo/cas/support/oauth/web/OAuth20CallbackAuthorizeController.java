@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
@@ -42,8 +43,10 @@ public class OAuth20CallbackAuthorizeController extends BaseOAuthWrapperControll
                                               final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                               final Config config,
                                               final CallbackController callbackController,
-                                              final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+                                              final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver,
+                                              final CasConfigurationProperties casProperties) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory,
+                principalFactory, webApplicationServiceServiceFactory, casProperties);
         this.config = config;
         this.callbackController = callbackController;
         this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;
