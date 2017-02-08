@@ -60,9 +60,11 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * A re-usable collection of utility methods for object instantiations and configurations used cross various
@@ -281,7 +283,9 @@ public class Beans {
      */
     public static ConnectionConfig newConnectionConfig(final AbstractLdapProperties l) {
         final ConnectionConfig cc = new ConnectionConfig();
-        cc.setLdapUrl(l.getLdapUrl());
+        final String urls = Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
+        LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
+        cc.setLdapUrl(urls);
         cc.setUseSSL(l.isUseSsl());
         cc.setUseStartTLS(l.isUseStartTls());
         cc.setConnectTimeout(newDuration(l.getConnectTimeout()));
