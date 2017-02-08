@@ -28,12 +28,12 @@ import static org.apache.commons.lang3.BooleanUtils.toBoolean;
  * @since 3.0.0
  */
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-    
+
     private final String sql;
     private final String fieldPassword;
     private final String fieldExpired;
     private final String fieldDisabled;
-    
+
     public QueryDatabaseAuthenticationHandler(final String sql, final String fieldPassword, final String fieldExpired, final String fieldDisabled) {
         this.sql = sql;
         this.fieldPassword = fieldPassword;
@@ -54,21 +54,21 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         final String password = credential.getPassword();
         try {
             final Map<String, Object> dbFields = getJdbcTemplate().queryForMap(this.sql, username);
-            final String dbPassword = (String)dbFields.get(this.fieldPassword);
+            final String dbPassword = (String) dbFields.get(this.fieldPassword);
 
             if (StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword)
-                || StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword)) {
+                    || StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
-            if (StringUtils.isNotBlank(this.fieldDisabled)){
+            if (StringUtils.isNotBlank(this.fieldDisabled)) {
                 final Object dbDisabled = dbFields.get(this.fieldDisabled);
-                if (dbDisabled != null && (Boolean.TRUE.equals(toBoolean(dbDisabled.toString())) || dbDisabled.equals(Integer.valueOf(1)))){
+                if (dbDisabled != null && (Boolean.TRUE.equals(toBoolean(dbDisabled.toString())) || dbDisabled.equals(Integer.valueOf(1)))) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
-            if (StringUtils.isNotBlank(this.fieldExpired)){
+            if (StringUtils.isNotBlank(this.fieldExpired)) {
                 final Object dbExpired = dbFields.get(this.fieldExpired);
-                if (dbExpired != null && (Boolean.TRUE.equals(toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))){
+                if (dbExpired != null && (Boolean.TRUE.equals(toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
