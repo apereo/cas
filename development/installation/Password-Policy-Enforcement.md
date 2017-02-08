@@ -8,8 +8,7 @@ title: CAS - Password Policy Enforcement
 Password policy enforcement attempts to:
 
 - Detect a number of scenarios that would otherwise prevent user authentication based on user account status.
-- Warn users whose account status is near a configurable expiration date and redirect the flow to an external
-identity management system.
+- Warn users whose account status is near a configurable expiration date and redirect the flow to an external identity management system.
 
 ## LDAP
 
@@ -34,6 +33,12 @@ please [review this guide](Configuration-Properties.html#ldap-authentication).
 
 LPPE is also able to warn the user when the account is about to expire. The expiration policy is
 determined through pre-configured LDAP attributes with default values in place.
+
+## JDBC
+
+A certain number of database authentication schemes have limited support for detecting locked/disabled/etc accounts
+via column names that are defined in the CAS sttings. To see the relevant list of CAS properties,
+please [review this guide](Configuration-Properties.html#database-authentication).
 
 ## Password Management
 
