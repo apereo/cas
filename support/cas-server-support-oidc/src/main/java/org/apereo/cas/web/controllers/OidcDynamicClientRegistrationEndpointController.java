@@ -1,12 +1,13 @@
 package org.apereo.cas.web.controllers;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.dynareg.OidcClientRegistrationRequest;
-import org.apereo.cas.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.dynareg.OidcClientRegistrationRequest;
+import org.apereo.cas.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthGrantTypes;
@@ -40,7 +41,7 @@ import java.util.Map;
  */
 public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWrapperController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcDynamicClientRegistrationEndpointController.class);
-    
+
     private StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer;
     private RandomStringGenerator clientIdGenerator;
     private RandomStringGenerator clientSecretGenerator;
@@ -53,8 +54,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
                                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                            final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer,
                                                            final RandomStringGenerator clientIdGenerator,
-                                                           final RandomStringGenerator clientSecretGenerator) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+                                                           final RandomStringGenerator clientSecretGenerator,
+                                                           final CasConfigurationProperties casProperties) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory,
+                principalFactory, webApplicationServiceServiceFactory, casProperties);
         this.clientRegistrationRequestSerializer = clientRegistrationRequestSerializer;
         this.clientIdGenerator = clientIdGenerator;
         this.clientSecretGenerator = clientSecretGenerator;
