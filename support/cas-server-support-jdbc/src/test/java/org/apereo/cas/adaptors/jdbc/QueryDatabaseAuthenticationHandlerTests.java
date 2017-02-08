@@ -83,7 +83,8 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
-        return String.format("insert into casusers (username, password, expired, disabled) values('%s', '%s', '%s', '%s');", "user" + i, "psw" + i, expired, disabled);
+        return String.format("insert into casusers (username, password, expired, disabled) values('%s', '%s', '%s', '%s');",
+                "user" + i, "psw" + i, expired, disabled);
     }
 
     @Entity(name = "casusers")

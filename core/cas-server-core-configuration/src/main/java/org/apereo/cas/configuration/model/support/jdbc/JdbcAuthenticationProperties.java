@@ -153,7 +153,6 @@ public class JdbcAuthenticationProperties {
         private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
         private String name;
-
         private Integer order;
 
         public Integer getOrder() {
