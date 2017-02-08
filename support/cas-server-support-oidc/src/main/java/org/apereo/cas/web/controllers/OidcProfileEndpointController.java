@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
@@ -35,8 +36,10 @@ public class OidcProfileEndpointController extends OAuth20ProfileController {
                                          final OAuth20Validator validator,
                                          final AccessTokenFactory accessTokenFactory,
                                          final PrincipalFactory principalFactory,
-                                         final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+                                         final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                         final CasConfigurationProperties casProperties) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory,
+                principalFactory, webApplicationServiceServiceFactory, casProperties);
     }
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)

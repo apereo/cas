@@ -4,7 +4,6 @@ import com.google.common.base.Throwables;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -23,10 +22,10 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.OidcIdTokenGeneratorService;
 import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -45,9 +44,6 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeController 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthorizeEndpointController.class);
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     private final OidcIdTokenGeneratorService idTokenGenerator;
 
     public OidcAuthorizeEndpointController(final ServicesManager servicesManager,
@@ -58,9 +54,11 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeController 
                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                            final OAuthCodeFactory oAuthCodeFactory,
                                            final ConsentApprovalViewResolver consentApprovalViewResolver,
-                                           final OidcIdTokenGeneratorService idTokenGenerator) {
+                                           final OidcIdTokenGeneratorService idTokenGenerator,
+                                           final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver);
+                webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
+                casProperties);
         this.idTokenGenerator = idTokenGenerator;
     }
 

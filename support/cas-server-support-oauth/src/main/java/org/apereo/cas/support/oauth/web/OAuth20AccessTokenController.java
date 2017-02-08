@@ -66,8 +66,10 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
                                         final PrincipalFactory principalFactory,
                                         final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                         final RefreshTokenFactory refreshTokenFactory,
-                                        final AccessTokenResponseGenerator accessTokenResponseGenerator) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+                                        final AccessTokenResponseGenerator accessTokenResponseGenerator,
+                                        final CasConfigurationProperties casProperties) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory,
+                principalFactory, webApplicationServiceServiceFactory, casProperties);
         this.refreshTokenFactory = refreshTokenFactory;
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
     }
