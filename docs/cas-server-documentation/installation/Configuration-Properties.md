@@ -1008,7 +1008,7 @@ Authenticates a user by comparing the user password (which can be encoded with a
 against the password on record determined by a configurable database query.
 
 ```properties
-# cas.authn.jdbc.query[0].sql=SELECT password FROM table WHERE name=?
+# cas.authn.jdbc.query[0].sql=SELECT * FROM table WHERE name=?
 # cas.authn.jdbc.query[0].healthQuery=
 # cas.authn.jdbc.query[0].isolateInternalQueries=false
 # cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
@@ -1028,6 +1028,10 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].credentialCriteria=
 # cas.authn.jdbc.query[0].name=
 # cas.authn.jdbc.query[0].order=0
+# cas.authn.jdbc.query[0].fieldPassword=password
+# cas.authn.jdbc.query[0].fieldExpired=
+# cas.authn.jdbc.query[0].fieldDisabled=
+
 
 # cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
@@ -1133,6 +1137,8 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].sql=
 # cas.authn.jdbc.encode[0].algorithmName=
 # cas.authn.jdbc.encode[0].passwordFieldName=password
+# cas.authn.jdbc.encode[0].expiredFieldName=
+# cas.authn.jdbc.encode[0].disabledFieldName=
 # cas.authn.jdbc.encode[0].healthQuery=
 # cas.authn.jdbc.encode[0].isolateInternalQueries=false
 # cas.authn.jdbc.encode[0].url=jdbc:hsqldb:mem:cas-hsql-database
