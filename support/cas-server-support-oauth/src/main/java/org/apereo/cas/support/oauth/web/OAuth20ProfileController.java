@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public class OAuth20ProfileController extends BaseOAuthWrapperController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
-    
+
     private static final String ID = "id";
     private static final String ATTRIBUTES = "attributes";
 
@@ -88,10 +88,10 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
             return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
         }
 
-        final Map<String, Object> map =
-                writeOutProfileResponse(accessTokenTicket.getAuthentication(),
-                        accessTokenTicket.getAuthentication().getPrincipal());
+        final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket.getAuthentication(),
+                accessTokenTicket.getAuthentication().getPrincipal());
         final String value = OAuthUtils.jsonify(map);
+        LOGGER.debug("Final user profile is [{}]", value);
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
 
@@ -105,6 +105,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
      */
     protected Map<String, Object> writeOutProfileResponse(final Authentication authentication,
                                                           final Principal principal) throws IOException {
+        LOGGER.debug("Preparing user profile response based on CAS principal [{}]", principal);
         final Map<String, Object> map = new HashMap<>();
         map.put(ID, principal.getId());
         map.put(ATTRIBUTES, principal.getAttributes());
