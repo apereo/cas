@@ -207,7 +207,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         final Map<String, Object> principalAttributes = principal.getAttributes();
-        assertEquals(1, principalAttributes.size());
+        assertEquals(attributes.size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
     }
 
@@ -253,7 +253,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         final Principal principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         final Map<String, Object> principalAttributes = principal.getAttributes();
-        assertEquals(1, principalAttributes.size());
+        assertEquals(attributes.size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
     }
 
@@ -300,7 +300,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         final Map<String, Object> principalAttributes = principal.getAttributes();
-        assertEquals(1, principalAttributes.size());
+        assertEquals(attributes.size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
     }
 
@@ -348,7 +348,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         final Principal principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         final Map<String, Object> principalAttributes = principal.getAttributes();
-        assertEquals(1, principalAttributes.size());
+        assertEquals(attributes.size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
     }
 
@@ -395,7 +395,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         final Map<String, Object> principalAttributes = principal.getAttributes();
-        assertEquals(1, principalAttributes.size());
+        assertEquals(attributes.size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
     }
 
@@ -442,7 +442,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         final Principal principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         final Map<String, Object> principalAttributes = principal.getAttributes();
-        assertEquals(1, principalAttributes.size());
+        assertEquals(attributes.size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE));
     }
 
