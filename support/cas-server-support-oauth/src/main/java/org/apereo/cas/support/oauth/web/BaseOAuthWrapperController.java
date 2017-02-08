@@ -41,7 +41,7 @@ import java.util.Map;
 @Controller
 public abstract class BaseOAuthWrapperController {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
-    
+
     private ServicesManager servicesManager;
 
     private TicketRegistry ticketRegistry;
@@ -80,7 +80,9 @@ public abstract class BaseOAuthWrapperController {
                                               final Authentication authentication,
                                               final J2EContext context) {
         final AccessToken accessToken = this.accessTokenFactory.create(service, authentication);
+        LOGGER.debug("Creating access token [{}]", accessToken);
         this.ticketRegistry.addTicket(accessToken);
+        LOGGER.debug("Added access token [{}] to registry", accessToken);
         return accessToken;
     }
 
@@ -106,9 +108,11 @@ public abstract class BaseOAuthWrapperController {
                                                   final RegisteredService service,
                                                   final J2EContext context) {
         final Principal principal = this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
+        LOGGER.debug("Created principal [{}] based on user profile [{}] to process attributes...", principal, profile);
 
         final Map<String, Object> newAttributes = service.getAttributeReleasePolicy().getAttributes(principal, service);
         final Principal newPrincipal = principalFactory.createPrincipal(profile.getId(), newAttributes);
+        LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, service);
 
         final String authenticator = profile.getClass().getCanonicalName();
         final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
@@ -116,6 +120,7 @@ public abstract class BaseOAuthWrapperController {
 
         final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.STATE), StringUtils.EMPTY);
         final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.NONCE), StringUtils.EMPTY);
+        LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuthConstants.STATE, state, OAuthConstants.NONCE, nonce);
 
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", profile.getPermissions())
@@ -126,9 +131,14 @@ public abstract class BaseOAuthWrapperController {
                 .setPrincipal(newPrincipal)
                 .setAuthenticationDate(ZonedDateTime.now())
                 .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
+
+        // Add "other" profile attributes as authentication attributes.
         profile.getAttributes().forEach((k, v) -> {
             if (!newPrincipal.getAttributes().containsKey(k)) {
+                LOGGER.debug("Added attribute [{}] with value [{}] to the authentication", k, v);
                 bldr.addAttribute(k, v);
+            } else {
+                LOGGER.debug("Skipped over attribute [{}] since it's already contained by the principal", k, v);
             }
         });
         return bldr.build();
