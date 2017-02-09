@@ -77,6 +77,8 @@ OpenID Connect clients can be *statically* registered with CAS as such:
 | `idTokenEncryptionAlg`        | The algorithm header value used to encrypt the id token.
 | `idTokenEncryptionEncoding`   | The algorithm method header value used to encrypt the id token.
 
+Service definitions are typically managed by the [service management](Service-Management.html) facility.
+
 ### Dynamically
 
 Clients applications may dynamically be registered with CAS for authentication. By default, CAS operates in a `PROTECTED` mode where the registration endpoint requires user authentication. This behavior may be relaxed via CAS settings to allow CAS to operate in an `OPEN` mode.
