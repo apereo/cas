@@ -74,6 +74,10 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 oidcBean.setJwks(oidc.getJwks());
                 oidcBean.setSignToken(oidc.isSignIdToken());
                 oidcBean.setImplicit(oidc.isImplicit());
+
+                oidcBean.setEncrypt(oidc.isEncryptIdToken());
+                oidcBean.setEncryptAlg(oidc.getIdTokenEncryptionAlg());
+                oidcBean.setEncryptEnc(oidc.getIdTokenEncryptionEncoding());
             }
 
         }
@@ -91,7 +95,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             samlbean.setSignAssert(saml.isSignAssertions());
             samlbean.setRemoveEmptyEntities(saml.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             samlbean.setRemoveRoleless(saml.isMetadataCriteriaRemoveRolelessEntityDescriptors());
-            
+
             if (StringUtils.isNotBlank(saml.getMetadataCriteriaDirection())) {
                 samlbean.setDir(saml.getMetadataCriteriaDirection().toUpperCase());
             }
@@ -101,7 +105,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             if (StringUtils.isNotBlank(saml.getMetadataCriteriaRoles())) {
                 samlbean.setRoles(org.springframework.util.StringUtils.commaDelimitedListToSet(saml.getMetadataCriteriaRoles()));
             }
-            
+
         }
 
         bean.setTheme(svc.getTheme());
@@ -181,6 +185,9 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                     ((OidcRegisteredService) regSvc).setJwks(data.getOidc().getJwks());
                     ((OidcRegisteredService) regSvc).setSignIdToken(data.getOidc().isSignToken());
                     ((OidcRegisteredService) regSvc).setImplicit(data.getOidc().isImplicit());
+                    ((OidcRegisteredService) regSvc).setEncryptIdToken(data.getOidc().isEncrypt());
+                    ((OidcRegisteredService) regSvc).setIdTokenEncryptionAlg(data.getOidc().getEncryptAlg());
+                    ((OidcRegisteredService) regSvc).setIdTokenEncryptionEncoding(data.getOidc().getEncryptEnc());
                 }
             } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.SAML.toString())) {
                 regSvc = new SamlRegisteredService();
