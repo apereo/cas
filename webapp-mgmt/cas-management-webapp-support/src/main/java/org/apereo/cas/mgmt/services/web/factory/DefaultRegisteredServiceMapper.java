@@ -46,6 +46,13 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
         }
         bean.setRequiredHandlers(svc.getRequiredHandlers());
 
+        if (StringUtils.isNotBlank(svc.getInformationUrl())) {
+            bean.setInformationUrl(svc.getInformationUrl());
+        }
+        if (StringUtils.isNotBlank(svc.getPrivacyUrl())) {
+            bean.setPrivacyUrl(svc.getPrivacyUrl());
+        }
+
         if (svc instanceof OAuthCallbackAuthorizeService) {
             bean.setType(RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString());
         }
@@ -229,6 +236,8 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             regSvc.setTheme(data.getTheme());
             regSvc.setEvaluationOrder(data.getEvalOrder());
             regSvc.setRequiredHandlers(data.getRequiredHandlers());
+            regSvc.setPrivacyUrl(data.getPrivacyUrl());
+            regSvc.setInformationUrl(data.getInformationUrl());
 
             // process logout settings
             regSvc.setLogoutType(parseLogoutType(data.getLogoutType()));
