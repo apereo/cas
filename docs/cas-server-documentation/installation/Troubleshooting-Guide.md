@@ -63,7 +63,7 @@ If your client application is not receiving attributes, you will need to make su
 1. The client is using a version of [CAS protocol](../protocol/CAS-Protocol.html) that is able to release attributes.
 2. The client, predicated on #1, is hitting the appropriate endpoint for service ticket validation.
 3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
-4. The CAS server is authorize to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
+4. The CAS server is authorized to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
 
 Please [review this guide](Service-Management.html) to better understand the CAS service registry.
 
@@ -164,6 +164,7 @@ This is a hostname/SSL certificate CN mismatch. This commonly happens when a sel
 is accessed by IP address. It should be noted that generating a certificate with an IP address for a common name, e.g. `CN=192.168.1.1,OU=Middleware,dc=vt,dc=edu`, will not work in most cases where the client making the connection is Java.
 
 ## HTTPS hostname wrong
+
 ```bash
 java.lang.RuntimeException: java.io.IOException: HTTPS hostname wrong:  should be <eiger.iad.vt.edu>
     org.apereo.cas.client.validation.Saml11TicketValidator.retrieveResponseFromServer(Saml11TicketValidator.java:203)
@@ -180,6 +181,15 @@ CN does not match the fully-qualified host name of the CAS server. There are a f
 
 It is also worth checking that the certificate your CAS server is using for SSL encryption matches the one the client is checking against. 
 
+## No name matching X found
+
+```bash
+Caused by: java.security.cert.CertificateException: No name matching cas.server found
+	at sun.security.util.HostnameChecker.matchDNS(Unknown Source) ~[?:1.8.0_77]
+	at sun.security.util.HostnameChecker
+```
+
+Same as above.
 
 ## Wildcard Certificates
 
