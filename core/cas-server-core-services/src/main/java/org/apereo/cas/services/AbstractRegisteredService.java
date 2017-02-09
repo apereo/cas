@@ -59,18 +59,17 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String theme;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String informationUrl;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String privacyUrl;
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String description;
 
     /**
@@ -108,16 +107,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      */
     @Lob
     @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
-    private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy =
-            new ReturnAllowedAttributeReleasePolicy();
+    private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 
     /**
      * The mfa policy.
      */
     @Lob
     @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
-    private RegisteredServiceMultifactorPolicy multifactorPolicy =
-            new DefaultRegisteredServiceMultifactorPolicy();
+    private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
 
     @Column(name = "logo")
     private URL logo;
