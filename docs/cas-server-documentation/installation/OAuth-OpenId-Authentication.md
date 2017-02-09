@@ -88,6 +88,8 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 }
 ```
 
+Service definitions are typically managed by the [service management](Service-Management.html) facility.
+
 ### Attribute Release
 
 Attribute/claim filtering and release policies are defined per SAML service.
