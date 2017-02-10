@@ -16,9 +16,14 @@ share the <strong>same</strong> service registry configuration for CAS services.
 </p></div>
 
 A sample overlay for the services management webapp is provided
- here: [https://github.com/Apereo/cas-services-management-overlay](https://github.com/apereo/cas-services-management-overlay)
+ here: [https://github.com/apereo/cas-services-management-overlay](https://github.com/apereo/cas-services-management-overlay)
 
  To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
+
+## Demo
+
+A demo is available at [https://jasigcasmgmt.herokuapp.com/cas-services](https://jasigcasmgmt.herokuapp.com/cas-services)
+It is important to note that this is a public demo site, used by the project for basic showcases and integration tests. It is NOT set up for internal demos and it may go down and up as the project needs without notice. If you have a need for a demo instance with a modified UI, that would be one you set up for your deployment.
 
 ## Services Registry
 
