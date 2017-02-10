@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
@@ -15,7 +16,6 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
-import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.validator.OAuth20AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
@@ -65,6 +65,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.annotation.PostConstruct;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -356,11 +357,12 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         final RegisteredService svc = servicesManager.findServiceBy(callbackService);
 
         if (svc == null || !svc.getServiceId().equals(oAuthCallbackUrl)) {
-            final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
-            service.setName("OAuth Callback url");
-            service.setDescription("OAuth Wrapper Callback Url");
+            final RegexRegisteredService service = new RegexRegisteredService();
+            service.setId(Math.abs(new SecureRandom().nextLong()));
+            service.setEvaluationOrder(0);
+            service.setName(service.getClass().getSimpleName());
+            service.setDescription("OAuth Authentication Callback Request URL");
             service.setServiceId(oAuthCallbackUrl);
-            service.setEvaluationOrder(Integer.MIN_VALUE);
             service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
             servicesManager.save(service);
