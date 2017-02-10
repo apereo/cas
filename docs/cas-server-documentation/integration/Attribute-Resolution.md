@@ -39,7 +39,7 @@ resolution use cases such as cascading, merging, etc. <a href="../installation/C
 
 The goal of the resolver is to construct a final identifiable authenticated principal for CAS which carries a number of attributes inside it.
 The behavior of the person-directory resolver is such that it attempts to locate the principal id, which in most cases is the same thing as the credential
-id provided during authentication or it could be a noted by a custom attribute. Then the resolver starts to construct attributes from attribute repositories defined. If it realizes that a custom attribute is used to determine the principal id AND the same attribute is also set to be collected into the final set of attributes, it will then remove that attribute from the final collection.
+id provided during authentication or it could be noted by a custom attribute. Then the resolver starts to construct attributes from attribute repositories defined. If it realizes that a custom attribute is used to determine the principal id AND the same attribute is also set to be collected into the final set of attributes, it will then remove that attribute from the final collection.
 
 Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP, JDBC, etc.
 If you need something more, you will need to resort to more elaborate measures of defining the bean configuration.
