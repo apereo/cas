@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -99,7 +100,7 @@ public class JdbcAuthenticationProperties {
         }
 
         public void setSql(final String sql) {
-            this.sql = sql;
+            this.sql = StringUtils.replace(sql, "{user}", "?");
         }
 
         public PrincipalTransformationProperties getPrincipalTransformation() {
