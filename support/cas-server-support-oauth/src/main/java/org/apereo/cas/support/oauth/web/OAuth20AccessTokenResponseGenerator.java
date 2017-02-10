@@ -8,7 +8,7 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.OAuthResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -54,7 +54,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                          final AccessToken accessTokenId,
                          final RefreshToken refreshTokenId,
                          final long timeout,
-                         final OAuthResponseTypes responseType) {
+                         final OAuth20ResponseTypes responseType) {
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -132,7 +132,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final long timeout,
                                         final Service service,
                                         final OAuthRegisteredService registeredService,
-                                        final OAuthResponseTypes responseType) throws Exception {
+                                        final OAuth20ResponseTypes responseType) throws Exception {
         jsonGenerator.writeStringField(OAuthConstants.ACCESS_TOKEN, accessTokenId.getId());
         jsonGenerator.writeStringField(OAuthConstants.TOKEN_TYPE, OAuthConstants.TOKEN_TYPE_BEARER);
         jsonGenerator.writeNumberField(OAuthConstants.EXPIRES_IN, timeout);

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.support.oauth.OAuthResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
@@ -36,5 +36,5 @@ public interface AccessTokenResponseGenerator {
                   AccessToken accessTokenId,
                   RefreshToken refreshTokenId,
                   long timeout,
-                  OAuthResponseTypes responseType);
+                  OAuth20ResponseTypes responseType);
 }

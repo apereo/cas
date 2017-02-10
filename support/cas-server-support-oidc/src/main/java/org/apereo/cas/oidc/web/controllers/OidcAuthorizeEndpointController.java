@@ -14,11 +14,11 @@ import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.OAuthResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
-import org.apereo.cas.support.oauth.web.OAuth20AuthorizeController;
+import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
@@ -40,7 +40,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcAuthorizeEndpointController extends OAuth20AuthorizeController {
+public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthorizeEndpointController.class);
 
@@ -72,23 +72,23 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeController 
     protected String buildCallbackUrlForTokenResponseType(final J2EContext context, final Authentication authentication,
                                                           final Service service, final String redirectUri,
                                                           final String responseType,
-                                                          final String clienttId) {
-        if (!isResponseType(responseType, OAuthResponseTypes.IDTOKEN_TOKEN)) {
+                                                          final String clientId) {
+        if (!isResponseType(responseType, OAuth20ResponseTypes.IDTOKEN_TOKEN)) {
             return super.buildCallbackUrlForTokenResponseType(context, authentication, service,
-                    redirectUri, responseType, clienttId);
+                    redirectUri, responseType, clientId);
         }
 
         LOGGER.debug("Handling callback for response type [{}]", responseType);
-        return buildCallbackUrlForImplicitHybridTokenResponseType(context, authentication,
-                service, redirectUri, clienttId, OAuthResponseTypes.IDTOKEN_TOKEN);
+        return buildCallbackUrlForImplicitTokenResponseType(context, authentication,
+                service, redirectUri, clientId, OAuth20ResponseTypes.IDTOKEN_TOKEN);
     }
 
-    private String buildCallbackUrlForImplicitHybridTokenResponseType(final J2EContext context,
-                                                                      final Authentication authentication,
-                                                                      final Service service,
-                                                                      final String redirectUri,
-                                                                      final String clientId,
-                                                                      final OAuthResponseTypes responseType) {
+    private String buildCallbackUrlForImplicitTokenResponseType(final J2EContext context,
+                                                                final Authentication authentication,
+                                                                final Service service,
+                                                                final String redirectUri,
+                                                                final String clientId,
+                                                                final OAuth20ResponseTypes responseType) {
         try {
             final AccessToken accessToken = generateAccessToken(service, authentication, context);
             LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
