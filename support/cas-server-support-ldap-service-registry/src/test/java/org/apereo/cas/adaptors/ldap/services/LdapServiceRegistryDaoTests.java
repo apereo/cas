@@ -15,8 +15,6 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryDao;
-import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.Before;
@@ -131,7 +129,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
         assertEquals(r, r2);
     }
-    
+
     @Test
     public void verifyOAuthServices() {
         final OAuthRegisteredService r = new OAuthRegisteredService();
@@ -143,30 +141,6 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         r.setClientId("testoauthservice");
         r.setClientSecret("anothertest");
         r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.dao.save(r);
-        assertEquals(r, r2);
-    }
-
-    @Test
-    public void verifyOAuthServicesCallback() {
-        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
-        r.setName("test1345");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final RegisteredService r2 = this.dao.save(r);
-        assertEquals(r, r2);
-    }
-
-    @Test
-    public void verifyOAuthRegisteredServicesCallback() {
-        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
-        r.setName("testoauth1");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r, r2);
     }
