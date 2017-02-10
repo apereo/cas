@@ -20,11 +20,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Service Management Webapp
 
-The service management webapp is a Web application that may be deployed along side CAS that provides a GUI
-to manage service registry data. The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com/cas-services](https://jasigcasmgmt.herokuapp.com/cas-services)
-
-The Services Management web application is a standalone application that helps one manage service registrations and
-entries via a customizable user interface. The management web application *MUST* share the same registry configuration as the CAS server itself so the entire system can load the same services data. To learn more about the management webapp, [please see this guide](Installing-ServicesMgmt-Webapp.html).
+The service management webapp is a standalone web application that may be deployed along side CAS that provides a GUI
+to manage service registry data. The management web application *MUST* share the same registry configuration as the CAS server itself so the entire system can load the same services data. To learn more about the management webapp, [please see this guide](Installing-ServicesMgmt-Webapp.html).
 
 ## Registered Services
 
