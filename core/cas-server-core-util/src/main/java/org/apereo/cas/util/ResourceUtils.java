@@ -10,6 +10,7 @@ import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 
 import java.io.File;
@@ -53,6 +54,38 @@ public final class ResourceUtils {
         }
         return metadataLocationResource;
     }
+
+    /**
+     * Does resource exist?
+     *
+     * @param resource       the resource
+     * @param resourceLoader the resource loader
+     * @return the boolean
+     */
+    public static boolean doesResourceExist(final String resource, final ResourceLoader resourceLoader) {
+        final Resource res = resourceLoader.getResource(resource);
+        return doesResourceExist(res);
+    }
+
+    /**
+     * Does resource exist?
+     *
+     * @param res the res
+     * @return the boolean
+     */
+    public static boolean doesResourceExist(final Resource res) {
+        if (res != null) {
+            try {
+                IOUtils.read(res.getInputStream(), new byte[1]);
+                return true;
+            } catch (final Exception e) {
+                LOGGER.debug(e.getMessage(), e);
+                return false;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Gets resource from a String location.
@@ -102,7 +135,7 @@ public final class ResourceUtils {
                 LOGGER.debug("No resource defined to prepare. Returning null");
                 return null;
             }
-            
+
             if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
                 return resource;
             }

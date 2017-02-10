@@ -359,9 +359,14 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
 
         final SignatureValidationFilter signatureValidationFilter =
                 SamlUtils.buildSignatureValidationFilter(service.getMetadataSignatureLocation());
-        signatureValidationFilter.setRequireSignedRoot(false);
-        metadataFilterList.add(signatureValidationFilter);
-        LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", service.getMetadataSignatureLocation());
+        if (signatureValidationFilter != null) {
+            signatureValidationFilter.setRequireSignedRoot(false);
+            metadataFilterList.add(signatureValidationFilter);
+            LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", service.getMetadataSignatureLocation());
+        } else {
+            LOGGER.warn("Skipped metadata SignatureValidationFilter since signature from [{}] cannot be located",
+                    service.getMetadataLocation());
+        }
     }
 
 
