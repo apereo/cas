@@ -72,30 +72,30 @@ public class MetadataUIUtils {
     public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor,
                                                                             final String entityId,
                                                                             final RegisteredService registeredService) {
+        final SamlMetadataUIInfo mdui = new SamlMetadataUIInfo(registeredService);
         if (entityDescriptor == null) {
             LOGGER.debug("Entity descriptor not found for [{}]", entityId);
-            return null;
+            return mdui;
         }
 
         final SPSSODescriptor spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
         if (spssoDescriptor == null) {
             LOGGER.debug("SP SSO descriptor not found for [{}]", entityId);
-            return null;
+            return mdui;
         }
 
         final Extensions extensions = spssoDescriptor.getExtensions();
         if (extensions == null) {
             LOGGER.debug("No extensions are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
-            return null;
+            return mdui;
         }
 
         final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
         if (spExtensions.isEmpty()) {
             LOGGER.debug("No extensions are located for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
-            return null;
+            return mdui;
         }
 
-        final SamlMetadataUIInfo mdui = new SamlMetadataUIInfo(registeredService);
         spExtensions.stream().filter(UIInfo.class::isInstance).forEach(obj -> {
             final UIInfo uiInfo = (UIInfo) obj;
             LOGGER.debug("Found UI info for [{}] and added to flow context", entityId);

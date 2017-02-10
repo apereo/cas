@@ -32,11 +32,6 @@
             <binding property="username" required="true"/>
             <binding property="password" required="true"/>
         </binder>
-        <!--
-        <on-entry>
-            <evaluate expression="samlMetadataUIParserAction" />
-        </on-entry>
-        -->
         <transition on="submit" bind="true" validate="true" to="realSubmit" history="invalidate"/>
     </view-state>
 
