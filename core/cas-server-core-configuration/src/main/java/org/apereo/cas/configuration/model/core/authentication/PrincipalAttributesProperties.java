@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
@@ -24,7 +25,7 @@ public class PrincipalAttributesProperties {
     private int expireInMinutes = 30;
     private int maximumCacheSize = 10000;
     private String merger = "REPLACE";
-    
+
     private Set<String> defaultAttributesToRelease = new HashSet<>();
     private Map<String, String> attributes = new HashMap();
 
@@ -123,13 +124,12 @@ public class PrincipalAttributesProperties {
             this.order = order;
         }
 
-
         public String getSql() {
             return sql;
         }
 
         public void setSql(final String sql) {
-            this.sql = sql;
+            this.sql = StringUtils.replace(sql, "{user}", "?");
         }
 
         public List<String> getUsername() {
@@ -213,7 +213,7 @@ public class PrincipalAttributesProperties {
             this.caseInsensitive = caseInsensitive;
         }
     }
-    
+
     public static class Ldap extends AbstractLdapProperties {
         private boolean subtreeSearch = true;
         private String baseDn;
