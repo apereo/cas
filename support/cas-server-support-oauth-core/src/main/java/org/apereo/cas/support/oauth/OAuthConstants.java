@@ -82,6 +82,9 @@ public interface OAuthConstants {
     /** The access token url. */
     String ACCESS_TOKEN_URL = "accessToken";
 
+    /** The token url. */
+    String TOKEN_URL = "token";
+
     /** The profile url. */
     String PROFILE_URL = "profile";
 

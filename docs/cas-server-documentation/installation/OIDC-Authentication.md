@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - OIDC Authentication
+title: CAS - OpenID Connect Authentication
 ---
 
 # OpenID Connect Authentication
@@ -21,24 +21,24 @@ To learn more about OpenId Connect, please [review this guide](http://openid.net
 
 The current implementation provides support for:
 
-- [Authorization Code flow](http://openid.net/specs/openid-connect-basic-1_0.html)
-- [Implicit flow](https://openid.net/specs/openid-connect-implicit-1_0.html)
+- [Authorization Code Flow](http://openid.net/specs/openid-connect-basic-1_0.html)
+- [Implicit Flow](https://openid.net/specs/openid-connect-implicit-1_0.html)
 - [Dynamic Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
-- Administration and registration of [OIDC clients](Service-Management.html).
-- Administration and registration of OIDC clients via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
+- Administration and registration of [OIDC clients and relying parties](Service-Management.html).
+- Administration and registration of [OIDC clients and relying parties](Service-Management.html) via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
 - Ability to [resolve, map and release claims](../integration/Attribute-Release-Policies.html).
 - Ability to configure expiration policies for various tokens.
 
 ## Endpoints
 
-| Field                                     | Description
-|-------------------------------------------|-------------------------------------------------------
+| Field                                         | Description
+|-----------------------------------------------|-------------------------------------------------------
 | `/cas/oidc/.well-known`                       | Discovery endpoint.
 | `/cas/oidc/.well-known/openid-configuration`  | Discovery endpoint.
 | `/cas/oidc/jwks`                              | Provides an aggregate of all keystores.
 | `/cas/oidc/authorize`                         | Authorization requests are handled here.
 | `/cas/oidc/profile`                           | User profile requests are handled here.
-| `/cas/oidc/accessToken`                       | Produces authorized access tokens.
+| `/cas/oidc/accessToken`, `/cas/oidc/token`    | Produces authorized access tokens.
 | `/cas/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
 
 ## Register Clients
@@ -81,7 +81,9 @@ Service definitions are typically managed by the [service management](Service-Ma
 
 ### Dynamically
 
-Clients applications may dynamically be registered with CAS for authentication. By default, CAS operates in a `PROTECTED` mode where the registration endpoint requires user authentication. This behavior may be relaxed via CAS settings to allow CAS to operate in an `OPEN` mode.
+Clients applications may dynamically be registered with CAS for authentication. By default, CAS operates 
+in a `PROTECTED` mode where the registration endpoint requires user authentication. This behavior may be relaxed via 
+CAS settings to allow CAS to operate in an `OPEN` mode.
 
 ## Settings
 
