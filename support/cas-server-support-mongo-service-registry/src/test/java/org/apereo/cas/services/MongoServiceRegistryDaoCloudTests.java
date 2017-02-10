@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
 
-import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,13 +61,6 @@ public class MongoServiceRegistryDaoCloudTests {
             this.serviceRegistryDao.delete(results.get(i));
         }
         assertTrue(this.serviceRegistryDao.load().isEmpty());
-    }
-
-    @Test
-    public void verifyOauthService() {
-        final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
-        service.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        this.serviceRegistryDao.save(service);
     }
 
     @After

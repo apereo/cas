@@ -19,7 +19,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
-import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.RegexUtils;
@@ -51,10 +50,6 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
         }
         if (StringUtils.isNotBlank(svc.getPrivacyUrl())) {
             bean.setPrivacyUrl(svc.getPrivacyUrl());
-        }
-
-        if (svc instanceof OAuthCallbackAuthorizeService) {
-            bean.setType(RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString());
         }
 
         if (svc instanceof OAuthRegisteredService) {
@@ -163,9 +158,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
 
             // create base RegisteredService object
             final String type = data.getType();
-            if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString())) {
-                regSvc = new OAuthCallbackAuthorizeService();
-            } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())
+            if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())
                     || StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OIDC.toString())) {
 
                 if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())) {
