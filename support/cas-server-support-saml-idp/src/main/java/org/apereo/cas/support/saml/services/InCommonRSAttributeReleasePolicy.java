@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
@@ -100,5 +101,11 @@ public class InCommonRSAttributeReleasePolicy extends ReturnAllowedAttributeRele
             }
         }
         return new HashMap();
+    }
+
+    @JsonIgnore
+    @Override
+    public List<String> getAllowedAttributes() {
+        return super.getAllowedAttributes();
     }
 }
