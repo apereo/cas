@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -14,10 +14,12 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.OAuthResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
+import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
@@ -48,8 +50,8 @@ import java.util.stream.Stream;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
+public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeEndpointController.class);
 
     /**
      * The code factory instance.
@@ -58,15 +60,15 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
     private ConsentApprovalViewResolver consentApprovalViewResolver;
 
-    public OAuth20AuthorizeController(final ServicesManager servicesManager,
-                                      final TicketRegistry ticketRegistry,
-                                      final OAuth20Validator validator,
-                                      final AccessTokenFactory accessTokenFactory,
-                                      final PrincipalFactory principalFactory,
-                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                      final OAuthCodeFactory oAuthCodeFactory,
-                                      final ConsentApprovalViewResolver consentApprovalViewResolver,
-                                      final CasConfigurationProperties casProperties) {
+    public OAuth20AuthorizeEndpointController(final ServicesManager servicesManager,
+                                              final TicketRegistry ticketRegistry,
+                                              final OAuth20Validator validator,
+                                              final AccessTokenFactory accessTokenFactory,
+                                              final PrincipalFactory principalFactory,
+                                              final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                              final OAuthCodeFactory oAuthCodeFactory,
+                                              final ConsentApprovalViewResolver consentApprovalViewResolver,
+                                              final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, casProperties);
         this.oAuthCodeFactory = oAuthCodeFactory;
@@ -152,9 +154,9 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
 
         String callbackUrl = null;
-        if (isResponseType(responseType, OAuthResponseTypes.CODE)) {
+        if (isResponseType(responseType, OAuth20ResponseTypes.CODE)) {
             callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri);
-        } else if (isResponseType(responseType, OAuthResponseTypes.TOKEN)) {
+        } else if (isResponseType(responseType, OAuth20ResponseTypes.TOKEN)) {
             callbackUrl = buildCallbackUrlForImplicitTokenResponseType(context, authentication, service, redirectUri);
         } else {
             callbackUrl = buildCallbackUrlForTokenResponseType(context, authentication, service,
@@ -294,7 +296,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
 
         return checkParameterExist
-                && checkResponseTypes(responseType, OAuthResponseTypes.values())
+                && checkResponseTypes(responseType, OAuth20ResponseTypes.values())
                 && getValidator().checkServiceValid(registeredService)
                 && getValidator().checkCallbackValid(registeredService, redirectUri);
     }
@@ -306,7 +308,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @param expectedTypes the expected response types
      * @return whether the response type is supported
      */
-    private boolean checkResponseTypes(final String type, final OAuthResponseTypes... expectedTypes) {
+    private boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
         LOGGER.debug("Response type: [{}]", type);
         final boolean checked = Stream.of(expectedTypes).anyMatch(t -> isResponseType(type, t));
         if (!checked) {
@@ -322,7 +324,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @param expectedType the expected response type
      * @return whether the response type is the expected one
      */
-    protected boolean isResponseType(final String type, final OAuthResponseTypes expectedType) {
+    protected boolean isResponseType(final String type, final OAuth20ResponseTypes expectedType) {
         return expectedType.getType().equalsIgnoreCase(type);
     }
 }

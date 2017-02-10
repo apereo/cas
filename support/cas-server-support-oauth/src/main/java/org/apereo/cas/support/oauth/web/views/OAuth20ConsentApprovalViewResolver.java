@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth.web.views;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.oauth.OAuthConstants;

@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -8,6 +8,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
+import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.config.Config;
@@ -27,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20CallbackAuthorizeController extends BaseOAuthWrapperController {
+public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuthWrapperController {
 
     private Config config;
 
@@ -35,16 +37,16 @@ public class OAuth20CallbackAuthorizeController extends BaseOAuthWrapperControll
 
     private OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver;
 
-    public OAuth20CallbackAuthorizeController(final ServicesManager servicesManager,
-                                              final TicketRegistry ticketRegistry,
-                                              final OAuth20Validator validator,
-                                              final AccessTokenFactory accessTokenFactory,
-                                              final PrincipalFactory principalFactory,
-                                              final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                              final Config config,
-                                              final CallbackController callbackController,
-                                              final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver,
-                                              final CasConfigurationProperties casProperties) {
+    public OAuth20CallbackAuthorizeEndpointController(final ServicesManager servicesManager,
+                                                      final TicketRegistry ticketRegistry,
+                                                      final OAuth20Validator validator,
+                                                      final AccessTokenFactory accessTokenFactory,
+                                                      final PrincipalFactory principalFactory,
+                                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                                      final Config config,
+                                                      final CallbackController callbackController,
+                                                      final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver,
+                                                      final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
                 principalFactory, webApplicationServiceServiceFactory, casProperties);
         this.config = config;

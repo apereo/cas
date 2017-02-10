@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.support.oauth.OAuthResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -36,7 +36,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
                                         final long timeout,
                                         final Service service,
                                         final OAuthRegisteredService registeredService,
-                                        final OAuthResponseTypes responseType) throws Exception {
+                                        final OAuth20ResponseTypes responseType) throws Exception {
 
         super.generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                 refreshTokenId, timeout, service, registeredService, responseType);

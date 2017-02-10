@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -36,19 +37,19 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20ProfileController extends BaseOAuthWrapperController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
+public class OAuth20UserProfileControllerController extends BaseOAuthWrapperController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20UserProfileControllerController.class);
 
     private static final String ID = "id";
     private static final String ATTRIBUTES = "attributes";
 
-    public OAuth20ProfileController(final ServicesManager servicesManager,
-                                    final TicketRegistry ticketRegistry,
-                                    final OAuth20Validator validator,
-                                    final AccessTokenFactory accessTokenFactory,
-                                    final PrincipalFactory principalFactory,
-                                    final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                    final CasConfigurationProperties casProperties) {
+    public OAuth20UserProfileControllerController(final ServicesManager servicesManager,
+                                                  final TicketRegistry ticketRegistry,
+                                                  final OAuth20Validator validator,
+                                                  final AccessTokenFactory accessTokenFactory,
+                                                  final PrincipalFactory principalFactory,
+                                                  final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                                  final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, casProperties);
     }
@@ -62,7 +63,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
      * @throws Exception the exception
      */
     @GetMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-    protected ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
