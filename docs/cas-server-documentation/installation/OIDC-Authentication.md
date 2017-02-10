@@ -98,6 +98,36 @@ are stored via server-backed session storage mechanisms. You will need to config
 OpenID connect claims are simply treated as normal CAS attributes that need to
 be [resolved, mapped and released](../integration/Attribute-Release-Policies.html).
 
+### Scope-based Claims
+
+You may chain various attribute release policies that authorize claim release based on specific scopes:
+
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId" : "...",
+  "name": "OIDC Test",
+  "id": 10,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+          {"@class": "org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy"},
+          {"@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy"},
+          {"@class": "org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy"},
+          {"@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy"}
+      ]
+    ]
+  }
+}
+```
+
+Additional policies [defined here](../integration/Attribute-Release-Policies.html) may also be chained 
+to authorize release of custom claims.
+
 ## Authentication Context Class
 
 Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request,

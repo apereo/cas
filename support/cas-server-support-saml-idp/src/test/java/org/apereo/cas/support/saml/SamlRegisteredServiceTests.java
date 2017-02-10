@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
@@ -17,6 +18,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
@@ -60,7 +62,7 @@ public class SamlRegisteredServiceTests {
         service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
         final InCommonRSAttributeReleasePolicy policy = new InCommonRSAttributeReleasePolicy();
         final ChainingAttributeReleasePolicy chain = new ChainingAttributeReleasePolicy();
-        chain.setPolicies(Collections.singletonList(policy));
+        chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
 
         final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
