@@ -41,7 +41,8 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenControl
                 casProperties);
     }
 
-    @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL)
+    @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL,
+                          '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.TOKEN_URL})
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
