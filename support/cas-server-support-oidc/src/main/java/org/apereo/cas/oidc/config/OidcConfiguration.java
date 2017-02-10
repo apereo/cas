@@ -39,14 +39,14 @@ import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.OAuthGrantTypes;
-import org.apereo.cas.support.oauth.OAuthResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
-import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
-import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
+import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
+import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
@@ -202,7 +202,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
+    public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new OidcCasClientRedirectActionBuilder(oidcAuthorizationRequestSupport());
     }
 
@@ -222,7 +222,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public OAuthCasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder() {
+    public OAuth20CasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder() {
         return new OidcCasClientRedirectActionBuilder(oidcAuthorizationRequestSupport());
     }
 
@@ -384,17 +384,17 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         discoveryProperties.setClaimsSupported(oidc.getClaims());
         discoveryProperties.setScopesSupported(oidc.getScopes());
         discoveryProperties.setResponseTypesSupported(
-                Arrays.asList(OAuthResponseTypes.CODE.getType(),
-                        OAuthResponseTypes.TOKEN.getType(),
-                        OAuthResponseTypes.IDTOKEN_TOKEN.getType()));
+                Arrays.asList(OAuth20ResponseTypes.CODE.getType(),
+                        OAuth20ResponseTypes.TOKEN.getType(),
+                        OAuth20ResponseTypes.IDTOKEN_TOKEN.getType()));
 
         discoveryProperties.setSubjectTypesSupported(oidc.getSubjectTypes());
         discoveryProperties.setClaimTypesSupported(Collections.singletonList("normal"));
 
         discoveryProperties.setGrantTypesSupported(
-                Arrays.asList(OAuthGrantTypes.AUTHORIZATION_CODE.getType(),
-                        OAuthGrantTypes.PASSWORD.getType(),
-                        OAuthGrantTypes.REFRESH_TOKEN.getType()));
+                Arrays.asList(OAuth20GrantTypes.AUTHORIZATION_CODE.getType(),
+                        OAuth20GrantTypes.PASSWORD.getType(),
+                        OAuth20GrantTypes.REFRESH_TOKEN.getType()));
 
         discoveryProperties.setIdTokenSigningAlgValuesSupported(Arrays.asList("none", "RS256"));
         return discoveryProperties;

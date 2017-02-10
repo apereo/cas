@@ -8,7 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.OAuthResponseTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
@@ -71,7 +71,7 @@ public class OidcIdTokenGeneratorService {
                            final HttpServletResponse response,
                            final AccessToken accessTokenId,
                            final long timeout,
-                           final OAuthResponseTypes responseType,
+                           final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) throws Exception {
 
         final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) registeredService;
@@ -106,7 +106,7 @@ public class OidcIdTokenGeneratorService {
                                              final OidcRegisteredService service,
                                              final UserProfile profile,
                                              final J2EContext context,
-                                             final OAuthResponseTypes responseType) {
+                                             final OAuth20ResponseTypes responseType) {
         final Authentication authentication = accessTokenId.getAuthentication();
         final Principal principal = authentication.getPrincipal();
 

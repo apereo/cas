@@ -10,7 +10,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileControllerController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.http.MediaType;
@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcProfileEndpointController extends OAuth20ProfileController {
+public class OidcProfileEndpointController extends OAuth20UserProfileControllerController {
 
     public OidcProfileEndpointController(final ServicesManager servicesManager,
                                          final TicketRegistry ticketRegistry,
@@ -44,7 +44,7 @@ public class OidcProfileEndpointController extends OAuth20ProfileController {
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    protected ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
 
