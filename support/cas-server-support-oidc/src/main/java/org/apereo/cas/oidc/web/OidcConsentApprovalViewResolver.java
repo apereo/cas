@@ -3,7 +3,7 @@ package org.apereo.cas.oidc.web;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.OAuth20ConsentApprovalViewResolver;
+import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
 import org.pac4j.core.context.J2EContext;
 
 import java.util.Set;

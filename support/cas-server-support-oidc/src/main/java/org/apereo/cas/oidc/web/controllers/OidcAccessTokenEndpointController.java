@@ -9,7 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
-import org.apereo.cas.support.oauth.web.OAuth20AccessTokenController;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcAccessTokenEndpointController extends OAuth20AccessTokenController {
+public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpointController {
 
     public OidcAccessTokenEndpointController(final ServicesManager servicesManager,
                                              final TicketRegistry ticketRegistry,

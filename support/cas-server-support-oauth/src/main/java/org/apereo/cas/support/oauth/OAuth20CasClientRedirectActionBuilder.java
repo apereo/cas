@@ -5,12 +5,12 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.redirect.RedirectAction;
 
 /**
- * This is {@link OAuthCasClientRedirectActionBuilder}.
+ * This is {@link OAuth20CasClientRedirectActionBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface OAuthCasClientRedirectActionBuilder {
+public interface OAuth20CasClientRedirectActionBuilder {
 
     /**
      * Build redirect action for the client dynamically

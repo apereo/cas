@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth.web.views;
 
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
