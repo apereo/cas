@@ -29,7 +29,7 @@ via the CAS properties. To see the relevant list of CAS properties, please [revi
 ### Log Levels
 
 While log levels can directly be massaged via the native `log4j2.xml` syntax, they may also be modified
-using the usual CAS properties.
+using the usual CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
 
 ### Refresh Interval
 
