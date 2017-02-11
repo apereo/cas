@@ -1,19 +1,20 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,10 +32,11 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @Autowired(required = false)
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @ConditionalOnMissingBean(name = "authenticationPolicy")
     @Bean(name = {"authenticationPolicy", "defaultAuthenticationPolicy"})
     public AuthenticationPolicy defaultAuthenticationPolicy() {
         final AuthenticationPolicyProperties police = casProperties.getAuthn().getPolicy();
@@ -58,6 +60,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
         return new NotPreventedAuthenticationPolicy();
     }
 
+    @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
     @Bean
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
         final DefaultAdaptiveAuthenticationPolicy p = new DefaultAdaptiveAuthenticationPolicy();
