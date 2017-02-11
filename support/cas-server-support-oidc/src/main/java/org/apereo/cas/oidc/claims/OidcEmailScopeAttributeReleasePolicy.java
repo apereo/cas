@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.claims;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 
 import java.util.Arrays;
 import java.util.List;

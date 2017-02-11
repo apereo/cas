@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.principal;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 
 /**
  * The {@link AbstractServiceFactory} is the parent class providing
@@ -25,7 +24,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         }
         return (T1) service;
     }
-    
+
     @Override
     public <T1 extends Service> T1 createService(final HttpServletRequest request, final Class<? extends Service> clazz) {
         final Service service = createService(request);
