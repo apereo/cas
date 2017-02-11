@@ -13,7 +13,6 @@
 
     <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post" th:object="${password}">
         <p>
-
         <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
             <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
         </div>
@@ -21,7 +20,7 @@
         <table>
             <tr>
                 <td class="pm">
-                    <label for="password">Enter password:</label>
+                    <label for="password" th:utext="#{screen.pm.enterpsw}" />
                 </td>
                 <td class="pm">
                     <input class="required" type="password" id="password" th:field="*{password}"/>
@@ -29,7 +28,7 @@
             </tr>
             <tr>
                 <td class="pm">
-                    <label for="confirmedPassword">Confirm password:</label>
+                    <label for="confirmedPassword" th:utext="#{screen.pm.confirmpsw}" />
                 </td>
                 <td class="pm">
                     <input class="required" type="password" id="confirmedPassword" th:field="*{confirmedPassword}" />
