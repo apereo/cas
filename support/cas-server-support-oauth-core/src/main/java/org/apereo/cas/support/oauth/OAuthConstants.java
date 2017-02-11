@@ -34,6 +34,9 @@ public interface OAuthConstants {
     /** The approval prompt. */
     String BYPASS_APPROVAL_PROMPT = "bypass_approval_prompt";
 
+    /** The scope request. */
+    String SCOPE = "scope";
+
     /** The code. */
     String CODE = "code";
 

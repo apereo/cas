@@ -29,7 +29,6 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
     @Override
     public GoogleAccountsService createService(final HttpServletRequest request) {
-
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
 
         final String xmlRequest = this.googleSaml20ObjectBuilder.decodeSamlAuthnRequest(

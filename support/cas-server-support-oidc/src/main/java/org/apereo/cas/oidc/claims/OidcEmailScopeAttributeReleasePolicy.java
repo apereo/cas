@@ -12,12 +12,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class OidcEmailScopeAttributeReleasePolicy extends ReturnAllowedAttributeReleasePolicy {
+public class OidcEmailScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
 
     private List<String> allowedAttributes = Arrays.asList("email", "email_verified");
 
     public OidcEmailScopeAttributeReleasePolicy() {
+        super("email");
         setAllowedAttributes(allowedAttributes);
     }
 

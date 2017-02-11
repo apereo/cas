@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileControllerController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -37,9 +38,11 @@ public class OidcProfileEndpointController extends OAuth20UserProfileControllerC
                                          final AccessTokenFactory accessTokenFactory,
                                          final PrincipalFactory principalFactory,
                                          final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                         final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                          final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory, casProperties);
+                principalFactory, webApplicationServiceServiceFactory,
+                scopeToAttributesFilter, casProperties);
     }
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)

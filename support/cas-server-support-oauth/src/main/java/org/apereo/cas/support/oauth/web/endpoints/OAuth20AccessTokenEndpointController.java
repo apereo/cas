@@ -10,9 +10,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -69,9 +70,10 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                 final RefreshTokenFactory refreshTokenFactory,
                                                 final AccessTokenResponseGenerator accessTokenResponseGenerator,
+                                                final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                 final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory, casProperties);
+                principalFactory, webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
         this.refreshTokenFactory = refreshTokenFactory;
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
     }
@@ -139,8 +141,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     if (!profile.isPresent()) {
                         throw new UnauthorizedServiceException("Oauth user profile cannot be determined");
                     }
-                    service = createService(registeredService);
-                    authentication = createAuthentication(profile.get(), registeredService, context);
+                    service = createService(registeredService, context);
+                    authentication = createAuthentication(profile.get(), registeredService, context, service);
 
                     RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                             registeredService, authentication);

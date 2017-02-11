@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
@@ -35,10 +36,11 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
                                              final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                              final RefreshTokenFactory refreshTokenFactory,
                                              final AccessTokenResponseGenerator accessTokenResponseGenerator,
+                                             final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                              final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, refreshTokenFactory, accessTokenResponseGenerator,
-                casProperties);
+                scopeToAttributesFilter, casProperties);
     }
 
     @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL,

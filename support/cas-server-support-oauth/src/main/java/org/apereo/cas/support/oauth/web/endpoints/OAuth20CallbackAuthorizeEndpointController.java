@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
@@ -19,7 +20,6 @@ import org.pac4j.springframework.web.CallbackController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,16 +46,14 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuthWrapper
                                                       final Config config,
                                                       final CallbackController callbackController,
                                                       final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver,
+                                                      final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                       final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory, casProperties);
+                principalFactory, webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
         this.config = config;
         this.callbackController = callbackController;
         this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;
-    }
 
-    @PostConstruct
-    private void postConstruct() {
         this.callbackController.setConfig(this.config);
     }
 

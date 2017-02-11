@@ -12,12 +12,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class OidcPhoneScopeAttributeReleasePolicy extends ReturnAllowedAttributeReleasePolicy {
+public class OidcPhoneScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
 
     private List<String> allowedAttributes = Arrays.asList("phone_number", "phone_number_verified");
 
     public OidcPhoneScopeAttributeReleasePolicy() {
+        super("phone");
         setAllowedAttributes(allowedAttributes);
     }
 

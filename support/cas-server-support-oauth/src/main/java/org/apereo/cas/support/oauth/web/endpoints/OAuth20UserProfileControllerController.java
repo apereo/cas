@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
@@ -49,9 +50,10 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
                                                   final AccessTokenFactory accessTokenFactory,
                                                   final PrincipalFactory principalFactory,
                                                   final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                                  final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                   final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, casProperties);
+                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
     }
 
     /**
