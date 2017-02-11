@@ -131,13 +131,13 @@ public class CasValidationConfiguration {
                 protocolAttributeEncoder,
                 servicesManager,
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                casProperties.getView().getCas3().isReleaseProtocolAttributes());
+                casProperties.getAuthn().isReleaseProtocolAttributes());
     }
 
     @Bean
     public View cas3ServiceSuccessView() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        final boolean isReleaseProtocolAttributes = casProperties.getView().getCas3().isReleaseProtocolAttributes();
+        final boolean isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30ResponseView(true, protocolAttributeEncoder,
                 servicesManager, authenticationContextAttribute, cas3SuccessView, isReleaseProtocolAttributes);
     }
