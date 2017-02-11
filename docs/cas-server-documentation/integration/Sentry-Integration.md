@@ -5,7 +5,7 @@ title: CAS - Sentry Monitoring Integration
 
 # Overview
 
-[Sentry]() is ...
+[Sentry](https://sentry.io) allows you to track logs and error in real time. It provides insight into production deployments and information to reproduce and fix crashes.
 
 ## Configuration
 

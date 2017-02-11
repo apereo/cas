@@ -85,6 +85,8 @@ Load settings from external properties/yaml configuration files.
 
 ```properties
 # spring.profiles.active=native
+
+# The configuration directory where CAS should monitor to locate settings.
 # spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
 ```
 
@@ -94,8 +96,16 @@ Load settings from an internal/external Git repository.
 
 ```properties
 # spring.profiles.active=default
+
+# The location of the git repository that contains CAS settings.
+# The location can point to an HTTP/SSH/directory.
 # spring.cloud.config.server.git.uri=https://github.com/repoName/config
 # spring.cloud.config.server.git.uri=file://${user.home}/config
+
+# The credentials used to authenticate git requests, specially
+# when using HTTPS. If connecting to the repository via SSH, remember
+# to register your public keys with an SSH agent just as your normal would have
+# with any other public repository.
 # spring.cloud.config.server.git.username=
 # spring.cloud.config.server.git.password=
 ```
@@ -139,7 +149,6 @@ Encrypt and decrypt configuration via Spring Cloud.
 
 To learn more about how sensitive CAS settings can be
 secured, [please review this guide](Configuration-Properties-Security.html).
-
 
 ## Cloud Configuration Bus
 
@@ -304,7 +313,7 @@ management.security.roles=ACTUATOR,ADMIN
 management.security.sessions=if_required
 
 # Each of the below endpoints can either be disabled
-# or can be individually marked as 'sensitive' (or not) 
+# or can be individually marked as 'sensitive' (or not)
 # to enable authentication.
 
 # endpoints.restart.enabled=false
@@ -466,8 +475,9 @@ spring.thymeleaf.cache=false
 
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
-# cas.view.cas3.releaseProtocolAttributes=true
 
+# Defines a default URL to which CAS may redirect if there is no service
+# provided in the authentication request.
 # cas.view.defaultRedirectUrl=https://www.github.com
 ```
 
@@ -702,6 +712,14 @@ then the following settings are relevant:
 ```
 
 To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
+
+### Protocol Attributes
+
+Defines whether CAS should include and release protocol attributes defined in the specification in addition to the principal attribute.
+
+```properties
+# cas.authn.releaseProtocolAttributes=true
+```
 
 ## Principal Resolution
 
