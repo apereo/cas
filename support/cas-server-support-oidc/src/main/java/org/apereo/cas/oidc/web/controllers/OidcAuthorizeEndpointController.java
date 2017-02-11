@@ -15,6 +15,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -55,10 +56,11 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                            final OAuthCodeFactory oAuthCodeFactory,
                                            final ConsentApprovalViewResolver consentApprovalViewResolver,
                                            final OidcIdTokenGeneratorService idTokenGenerator,
+                                           final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                            final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
-                casProperties);
+                scopeToAttributesFilter, casProperties);
         this.idTokenGenerator = idTokenGenerator;
     }
 

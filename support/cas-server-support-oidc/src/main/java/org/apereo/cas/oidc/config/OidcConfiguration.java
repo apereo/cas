@@ -18,6 +18,7 @@ import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoader;
+import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
@@ -43,6 +44,7 @@ import org.apereo.cas.support.oauth.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -252,13 +254,18 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new DefaultPrincipalFactory();
     }
 
+    @Bean
+    public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
+        return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory());
+    }
+
     @RefreshScope
     @Bean
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
         return new OidcAccessTokenEndpointController(
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory,
-                oidcAccessTokenResponseGenerator(), casProperties);
+                oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties);
     }
 
     @Bean
@@ -274,14 +281,17 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 oidcPrincipalFactory(), webApplicationServiceFactory, clientRegistrationRequestSerializer(),
                 new DefaultRandomStringGenerator(),
                 new DefaultRandomStringGenerator(),
+                profileScopeToAttributesFilter(),
                 casProperties);
     }
 
     @RefreshScope
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
-        return new OidcJwksEndpointController(servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
-                oidcPrincipalFactory(), webApplicationServiceFactory, casProperties);
+        return new OidcJwksEndpointController(servicesManager, ticketRegistry, oAuth20Validator,
+                defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory,
+                profileScopeToAttributesFilter(), casProperties);
     }
 
     @RefreshScope
@@ -290,7 +300,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
                 oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
-                oidcServerDiscoverySettings(), casProperties);
+                oidcServerDiscoverySettings(), profileScopeToAttributesFilter(),
+                casProperties);
     }
 
     @RefreshScope
@@ -299,6 +310,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcProfileEndpointController(servicesManager, ticketRegistry, oAuth20Validator,
                 defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
+                profileScopeToAttributesFilter(),
                 casProperties);
     }
 
@@ -309,7 +321,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory,
                 consentApprovalViewResolver(), oidcIdTokenGenerator(),
-                casProperties);
+                profileScopeToAttributesFilter(), casProperties);
     }
 
     @RefreshScope
