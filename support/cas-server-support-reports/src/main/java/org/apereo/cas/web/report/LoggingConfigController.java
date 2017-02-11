@@ -1,8 +1,6 @@
 package org.apereo.cas.web.report;
 
 import com.google.common.base.Throwables;
-import org.apache.commons.io.input.Tailer;
-import org.apache.commons.io.input.TailerListenerAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -28,8 +26,6 @@ import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +35,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,10 +49,6 @@ import java.util.Set;
  * @since 4.2
  */
 public class LoggingConfigController extends AbstractNamedMvcEndpoint {
-    private static StringBuilder LOG_OUTPUT = new StringBuilder();
-
-    private static final Object LOCK = new Object();
-
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
 
@@ -91,36 +82,9 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
 
             this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
             this.loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
-            registerLogFileTailThreads();
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    private void registerLogFileTailThreads() throws IOException {
-        final Collection<String> outputFileNames = new HashSet<>();
-        final Collection<Appender> loggerAppenders = this.loggerContext.getConfiguration().getAppenders().values();
-        for (final Appender appender : loggerAppenders) {
-            if (appender instanceof FileAppender) {
-                outputFileNames.add(((FileAppender) appender).getFileName());
-            } else if (appender instanceof RandomAccessFileAppender) {
-                outputFileNames.add(((RandomAccessFileAppender) appender).getFileName());
-            } else if (appender instanceof RollingFileAppender) {
-                outputFileNames.add(((RollingFileAppender) appender).getFileName());
-            } else if (appender instanceof MemoryMappedFileAppender) {
-                outputFileNames.add(((MemoryMappedFileAppender) appender).getFileName());
-            } else if (appender instanceof RollingRandomAccessFileAppender) {
-                outputFileNames.add(((RollingRandomAccessFileAppender) appender).getFileName());
-            }
-        }
-
-        outputFileNames.forEach(s -> {
-            final Tailer t = new Tailer(new File(s), new LogTailerListener(), 100, false, true);
-            final Thread thread = new Thread(t);
-            thread.setPriority(Thread.MIN_PRIORITY);
-            thread.setName(s);
-            thread.start();
-        });
     }
 
     /**
@@ -288,37 +252,5 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
     @ResponseBody
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return this.auditTrailManager.get();
-    }
-
-    /**
-     * Gets logs.
-     *
-     * @return the log output
-     * @throws Exception the exception
-     */
-    @MessageMapping("/logoutput")
-    @SendTo("/logs/logoutput")
-    public String logoutput() throws Exception {
-        synchronized (LOCK) {
-            final String log = LOG_OUTPUT.toString();
-            LOG_OUTPUT = new StringBuilder();
-            return log;
-        }
-    }
-
-    private static class LogTailerListener extends TailerListenerAdapter {
-        @Override
-        public void handle(final String line) {
-            synchronized (LOCK) {
-                LOG_OUTPUT.append(line).append('\n');
-            }
-        }
-
-        @Override
-        public void handle(final Exception ex) {
-            synchronized (LOCK) {
-                LOG_OUTPUT.append(ex).append('\n');
-            }
-        }
     }
 }
