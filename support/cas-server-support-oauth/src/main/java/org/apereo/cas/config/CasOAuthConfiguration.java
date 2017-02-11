@@ -16,10 +16,13 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -42,7 +45,6 @@ import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
-import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.config.Config;
@@ -67,7 +69,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.annotation.PostConstruct;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -117,12 +118,18 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    public CallbackUrlResolver casCallbackUrlResolver() {
+        final String url = casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        return new OAuth20CasCallbackUrlResolver(url);
+    }
+
+    @Bean
     public Config oauthSecConfig() {
         final CasConfiguration cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
         final CasClient oauthCasClient = new CasClient(cfg);
         oauthCasClient.setRedirectActionBuilder(webContext -> oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
-        oauthCasClient.setCallbackUrlResolver(buildOAuthCasCallbackUrlResolver());
+        oauthCasClient.setCallbackUrlResolver(casCallbackUrlResolver());
 
         final Authenticator authenticator = oAuthClientAuthenticator();
         final DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(authenticator);
@@ -138,32 +145,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
         final String callbackUrl = casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         return new Config(callbackUrl, oauthCasClient, basicAuthClient, directFormClient, userFormClient);
-    }
-
-    private CallbackUrlResolver buildOAuthCasCallbackUrlResolver() {
-        return (url, context) -> {
-            final String callbackUrl = casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
-            if (url.startsWith(callbackUrl)) {
-                final URIBuilder builder = new URIBuilder(url);
-                final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
-                Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                        .stream().filter(p -> p.getName().equals(OAuthConstants.CLIENT_ID))
-                        .findFirst();
-
-                parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
-                parameter = builderContext.getQueryParams()
-                        .stream().filter(p -> p.getName().equals(OAuthConstants.REDIRECT_URI))
-                        .findFirst();
-                parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
-
-                parameter = builderContext.getQueryParams()
-                        .stream().filter(p -> p.getName().equals(OAuthConstants.ACR_VALUES))
-                        .findFirst();
-                parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
-                return builder.build().toString();
-            }
-            return url;
-        };
     }
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
@@ -270,13 +251,19 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new DefaultOAuthCodeFactory(oAuthCodeIdGenerator(), oAuthCodeExpirationPolicy());
     }
 
+    @ConditionalOnMissingBean(name = "profileScopeToAttributesFilter")
+    @Bean
+    public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
+        return new DefaultOAuth20ProfileScopeToAttributesFilter();
+    }
+
     @Bean
     @ConditionalOnMissingBean(name = "callbackAuthorizeController")
     public OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController() {
         return new OAuth20CallbackAuthorizeEndpointController(servicesManager, ticketRegistry,
                 oAuthValidator(), defaultAccessTokenFactory(), oauthPrincipalFactory(), webApplicationServiceFactory,
                 oauthSecConfig(), callbackController(), callbackAuthorizeViewResolver(),
-                casProperties);
+                profileScopeToAttributesFilter(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "accessTokenController")
@@ -290,6 +277,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 webApplicationServiceFactory,
                 defaultRefreshTokenFactory(),
                 accessTokenResponseGenerator(),
+                profileScopeToAttributesFilter(),
                 casProperties
         );
     }
@@ -299,7 +287,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20UserProfileControllerController profileController() {
         return new OAuth20UserProfileControllerController(servicesManager,
                 ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
-                oauthPrincipalFactory(), webApplicationServiceFactory, casProperties);
+                oauthPrincipalFactory(), webApplicationServiceFactory,
+                profileScopeToAttributesFilter(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "authorizeController")
@@ -308,7 +297,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20AuthorizeEndpointController(
                 servicesManager, ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
                 oauthPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory(),
-                consentApprovalViewResolver(), casProperties
+                consentApprovalViewResolver(), profileScopeToAttributesFilter(), casProperties
         );
     }
 

@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 /**
  * The {@link AbstractServiceFactory} is the parent class providing
@@ -15,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceFactory.class);
-    
     @Override
     public <T1 extends Service> T1 createService(final String id, final Class<? extends Service> clazz) {
         final Service service = createService(id);
@@ -28,7 +25,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         }
         return (T1) service;
     }
-
+    
     @Override
     public <T1 extends Service> T1 createService(final HttpServletRequest request, final Class<? extends Service> clazz) {
         final Service service = createService(request);

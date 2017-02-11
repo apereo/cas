@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebApplicationServiceFactory.class);
-    
+
     @Override
     public WebApplicationService createService(final HttpServletRequest request) {
         final String serviceToUse = getRequestedService(request);
