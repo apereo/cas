@@ -32,11 +32,18 @@ to see what options and choices might be available for deployments and applicati
 Likewise, it's equally important that you study the list of 
 CAS [supported protocols and specifications](../protocol/Protocol-Overview.html).
 
+## Review Blog
+
+From time to time, blog posts appears on the [Apereo Blog](https://apereo.github.io/)
+that might become useful as you are thinking about requirements and evaluating features.
+It is generally recommended that you follow the blog and keep up with project news and 
+announcements as much as possible, and do not shy away from writing and contributing your own blog posts, experiences and updates throughout your CAS deployment.
+
 ## Prepare Environment
 
 Quite simply, study the [installation requirements](Installation-Requirements.html) for the deployment environment.
 
-## Install CAS
+## Deploy CAS
 
 It is recommended to build and deploy CAS locally using the [WAR Overlay method](../installation/Maven-Overlay-Installation.html). 
 This approach does not require the adopter to *explicitly* download any version of CAS, but 
