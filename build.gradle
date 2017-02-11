@@ -32,6 +32,7 @@ apply plugin: "com.gradle.build-scan"
 buildScan {
     licenseAgreementUrl = "https://gradle.com/terms-of-service"
     licenseAgree = "yes"
+    licenseAgree = "yes"
 }
 
 buildscript {
@@ -163,9 +164,11 @@ subprojects {
             if (!Boolean.getBoolean("skipVersionConflict")) {
                 failOnVersionConflict()
             }
+            preferProjectModules()
             cacheDynamicVersionsFor 5, 'days'
             cacheChangingModulesFor 5, 'days'
         }
+        
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")

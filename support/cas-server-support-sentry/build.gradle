@@ -1,0 +1,7 @@
+description = "Apereo CAS Sentry Monitoring and Tracking Support"
+
+dependencies {
+    compile libraries.springboot
+    compile libraries.spring
+    compile libraries.sentry
+}

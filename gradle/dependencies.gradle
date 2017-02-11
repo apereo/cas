@@ -19,7 +19,14 @@ ext.libraries = [
                     force = true
                 }
         ],
-
+        sentry                  : [
+                dependencies.create("com.getsentry.raven:raven:$sentryRavenVersion") {
+                    force = true
+                },
+                dependencies.create("com.getsentry.raven:raven-log4j2:$sentryRavenVersion") {
+                    force = true
+                }
+        ],
         casclient               : dependencies.create("org.jasig.cas.client:cas-client-core:$casClientVersion") {
             exclude(group: "javax.servlet", module: "servlet-api")
             exclude(group: "org.slf4j", module: "log4j-over-slf4j")
