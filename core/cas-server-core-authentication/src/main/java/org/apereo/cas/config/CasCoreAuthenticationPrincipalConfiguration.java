@@ -28,7 +28,8 @@ public class CasCoreAuthenticationPrincipalConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @ConditionalOnMissingBean(name = "principalElectionStrategy")
     @Autowired
     @Bean(name = {"defaultPrincipalElectionStrategy", "principalElectionStrategy"})
     public PrincipalElectionStrategy defaultPrincipalElectionStrategy(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
@@ -45,6 +46,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @Autowired
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "personDirectoryPrincipalResolver")
     public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository,
                                                               @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();

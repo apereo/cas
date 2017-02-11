@@ -1,4 +1,3 @@
-
 /*
   Override the version used by Spring boot to match CAS.
   As boot is upgraded, some of these enforcements below
