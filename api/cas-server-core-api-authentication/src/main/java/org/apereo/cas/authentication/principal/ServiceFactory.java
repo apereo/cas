@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 
 /**
  * The {@link ServiceFactory} is responsible for creating service objects.
  *
- * @param <T> the type parameter
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 4.2
  */
 public interface ServiceFactory<T extends Service> {
