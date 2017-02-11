@@ -45,7 +45,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ### Spring Security
 
-Alternative, you may design the security of CAS `/status` endpoints to take advantage 
+Alternative, you may design the security of CAS `/status` endpoints to take advantage
 of [Spring Security](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-monitoring.html).
 Using this model and via CAS settings, you get to define the authentication scheme (i.e. `BASIC`) as well
 as the protected/ignored paths and pre-defined "master" username/password that is used for authentication.

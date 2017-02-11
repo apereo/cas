@@ -19,10 +19,13 @@ deployers via relevant CAS properties.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#audits).
 
 
+## Sentry-based Audits
+
+Audit log data can be automatically routed to and integrated with [Sentry](../integration/Sentry-Integration.html) to track and monitor CAS events and errors.
+
 ## File-based Audits
 
-File-based audit logs appear in a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
-
+File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](Logging.html) configuration.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#audits).
 
 ### Sample Log Output
@@ -57,7 +60,7 @@ If you intend to use a database for auditing functionality, enable the following
 </dependency>
 ```
 
-To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To learn how to configure database drivers, please [review this guide](JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-audits).
 
 ## Audit Events

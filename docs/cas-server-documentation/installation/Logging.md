@@ -10,17 +10,16 @@ failure; it can be customized to produce additional information for troubleshoot
 Logging framework as a facade for the [Log4J engine](http://logging.apache.org) by default.
 
 The default log4j configuration file is located in `src/main/resources/log4j2.xml`.
-By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code and `WARN` for
-messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set
-these levels to  `DEBUG`.
+By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code. For debugging and diagnostic purposes you may want to set these levels to  `DEBUG`.
 
-<div class="alert alert-warning"><strong>Production</strong><p>You should always run everything under <code>WARN</code>. In production 
-warnings and errors are things you care about. Everything else is just diagnostics. Only 
+<div class="alert alert-warning"><strong>Production</strong><p>You should always run everything under
+<code>WARN</code>. In production
+warnings and errors are things you care about. Everything else is just diagnostics. Only
 turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a particular issue.</p></div>
 
 ## Configuration
 
-It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
+It is often time helpful to externalize the `log4j2.xml` file to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
 via the CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
 
@@ -79,6 +78,10 @@ and remove `log4j*.jar` from the `jarsToSkip` property.
 You may need to do something similar on other containers if they skip scanning Log4j JAR files.
 
 Failure to do so will stop Tomcat to gracefully shut down and causes logger context threads to hang.
+
+## Routing Logs to Sentry
+
+Log data can be automatically routed to and integrated with [Sentry](../integration/Sentry-Integration.html) to track and monitor CAS events and errors.
 
 ## Routing Logs to SysLog
 
