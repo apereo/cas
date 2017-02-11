@@ -15,6 +15,7 @@ import org.apereo.cas.web.report.ConfigurationStateController;
 import org.apereo.cas.web.report.DashboardController;
 import org.apereo.cas.web.report.HealthCheckController;
 import org.apereo.cas.web.report.LoggingConfigController;
+import org.apereo.cas.web.report.LoggingOutputSocketMessagingController;
 import org.apereo.cas.web.report.PersonDirectoryAttributeResolutionController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
 import org.apereo.cas.web.report.StatisticsController;
@@ -100,6 +101,11 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Bean
     public MvcEndpoint statisticsController() {
         return new StatisticsController(centralAuthenticationService, metricsRegistry, healthCheckRegistry, casProperties.getHost().getName());
+    }
+
+    @Bean
+    public LoggingOutputSocketMessagingController loggingOutputController() {
+        return new LoggingOutputSocketMessagingController();
     }
 
     @Override
