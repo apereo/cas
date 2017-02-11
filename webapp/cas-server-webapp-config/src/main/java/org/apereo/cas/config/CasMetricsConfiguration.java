@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,15 +35,16 @@ import java.util.concurrent.TimeUnit;
 @EnableMetrics
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-            
+
     /**
      * Metric registry metric registry.
      *
      * @return the metric registry
      */
+    @RefreshScope
     @Bean
     public MetricRegistry metrics() {
         final MetricRegistry metrics = new MetricRegistry();
@@ -52,11 +54,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
         metrics.register("jvm.fd.usage", new FileDescriptorRatioGauge());
         return metrics;
     }
-    /**
-     * Metrics servlet servlet registration bean.
-     *
-     * @return the servlet registration bean
-     */
+
     @Bean
     public ServletRegistrationBean metricsServlet() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
@@ -67,12 +65,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
         bean.setLoadOnStartup(1);
         return bean;
     }
-        
-    /**
-     * Health check metrics health check registry.
-     *
-     * @return the health check registry
-     */
+
     @Bean
     public HealthCheckRegistry healthCheckMetrics() {
         return new HealthCheckRegistry();
