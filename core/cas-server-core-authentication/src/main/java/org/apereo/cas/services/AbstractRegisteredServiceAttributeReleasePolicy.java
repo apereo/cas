@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -78,7 +77,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     public void setExcludeDefaultAttributes(final boolean excludeDefaultAttributes) {
         this.excludeDefaultAttributes = excludeDefaultAttributes;
     }
-    
+
     @Override
     public Map<String, Object> getAttributes(final Principal p, final RegisteredService service) {
         LOGGER.debug("Locating principal attributes for [{}]", p.getId());
