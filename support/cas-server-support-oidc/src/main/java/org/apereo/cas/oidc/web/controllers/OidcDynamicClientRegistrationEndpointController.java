@@ -32,7 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcDynamicClientRegistrationEndpointController}.
@@ -84,9 +88,15 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
             final OidcClientRegistrationRequest registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
 
+            if (registrationRequest.getScopes().isEmpty()) {
+                throw new Exception("Registration request does not contain any scope values");
+            }
+            if (!registrationRequest.getScope().contains(OidcConstants.OPENID)) {
+                throw new Exception("Registration request scopes do not contain [{}]" + OidcConstants.OPENID);
+            }
+
             final OidcRegisteredService registeredService = new OidcRegisteredService();
             registeredService.setName(registrationRequest.getClientName());
-            registeredService.setGenerateRefreshToken(true);
 
             if (StringUtils.isNotBlank(registrationRequest.getJwksUri())) {
                 registeredService.setJwks(registrationRequest.getJwksUri());
@@ -99,14 +109,25 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
             registeredService.setClientSecret(clientSecretGenerator.getNewString());
             registeredService.setEvaluationOrder(Integer.MIN_VALUE);
 
+            final Set<String> supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getScopes());
+            supportedScopes.retainAll(registrationRequest.getScopes());
+
             final OidcClientRegistrationResponse clientResponse = getClientRegistrationResponse(registrationRequest, registeredService);
+            registeredService.setScopes(supportedScopes);
+            final Set<String> processedScopes = new LinkedHashSet<>(supportedScopes);
+            registeredService.setScopes(processedScopes);
             registeredService.setDescription("Dynamically registered service "
                     .concat(registeredService.getName())
                     .concat(" with grant types ")
-                    .concat(clientResponse.getGrantTypes().toString())
+                    .concat(clientResponse.getGrantTypes().stream().collect(Collectors.joining(",")))
+                    .concat(" and with scopes ")
+                    .concat(registeredService.getScopes().stream().collect(Collectors.joining(",")))
                     .concat(" and response types ")
-                    .concat(clientResponse.getResponseTypes().toString()));
-            getServicesManager().save(registeredService);
+                    .concat(clientResponse.getResponseTypes().stream().collect(Collectors.joining(","))));
+            registeredService.setDynamicallyRegistered(true);
+
+            scopeToAttributesFilter.reconcile(registeredService);
+
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

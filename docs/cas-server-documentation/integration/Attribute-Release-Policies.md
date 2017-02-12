@@ -242,10 +242,33 @@ that receives a list of parameters. The collection of current attributes in proc
 as well as a logger object are passed to this function. The result must produce a
 map whose `key`s are attributes names and whose `value`s are a list of attribute values.
 
+## Chaining Policies
+
+Attribute release policies can be chained together to process multiple rules.
+The order of policy invocation is the same as the definition order defined for the service itself.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+          {"@class": "..."},
+          {"@class": "..."}
+      ]
+    ]
+  }
+}
+```
+
 ## Attribute Filters
 
 While each policy defines what principal attributes may be allowed for a given service,
-there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**.
+there are optional attribute filters that can be set per policy to further weed out attributes based on their *values**.
 
 ### Regex
 

@@ -96,7 +96,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
         }
 
         final String clientId = context.getRequestParameter(OAuthConstants.CLIENT_ID);
-        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
+        final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
@@ -111,6 +111,16 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
 
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
 
+    }
+
+    /**
+     * Gets registered service by client id.
+     *
+     * @param clientId the client id
+     * @return the registered service by client id
+     */
+    protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
+        return OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
     }
 
     private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
@@ -296,7 +306,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
         final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
+        final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
 
         return checkParameterExist
                 && checkResponseTypes(responseType, OAuth20ResponseTypes.values())

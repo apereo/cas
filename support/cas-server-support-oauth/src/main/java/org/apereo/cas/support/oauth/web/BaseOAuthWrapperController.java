@@ -48,14 +48,22 @@ public abstract class BaseOAuthWrapperController {
      **/
     protected final CasConfigurationProperties casProperties;
 
-    private final ServicesManager servicesManager;
+    /**
+     * Convert profile scopes to attributes.
+     */
+    protected final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
+
+    /**
+     * Services manager.
+     */
+    protected final ServicesManager servicesManager;
+
     private final TicketRegistry ticketRegistry;
     private final OAuth20Validator validator;
     private final AccessTokenFactory accessTokenFactory;
     private final PrincipalFactory principalFactory;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
-    private final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
-
+    
     public BaseOAuthWrapperController(final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry,
                                       final OAuth20Validator validator,

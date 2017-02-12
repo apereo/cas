@@ -12,7 +12,6 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 public class OidcWellKnownEndpointController extends BaseOAuthWrapperController {
 
-    private final FactoryBean<OidcServerDiscoverySettings> discovery;
+    private final OidcServerDiscoverySettings discovery;
 
     public OidcWellKnownEndpointController(final ServicesManager servicesManager,
                                            final TicketRegistry ticketRegistry,
@@ -34,7 +33,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
                                            final AccessTokenFactory accessTokenFactory,
                                            final PrincipalFactory principalFactory,
                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                           final FactoryBean<OidcServerDiscoverySettings> discovery,
+                                           final OidcServerDiscoverySettings discovery,
                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                            final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
@@ -50,7 +49,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() throws Exception {
-        return new ResponseEntity(this.discovery.getObject(), HttpStatus.OK);
+        return new ResponseEntity(this.discovery, HttpStatus.OK);
     }
 
     /**

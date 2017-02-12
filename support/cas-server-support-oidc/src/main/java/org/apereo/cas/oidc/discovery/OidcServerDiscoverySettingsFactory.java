@@ -55,6 +55,6 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 }

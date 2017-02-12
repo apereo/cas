@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{cas.oauth.confirm.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-success">
+        <h2 th:text="#{screen.oauth.confirm.header}"/>
+
+        <div th:if="${dynamic}">
+            <div class="alert alert-info fade in" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <p/><strong th:text="#{screen.oidc.confirm.dynamic}" />
+            </div>
+        </div>
+
+        <div th:if="${scopes}">
+            <p th:text="#{screen.oidc.confirm.asksinfo}"/>
+
+            <span th:each="scope : ${scopes}">
+                <div>
+                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    <code th:text="${scope}"/>
+                    <p th:text="#{screen.oidc.confirm.scope.__${scope}__}"/>
+                </div>
+            </span>
+        </div>
+
+        <p th:text="#{screen.oauth.confirm.message(${serviceName})}"/>
+        <p>
+            <a class="btn btn-success btn-lg" id="allow" name="allow"
+               th:href="@{${callbackUrl}}"
+               th:utext="#{screen.oauth.confirm.allow}"/>
+        </p>
+    </div>
+</div>
+</body>
+</html>

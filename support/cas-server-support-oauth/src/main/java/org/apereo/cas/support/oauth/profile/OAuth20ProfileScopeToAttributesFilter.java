@@ -25,4 +25,15 @@ public interface OAuth20ProfileScopeToAttributesFilter {
     Principal filter(Service service, Principal profile,
                      RegisteredService registeredService,
                      J2EContext context);
+
+    /**
+     * Reconcile the service definition.
+     * Usual operations involve translating scopes
+     * to attribute release policies if needed.
+     * The operation is expected to persist service changes.
+     *
+     * @param service the service
+     */
+    default void reconcile(RegisteredService service) {
+    }
 }

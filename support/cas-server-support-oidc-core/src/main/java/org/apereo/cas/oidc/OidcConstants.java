@@ -34,6 +34,31 @@ public interface OidcConstants {
     String OPENID = "openid";
 
     /**
+     * The `email` scope.
+     */
+    String EMAIL = "email";
+
+    /**
+     * The `address` scope.
+     */
+    String ADDRESS = "address";
+
+    /**
+     * The `profile` scope.
+     */
+    String PROFILE = "profile";
+
+    /**
+     * The `phone` scope.
+     */
+    String PHONE = "phone";
+
+    /**
+     * The `offline_accessw` scope.
+     */
+    String OFFLINE_ACCESS = "offline_access";
+
+    /**
      * Authentication method reference passed in the id token.
      */
     String AMR = "amr";
@@ -107,4 +132,9 @@ public interface OidcConstants {
      * Indicates authentication is required and could not be performed.
      */
     String LOGIN_REQUIRED = "login_required";
+
+    /**
+     * The confirm/consent view.
+     */
+    String CONFIRM_VIEW = "oidcConfirmView";
 }
