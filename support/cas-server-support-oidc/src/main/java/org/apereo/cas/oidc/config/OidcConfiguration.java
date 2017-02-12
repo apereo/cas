@@ -65,7 +65,6 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.SecurityInterceptor;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -252,7 +251,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
-        return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory());
+        return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), servicesManager);
     }
 
     @RefreshScope
@@ -290,13 +289,15 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 profileScopeToAttributesFilter(), casProperties);
     }
 
+    @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController() {
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory")
+                                                                   final OidcServerDiscoverySettings discoverySettings) {
         return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
                 oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
-                oidcServerDiscoverySettings(), profileScopeToAttributesFilter(),
+                discoverySettings, profileScopeToAttributesFilter(),
                 casProperties);
     }
 
@@ -381,9 +382,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcServiceJsonWebKeystoreCacheLoader();
     }
 
-    @RefreshScope
     @Bean
-    public FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettings() {
+    public OidcServerDiscoverySettingsFactory oidcServerDiscoverySettingsFactory() {
         return new OidcServerDiscoverySettingsFactory(casProperties);
     }
 

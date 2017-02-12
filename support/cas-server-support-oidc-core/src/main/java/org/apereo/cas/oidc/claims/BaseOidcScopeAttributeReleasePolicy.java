@@ -22,4 +22,5 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends ReturnAllowedA
     public String getScopeName() {
         return scopeName;
     }
+    
 }
