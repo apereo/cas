@@ -46,7 +46,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
     protected boolean isConsentApprovalBypassed(final J2EContext context, final OAuthRegisteredService service) {
         return service.isBypassApprovalPrompt();
     }
-    
+
     /**
      * Redirect to approve view model and view.
      *
@@ -57,10 +57,42 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
     protected ModelAndView redirectToApproveView(final J2EContext ctx, final OAuthRegisteredService svc) {
         String callbackUrl = ctx.getFullRequestURL();
         callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.BYPASS_APPROVAL_PROMPT, "true");
+        LOGGER.debug("callbackUrl: [{}]", callbackUrl);
+
         final Map<String, Object> model = new HashMap<>();
         model.put("callbackUrl", callbackUrl);
         model.put("serviceName", svc.getName());
-        LOGGER.debug("callbackUrl: [{}]", callbackUrl);
-        return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
+
+        prepareApprovalViewModel(model, ctx, svc);
+        return getApprovalModelAndView(model);
+    }
+
+    /**
+     * Gets approval model and view.
+     *
+     * @param model the model
+     * @return the approval model and view
+     */
+    protected ModelAndView getApprovalModelAndView(final Map<String, Object> model) {
+        return new ModelAndView(getApprovalViewName(), model);
+    }
+
+    /**
+     * Gets approval view name.
+     *
+     * @return the approval view name
+     */
+    protected String getApprovalViewName() {
+        return OAuthConstants.CONFIRM_VIEW;
+    }
+
+    /**
+     * Prepare approval view model.
+     *
+     * @param model the model
+     * @param ctx   the ctx
+     * @param svc   the svc
+     */
+    protected void prepareApprovalViewModel(final Map<String, Object> model, final J2EContext ctx, final OAuthRegisteredService svc) {
     }
 }

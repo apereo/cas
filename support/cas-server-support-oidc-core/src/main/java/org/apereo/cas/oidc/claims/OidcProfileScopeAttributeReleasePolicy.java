@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apereo.cas.oidc.OidcConstants;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +19,7 @@ public class OidcProfileScopeAttributeReleasePolicy extends BaseOidcScopeAttribu
             "preferred_username", "profile", "picture", "website", "gender", "birthdate", "zoneinfo", "locale", "updated_at");
 
     public OidcProfileScopeAttributeReleasePolicy() {
-        super("profile");
+        super(OidcConstants.PROFILE);
         setAllowedAttributes(allowedAttributes);
     }
 
