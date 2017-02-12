@@ -62,6 +62,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
         final Map<String, Object> model = new HashMap<>();
         model.put("callbackUrl", callbackUrl);
         model.put("serviceName", svc.getName());
+        model.put("deniedApprovalUrl", svc.getAccessStrategy().getUnauthorizedRedirectUrl());
 
         prepareApprovalViewModel(model, ctx, svc);
         return getApprovalModelAndView(model);
