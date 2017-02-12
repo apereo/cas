@@ -10,13 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is {@link DefaultOAuth20CasClientRedirectActionBuilder}.
+ * This is {@link OAuth20DefaultCasClientRedirectActionBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DefaultOAuth20CasClientRedirectActionBuilder implements OAuth20CasClientRedirectActionBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultOAuth20CasClientRedirectActionBuilder.class);
+public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasClientRedirectActionBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20DefaultCasClientRedirectActionBuilder.class);
     
     @Override
     public RedirectAction build(final CasClient casClient, final WebContext context) {

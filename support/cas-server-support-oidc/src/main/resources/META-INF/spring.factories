@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.OidcConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.oidc.config.OidcConfiguration

@@ -139,7 +139,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     // resource owner password grant type
                     final Optional<OAuthUserProfile> profile = manager.get(true);
                     if (!profile.isPresent()) {
-                        throw new UnauthorizedServiceException("Oauth user profile cannot be determined");
+                        throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
                     }
                     service = createService(registeredService, context);
                     authentication = createAuthentication(profile.get(), registeredService, context, service);

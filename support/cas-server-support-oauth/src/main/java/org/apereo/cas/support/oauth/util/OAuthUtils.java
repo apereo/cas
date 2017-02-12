@@ -3,22 +3,29 @@ package org.apereo.cas.support.oauth.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This class has some usefull methods to output data in plain text,
@@ -82,15 +89,50 @@ public final class OAuthUtils {
      * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
      */
     public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager, final String clientId) {
-        for (final RegisteredService aService : servicesManager.getAllServices()) {
-            if (aService instanceof OAuthRegisteredService) {
-                final OAuthRegisteredService service = (OAuthRegisteredService) aService;
-                if (service.getClientId().equals(clientId)) {
-                    return service;
-                }
-            }
+        final Collection<RegisteredService> services = servicesManager.getAllServices();
+        return (OAuthRegisteredService) services.stream()
+                .filter(OAuthRegisteredService.class::isInstance)
+                .filter(s -> OAuthRegisteredService.class.cast(s).getClientId().equals(clientId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Gets attributes.
+     *
+     * @param attributes the attributes
+     * @param context    the context
+     * @return the attributes
+     */
+    public static Map<String, Object> getRequestParameters(final Collection<String> attributes, final HttpServletRequest context) {
+        return attributes.stream()
+                .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
+                .map(m -> Pair.of(m, Arrays.asList(context.getParameterValues(m))))
+                .collect(Collectors.toMap(Pair::getKey, p -> p));
+    }
+
+    /**
+     * Gets requested scopes.
+     *
+     * @param context the context
+     * @return the requested scopes
+     */
+    public static Collection<String> getRequestedScopes(final J2EContext context) {
+        return getRequestedScopes(context.getRequest());
+    }
+
+    /**
+     * Gets requested scopes.
+     *
+     * @param context the context
+     * @return the requested scopes
+     */
+    public static Collection<String> getRequestedScopes(final HttpServletRequest context) {
+        final Map<String, Object> map = getRequestParameters(Arrays.asList(OAuthConstants.SCOPE), context);
+        if (map == null || map.isEmpty()) {
+            return Collections.emptyList();
         }
-        return null;
+        return (Collection<String>) map.get(OAuthConstants.SCOPE);
     }
 
     /**

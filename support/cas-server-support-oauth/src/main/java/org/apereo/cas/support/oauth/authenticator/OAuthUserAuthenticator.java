@@ -30,10 +30,8 @@ public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCre
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
-        final UsernamePasswordCredential casCredential = new UsernamePasswordCredential(credentials.getUsername(),
-                credentials.getPassword());
+        final UsernamePasswordCredential casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         try {
-
             final AuthenticationResult authenticationResult = this.authenticationSystemSupport
                     .handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
             final Authentication authentication = authenticationResult.getAuthentication();

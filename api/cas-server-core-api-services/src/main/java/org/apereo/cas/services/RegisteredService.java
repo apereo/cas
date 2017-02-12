@@ -16,7 +16,7 @@ import java.util.Set;
  * @since 3.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-public interface RegisteredService extends Cloneable, Serializable {
+public interface RegisteredService extends Cloneable, Serializable, Comparable<RegisteredService> {
 
     /**
      * Initial ID value of newly created (but not persisted) registered service.
