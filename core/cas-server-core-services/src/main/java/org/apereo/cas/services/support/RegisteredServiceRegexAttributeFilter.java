@@ -1,5 +1,6 @@
 package org.apereo.cas.services.support;
 
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -188,7 +189,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("pattern", this.pattern.pattern())
                 .toString();
     }

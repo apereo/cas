@@ -28,15 +28,9 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcCallbackAuthorizeViewResolver.class);
 
     private final OidcAuthorizationRequestSupport authorizationRequestSupport;
-    private final ServicesManager servicesManager;
-    private final OidcServerDiscoverySettings oidcServerDiscoverySettings;
-
-    public OidcCallbackAuthorizeViewResolver(final OidcAuthorizationRequestSupport authorizationRequestSupport,
-                                             final ServicesManager servicesManager,
-                                             final OidcServerDiscoverySettings oidcServerDiscoverySettings) {
+    
+    public OidcCallbackAuthorizeViewResolver(final OidcAuthorizationRequestSupport authorizationRequestSupport) {
         this.authorizationRequestSupport = authorizationRequestSupport;
-        this.servicesManager = servicesManager;
-        this.oidcServerDiscoverySettings = oidcServerDiscoverySettings;
     }
 
     @Override

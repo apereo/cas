@@ -16,16 +16,22 @@ public class OidcServerDiscoverySettings {
 
     @JsonProperty("scopes_supported")
     private List<String> scopesSupported;
+
     @JsonProperty("response_types_supported")
     private List<String> responseTypesSupported;
+
     @JsonProperty("subject_types_supported")
     private List<String> subjectTypesSupported;
+
     @JsonProperty("claim_types_supported")
     private List<String> claimTypesSupported;
+
     @JsonProperty("claims_supported")
     private List<String> claimsSupported;
+
     @JsonProperty("grant_types_supported")
     private List<String> grantTypesSupported;
+    
     @JsonProperty("id_token_signing_alg_values_supported")
     private List<String> idTokenSigningAlgValuesSupported;
 

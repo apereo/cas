@@ -118,6 +118,9 @@ public class LoggingOutputSocketMessagingController {
         }
     }
 
+    /**
+     * The Log tailer listener.
+     */
     @MessageMapping("/logoutput")
     public class LogTailerListener extends TailerListenerAdapter {
         @Override
