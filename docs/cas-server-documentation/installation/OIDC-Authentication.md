@@ -127,6 +127,7 @@ such as `displayName` above, get bundled into a `custom` scope which can be used
 If you however wish to define your custom scopes as an extention to what OpenID Connect defines
 such that you may bundle attributes together, then you need to first register your `scope`,
 define its attribute bundle and then use it a given service definition such as `eduPerson` above.
+Such user-defined scopes are also able to override the definition of system scopes.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
 

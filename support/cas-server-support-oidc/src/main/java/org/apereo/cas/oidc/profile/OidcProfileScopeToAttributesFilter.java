@@ -46,9 +46,11 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     private Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
     private final PrincipalFactory principalFactory;
     private final ServicesManager servicesManager;
+    private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
 
     public OidcProfileScopeToAttributesFilter(final PrincipalFactory principalFactory,
-                                              final ServicesManager servicesManager) {
+                                              final ServicesManager servicesManager,
+                                              final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes) {
         filters = new HashMap<>();
 
         final String packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
@@ -64,8 +66,12 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             final BaseOidcScopeAttributeReleasePolicy ex = (BaseOidcScopeAttributeReleasePolicy) ClassUtils.newInstance(t);
             filters.put(ex.getScopeName(), ex);
         });
+
+        userScopes.forEach(t -> filters.put(t.getScopeName(), t));
+
         this.principalFactory = principalFactory;
         this.servicesManager = servicesManager;
+        this.userScopes = userScopes;
     }
 
     @Override
@@ -83,16 +89,19 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         }
 
         final Map<String, Object> attributes = new HashMap<>();
+        filterAttributesByScope(scopes, attributes, principal, oidcService);
+        return this.principalFactory.createPrincipal(profile.getId(), attributes);
+    }
 
-        scopes.stream()
-                .distinct()
+    private void filterAttributesByScope(final Collection<String> stream,
+                                         final Map<String, Object> attributes,
+                                         final Principal principal, final RegisteredService registeredService) {
+        stream.stream().distinct()
                 .filter(s -> this.filters.containsKey(s))
                 .forEach(s -> {
                     final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
                     attributes.putAll(policy.getAttributes(principal, registeredService));
                 });
-
-        return this.principalFactory.createPrincipal(profile.getId(), attributes);
     }
 
     @Override
@@ -123,8 +132,17 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 case OidcConstants.OFFLINE_ACCESS:
                     oidc.setGenerateRefreshToken(true);
                     break;
-                default:
+                case OidcCustomScopeAttributeReleasePolicy.SCOPE_CUSTOM:
                     otherScopes.add(s.trim());
+                    break;
+                default:
+                    final BaseOidcScopeAttributeReleasePolicy userPolicy = userScopes.stream()
+                            .filter(t -> t.getScopeName().equals(s.trim()))
+                            .findFirst()
+                            .orElse(null);
+                    if (userPolicy != null) {
+                        policy.getPolicies().add(userPolicy);
+                    }
             }
         });
         otherScopes.remove(OidcConstants.OPENID);

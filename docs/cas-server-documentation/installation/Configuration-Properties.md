@@ -2257,6 +2257,9 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.subjectTypes=public,pairwise
 # cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
 # cas.authn.oidc.claims=sub,name,preferred_username,family_name,given_name,middle_name,given_name,profile,picture,nickname,website,zoneinfo,locale,updated_at,birthdate,email,email_verified,phone_number,phone_number_verified,address
+
+# cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
+# cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
 ```
 
 ## Pac4j Delegated AuthN

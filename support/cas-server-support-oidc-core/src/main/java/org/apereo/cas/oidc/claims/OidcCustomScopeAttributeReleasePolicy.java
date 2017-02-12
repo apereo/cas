@@ -22,7 +22,11 @@ public class OidcCustomScopeAttributeReleasePolicy extends BaseOidcScopeAttribut
     }
 
     public OidcCustomScopeAttributeReleasePolicy(final List<String> allowedAttributes) {
-        super(SCOPE_CUSTOM);
+        this(SCOPE_CUSTOM, allowedAttributes);
+    }
+
+    public OidcCustomScopeAttributeReleasePolicy(final String scopeName, final List<String> allowedAttributes) {
+        super(scopeName);
         setAllowedAttributes(allowedAttributes);
     }
 }
