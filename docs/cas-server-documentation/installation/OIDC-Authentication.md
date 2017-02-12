@@ -113,22 +113,11 @@ You may chain various attribute release policies that authorize claim release ba
   "serviceId" : "...",
   "name": "OIDC Test",
   "id": 10,
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
-    "policies": [ "java.util.ArrayList",
-      [
-          {"@class": "org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy"},
-          {"@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy"},
-          {"@class": "org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy"},
-          {"@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy"}
-      ]
-    ]
-  }
+  "scopes" : [ "java.util.HashSet", 
+    [ "profile", "email", "address", "phone", "offline_access", "customScope1", "customScope2" ]
+  ]
 }
 ```
-
-Additional policies [defined here](../integration/Attribute-Release-Policies.html) may also be chained 
-to authorize release of custom claims.
 
 ## Authentication Context Class
 

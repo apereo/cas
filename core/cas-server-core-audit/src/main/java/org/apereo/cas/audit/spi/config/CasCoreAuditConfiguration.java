@@ -78,7 +78,7 @@ public class CasCoreAuditConfiguration {
     @Bean
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         final AuditProperties audit = casProperties.getAudit();
-        
+
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ClientInfoThreadLocalFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
@@ -93,7 +93,7 @@ public class CasCoreAuditConfiguration {
         if (StringUtils.isNotBlank(audit.getAlternateServerAddrHeaderName())) {
             initParams.put(ClientInfoThreadLocalFilter.CONST_SERVER_IP_ADDRESS_HEADER, audit.getAlternateServerAddrHeaderName());
         }
-        
+
         initParams.put(ClientInfoThreadLocalFilter.CONST_USE_SERVER_HOST_ADDRESS, String.valueOf(audit.isUseServerHostAddress()));
         bean.setInitParameters(initParams);
         return bean;
@@ -157,11 +157,11 @@ public class CasCoreAuditConfiguration {
         map.put("AUTHENTICATION_RESOLVER", resolver);
         map.put("SAVE_SERVICE_ACTION_RESOLVER", resolver);
         map.put("CHANGE_PASSWORD_ACTION_RESOLVER", resolver);
-        
+
         final AuditActionResolver defResolver = new DefaultAuditActionResolver();
         map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", defResolver);
         map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", defResolver);
-        
+
         final AuditActionResolver cResolver = ticketCreationActionResolver();
         map.put("CREATE_PROXY_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("GRANT_SERVICE_TICKET_RESOLVER", cResolver);

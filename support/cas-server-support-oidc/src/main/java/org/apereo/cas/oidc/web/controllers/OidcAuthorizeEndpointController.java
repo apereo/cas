@@ -16,6 +16,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -70,11 +71,19 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Collection<String> scopes = OAuthUtils.getRequestedScopes(request);
         if (scopes.isEmpty() || !scopes.contains(OidcConstants.OPENID)) {
-            LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect");
-            return OAuthUtils.produceUnauthorizedErrorView();
+            LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect, which requires that scope [{}] MUST be specified, "
+                            + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",
+                    scopes, OidcConstants.OPENID);
         }
 
         return super.handleRequestInternal(request, response);
+    }
+
+    @Override
+    protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
+        final OAuthRegisteredService service = super.getRegisteredServiceByClientId(clientId);
+        scopeToAttributesFilter.reconcile(service);
+        return service;
     }
 
     @Override

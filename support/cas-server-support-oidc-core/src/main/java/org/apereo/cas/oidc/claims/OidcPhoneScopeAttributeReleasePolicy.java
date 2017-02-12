@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apereo.cas.oidc.OidcConstants;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,7 @@ public class OidcPhoneScopeAttributeReleasePolicy extends BaseOidcScopeAttribute
     private List<String> allowedAttributes = Arrays.asList("phone_number", "phone_number_verified");
 
     public OidcPhoneScopeAttributeReleasePolicy() {
-        super("phone");
+        super(OidcConstants.PHONE);
         setAllowedAttributes(allowedAttributes);
     }
 

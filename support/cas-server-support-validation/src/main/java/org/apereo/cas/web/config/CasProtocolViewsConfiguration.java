@@ -89,6 +89,12 @@ public class CasProtocolViewsConfiguration {
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public CasProtocolView oidcConfirmView() {
+        return new CasProtocolView("protocol/oidc/confirm", applicationContext, springTemplateEngine, properties);
+    }
+
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public CasProtocolView casOpenIdServiceFailureView() {
         return new CasProtocolView("protocol/openid/casOpenIdServiceFailureView", applicationContext, springTemplateEngine, properties);
     }
