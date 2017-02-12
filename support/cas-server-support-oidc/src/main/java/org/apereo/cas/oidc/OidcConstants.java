@@ -29,6 +29,11 @@ public interface OidcConstants {
     String ACR = "acr";
 
     /**
+     * The `openid` scope.
+     */
+    String OPENID = "openid";
+
+    /**
      * Authentication method reference passed in the id token.
      */
     String AMR = "amr";
