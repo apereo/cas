@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
@@ -41,8 +42,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20CasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
@@ -66,6 +65,7 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.SecurityInterceptor;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -82,8 +82,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -199,8 +197,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
-        return new OidcCallbackAuthorizeViewResolver(oidcAuthorizationRequestSupport(), servicesManager,
-                oidcServerDiscoverySettings());
+        return new OidcCallbackAuthorizeViewResolver(oidcAuthorizationRequestSupport());
     }
 
     @Bean
@@ -386,29 +383,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @Bean
-    public OidcServerDiscoverySettings oidcServerDiscoverySettings() {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        final OidcServerDiscoverySettings discoveryProperties =
-                new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(),
-                        oidc.getIssuer());
-
-        discoveryProperties.setClaimsSupported(oidc.getClaims());
-        discoveryProperties.setScopesSupported(oidc.getScopes());
-        discoveryProperties.setResponseTypesSupported(
-                Arrays.asList(OAuth20ResponseTypes.CODE.getType(),
-                        OAuth20ResponseTypes.TOKEN.getType(),
-                        OAuth20ResponseTypes.IDTOKEN_TOKEN.getType()));
-
-        discoveryProperties.setSubjectTypesSupported(oidc.getSubjectTypes());
-        discoveryProperties.setClaimTypesSupported(Collections.singletonList("normal"));
-
-        discoveryProperties.setGrantTypesSupported(
-                Arrays.asList(OAuth20GrantTypes.AUTHORIZATION_CODE.getType(),
-                        OAuth20GrantTypes.PASSWORD.getType(),
-                        OAuth20GrantTypes.REFRESH_TOKEN.getType()));
-
-        discoveryProperties.setIdTokenSigningAlgValuesSupported(Arrays.asList("none", "RS256"));
-        return discoveryProperties;
+    public FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettings() {
+        return new OidcServerDiscoverySettingsFactory(casProperties);
     }
 
     @Bean
