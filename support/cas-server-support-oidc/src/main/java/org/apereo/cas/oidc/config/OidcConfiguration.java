@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
@@ -81,6 +83,8 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -251,7 +255,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
-        return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), servicesManager);
+        return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), servicesManager,
+                userDefinedScopeBasedAttributeReleasePolicies());
     }
 
     @RefreshScope
@@ -404,6 +409,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 requiresAuthenticationAuthorizeInterceptor(),
                 requiresAuthenticationDynamicRegistrationInterceptor(),
                 mode);
+    }
+
+    @RefreshScope
+    @Bean
+    public Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
+        final OidcProperties oidc = casProperties.getAuthn().getOidc();
+        return oidc.getUserDefinedScopes().entrySet()
+                .stream()
+                .map((k) -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), Arrays.asList(k.getValue().split(","))))
+                .collect(Collectors.toSet());
     }
 
     @PostConstruct
