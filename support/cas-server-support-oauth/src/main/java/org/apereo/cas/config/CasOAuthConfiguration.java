@@ -6,12 +6,12 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.DefaultOAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
@@ -114,13 +114,17 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
     public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
-        return new DefaultOAuth20CasClientRedirectActionBuilder();
+        return new OAuth20DefaultCasClientRedirectActionBuilder();
+    }
+
+    @Bean
+    public String casOAuthCallbackUrl() {
+        return casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
     }
 
     @Bean
     public CallbackUrlResolver casCallbackUrlResolver() {
-        final String url = casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
-        return new OAuth20CasCallbackUrlResolver(url);
+        return new OAuth20CasCallbackUrlResolver(casOAuthCallbackUrl());
     }
 
     @Bean
@@ -142,9 +146,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
         final DirectFormClient userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
-
-        final String callbackUrl = casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
-        return new Config(callbackUrl, oauthCasClient, basicAuthClient, directFormClient, userFormClient);
+        return new Config(casOAuthCallbackUrl(), oauthCasClient, basicAuthClient, directFormClient, userFormClient);
     }
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
@@ -188,7 +190,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public OAuth20CasClientRedirectActionBuilder defaultOAuthCasClientRedirectActionBuilder() {
-        return new DefaultOAuth20CasClientRedirectActionBuilder();
+        return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
 
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
@@ -272,7 +274,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20AccessTokenEndpointController(
                 servicesManager,
                 ticketRegistry,
-                oAuthValidator(), defaultAccessTokenFactory(),
+                oAuthValidator(),
+                defaultAccessTokenFactory(),
                 oauthPrincipalFactory(),
                 webApplicationServiceFactory,
                 defaultRefreshTokenFactory(),
@@ -321,7 +324,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")
     public AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy() {
-        return new OAuth20AuthenticationRequestServiceSelectionStrategy(servicesManager, webApplicationServiceFactory);
+        return new OAuth20AuthenticationRequestServiceSelectionStrategy(servicesManager,
+                webApplicationServiceFactory, casOAuthCallbackUrl());
     }
 
     @Bean
@@ -352,7 +356,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             service.setName(service.getClass().getSimpleName());
             service.setDescription("OAuth Authentication Callback Request URL");
             service.setServiceId(oAuthCallbackUrl);
-            service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+            service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
 
             servicesManager.save(service);
             servicesManager.load();

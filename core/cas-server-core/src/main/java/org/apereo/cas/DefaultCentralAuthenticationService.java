@@ -300,7 +300,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             }
 
             final Service selectedService = resolveServiceFromAuthenticationRequest(service);
-
+            LOGGER.debug("Resolved service [{}] from the authentication request");
+            
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
             LOGGER.debug("Located registered service definition [{}] from [{}] to handle validation request",
                     registeredService, selectedService);

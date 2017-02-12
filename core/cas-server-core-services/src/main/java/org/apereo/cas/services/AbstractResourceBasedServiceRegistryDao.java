@@ -22,9 +22,11 @@ import java.nio.file.Paths;
 import java.nio.file.Watchable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AbstractResourceBasedServiceRegistryDao}.
@@ -181,7 +183,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         });
 
         if (errorCount[0] == 0) {
-            this.serviceMap = temp;
+            this.serviceMap = temp.entrySet().stream().sorted(Map.Entry.comparingByValue())
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                            (e1, e2) -> e1, LinkedHashMap::new));
         } else {
             LOGGER.warn("[{}] errors encountered when loading service definitions. New definitions are not loaded until errors are "
                     + "corrected", errorCount[0]);
