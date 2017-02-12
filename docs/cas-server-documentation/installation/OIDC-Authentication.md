@@ -114,10 +114,21 @@ You may chain various attribute release policies that authorize claim release ba
   "name": "OIDC Test",
   "id": 10,
   "scopes" : [ "java.util.HashSet", 
-    [ "profile", "email", "address", "phone", "offline_access", "customScope1", "customScope2" ]
+    [ "profile", "email", "address", "phone", "offline_access", "displayName", "eduPerson" ]
   ]
 }
 ```
+
+### User-Defined Scopes
+
+Note that in addition to standard system scopes, you may define your own custom attributes. These 
+such as `displayName` above, get bundled into a `custom` scope which can be used and requested by services and clients.
+
+If you however wish to define your custom scopes as an extention to what OpenID Connect defines
+such that you may bundle attributes together, then you need to first register your `scope`,
+define its attribute bundle and then use it a given service definition such as `eduPerson` above.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
 
 ## Authentication Context Class
 
