@@ -4,11 +4,6 @@ import com.google.common.base.Throwables;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import javax.persistence.Column;
@@ -16,9 +11,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.PostLoad;
-import java.util.ArrayList;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -53,6 +47,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Column(updatable = true, insertable = true)
     private boolean implicit;
+
+    @Column(name = "DYNAMIC_REG_TIME")
+    private ZonedDateTime dynamicRegistrationDateTime;
 
     @Lob
     @Column(name = "scopes", length = Integer.MAX_VALUE)
@@ -114,8 +111,14 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         return dynamicallyRegistered;
     }
 
+    /**
+     * Indicates the service was dynamically registered.
+     * Records the registration time automatically.
+     * @param dynamicallyRegistered dynamically registered.
+     */
     public void setDynamicallyRegistered(final boolean dynamicallyRegistered) {
         this.dynamicallyRegistered = dynamicallyRegistered;
+        setDynamicRegistrationDateTime(ZonedDateTime.now());
     }
 
     /**
@@ -127,7 +130,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         if (this.scopes == null) {
             this.scopes = new HashSet<>();
         }
-        this.scopes.remove(OidcConstants.OPENID);
         return scopes;
     }
 
@@ -140,7 +142,15 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         getScopes().clear();
         getScopes().addAll(scopes);
     }
-    
+
+    public ZonedDateTime getDynamicRegistrationDateTime() {
+        return dynamicRegistrationDateTime;
+    }
+
+    public void setDynamicRegistrationDateTime(final ZonedDateTime dynamicRegistrationDateTime) {
+        this.dynamicRegistrationDateTime = dynamicRegistrationDateTime;
+    }
+
     /**
      * Initializes the registered service with default values
      * for fields that are unspecified. Only triggered by JPA.

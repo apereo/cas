@@ -38,6 +38,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
         super.prepareApprovalViewModel(model, ctx, svc);
         final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) svc;
         model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
+        model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
         model.put("scopes", oidcRegisteredService.getScopes());
         model.put("service", svc);
     }

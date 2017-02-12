@@ -72,8 +72,12 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     public Principal filter(final Service service, final Principal profile,
                             final RegisteredService registeredService, final J2EContext context) {
         final Principal principal = super.filter(service, profile, registeredService, context);
-        final Collection<String> scopes = OAuthUtils.getRequestedScopes(context);
-        if (scopes.isEmpty() || !scopes.contains(OidcConstants.OPENID)) {
+
+        final OidcRegisteredService oidcService = (OidcRegisteredService) registeredService;
+        final Collection<String> scopes = new ArrayList<>(OAuthUtils.getRequestedScopes(context));
+        scopes.addAll(oidcService.getScopes());
+
+        if (!scopes.contains(OidcConstants.OPENID)) {
             LOGGER.debug("Request does not indicate a scope [{}] that can identify OpenID Connect", scopes);
             return principal;
         }
@@ -101,7 +105,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         final List<String> otherScopes = new ArrayList<>();
         final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
         final OidcRegisteredService oidc = OidcRegisteredService.class.cast(service);
-        
+
         oidc.getScopes().forEach(s -> {
             switch (s.trim().toLowerCase()) {
                 case OidcConstants.EMAIL:

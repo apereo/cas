@@ -125,7 +125,6 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
                     .concat(" and response types ")
                     .concat(clientResponse.getResponseTypes().stream().collect(Collectors.joining(","))));
             registeredService.setDynamicallyRegistered(true);
-
             scopeToAttributesFilter.reconcile(registeredService);
 
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
