@@ -31,17 +31,18 @@ import java.util.Set;
  */
 public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileScopeToAttributesFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcProfileScopeToAttributesFilter.class);
-    
+
     private Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
     private final PrincipalFactory principalFactory;
 
     public OidcProfileScopeToAttributesFilter(final PrincipalFactory principalFactory) {
         filters = new HashMap<>();
 
+        final String packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
         final Reflections reflections =
                 new Reflections(new ConfigurationBuilder()
-                        .filterInputsBy(new FilterBuilder().includePackage(getClass().getPackage().getName()))
-                        .setUrls(ClasspathHelper.forPackage(getClass().getPackage().getName()))
+                        .filterInputsBy(new FilterBuilder().includePackage(packageName))
+                        .setUrls(ClasspathHelper.forPackage(packageName))
                         .setScanners(new SubTypesScanner(true)));
 
         final Set<Class<? extends BaseOidcScopeAttributeReleasePolicy>> subTypes =
