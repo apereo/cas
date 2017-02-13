@@ -701,7 +701,7 @@ This option reads all the groups from Grouper repository for the given CAS princ
 as CAS attributes under a `grouperGroups` multi-valued attribute. To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
 ```properties
-# cas.authn.attributeRepository.grouper[0].order=1
+cas.authn.attributeRepository.grouper[0].order=1
 ```
 
 You will also need to ensure `grouper.client.properties` is available on the classpath (i.e. `src/main/resources`)
