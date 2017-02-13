@@ -338,7 +338,7 @@
             <property name="severity" value="error"/>
             <property name="format" value="@(Configuration|Component|Controller)(\(\))*$"/>
             <property name="message"
-                      value="It's better to name controller/component/configuration annotations to avoid implicit configuration"/>
+                      value="You should name controller/component/configuration annotations to avoid implicit configuration"/>
         </module>
 
         <module name="RegexpSinglelineJava">
