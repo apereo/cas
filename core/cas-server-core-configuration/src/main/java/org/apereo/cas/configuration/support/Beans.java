@@ -65,7 +65,9 @@ import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.RecursiveEntryHandler;
 import org.ldaptive.handler.SearchEntryHandler;
+import org.ldaptive.pool.BindPassivator;
 import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.ClosePassivator;
 import org.ldaptive.pool.CompareValidator;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
@@ -586,6 +588,21 @@ public final class Beans {
         }
 
         cp.setFailFastInitialize(l.isFailFast());
+
+        if (StringUtils.isNotBlank(l.getPoolPassivator())) {
+            final AbstractLdapProperties.LdapConnectionPoolPassivator pass =
+                    AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
+            switch (pass) {
+                case CLOSE:
+                    cp.setPassivator(new ClosePassivator());
+                    break;
+                case BIND:
+                    cp.setPassivator(new BindPassivator());
+                    break;
+                default:
+                    break;
+            }
+        }
 
         LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", l.getLdapUrl(), l.getBindDn());
         cp.initialize();
