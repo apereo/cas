@@ -144,8 +144,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     service = createService(registeredService, context);
                     authentication = createAuthentication(profile.get(), registeredService, context, service);
 
-                    RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                            registeredService, authentication);
+                    RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
                 } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
                     return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
