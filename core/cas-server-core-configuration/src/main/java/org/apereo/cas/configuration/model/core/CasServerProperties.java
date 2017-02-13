@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -68,11 +69,11 @@ public class CasServerProperties {
     }
     
     public String getLoginUrl() {
-        return getPrefix().concat("/login");
+        return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGIN);
     }
 
     public String getLogoutUrl() {
-        return getPrefix().concat("/logout");
+        return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGOUT);
     }
 
     public static class Ajp {
