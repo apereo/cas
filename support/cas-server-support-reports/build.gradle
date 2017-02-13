@@ -11,6 +11,7 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compileOnly project(":support:cas-server-support-trusted-mfa")
     compileOnly project(":core:cas-server-core-events")
+    provided project(":support:cas-server-support-cookie")
 
     provided project(":core:cas-server-core-audit")
 }
