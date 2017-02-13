@@ -32,8 +32,7 @@ public class InCommonRSAttributeReleasePolicy extends BaseSamlRegisteredServiceA
     public InCommonRSAttributeReleasePolicy() {
         setAllowedAttributes(allowedAttributes);
     }
-
-
+    
     @Override
     protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
                                                                         final SamlRegisteredService service,
@@ -45,11 +44,14 @@ public class InCommonRSAttributeReleasePolicy extends BaseSamlRegisteredServiceA
                 new EntityAttributesPredicate.Candidate("http://macedir.org/entity-category");
         attr.setValues(Collections.singletonList("http://refeds.org/category/research-and-scholarship"));
 
+        LOGGER.debug("Loading entity attribute predicate filter for candidate [{}] with values [{}]",
+                attr.getName(), attr.getValues());
+
         final EntityAttributesPredicate predicate = new EntityAttributesPredicate(
                 Collections.singletonList(attr), true);
 
         if (predicate.apply(entityDescriptor)) {
-            return super.getAttributesInternal(attributes, service);
+            return authorizeReleaseOfAllowedAttributes(attributes);
         }
         return new HashMap<>();
     }
