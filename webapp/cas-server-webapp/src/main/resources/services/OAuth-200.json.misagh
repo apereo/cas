@@ -1,0 +1,19 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "client",
+  "clientSecret": "test",
+  "bypassApprovalPrompt": false,
+  "serviceId" : ".*",
+  "name" : "OAuth",
+  "id" : 200,
+  "evaluationOrder": 2,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "excludeDefaultAttributes" : true,
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "cn" : "RemappedCommonName",
+      "firstname" : "remappedFirstNameMisagh"
+    }
+  }
+}
