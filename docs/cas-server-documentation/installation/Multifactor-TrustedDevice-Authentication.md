@@ -3,7 +3,7 @@ layout: default
 title: CAS - Trusted Device Multifactor Authentication
 ---
 
-# MFA Trusted Device/Browser
+# Multifactor Authentication Trusted Device/Browser
 
 <div class="alert alert-warning"><strong>Achtung, liebe Leser</strong><p>This feature swings more towards the experimental.</p></div>
 
