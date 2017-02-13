@@ -25,11 +25,11 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 After enabling OAuth support, the following endpoints will be available:
 
-* `/cas/oauth2.0/authorize`  
+* `/cas/oauth2.0/authorize`
 
 It's the url to call to authorize the user: the CAS login page will be displayed and the user will login.
 
-* `/cas/oauth2.0/accessToken`  
+* `/cas/oauth2.0/accessToken`
 
 It's the url to call to get an access token. The returned format will be plain text by default, but it can be JSON
 if set so in the management webapp per OAuth client.
