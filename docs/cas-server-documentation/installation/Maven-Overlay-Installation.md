@@ -16,14 +16,14 @@ The output of a WAR overlay build is a `cas.war` file that can be deployed to a 
 Overlays are a strategy to combat repetitive code and/or resources. Rather than downloading the CAS codebase and building from source,
 overlays allow you to download a pre-built vanilla CAS web application server provided by the project itself and override/insert specific behavior into it.
 At build time, the Maven/Gradle installation process will attempt to download the provided binary artifact first. Then the tool will locate your configuration files and settings made available inside the same project directory and will merge those into the downloaded artifact in order to produce
-one wholesome archive (i.e. `cas.war`) . Overriden artifacts may include resources, java classes, images, CSS and javascript files. In order for the merge 
-process is successfully execute, the location and names of the overriden artifacts locally must **EXACTLY** match that of those provided by the project
+one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include resources, java classes, images, CSS and javascript files. In order for the merge 
+process is successfully execute, the location and names of the overridden artifacts locally must **EXACTLY** match that of those provided by the project
 inside the originally downloaded archive.
 
 It goes without saying that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
 
 1. There is no need to download/build from the source.
-2. Upgrades are tremedously easier in most cases by simply adjusting the build script to download the newer CAS release.
+2. Upgrades are tremendously easier in most cases by simply adjusting the build script to download the newer CAS release.
 3. Rather than hosting the entire software source code, as the deployer you **ONLY** keep your own local customizations which makes change tracking much easier.
 4. Tracking changes inside a source control repository is very lightweight, again simply because only relevant changes (and not the entire software) is managed.
 
@@ -40,7 +40,7 @@ The process of working with an overlay, whether Maven or Gradle, can be summariz
 - Identify the artifacts from the produced build that need changes. These artifacts are generally produced by the build in the `target` or `build` directory for Maven or Gradle, respectively.
 - Copy the identified artifiacts from the identified above directories over to the `src` directory.
 1. Create the `src` directory and all of its children, if they don't already exist.
-2. Copied paths and filenames **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. Ssee the table below to understand how to map folders and files from the build to `src`.
+2. Copied paths and filenames **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. See the table below to understand how to map folders and files from the build to `src`.
 - After changes, rebuild and repeat the process as many times as possible.
 - Double check your changes inside the built binary artifact to make sure the overlay process is working.
 
