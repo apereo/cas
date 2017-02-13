@@ -434,6 +434,7 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.ldap.keystorePassword=
 # cas.adminPagesSecurity.ldap.keystoreType=JKS|JCEKS|PKCS12
 
+# cas.adminPagesSecurity.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.adminPagesSecurity.ldap.minPoolSize=3
 # cas.adminPagesSecurity.ldap.maxPoolSize=10
 # cas.adminPagesSecurity.ldap.validateOnCheckout=true
@@ -576,6 +577,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap[0].keystore=
 # cas.authn.attributeRepository.ldap[0].keystorePassword=
 # cas.authn.attributeRepository.ldap[0].keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.attributeRepository.ldap[0].poolPassivator=NONE|CLOSE|BIND
 # cas.authn.attributeRepository.ldap[0].minPoolSize=3
 # cas.authn.attributeRepository.ldap[0].maxPoolSize=10
 # cas.authn.attributeRepository.ldap[0].validateOnCheckout=true
@@ -1306,6 +1308,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].keystorePassword=
 # cas.authn.ldap[0].keystoreType=JKS|JCEKS|PKCS12
 
+# cas.authn.ldap[0].poolPassivator=NONE|CLOSE|BIND
 # cas.authn.ldap[0].minPoolSize=3
 # cas.authn.ldap[0].maxPoolSize=10
 # cas.authn.ldap[0].validateOnCheckout=true
@@ -1459,6 +1462,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.keystore=
 # cas.authn.spnego.ldap.keystorePassword=
 # cas.authn.spnego.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.spnego.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.authn.spnego.ldap.minPoolSize=3
 # cas.authn.spnego.ldap.maxPoolSize=10
 # cas.authn.spnego.ldap.validateOnCheckout=true
@@ -1663,6 +1667,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.keystore=
 # cas.authn.x509.ldap.keystorePassword=
 # cas.authn.x509.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.x509.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.authn.x509.ldap.minPoolSize=3
 # cas.authn.x509.ldap.maxPoolSize=10
 # cas.authn.x509.ldap.validateOnCheckout=true
@@ -2654,6 +2659,7 @@ used for authentication, etc.
 # cas.monitor.ldap.keystore=
 # cas.monitor.ldap.keystorePassword=
 # cas.monitor.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.monitor.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.monitor.ldap.minPoolSize=3
 # cas.monitor.ldap.maxPoolSize=10
 # cas.monitor.ldap.validateOnCheckout=true
@@ -2855,6 +2861,7 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.keystore=
 # cas.serviceRegistry.ldap.keystorePassword=
 # cas.serviceRegistry.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.serviceRegistry.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.serviceRegistry.ldap.minPoolSize=3
 # cas.serviceRegistry.ldap.maxPoolSize=10
 # cas.serviceRegistry.ldap.validateOnCheckout=true
@@ -3332,6 +3339,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldap.keystore=
 # cas.mgmt.ldap.keystorePassword=
 # cas.mgmt.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.mgmt.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.mgmt.ldap.minPoolSize=3
 # cas.mgmt.ldap.maxPoolSize=10
 # cas.mgmt.ldap.validateOnCheckout=true
@@ -3442,6 +3450,7 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.keystore=
 # cas.acceptableUsagePolicy.ldap.keystorePassword=
 # cas.acceptableUsagePolicy.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.acceptableUsagePolicy.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.acceptableUsagePolicy.ldap.minPoolSize=3
 # cas.acceptableUsagePolicy.ldap.maxPoolSize=10
 # cas.acceptableUsagePolicy.ldap.validateOnCheckout=true
@@ -3583,6 +3592,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.keystore=
 # cas.authn.pm.ldap.keystorePassword=
 # cas.authn.pm.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.pm.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.authn.pm.ldap.minPoolSize=3
 # cas.authn.pm.ldap.maxPoolSize=10
 # cas.authn.pm.ldap.validateOnCheckout=true
