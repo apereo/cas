@@ -92,7 +92,7 @@ Service definitions are typically managed by the [service management](Service-Ma
 
 ### Attribute Release
 
-Attribute/claim filtering and release policies are defined per SAML service.
+Attribute/claim filtering and release policies are defined per OAuth service.
 See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
 ## OAuth Expiration Policy
