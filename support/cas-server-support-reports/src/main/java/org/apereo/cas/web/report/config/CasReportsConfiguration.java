@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.report.AuthenticationEventsController;
 import org.apereo.cas.web.report.ConfigurationStateController;
@@ -17,9 +18,11 @@ import org.apereo.cas.web.report.HealthCheckController;
 import org.apereo.cas.web.report.LoggingConfigController;
 import org.apereo.cas.web.report.LoggingOutputSocketMessagingController;
 import org.apereo.cas.web.report.PersonDirectoryAttributeResolutionController;
+import org.apereo.cas.web.report.SingleSignOnSessionStatusController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
 import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.TrustedDevicesController;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
@@ -44,6 +47,14 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableWebSocketMessageBroker
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -96,6 +107,11 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Autowired
     public MvcEndpoint loggingConfigController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
         return new LoggingConfigController(auditTrailManager);
+    }
+
+    @Bean
+    public MvcEndpoint ssoStatusController() {
+        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
     }
 
     @Bean
