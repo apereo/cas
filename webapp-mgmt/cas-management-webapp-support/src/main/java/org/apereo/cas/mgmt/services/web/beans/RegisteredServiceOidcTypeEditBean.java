@@ -13,7 +13,24 @@ public class RegisteredServiceOidcTypeEditBean extends RegisteredServiceOAuthTyp
     private boolean encrypt;
     private String encryptAlg;
     private String encryptEnc;
+    private String dynamicDate;
+    private boolean dynamic;
 
+    public String getDynamicDate() {
+        return dynamicDate;
+    }
+
+    public void setDynamicDate(final String dynamicDate) {
+        this.dynamicDate = dynamicDate;
+    }
+
+    public boolean isDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(final boolean dynamic) {
+        this.dynamic = dynamic;
+    }
 
     public boolean isEncrypt() {
         return encrypt;

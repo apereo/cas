@@ -73,6 +73,11 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 oidcBean.setEncrypt(oidc.isEncryptIdToken());
                 oidcBean.setEncryptAlg(oidc.getIdTokenEncryptionAlg());
                 oidcBean.setEncryptEnc(oidc.getIdTokenEncryptionEncoding());
+
+                oidcBean.setDynamic(oidc.isDynamicallyRegistered());
+                if (oidc.isDynamicallyRegistered()) {
+                    oidcBean.setDynamicDate(oidc.getDynamicRegistrationDateTime().toString());
+                }
             }
 
         }
