@@ -11,7 +11,8 @@ The following endpoints are secured and available:
 |-----------------------------------|------------------------------------------
 | `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management.
 | `/status`                         | [Monitor CAS status and other underlying components](Configuring-Monitoring.html).
-| `/status/autoconfig`              | Describes how the CAS application context is auto-configured.
+| `/status/sso`                     | Describes how the CAS application context is auto-configured.
+| `/status/autoconfig`              | Describes if there exists an active SSO session for this session.
 | `/status/beans`                   | Displays all CAS application context **internal** Spring beans.
 | `/status/configprops`             | List of **internal** configuration properties.
 | `/status/dump`                    | Produces a thread dump for the running CAS server.
