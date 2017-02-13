@@ -14,6 +14,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.BaseGroovyScriptDaoImpl;
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
+import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao;
@@ -68,6 +69,7 @@ public class CasPersonDirectoryConfiguration {
         addJdbcAttributeRepository(list);
         addJsonAttributeRepository(list);
         addGroovyAttributeRepository(list);
+        addGrouperAttributeRepository(list);
         addStubAttributeRepositoryIfNothingElse(list);
         OrderComparator.sort(list);
         return list;
@@ -143,6 +145,15 @@ public class CasPersonDirectoryConfiguration {
                     casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
         }
         return impl;
+    }
+
+    private void addGrouperAttributeRepository(final List<IPersonAttributeDao> list) {
+        casProperties.getAuthn().getAttributeRepository().getGrouper().forEach(gp -> {
+            final GrouperPersonAttributeDao dao = new GrouperPersonAttributeDao();
+            dao.setOrder(gp.getOrder());
+            LOGGER.debug("Configured Grouper attribute source");
+            list.add(dao);
+        });
     }
 
     private void addStubAttributeRepositoryIfNothingElse(final List<IPersonAttributeDao> list) {

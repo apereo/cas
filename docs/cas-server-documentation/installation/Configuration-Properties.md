@@ -545,8 +545,9 @@ By default, the execution order is the following but can be adjusted per source:
 2. JDBC
 3. JSON
 4. Groovy
-5. Shibboleth
-6. Static Stub
+5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
+6. Shibboleth
+7. Static Stub
 
 Note that if no other attribute source is defined and if attributes are not directly retrieved
 as part of primary authentication, then a stub/static source will be created
@@ -693,6 +694,25 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].pool.maxIdleTime=1000
 # cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
 ```
+
+### Grouper
+
+This option reads all the groups from Grouper repository for the given CAS principal and adopts them
+as CAS attributes under a `grouperGroups` multi-valued attribute. To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
+
+```properties
+# cas.authn.attributeRepository.grouper[0].order=1
+```
+
+You will also need to ensure `grouper.client.properties` is available on the classpath (i.e. `src/main/resources`)
+with the following configured properties:
+
+```properties
+grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+grouperClient.webService.login = banderson
+grouperClient.webService.password = password
+```
+
 
 ### Shibboleth Attribute Resolver
 
