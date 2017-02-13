@@ -26,8 +26,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
     public OidcServerDiscoverySettings getObject() throws Exception {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
         final OidcServerDiscoverySettings discoveryProperties =
-                new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(),
-                        oidc.getIssuer());
+                new OidcServerDiscoverySettings(casProperties, oidc.getIssuer());
 
         discoveryProperties.setClaimsSupported(oidc.getClaims());
         discoveryProperties.setScopesSupported(oidc.getScopes());
