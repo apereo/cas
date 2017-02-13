@@ -23,9 +23,30 @@ inside the originally downloaded archive.
 It goes without saying that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
 
 1. There is no need to download/build from the source.
-2. Upgrades are tremedously easier in most cases by simply adjusting the build script to download the newer CAS release. 
+2. Upgrades are tremedously easier in most cases by simply adjusting the build script to download the newer CAS release.
 3. Rather than hosting the entire software source code, as the deployer you **ONLY** keep your own local customizations which makes change tracking much easier.
 4. Tracking changes inside a source control repository is very lightweight, again simply because only relevant changes (and not the entire software) is managed.
+
+
+### Managing Overlays
+
+Every aspect of CAS can be controlled by
+adding, removing, or modifying files in the overlay; it's also possible and indeed common to customize the behavior of
+CAS by adding third-party components that implement CAS APIs as Java source files or dependency references.
+
+The process of working with an overlay, whether Maven or Gradle, can be summarized in the following steps:
+
+- Start with and build the provided basic vanilla build/deployment.
+- Identify the artifacts from the produced build that need changes. These artifacts are generally produced by the build in the `target` or `build` directory for Maven or Gradle, respectively.
+- Copy the identified artifiacts from the identified above directories over to the `src` directory.
+1. Create the `src` directory and all of its children, if they don't already exist.
+2. Copied paths and filenames **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. Ssee the table below to understand how to map folders and files from the build to `src`.
+- After changes, rebuild and repeat the process as many times as possible.
+- Double check your changes inside the built binary artifact to make sure the overlay process is working.
+
+<div class="alert alert-warning"><strong>Be Exact</strong><p>Do NOT copy everything produced by the build. Attempt to keep changes and customizations to a minimum and only grab what you actually need. Make sure the deployment environment is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</div>
+
+## WAR Overlay Projects
 
 WAR overlay projects are provided for reference and study.
 
@@ -34,22 +55,34 @@ You should always make sure the branch you are on matches the version of CAS you
 branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate, 
 use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
 
-## Gradle
+### Gradle
 
 - [CAS Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
 
-## Maven
+### Overlay Mapping
+
+| Build Directory                               | Source Directory 
+|-----------------------------------------------|-----------------------
+| `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
+
+The Gradle overlay process does not quite explode the binary artifact first before re-assembling it again.
+So you may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
+
+### Maven
 
 - [CAS Maven Overlay](https://github.com/apereo/cas-overlay-template)
 
-## Docker
+### Overlay Mapping
+
+| Build Directory                  | Source Directory 
+|----------------------------------|-----------------------------
+| `target/cas/WEB-INF/classes/`    | `src/main/resources`
+
+Copy directories and files in the build directory over to the source directory.
+
+## Dockerized Deployment
 
 - See [this guide](Docker-Installation.html) for more info.
- 
-Every aspect of CAS can be controlled by
-adding, removing, or modifying files in the overlay; it's also possible and indeed common to customize the behavior of
-CAS by adding third-party components that implement CAS APIs as Java source files or dependency references.
-
 
 ## Servlet Container
 

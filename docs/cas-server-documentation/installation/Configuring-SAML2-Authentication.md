@@ -7,6 +7,8 @@ title: CAS - SAML2 Authentication
 
 CAS can act as a SAML2 identity provider accepting authentication requests and producing SAML assertions.
 
+If you intend to allow CAS to delegate authentication to an external SAML2 identity provider, you need to [review this guide](../integration/Delegate-Authentication.html).
+
 <div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on
 SAML2 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure about the
 concepts referred to on this page,
@@ -205,9 +207,9 @@ needed for InCommon's Research and Scholarship service providers:
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [ "java.util.ArrayList",
-      [{
-          "@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"
-      }]
+      [
+         {"@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"}
+      ]
     ]
   }
 }
