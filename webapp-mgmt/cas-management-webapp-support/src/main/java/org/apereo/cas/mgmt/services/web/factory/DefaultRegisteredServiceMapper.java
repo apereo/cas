@@ -26,6 +26,7 @@ import org.apereo.cas.util.RegexUtils;
 import java.net.URL;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Default mapper for converting {@link RegisteredService} to/from {@link RegisteredServiceEditBean.ServiceData}.
@@ -78,6 +79,8 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 if (oidc.isDynamicallyRegistered()) {
                     oidcBean.setDynamicDate(oidc.getDynamicRegistrationDateTime().toString());
                 }
+
+                oidcBean.setScopes(oidc.getScopes().stream().collect(Collectors.joining(",")));
             }
 
         }
@@ -186,6 +189,8 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                     ((OidcRegisteredService) regSvc).setEncryptIdToken(data.getOidc().isEncrypt());
                     ((OidcRegisteredService) regSvc).setIdTokenEncryptionAlg(data.getOidc().getEncryptAlg());
                     ((OidcRegisteredService) regSvc).setIdTokenEncryptionEncoding(data.getOidc().getEncryptEnc());
+                    ((OidcRegisteredService) regSvc).setScopes(
+                            org.springframework.util.StringUtils.commaDelimitedListToSet(data.getOidc().getScopes()));
                 }
             } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.SAML.toString())) {
                 regSvc = new SamlRegisteredService();
