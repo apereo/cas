@@ -192,6 +192,8 @@ via CAS properties. To see the relevant list of CAS properties, please [review t
 Attribute filtering and release policies are defined per SAML service.
 See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
+A few additional policies specific to SAML services are also provided below.
+
 #### InCommon Research and Scholardship
 
 A specific attribute release policy is available to release the [attribute bundles](https://spaces.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
@@ -211,6 +213,26 @@ needed for InCommon's Research and Scholarship service providers:
          {"@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"}
       ]
     ]
+  }
+}
+```
+
+#### Pattern Matching Entity Ids
+
+In the event that an aggregate is defined containing multiple entity ids, the below attribute release policy may be used to release a collection of allowed attributes to entity ids grouped together by a regular expression pattern:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
+    "fullMatch" : "true",
+    "entityIds" : "entityId1|entityId2|somewhere.+"
   }
 }
 ```
