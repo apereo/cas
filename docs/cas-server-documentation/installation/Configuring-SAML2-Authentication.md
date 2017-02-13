@@ -194,7 +194,7 @@ See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
 A few additional policies specific to SAML services are also provided below.
 
-#### InCommon Research and Scholardship
+#### InCommon Research and Scholarship
 
 A specific attribute release policy is available to release the [attribute bundles](https://spaces.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
 needed for InCommon's Research and Scholarship service providers:
