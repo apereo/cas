@@ -65,8 +65,8 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.SCRIPT.toString());
                 sBean.setScriptFile(policyS.getScriptFile());
             } else if (attrPolicy instanceof GroovyScriptAttributeReleasePolicy) {
-                final ScriptedRegisteredServiceAttributeReleasePolicy policyG = (ScriptedRegisteredServiceAttributeReleasePolicy) attrPolicy;
-                sBean.setScriptFile(policyG.getScriptFile());
+                final GroovyScriptAttributeReleasePolicy policyG = (GroovyScriptAttributeReleasePolicy) attrPolicy;
+                sBean.setScriptFile(policyG.getGroovyScript());
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.GROOVY.toString());
             } else if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
@@ -131,7 +131,7 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
         if (StringUtils.equalsIgnoreCase(policyType,
                 AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.SCRIPT.toString())) {
             policy = new ScriptedRegisteredServiceAttributeReleasePolicy(policyBean.getScriptFile());
-            
+
         } else if (StringUtils.equalsIgnoreCase(policyType,
                 AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.GROOVY.toString())) {
             policy = new GroovyScriptAttributeReleasePolicy(policyBean.getScriptFile());
