@@ -39,7 +39,7 @@ public abstract class AbstractLdapProperties {
     }
 
     /**
-     * The ldap connection pool passivator
+     * The ldap connection pool passivator.
      */
     public enum LdapConnectionPoolPassivator {
         /**
