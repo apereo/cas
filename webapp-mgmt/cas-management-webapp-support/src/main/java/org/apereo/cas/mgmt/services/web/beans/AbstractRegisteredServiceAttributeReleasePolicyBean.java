@@ -12,6 +12,15 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicyBean implem
 
     private boolean releasePassword;
     private boolean releaseTicket;
+    private boolean excludeDefault;
+
+    public boolean isExcludeDefault() {
+        return excludeDefault;
+    }
+
+    public void setExcludeDefault(final boolean excludeDefault) {
+        this.excludeDefault = excludeDefault;
+    }
 
     public boolean isReleasePassword() {
         return this.releasePassword;
