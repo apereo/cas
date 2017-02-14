@@ -1,0 +1,141 @@
+<!-- Attribute Filter Policies Options -->
+<div class="panel panel-default">
+    <div class="panel-heading"><span th:remove="tag" th:text="#{services.form.header.attrPolicy}" /></div>
+    <div class="panel-body">
+        <div class="radio-group">
+            
+            <!-- Filter Policies Radio Button - Return Script -->
+            <label class="radio-inline">
+                <input type="radio" name="policiesReturnScript" id="policiesRadioScript" value="script"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'script'" />
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.script}" />
+            </label>
+
+            <!-- Filter Policies Radio Button - Return Groovy Script -->
+            <label class="radio-inline">
+                <input type="radio" name="policiesReturnGroovy" id="policiesRadioGroovy" value="groovy"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'groovy'" />
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.groovy}" />
+            </label>
+
+            <!-- Filter Policies Radio Button - Return All -->
+            <label class="radio-inline">
+                <input type="radio" name="policiesReturnAll" id="policiesRadioAll" value="all"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'all'" />
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.returnAll}" />
+            </label>
+
+            <!-- Filter Policies Radio Button - Return All -->
+            <label class="radio-inline">
+                <input type="radio" name="policiesReturnAll" id="policiesRadioDeny" value="deny"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'deny'" />
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.denyAll}" />
+            </label>
+
+            <!-- Filter Policies Radio Button - Return Allowed -->
+            <label class="radio-inline">
+                <input type="radio" name="policiesReturnAllowed" id="policiesReturnAllowed" value="allowed"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'allowed'"
+                       ng-disabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.returnAllowed}" />
+            </label>
+
+            <!-- Filter Policies Radio Button - Return Allowed -->
+            <label class="radio-inline">
+                <input type="radio" name="policiesReturnMapped" id="policiesReturnMapped" value="mapped"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'mapped'"
+                       ng-disabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.returnMapped}" />
+            </label>
+        </div>
+
+
+        <!-- Attribute Release Policies Return Script Option -->
+        <div class="form-group" ng-show="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'script'">
+            <label class="col-sm-4" for="scriptFile">
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.scriptFile}"/>
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.attrRelease.policies.scriptFile}"></i>
+            </label>
+
+            <div class="col-sm-8">
+                <input type="text" autocomplete="off" class="form-control" id="scriptFile"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.scriptFile"/>
+            </div>
+        </div>
+
+
+        <!-- Attribute Release Policies Return Groovy Option -->
+        <div class="form-group" ng-show="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'groovy'">
+            <label class="col-sm-4" for="groovyFile">
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.scriptFile}"/>
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.attrRelease.policies.scriptFile}"></i>
+            </label>
+
+            <div class="col-sm-8">
+                <input type="text" autocomplete="off" class="form-control" id="groovyFile"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.scriptFile"/>
+            </div>
+        </div>
+        
+        
+        <!-- Attribute Release Policies Return All Option -->
+        <div class="well well-sm" ng-show="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'all' || serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
+            <span th:remove="tag" th:text="#{management.services.service.noAction}" />
+        </div>
+
+        <!-- Attribute Release Policies Return Allowed Option -->
+        <div class="form-group" ng-show="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'allowed' &amp;&amp; !serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
+            <label class="col-sm-3" for="returnAllowed">
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.returnAllowed}" />
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.attrRelease.policies.returnAllowed}"></i>
+            </label>
+            <div class="col-sm-9">
+                <select class="form-control" multiple="true" id="returnedAllowed"
+                        ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.allowed">
+                    <option ng-repeat="opt in serviceFormCtrl.formData.availableAttributes" ng-attr-value="{{ opt }}"
+                            ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.serviceData.attrRelease.attrPolicy.allowed)">{{ opt }}</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Attribute Release Policies Return Mapped Option -->
+        <div class="panel panel-default" ng-show="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'mapped' &amp;&amp; !serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
+            <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed" >
+                <thead>
+                <tr>
+                    <th class="col-md-4"><span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.sourceAttribute}" /></th>
+                    <th class="col-md-8">
+                        <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.casAttribute}" />
+                        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                           data-toggle="tooltip"
+                           data-placement="top"
+                           th:title="#{services.form.tooltip.attrRelease.policies.returnMapped}"></i>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="mappedValue in serviceFormCtrl.formData.availableAttributes">
+                    <td class="va-middle">{{ mappedValue }}</td>
+                    <td><input ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.mapped[ mappedValue ]" type="text" class="form-control input-sm" /></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
