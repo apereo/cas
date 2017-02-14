@@ -14,6 +14,15 @@ public class RegisteredServiceAttributeReleasePolicyStrategyEditBean
 
     private String type = Types.ALLOWED.toString();
     private Object attributes;
+    private String scriptFile;
+
+    public String getScriptFile() {
+        return scriptFile;
+    }
+
+    public void setScriptFile(final String scriptFile) {
+        this.scriptFile = scriptFile;
+    }
 
     public String getType() {
         return this.type;

@@ -23,6 +23,13 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
 
     private String groovyScript;
 
+    public GroovyScriptAttributeReleasePolicy() {
+    }
+
+    public GroovyScriptAttributeReleasePolicy(final String groovyScript) {
+        this.groovyScript = groovyScript;
+    }
+
     public String getGroovyScript() {
         return groovyScript;
     }

@@ -25,6 +25,13 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
 
     private String scriptFile;
 
+    public ScriptedRegisteredServiceAttributeReleasePolicy() {
+    }
+
+    public ScriptedRegisteredServiceAttributeReleasePolicy(final String scriptFile) {
+        this.scriptFile = scriptFile;
+    }
+
     public String getScriptFile() {
         return scriptFile;
     }
