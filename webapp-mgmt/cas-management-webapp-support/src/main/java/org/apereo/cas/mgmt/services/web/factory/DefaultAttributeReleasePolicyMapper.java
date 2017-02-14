@@ -11,11 +11,13 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
+import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
+import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -58,7 +60,15 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
             this.principalAttributesRepositoryMapper.mapPrincipalRepository(attrPolicy.getPrincipalAttributesRepository(), bean);
 
             final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
-            if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
+            if (attrPolicy instanceof ScriptedRegisteredServiceAttributeReleasePolicy) {
+                final ScriptedRegisteredServiceAttributeReleasePolicy policyS = (ScriptedRegisteredServiceAttributeReleasePolicy) attrPolicy;
+                sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.SCRIPT.toString());
+                sBean.setScriptFile(policyS.getScriptFile());
+            } else if (attrPolicy instanceof GroovyScriptAttributeReleasePolicy) {
+                final ScriptedRegisteredServiceAttributeReleasePolicy policyG = (ScriptedRegisteredServiceAttributeReleasePolicy) attrPolicy;
+                sBean.setScriptFile(policyG.getScriptFile());
+                sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.GROOVY.toString());
+            } else if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
             } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
                 final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
@@ -84,7 +94,11 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
             attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
             attrPolicyBean.setExcludeDefault(attrPolicy.isExcludeDefaultAttributes());
 
-            if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
+            if (attrPolicy instanceof ScriptedRegisteredServiceAttributeReleasePolicy) {
+                attrPolicyBean.setAttrPolicy(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.SCRIPT.toString());
+            } else if (attrPolicy instanceof GroovyScriptAttributeReleasePolicy) {
+                attrPolicyBean.setAttrPolicy(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.GROOVY.toString());
+            } else if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
                 attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALL.toString());
             } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
                 final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
@@ -113,7 +127,16 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
         final String policyType = policyBean.getType();
 
         final AbstractRegisteredServiceAttributeReleasePolicy policy;
-        if (StringUtils.equalsIgnoreCase(policyType, AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
+
+        if (StringUtils.equalsIgnoreCase(policyType,
+                AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.SCRIPT.toString())) {
+            policy = new ScriptedRegisteredServiceAttributeReleasePolicy(policyBean.getScriptFile());
+            
+        } else if (StringUtils.equalsIgnoreCase(policyType,
+                AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.GROOVY.toString())) {
+            policy = new GroovyScriptAttributeReleasePolicy(policyBean.getScriptFile());
+
+        } else if (StringUtils.equalsIgnoreCase(policyType, AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
             policy = new ReturnAllAttributeReleasePolicy();
         } else if (StringUtils.equalsIgnoreCase(policyType,
                 AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString())) {
