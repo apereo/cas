@@ -195,7 +195,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
-        return new OidcConsentApprovalViewResolver();
+        return new OidcConsentApprovalViewResolver(casProperties);
     }
 
     @Bean

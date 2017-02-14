@@ -1,12 +1,15 @@
 package org.apereo.cas.oidc.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
 import org.pac4j.core.context.J2EContext;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,6 +20,10 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
+
+    public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties) {
+        super(casProperties);
+    }
 
     @Override
     protected boolean isConsentApprovalBypassed(final J2EContext context, final OAuthRegisteredService service) {
@@ -39,7 +46,10 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
         final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) svc;
         model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
         model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
-        model.put("scopes", oidcRegisteredService.getScopes());
-        model.put("service", svc);
+
+        final Set<String> supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getScopes());
+        supportedScopes.retainAll(oidcRegisteredService.getScopes());
+        supportedScopes.retainAll(OAuthUtils.getRequestedScopes(ctx));
+        model.put("scopes", supportedScopes);
     }
 }
