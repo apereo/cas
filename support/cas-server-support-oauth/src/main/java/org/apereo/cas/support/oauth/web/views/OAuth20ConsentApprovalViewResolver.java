@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.views;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
@@ -21,9 +22,17 @@ import java.util.Map;
 public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20ConsentApprovalViewResolver.class);
 
+    /**
+     * CAS settings.
+     */
+    protected final CasConfigurationProperties casProperties;
+
+    public OAuth20ConsentApprovalViewResolver(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
+    }
+
     @Override
     public ModelAndView resolve(final J2EContext context, final OAuthRegisteredService service) {
-
         final String bypassApprovalParameter = context.getRequestParameter(OAuthConstants.BYPASS_APPROVAL_PROMPT);
         LOGGER.debug("bypassApprovalParameter: [{}]", bypassApprovalParameter);
 
@@ -60,6 +69,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
         LOGGER.debug("callbackUrl: [{}]", callbackUrl);
 
         final Map<String, Object> model = new HashMap<>();
+        model.put("service", svc);
         model.put("callbackUrl", callbackUrl);
         model.put("serviceName", svc.getName());
         model.put("deniedApprovalUrl", svc.getAccessStrategy().getUnauthorizedRedirectUrl());

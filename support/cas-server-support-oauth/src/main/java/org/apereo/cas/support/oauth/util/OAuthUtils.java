@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -107,8 +108,15 @@ public final class OAuthUtils {
     public static Map<String, Object> getRequestParameters(final Collection<String> attributes, final HttpServletRequest context) {
         return attributes.stream()
                 .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
-                .map(m -> Pair.of(m, Arrays.asList(context.getParameterValues(m))))
-                .collect(Collectors.toMap(Pair::getKey, p -> p));
+                .map(m -> {
+                    final String[] values = context.getParameterValues(m);
+                    final Collection<String> valuesSet = new LinkedHashSet<>();
+                    if (values != null && values.length > 0) {
+                        Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
+                    }
+                    return Pair.of(m, valuesSet);
+                })
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     /**
