@@ -30,7 +30,6 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
      * Default constructor.
      */
     public AbstractTokenWrapperAuthenticationHandler() {
-
     }
 
     @Override

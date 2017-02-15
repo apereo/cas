@@ -24,7 +24,15 @@ public class PasswordEncoderProperties {
         /**
          * Uses {@link org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder}.
          */
-        BCRYPT
+        BCRYPT,
+        /**
+         * Uses {@link org.springframework.security.crypto.scrypt.SCryptPasswordEncoder}.
+         */
+        SCRYPT,
+        /**
+         * Uses {@link org.springframework.security.crypto.password.Pbkdf2PasswordEncoder}.
+         */
+        PBKDF2
     }
     private String type = "NONE";
     
