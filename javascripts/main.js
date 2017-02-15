@@ -262,6 +262,50 @@ function ensureBootrapIsLoaded() {
     }
 }
 
+function generateDependencyLangFragments() {
+  $.each( $("div.language-xml.highlighter-rouge div.highlight pre"), function( i, val ) {
+
+      var text = $(val).text();
+      if (text.indexOf("<dependency>") == -1) {
+          return;
+      }
+
+      var mavenXml = $(val).html();
+
+      xmlDoc = $.parseXML(text),
+      $xml = $( xmlDoc ),
+      $groupId = $xml.find("groupId");
+      $artifactId = $xml.find("artifactId");
+      
+      var gradleDep = "compile \"" + $groupId.text() + ":" + $artifactId.text() + ":${project.'cas.version'}\"";
+
+      var gradleFragment = "<table style='border-spacing: 0' class='table table-responsive'><tbody><tr><td class='gutter gl' style='text-align: right'><pre class='lineno'>1</pre></td><td class='code'><pre>" + gradleDep + "</pre></td></tr></tbody></table>";
+
+      var parentTable = $(val).parent().parent().parent().parent().parent();
+
+      var tabs = "<ul class='nav nav-pills nav-justified'> \
+  <li class='active'><a data-toggle='tab' href='#maven'>Maven</a></li> \
+  <li><a data-toggle='tab' href='#gradle'>Gradle</a></li> \
+  <li role='presentation' class='dropdown'> \
+      <a class='dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' \ aria-expanded='false'>More Info<span class='caret'></span></a> \
+      <ul class='dropdown-menu'> \
+          <li><a href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a></li> \
+          <li><a href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Gradle Overlay Project</a></li> \
+      </ul> \
+  </li> \
+  </ul> \
+  <div class='tab-content clearfix'> \
+    <div class='tab-pane fade in active language-xml highlighter-rouge highlight' id='maven'>" + parentTable.html() + "</div> \
+    <div class='tab-pane fade in language-groovy highlighter-rouge highlight' id='gradle'>" + gradleFragment + "</div> \
+  </div>";
+
+      var divHighlight = parentTable.parent();
+      
+      divHighlight.empty();
+      divHighlight.prepend(tabs);
+  });
+}
+
 function responsiveImages() {
     $('img').each(function() {
         $(this).addClass('img-fluid');
