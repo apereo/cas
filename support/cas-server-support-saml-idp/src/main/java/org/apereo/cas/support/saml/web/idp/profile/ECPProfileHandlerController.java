@@ -23,6 +23,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
@@ -34,7 +35,6 @@ import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Envelope;
-import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
@@ -244,7 +244,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                                             final HttpServletResponse response) {
         try {
             final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
-            final WebContext webContext = new J2EContext(request, response);
+            final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);
