@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -32,8 +33,9 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) throws Exception {
-        final J2EContext ctx = new J2EContext(request, response);
-        final ProfileManager manager = new ProfileManager(ctx);
+        final J2EContext ctx = WebUtils.getPac4jJ2EContext(request, response);
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+
 
         boolean clearCreds = false;
         final Optional<UserProfile> auth = authorizationRequestSupport.isAuthenticationProfileAvailable(ctx);

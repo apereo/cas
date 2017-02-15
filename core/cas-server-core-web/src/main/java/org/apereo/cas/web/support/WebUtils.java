@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
@@ -397,8 +398,7 @@ public final class WebUtils {
         final HttpServletRequest request = getHttpServletRequestFromRequestAttributes();
         final HttpServletResponse response = getHttpServletResponseFromRequestAttributes();
         if (request != null && response != null) {
-            final J2EContext context = new J2EContext(request, response);
-            final ProfileManager manager = new ProfileManager(context);
+            final ProfileManager manager = getPac4jProfileManager(request, response);
             final Optional<UserProfile> profile = manager.get(true);
             if (profile != null && profile.isPresent()) {
                 final String id = profile.get().getId();
@@ -408,6 +408,39 @@ public final class WebUtils {
             }
         }
         return PrincipalResolver.UNKNOWN_USER;
+    }
+
+    /**
+     * Gets pac 4 j profile manager.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the pac 4 j profile manager
+     */
+    public static ProfileManager getPac4jProfileManager(final HttpServletRequest request, final HttpServletResponse response) {
+        final J2EContext context = getPac4jJ2EContext(request, response);
+        return getPac4jProfileManager(context);
+    }
+
+    /**
+     * Gets pac4j profile manager.
+     *
+     * @param context the context
+     * @return the pac4j profile manager
+     */
+    public static ProfileManager getPac4jProfileManager(final WebContext context) {
+        return new ProfileManager(context);
+    }
+
+    /**
+     * Gets pac4j context.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the context
+     */
+    public static J2EContext getPac4jJ2EContext(final HttpServletRequest request, final HttpServletResponse response) {
+        return new J2EContext(request, response);
     }
 
     /**

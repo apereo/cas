@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.web.support.WebUtils;
-import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -82,7 +81,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @return the web context
      */
     protected final WebContext getWebContext() {
-        return new J2EContext(
+        return WebUtils.getPac4jJ2EContext(
                         WebUtils.getHttpServletRequestFromRequestAttributes(),
                         WebUtils.getHttpServletResponseFromRequestAttributes());
     }

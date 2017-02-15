@@ -35,7 +35,7 @@ public class SAML2ClientLogoutAction extends AbstractAction {
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
             final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
-            final J2EContext context = new J2EContext(request, response);
+            final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
             final SAML2Client client = clients.findClient(SAML2Client.class);
             if (client != null) {
                 LOGGER.debug("Located SAML2 client [{}]", client);

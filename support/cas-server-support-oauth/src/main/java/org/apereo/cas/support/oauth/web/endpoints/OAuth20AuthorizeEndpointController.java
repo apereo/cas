@@ -27,6 +27,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -87,8 +88,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
      */
     @GetMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL)
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final J2EContext context = new J2EContext(request, response);
-        final ProfileManager manager = new ProfileManager(context);
+        final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
 
         if (!verifyAuthorizeRequest(request) || !isRequestAuthenticated(manager, context)) {
             LOGGER.error("Authorize request verification failed");

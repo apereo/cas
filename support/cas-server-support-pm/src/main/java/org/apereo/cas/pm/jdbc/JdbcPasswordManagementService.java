@@ -55,7 +55,8 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final String username) {
-        final String email = this.jdbcTemplate.queryForObject(passwordManagementProperties.getJdbc().getSqlFindEmail(), String.class, username);
+        final String email = this.jdbcTemplate.queryForObject(passwordManagementProperties.getJdbc().getSqlFindEmail(),
+                String.class, username);
         if (StringUtils.isNotBlank(email) && EmailValidator.getInstance().isValid(email)) {
             return email;
         }

@@ -6,8 +6,6 @@ import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,9 +91,7 @@ public class TerminateSessionAction extends AbstractAction {
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Destroying application session");
-
-        final WebContext context = new J2EContext(request, response, pac4jSecurityConfig.getSessionStore());
-        final ProfileManager manager = new ProfileManager(context);
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
         manager.logout();
 
         final HttpSession session = request.getSession();
