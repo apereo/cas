@@ -5,8 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all authentication handlers that support configurable naming.
@@ -16,8 +14,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAuthenticationHandler.class);
-    
     /**
      * Factory to create the principal type.
      **/
@@ -75,6 +71,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * Sets order. If order is undefined, generates a random order value.
      * Since handlers are generally sorted by this order, it's important that
      * order numbers be unique on a best-effort basis.
+     *
      * @param order the order
      */
     public void setOrder(final Integer order) {
@@ -87,7 +84,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
         ensureOrderIsProvidedIfNecessary();
         return this.order;
     }
-    
+
     private void ensureOrderIsProvidedIfNecessary() {
         if (this.order == null) {
             this.order = RandomUtils.nextInt(1, Integer.MAX_VALUE);
