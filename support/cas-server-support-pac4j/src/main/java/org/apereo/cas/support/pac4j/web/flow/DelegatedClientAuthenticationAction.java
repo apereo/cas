@@ -198,7 +198,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             try {
                 final IndirectClient indirectClient = (IndirectClient) client;
 
-                final String name = StringUtils.remove(client.getName(), "Client");
+                final String name = StringUtils.remove(client.getName(), "Client").replaceAll("\\.\\d*", "");
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
                 LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
                 urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
