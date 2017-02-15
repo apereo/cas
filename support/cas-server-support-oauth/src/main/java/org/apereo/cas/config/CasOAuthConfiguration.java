@@ -50,7 +50,7 @@ import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.http.CallbackUrlResolver;
+import org.pac4j.core.http.UrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.springframework.web.CallbackController;
@@ -123,7 +123,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public CallbackUrlResolver casCallbackUrlResolver() {
+    public UrlResolver casCallbackUrlResolver() {
         return new OAuth20CasCallbackUrlResolver(casOAuthCallbackUrl());
     }
 
