@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -69,8 +70,8 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuthWrapper
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         this.callbackController.callback(request, response);
         final String url = StringUtils.remove(response.getHeader("Location"), "redirect:");
-        final J2EContext ctx = new J2EContext(request, response);
-        final ProfileManager manager = new ProfileManager(ctx);
+        final J2EContext ctx = WebUtils.getPac4jJ2EContext(request, response);
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
         return oAuth20CallbackAuthorizeViewResolver.resolve(ctx, manager, url);
     }
 }
