@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.web;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.http.CallbackUrlResolver;
+import org.pac4j.core.http.UrlResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class OAuth20CasCallbackUrlResolver implements CallbackUrlResolver {
+public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20CasCallbackUrlResolver.class);
 
     private String callbackUrl;
@@ -24,25 +24,28 @@ public class OAuth20CasCallbackUrlResolver implements CallbackUrlResolver {
         this.callbackUrl = callbackUrl;
     }
 
+
+    Optional<URIBuilder.BasicNameValuePair> getQueryParameter(final WebContext context, final String name) {
+        final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
+        return builderContext.getQueryParams()
+                .stream().filter(p -> p.getName().equals(OAuthConstants.CLIENT_ID))
+                .findFirst();
+    }
+
     @Override
     public String compute(final String url, final WebContext context) {
         if (url.startsWith(callbackUrl)) {
             final URIBuilder builder = new URIBuilder(url);
-            final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
-            Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                    .stream().filter(p -> p.getName().equals(OAuthConstants.CLIENT_ID))
-                    .findFirst();
 
-            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
-            parameter = builderContext.getQueryParams()
-                    .stream().filter(p -> p.getName().equals(OAuthConstants.REDIRECT_URI))
-                    .findFirst();
+            Optional<URIBuilder.BasicNameValuePair> parameter = getQueryParameter(context, OAuthConstants.CLIENT_ID);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
 
-            parameter = builderContext.getQueryParams()
-                    .stream().filter(p -> p.getName().equals(OAuthConstants.ACR_VALUES))
-                    .findFirst();
+            parameter = getQueryParameter(context, OAuthConstants.REDIRECT_URI);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+
+            parameter = getQueryParameter(context, OAuthConstants.ACR_VALUES);
+            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+
             final String callbackResolved = builder.build().toString();
 
             LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
