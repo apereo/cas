@@ -49,6 +49,14 @@ Typical questions in this category that are best answered elsewhere are:
 - How do I tune up a hazelcast cluster?
 - What is the recommended strategy for making MongoDb highly available? 
 
+## Configuring SSL Behind Load Balancer/Proxy
+
+You might be running CAS inside a [servlet container](Configuring-Servlet-Container.html) such as Apache Tomcat beind some sort of proxy such as haproxy, Apache httpd, etc where the proxy is handling the SSL termination. The connections to the user are secured via `https`, yet those between the proxy and CAS service are just `http`. 
+
+With this setup, the CAS login screen may still warn you about a non-secure connection. There is no setting in CAS that would allow you to control/adjust this, as this is entirely controlled by the container itself. All CAS cares about is whether the incoming connection request identifies itself as a secure connection. So to remove the warning, you will need to look into your container's configuration and docs to see how the connection may be secured between the proxy and CAS. 
+
+For [Apache Tomcat](https://tomcat.apache.org/tomcat-8.0-doc/config/http.html), you may be able to adjust the connector that talks to the proxy with a `secure=true` attribute.
+
 ## Application X "redirected you too many times" 
 
 "Too many redirect" errors are usually cause by service ticket validation failure events, generally 
@@ -86,7 +94,6 @@ you may want to adjust the [ticket expiration policy configuration](Configuring-
 
 Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need 
 to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  
-
 
 ## Out of Heap Memory Error
 
@@ -185,8 +192,8 @@ It is also worth checking that the certificate your CAS server is using for SSL 
 
 ```bash
 Caused by: java.security.cert.CertificateException: No name matching cas.server found
-	at sun.security.util.HostnameChecker.matchDNS(Unknown Source) ~[?:1.8.0_77]
-	at sun.security.util.HostnameChecker
+    at sun.security.util.HostnameChecker.matchDNS(Unknown Source) ~[?:1.8.0_77]
+    at sun.security.util.HostnameChecker
 ```
 
 Same as above.

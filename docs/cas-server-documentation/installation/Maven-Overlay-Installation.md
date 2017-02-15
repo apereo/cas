@@ -61,7 +61,7 @@ use <code>git branch -a</code> to see available branches, and then <code>git che
 
 ### Overlay Mapping
 
-| Build Directory                               | Source Directory 
+| Build Directory                               | Source Directory
 |-----------------------------------------------|-----------------------
 | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
 
@@ -74,7 +74,7 @@ So you may need to do that step manually yourself to learn what files/directorie
 
 ### Overlay Mapping
 
-| Build Directory                  | Source Directory 
+| Build Directory                  | Source Directory
 |----------------------------------|-----------------------------
 | `target/cas/WEB-INF/classes/`    | `src/main/resources`
 
@@ -91,18 +91,17 @@ CAS can be deployed to a number of servlet containers. See [this guide](Configur
 ## Spring Configuration
 
 CAS server depends heavily on the Spring framework. Two modes of configuration are available. Note that both modes
-can be used at the same time. 
+can be used at the same time.
 
 ### XML
 
-There is a `deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings. 
+There is a `src/main/resources/deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings.
 Note that in most cases, modifying this file should be unnecessary.
 
 ### Groovy
 
-The CAS application context is able to load a `deployerConfigContext.groovy`. 
+The CAS application context is able to load a `src/main/resources/deployerConfigContext.groovy`. 
 For advanced use cases, CAS beans can be dynamically defined via the [Groovy programming language](http://www.groovy-lang.org/).
-As an example, here is an `exampleBean` defined inside a `applicationContext.groovy` file:
 
 
 ```groovy
@@ -117,20 +116,20 @@ beans {
 }
 ```
 
-Additionally, dynamic reloadable Groovy beans can be defined in the `deployerConfigContext.xml`. These definitions
+Additionally, dynamic reloadable Groovy beans can be defined in the `src/main/resources/deployerConfigContext.xml`. These definitions
 are directly read from a `.groovy` script which is monitored for changes and reloaded automatically.
 Here is a dynamic `messenger` bean defined whose definition is read from a `Messenger.groovy` file,
-and is monitored for changes every 5 seconds. 
+and is monitored for changes every 5 seconds.
 
 ```xml
 <lang:groovy id="messenger"
-    refresh-check-delay="5000" 
+    refresh-check-delay="5000"
     script-source="classpath:Messenger.groovy">
     <lang:property name="message" value="Hello, CAS!" />
 </lang:groovy>
 ```
 
-The contents of the `Messenger.groovy` must resolve to a valid Java class:
+The contents of the `Messenger.groovy` must resolve to a valid Java/Groovy class:
 
 ```groovy
 class ExampleMessenger implements Messenger {
@@ -149,14 +148,13 @@ class ExampleMessenger implements Messenger {
 
 It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or
 to include third-party source by Maven dependency references. Including third-party source is trivial; simply include
-the relevant dependency in the overlay `pom.xml` or `build.gradle` file. In order to include custom Java source, it should be included
-under a `src/java/main` directory in the overlay project source tree.
+the relevant dependency in the overlay `pom.xml` or `build.gradle` file. In order to include custom Java source, it should be included under a `src/main/java` directory in the overlay project source tree.
 
     ├── src
     │   ├── main
     │   │   ├── java
     │   │   │   └── edu
-    │   │   │       └── vt
+    │   │   │       └── sso
     │   │   │           └── middleware
     │   │   │               └── cas
     │   │   │                   ├── audit
@@ -178,7 +176,7 @@ under a `src/java/main` directory in the overlay project source tree.
 ### Maven Caveat
 
 Also, note that for any custom Java component to compile and be included in the final `cas.war` file, the `pom.xml` 
-in the Maven overlay must include a reference to the Maven Java compiler so classes can compile. 
+in the Maven overlay must include a reference to the Maven Java compiler so classes can compile.
 
 Here is a *sample* Maven build configuration:
 
@@ -207,8 +205,7 @@ Here is a *sample* Maven build configuration:
 ## Dependency Management
 
 Each release of CAS provides a curated list of dependencies it supports. In practice, you do not need to provide a version for any of 
-these dependencies in your build configuration as the CAS distribution is managing that for you. When you upgrade CAS itself, 
-these dependencies will be upgraded as well in a consistent way.
+these dependencies in your build configuration as the CAS distribution is managing that for you. When you upgrade CAS itself, these dependencies will be upgraded as well in a consistent way.
 
 The curated list of dependencies contains a refined list of third party libraries. The list is available as a standard Bills of Materials (BOM).
 
@@ -235,14 +232,14 @@ by using a `scope=import` dependency:
 ```xml
 <dependencyManagement>
      <dependencies>
-     
+
         <!-- Override a dependency by including it BEFORE the BOM -->
         <dependency>
             <groupId>org.group</groupId>
             <artifactId>artifact-name</artifactId>
             <version>X.Y.Z</version>
         </dependency>
-             
+
         <dependency>
             <groupId>org.apereo.cas</groupId>
             <artifactId>cas-server-support-bom</artifactId>
@@ -256,7 +253,7 @@ by using a `scope=import` dependency:
 
 ### Gradle
 
-To take advantage of the CAS BOM via Gradle, please [use this guide](https://plugins.gradle.org/plugin/io.spring.dependency-management) 
+To take advantage of the CAS BOM via Gradle, please [use this guide](https://plugins.gradle.org/plugin/io.spring.dependency-management)
 and configure the Gradle build accordingly.
 
 *(1) [WAR Overlays](http://maven.apache.org/plugins/maven-war-plugin/overlays.html)*
