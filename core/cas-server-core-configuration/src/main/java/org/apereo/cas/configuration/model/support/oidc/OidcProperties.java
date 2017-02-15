@@ -27,7 +27,7 @@ public class OidcProperties {
             "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
             "birthdate", "email", "email_verified", "phone_number",
             "phone_number_verified", "address");
-    private List<String> subjectTypes = Arrays.asList("public", "pairwise");
+    private List<String> subjectTypes = Arrays.asList("public");
 
     private Map<String, String> userDefinedScopes = new HashMap<>();
 

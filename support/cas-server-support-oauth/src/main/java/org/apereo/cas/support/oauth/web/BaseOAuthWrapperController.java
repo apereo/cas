@@ -63,7 +63,7 @@ public abstract class BaseOAuthWrapperController {
     private final AccessTokenFactory accessTokenFactory;
     private final PrincipalFactory principalFactory;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
-    
+
     public BaseOAuthWrapperController(final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry,
                                       final OAuth20Validator validator,
@@ -130,7 +130,7 @@ public abstract class BaseOAuthWrapperController {
                         this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes()),
                         registeredService,
                         context);
-        
+
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
         final String authenticator = profile.getClass().getCanonicalName();
