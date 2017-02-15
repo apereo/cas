@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This is {@link Pac4jProperties}.
  *
@@ -14,9 +17,9 @@ public class Pac4jProperties {
 
     private Facebook facebook = new Facebook();
     private Twitter twitter = new Twitter();
-    private Saml saml = new Saml();
-    private Oidc oidc = new Oidc();
-    private Cas cas = new Cas();
+    private List<Saml> saml = new ArrayList<>();
+    private List<Oidc> oidc = new ArrayList<>();
+    private List<Cas> cas = new ArrayList<>();
 
     private LinkedIn linkedIn = new LinkedIn();
     private Dropbox dropbox = new Dropbox();
@@ -116,27 +119,27 @@ public class Pac4jProperties {
         this.twitter = twitter;
     }
 
-    public void setSaml(final Saml saml) {
+    public void setSaml(final List<Saml> saml) {
         this.saml = saml;
     }
 
-    public void setOidc(final Oidc oidc) {
+    public void setOidc(final List<Oidc> oidc) {
         this.oidc = oidc;
     }
 
-    public void setCas(final Cas cas) {
+    public void setCas(final List<Cas> cas) {
         this.cas = cas;
     }
 
-    public Cas getCas() {
+    public List<Cas> getCas() {
         return this.cas;
     }
 
-    public Saml getSaml() {
+    public List<Saml> getSaml() {
         return this.saml;
     }
 
-    public Oidc getOidc() {
+    public List<Oidc> getOidc() {
         return this.oidc;
     }
 

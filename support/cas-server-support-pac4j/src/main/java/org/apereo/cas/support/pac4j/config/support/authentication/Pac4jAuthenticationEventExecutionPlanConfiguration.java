@@ -43,14 +43,14 @@ import java.util.Map;
 @Configuration("pac4jAuthenticationEventExecutionPlanConfiguration")
 public class Pac4jAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jAuthenticationEventExecutionPlanConfiguration.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -115,38 +115,50 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
     }
 
     private void configureCasClient(final Map<String, String> properties) {
-        final Pac4jProperties.Cas cas = casProperties.getAuthn().getPac4j().getCas();
-        properties.put(PropertiesConfigFactory.CAS_LOGIN_URL, cas.getLoginUrl());
-        properties.put(PropertiesConfigFactory.CAS_PROTOCOL, cas.getProtocol());
+        for (Integer i = 0; i < casProperties.getAuthn().getPac4j().getCas().size(); i++) {
+            final Pac4jProperties.Cas cas = casProperties.getAuthn().getPac4j().getCas().get(0);
+            properties.put(getConfigurationKey(PropertiesConfigFactory.CAS_LOGIN_URL, i), cas.getLoginUrl());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.CAS_PROTOCOL, i), cas.getProtocol());
+        }
     }
 
     private void configureSamlClient(final Map<String, String> properties) {
-        final Pac4jProperties.Saml saml = casProperties.getAuthn().getPac4j().getSaml();
+        for (Integer i = 0; i < casProperties.getAuthn().getPac4j().getSaml().size(); i++) {
+            final Pac4jProperties.Saml saml = casProperties.getAuthn().getPac4j().getSaml().get(i);
 
-        properties.put(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH, saml.getIdentityProviderMetadataPath());
-        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD, saml.getKeystorePassword());
-        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PATH, saml.getKeystorePath());
-        properties.put(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME, saml.getMaximumAuthenticationLifetime());
-        properties.put(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD, saml.getPrivateKeyPassword());
-        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID, saml.getServiceProviderEntityId());
-        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH, saml.getServiceProviderMetadataPath());
-        properties.put(PropertiesConfigFactory.SAML_DESTINATION_BINDING_TYPE, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH, i), saml.getIdentityProviderMetadataPath());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD, i), saml.getKeystorePassword());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_KEYSTORE_PATH, i), saml.getKeystorePath());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME, i), saml.getMaximumAuthenticationLifetime());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD, i), saml.getPrivateKeyPassword());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID, i), saml.getServiceProviderEntityId());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH, i), saml.getServiceProviderMetadataPath());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_DESTINATION_BINDING_TYPE, i), SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+        }
     }
 
     private void configureOidcClient(final Map<String, String> properties) {
-        final Pac4jProperties.Oidc oidc = casProperties.getAuthn().getPac4j().getOidc();
+        for (Integer i = 0; i < casProperties.getAuthn().getPac4j().getOidc().size(); i++) {
+            final Pac4jProperties.Oidc oidc = casProperties.getAuthn().getPac4j().getOidc().get(i);
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, i), oidc.getCustomParamKey1());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, i), oidc.getCustomParamKey2());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, i), oidc.getCustomParamValue1());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, i), oidc.getCustomParamValue2());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_DISCOVERY_URI, i), oidc.getDiscoveryUri());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_ID, i), oidc.getId());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, i), oidc.getMaxClockSkew());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, i), oidc.getPreferredJwsAlgorithm());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_SECRET, i), oidc.getSecret());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_USE_NONCE, i), oidc.getUseNonce());
+            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_SCOPE, i), oidc.getScope());
+        }
+    }
 
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, oidc.getCustomParamKey1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, oidc.getCustomParamKey2());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, oidc.getCustomParamValue1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, oidc.getCustomParamValue2());
-        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, oidc.getDiscoveryUri());
-        properties.put(PropertiesConfigFactory.OIDC_ID, oidc.getId());
-        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, oidc.getMaxClockSkew());
-        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, oidc.getPreferredJwsAlgorithm());
-        properties.put(PropertiesConfigFactory.OIDC_SECRET, oidc.getSecret());
-        properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, oidc.getUseNonce());
-        properties.put(PropertiesConfigFactory.OIDC_SCOPE, oidc.getScope());
+    private String getConfigurationKey(final String key, final int index) {
+        if (index == 0) {
+            return key;
+        }
+        return key.concat(".").concat(String.valueOf(index));
     }
 
     @RefreshScope
@@ -209,7 +221,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         h.setName(casProperties.getAuthn().getPac4j().getName());
         return h;
     }
-    
+
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver);
