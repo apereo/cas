@@ -94,7 +94,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -279,10 +281,19 @@ public final class Beans {
                     LOGGER.debug("Creating BCRYPT encoder without secret");
                     return new BCryptPasswordEncoder(properties.getStrength());
                 }
-
                 LOGGER.debug("Creating BCRYPT encoder with secret");
                 return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
+            case SCRYPT:
+                LOGGER.debug("Creating SCRYPT encoder");
+                return new SCryptPasswordEncoder();
+            case PBKDF2:
+                if (StringUtils.isBlank(properties.getSecret())) {
+                    LOGGER.debug("Creating PBKDF2 encoder without secret");
+                    return new Pbkdf2PasswordEncoder();
+                }
+                final int hashWidth = 256;
+                return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), hashWidth);
             case NONE:
             default:
                 LOGGER.debug("No password encoder shall be created given the requested encoder type [{}]", type);
