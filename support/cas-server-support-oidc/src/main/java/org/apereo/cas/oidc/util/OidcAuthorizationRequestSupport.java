@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.J2EContext;
@@ -93,7 +94,7 @@ public class OidcAuthorizationRequestSupport {
      * @return the optional user profile
      */
     public static Optional<UserProfile> isAuthenticationProfileAvailable(final WebContext context) {
-        final ProfileManager manager = new ProfileManager(context);
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(context);
         return manager.get(true);
     }
 
