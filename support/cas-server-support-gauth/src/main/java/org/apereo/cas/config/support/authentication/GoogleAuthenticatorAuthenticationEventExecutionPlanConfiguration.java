@@ -82,6 +82,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
         return new GoogleAuthenticator(bldr.build());
     }
 
+    @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationHandler")
     @Bean
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
