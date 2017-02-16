@@ -6,7 +6,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -35,7 +35,7 @@ import java.util.List;
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {
     private static final long serialVersionUID = -3945938960014421135L;
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSamlAssertionBuilder.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -47,14 +47,14 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
     private SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
 
-    private SamlObjectSigner samlObjectSigner;
+    private BaseSamlObjectSigner samlObjectSigner;
 
     public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean,
                                            final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,
                                            final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder,
                                            final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder,
                                            final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder,
-                                           final SamlObjectSigner samlObjectSigner) {
+                                           final BaseSamlObjectSigner samlObjectSigner) {
         super(configBean);
         this.samlProfileSamlAuthNStatementBuilder = samlProfileSamlAuthNStatementBuilder;
         this.samlProfileSamlAttributeStatementBuilder = samlProfileSamlAttributeStatementBuilder;
