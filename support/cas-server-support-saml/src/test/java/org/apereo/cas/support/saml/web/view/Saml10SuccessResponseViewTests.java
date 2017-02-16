@@ -7,6 +7,7 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.cas.CasProtocolConstants;
@@ -57,7 +58,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final DefaultServicesManager mgmr = new DefaultServicesManager(dao);
         mgmr.load();
         
-        this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr),
+        this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, NoOpCipherExecutor.getInstance()),
                 mgmr, "attribute", new Saml10ObjectBuilder(configBean),
                 new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(),
                 1000, "testIssuer", "whatever");         
