@@ -352,8 +352,9 @@ $(function () {
     ensureBootrapIsLoaded();
     loadSidebarForActiveVersion();
     generateTableOfContentsForPage();
-
+    generateDependencyLangFragments();
     generateToolbarIcons();
+
     responsiveImages();
     responsiveTables();
 
