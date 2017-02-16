@@ -30,6 +30,9 @@ public class Pac4jProperties {
     private Yahoo yahoo = new Yahoo();
     private Foursquare foursquare = new Foursquare();
     private WindowsLive windowsLive = new WindowsLive();
+    private Paypal paypal = new Paypal();
+    private Wordpress wordpress = new Wordpress();
+    private Bitbucket bitbucket = new Bitbucket();
 
     private String name;
 
@@ -47,6 +50,30 @@ public class Pac4jProperties {
 
     public void setAutoRedirect(final boolean autoRedirect) {
         this.autoRedirect = autoRedirect;
+    }
+
+    public Bitbucket getBitbucket() {
+        return bitbucket;
+    }
+
+    public void setBitbucket(final Bitbucket bitbucket) {
+        this.bitbucket = bitbucket;
+    }
+
+    public Wordpress getWordpress() {
+        return wordpress;
+    }
+
+    public void setWordpress(final Wordpress wordpress) {
+        this.wordpress = wordpress;
+    }
+
+    public Paypal getPaypal() {
+        return paypal;
+    }
+
+    public void setPaypal(final Paypal paypal) {
+        this.paypal = paypal;
     }
 
     public LinkedIn getLinkedIn() {
@@ -228,6 +255,69 @@ public class Pac4jProperties {
 
         public void setFields(final String fields) {
             this.fields = fields;
+        }
+    }
+
+    public static class Bitbucket {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class Wordpress {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class Paypal {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
         }
     }
 
