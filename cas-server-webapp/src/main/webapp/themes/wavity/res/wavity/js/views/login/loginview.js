@@ -40,7 +40,7 @@ define(
 	            $('.ot_username, .ot_password').addClass('has-error');
 	            $('.ot_username, .ot_password').find('.help-inline').addClass('oneteam-error-msg');
 			}
-			$("#appIcon").attr("src", $('input[name=appLogo]').val());
+			/*$("#appIcon").attr("src", $('input[name=appLogo]').val());
 			$("#domainIcon").attr("src", $('input[name=tenantLogo]').val());
 
 			if($("#domainIcon").width() > 400 || $("#domainIcon").width() <= 0) {
@@ -49,7 +49,7 @@ define(
 
 			if($("#domainIcon").height() > 400 || $("#domainIcon").height() <= 0) {
 				$("#domainIcon").height(400);
-			}
+			}*/
 
 			$('#loginForm input[name=lt]').val($('input[name=loginTicket]').val());
 			$('#loginForm input[name=execution]').val($('input[name=flowExecutionKey]').val());
@@ -69,9 +69,19 @@ define(
 			$('#tempForm').remove();
 			$('input[name=prevAddressContainer]').remove();
 			$('#list-providers').remove();
-
+			this.updateTenantBranding();
 			this.addForgetPasswordLink();
 			this.checkLoginErrorMessage();
+		},
+		updateTenantBranding: function(){
+			var serviceUrl = this.getParam("service");
+			var decodedUrl = decodeURIComponent(serviceUrl);
+			var tenantBrandingImageUrl = this.createLocation(decodedUrl) + '/scim/v2/TenantImage/jpegPhoto/appBranding';
+			var tenantBrandingOnErrorUrl = this.createLocation(decodedUrl) + '/scim/v2/TenantImage/jpegPhoto/primary';
+			$("#tenantBranding").attr("src", tenantBrandingImageUrl);
+			$("#tenantBranding").on("error", function(){
+		        $(this).unbind("error").attr('src', tenantBrandingOnErrorUrl);
+		    });			
 		},
 		checkLoginErrorMessage: function(){
 			var errors = $("input[name='loginErrorMsg']");
@@ -98,8 +108,8 @@ define(
 		addForgetPasswordLink: function(){
 			var serviceUrl = this.getParam("service");
 			var decodedUrl = decodeURIComponent(serviceUrl);
-			var serviceLocation = this.createLocation(decodedUrl);
-			var forgetPasswordUrl = serviceLocation.origin + "/ics/passwordReset.html";
+			var serviceHost = this.createLocation(decodedUrl);
+			var forgetPasswordUrl = serviceHost + "/ics/passwordReset.html";
 			$('#forgetPasswordLink').attr("href",forgetPasswordUrl);
 		},
 		getParam: function(sParam) {
@@ -115,7 +125,14 @@ define(
 		createLocation: function(href){
 			var location = document.createElement("a");
 			location.href = href;
-			return location;
+			//Fix for Internet Explorer
+			if (!location.origin) {
+				return location.protocol 
+				+ "//" + location.hostname 
+				+ (location.port ? ':' + location.port: '');
+			} else {
+				return location.origin;
+			}
 		},
 		login: function(event){
 			this.hideErrorMessage();

@@ -19,7 +19,7 @@ div {
 #loginColumns {	
 	margin: 0 auto;
     max-width: 900px;
-    padding: 100px 40px 10px;
+    padding: 200px 40px 10px;
 }
 #loginColumns .form-group .form-control {
 	border-bottom-left-radius: 0;
