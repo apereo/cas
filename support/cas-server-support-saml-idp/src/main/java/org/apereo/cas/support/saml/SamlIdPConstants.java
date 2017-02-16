@@ -42,6 +42,9 @@ public interface SamlIdPConstants {
     /** The time constant. */
     String TIME = "time";
 
+    /** The error view. */
+    String ERROR_VIEW = "casServiceErrorView";
+    
     /** The samlError constant. */
     String REQUEST_ATTRIBUTE_ERROR = "samlError";
 }
