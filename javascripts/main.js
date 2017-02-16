@@ -287,10 +287,11 @@ function generateDependencyLangFragments() {
   <li class='nav-item'><a class='nav-link active' data-toggle='tab' href='#maven'>Maven</a></li> \
   <li class='nav-item'><a class='nav-link' data-toggle='tab' href='#gradle'>Gradle</a></li> \
   <li role='presentation' class='nav-item dropdown'> \
-      <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>More Info<span class='caret'></span></a> \
+      <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>More...<span class='caret'></span></a> \
       <div class='dropdown-menu'> \
-          <a href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a> \
-          <a href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Gradle Overlay Project</a> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a> \
+          <a class='dropdown-item' href='#'/> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Gradle Overlay Project</a> \
       </div> \
   </li> \
   </ul> \
