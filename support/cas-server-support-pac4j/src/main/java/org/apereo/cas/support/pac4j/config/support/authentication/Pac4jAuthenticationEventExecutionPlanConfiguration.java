@@ -20,14 +20,17 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.FoursquareClient;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.oauth.client.Google2Client;
 import org.pac4j.oauth.client.LinkedIn2Client;
+import org.pac4j.oauth.client.PayPalClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.client.WindowsLiveClient;
+import org.pac4j.oauth.client.WordPressClient;
 import org.pac4j.oauth.client.YahooClient;
 import org.pac4j.oidc.client.AzureAdClient;
 import org.pac4j.oidc.client.GoogleOidcClient;
@@ -73,132 +76,186 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
     private void configureGithubClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Github github = casProperties.getAuthn().getPac4j().getGithub();
-        final GitHubClient client = new GitHubClient(github.getId(), github.getSecret());
-        properties.add(client);
+        if (StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
+            final GitHubClient client = new GitHubClient(github.getId(), github.getSecret());
+            properties.add(client);
+        }
     }
 
     private void configureDropboxClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Dropbox db = casProperties.getAuthn().getPac4j().getDropbox();
-        final DropBoxClient client = new DropBoxClient(db.getId(), db.getSecret());
-        properties.add(client);
+        if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
+            final DropBoxClient client = new DropBoxClient(db.getId(), db.getSecret());
+            properties.add(client);
+        }
     }
 
     private void configureWindowsLiveClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.WindowsLive live = casProperties.getAuthn().getPac4j().getWindowsLive();
-        final WindowsLiveClient client = new WindowsLiveClient(live.getId(), live.getSecret());
-        properties.add(client);
+        if (StringUtils.isNotBlank(live.getId()) && StringUtils.isNotBlank(live.getSecret())) {
+            final WindowsLiveClient client = new WindowsLiveClient(live.getId(), live.getSecret());
+            properties.add(client);
+        }
     }
 
     private void configureYahooClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Yahoo yahoo = casProperties.getAuthn().getPac4j().getYahoo();
-        final YahooClient client = new YahooClient(yahoo.getId(), yahoo.getSecret());
-        properties.add(client);
+        if (StringUtils.isNotBlank(yahoo.getId()) && StringUtils.isNotBlank(yahoo.getSecret())) {
+            final YahooClient client = new YahooClient(yahoo.getId(), yahoo.getSecret());
+            properties.add(client);
+        }
     }
 
     private void configureFoursquareClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Foursquare foursquare = casProperties.getAuthn().getPac4j().getFoursquare();
-        final FoursquareClient client = new FoursquareClient(foursquare.getId(), foursquare.getSecret());
-        properties.add(client);
+        if (StringUtils.isNotBlank(foursquare.getId()) && StringUtils.isNotBlank(foursquare.getSecret())) {
+            final FoursquareClient client = new FoursquareClient(foursquare.getId(), foursquare.getSecret());
+            properties.add(client);
+        }
     }
 
     private void configureGoogleClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Google google = casProperties.getAuthn().getPac4j().getGoogle();
         final Google2Client client = new Google2Client(google.getId(), google.getSecret());
-
-        if (StringUtils.isNotBlank(google.getScope())) {
-            client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
+        if (StringUtils.isNotBlank(google.getId()) && StringUtils.isNotBlank(google.getSecret())) {
+            if (StringUtils.isNotBlank(google.getScope())) {
+                client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
+            }
+            properties.add(client);
         }
-        properties.add(client);
     }
 
     private void configureFacebookClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Facebook fb = casProperties.getAuthn().getPac4j().getFacebook();
-        final FacebookClient client = new FacebookClient(fb.getId(), fb.getSecret());
-        client.setScope(fb.getScope());
-        client.setFields(fb.getFields());
-        properties.add(client);
+        if (StringUtils.isNotBlank(fb.getId()) && StringUtils.isNotBlank(fb.getSecret())) {
+            final FacebookClient client = new FacebookClient(fb.getId(), fb.getSecret());
+            if (StringUtils.isNotBlank(fb.getScope())) {
+                client.setScope(fb.getScope());
+            }
+
+            if (StringUtils.isNotBlank(fb.getFields())) {
+                client.setFields(fb.getFields());
+            }
+            properties.add(client);
+        }
     }
 
     private void configureLinkedInClient(final Collection<BaseClient> properties) {
-        final Pac4jProperties.LinkedIn fb = casProperties.getAuthn().getPac4j().getLinkedIn();
-        final LinkedIn2Client client = new LinkedIn2Client(fb.getId(), fb.getSecret());
+        final Pac4jProperties.LinkedIn ln = casProperties.getAuthn().getPac4j().getLinkedIn();
+        if (StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
+            final LinkedIn2Client client = new LinkedIn2Client(ln.getId(), ln.getSecret());
 
-        if (StringUtils.isNotBlank(fb.getScope())) {
-            client.setScope(fb.getScope());
-        }
+            if (StringUtils.isNotBlank(ln.getScope())) {
+                client.setScope(ln.getScope());
+            }
 
-        if (StringUtils.isNotBlank(fb.getFields())) {
-            client.setFields(fb.getFields());
+            if (StringUtils.isNotBlank(ln.getFields())) {
+                client.setFields(ln.getFields());
+            }
+            properties.add(client);
         }
-        properties.add(client);
     }
 
     private void configureTwitterClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Twitter twitter = casProperties.getAuthn().getPac4j().getTwitter();
-        final TwitterClient client = new TwitterClient(twitter.getId(), twitter.getSecret());
-        properties.add(client);
+        if (StringUtils.isNotBlank(twitter.getId()) && StringUtils.isNotBlank(twitter.getSecret())) {
+            final TwitterClient client = new TwitterClient(twitter.getId(), twitter.getSecret());
+            properties.add(client);
+        }
+    }
+
+    private void configureWordpressClient(final Collection<BaseClient> properties) {
+        final Pac4jProperties.Wordpress wp = casProperties.getAuthn().getPac4j().getWordpress();
+        if (StringUtils.isNotBlank(wp.getId()) && StringUtils.isNotBlank(wp.getSecret())) {
+            final WordPressClient client = new WordPressClient(wp.getId(), wp.getSecret());
+            properties.add(client);
+        }
+    }
+
+    private void configureBitbucketClient(final Collection<BaseClient> properties) {
+        final Pac4jProperties.Bitbucket bb = casProperties.getAuthn().getPac4j().getBitbucket();
+        if (StringUtils.isNotBlank(bb.getId()) && StringUtils.isNotBlank(bb.getSecret())) {
+            final BitbucketClient client = new BitbucketClient(bb.getId(), bb.getSecret());
+            properties.add(client);
+        }
+    }
+
+    private void configurePaypalClient(final Collection<BaseClient> properties) {
+        final Pac4jProperties.Paypal paypal = casProperties.getAuthn().getPac4j().getPaypal();
+        if (StringUtils.isNotBlank(paypal.getId()) && StringUtils.isNotBlank(paypal.getSecret())) {
+            final PayPalClient client = new PayPalClient(paypal.getId(), paypal.getSecret());
+            properties.add(client);
+        }
     }
 
     private void configureCasClient(final Collection<BaseClient> properties) {
-        casProperties.getAuthn().getPac4j().getCas().forEach(cas -> {
-            final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), cas.getProtocol());
-            final CasClient client = new CasClient(cfg);
-            properties.add(client);
-        });
+        casProperties.getAuthn().getPac4j().getCas()
+                .stream()
+                .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
+                .forEach(cas -> {
+                    final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), cas.getProtocol());
+                    final CasClient client = new CasClient(cfg);
+                    properties.add(client);
+                });
     }
 
     private void configureSamlClient(final Collection<BaseClient> properties) {
-        casProperties.getAuthn().getPac4j().getSaml().forEach(saml -> {
-            final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(saml.getKeystorePath(), saml.getKeystorePassword(),
-                    saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
-            cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
-            cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
-            cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
-            cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
-            final SAML2Client client = new SAML2Client(cfg);
-            properties.add(client);
-        });
+        casProperties.getAuthn().getPac4j().getSaml()
+                .stream()
+                .filter(saml -> StringUtils.isNotBlank(saml.getKeystorePath()) && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath()))
+                .forEach(saml -> {
+                    final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(saml.getKeystorePath(), saml.getKeystorePassword(),
+                            saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
+                    cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
+                    cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
+                    cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
+                    cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+                    final SAML2Client client = new SAML2Client(cfg);
+                    properties.add(client);
+                });
     }
 
     private void configureOidcClient(final Collection<BaseClient> properties) {
-        casProperties.getAuthn().getPac4j().getOidc().forEach(oidc -> {
+        casProperties.getAuthn().getPac4j().getOidc()
+                .stream()
+                .filter(oidc -> StringUtils.isNotBlank(oidc.getId()) && StringUtils.isNotBlank(oidc.getSecret()))
+                .forEach(oidc -> {
 
-            final OidcConfiguration cfg = new OidcConfiguration();
-            if (StringUtils.isNotBlank(oidc.getScope())) {
-                cfg.setScope(oidc.getScope());
-            }
-            cfg.setUseNonce(oidc.isUseNonce());
-            cfg.setSecret(oidc.getSecret());
-            cfg.setClientId(oidc.getId());
+                    final OidcConfiguration cfg = new OidcConfiguration();
+                    if (StringUtils.isNotBlank(oidc.getScope())) {
+                        cfg.setScope(oidc.getScope());
+                    }
+                    cfg.setUseNonce(oidc.isUseNonce());
+                    cfg.setSecret(oidc.getSecret());
+                    cfg.setClientId(oidc.getId());
 
-            if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-                cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
-            }
-            cfg.setMaxClockSkew(oidc.getMaxClockSkew());
-            cfg.setDiscoveryURI(oidc.getDiscoveryUri());
-            cfg.setCustomParams(oidc.getCustomParams());
+                    if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
+                        cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+                    }
+                    cfg.setMaxClockSkew(oidc.getMaxClockSkew());
+                    cfg.setDiscoveryURI(oidc.getDiscoveryUri());
+                    cfg.setCustomParams(oidc.getCustomParams());
 
-            final OidcClient client;
-            switch (oidc.getType().toUpperCase()) {
-                case "GOOGLE":
-                    client = new GoogleOidcClient(cfg);
-                    break;
-                case "AZURE":
-                    client = new AzureAdClient(cfg);
-                    break;
-                case "GENERIC":
-                default:
-                    client = new OidcClient(cfg);
-                    break;
-            }
-            properties.add(client);
-        });
+                    final OidcClient client;
+                    switch (oidc.getType().toUpperCase()) {
+                        case "GOOGLE":
+                            client = new GoogleOidcClient(cfg);
+                            break;
+                        case "AZURE":
+                            client = new AzureAdClient(cfg);
+                            break;
+                        case "GENERIC":
+                        default:
+                            client = new OidcClient(cfg);
+                            break;
+                    }
+                    properties.add(client);
+                });
     }
 
     @RefreshScope
     @Bean
     public Clients builtClients() {
-        // turn the properties file into a map of properties
         final Set<BaseClient> clients = new LinkedHashSet<>();
 
         configureCasClient(clients);
@@ -213,6 +270,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         configureWindowsLiveClient(clients);
         configureYahooClient(clients);
         configureLinkedInClient(clients);
+        configurePaypalClient(clients);
+        configureWordpressClient(clients);
+        configureBitbucketClient(clients);
 
         if (clients.isEmpty()) {
             throw new IllegalArgumentException("At least one client must be defined");
