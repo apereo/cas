@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.google.common.base.Throwables;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
@@ -71,7 +72,7 @@ public class CasCoreServicesConfiguration {
     public PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator() {
         return new ShibbolethCompatiblePersistentIdGenerator();
     }
-    
+
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
         return new DefaultWebApplicationResponseBuilderLocator();
@@ -85,8 +86,12 @@ public class CasCoreServicesConfiguration {
 
     @RefreshScope
     @Bean
-    public ProtocolAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        return new DefaultCasProtocolAttributeEncoder(servicesManager(serviceRegistryDao), registeredServiceCipherExecutor());
+    public ProtocolAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao")
+                                                        final ServiceRegistryDao serviceRegistryDao,
+                                                        @Qualifier("cacheCredentialsCipherExecutor")
+                                                        final CipherExecutor cacheCredentialsCipherExecutor) {
+        return new DefaultCasProtocolAttributeEncoder(servicesManager(serviceRegistryDao),
+                registeredServiceCipherExecutor(), cacheCredentialsCipherExecutor);
     }
 
     @Bean
@@ -133,7 +138,7 @@ public class CasCoreServicesConfiguration {
             throw Throwables.propagate(e);
         }
     }
-    
+
     /**
      * The embedded service registry that processes built-in JSON service files
      * on the classpath.

@@ -13,4 +13,9 @@ public class MultifactorAuthenticationTrustCipherExecutor extends BaseStringCiph
                                                         final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
     }
+
+    @Override
+    public String getName() {
+        return "Multifactor Authentication & Trusted Devices";
+    }
 }
