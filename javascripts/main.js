@@ -279,18 +279,14 @@ function generateDependencyLangFragments() {
       
       var gradleDep = "compile \"" + $groupId.text() + ":" + $artifactId.text() + ":${project.'cas.version'}\"";
 
-      var gradleFragment = "<div class='language-groovy highlighter-rouge'> \
-      <div class='highlight'> \
-	      <table style='border-spacing: 0'> \
+      var gradleFragment = "<table style='border-spacing: 0'> \
 	      <tbody>\
 	      <tr>\
 	      	<td class='gutter gl' style='text-align: right'><pre class='lineno'>1</pre></td>\
 	      	<td class='code'><pre>" + gradleDep + "</pre></td>\
 	      </tr> \
 	      </tbody> \
-	      </table> \
-      </div> \
-      </div>";
+	      </table>";
 
       var parentTable = $(val).parent().parent().parent().parent().parent();
 
@@ -335,10 +331,7 @@ function responsiveTables() {
 function copyButton() {
     $('div.highlight').each(function() {
         var btn = '<button class="copy-button hidden-md-down fa fa-clipboard" />';
-        var cp = $(this).find(".copy-button");
-        if (cp == null || cp==undefined) {
-            $(this).append( btn );
-        }
+        $(this).append( btn );
     });
 }
 
