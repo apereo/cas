@@ -2338,6 +2338,42 @@ Delegate authentication to Twitter.
 # cas.authn.pac4j.twitter.secret=
 ```
 
+
+### Paypal
+
+Delegate authentication to Paypal.
+
+```properties
+# cas.authn.pac4j.paypal.id=
+# cas.authn.pac4j.paypal.secret=
+```
+
+
+### Wordpress
+
+Delegate authentication to Wordpress.
+
+```properties
+# cas.authn.pac4j.wordpress.id=
+# cas.authn.pac4j.wordpress.secret=
+```
+
+### OAuth20
+
+Delegate authentication to an generic OAuth2 server.
+
+```properties
+# cas.authn.pac4j.oauth2.id=
+# cas.authn.pac4j.oauth2.secret=
+# cas.authn.pac4j.oauth2.authUrl=
+# cas.authn.pac4j.oauth2.tokenUrl=
+# cas.authn.pac4j.oauth2.profileUrl=
+# cas.authn.pac4j.oauth2.profilePath=
+# cas.authn.pac4j.oauth2.profileVerb=GET|POST
+# cas.authn.pac4j.oauth2.profileAttrs.attr1=path-to-attr-in-profile
+# cas.authn.pac4j.oauth2.customParams.param1=value1
+```
+
 ### OpenID Connect
 
 Delegate authentication to an external OpenID Connect server.
