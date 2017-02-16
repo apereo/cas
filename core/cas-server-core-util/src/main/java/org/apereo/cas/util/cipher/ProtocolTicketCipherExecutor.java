@@ -28,4 +28,9 @@ public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
                                         final String contentEncryptionAlgorithmIdentifier) {
         super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier);
     }
+
+    @Override
+    public String getName() {
+        return "CAS Protocol Tickets";
+    }
 }

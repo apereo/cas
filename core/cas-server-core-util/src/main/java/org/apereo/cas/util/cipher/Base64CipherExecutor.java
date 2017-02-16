@@ -41,4 +41,9 @@ public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, S
         final byte[] decoded = EncodingUtils.decodeBase64(value.toString());
         return new String(decoded, StandardCharsets.UTF_8);
     }
+
+    @Override
+    public String getName() {
+        return null;
+    }
 }

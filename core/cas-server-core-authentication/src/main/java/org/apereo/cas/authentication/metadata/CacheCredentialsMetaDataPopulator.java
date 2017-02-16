@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.metadata;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.Credential;
@@ -17,20 +18,28 @@ import org.slf4j.LoggerFactory;
  * @since 4.1
  */
 public class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheCredentialsMetaDataPopulator.class);
+    private final CipherExecutor<String, String> cipherExecutor;
+
+    public CacheCredentialsMetaDataPopulator() {
+        this(null);
+        LOGGER.warn("No cipher is specified to handle credential caching encryption");
+    }
+
+    public CacheCredentialsMetaDataPopulator(final CipherExecutor cipherExecutor) {
+        this.cipherExecutor = cipherExecutor;
+    }
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         LOGGER.debug("Processing request to capture the credential for [{}]", credential.getId());
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
-        builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, c.getPassword());
-        LOGGER.debug("Encrypted credential is added as the authentication attribute [{}] to the authentication",
-                    UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
-
+        final String psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword());
+        builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, psw);
+        LOGGER.debug("Credential is added as the authentication attribute [{}] to the authentication",
+                UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
     }
 
-    
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof UsernamePasswordCredential;
@@ -38,7 +47,6 @@ public class CacheCredentialsMetaDataPopulator implements AuthenticationMetaData
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .toString();
+        return new ToStringBuilder(this).toString();
     }
 }
