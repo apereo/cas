@@ -22,6 +22,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
@@ -97,7 +98,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                        final String loginUrl,
                                        final String logoutUrl,
                                        final boolean forceSignedLogoutRequests,
-                                       final boolean singleLogoutCallbacksDisabled) {
+                                       final boolean singleLogoutCallbacksDisabled,
+                                       final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
                 servicesManager, webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
@@ -105,7 +107,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                 authenticationContextClassMappings,
                 serverPrefix, serverName,
                 authenticationContextRequestParameter, loginUrl, logoutUrl,
-                forceSignedLogoutRequests, singleLogoutCallbacksDisabled);
+                forceSignedLogoutRequests, singleLogoutCallbacksDisabled,
+                samlObjectSignatureValidator);
         this.samlEcpFaultResponseBuilder = samlEcpFaultResponseBuilder;
     }
 
