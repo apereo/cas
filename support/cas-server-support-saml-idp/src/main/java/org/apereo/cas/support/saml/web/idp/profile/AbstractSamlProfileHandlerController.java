@@ -24,7 +24,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.util.EncodingUtils;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
@@ -42,6 +42,8 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +69,7 @@ import java.util.TreeSet;
 @Controller
 public abstract class AbstractSamlProfileHandlerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSamlProfileHandlerController.class);
-    
+
     /**
      * Authentication support to handle credentials and authn subsystem calls.
      */
@@ -76,7 +78,7 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Saml object signer.
      */
-    protected SamlObjectSigner samlObjectSigner;
+    protected BaseSamlObjectSigner samlObjectSigner;
 
     /**
      * The Parser pool.
@@ -173,7 +175,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param forceSignedLogoutRequests                    the force signed logout requests
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
      */
-    public AbstractSamlProfileHandlerController(final SamlObjectSigner samlObjectSigner,
+    public AbstractSamlProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                                 final ParserPool parserPool,
                                                 final AuthenticationSystemSupport authenticationSystemSupport,
                                                 final ServicesManager servicesManager,
@@ -546,6 +548,11 @@ public abstract class AbstractSamlProfileHandlerController {
         LOGGER.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
         this.responseBuilder.build(authenticationContext.getKey(), request, response, casAssertion, registeredService, adaptor);
         LOGGER.info("Built the SAML response for [{}]", adaptor.getEntityId());
+    }
+
+    @ExceptionHandler(UnauthorizedServiceException.class)
+    public ModelAndView handleError(final HttpServletRequest req, final Exception ex) {
+        return SamlIdPUtils.produceUnauthorizedErrorView();
     }
 }
 

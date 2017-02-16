@@ -8,8 +8,8 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -43,7 +43,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSaml2ResponseBuilder.class);
 
     public SamlProfileSaml2ResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
-                                           final SamlObjectSigner samlObjectSigner,
+                                           final BaseSamlObjectSigner samlObjectSigner,
                                            final VelocityEngineFactory velocityEngineFactory,
                                            final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                            final SamlObjectEncrypter samlObjectEncrypter) {

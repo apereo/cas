@@ -68,13 +68,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is {@link SamlObjectSigner}.
+ * This is {@link BaseSamlObjectSigner}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlObjectSigner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlObjectSigner.class);
+public class BaseSamlObjectSigner {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseSamlObjectSigner.class);
 
     /**
      * The Override signature reference digest methods.
@@ -100,8 +100,8 @@ public class SamlObjectSigner {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    public SamlObjectSigner(final List overrideSignatureReferenceDigestMethods, final List overrideSignatureAlgorithms,
-                            final List overrideBlackListedSignatureAlgorithms, final List overrideWhiteListedAlgorithms) {
+    public BaseSamlObjectSigner(final List overrideSignatureReferenceDigestMethods, final List overrideSignatureAlgorithms,
+                                final List overrideBlackListedSignatureAlgorithms, final List overrideWhiteListedAlgorithms) {
         this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
         this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
         this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
@@ -379,7 +379,8 @@ public class SamlObjectSigner {
         final Signature signature = profileRequest.getSignature();
         if (signature != null) {
             final SAMLSignatureProfileValidator validator = new SAMLSignatureProfileValidator();
-            LOGGER.debug("Validating profile signature for [{}] via [{}]...", profileRequest.getIssuer(), validator.getClass().getSimpleName());
+            LOGGER.debug("Validating profile signature for [{}] via [{}]...", profileRequest.getIssuer(),
+                    validator.getClass().getSimpleName());
             validator.validate(signature);
             LOGGER.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
 

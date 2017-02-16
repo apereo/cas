@@ -21,7 +21,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
  */
 public class ECPProfileHandlerController extends AbstractSamlProfileHandlerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ECPProfileHandlerController.class);
-    
+
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlEcpFaultResponseBuilder;
 
     /**
@@ -81,7 +81,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @param forceSignedLogoutRequests                    the force signed logout requests
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
      */
-    public ECPProfileHandlerController(final SamlObjectSigner samlObjectSigner,
+    public ECPProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                        final ParserPool parserPool,
                                        final AuthenticationSystemSupport authenticationSystemSupport,
                                        final ServicesManager servicesManager,
