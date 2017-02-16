@@ -283,15 +283,15 @@ function generateDependencyLangFragments() {
 
       var parentTable = $(val).parent().parent().parent().parent().parent();
 
-      var tabs = "<ul class='nav nav-pills nav-justified'> \
-  <li class='active'><a data-toggle='tab' href='#maven'>Maven</a></li> \
-  <li><a data-toggle='tab' href='#gradle'>Gradle</a></li> \
-  <li role='presentation' class='dropdown'> \
-      <a class='dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' \ aria-expanded='false'>More Info<span class='caret'></span></a> \
-      <ul class='dropdown-menu'> \
-          <li><a href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a></li> \
-          <li><a href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Gradle Overlay Project</a></li> \
-      </ul> \
+      var tabs = "<ul class='nav nav-pills'> \
+  <li class='nav-item'><a class='nav-link active' data-toggle='tab' href='#maven'>Maven</a></li> \
+  <li class='nav-item'><a class='nav-link' data-toggle='tab' href='#gradle'>Gradle</a></li> \
+  <li role='presentation' class='nav-item dropdown'> \
+      <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>More Info<span class='caret'></span></a> \
+      <div class='dropdown-menu'> \
+          <a href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a> \
+          <a href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Gradle Overlay Project</a> \
+      </div> \
   </li> \
   </ul> \
   <div class='tab-content clearfix'> \
