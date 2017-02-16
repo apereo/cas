@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import com.github.scribejava.core.model.OAuthConstants;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;

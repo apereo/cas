@@ -16,6 +16,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.jasig.cas.client.util.CommonUtils;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
@@ -47,8 +48,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHandlerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(IdPInitiatedProfileHandlerController.class);
-
-    private final BaseSamlObjectSigner samlServiceObjectSigner;
 
     /**
      * Instantiates a new idp-init saml profile handler controller.
@@ -86,15 +85,15 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
                                                 final String logoutUrl,
                                                 final boolean forceSignedLogoutRequests,
                                                 final boolean singleLogoutCallbacksDisabled,
-                                                final BaseSamlObjectSigner samlServiceObjectSigner) {
+                                                final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
                 servicesManager, webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
                 configBean, responseBuilder, authenticationContextClassMappings,
                 serverPrefix, serverName,
                 authenticationContextRequestParameter, loginUrl, logoutUrl,
-                forceSignedLogoutRequests, singleLogoutCallbacksDisabled);
-        this.samlServiceObjectSigner = samlServiceObjectSigner;
+                forceSignedLogoutRequests, singleLogoutCallbacksDisabled,
+                samlObjectSignatureValidator);
     }
 
     /**
@@ -168,7 +167,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         ctx.setAutoCreateSubcontexts(true);
 
         if (adaptor.isAuthnRequestsSigned()) {
-            samlServiceObjectSigner.encode(authnRequest, registeredService, adaptor, response, request);
+            samlObjectSigner.encode(authnRequest, registeredService, adaptor, response, request);
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
