@@ -26,6 +26,7 @@ import javax.validation.MessageInterpolator;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
 public class CasCoreUtilConfiguration {
+
     @Bean
     public ApplicationContextProvider applicationContextProvider() {
         return new ApplicationContextProvider();
@@ -41,7 +42,6 @@ public class CasCoreUtilConfiguration {
         return new CommunicationsManager();
     }
 
-    
     @PostConstruct
     public void init() {
         final ConfigurableApplicationContext applicationContext = applicationContextProvider().getConfigurableApplicationContext();
@@ -50,4 +50,6 @@ public class CasCoreUtilConfiguration {
         final ScheduledAnnotationBeanPostProcessor p = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
         p.setEmbeddedValueResolver(new CasConfigurationEmbeddedValueResolver(applicationContext));
     }
+
+
 }

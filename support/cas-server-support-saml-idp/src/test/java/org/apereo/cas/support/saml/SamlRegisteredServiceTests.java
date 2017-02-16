@@ -3,10 +3,13 @@ package org.apereo.cas.support.saml;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,6 +18,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
@@ -51,6 +55,22 @@ public class SamlRegisteredServiceTests {
     }
 
     @Test
+    public void verifySavingInCommonSamlService() throws Exception {
+        final SamlRegisteredService service = new SamlRegisteredService();
+        service.setName("SAMLService");
+        service.setServiceId("http://mmoayyed.unicon.net");
+        service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
+        final InCommonRSAttributeReleasePolicy policy = new InCommonRSAttributeReleasePolicy();
+        final ChainingAttributeReleasePolicy chain = new ChainingAttributeReleasePolicy();
+        chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
+        service.setAttributeReleasePolicy(chain);
+
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+        dao.save(service);
+        dao.load();
+    }
+
+    @Test
     public void checkPattern() {
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("SAMLService");
@@ -73,11 +93,8 @@ public class SamlRegisteredServiceTests {
         serviceWritten.setName("SAMLService");
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
         serviceWritten.setMetadataLocation("classpath:/sample-idp-metadata.xml");
-
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-
         final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, SamlRegisteredService.class);
-
         assertEquals(serviceWritten, serviceRead);
     }
 }

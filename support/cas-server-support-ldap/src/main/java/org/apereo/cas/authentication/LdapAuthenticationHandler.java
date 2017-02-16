@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  */
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapAuthenticationHandler.class);
-    
+
     /**
      * Mapping of LDAP attribute name to principal attribute name.
      */
@@ -70,6 +70,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Flag indicating whether multiple values are allowed fo principalIdAttribute.
      */
     private boolean allowMultiplePrincipalAttributeValues;
+
+    /**
+     * Flag to indicate whether CAS should block authentication
+     * if a specific/configured principal id attribute is not found.
+     */
+    private boolean allowMissingPrincipalAttributeValue = true;
 
     /**
      * Set of LDAP attributes fetch from an entry as part of the authentication process.
@@ -234,12 +240,17 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (StringUtils.isNotBlank(this.principalIdAttribute)) {
             final LdapAttribute principalAttr = ldapEntry.getAttribute(this.principalIdAttribute);
             if (principalAttr == null || principalAttr.size() == 0) {
-                LOGGER.warn("The principal id attribute [{}] is not found. CAS cannot construct the final authenticated principal "
-                                + "if it's unable to locate the attribute that is designated as the principal id. "
-                                + "Attributes available on the LDAP entry are [{}]. Since principal id attribute is not available, CAS will "
-                                + "fallback to construct the principal based on the provided user id: [{}]",
-                        this.principalIdAttribute, ldapEntry.getAttributes(), username);
-                return username;
+
+                if (this.allowMissingPrincipalAttributeValue) {
+                    LOGGER.warn("The principal id attribute [{}] is not found. CAS cannot construct the final authenticated principal "
+                                 + "if it's unable to locate the attribute that is designated as the principal id. "
+                                 + "Attributes available on the LDAP entry are [{}]. Since principal id attribute is not available, CAS will "
+                                 + "fallback to construct the principal based on the provided user id: [{}]",
+                            this.principalIdAttribute, ldapEntry.getAttributes(), username);
+                    return username;
+                }
+                LOGGER.error("The principal id attribute [{}] is not found. CAS is configured to disallow missing principal attributes");
+                throw new LoginException("Principal id attribute is not found for " + principalAttr);
             }
 
             if (principalAttr.size() > 1) {
@@ -254,6 +265,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         LOGGER.debug("Principal id attribute is not defined. Using the default provided user id [{}]", username);
         return username;
+    }
+
+    public void setAllowMissingPrincipalAttributeValue(final boolean allowMissingPrincipalAttributeValue) {
+        this.allowMissingPrincipalAttributeValue = allowMissingPrincipalAttributeValue;
     }
 
     /**

@@ -32,6 +32,17 @@ which represent the authenticated principal for CAS:
 {"@c":".SimplePrincipal","id":"casuser","attributes":{}}
 ```
 
+Expected responses from the REST endpoint are mapped to CAS as such:
+
+| Code                   | Result
+|------------------------|---------------------------------------------
+| `200`          | Successful authentication.
+| `403`          | Produces a `AccountDisabledException`
+| `404`          | Produces a `AccountNotFoundException`
+| `423`          | Produces a `AccountLockedException`
+| `428`          | Produces a `AccountExpiredException`
+| Other          | Produces a `FailedLoginException`
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-authentication).

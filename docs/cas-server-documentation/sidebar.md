@@ -4,6 +4,7 @@ layout: null
 
 * [Planning](#planning)
     *   [Architecture](/$version/planning/Architecture.html)
+    *   [Getting Started](/$version/planning/Getting-Started.html)
     *   [Installation Requirements](/$version/planning/Installation-Requirements.html)
     *   [Security Guide](/$version/planning/Security-Guide.html)
     *   [High Availability Guide](/$version/planning/High-Availability-Guide.html)
@@ -27,6 +28,7 @@ layout: null
 * [Authentication](#casauthentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
     *   [Database](/$version/installation/Database-Authentication.html)
+        *   [Password Policy](/$version/installation/Password-Policy-Enforcement.html)
     *   [JAAS](/$version/installation/JAAS-Authentication.html)
     *   [X.509](/$version/installation/X509-Authentication.html)
     *   [Adaptive](/$version/installation/Configuring-Adaptive-Authentication.html)
@@ -126,8 +128,7 @@ layout: null
     *   [OIDC Protocol](/$version/protocol/OIDC-Protocol.html)
     *   [SAML Protocol](#samlprotocol)
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
-        *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
-        *   [Google Apps](/$version/integration/Google-Apps-Integration.html)  
+        *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html) 
     *   [REST Protocol](/$version/protocol/REST-Protocol.html)
 
 * [Integration](#appintegration)

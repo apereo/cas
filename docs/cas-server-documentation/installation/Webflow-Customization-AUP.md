@@ -21,20 +21,15 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
+Customize the policy by modifying the `src/main/resources/casAcceptableUsagePolicyView.html`. See [this guide](User-Interface-Customization.html)
+to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes,
+if you wish to dynamically alter the page to present different text, etc.
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
 
-### Enable Webflow
-
-In the `login-webflow.xml` file, enable the transition to `acceptableUsagePolicyCheck`
-by uncommenting the following entry:
-
-```xml
-<transition on="success" to="acceptableUsagePolicyCheck" />
-```
-
-Customize the policy by modifying `casAcceptableUsagePolicyView.html`.
-
 ## Storage Mechanism
+
+Usage policy user decisions are stored and rememberd via the following ways. 
 
 ### Default
 

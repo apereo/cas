@@ -173,7 +173,7 @@ public final class LdapUtils {
                                                                 final SearchFilter filter) throws LdapException {
         try (Connection connection = createConnection(connectionFactory)) {
             final SearchOperation searchOperation = new SearchOperation(connection);
-            final SearchRequest request = Beans.newSearchRequest(baseDn, filter);
+            final SearchRequest request = Beans.newLdaptiveSearchRequest(baseDn, filter);
             request.setReferralHandler(new SearchReferralHandler());
             return searchOperation.execute(request);
         }

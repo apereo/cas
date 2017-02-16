@@ -21,8 +21,8 @@ import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -52,8 +52,14 @@ import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
+import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.EntryResolver;
+import org.ldaptive.auth.FormatDnResolver;
+import org.ldaptive.auth.PooledBindAuthenticationHandler;
+import org.ldaptive.auth.PooledCompareAuthenticationHandler;
+import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.auth.PooledSearchEntryResolver;
+import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
@@ -98,6 +104,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * A re-usable collection of utility methods for object instantiations and configurations used cross various
@@ -182,8 +189,8 @@ public final class Beans {
      * @param jpaProperties the jpa properties
      * @return the local container entity manager factory bean
      */
-    public static LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigDataHolder config,
-                                                                                     final AbstractJpaProperties jpaProperties) {
+    public static LocalContainerEntityManagerFactoryBean newHibernateEntityManagerFactoryBean(final JpaConfigDataHolder config,
+                                                                                              final AbstractJpaProperties jpaProperties) {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
@@ -319,12 +326,20 @@ public final class Beans {
     /**
      * New dn resolver entry resolver.
      * Creates the necessary search entry resolver.
+     *
      * @param l       the ldap settings
      * @param factory the factory
      * @return the entry resolver
      */
-    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l,
-                                                       final PooledConnectionFactory factory) {
+    public static EntryResolver newLdaptiveSearchEntryResolver(final AbstractLdapAuthenticationProperties l,
+                                                               final PooledConnectionFactory factory) {
+        if (StringUtils.isBlank(l.getBaseDn())) {
+            throw new IllegalArgumentException("To create a search entry resolver, base dn cannot be empty/blank ");
+        }
+        if (StringUtils.isBlank(l.getUserFilter())) {
+            throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
+        }
+
         final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getUserFilter());
@@ -376,7 +391,7 @@ public final class Beans {
                     break;
             }
         });
-        
+
         if (!handlers.isEmpty()) {
             LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
             entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
@@ -391,10 +406,18 @@ public final class Beans {
      * @param l the ldap properties
      * @return the connection config
      */
-    public static ConnectionConfig newConnectionConfig(final AbstractLdapProperties l) {
+    public static ConnectionConfig newLdaptiveConnectionConfig(final AbstractLdapProperties l) {
+        if (StringUtils.isBlank(l.getLdapUrl())) {
+            throw new IllegalArgumentException("LDAP url cannot be empty/blank");
+        }
+
         LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
-        cc.setLdapUrl(l.getLdapUrl());
+
+        final String urls = Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
+        LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
+        cc.setLdapUrl(urls);
+
         cc.setUseSSL(l.isUseSsl());
         cc.setUseStartTLS(l.isUseStartTls());
         cc.setConnectTimeout(newDuration(l.getConnectTimeout()));
@@ -424,19 +447,25 @@ public final class Beans {
         }
 
         if (l.getTrustCertificates() != null) {
+            LOGGER.debug("Creating LDAP SSL configuration via trust certificates [{}]", l.getTrustCertificates());
             final X509CredentialConfig cfg = new X509CredentialConfig();
             cfg.setTrustCertificates(l.getTrustCertificates());
             cc.setSslConfig(new SslConfig(cfg));
+
         } else if (l.getKeystore() != null) {
+            LOGGER.debug("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
             final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
             cfg.setKeyStore(l.getKeystore());
             cfg.setKeyStorePassword(l.getKeystorePassword());
             cfg.setKeyStoreType(l.getKeystoreType());
             cc.setSslConfig(new SslConfig(cfg));
         } else {
+            LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore [{}]");
             cc.setSslConfig(new SslConfig());
         }
         if (l.getSaslMechanism() != null) {
+            LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
+
             final BindConnectionInitializer bc = new BindConnectionInitializer();
             final SaslConfig sc;
             switch (l.getSaslMechanism()) {
@@ -464,8 +493,10 @@ public final class Beans {
             bc.setBindSaslConfig(sc);
             cc.setConnectionInitializer(bc);
         } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
+            LOGGER.debug("Creating LDAP fast-bind connection initializer");
             cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
+            LOGGER.debug("Creating LDAP bind connection initializer via [{}]", l.getBindDn());
             cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
         }
         return cc;
@@ -477,7 +508,7 @@ public final class Beans {
      * @param l the ldap properties
      * @return the pool config
      */
-    public static PoolConfig newPoolConfig(final AbstractLdapProperties l) {
+    public static PoolConfig newLdaptivePoolConfig(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection pool configuration for [{}]", l.getLdapUrl());
         final PoolConfig pc = new PoolConfig();
         pc.setMinPoolSize(l.getMinPoolSize());
@@ -494,9 +525,9 @@ public final class Beans {
      * @param l the l
      * @return the connection factory
      */
-    public static DefaultConnectionFactory newConnectionFactory(final AbstractLdapProperties l) {
+    public static DefaultConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
-        final ConnectionConfig cc = newConnectionConfig(l);
+        final ConnectionConfig cc = newLdaptiveConnectionConfig(l);
         final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
         if (l.getProviderClass() != null) {
             try {
@@ -515,9 +546,9 @@ public final class Beans {
      * @param l the l
      * @return the connection pool
      */
-    public static ConnectionPool newBlockingConnectionPool(final AbstractLdapProperties l) {
-        final DefaultConnectionFactory bindCf = newConnectionFactory(l);
-        final PoolConfig pc = newPoolConfig(l);
+    public static ConnectionPool newLdaptiveBlockingConnectionPool(final AbstractLdapProperties l) {
+        final DefaultConnectionFactory bindCf = newLdaptiveConnectionFactory(l);
+        final PoolConfig pc = newLdaptivePoolConfig(l);
         final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
 
         cp.setBlockWaitTime(newDuration(l.getBlockWaitTime()));
@@ -567,8 +598,8 @@ public final class Beans {
      * @param l the ldap properties
      * @return the pooled connection factory
      */
-    public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
-        final ConnectionPool cp = newBlockingConnectionPool(l);
+    public static PooledConnectionFactory newLdaptivePooledConnectionFactory(final AbstractLdapProperties l) {
+        final ConnectionPool cp = newLdaptiveBlockingConnectionPool(l);
         return new PooledConnectionFactory(cp);
     }
 
@@ -633,7 +664,7 @@ public final class Beans {
      * @param filter the filter
      * @return the search request
      */
-    public static SearchRequest newSearchRequest(final String baseDn, final SearchFilter filter) {
+    public static SearchRequest newLdaptiveSearchRequest(final String baseDn, final SearchFilter filter) {
         final SearchRequest sr = new SearchRequest(baseDn, filter);
         sr.setBinaryAttributes(ReturnAttributes.ALL_USER.value());
         sr.setReturnAttributes(ReturnAttributes.ALL_USER.value());
@@ -648,8 +679,8 @@ public final class Beans {
      * @param filterQuery the query filter
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newSearchFilter(final String filterQuery) {
-        return newSearchFilter(filterQuery, Collections.emptyList());
+    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery) {
+        return newLdaptiveSearchFilter(filterQuery, Collections.emptyList());
     }
 
     /**
@@ -660,8 +691,8 @@ public final class Beans {
      * @param params      the username
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newSearchFilter(final String filterQuery, final List<String> params) {
-        return newSearchFilter(filterQuery, LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, params);
+    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final List<String> params) {
+        return newLdaptiveSearchFilter(filterQuery, LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, params);
     }
 
     /**
@@ -673,7 +704,7 @@ public final class Beans {
      * @param params      the username
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
+    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(filterQuery);
         if (params != null) {
@@ -690,18 +721,48 @@ public final class Beans {
     }
 
     /**
-     * New search executor search executor.
+     * New search executor.
      *
      * @param baseDn      the base dn
      * @param filterQuery the filter query
      * @param params      the params
      * @return the search executor
      */
-    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final List<String> params) {
+    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery, final List<String> params) {
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, ReturnAttributes.ALL.value());
+    }
+
+    /**
+     * New ldaptive search executor search executor.
+     *
+     * @param baseDn           the base dn
+     * @param filterQuery      the filter query
+     * @param params           the params
+     * @param returnAttributes the return attributes
+     * @return the search executor
+     */
+    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery,
+                                                           final List<String> params,
+                                                           final List<String> returnAttributes) {
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, returnAttributes.toArray(new String[]{}));
+    }
+
+    /**
+     * New ldaptive search executor search executor.
+     *
+     * @param baseDn           the base dn
+     * @param filterQuery      the filter query
+     * @param params           the params
+     * @param returnAttributes the return attributes
+     * @return the search executor
+     */
+    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery,
+                                                           final List<String> params,
+                                                           final String[] returnAttributes) {
         final SearchExecutor executor = new SearchExecutor();
         executor.setBaseDn(baseDn);
-        executor.setSearchFilter(newSearchFilter(filterQuery, params));
-        executor.setReturnAttributes(ReturnAttributes.ALL.value());
+        executor.setSearchFilter(newLdaptiveSearchFilter(filterQuery, params));
+        executor.setReturnAttributes(returnAttributes);
         executor.setSearchScope(SearchScope.SUBTREE);
         return executor;
     }
@@ -713,8 +774,8 @@ public final class Beans {
      * @param filterQuery the filter query
      * @return the search executor
      */
-    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery) {
-        return newSearchExecutor(baseDn, filterQuery, Collections.emptyList());
+    public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery) {
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, Collections.emptyList());
     }
 
     /**
@@ -772,5 +833,118 @@ public final class Beans {
                                 mongo.getDatabaseName(),
                                 mongo.getPassword().toCharArray())),
                 newMongoDbClientOptions(mongo));
+    }
+
+    /**
+     * New ldap authenticator.
+     *
+     * @param l the ldap settings.
+     * @return the authenticator
+     */
+    public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (l.getType() == AbstractLdapAuthenticationProperties.AuthenticationTypes.AD) {
+            LOGGER.debug("Creating active directory authenticator for [{}]", l.getLdapUrl());
+            return getActiveDirectoryAuthenticator(l);
+        }
+        if (l.getType() == AbstractLdapAuthenticationProperties.AuthenticationTypes.DIRECT) {
+            LOGGER.debug("Creating direct-bind authenticator for [{}]", l.getLdapUrl());
+            return getDirectBindAuthenticator(l);
+        }
+        if (l.getType() == AbstractLdapAuthenticationProperties.AuthenticationTypes.SASL) {
+            LOGGER.debug("Creating SASL authenticator for [{}]", l.getLdapUrl());
+            return getSaslAuthenticator(l);
+        }
+        if (l.getType() == AbstractLdapAuthenticationProperties.AuthenticationTypes.AUTHENTICATED) {
+            LOGGER.debug("Creating authenticated authenticator for [{}]", l.getLdapUrl());
+            return getAuthenticatedOrAnonSearchAuthenticator(l);
+        }
+
+        LOGGER.debug("Creating anonymous authenticator for [{}]", l.getLdapUrl());
+        return getAuthenticatedOrAnonSearchAuthenticator(l);
+    }
+
+    private static Authenticator getSaslAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getUserFilter())) {
+            throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
+        }
+
+        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
+        final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
+        resolver.setBaseDn(l.getBaseDn());
+        resolver.setSubtreeSearch(l.isSubtreeSearch());
+        resolver.setAllowMultipleDns(l.isAllowMultipleDns());
+        resolver.setConnectionFactory(factory);
+        resolver.setUserFilter(l.getUserFilter());
+        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
+    }
+
+    private static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getBaseDn())) {
+            throw new IllegalArgumentException("Base dn cannot be empty/blank for authenticated/anonymous authentication");
+        }
+        if (StringUtils.isBlank(l.getUserFilter())) {
+            throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
+        }
+        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
+        final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
+        resolver.setBaseDn(l.getBaseDn());
+        resolver.setSubtreeSearch(l.isSubtreeSearch());
+        resolver.setAllowMultipleDns(l.isAllowMultipleDns());
+        resolver.setConnectionFactory(Beans.newLdaptivePooledConnectionFactory(l));
+        resolver.setUserFilter(l.getUserFilter());
+
+        final Authenticator auth;
+        if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
+            auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
+        } else {
+            auth = new Authenticator(resolver, getPooledCompareAuthenticationHandler(l, factory));
+        }
+
+        if (l.isEnhanceWithEntryResolver()) {
+            auth.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, factory));
+        }
+        return auth;
+    }
+
+    private static Authenticator getDirectBindAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getDnFormat())) {
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
+        }
+        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
+        final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
+        final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
+
+        if (l.isEnhanceWithEntryResolver()) {
+            authenticator.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, factory));
+        }
+        return authenticator;
+    }
+
+    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getDnFormat())) {
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
+        }
+        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
+        final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
+        final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
+
+        if (l.isEnhanceWithEntryResolver()) {
+            authn.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, factory));
+        }
+        return authn;
+    }
+
+    private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
+                                                                                      final PooledConnectionFactory factory) {
+        final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler(factory);
+        handler.setAuthenticationControls(new PasswordPolicyControl());
+        return handler;
+    }
+
+    private static PooledCompareAuthenticationHandler getPooledCompareAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
+                                                                                            final PooledConnectionFactory factory) {
+        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(factory);
+        handler.setPasswordAttribute(l.getPrincipalAttributePassword());
+        return handler;
     }
 }

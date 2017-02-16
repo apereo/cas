@@ -114,7 +114,8 @@ public class AbstractRegisteredServiceTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
         
-        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p);
+        final Map<String, Object> attr = this.r.getAttributeReleasePolicy()
+                .getAttributes(p, RegisteredServiceTestUtils.getRegisteredService("test"));
         assertEquals(attr.size(), map.size());
     }
     
@@ -134,7 +135,8 @@ public class AbstractRegisteredServiceTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
         
-        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p);
+        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+                RegisteredServiceTestUtils.getRegisteredService("test"));
         assertEquals(attr.size(), 2);
         assertTrue(attr.containsKey("attr1"));
         assertTrue(attr.containsKey("attr3"));
@@ -160,7 +162,8 @@ public class AbstractRegisteredServiceTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
         
-        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p);
+        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+                RegisteredServiceTestUtils.getRegisteredService("test"));
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey("newAttr1"));
     }

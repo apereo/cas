@@ -26,7 +26,7 @@ import java.util.TreeMap;
 public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 5325460875620586503L;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredServiceAttributeReleasePolicy.class);
 
     private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
@@ -76,14 +76,14 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     @Override
-    public Map<String, Object> getAttributes(final Principal p) {
+    public Map<String, Object> getAttributes(final Principal p, final RegisteredService service) {
         LOGGER.debug("Locating principal attributes for [{}]", p.getId());
         final Map<String, Object> principalAttributes = this.principalAttributesRepository == null
                 ? p.getAttributes() : this.principalAttributesRepository.getAttributes(p);
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, p.getId());
 
         LOGGER.debug("Calling attribute policy [{}] to process attributes for [{}]", getClass().getSimpleName(), p.getId());
-        final Map<String, Object> policyAttributes = getAttributesInternal(principalAttributes);
+        final Map<String, Object> policyAttributes = getAttributesInternal(principalAttributes, service);
         LOGGER.debug("Attribute policy [{}] allows release of [{}] for [{}]", getClass().getSimpleName(), policyAttributes, p.getId());
 
         LOGGER.debug("Checking default attribute policy attributes");
@@ -110,6 +110,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     /**
      * Return the final attributes collection.
      * Subclasses may override this minute to impose last minute rules.
+     *
      * @param attributesToRelease the attributes to release
      * @return the map
      */
@@ -151,9 +152,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * Gets the attributes internally from the implementation.
      *
      * @param attributes the principal attributes
+     * @param service    the service
      * @return the attributes allowed for release
      */
-    protected abstract Map<String, Object> getAttributesInternal(Map<String, Object> attributes);
+    protected abstract Map<String, Object> getAttributesInternal(Map<String, Object> attributes,
+                                                                 RegisteredService service);
 
     @Override
     public int hashCode() {

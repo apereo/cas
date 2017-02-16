@@ -1,9 +1,13 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,11 +18,22 @@ import java.util.List;
  */
 public class AdminPagesSecurityProperties {
     private String ip = "127\\.0\\.0\\.1|0:0:0:0:0:0:0:1";
-    private List<String> adminRoles = new ArrayList<>(Collections.singletonList("ROLE_ADMIN"));
+    private List<String> adminRoles = Arrays.asList("ROLE_ADMIN", "ROLE_ACTUATOR");
     private String loginUrl;
     private String service;
     private Resource users;
     private boolean actuatorEndpointsEnabled;
+
+    private Jdbc jdbc = new Jdbc();
+    private Ldap ldap = new Ldap();
+
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(final Jdbc jdbc) {
+        this.jdbc = jdbc;
+    }
 
     public boolean isActuatorEndpointsEnabled() {
         return actuatorEndpointsEnabled;
@@ -66,5 +81,65 @@ public class AdminPagesSecurityProperties {
 
     public void setUsers(final Resource users) {
         this.users = users;
+    }
+
+    public Ldap getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final Ldap ldap) {
+        this.ldap = ldap;
+    }
+
+    public class Ldap extends AbstractLdapAuthenticationProperties {
+        @NestedConfigurationProperty
+        private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
+
+        /**
+         * Gets ldap authz.
+         *
+         * @return the ldap authz
+         */
+        public LdapAuthorizationProperties getLdapAuthz() {
+            ldapAuthz.setBaseDn(getBaseDn());
+            ldapAuthz.setSearchFilter(getUserFilter());
+            return ldapAuthz;
+        }
+
+        public void setLdapAuthz(final LdapAuthorizationProperties ldapAuthz) {
+            this.ldapAuthz = ldapAuthz;
+        }
+    }
+
+    public class Jdbc extends AbstractJpaProperties {
+        private String rolePrefix;
+        private String query;
+
+        @NestedConfigurationProperty
+        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+        public String getRolePrefix() {
+            return rolePrefix;
+        }
+
+        public void setRolePrefix(final String rolePrefix) {
+            this.rolePrefix = rolePrefix;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(final String query) {
+            this.query = query;
+        }
+
+        public PasswordEncoderProperties getPasswordEncoder() {
+            return passwordEncoder;
+        }
+
+        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+        }
     }
 }

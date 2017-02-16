@@ -34,7 +34,7 @@ import java.util.List;
  */
 @Configuration("casCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class CasCoreConfiguration {
     
     @Autowired

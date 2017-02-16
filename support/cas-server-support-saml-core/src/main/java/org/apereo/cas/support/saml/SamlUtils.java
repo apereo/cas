@@ -107,10 +107,14 @@ public final class SamlUtils {
      * @throws Exception the exception
      */
     public static SignatureValidationFilter buildSignatureValidationFilter(final ResourceLoader resourceLoader,
-                                                                           final String signatureResourceLocation) throws
-            Exception {
-        final Resource resource = resourceLoader.getResource(signatureResourceLocation);
-        return buildSignatureValidationFilter(resource);
+                                                                           final String signatureResourceLocation) throws Exception {
+        try {
+            final Resource resource = resourceLoader.getResource(signatureResourceLocation);
+            return buildSignatureValidationFilter(resource);
+        } catch (final Exception e){
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**
@@ -121,6 +125,11 @@ public final class SamlUtils {
      * @throws Exception the exception
      */
     public static SignatureValidationFilter buildSignatureValidationFilter(final Resource signatureResourceLocation) throws Exception {
+        if (!ResourceUtils.doesResourceExist(signatureResourceLocation)) {
+            LOGGER.warn("Resource [{}] cannot be located", signatureResourceLocation);
+            return null;
+        }
+
         final List<KeyInfoProvider> keyInfoProviderList = new ArrayList<>();
         keyInfoProviderList.add(new RSAKeyValueProvider());
         keyInfoProviderList.add(new DSAKeyValueProvider());
@@ -159,7 +168,7 @@ public final class SamlUtils {
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
 
-            LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...", 
+            LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...",
                     resource);
             final BasicResourceCredentialFactoryBean credentialFactoryBean = new BasicResourceCredentialFactoryBean();
             credentialFactoryBean.setPublicKeyInfo(resource);

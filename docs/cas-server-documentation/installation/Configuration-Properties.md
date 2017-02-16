@@ -192,6 +192,10 @@ server.port=8443
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
+server.maxHttpHeader-size=2097152
+server.useForwardHeaders=true
+server.connectionTimeout=20000
+
 # server.ssl.ciphers=
 # server.ssl.clientAuth=
 # server.ssl.enabled=
@@ -210,7 +214,7 @@ server.tomcat.accesslog.enabled=true
 server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
 server.tomcat.accesslog.suffix=.log
 
-server.tomcat.maxHttpHeaderSize=20971520
+server.tomcat.maxHttpPostSize=20971520
 server.tomcat.maxThreads=5
 server.tomcat.portHeader=X-Forwarded-Port
 server.tomcat.protocolHeader=X-Forwarded-Proto
@@ -229,7 +233,6 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.http.port=8080
 # cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
 # cas.server.http.enabled=true
-# cas.server.connectionTimeout=20000
 
 # cas.server.ajp.secure=false
 # cas.server.ajp.enabled=false
@@ -294,9 +297,32 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 ```properties
 # endpoints.enabled=true
 # endpoints.sensitive=true
-# management.contextPath=/status
+
+management.contextPath=/status
+management.security.enabled=true
+management.security.roles=ACTUATOR,ADMIN
+management.security.sessions=if_required
+
+# Each of the below endpoints can either be disabled
+# or can be individually marked as 'sensitive' (or not) 
+# to enable authentication.
+
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
+# endpoints.autoconfig.enabled=true
+# endpoints.beans.enabled=true
+# endpoints.bus.enabled=true
+# endpoints.configprops.enabled=true
+# endpoints.dump.enabled=true
+# endpoints.env.enabled=true
+# endpoints.health.enabled=true
+# endpoints.features.enabled=true
+# endpoints.info.enabled=true
+# endpoints.loggers.enabled=true
+# endpoints.logfile.enabled=true
+# endpoints.trace.enabled=true
+# endpoints.docs.enabled=false
+# endpoints.heapdump.enabled=true
 
 # IP address may be enough to protect all endpoints.
 # If you wish to protect the admin pages via CAS itself, configure the rest.
@@ -320,6 +346,97 @@ The format of the file is as such:
 - `casuser`: This is the authenticated user id received from CAS
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
 - `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
+
+### Admin Status Endpoints With Spring Security
+
+Status endpoints may also be secured by Spring Security. You can define the authentication scheme/paths via the below settings.
+
+```properties
+# security.ignored[0]=/**
+security.filterOrder=0
+security.requireSsl=true
+security.sessions=if_required
+security.user.name=<predefined-userid>
+security.user.password=<predefined-password>
+security.user.role=ACTUATOR
+```
+
+#### Basic AuthN
+
+```properties
+security.basic.authorizeMode=none|role|authenticated
+security.basic.enabled=true
+security.basic.path=/cas/status/**
+security.basic.realm=CAS
+```
+
+#### JDBC
+
+```properties
+# cas.adminPagesSecurity.jdbc.query=SELECT username,password,enabled FROM users WHERE username=?
+# cas.adminPagesSecurity.jdbc.healthQuery=
+# cas.adminPagesSecurity.jdbc.isolateInternalQueries=false
+# cas.adminPagesSecurity.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.adminPagesSecurity.jdbc.failFast=true
+# cas.adminPagesSecurity.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.adminPagesSecurity.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.adminPagesSecurity.jdbc.leakThreshold=10
+# cas.adminPagesSecurity.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.adminPagesSecurity.jdbc.batchSize=1
+# cas.adminPagesSecurity.jdbc.user=sa
+# cas.adminPagesSecurity.jdbc.ddlAuto=create-drop
+# cas.adminPagesSecurity.jdbc.maxAgeDays=180
+# cas.adminPagesSecurity.jdbc.password=
+# cas.adminPagesSecurity.jdbc.autocommit=false
+# cas.adminPagesSecurity.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.adminPagesSecurity.jdbc.idleTimeout=5000
+```
+
+#### LDAP
+
+
+```properties
+# cas.adminPagesSecurity.ldap.type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
+
+# cas.adminPagesSecurity.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.adminPagesSecurity.ldap.connectionStrategy=
+# cas.adminPagesSecurity.ldap.useSsl=true
+# cas.adminPagesSecurity.ldap.useStartTls=false
+# cas.adminPagesSecurity.ldap.connectTimeout=5000
+# cas.adminPagesSecurity.ldap.baseDn=dc=example,dc=org
+# cas.adminPagesSecurity.ldap.userFilter=cn={user}
+# cas.adminPagesSecurity.ldap.subtreeSearch=true
+# cas.adminPagesSecurity.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.adminPagesSecurity.ldap.bindCredential=Password
+
+# cas.adminPagesSecurity.ldap.enhanceWithEntryResolver=true
+# cas.adminPagesSecurity.ldap.dnFormat=uid=%s,ou=people,dc=example,dc=org
+# cas.adminPagesSecurity.ldap.principalAttributePassword=password
+
+# cas.adminPagesSecurity.ldap.saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
+# cas.adminPagesSecurity.ldap.saslRealm=EXAMPLE.COM
+# cas.adminPagesSecurity.ldap.saslAuthorizationId=
+# cas.adminPagesSecurity.ldap.saslMutualAuth=
+# cas.adminPagesSecurity.ldap.saslQualityOfProtection=
+# cas.adminPagesSecurity.ldap.saslSecurityStrength=
+
+# cas.adminPagesSecurity.ldap.trustCertificates=
+# cas.adminPagesSecurity.ldap.keystore=
+# cas.adminPagesSecurity.ldap.keystorePassword=
+# cas.adminPagesSecurity.ldap.keystoreType=JKS|JCEKS|PKCS12
+
+# cas.adminPagesSecurity.ldap.minPoolSize=3
+# cas.adminPagesSecurity.ldap.maxPoolSize=10
+# cas.adminPagesSecurity.ldap.validateOnCheckout=true
+# cas.adminPagesSecurity.ldap.validatePeriodically=true
+# cas.adminPagesSecurity.ldap.validatePeriod=600
+
+# cas.adminPagesSecurity.ldap.ldapAuthz.groupAttribute=
+# cas.adminPagesSecurity.ldap.ldapAuthz.groupPrefix=
+# cas.adminPagesSecurity.ldap.ldapAuthz.groupFilter=
+# cas.adminPagesSecurity.ldap.ldapAuthz.rolePrefix=ROLE_
+# cas.adminPagesSecurity.ldap.ldapAuthz.roleAttribute=uugid
+```
 
 ## Web Application Session
 
@@ -543,7 +660,7 @@ the following settings are then relevant:
 
 # cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table WHERE {0}
 # cas.authn.attributeRepository.jdbc[0].username=uid
-# cas.authn.attributeRepository.jdbc[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.attributeRepository.jdbc[0].healthQuery=
 # cas.authn.attributeRepository.jdbc[0].isolateInternalQueries=false
 # cas.authn.attributeRepository.jdbc[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.attributeRepository.jdbc[0].failFast=true
@@ -667,7 +784,7 @@ same IP address.
 
 ```properties
 # cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
-# cas.authn.throttle.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.throttle.jdbc.healthQuery=
 # cas.authn.throttle.jdbc.isolateInternalQueries=false
 # cas.authn.throttle.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.throttle.jdbc.failFast=true
@@ -726,14 +843,6 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 # cas.authn.adaptive.risk.response.mfaProvider=
 # cas.authn.adaptive.risk.response.riskyAuthenticationAttribute=triggeredRiskBasedAuthentication
-
-# spring.mail.host=
-# spring.mail.username=
-# spring.mail.password=
-# spring.mail.port=
-# spring.mail.properties.mail.smtp.auth=true
-# spring.mail.protocol=smtp
-# spring.mail.test-connection=false
 
 # cas.authn.adaptive.risk.response.mail.from=
 # cas.authn.adaptive.risk.response.mail.text=
@@ -899,8 +1008,8 @@ Authenticates a user by comparing the user password (which can be encoded with a
 against the password on record determined by a configurable database query.
 
 ```properties
-# cas.authn.jdbc.query[0].sql=SELECT password FROM table WHERE name=?
-# cas.authn.jdbc.query[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.query[0].sql=SELECT * FROM table WHERE name=?
+# cas.authn.jdbc.query[0].healthQuery=
 # cas.authn.jdbc.query[0].isolateInternalQueries=false
 # cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.jdbc.query[0].failFast=true
@@ -919,6 +1028,10 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].credentialCriteria=
 # cas.authn.jdbc.query[0].name=
 # cas.authn.jdbc.query[0].order=0
+# cas.authn.jdbc.query[0].fieldPassword=password
+# cas.authn.jdbc.query[0].fieldExpired=
+# cas.authn.jdbc.query[0].fieldDisabled=
+
 
 # cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
@@ -939,7 +1052,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].fieldUser=
 # cas.authn.jdbc.search[0].tableUsers=
 # cas.authn.jdbc.search[0].fieldPassword=
-# cas.authn.jdbc.search[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.search[0].healthQuery=
 # cas.authn.jdbc.search[0].isolateInternalQueries=false
 # cas.authn.jdbc.search[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.jdbc.search[0].failFast=true
@@ -975,7 +1088,7 @@ Searches for a user record by querying against a username and password; the user
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
 ```properties
-# cas.authn.jdbc.bind[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.bind[0].healthQuery=
 # cas.authn.jdbc.bind[0].isolateInternalQueries=false
 # cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.jdbc.bind[0].failFast=true
@@ -1024,7 +1137,9 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].sql=
 # cas.authn.jdbc.encode[0].algorithmName=
 # cas.authn.jdbc.encode[0].passwordFieldName=password
-# cas.authn.jdbc.encode[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.encode[0].expiredFieldName=
+# cas.authn.jdbc.encode[0].disabledFieldName=
+# cas.authn.jdbc.encode[0].healthQuery=
 # cas.authn.jdbc.encode[0].isolateInternalQueries=false
 # cas.authn.jdbc.encode[0].url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.jdbc.encode[0].failFast=true
@@ -1157,6 +1272,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].principalAttributePassword=password
 # cas.authn.ldap[0].principalAttributeList=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
+# cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
 # cas.authn.ldap[0].additionalAttributes=
 # cas.authn.ldap[0].credentialCriteria=
 
@@ -1651,7 +1767,7 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 ### JDBC Storage
 
 ```properties
-# cas.authn.mfa.trusted.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.mfa.trusted.jpa.healthQuery=
 # cas.authn.mfa.trusted.jpa.isolateInternalQueries=false
 # cas.authn.mfa.trusted.jpa.url=jdbc:hsqldb:mem:cas-jdbc-storage
 # cas.authn.mfa.trusted.jpa.failFast=true
@@ -1733,6 +1849,12 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.json.config.location=file:/somewhere.json
 ```
 
+#### Google Authenticator Rest
+
+```properties
+# cas.authn.mfa.gauth.rest.endpointUrl=https://somewhere.gauth.com
+```
+
 #### Google Authenticator MongoDb
 
 ```properties
@@ -1745,7 +1867,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 #### Google Authenticator JPA
 
 ```properties
-# cas.authn.mfa.gauth.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.mfa.gauth.jpa.database.healthQuery=
 # cas.authn.mfa.gauth.jpa.database.isolateInternalQueries=false
 # cas.authn.mfa.gauth.jpa.database.url=jdbc:hsqldb:mem:cas-gauth
 # cas.authn.mfa.gauth.jpa.database.failFast=true
@@ -1911,7 +2033,6 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 
 ```properties
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
-# cas.authn.samlIdp.hostName=cas.example.org
 # cas.authn.samlIdp.scope=example.org
 # cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 
@@ -2107,14 +2228,17 @@ The signature location MUST BE the public key used to sign the metadata.
 
 ## OpenID Connect
 
-Allow CAS to become an OpenID Connect provider (OP).
-To learn more about this topic, [please review this guide](OIDC-Authentication.html).
+Allow CAS to become an OpenID Connect provider (OP). To learn more about this topic, [please review this guide](OIDC-Authentication.html).
 
 ```properties
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
 # cas.authn.oidc.skew=5
 # cas.authn.oidc.jwksFile=file:/keystore.jwks
+# cas.authn.oidc.jwksCacheInMinutes=60
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
+# cas.authn.oidc.subjectTypes=public,pairwise
+# cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
+# cas.authn.oidc.claims=sub,name,preferred_username,family_name,given_name,middle_name,given_name,profile,picture,nickname,website,zoneinfo,locale,updated_at,birthdate,email,email_verified,phone_number,phone_number_verified,address
 ```
 
 ## Pac4j Delegated AuthN
@@ -2192,19 +2316,29 @@ Delegate authentication to an external SAML2 IdP (do not use the `resource:` or 
 prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 ```properties
+
+# Settings required for CAS SP metadata generation process
+# The keystore will be automatically generated by CAS with
+# keys required for the metadata generation and/or exchange.
+#
 # cas.authn.pac4j.saml.keystorePassword=
 # cas.authn.pac4j.saml.privateKeyPassword=
-# cas.authn.pac4j.saml.serviceProviderEntityId=
-# cas.authn.pac4j.saml.serviceProviderMetadataPath=
 # cas.authn.pac4j.saml.keystorePath=
+
+# The entityID assigned to CAS acting as the SP
+# cas.authn.pac4j.saml.serviceProviderEntityId=
+
+# Path to the auto-generated CAS SP metadata
+# cas.authn.pac4j.saml.serviceProviderMetadataPath=
+
 # cas.authn.pac4j.saml.maximumAuthenticationLifetime=
+
+# Path/URL to delegated IdP metadata
 # cas.authn.pac4j.saml.identityProviderMetadataPath=
 ```
 
-The callback url for the SAML identity provider will be the CAS login page plus the `client_name=SAML2Client` query string.
-If the `serviceProviderEntityId` is not defined, its value will be the CAS login page URL (without any query string).
-
-So you must configure your SAML IdP accordingly.
+Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  
+Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
 
 ### Yahoo
 
@@ -2275,6 +2409,7 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.code.timeToKillInSeconds=30
 # cas.authn.oauth.code.numberOfUses=1
 
+# cas.authn.oauth.accessToken.releaseProtocolAttributes=true
 # cas.authn.oauth.accessToken.timeToKillInSeconds=7200
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 ```
@@ -2389,7 +2524,7 @@ To learn more about this topic, [please review this guide](Audits.html).
 Store audit logs inside a database.
 
 ```properties
-# cas.audit.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.audit.jdbc.healthQuery=
 # cas.audit.jdbc.isolateInternalQueries=false
 # cas.audit.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.audit.jdbc.failFast=true
@@ -2452,7 +2587,7 @@ for authentication or attribute retrieval.
 ```properties
 # cas.monitor.jdbc.validationQuery=SELECT 1
 # cas.monitor.jdbc.maxWait=5000
-# cas.monitor.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.monitor.jdbc.healthQuery=
 # cas.monitor.jdbc.isolateInternalQueries=false
 # cas.monitor.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.monitor.jdbc.failFast=true
@@ -2553,7 +2688,7 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 Decide how CAS should store authentication events inside a database instance.
 
 ```properties
-# cas.events.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.events.jpa.healthQuery=
 # cas.events.jpa.isolateInternalQueries=false
 # cas.events.jpa.url=jdbc:hsqldb:mem:cas-events
 # cas.events.jpa.failFast=true
@@ -2739,7 +2874,7 @@ Control how CAS services should be found inside a database instance.
 To learn more about this topic, [please review this guide](JPA-Service-Management.html)
 
 ```properties
-# cas.serviceRegistry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.serviceRegistry.jpa.healthQuery=
 # cas.serviceRegistry.jpa.isolateInternalQueries=false
 # cas.serviceRegistry.jpa.url=jdbc:hsqldb:mem:cas-service-registry
 # cas.serviceRegistry.jpa.failFast=true
@@ -2783,7 +2918,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
-# cas.ticket.registry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.ticket.registry.jpa.healthQuery=
 # cas.ticket.registry.jpa.isolateInternalQueries=false
 # cas.ticket.registry.jpa.url=jdbc:hsqldb:mem:cas-ticket-registry
 # cas.ticket.registry.jpa.failFast=true
@@ -3148,40 +3283,46 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 
 # cas.mgmt.authzAttributes[0]=memberOf
 # cas.mgmt.authzAttributes[1]=groupMembership
+```
 
-# cas.mgmt.ldapAuthz.groupAttribute=
-# cas.mgmt.ldapAuthz.groupPrefix=
-# cas.mgmt.ldapAuthz.groupFilter=
-# cas.mgmt.ldapAuthz.rolePrefix=ROLE_
-# cas.mgmt.ldapAuthz.roleAttribute=uugid
-# cas.mgmt.ldapAuthz.searchFilter=cn={user}
+### LDAP Authorization
 
-# cas.mgmt.ldapAuthz.allowMultipleResults=false
-# cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
-# cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.mgmt.ldapAuthz.connectionStrategy=
-# cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
-# cas.mgmt.ldapAuthz.userFilter=cn={user}
-# cas.mgmt.ldapAuthz.bindDn=cn=Directory Manager,dc=example,dc=org
-# cas.mgmt.ldapAuthz.bindCredential=Password
-# cas.mgmt.ldapAuthz.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
-# cas.mgmt.ldapAuthz.connectTimeout=5000
-# cas.mgmt.ldapAuthz.trustCertificates=
-# cas.mgmt.ldapAuthz.keystore=
-# cas.mgmt.ldapAuthz.keystorePassword=
-# cas.mgmt.ldapAuthz.keystoreType=JKS|JCEKS|PKCS12
-# cas.mgmt.ldapAuthz.minPoolSize=3
-# cas.mgmt.ldapAuthz.maxPoolSize=10
-# cas.mgmt.ldapAuthz.validateOnCheckout=true
-# cas.mgmt.ldapAuthz.validatePeriodically=true
-# cas.mgmt.ldapAuthz.validatePeriod=600
-# cas.mgmt.ldapAuthz.failFast=true
-# cas.mgmt.ldapAuthz.idleTime=500
-# cas.mgmt.ldapAuthz.prunePeriod=600
-# cas.mgmt.ldapAuthz.blockWaitTime=5000
-# cas.mgmt.ldapAuthz.subtreeSearch=true
-# cas.mgmt.ldapAuthz.useSsl=true
-# cas.mgmt.ldapAuthz.useStartTls=false
+```properties
+# cas.mgmt.ldap.ldapAuthz.groupAttribute=
+# cas.mgmt.ldap.ldapAuthz.groupPrefix=
+# cas.mgmt.ldap.ldapAuthz.groupFilter=
+# cas.mgmt.ldap.ldapAuthz.groupBaseDn=
+# cas.mgmt.ldap.ldapAuthz.rolePrefix=ROLE_
+# cas.mgmt.ldap.ldapAuthz.roleAttribute=uugid
+# cas.mgmt.ldap.ldapAuthz.searchFilter=cn={user}
+# cas.mgmt.ldap.ldapAuthz.baseDn=
+
+# cas.mgmt.ldap.allowMultipleResults=false
+# cas.mgmt.ldap.baseDn=dc=example,dc=org
+# cas.mgmt.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.mgmt.ldap.connectionStrategy=
+# cas.mgmt.ldap.baseDn=dc=example,dc=org
+# cas.mgmt.ldap.userFilter=cn={user}
+# cas.mgmt.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.mgmt.ldap.bindCredential=Password
+# cas.mgmt.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.mgmt.ldap.connectTimeout=5000
+# cas.mgmt.ldap.trustCertificates=
+# cas.mgmt.ldap.keystore=
+# cas.mgmt.ldap.keystorePassword=
+# cas.mgmt.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.mgmt.ldap.minPoolSize=3
+# cas.mgmt.ldap.maxPoolSize=10
+# cas.mgmt.ldap.validateOnCheckout=true
+# cas.mgmt.ldap.validatePeriodically=true
+# cas.mgmt.ldap.validatePeriod=600
+# cas.mgmt.ldap.failFast=true
+# cas.mgmt.ldap.idleTime=500
+# cas.mgmt.ldap.prunePeriod=600
+# cas.mgmt.ldap.blockWaitTime=5000
+# cas.mgmt.ldap.subtreeSearch=true
+# cas.mgmt.ldap.useSsl=true
+# cas.mgmt.ldap.useStartTls=false
 ```
 
 ## Google reCAPTCHA Integration
@@ -3229,6 +3370,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # spring.data.mongodb.database=prod
 
 # Manage session storage via Redis
+# spring.session.store-type=redis
 # spring.redis.host=localhost
 # spring.redis.password=secret
 # spring.redis.port=6379
@@ -3451,7 +3593,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
 # cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
 
-# cas.authn.pm.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.pm.jdbc.healthQuery=
 # cas.authn.pm.jdbc.isolateInternalQueries=false
 # cas.authn.pm.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.authn.pm.jdbc.failFast=true
@@ -3474,3 +3616,11 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.jdbc.passwordEncoder.secret=
 # cas.authn.pm.jdbc.passwordEncoder.strength=16
 ````
+
+### REST Password Management
+
+```properties
+# cas.authn.pm.rest.endpointUrlEmail=
+# cas.authn.pm.rest.endpointUrlSecurityQuestions=
+# cas.authn.pm.rest.endpointUrlChange=
+```

@@ -11,10 +11,9 @@ import org.apereo.cas.util.ISOStandardDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
@@ -36,9 +35,7 @@ import java.util.concurrent.Callable;
  * @author Dmitriy Kopylenko
  * @since 4.1
  */
-@Controller("singleSignOnSessionsReportController")
-@RequestMapping(value = "/status/ssosessions")
-public class SingleSignOnSessionsReportController {
+public class SingleSignOnSessionsReportController extends AbstractNamedMvcEndpoint {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
     private static final String STATUS = "status";
@@ -47,7 +44,7 @@ public class SingleSignOnSessionsReportController {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     private enum SsoSessionReportOptions {
         ALL("all"),
         PROXIED("proxied"),
@@ -109,6 +106,7 @@ public class SingleSignOnSessionsReportController {
     private final CentralAuthenticationService centralAuthenticationService;
 
     public SingleSignOnSessionsReportController(final CentralAuthenticationService centralAuthenticationService) {
+        super("ssosessions", "/ssosessions", true, true);
         this.centralAuthenticationService = centralAuthenticationService;
     }
 

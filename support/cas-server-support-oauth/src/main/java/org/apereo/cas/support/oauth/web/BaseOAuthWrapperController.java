@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -29,7 +30,6 @@ import org.springframework.stereotype.Controller;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.
@@ -41,31 +41,31 @@ import java.util.Map;
 @Controller
 public abstract class BaseOAuthWrapperController {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
-    
-    private ServicesManager servicesManager;
 
-    private TicketRegistry ticketRegistry;
+    /** Collection of CAS settings. **/
+    protected final CasConfigurationProperties casProperties;
 
-    private OAuth20Validator validator;
-
-    private AccessTokenFactory accessTokenFactory;
-
-    private PrincipalFactory principalFactory;
-
-    private ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+    private final ServicesManager servicesManager;
+    private final TicketRegistry ticketRegistry;
+    private final OAuth20Validator validator;
+    private final AccessTokenFactory accessTokenFactory;
+    private final PrincipalFactory principalFactory;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
     public BaseOAuthWrapperController(final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry,
                                       final OAuth20Validator validator,
                                       final AccessTokenFactory accessTokenFactory,
                                       final PrincipalFactory principalFactory,
-                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                      final CasConfigurationProperties casProperties) {
         this.servicesManager = servicesManager;
         this.ticketRegistry = ticketRegistry;
         this.validator = validator;
         this.accessTokenFactory = accessTokenFactory;
         this.principalFactory = principalFactory;
         this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
+        this.casProperties = casProperties;
     }
 
     /**
@@ -80,7 +80,9 @@ public abstract class BaseOAuthWrapperController {
                                               final Authentication authentication,
                                               final J2EContext context) {
         final AccessToken accessToken = this.accessTokenFactory.create(service, authentication);
+        LOGGER.debug("Creating access token [{}]", accessToken);
         this.ticketRegistry.addTicket(accessToken);
+        LOGGER.debug("Added access token [{}] to registry", accessToken);
         return accessToken;
     }
 
@@ -105,10 +107,8 @@ public abstract class BaseOAuthWrapperController {
     protected Authentication createAuthentication(final UserProfile profile,
                                                   final RegisteredService service,
                                                   final J2EContext context) {
-        final Principal principal = this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
-
-        final Map<String, Object> newAttributes = service.getAttributeReleasePolicy().getAttributes(principal);
-        final Principal newPrincipal = principalFactory.createPrincipal(profile.getId(), newAttributes);
+        final Principal newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
+        LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, service);
 
         final String authenticator = profile.getClass().getCanonicalName();
         final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
@@ -116,6 +116,7 @@ public abstract class BaseOAuthWrapperController {
 
         final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.STATE), StringUtils.EMPTY);
         final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.NONCE), StringUtils.EMPTY);
+        LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuthConstants.STATE, state, OAuthConstants.NONCE, nonce);
 
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", profile.getPermissions())
@@ -126,11 +127,18 @@ public abstract class BaseOAuthWrapperController {
                 .setPrincipal(newPrincipal)
                 .setAuthenticationDate(ZonedDateTime.now())
                 .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
-        profile.getAttributes().forEach((k, v) -> {
-            if (!newPrincipal.getAttributes().containsKey(k)) {
-                bldr.addAttribute(k, v);
-            }
-        });
+
+        // Add "other" profile attributes as authentication attributes.
+        if (casProperties.getAuthn().getOauth().getAccessToken().isReleaseProtocolAttributes()) {
+            profile.getAttributes().forEach((k, v) -> {
+                if (!newPrincipal.getAttributes().containsKey(k)) {
+                    LOGGER.debug("Added attribute [{}] with value [{}] to the authentication", k, v);
+                    bldr.addAttribute(k, v);
+                } else {
+                    LOGGER.debug("Skipped over attribute [{}] since it's already contained by the principal", k, v);
+                }
+            });
+        }
         return bldr.build();
     }
 

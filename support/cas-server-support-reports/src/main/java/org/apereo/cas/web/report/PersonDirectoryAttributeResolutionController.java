@@ -6,10 +6,9 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
+import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,9 +24,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller("PersonDirectoryAttributeResolutionController")
-@RequestMapping("/status/attrresolution")
-public class PersonDirectoryAttributeResolutionController {
+public class PersonDirectoryAttributeResolutionController extends AbstractNamedMvcEndpoint {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -35,7 +32,11 @@ public class PersonDirectoryAttributeResolutionController {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
-    
+
+    public PersonDirectoryAttributeResolutionController() {
+        super("attrresolution", "/attrresolution", true, true);
+    }
+
     /**
      * Handle request.
      *
@@ -45,7 +46,8 @@ public class PersonDirectoryAttributeResolutionController {
      * @throws Exception the exception
      */
     @GetMapping
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
         return new ModelAndView("monitoring/attrresolution");
     }
 

@@ -2,10 +2,9 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,14 +18,13 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller("authenticationEventsController")
-@RequestMapping("/status/authnEvents")
 @ConditionalOnClass(value = CasEventRepository.class)
-public class AuthenticationEventsController {
+public class AuthenticationEventsController extends AbstractNamedMvcEndpoint {
 
     private CasEventRepository eventRepository;
 
     public AuthenticationEventsController(final CasEventRepository eventRepository) {
+        super("casauthnevents", "/authnEvents", true, true);
         this.eventRepository = eventRepository;
     }
 
@@ -39,7 +37,8 @@ public class AuthenticationEventsController {
      * @throws Exception the exception
      */
     @GetMapping
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
         return new ModelAndView("monitoring/viewAuthenticationEvents");
     }
 

@@ -77,7 +77,7 @@ import java.util.Optional;
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasWebflowConfigurer.class);
-    
+
     /**
      * The logout flow definition registry.
      */
@@ -257,16 +257,40 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     /**
-     * Add transition to action state.
+     * Create transition for state transition.
      *
-     * @param state           the action state
+     * @param state           the state
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
      * @return the transition
      */
     protected Transition createTransitionForState(final TransitionableState state,
-                                                  final String criteriaOutcome, final String targetState) {
+                                                  final String criteriaOutcome,
+                                                  final String targetState) {
+        return createTransitionForState(state, criteriaOutcome, targetState, false);
+    }
+
+    /**
+     * Add transition to action state.
+     *
+     * @param state           the action state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param removeExisting  the remove existing
+     * @return the transition
+     */
+    protected Transition createTransitionForState(final TransitionableState state,
+                                                  final String criteriaOutcome,
+                                                  final String targetState,
+                                                  final boolean removeExisting) {
         try {
+            if (removeExisting) {
+                final Transition success = (Transition) state.getTransition(criteriaOutcome);
+                if (success != null) {
+                    state.getTransitionSet().remove(success);
+                }
+            }
+
             final Transition transition = createTransition(criteriaOutcome, targetState);
             state.getTransitionSet().add(transition);
             LOGGER.debug("Added transition [{}] to the state [{}]", transition.getId(), state.getId());

@@ -43,7 +43,6 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
-
         String currentDn = null;
         try {
             final Response<SearchResult> response = searchForId(credential.getId());
@@ -72,7 +71,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      */
     private Response<SearchResult> searchForId(final String id) throws LdapException {
 
-        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter,
+        final SearchFilter filter = Beans.newLdaptiveSearchFilter(this.searchFilter,
                 Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 Arrays.asList(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);

@@ -151,7 +151,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private Response<SearchResult> getSearchResultResponse() throws LdapException {
         return LdapUtils.executeSearchOperation(this.connectionFactory,
-                this.baseDn, Beans.newSearchFilter(this.loadFilter));
+                this.baseDn, Beans.newLdaptiveSearchFilter(this.loadFilter));
     }
 
     @Override
@@ -180,7 +180,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForServiceById(final Long id) throws LdapException {
-        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter,
+        final SearchFilter filter = Beans.newLdaptiveSearchFilter(this.searchFilter,
                 Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 Arrays.asList(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);

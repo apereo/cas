@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
         CasCoreUtilConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class})
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 public class JpaGoogleAuthenticatorAccountRegistryTests {

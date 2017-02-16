@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 public class SamlIdPProperties {
 
     private String entityId = "https://cas.example.org/idp";
-    private String hostName = "cas.example.org";
     private String scope = "example.org";
     private Set<String> authenticationContextClassMappings;
 
@@ -70,14 +69,6 @@ public class SamlIdPProperties {
 
     public void setEntityId(final String entityId) {
         this.entityId = entityId;
-    }
-
-    public String getHostName() {
-        return hostName;
-    }
-
-    public void setHostName(final String hostName) {
-        this.hostName = hostName;
     }
 
     public String getScope() {

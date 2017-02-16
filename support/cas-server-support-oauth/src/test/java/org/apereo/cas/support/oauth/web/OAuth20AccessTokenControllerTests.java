@@ -18,15 +18,16 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.OAuthGrantType;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
+import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +51,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * This class tests the {@link OAuth20AccessTokenController} class.
+ * This class tests the {@link OAuth20AccessTokenEndpointController} class.
  *
  * @author Jerome Leleu
  * @since 3.5.2
@@ -99,9 +100,8 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("accessTokenController")
-    private OAuth20AccessTokenController oAuth20AccessTokenController;
-
-
+    private OAuth20AccessTokenEndpointController oAuth20AccessTokenController;
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -126,7 +126,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
@@ -145,7 +145,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
@@ -203,7 +203,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
@@ -223,7 +223,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
 
@@ -244,7 +244,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
         final OAuthCode code = addCode(principal, registeredService);
@@ -265,7 +265,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, OTHER_REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
@@ -286,7 +286,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, WRONG_CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
@@ -324,7 +324,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         servicesManager.save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -416,7 +416,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         if (basicAuth) {
             final String auth = CLIENT_ID + ':' + CLIENT_SECRET;
             final String value = Base64.encodeBase64String(auth.getBytes(StandardCharsets.UTF_8));
@@ -491,7 +491,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.PASSWORD.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -507,7 +507,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.PASSWORD.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -525,7 +525,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -543,7 +543,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.PASSWORD.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, "badPassword");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -592,7 +592,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.PASSWORD.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -646,7 +646,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.REFRESH_TOKEN, refreshToken.getId());
@@ -666,7 +666,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, WRONG_CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.REFRESH_TOKEN, refreshToken.getId());
@@ -684,7 +684,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -737,7 +737,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.REFRESH_TOKEN, refreshToken.getId());

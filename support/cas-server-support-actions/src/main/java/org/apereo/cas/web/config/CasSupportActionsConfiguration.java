@@ -49,7 +49,7 @@ import java.util.Collections;
  */
 @Configuration("casSupportActionsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class CasSupportActionsConfiguration {
 
     @Autowired

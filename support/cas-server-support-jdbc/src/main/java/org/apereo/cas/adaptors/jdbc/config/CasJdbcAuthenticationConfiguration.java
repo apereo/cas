@@ -105,7 +105,9 @@ public class CasJdbcAuthenticationConfiguration {
 
     private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Encode b) {
         final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getAlgorithmName(), b.getSql(),
-                b.getPasswordFieldName(), b.getSaltFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(), b.getStaticSalt());
+                b.getPasswordFieldName(), b.getSaltFieldName(), b.getExpiredFieldName(),
+                b.getDisabledFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(),
+                b.getStaticSalt());
 
         h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
@@ -133,7 +135,8 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
-        final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getSql());
+        final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getSql(),
+                b.getFieldPassword(), b.getFieldExpired(), b.getFieldDisabled());
         h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));

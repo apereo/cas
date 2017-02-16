@@ -19,7 +19,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
-import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.RegexUtils;
@@ -46,8 +45,11 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
         }
         bean.setRequiredHandlers(svc.getRequiredHandlers());
 
-        if (svc instanceof OAuthCallbackAuthorizeService) {
-            bean.setType(RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString());
+        if (StringUtils.isNotBlank(svc.getInformationUrl())) {
+            bean.setInformationUrl(svc.getInformationUrl());
+        }
+        if (StringUtils.isNotBlank(svc.getPrivacyUrl())) {
+            bean.setPrivacyUrl(svc.getPrivacyUrl());
         }
 
         if (svc instanceof OAuthRegisteredService) {
@@ -66,6 +68,11 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 final RegisteredServiceOidcTypeEditBean oidcBean = bean.getOidc();
                 oidcBean.setJwks(oidc.getJwks());
                 oidcBean.setSignToken(oidc.isSignIdToken());
+                oidcBean.setImplicit(oidc.isImplicit());
+
+                oidcBean.setEncrypt(oidc.isEncryptIdToken());
+                oidcBean.setEncryptAlg(oidc.getIdTokenEncryptionAlg());
+                oidcBean.setEncryptEnc(oidc.getIdTokenEncryptionEncoding());
             }
 
         }
@@ -83,7 +90,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             samlbean.setSignAssert(saml.isSignAssertions());
             samlbean.setRemoveEmptyEntities(saml.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             samlbean.setRemoveRoleless(saml.isMetadataCriteriaRemoveRolelessEntityDescriptors());
-            
+
             if (StringUtils.isNotBlank(saml.getMetadataCriteriaDirection())) {
                 samlbean.setDir(saml.getMetadataCriteriaDirection().toUpperCase());
             }
@@ -93,7 +100,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             if (StringUtils.isNotBlank(saml.getMetadataCriteriaRoles())) {
                 samlbean.setRoles(org.springframework.util.StringUtils.commaDelimitedListToSet(saml.getMetadataCriteriaRoles()));
             }
-            
+
         }
 
         bean.setTheme(svc.getTheme());
@@ -151,9 +158,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
 
             // create base RegisteredService object
             final String type = data.getType();
-            if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString())) {
-                regSvc = new OAuthCallbackAuthorizeService();
-            } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())
+            if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())
                     || StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OIDC.toString())) {
 
                 if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())) {
@@ -172,6 +177,10 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OIDC.toString())) {
                     ((OidcRegisteredService) regSvc).setJwks(data.getOidc().getJwks());
                     ((OidcRegisteredService) regSvc).setSignIdToken(data.getOidc().isSignToken());
+                    ((OidcRegisteredService) regSvc).setImplicit(data.getOidc().isImplicit());
+                    ((OidcRegisteredService) regSvc).setEncryptIdToken(data.getOidc().isEncrypt());
+                    ((OidcRegisteredService) regSvc).setIdTokenEncryptionAlg(data.getOidc().getEncryptAlg());
+                    ((OidcRegisteredService) regSvc).setIdTokenEncryptionEncoding(data.getOidc().getEncryptEnc());
                 }
             } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.SAML.toString())) {
                 regSvc = new SamlRegisteredService();
@@ -227,6 +236,8 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             regSvc.setTheme(data.getTheme());
             regSvc.setEvaluationOrder(data.getEvalOrder());
             regSvc.setRequiredHandlers(data.getRequiredHandlers());
+            regSvc.setPrivacyUrl(data.getPrivacyUrl());
+            regSvc.setInformationUrl(data.getInformationUrl());
 
             // process logout settings
             regSvc.setLogoutType(parseLogoutType(data.getLogoutType()));

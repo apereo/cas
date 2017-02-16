@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileControllerController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
@@ -33,7 +34,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * This class tests the {@link OAuth20ProfileController} class.
+ * This class tests the {@link OAuth20UserProfileControllerController} class.
  *
  * @author Jerome Leleu
  * @since 3.5.2
@@ -59,7 +60,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     private AccessTokenFactory accessTokenFactory;
 
     @Autowired
-    private OAuth20ProfileController oAuth20ProfileController;
+    private OAuth20UserProfileControllerController oAuth20ProfileController;
 
     @Test
     public void verifyNoGivenAccessToken() throws Exception {
