@@ -14,6 +14,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
@@ -75,7 +76,8 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
                                                    final String loginUrl,
                                                    final String logoutUrl,
                                                    final boolean forceSignedLogoutRequests,
-                                                   final boolean singleLogoutCallbacksDisabled) {
+                                                   final boolean singleLogoutCallbacksDisabled,
+                                                   final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner,
                 parserPool,
                 authenticationSystemSupport,
@@ -91,7 +93,8 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
                 loginUrl,
                 logoutUrl,
                 forceSignedLogoutRequests,
-                singleLogoutCallbacksDisabled);
+                singleLogoutCallbacksDisabled,
+                samlObjectSignatureValidator);
     }
 
     /**
