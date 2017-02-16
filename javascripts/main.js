@@ -283,21 +283,23 @@ function generateDependencyLangFragments() {
 
       var parentTable = $(val).parent().parent().parent().parent().parent();
 
+      var mavenId = Math.floor((Math.random() * 10000) + 1);
+      var gradleId = Math.floor((Math.random() * 10000) + 1);
+      
       var tabs = "<ul class='nav nav-pills'> \
-  <li class='nav-item'><a class='nav-link active' data-toggle='tab' href='#maven'>Maven</a></li> \
-  <li class='nav-item'><a class='nav-link' data-toggle='tab' href='#gradle'>Gradle</a></li> \
+  <li class='nav-item'><a class='nav-link active' data-toggle='tab' href='#maven" + mavenId + "'>Maven</a></li> \
+  <li class='nav-item'><a class='nav-link' data-toggle='tab' href='#gradle" + gradleId + "'>Gradle</a></li> \
   <li role='presentation' class='nav-item dropdown'> \
-      <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>More...<span class='caret'></span></a> \
+      <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>More<span class='caret'></span></a> \
       <div class='dropdown-menu'> \
           <a class='dropdown-item' href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a> \
-          <a class='dropdown-item' href='#'/> \
           <a class='dropdown-item' href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Gradle Overlay Project</a> \
       </div> \
   </li> \
   </ul> \
   <div class='tab-content clearfix'> \
-    <div class='tab-pane fade in active language-xml highlighter-rouge highlight' id='maven'>" + parentTable.html() + "</div> \
-    <div class='tab-pane fade in language-groovy highlighter-rouge highlight' id='gradle'>" + gradleFragment + "</div> \
+    <div class='tab-pane fade in active language-xml highlighter-rouge highlight' id='maven" + mavenId + "'>" + parentTable.html() + "</div> \
+    <div class='tab-pane fade in language-groovy highlighter-rouge highlight' id='gradle" + gradleId + "'>" + gradleFragment + "</div> \
   </div>";
 
       var divHighlight = parentTable.parent();
