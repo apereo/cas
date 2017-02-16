@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link Pac4jProperties}.
@@ -255,7 +257,7 @@ public class Pac4jProperties {
         private String privateKeyPassword;
         private String keystorePath;
         private String identityProviderMetadataPath;
-        private String maximumAuthenticationLifetime;
+        private int maximumAuthenticationLifetime = 600;
         private String serviceProviderEntityId;
         private String serviceProviderMetadataPath;
 
@@ -291,11 +293,11 @@ public class Pac4jProperties {
             this.identityProviderMetadataPath = identityProviderMetadataPath;
         }
 
-        public String getMaximumAuthenticationLifetime() {
+        public int getMaximumAuthenticationLifetime() {
             return this.maximumAuthenticationLifetime;
         }
 
-        public void setMaximumAuthenticationLifetime(final String maximumAuthenticationLifetime) {
+        public void setMaximumAuthenticationLifetime(final int maximumAuthenticationLifetime) {
             this.maximumAuthenticationLifetime = maximumAuthenticationLifetime;
         }
 
@@ -338,17 +340,31 @@ public class Pac4jProperties {
     }
 
     public static class Oidc {
+        private String type = "generic";
         private String id;
         private String secret;
         private String discoveryUri;
-        private String useNonce;
+        private boolean useNonce;
         private String scope;
         private String preferredJwsAlgorithm;
-        private String maxClockSkew;
-        private String customParamKey1;
-        private String customParamValue1;
-        private String customParamKey2;
-        private String customParamValue2;
+        private int maxClockSkew;
+        private Map<String, String> customParams = new HashMap<>();
+
+        public Map<String, String> getCustomParams() {
+            return customParams;
+        }
+
+        public void setCustomParams(final Map<String, String> customParams) {
+            this.customParams = customParams;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(final String type) {
+            this.type = type;
+        }
 
         public String getScope() {
             return scope;
@@ -382,11 +398,11 @@ public class Pac4jProperties {
             this.discoveryUri = discoveryUri;
         }
 
-        public String getUseNonce() {
-            return this.useNonce;
+        public boolean isUseNonce() {
+            return useNonce;
         }
 
-        public void setUseNonce(final String useNonce) {
+        public void setUseNonce(final boolean useNonce) {
             this.useNonce = useNonce;
         }
 
@@ -398,44 +414,12 @@ public class Pac4jProperties {
             this.preferredJwsAlgorithm = preferredJwsAlgorithm;
         }
 
-        public String getMaxClockSkew() {
+        public int getMaxClockSkew() {
             return this.maxClockSkew;
         }
 
-        public void setMaxClockSkew(final String maxClockSkew) {
+        public void setMaxClockSkew(final int maxClockSkew) {
             this.maxClockSkew = maxClockSkew;
-        }
-
-        public String getCustomParamKey1() {
-            return this.customParamKey1;
-        }
-
-        public void setCustomParamKey1(final String customParamKey1) {
-            this.customParamKey1 = customParamKey1;
-        }
-
-        public String getCustomParamValue1() {
-            return this.customParamValue1;
-        }
-
-        public void setCustomParamValue1(final String customParamValue1) {
-            this.customParamValue1 = customParamValue1;
-        }
-
-        public String getCustomParamKey2() {
-            return this.customParamKey2;
-        }
-
-        public void setCustomParamKey2(final String customParamKey2) {
-            this.customParamKey2 = customParamKey2;
-        }
-
-        public String getCustomParamValue2() {
-            return this.customParamValue2;
-        }
-
-        public void setCustomParamValue2(final String customParamValue2) {
-            this.customParamValue2 = customParamValue2;
         }
     }
 
