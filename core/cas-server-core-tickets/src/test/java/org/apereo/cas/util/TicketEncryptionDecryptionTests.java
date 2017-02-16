@@ -6,7 +6,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.Ticket;
 
 import com.google.common.io.ByteSource;
-import org.apereo.cas.util.cipher.BinaryCipherExecutor;
+import org.apereo.cas.util.cipher.BaseBinaryCipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.junit.Test;
 
@@ -20,8 +20,9 @@ import static org.junit.Assert.*;
 public class TicketEncryptionDecryptionTests {
 
     private final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");
-    private final BinaryCipherExecutor cipher = new BinaryCipherExecutor("1234567890123456",
-            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 512, 16);
+    private final BaseBinaryCipherExecutor cipher = new BaseBinaryCipherExecutor("1234567890123456",
+            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
+            512, 16) {};
 
     @Test
     public void checkSerializationOfTgt() {

@@ -3,26 +3,24 @@ package org.apereo.cas.util.cipher;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.jose4j.keys.AesKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 
 /**
  * Abstract cipher to provide common operations around signing objects.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCipherExecutor.class);
-    
+
     private AesKey signingKey;
 
     /**
      * Instantiates a new cipher executor.
-     *
      */
-    protected AbstractCipherExecutor() {}
+    protected AbstractCipherExecutor() {
+    }
 
     /**
      * Instantiates a new cipher executor.

@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseStringCipherExecutor.class);
-    
+
     private static final int ENCRYPTION_KEY_SIZE = 256;
 
     private static final int SIGNING_KEY_SIZE = 512;
@@ -74,18 +74,18 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
         String secretKeyToUse = secretKeyEncryption;
         if (StringUtils.isBlank(secretKeyToUse)) {
-            LOGGER.warn("Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key");
+            LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
             secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
-            LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
-                    secretKeyToUse, ENCRYPTION_KEY_SIZE);
+            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
+                    secretKeyToUse, ENCRYPTION_KEY_SIZE, getName());
         }
 
         String signingKeyToUse = secretKeySigning;
         if (StringUtils.isBlank(signingKeyToUse)) {
-            LOGGER.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
+            LOGGER.warn("Secret key for signing is not defined for [{}]. CAS will attempt to auto-generate the signing key", getName());
             signingKeyToUse = EncodingUtils.generateJsonWebKey(SIGNING_KEY_SIZE);
-            LOGGER.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings.",
-                    signingKeyToUse, SIGNING_KEY_SIZE);
+            LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
+                    signingKeyToUse, SIGNING_KEY_SIZE, getName());
         }
 
 

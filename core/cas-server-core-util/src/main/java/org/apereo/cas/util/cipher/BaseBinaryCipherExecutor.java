@@ -20,13 +20,16 @@ import java.util.Map;
  * A implementation that is based on algorithms
  * provided by the default platform's JCE. By default AES encryption is
  * used.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BinaryCipherExecutor.class);
-    
-    /** Secret key IV algorithm. Default is {@code AES}. */
+public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseBinaryCipherExecutor.class);
+
+    /**
+     * Secret key IV algorithm. Default is {@code AES}.
+     */
     private String secretKeyAlgorithm = "AES";
 
     private String encryptionSecretKey;
@@ -40,10 +43,10 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
      * @param signingKeySize      the signing key size
      * @param encryptionKeySize   the encryption key size
      */
-    public BinaryCipherExecutor(final String encryptionSecretKey,
-                                final String signingSecretKey,
-                                final int signingKeySize,
-                                final int encryptionKeySize) {
+    public BaseBinaryCipherExecutor(final String encryptionSecretKey,
+                                    final String signingSecretKey,
+                                    final int signingKeySize,
+                                    final int encryptionKeySize) {
 
         String signingKeyToUse = signingSecretKey;
         if (StringUtils.isBlank(signingKeyToUse)) {
@@ -106,5 +109,10 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
             LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 }

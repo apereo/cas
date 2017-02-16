@@ -2533,6 +2533,9 @@ the last resort in getting an integration to work...maybe not even then.</p></di
 
 ```properties
 # cas.clearpass.cacheCredential=false
+# cas.clearpass.encryptionKey=
+# cas.clearpass.signingKey=
+# cas.clearpass.cipherEnabled=true;
 ```
 
 ## Message Bundles
