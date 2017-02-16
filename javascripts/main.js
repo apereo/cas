@@ -279,7 +279,18 @@ function generateDependencyLangFragments() {
       
       var gradleDep = "compile \"" + $groupId.text() + ":" + $artifactId.text() + ":${project.'cas.version'}\"";
 
-      var gradleFragment = "<table style='border-spacing: 0' class='table table-responsive'><tbody><tr><td class='gutter gl' style='text-align: right'><pre class='lineno'>1</pre></td><td class='code'><pre>" + gradleDep + "</pre></td></tr></tbody></table>";
+      var gradleFragment = "<div class='language-groovy highlighter-rouge'> \
+      <div class='highlight'> \
+	      <table style='border-spacing: 0'> \
+	      <tbody>\
+	      <tr>\
+	      	<td class='gutter gl' style='text-align: right'><pre class='lineno'>1</pre></td>\
+	      	<td class='code'><pre>" + gradleDep + "</pre></td>\
+	      </tr> \
+	      </tbody> \
+	      </table>" \
+      "</div>" \
+      "</div>";
 
       var parentTable = $(val).parent().parent().parent().parent().parent();
 
