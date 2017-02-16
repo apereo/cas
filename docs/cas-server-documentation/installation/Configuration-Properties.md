@@ -2967,6 +2967,15 @@ This section controls how that process should behave.
 
 To learn more about this topic, [please review this guide](JPA-Ticket-Registry.html).
 
+Note that the default value for Hibernate's DDL setting is `create-drop`
+which may not be appropriate for use in production. Setting the value to
+`validate` may be more desirable, but any of the following options can be used:
+
+* `validate` - validate the schema, but make no changes to the database.
+* `update` - update the schema.
+* `create` - create the schema, destroying previous data.
+* `create-drop` - drop the schema at the end of the session.
+
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
 # cas.ticket.registry.jpa.healthQuery=
