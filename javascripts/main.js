@@ -288,9 +288,9 @@ function generateDependencyLangFragments() {
 	      	<td class='code'><pre>" + gradleDep + "</pre></td>\
 	      </tr> \
 	      </tbody> \
-	      </table>" \
-      "</div>" \
-      "</div>";
+	      </table> \
+      </div> \
+      </div>";
 
       var parentTable = $(val).parent().parent().parent().parent().parent();
 
