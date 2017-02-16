@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.config.support.authentication;
 
+import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
@@ -24,6 +25,7 @@ import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.FoursquareClient;
+import org.pac4j.oauth.client.GenericOAuth20Client;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.oauth.client.Google2Client;
 import org.pac4j.oauth.client.LinkedIn2Client;
@@ -52,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This is {@link Pac4jAuthenticationEventExecutionPlanConfiguration}.
@@ -189,17 +192,20 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
     }
 
     private void configureCasClient(final Collection<BaseClient> properties) {
+        final AtomicInteger index = new AtomicInteger();
         casProperties.getAuthn().getPac4j().getCas()
                 .stream()
                 .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
                 .forEach(cas -> {
                     final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), cas.getProtocol());
                     final CasClient client = new CasClient(cfg);
+                    client.setName(client.getClass().getSimpleName() + index.incrementAndGet());
                     properties.add(client);
                 });
     }
 
     private void configureSamlClient(final Collection<BaseClient> properties) {
+        final AtomicInteger index = new AtomicInteger();
         casProperties.getAuthn().getPac4j().getSaml()
                 .stream()
                 .filter(saml -> StringUtils.isNotBlank(saml.getKeystorePath()) && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath()))
@@ -211,11 +217,35 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                     cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
                     cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
                     final SAML2Client client = new SAML2Client(cfg);
+                    client.setName(client.getClass().getSimpleName() + index.incrementAndGet());
                     properties.add(client);
                 });
     }
 
+    private void configureOAuth20Client(final Collection<BaseClient> properties) {
+        final AtomicInteger index = new AtomicInteger();
+        casProperties.getAuthn().getPac4j().getOauth2()
+                .stream()
+                .filter(oauth -> StringUtils.isNotBlank(oauth.getId()) && StringUtils.isNotBlank(oauth.getSecret()))
+                .forEach(oauth -> {
+                    final GenericOAuth20Client client = new GenericOAuth20Client();
+                    client.setKey(oauth.getId());
+                    client.setSecret(oauth.getSecret());
+                    client.setProfileAttrs(oauth.getProfileAttrs());
+                    client.setProfileNodePath(oauth.getProfilePath());
+                    client.setProfileUrl(oauth.getProfileUrl());
+                    client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase()));
+                    client.setTokenUrl(oauth.getTokenUrl());
+                    client.setAuthUrl(oauth.getAuthUrl());
+                    client.setCustomParams(oauth.getCustomParams());
+                    client.setName(client.getClass().getSimpleName() + index.incrementAndGet());
+                    properties.add(client);
+                });
+    }
+
+
     private void configureOidcClient(final Collection<BaseClient> properties) {
+        final AtomicInteger index = new AtomicInteger();
         casProperties.getAuthn().getPac4j().getOidc()
                 .stream()
                 .filter(oidc -> StringUtils.isNotBlank(oidc.getId()) && StringUtils.isNotBlank(oidc.getSecret()))
@@ -249,6 +279,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                             client = new OidcClient(cfg);
                             break;
                     }
+                    client.setName(client.getClass().getSimpleName() + index.incrementAndGet());
                     properties.add(client);
                 });
     }
@@ -261,6 +292,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         configureCasClient(clients);
         configureFacebookClient(clients);
         configureOidcClient(clients);
+        configureOAuth20Client(clients);
         configureSamlClient(clients);
         configureTwitterClient(clients);
         configureDropboxClient(clients);

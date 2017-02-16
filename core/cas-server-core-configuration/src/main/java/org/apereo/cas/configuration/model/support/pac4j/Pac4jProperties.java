@@ -21,6 +21,7 @@ public class Pac4jProperties {
     private Twitter twitter = new Twitter();
     private List<Saml> saml = new ArrayList<>();
     private List<Oidc> oidc = new ArrayList<>();
+    private List<OAuth20> oauth2 = new ArrayList<>();
     private List<Cas> cas = new ArrayList<>();
 
     private LinkedIn linkedIn = new LinkedIn();
@@ -35,6 +36,14 @@ public class Pac4jProperties {
     private Bitbucket bitbucket = new Bitbucket();
 
     private String name;
+
+    public List<OAuth20> getOauth2() {
+        return oauth2;
+    }
+
+    public void setOauth2(final List<OAuth20> oauth2) {
+        this.oauth2 = oauth2;
+    }
 
     public String getName() {
         return name;
@@ -320,6 +329,92 @@ public class Pac4jProperties {
             this.secret = secret;
         }
     }
+
+    public static class OAuth20 {
+        private String id;
+        private String secret;
+
+        private String authUrl;
+        private String tokenUrl;
+        private String profileUrl;
+        private String profilePath;
+        private String profileVerb = "POST";
+        private Map<String, String> profileAttrs;
+        private Map<String, String> customParams;
+
+        public String getAuthUrl() {
+            return authUrl;
+        }
+
+        public void setAuthUrl(final String authUrl) {
+            this.authUrl = authUrl;
+        }
+
+        public String getTokenUrl() {
+            return tokenUrl;
+        }
+
+        public void setTokenUrl(final String tokenUrl) {
+            this.tokenUrl = tokenUrl;
+        }
+
+        public String getProfileUrl() {
+            return profileUrl;
+        }
+
+        public void setProfileUrl(final String profileUrl) {
+            this.profileUrl = profileUrl;
+        }
+
+        public String getProfilePath() {
+            return profilePath;
+        }
+
+        public void setProfilePath(final String profilePath) {
+            this.profilePath = profilePath;
+        }
+
+        public String getProfileVerb() {
+            return profileVerb;
+        }
+
+        public void setProfileVerb(final String profileVerb) {
+            this.profileVerb = profileVerb;
+        }
+
+        public Map<String, String> getProfileAttrs() {
+            return profileAttrs;
+        }
+
+        public void setProfileAttrs(final Map<String, String> profileAttrs) {
+            this.profileAttrs = profileAttrs;
+        }
+
+        public Map<String, String> getCustomParams() {
+            return customParams;
+        }
+
+        public void setCustomParams(final Map<String, String> customParams) {
+            this.customParams = customParams;
+        }
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
 
     public static class Twitter {
         private String id;
