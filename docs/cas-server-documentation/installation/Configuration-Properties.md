@@ -201,7 +201,7 @@ server.port=8443
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
-server.maxHttpHeader-size=2097152
+server.maxHttpHeaderSize=2097152
 server.useForwardHeaders=true
 server.connectionTimeout=20000
 
