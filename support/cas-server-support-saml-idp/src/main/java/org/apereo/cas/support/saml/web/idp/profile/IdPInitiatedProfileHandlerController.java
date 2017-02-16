@@ -151,11 +151,9 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
 
         final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
         if (NumberUtils.isCreatable(time)) {
-            authnRequest.setID(id + time);
             authnRequest.setIssueInstant(new DateTime(TimeUnit.SECONDS.convert(Long.parseLong(time), TimeUnit.MILLISECONDS),
                     ISOChronology.getInstanceUTC()));
         } else {
-            authnRequest.setID(id);
             authnRequest.setIssueInstant(new DateTime(DateTime.now(), ISOChronology.getInstanceUTC()));
         }
         authnRequest.setForceAuthn(Boolean.FALSE);
