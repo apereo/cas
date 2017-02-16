@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -69,7 +68,7 @@ public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCre
             LOGGER.debug("Authenticated user profile [{}]", profile);
 
             credentials.setUserProfile(profile);
-        } catch (final AuthenticationException e) {
+        } catch (final Exception e) {
             throw new CredentialsException("Cannot login user using CAS internal authentication", e);
         }
     }
