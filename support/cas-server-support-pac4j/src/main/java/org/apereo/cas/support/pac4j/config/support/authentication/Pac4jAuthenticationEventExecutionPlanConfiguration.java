@@ -1,5 +1,7 @@
 package org.apereo.cas.support.pac4j.config.support.authentication;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -14,11 +16,25 @@ import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataP
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.apereo.cas.support.pac4j.web.flow.SAML2ClientLogoutAction;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.pac4j.config.client.PropertiesConfigFactory;
-import org.pac4j.core.client.Client;
+import org.pac4j.cas.client.CasClient;
+import org.pac4j.cas.config.CasConfiguration;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.config.Config;
-import org.pac4j.core.config.ConfigFactory;
+import org.pac4j.oauth.client.DropBoxClient;
+import org.pac4j.oauth.client.FacebookClient;
+import org.pac4j.oauth.client.FoursquareClient;
+import org.pac4j.oauth.client.GitHubClient;
+import org.pac4j.oauth.client.Google2Client;
+import org.pac4j.oauth.client.LinkedIn2Client;
+import org.pac4j.oauth.client.TwitterClient;
+import org.pac4j.oauth.client.WindowsLiveClient;
+import org.pac4j.oauth.client.YahooClient;
+import org.pac4j.oidc.client.AzureAdClient;
+import org.pac4j.oidc.client.GoogleOidcClient;
+import org.pac4j.oidc.client.OidcClient;
+import org.pac4j.oidc.config.OidcConfiguration;
+import org.pac4j.saml.client.SAML2Client;
+import org.pac4j.saml.client.SAML2ClientConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +46,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * This is {@link Pac4jAuthenticationEventExecutionPlanConfiguration}.
@@ -55,144 +71,155 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
 
-    private void configureGithubClient(final Map<String, String> properties) {
+    private void configureGithubClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Github github = casProperties.getAuthn().getPac4j().getGithub();
-        properties.put(PropertiesConfigFactory.GITHUB_ID, github.getId());
-        properties.put(PropertiesConfigFactory.GITHUB_SECRET, github.getSecret());
+        final GitHubClient client = new GitHubClient(github.getId(), github.getSecret());
+        properties.add(client);
     }
 
-    private void configureDropboxClient(final Map<String, String> properties) {
+    private void configureDropboxClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Dropbox db = casProperties.getAuthn().getPac4j().getDropbox();
-        properties.put(PropertiesConfigFactory.DROPBOX_ID, db.getId());
-        properties.put(PropertiesConfigFactory.DROPBOX_SECRET, db.getSecret());
+        final DropBoxClient client = new DropBoxClient(db.getId(), db.getSecret());
+        properties.add(client);
     }
 
-    private void configureWindowsLiveClient(final Map<String, String> properties) {
+    private void configureWindowsLiveClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.WindowsLive live = casProperties.getAuthn().getPac4j().getWindowsLive();
-        properties.put(PropertiesConfigFactory.WINDOWSLIVE_ID, live.getId());
-        properties.put(PropertiesConfigFactory.WINDOWSLIVE_SECRET, live.getSecret());
+        final WindowsLiveClient client = new WindowsLiveClient(live.getId(), live.getSecret());
+        properties.add(client);
     }
 
-    private void configureYahooClient(final Map<String, String> properties) {
+    private void configureYahooClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Yahoo yahoo = casProperties.getAuthn().getPac4j().getYahoo();
-        properties.put(PropertiesConfigFactory.YAHOO_ID, yahoo.getId());
-        properties.put(PropertiesConfigFactory.YAHOO_SECRET, yahoo.getSecret());
+        final YahooClient client = new YahooClient(yahoo.getId(), yahoo.getSecret());
+        properties.add(client);
     }
 
-    private void configureFoursquareClient(final Map<String, String> properties) {
+    private void configureFoursquareClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Foursquare foursquare = casProperties.getAuthn().getPac4j().getFoursquare();
-        properties.put(PropertiesConfigFactory.FOURSQUARE_ID, foursquare.getId());
-        properties.put(PropertiesConfigFactory.FOURSQUARE_SECRET, foursquare.getSecret());
+        final FoursquareClient client = new FoursquareClient(foursquare.getId(), foursquare.getSecret());
+        properties.add(client);
     }
 
-    private void configureGoogleClient(final Map<String, String> properties) {
+    private void configureGoogleClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Google google = casProperties.getAuthn().getPac4j().getGoogle();
-        properties.put(PropertiesConfigFactory.GOOGLE_ID, google.getId());
-        properties.put(PropertiesConfigFactory.GOOGLE_SECRET, google.getSecret());
-        properties.put(PropertiesConfigFactory.GOOGLE_SCOPE, google.getScope());
+        final Google2Client client = new Google2Client(google.getId(), google.getSecret());
+
+        if (StringUtils.isNotBlank(google.getScope())) {
+            client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
+        }
+        properties.add(client);
     }
 
-    private void configureFacebookClient(final Map<String, String> properties) {
+    private void configureFacebookClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Facebook fb = casProperties.getAuthn().getPac4j().getFacebook();
-        properties.put(PropertiesConfigFactory.FACEBOOK_ID, fb.getId());
-        properties.put(PropertiesConfigFactory.FACEBOOK_SECRET, fb.getSecret());
-        properties.put(PropertiesConfigFactory.FACEBOOK_SCOPE, fb.getScope());
-        properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, fb.getFields());
+        final FacebookClient client = new FacebookClient(fb.getId(), fb.getSecret());
+        client.setScope(fb.getScope());
+        client.setFields(fb.getFields());
+        properties.add(client);
     }
 
-    private void configureLinkedInClient(final Map<String, String> properties) {
+    private void configureLinkedInClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.LinkedIn fb = casProperties.getAuthn().getPac4j().getLinkedIn();
-        properties.put(PropertiesConfigFactory.LINKEDIN_ID, fb.getId());
-        properties.put(PropertiesConfigFactory.LINKEDIN_SECRET, fb.getSecret());
-        properties.put(PropertiesConfigFactory.LINKEDIN_SCOPE, fb.getScope());
-        properties.put(PropertiesConfigFactory.LINKEDIN_FIELDS, fb.getFields());
+        final LinkedIn2Client client = new LinkedIn2Client(fb.getId(), fb.getSecret());
+
+        if (StringUtils.isNotBlank(fb.getScope())) {
+            client.setScope(fb.getScope());
+        }
+
+        if (StringUtils.isNotBlank(fb.getFields())) {
+            client.setFields(fb.getFields());
+        }
+        properties.add(client);
     }
 
-    private void configureTwitterClient(final Map<String, String> properties) {
+    private void configureTwitterClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Twitter twitter = casProperties.getAuthn().getPac4j().getTwitter();
-        properties.put(PropertiesConfigFactory.TWITTER_ID, twitter.getId());
-        properties.put(PropertiesConfigFactory.TWITTER_SECRET, twitter.getSecret());
+        final TwitterClient client = new TwitterClient(twitter.getId(), twitter.getSecret());
+        properties.add(client);
     }
 
-    private void configureCasClient(final Map<String, String> properties) {
-        for (Integer i = 0; i < casProperties.getAuthn().getPac4j().getCas().size(); i++) {
-            final Pac4jProperties.Cas cas = casProperties.getAuthn().getPac4j().getCas().get(0);
-            properties.put(getConfigurationKey(PropertiesConfigFactory.CAS_LOGIN_URL, i), cas.getLoginUrl());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.CAS_PROTOCOL, i), cas.getProtocol());
-        }
+    private void configureCasClient(final Collection<BaseClient> properties) {
+        casProperties.getAuthn().getPac4j().getCas().forEach(cas -> {
+            final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), cas.getProtocol());
+            final CasClient client = new CasClient(cfg);
+            properties.add(client);
+        });
     }
 
-    private void configureSamlClient(final Map<String, String> properties) {
-        for (Integer i = 0; i < casProperties.getAuthn().getPac4j().getSaml().size(); i++) {
-            final Pac4jProperties.Saml saml = casProperties.getAuthn().getPac4j().getSaml().get(i);
-
-            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH, i), saml.getIdentityProviderMetadataPath());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD, i), saml.getKeystorePassword());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_KEYSTORE_PATH, i), saml.getKeystorePath());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME, i), saml.getMaximumAuthenticationLifetime());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD, i), saml.getPrivateKeyPassword());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID, i), saml.getServiceProviderEntityId());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH, i), saml.getServiceProviderMetadataPath());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.SAML_DESTINATION_BINDING_TYPE, i), SAMLConstants.SAML2_REDIRECT_BINDING_URI);
-        }
+    private void configureSamlClient(final Collection<BaseClient> properties) {
+        casProperties.getAuthn().getPac4j().getSaml().forEach(saml -> {
+            final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(saml.getKeystorePath(), saml.getKeystorePassword(),
+                    saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
+            cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
+            cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
+            cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
+            cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+            final SAML2Client client = new SAML2Client(cfg);
+            properties.add(client);
+        });
     }
 
-    private void configureOidcClient(final Map<String, String> properties) {
-        for (Integer i = 0; i < casProperties.getAuthn().getPac4j().getOidc().size(); i++) {
-            final Pac4jProperties.Oidc oidc = casProperties.getAuthn().getPac4j().getOidc().get(i);
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, i), oidc.getCustomParamKey1());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, i), oidc.getCustomParamKey2());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, i), oidc.getCustomParamValue1());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, i), oidc.getCustomParamValue2());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_DISCOVERY_URI, i), oidc.getDiscoveryUri());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_ID, i), oidc.getId());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, i), oidc.getMaxClockSkew());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, i), oidc.getPreferredJwsAlgorithm());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_SECRET, i), oidc.getSecret());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_USE_NONCE, i), oidc.getUseNonce());
-            properties.put(getConfigurationKey(PropertiesConfigFactory.OIDC_SCOPE, i), oidc.getScope());
-        }
-    }
+    private void configureOidcClient(final Collection<BaseClient> properties) {
+        casProperties.getAuthn().getPac4j().getOidc().forEach(oidc -> {
 
-    private String getConfigurationKey(final String key, final int index) {
-        if (index == 0) {
-            return key;
-        }
-        return key.concat(".").concat(String.valueOf(index));
+            final OidcConfiguration cfg = new OidcConfiguration();
+            if (StringUtils.isNotBlank(oidc.getScope())) {
+                cfg.setScope(oidc.getScope());
+            }
+            cfg.setUseNonce(oidc.isUseNonce());
+            cfg.setSecret(oidc.getSecret());
+            cfg.setClientId(oidc.getId());
+
+            if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
+                cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+            }
+            cfg.setMaxClockSkew(oidc.getMaxClockSkew());
+            cfg.setDiscoveryURI(oidc.getDiscoveryUri());
+            cfg.setCustomParams(oidc.getCustomParams());
+
+            final OidcClient client;
+            switch (oidc.getType().toUpperCase()) {
+                case "GOOGLE":
+                    client = new GoogleOidcClient(cfg);
+                    break;
+                case "AZURE":
+                    client = new AzureAdClient(cfg);
+                    break;
+                case "GENERIC":
+                default:
+                    client = new OidcClient(cfg);
+                    break;
+            }
+            properties.add(client);
+        });
     }
 
     @RefreshScope
     @Bean
     public Clients builtClients() {
-        final List<Client> allClients = new ArrayList<>();
-
         // turn the properties file into a map of properties
-        final Map<String, String> properties = new HashMap<>();
+        final Set<BaseClient> clients = new LinkedHashSet<>();
 
-        configureCasClient(properties);
-        configureFacebookClient(properties);
-        configureOidcClient(properties);
-        configureSamlClient(properties);
-        configureTwitterClient(properties);
-        configureDropboxClient(properties);
-        configureFoursquareClient(properties);
-        configureGithubClient(properties);
-        configureGoogleClient(properties);
-        configureWindowsLiveClient(properties);
-        configureYahooClient(properties);
-        configureLinkedInClient(properties);
+        configureCasClient(clients);
+        configureFacebookClient(clients);
+        configureOidcClient(clients);
+        configureSamlClient(clients);
+        configureTwitterClient(clients);
+        configureDropboxClient(clients);
+        configureFoursquareClient(clients);
+        configureGithubClient(clients);
+        configureGoogleClient(clients);
+        configureWindowsLiveClient(clients);
+        configureYahooClient(clients);
+        configureLinkedInClient(clients);
 
-        // add the new clients found via properties first
-        final ConfigFactory configFactory = new PropertiesConfigFactory(properties);
-        final Config propertiesConfig = configFactory.build();
-        allClients.addAll(propertiesConfig.getClients().getClients());
-
-        if (allClients.isEmpty()) {
+        if (clients.isEmpty()) {
             throw new IllegalArgumentException("At least one client must be defined");
         }
 
-        LOGGER.debug("The following clients are built: [{}]", allClients);
-        return new Clients(casProperties.getServer().getLoginUrl(), allClients);
+        LOGGER.debug("The following clients are built: [{}]", clients);
+        return new Clients(casProperties.getServer().getLoginUrl(), new ArrayList<>(clients));
     }
 
     @ConditionalOnMissingBean(name = "clientPrincipalFactory")

@@ -2343,17 +2343,15 @@ Delegate authentication to Twitter.
 Delegate authentication to an external OpenID Connect server.
 
 ```properties
+# cas.authn.pac4j.oidc.type=GOOGLE|AZURE|GENERIC
 # cas.authn.pac4j.oidc.discoveryUri=
 # cas.authn.pac4j.oidc.maxClockSkew=
-# cas.authn.pac4j.oidc.customParamKey2=
-# cas.authn.pac4j.oidc.customParamValue2=
 # cas.authn.pac4j.oidc.scope=
 # cas.authn.pac4j.oidc.id=
 # cas.authn.pac4j.oidc.secret=
-# cas.authn.pac4j.oidc.customParamKey1=
-# cas.authn.pac4j.oidc.customParamValue1=
 # cas.authn.pac4j.oidc.useNonce=
 # cas.authn.pac4j.oidc.preferredJwsAlgorithm=
+# cas.authn.pac4j.oidc.customParams.param1=value1
 ```
 
 ### SAML
@@ -2438,7 +2436,7 @@ Delegate authentication to Google.
 ```properties
 # cas.authn.pac4j.google.id=
 # cas.authn.pac4j.google.secret=
-# cas.authn.pac4j.google.scope=
+# cas.authn.pac4j.google.scope=EMAIL|PROFILE|EMAIL_AND_PROFILE
 ```
 
 ## OAuth2
