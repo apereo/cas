@@ -335,15 +335,20 @@ function responsiveTables() {
 function copyButton() {
     $('div.highlight').each(function() {
         var btn = '<button class="copy-button hidden-md-down fa fa-clipboard" />';
-        $(this).append( btn );
+        var cp = $(this).find(".copy-button");
+        if (cp == null || cp==undefined) {
+            $(this).append( btn );
+        }
     });
 }
+
 var clipboard = new Clipboard('.copy-button', {
     target: function(trigger) {
         var code = $(trigger).prev('table').find('td.code pre')[0];
         return code;
     }
 });
+
 clipboard.on('success', function(e) {
     e.clearSelection();
 });
