@@ -1,25 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-     This is example metadata only. Do *NOT* supply it as is without review,
-     and do *NOT* provide it in real time to your partners.
-
-     This metadata is not dynamic - it will not change as your configuration changes.
--->
 <EntityDescriptor  xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="mmoayyed.unicon.net">
 
     <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol urn:mace:shibboleth:1.0">
 
         <Extensions>
             <shibmd:Scope regexp="false">unicon.net</shibmd:Scope>
-            <!--
-                Fill in the details for your IdP here
-
-                        <mdui:UIInfo>
-                            <mdui:DisplayName xml:lang="en">A Name for the IdP at mmoayyed.unicon.net</mdui:DisplayName>
-                            <mdui:Description xml:lang="en">Enter a description of your IdP at mmoayyed.unicon.net</mdui:Description>
-                            <mdui:Logo height="HeightInPixels" width="WidthInPixels">https://mmoayyed.unicon.net/Path/To/Logo.png</mdui:Logo>
-                        </mdui:UIInfo>
-            -->
         </Extensions>
 
         <KeyDescriptor use="signing">
@@ -74,17 +59,6 @@
             </ds:KeyInfo>
 
         </KeyDescriptor>
-
-        <!--
-                <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="https://mmoayyed.unicon.net:8443/cas/idp/profile/SAML1/SOAP/ArtifactResolution" index="1"/>
-                <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://mmoayyed.unicon.net:8443/cas/idp/profile/SAML2/SOAP/ArtifactResolution" index="2"/>
-        -->
-        <!--
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://mmoayyed.unicon.net/idp/profile/SAML2/Redirect/SLO"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://mmoayyed.unicon.net/idp/profile/SAML2/POST/SLO"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://mmoayyed.unicon.net/idp/profile/SAML2/POST-SimpleSign/SLO"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://mmoayyed.unicon.net:8443/idp/profile/SAML2/SOAP/SLO"/>
-        -->
 
         <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
