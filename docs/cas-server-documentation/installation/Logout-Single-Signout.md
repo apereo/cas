@@ -21,6 +21,9 @@ CAS is configured for SLO, it attempts to send logout messages to every applicat
 CAS during the SSO session. While this is a best-effort process, in many cases it works well and provides a consistent
 user experience by creating symmetry between login and logout.
 
+<div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
+and determine if CAS itself maintains an active SSO session via the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+
 
 ## CAS Logout
 
