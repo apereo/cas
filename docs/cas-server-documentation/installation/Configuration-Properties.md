@@ -1853,6 +1853,17 @@ Delegate authentication to Google.
 # cas.authn.pac4j.google.scope=
 ```
 
+### LinkedIn
+
+Delegate authentication to LinkedIn.
+
+```properties
+# cas.authn.pac4j.linkedIn.id=
+# cas.authn.pac4j.linkedIn.secret=
+# cas.authn.pac4j.linkedIn.fields=
+# cas.authn.pac4j.linkedIn.scope=
+```
+
 ## OAuth2
 
 Allows CAS to act as an OAuth2 provider. Here you can control how
