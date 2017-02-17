@@ -105,7 +105,7 @@ public class DelegatedClientAuthenticationActionTests {
     @Test
     public void verifyFinishAuthentication() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClientw");
+        mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
         final MockHttpSession mockSession = new MockHttpSession();
         mockSession.setAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
