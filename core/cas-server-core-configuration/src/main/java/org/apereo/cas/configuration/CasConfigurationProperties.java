@@ -34,6 +34,7 @@ import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProper
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethAttributeResolverProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
+import org.apereo.cas.configuration.model.support.sms.ClickatellProperties;
 import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
 import org.apereo.cas.configuration.model.support.sms.TwillioProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
@@ -123,6 +124,9 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private TextMagicProperties textMagic = new TextMagicProperties();
+
+    @NestedConfigurationProperty
+    private ClickatellProperties clickatell = new ClickatellProperties();
 
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
@@ -490,5 +494,13 @@ public class CasConfigurationProperties {
 
     public void setScim(final ScimProperties scim) {
         this.scim = scim;
+    }
+
+    public ClickatellProperties getClickatell() {
+        return clickatell;
+    }
+
+    public void setClickatell(final ClickatellProperties clickatell) {
+        this.clickatell = clickatell;
     }
 }

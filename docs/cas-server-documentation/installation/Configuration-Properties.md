@@ -926,6 +926,13 @@ To learn more about this topic, [please review this guide](SMS-Messaging-Configu
 # cas.textMagic.token=
 ```
 
+### Clickatell
+
+```properties
+# cas.clickatell.serverUrl=https://platform.clickatell.com/messages
+# cas.clickatell.token=
+```
+
 ## GeoTracking
 
 To learn more about this topic, [please review this guide](GeoTracking-Authentication-Requests.html).
@@ -1610,7 +1617,7 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 
 ### CRL Fetching / Revocation
 
-CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability 
+CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability
 in the revocation machinery built into the JSSE.
 
 Available policies cover the following events:
