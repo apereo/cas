@@ -430,7 +430,6 @@ public class SamlIdPConfiguration {
             resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
             resolver.setId(idp.getEntityId());
             resolver.initialize();
-            ;
             return resolver;
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
