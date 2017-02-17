@@ -113,22 +113,23 @@ You may chain various attribute release policies that authorize claim release ba
   "serviceId" : "...",
   "name": "OIDC Test",
   "id": 10,
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
-    "policies": [ "java.util.ArrayList",
-      [
-          {"@class": "org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy"},
-          {"@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy"},
-          {"@class": "org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy"},
-          {"@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy"}
-      ]
-    ]
-  }
+  "scopes" : [ "java.util.HashSet", 
+    [ "profile", "email", "address", "phone", "offline_access", "displayName", "eduPerson" ]
+  ]
 }
 ```
 
-Additional policies [defined here](../integration/Attribute-Release-Policies.html) may also be chained 
-to authorize release of custom claims.
+### User-Defined Scopes
+
+Note that in addition to standard system scopes, you may define your own custom attributes. These 
+such as `displayName` above, get bundled into a `custom` scope which can be used and requested by services and clients.
+
+If you however wish to define your custom scopes as an extention to what OpenID Connect defines
+such that you may bundle attributes together, then you need to first register your `scope`,
+define its attribute bundle and then use it a given service definition such as `eduPerson` above.
+Such user-defined scopes are also able to override the definition of system scopes.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
 
 ## Authentication Context Class
 
@@ -156,6 +157,6 @@ file is similar to the following:
 }
 ```
 
-CAS will attempt to auto-generate a keystore if it can'tt find one, but if you wish to generate one manually, 
+CAS will attempt to auto-generate a keystore if it can't find one, but if you wish to generate one manually, 
 a JWKS can be generated using [this tool](https://mkjwk.org/)
 or [this tool](http://connect2id.com/products/nimbus-jose-jwt/generator).

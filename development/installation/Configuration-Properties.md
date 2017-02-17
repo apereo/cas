@@ -85,6 +85,8 @@ Load settings from external properties/yaml configuration files.
 
 ```properties
 # spring.profiles.active=native
+
+# The configuration directory where CAS should monitor to locate settings.
 # spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
 ```
 
@@ -94,8 +96,16 @@ Load settings from an internal/external Git repository.
 
 ```properties
 # spring.profiles.active=default
+
+# The location of the git repository that contains CAS settings.
+# The location can point to an HTTP/SSH/directory.
 # spring.cloud.config.server.git.uri=https://github.com/repoName/config
 # spring.cloud.config.server.git.uri=file://${user.home}/config
+
+# The credentials used to authenticate git requests, specially
+# when using HTTPS. If connecting to the repository via SSH, remember
+# to register your public keys with an SSH agent just as your normal would have
+# with any other public repository.
 # spring.cloud.config.server.git.username=
 # spring.cloud.config.server.git.password=
 ```
@@ -139,7 +149,6 @@ Encrypt and decrypt configuration via Spring Cloud.
 
 To learn more about how sensitive CAS settings can be
 secured, [please review this guide](Configuration-Properties-Security.html).
-
 
 ## Cloud Configuration Bus
 
@@ -192,7 +201,7 @@ server.port=8443
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
-server.maxHttpHeader-size=2097152
+server.maxHttpHeaderSize=2097152
 server.useForwardHeaders=true
 server.connectionTimeout=20000
 
@@ -304,7 +313,7 @@ management.security.roles=ACTUATOR,ADMIN
 management.security.sessions=if_required
 
 # Each of the below endpoints can either be disabled
-# or can be individually marked as 'sensitive' (or not) 
+# or can be individually marked as 'sensitive' (or not)
 # to enable authentication.
 
 # endpoints.restart.enabled=false
@@ -425,6 +434,7 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.ldap.keystorePassword=
 # cas.adminPagesSecurity.ldap.keystoreType=JKS|JCEKS|PKCS12
 
+# cas.adminPagesSecurity.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.adminPagesSecurity.ldap.minPoolSize=3
 # cas.adminPagesSecurity.ldap.maxPoolSize=10
 # cas.adminPagesSecurity.ldap.validateOnCheckout=true
@@ -466,8 +476,9 @@ spring.thymeleaf.cache=false
 
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
-# cas.view.cas3.releaseProtocolAttributes=true
 
+# Defines a default URL to which CAS may redirect if there is no service
+# provided in the authentication request.
 # cas.view.defaultRedirectUrl=https://www.github.com
 ```
 
@@ -534,8 +545,9 @@ By default, the execution order is the following but can be adjusted per source:
 2. JDBC
 3. JSON
 4. Groovy
-5. Shibboleth
-6. Static Stub
+5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
+6. Shibboleth
+7. Static Stub
 
 Note that if no other attribute source is defined and if attributes are not directly retrieved
 as part of primary authentication, then a stub/static source will be created
@@ -566,6 +578,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap[0].keystore=
 # cas.authn.attributeRepository.ldap[0].keystorePassword=
 # cas.authn.attributeRepository.ldap[0].keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.attributeRepository.ldap[0].poolPassivator=NONE|CLOSE|BIND
 # cas.authn.attributeRepository.ldap[0].minPoolSize=3
 # cas.authn.attributeRepository.ldap[0].maxPoolSize=10
 # cas.authn.attributeRepository.ldap[0].validateOnCheckout=true
@@ -682,6 +695,25 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
 ```
 
+### Grouper
+
+This option reads all the groups from Grouper repository for the given CAS principal and adopts them
+as CAS attributes under a `grouperGroups` multi-valued attribute. To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
+
+```properties
+cas.authn.attributeRepository.grouper[0].order=1
+```
+
+You will also need to ensure `grouper.client.properties` is available on the classpath (i.e. `src/main/resources`)
+with the following configured properties:
+
+```properties
+grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+grouperClient.webService.login = banderson
+grouperClient.webService.password = password
+```
+
+
 ### Shibboleth Attribute Resolver
 
 To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
@@ -702,6 +734,14 @@ then the following settings are relevant:
 ```
 
 To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
+
+### Protocol Attributes
+
+Defines whether CAS should include and release protocol attributes defined in the specification in addition to the principal attribute.
+
+```properties
+# cas.authn.releaseProtocolAttributes=true
+```
 
 ## Principal Resolution
 
@@ -948,7 +988,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.failoverOnException=false
 # cas.authn.radius.failoverOnAuthenticationFailure=false
 
-# cas.authn.radius.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.radius.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.radius.passwordEncoder.characterEncoding=
 # cas.authn.radius.passwordEncoder.encodingAlgorithm=
 # cas.authn.radius.passwordEncoder.secret=
@@ -968,7 +1008,7 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 # cas.authn.file.filename=file:///path/to/users/file
 # cas.authn.file.name=
 
-# cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.file.passwordEncoder.characterEncoding=
 # cas.authn.file.passwordEncoder.encodingAlgorithm=
 # cas.authn.file.passwordEncoder.secret=
@@ -987,7 +1027,7 @@ To learn more about this topic, [please review this guide](Blacklist-Authenticat
 # cas.authn.reject.users=user1,user2
 # cas.authn.reject.name=
 
-# cas.authn.reject.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.reject.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.reject.passwordEncoder.characterEncoding=
 # cas.authn.reject.passwordEncoder.encodingAlgorithm=
 # cas.authn.reject.passwordEncoder.secret=
@@ -1033,7 +1073,7 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].fieldDisabled=
 
 
-# cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.query[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.query[0].passwordEncoder.secret=
@@ -1072,7 +1112,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].name=
 # cas.authn.jdbc.search[0].order=0
 
-# cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.search[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.search[0].passwordEncoder.secret=
@@ -1108,7 +1148,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].name=
 # cas.authn.jdbc.bind[0].order=0
 
-# cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.bind[0].passwordEncoder.secret=
@@ -1159,7 +1199,7 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].name=
 # cas.authn.jdbc.encode[0].order=0
 
-# cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.encode[0].passwordEncoder.secret=
@@ -1186,7 +1226,7 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 # cas.authn.mongo.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.mongo.principalTransformation.prefix=
 
-# cas.authn.mongo.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.mongo.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.mongo.passwordEncoder.characterEncoding=
 # cas.authn.mongo.passwordEncoder.encodingAlgorithm=
 # cas.authn.mongo.passwordEncoder.secret=
@@ -1288,6 +1328,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].keystorePassword=
 # cas.authn.ldap[0].keystoreType=JKS|JCEKS|PKCS12
 
+# cas.authn.ldap[0].poolPassivator=NONE|CLOSE|BIND
 # cas.authn.ldap[0].minPoolSize=3
 # cas.authn.ldap[0].maxPoolSize=10
 # cas.authn.ldap[0].validateOnCheckout=true
@@ -1324,7 +1365,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].name=
 # cas.authn.ldap[0].order=0
 
-# cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.ldap[0].passwordEncoder.characterEncoding=
 # cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.ldap[0].passwordEncoder.secret=
@@ -1363,7 +1404,7 @@ To learn more about this topic, [please review this guide](Rest-Authentication.h
 # cas.authn.rest.uri=https://...
 # cas.authn.rest.name=
 
-# cas.authn.rest.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.rest.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.rest.passwordEncoder.characterEncoding=
 # cas.authn.rest.passwordEncoder.encodingAlgorithm=
 # cas.authn.rest.passwordEncoder.secret=
@@ -1441,6 +1482,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.keystore=
 # cas.authn.spnego.ldap.keystorePassword=
 # cas.authn.spnego.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.spnego.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.authn.spnego.ldap.minPoolSize=3
 # cas.authn.spnego.ldap.maxPoolSize=10
 # cas.authn.spnego.ldap.validateOnCheckout=true
@@ -1482,7 +1524,7 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.kerberosRealmSystemProperty=
 # cas.authn.jaas.name=
 
-# cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jaas.passwordEncoder.characterEncoding=
 # cas.authn.jaas.passwordEncoder.encodingAlgorithm=
 # cas.authn.jaas.passwordEncoder.secret=
@@ -1551,7 +1593,7 @@ prior to production rollouts.</p></div>
 # cas.authn.accept.users=
 # cas.authn.accept.name=
 
-# cas.authn.accept.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.accept.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
 # cas.authn.accept.passwordEncoder.characterEncoding=
 # cas.authn.accept.passwordEncoder.encodingAlgorithm=
 # cas.authn.accept.passwordEncoder.secret=
@@ -1645,6 +1687,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.keystore=
 # cas.authn.x509.ldap.keystorePassword=
 # cas.authn.x509.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.x509.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.authn.x509.ldap.minPoolSize=3
 # cas.authn.x509.ldap.maxPoolSize=10
 # cas.authn.x509.ldap.validateOnCheckout=true
@@ -1679,7 +1722,7 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.shiro.config.location=classpath:shiro.ini
 # cas.authn.shiro.name=
 
-# cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.shiro.passwordEncoder.characterEncoding=
 # cas.authn.shiro.passwordEncoder.encodingAlgorithm=
 # cas.authn.shiro.passwordEncoder.secret=
@@ -2239,6 +2282,9 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.subjectTypes=public,pairwise
 # cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
 # cas.authn.oidc.claims=sub,name,preferred_username,family_name,given_name,middle_name,given_name,profile,picture,nickname,website,zoneinfo,locale,updated_at,birthdate,email,email_verified,phone_number,phone_number_verified,address
+
+# cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
+# cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
 ```
 
 ## Pac4j Delegated AuthN
@@ -2292,22 +2338,56 @@ Delegate authentication to Twitter.
 # cas.authn.pac4j.twitter.secret=
 ```
 
+
+### Paypal
+
+Delegate authentication to Paypal.
+
+```properties
+# cas.authn.pac4j.paypal.id=
+# cas.authn.pac4j.paypal.secret=
+```
+
+
+### Wordpress
+
+Delegate authentication to Wordpress.
+
+```properties
+# cas.authn.pac4j.wordpress.id=
+# cas.authn.pac4j.wordpress.secret=
+```
+
+### OAuth20
+
+Delegate authentication to an generic OAuth2 server.
+
+```properties
+# cas.authn.pac4j.oauth2.id=
+# cas.authn.pac4j.oauth2.secret=
+# cas.authn.pac4j.oauth2.authUrl=
+# cas.authn.pac4j.oauth2.tokenUrl=
+# cas.authn.pac4j.oauth2.profileUrl=
+# cas.authn.pac4j.oauth2.profilePath=
+# cas.authn.pac4j.oauth2.profileVerb=GET|POST
+# cas.authn.pac4j.oauth2.profileAttrs.attr1=path-to-attr-in-profile
+# cas.authn.pac4j.oauth2.customParams.param1=value1
+```
+
 ### OpenID Connect
 
 Delegate authentication to an external OpenID Connect server.
 
 ```properties
+# cas.authn.pac4j.oidc.type=GOOGLE|AZURE|GENERIC
 # cas.authn.pac4j.oidc.discoveryUri=
 # cas.authn.pac4j.oidc.maxClockSkew=
-# cas.authn.pac4j.oidc.customParamKey2=
-# cas.authn.pac4j.oidc.customParamValue2=
 # cas.authn.pac4j.oidc.scope=
 # cas.authn.pac4j.oidc.id=
 # cas.authn.pac4j.oidc.secret=
-# cas.authn.pac4j.oidc.customParamKey1=
-# cas.authn.pac4j.oidc.customParamValue1=
 # cas.authn.pac4j.oidc.useNonce=
 # cas.authn.pac4j.oidc.preferredJwsAlgorithm=
+# cas.authn.pac4j.oidc.customParams.param1=value1
 ```
 
 ### SAML
@@ -2392,7 +2472,7 @@ Delegate authentication to Google.
 ```properties
 # cas.authn.pac4j.google.id=
 # cas.authn.pac4j.google.secret=
-# cas.authn.pac4j.google.scope=
+# cas.authn.pac4j.google.scope=EMAIL|PROFILE|EMAIL_AND_PROFILE
 ```
 
 ## OAuth2
@@ -2487,6 +2567,9 @@ the last resort in getting an integration to work...maybe not even then.</p></di
 
 ```properties
 # cas.clearpass.cacheCredential=false
+# cas.clearpass.encryptionKey=
+# cas.clearpass.signingKey=
+# cas.clearpass.cipherEnabled=true;
 ```
 
 ## Message Bundles
@@ -2633,6 +2716,7 @@ used for authentication, etc.
 # cas.monitor.ldap.keystore=
 # cas.monitor.ldap.keystorePassword=
 # cas.monitor.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.monitor.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.monitor.ldap.minPoolSize=3
 # cas.monitor.ldap.maxPoolSize=10
 # cas.monitor.ldap.validateOnCheckout=true
@@ -2834,6 +2918,7 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.keystore=
 # cas.serviceRegistry.ldap.keystorePassword=
 # cas.serviceRegistry.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.serviceRegistry.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.serviceRegistry.ldap.minPoolSize=3
 # cas.serviceRegistry.ldap.maxPoolSize=10
 # cas.serviceRegistry.ldap.validateOnCheckout=true
@@ -2915,6 +3000,15 @@ This section controls how that process should behave.
 ### JPA Ticket Registry
 
 To learn more about this topic, [please review this guide](JPA-Ticket-Registry.html).
+
+Note that the default value for Hibernate's DDL setting is `create-drop`
+which may not be appropriate for use in production. Setting the value to
+`validate` may be more desirable, but any of the following options can be used:
+
+* `validate` - validate the schema, but make no changes to the database.
+* `update` - update the schema.
+* `create` - create the schema, destroying previous data.
+* `create-drop` - drop the schema at the end of the session.
 
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
@@ -3311,6 +3405,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldap.keystore=
 # cas.mgmt.ldap.keystorePassword=
 # cas.mgmt.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.mgmt.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.mgmt.ldap.minPoolSize=3
 # cas.mgmt.ldap.maxPoolSize=10
 # cas.mgmt.ldap.validateOnCheckout=true
@@ -3421,6 +3516,7 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.keystore=
 # cas.acceptableUsagePolicy.ldap.keystorePassword=
 # cas.acceptableUsagePolicy.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.acceptableUsagePolicy.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.acceptableUsagePolicy.ldap.minPoolSize=3
 # cas.acceptableUsagePolicy.ldap.maxPoolSize=10
 # cas.acceptableUsagePolicy.ldap.validateOnCheckout=true
@@ -3562,6 +3658,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.keystore=
 # cas.authn.pm.ldap.keystorePassword=
 # cas.authn.pm.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.pm.ldap.poolPassivator=NONE|CLOSE|BIND
 # cas.authn.pm.ldap.minPoolSize=3
 # cas.authn.pm.ldap.maxPoolSize=10
 # cas.authn.pm.ldap.validateOnCheckout=true
@@ -3610,7 +3707,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.pm.jdbc.idleTimeout=5000
 
-# cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
+# cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.pm.jdbc.passwordEncoder.characterEncoding=
 # cas.authn.pm.jdbc.passwordEncoder.encodingAlgorithm=
 # cas.authn.pm.jdbc.passwordEncoder.secret=

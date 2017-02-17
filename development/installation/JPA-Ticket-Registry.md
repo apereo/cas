@@ -27,15 +27,6 @@ Support is enabled by adding the following module into the Maven overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jpa-ticket-registry).
 
-Note that the default value for Hibernate's DDL setting is `create-drop`
-which may not be appropriate for use in production. Setting the value to
-`validate` may be more desirable, but any of the following options can be used:
-
-* `validate` - validate the schema, but make no changes to the database.
-* `update` - update the schema.
-* `create` - create the schema, destroying previous data.
-* `create-drop` - drop the schema at the end of the session.
-
 ## TGT Locking
 
 TGTs are almost always updated within the same transaction they are loaded from the database in, but
