@@ -20,6 +20,9 @@ the result for each respected key. The deployer MUST attempt to copy the generat
 settings in their CAS properties file, specially when running a multi-node CAS deployment. Failure to do so will prevent CAS
 to appropriate decrypt and encrypt the cookie value and will prevent successful single sign-on.
 
+<div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
+and determine if CAS itself maintains an active SSO session via the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ticket-granting-cookie).
