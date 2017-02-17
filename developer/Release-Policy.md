@@ -10,7 +10,7 @@ accommodate and how lines of development are managed. CAS adopters can also expe
 for each release type. All new improvements, fixes, enhancements, and changes are weighed against 
 the release strategy for consideration in future release.
 
-The project release schedule is [available here](https://github.com/apereo/cas/releases).
+The project release schedule is [available here](https://github.com/apereo/cas/milestones).
 
 ## SECURITY 
 
