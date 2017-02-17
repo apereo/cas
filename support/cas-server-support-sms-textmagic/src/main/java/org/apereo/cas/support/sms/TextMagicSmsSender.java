@@ -1,4 +1,4 @@
-package org.apereo.cas.supportsms;
+package org.apereo.cas.support.sms;
 
 import com.textmagic.sdk.RestClient;
 import com.textmagic.sdk.resource.instance.TMNewMessage;
