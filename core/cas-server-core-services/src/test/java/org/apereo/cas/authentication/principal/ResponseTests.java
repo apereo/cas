@@ -68,4 +68,13 @@ public class ResponseTests {
         final Response response = DefaultResponse.getRedirectResponse(url, attributes);
         assertEquals("https://www.example.com/πολιτικῶν?ticket=ST-12345", response.getUrl());
     }
+
+    @Test
+    public void verifyUrlWithUrn() {
+        final String url = "urn:applis-cri:java-sso";
+        final Map<String, String> attributes = new HashMap<>();
+        attributes.put("ticket", "ST-123456");
+        final Response response = DefaultResponse.getRedirectResponse(url, attributes);
+        assertEquals("urn:applis-cri:java-sso?ticket=ST-123456", response.getUrl());
+    }
 }
