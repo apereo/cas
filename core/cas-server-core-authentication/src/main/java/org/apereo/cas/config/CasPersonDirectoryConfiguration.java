@@ -148,12 +148,15 @@ public class CasPersonDirectoryConfiguration {
     }
 
     private void addGrouperAttributeRepository(final List<IPersonAttributeDao> list) {
-        casProperties.getAuthn().getAttributeRepository().getGrouper().forEach(gp -> {
-            final GrouperPersonAttributeDao dao = new GrouperPersonAttributeDao();
-            dao.setOrder(gp.getOrder());
-            LOGGER.debug("Configured Grouper attribute source");
-            list.add(dao);
-        });
+        casProperties.getAuthn().getAttributeRepository().getGrouper()
+                .stream()
+                .filter(PrincipalAttributesProperties.Grouper::isEnabled)
+                .forEach(gp -> {
+                    final GrouperPersonAttributeDao dao = new GrouperPersonAttributeDao();
+                    dao.setOrder(gp.getOrder());
+                    LOGGER.debug("Configured Grouper attribute source");
+                    list.add(dao);
+                });
     }
 
     private void addStubAttributeRepositoryIfNothingElse(final List<IPersonAttributeDao> list) {
