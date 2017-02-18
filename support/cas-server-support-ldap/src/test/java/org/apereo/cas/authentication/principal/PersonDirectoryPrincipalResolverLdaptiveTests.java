@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
@@ -57,7 +58,9 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
             final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeRepository);
-            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw), CoreAuthenticationTestUtils.getPrincipal());
+            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw), 
+                    CoreAuthenticationTestUtils.getPrincipal(),
+                    new SimpleTestUsernamePasswordAuthenticationHandler());
             assertNotNull(p);
             assertTrue(p.getAttributes().containsKey("displayName"));
         }
@@ -76,7 +79,9 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
             final Map<String, Object> attributes = new HashMap<>(2);
             attributes.put("a1", "v1");
             attributes.put("a2", "v2");
-            final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw), CoreAuthenticationTestUtils.getPrincipal(username, attributes));
+            final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw), 
+                    CoreAuthenticationTestUtils.getPrincipal(username, attributes),
+                    new SimpleTestUsernamePasswordAuthenticationHandler());
             assertNotNull(p);
             assertTrue(p.getAttributes().containsKey("displayName"));
             assertTrue(p.getAttributes().containsKey("a1"));

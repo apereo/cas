@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
@@ -27,7 +28,19 @@ public interface PrincipalResolver {
      * @return the principal
      */
     default Principal resolve(Credential credential) {
-        return resolve(credential, null);
+        return resolve(credential, null, null);
+    }
+    
+    /**
+     * Resolves a principal from the given credential using an arbitrary strategy.
+     * Assumes no principal is already resolved by the authentication subsystem, etc.
+     *
+     * @param credential Source credential.
+     * @param handler    the authentication handler linked to the resolver. May be null.
+     * @return the principal
+     */
+    default Principal resolve(Credential credential, AuthenticationHandler handler) {
+        return resolve(credential, null, handler);
     }
 
     /**
@@ -35,13 +48,14 @@ public interface PrincipalResolver {
      *
      * @param credential Source credential.
      * @param principal  A principal that may have been produced during the authentication process. May be null.
+     * @param handler    the authentication handler linked to the resolver. May be null.
      * @return Resolved principal, or null if the principal could not be resolved.
      */
-    Principal resolve(Credential credential, Principal principal);
+    Principal resolve(Credential credential, Principal principal, AuthenticationHandler handler);
 
     /**
      * Determines whether this instance supports principal resolution from the given credential. This method SHOULD
-     * be called prior to {@link #resolve(Credential, Principal)}.
+     * be called prior to {@link #resolve(Credential, Principal, AuthenticationHandler)}.
      *
      * @param credential The credential to check for support.
      * @return True if credential is supported, false otherwise.

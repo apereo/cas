@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal.resolvers;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -79,7 +80,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     @Override
-    public Principal resolve(final Credential credential, final Principal currentPrincipal) {
+    public Principal resolve(final Credential credential, final Principal currentPrincipal, final AuthenticationHandler handler) {
         LOGGER.debug("Attempting to resolve a principal...");
 
         String principalId = extractPrincipalId(credential);
