@@ -81,14 +81,13 @@
 		<main role="main" id="ot-main" class="main">
 			<section id="loginColumns" class="animated fadeInDown">
 				<div class="row">		
-					<div class="col-md-6 hidden-xs tenant-logo-wrapper">
-						<img id="domainIcon" class="m-t-50" src="${tenantLogo}"/>
+					<div class="col-md-5 col-lg-5 hidden-xs tenant-logo-wrapper">
+						<img id="serviceIcon" src="${appLogo}" width="200px" height="200px"/>
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-7 col-lg-7">
 						<div style="color: #333; width: 400px;">
-							<div id="images" style="margin-bottom: 30px;">
-								<img src="${appLogo}" style="width: 150px; height: 150px; float: left;">
-								<img src="${icsLogo}" style="width: 150px; height: 150px; margin-left: 30px;">
+							<div id="images" style="margin-bottom: 50px; margin-top: 10px;">
+								<img id="tenantBranding" width="200px" height="auto" style="max-height: 30px;"/>
 							</div>
 							<div id="msg" class="success">
 								<h2><spring:message code="screen.logout.header" /></h2>
@@ -107,15 +106,42 @@
 			<img src="themes/wavity/res/lib/custom/img/LogInScreen/wavity_stacked.png">
 		</footer>
 		<script type="text/javascript">
-			window.onload = function(e){
-				var tenantLogo = document.getElementById("domainIcon");
-				if(tenantLogo.width > 400 || tenantLogo.width <= 0) {
-					tenantLogo.width = 400;
+			window.onload = function(e){				
+				function getParam(sParam) {
+					var sPageURL = window.location.search.substring(1);
+					var sURLVariables = sPageURL.split('&');
+					for(var i = 0; i < sURLVariables.length; i++) {
+						var sParameterName = sURLVariables[i].split('=');
+						if (sParameterName[0] == sParam) {
+							return sParameterName[1];
+						}
+					}
+				}
+				function createLocation(href){
+					var location = document.createElement("a");
+					location.href = href;
+					//Fix for Internet Explorer
+					if (!location.origin) {
+						return location.protocol 
+						+ "//" + location.hostname 
+						+ (location.port ? ':' + location.port: '');
+					} else {
+						return location.origin;
+					}
 				}
 				
-				if(tenantLogo.height > 400 || tenantLogo.height <= 0) {
-					tenantLogo.height = 400;
+				function updateTenantBranding(){
+					var serviceUrl = getParam("service");
+					var decodedUrl = decodeURIComponent(serviceUrl);
+					var tenantBrandingImageUrl = createLocation(decodedUrl) + '/scim/v2/TenantImage/jpegPhoto/appBranding';
+					var tenantBrandingOnErrorUrl = createLocation(decodedUrl) + '/scim/v2/TenantImage/jpegPhoto/primary';
+					document.getElementById("tenantBranding").setAttribute("src", tenantBrandingImageUrl);
+					document.getElementById("tenantBranding").on("error", function(){
+						document.getElementById(this).unbind("error").setAttribute('src', tenantBrandingOnErrorUrl);
+				    });			
 				}
+				
+				updateTenantBranding();
 				
 			    var serviceUrl = getQueryParams(window.location.search);
 			    if(serviceUrl != null && serviceUrl != "" && validateUrl(serviceUrl)) {
