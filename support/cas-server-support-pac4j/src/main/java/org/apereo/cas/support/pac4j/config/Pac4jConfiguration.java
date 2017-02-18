@@ -19,6 +19,8 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,7 +45,8 @@ import java.util.Map;
 @Configuration("pac4jConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class Pac4jConfiguration {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jConfiguration.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -237,18 +240,20 @@ public class Pac4jConfiguration {
         // add all indirect clients from the Spring context
         if (this.clients != null && this.clients.length > 0) {
             allClients.addAll(Arrays.<Client>asList(this.clients));
-        }
-
-        // build a Clients configuration
+        } 
+        
         if (allClients.isEmpty()) {
-            throw new IllegalArgumentException("At least one client must be defined");
+            LOGGER.debug("No pac4j clients are defined");
         }
         return new Clients(casProperties.getServer().getLoginUrl(), allClients);
     }
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(clientAuthenticationHandler(), this.clientPrincipalResolver);
-        authenticationMetadataPopulators.add(0, clientAuthenticationMetaDataPopulator());
+        final ClientAuthenticationHandler handler = clientAuthenticationHandler();
+        if (!handler.getClients().findAllClients().isEmpty()) {
+            authenticationHandlersResolvers.put(clientAuthenticationHandler(), this.clientPrincipalResolver);
+            authenticationMetadataPopulators.add(0, clientAuthenticationMetaDataPopulator());
+        }
     }
 }
