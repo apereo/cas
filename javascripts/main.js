@@ -266,7 +266,7 @@ function generateDependencyLangFragments() {
   $.each( $("div.language-xml.highlighter-rouge div.highlight pre"), function( i, val ) {
 
       var text = $(val).text();
-      if (text.indexOf("<dependency>") == -1) {
+      if (!text.trim().startsWith("<dependency>")) {
           return;
       }
 
