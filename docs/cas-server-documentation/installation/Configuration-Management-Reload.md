@@ -33,7 +33,17 @@ to manage the internal state of the configuration. The configuration server that
 is provided by Spring Cloud embedded in CAS is constantly monitoring sources
 that house CAS settings and upon changes will auto-refresh itself.
 
-Next, any changes you make to the externally-defined `application.properties`
+### Native Profile
+
+In the event that the [native configuration profile](Configuration-Management.html#native)
+is used to control and direct settings, CAS will begin to automatically watch and monitor
+the configuration files indicated by the profile and will auto-reload the state of the runtime
+application context automatically. You may also attempt to [refresh settings manually](Monitoring-Statistics.html)
+via the CAS admin screens.
+
+### Other Profiles
+
+Any changes you make to the externally-defined `application.properties|yml` or `cas.properties|yml`
 file [MUST be refreshed manually](Monitoring-Statistics.html).
 If you are using the CAS admin screens to update and edit properties,
 the configuration state of the CAS server
