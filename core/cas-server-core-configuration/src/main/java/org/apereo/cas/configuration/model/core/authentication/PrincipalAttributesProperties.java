@@ -33,13 +33,13 @@ public class PrincipalAttributesProperties {
     private List<Groovy> groovy = new ArrayList();
     private List<Ldap> ldap = new ArrayList();
     private List<Json> json = new ArrayList();
-    private List<Grouper> grouper = new ArrayList();
+    private Grouper grouper = new Grouper();
 
-    public List<Grouper> getGrouper() {
+    public Grouper getGrouper() {
         return grouper;
     }
 
-    public void setGrouper(final List<Grouper> grouper) {
+    public void setGrouper(final Grouper grouper) {
         this.grouper = grouper;
     }
 

@@ -32,7 +32,7 @@ import java.util.Set;
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAuthenticationManager.class);
-    
+
     /**
      * Plan to execute the authentication transaction.
      */
@@ -106,17 +106,17 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * Resolve principal.
      *
-     * @param handlerName the handler name
-     * @param resolver    the resolver
-     * @param credential  the credential
-     * @param principal   the current authenticated principal from a handler, if any.
+     * @param handler    the handler name
+     * @param resolver   the resolver
+     * @param credential the credential
+     * @param principal  the current authenticated principal from a handler, if any.
      * @return the principal
      */
-    protected Principal resolvePrincipal(final String handlerName, final PrincipalResolver resolver,
+    protected Principal resolvePrincipal(final AuthenticationHandler handler, final PrincipalResolver resolver,
                                          final Credential credential, final Principal principal) {
         if (resolver.supports(credential)) {
             try {
-                final Principal p = resolver.resolve(credential, principal);
+                final Principal p = resolver.resolve(credential, principal, handler);
                 LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
@@ -125,9 +125,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         } else {
             LOGGER.warn(
                     "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
-                    handlerName,
-                    resolver,
-                    credential);
+                    handler.getName(), resolver, credential);
         }
         return null;
     }
@@ -191,7 +189,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
                     handler.getName(),
                     principal);
         } else {
-            principal = resolvePrincipal(handler.getName(), resolver, credential, principal);
+            principal = resolvePrincipal(handler, resolver, credential, principal);
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
                     LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
