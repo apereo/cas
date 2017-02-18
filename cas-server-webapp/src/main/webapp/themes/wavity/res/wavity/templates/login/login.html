@@ -2,10 +2,10 @@
 <% var nls = getLoginNLS(); %>
 <section id="loginColumns" class="animated fadeInDown">
 	<div class="row">
-		<div class="col-md-6 hidden-xs tenant-logo-wrapper">			
-			<img id="serviceIcon" src="themes/wavity/res/lib/custom/img/LogInScreen/LogInScreen_OneTeam_logo.png" width="200px" height="200px" class="m-t-50"/>
+		<div class="col-md-5 col-lg-5 hidden-xs tenant-logo-wrapper">			
+			<img id="serviceIcon" src="themes/wavity/res/lib/custom/img/LogInScreen/LogInScreen_OneTeam_logo.png" width="200px" height="200px"/>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-7 col-lg-7">
 			<div id="top_notification" data-module="notifications">
 				<div class="notification_container notification_error is-open" data-type="error" role="alert">
 					<div class="notification_outer">
@@ -31,7 +31,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<div style="margin-top: 50px;">
+					<div style="margin-top: 30px;">
 						<!--<input type="password" class="form-control passwordtext" id="inputpassword" name="ot_password" maxlength="30" placeholder="<%= nls.PASSWORD %>" onfocus="this.placeholder=''" onblur="this.placeholder='<%= nls.PASSWORD %>'">-->
 						<input id="password" name="password" class="form-control passwordtext" name="ot_password" placeholder="Password" tabindex="2" accesskey="p" type="password" value="" size="25" autocomplete="off">
 						<span class="help-inline color-red"></span>
@@ -57,10 +57,7 @@
 					<a id="twitter" href="javascript:;;"><img src="themes/wavity/res/lib/custom/img/LogInScreen/ICN_Twitter_120x120.png" width="32px" height="32px" /></a>
 					<a id="linkedin" href="javascript:;;"><img src="themes/wavity/res/lib/custom/img/LogInScreen/ICN_LinkedIn_120x120.png" width="32px" height="32px" /></a>
 				</div>
-				-->			
-			<!--div>
-				<a href="javascript:;;" class="pull-left"><p class="text-primary">SIGN OUT</p></a>
-				</div-->
+			-->
 		</div>
 	</div>
 </section>

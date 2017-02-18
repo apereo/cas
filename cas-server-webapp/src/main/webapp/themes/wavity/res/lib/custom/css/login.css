@@ -149,8 +149,8 @@ div {
 }
 
 .tenant-logo-wrapper {
-	height:400px; 
-	text-align:center
+	height: 350px; 
+	text-align: center;
 }
 
 .tenant-logo-wrapper img {
@@ -250,26 +250,12 @@ div {
 	font-size:14px;
 }
 
-@media only screen and (min-device-width: 1366px) and (max-device-width: 1367px) {
-	.errorLoginMsg {
-		margin-top: -148px !important;
-		margin-right: 5% !important;
-	}
-}
-
-@media only screen and (min-device-width: 1400px) and (max-device-width: 1401px) {
-	.errorLoginMsg {
-		margin-top: -134px !important;
-		margin-right: 6% !important;	
-	}
-}
-@media only screen and (min-device-width: 1440px) and (max-device-width: 1441px) {
-	.errorLoginMsg {
-		margin-top: -134px !important;
-		margin-right: 6% !important;	
-	}
-}
-
 .color-red {
 	color: #F00;
+}
+
+@media (min-width: 992px) {
+   #serviceIcon {
+      float: right;
+  }
 }
