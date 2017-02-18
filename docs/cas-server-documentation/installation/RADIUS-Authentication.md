@@ -34,3 +34,19 @@ RSA RADIUS OTP support for MFA is enabled by only including the following depend
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#radius-otp).
+
+## Repository
+
+You may also need to declare the following repository in
+your CAS overlay to be able to resolve dependencies:
+
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>jitpack</id>
+        <url>https://jitpack.io</url>
+    </repository>
+    ...
+</repositories>
+```
