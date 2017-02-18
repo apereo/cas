@@ -56,7 +56,7 @@ openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
 ```
 
-## Register Service
+## Register Public Key
 
 Once you have received the public key from the client application owner, it must be first
 registered inside the CAS server's service registry. The service that holds the public key above must also
