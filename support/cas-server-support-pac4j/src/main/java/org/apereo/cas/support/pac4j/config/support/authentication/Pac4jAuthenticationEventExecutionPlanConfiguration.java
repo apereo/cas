@@ -306,11 +306,10 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         configureWordpressClient(clients);
         configureBitbucketClient(clients);
 
-        if (clients.isEmpty()) {
-            throw new IllegalArgumentException("At least one client must be defined");
-        }
-
         LOGGER.debug("The following clients are built: [{}]", clients);
+        if (clients.isEmpty()) {
+            LOGGER.warn("At least one client must be defined with pac4j");
+        }
         return new Clients(casProperties.getServer().getLoginUrl(), new ArrayList<>(clients));
     }
 
@@ -343,7 +342,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver);
-        plan.registerMetadataPopulator(clientAuthenticationMetaDataPopulator());
+        if (!builtClients().findAllClients().isEmpty()) {
+            plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver);
+            plan.registerMetadataPopulator(clientAuthenticationMetaDataPopulator());
+        }
     }
 }
