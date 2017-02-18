@@ -48,7 +48,6 @@ public class ClickatellSmsSender implements SmsSender {
     @Override
     public boolean send(final String from, final String to, final String message) {
         try {
-
             final MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("Authorization", this.token);
             headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
@@ -57,6 +56,7 @@ public class ClickatellSmsSender implements SmsSender {
             final Map<String, Object> map = new HashMap<>();
             map.put("content", message);
             map.put("to", Arrays.asList(to));
+            map.put("from", from);
 
             final StringWriter stringify = new StringWriter();
             mapper.writeValue(stringify, map);
