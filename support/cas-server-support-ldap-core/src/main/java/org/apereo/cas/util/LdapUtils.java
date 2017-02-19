@@ -20,6 +20,7 @@ import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -166,17 +167,37 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param baseDn            the base dn
      * @param filter            the filter
+     * @param binaryAttributes  the binary attributes
+     * @param returnAttributes  the return attributes
      * @return the response
      * @throws LdapException the ldap exception
      */
-    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory, final String baseDn,
-                                                                final SearchFilter filter) throws LdapException {
+    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
+                                                                final String baseDn,
+                                                                final SearchFilter filter,
+                                                                final String[] binaryAttributes,
+                                                                final String[] returnAttributes) throws LdapException {
         try (Connection connection = createConnection(connectionFactory)) {
             final SearchOperation searchOperation = new SearchOperation(connection);
-            final SearchRequest request = Beans.newLdaptiveSearchRequest(baseDn, filter);
+            final SearchRequest request = Beans.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
             request.setReferralHandler(new SearchReferralHandler());
             return searchOperation.execute(request);
         }
+    }
+
+    /**
+     * Execute search operation response.
+     *
+     * @param connectionFactory the connection factory
+     * @param baseDn            the base dn
+     * @param filter            the filter
+     * @return the response
+     * @throws LdapException the ldap exception
+     */
+    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
+                                                                final String baseDn,
+                                                                final SearchFilter filter) throws LdapException {
+        return executeSearchOperation(connectionFactory, baseDn, filter, ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }
 
     /**

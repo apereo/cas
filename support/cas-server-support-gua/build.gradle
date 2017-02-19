@@ -7,6 +7,7 @@ dependencies {
     compile project(":support:cas-server-support-ldap-core")
     compile project(":core:cas-server-core-configuration")
     compile project(":support:cas-server-support-jpa-util")
+    provided project(":support:cas-server-support-actions")
     runtime project(":support:cas-server-support-jdbc-drivers")
 
     compile libraries.spring

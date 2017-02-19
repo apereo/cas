@@ -1544,6 +1544,54 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.principalTransformation.prefix=
 ```
 
+## GUA Authentication
+
+To learn more about this topic, [please review this guide](GUA-Authentication.html).
+
+### LDAP Repository
+
+```properties
+# cas.authn.gua.ldap.imageAttribute=userImageIdentifier
+# cas.authn.gua.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.gua.ldap.connectionStrategy=
+# cas.authn.gua.ldap.baseDn=dc=example,dc=org
+# cas.authn.gua.ldap.userFilter=cn={user}
+# cas.authn.gua.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.gua.ldap.bindCredential=Password
+# cas.authn.gua.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.gua.ldap.connectTimeout=5000
+# cas.authn.gua.ldap.trustCertificates=
+# cas.authn.gua.ldap.keystore=
+# cas.authn.gua.ldap.keystorePassword=
+# cas.authn.gua.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.gua.ldap.poolPassivator=NONE|CLOSE|BIND
+# cas.authn.gua.ldap.minPoolSize=3
+# cas.authn.gua.ldap.maxPoolSize=10
+# cas.authn.gua.ldap.validateOnCheckout=true
+# cas.authn.gua.ldap.validatePeriodically=true
+# cas.authn.gua.ldap.validatePeriod=600
+# cas.authn.gua.ldap.failFast=true
+# cas.authn.gua.ldap.idleTime=500
+# cas.authn.gua.ldap.prunePeriod=600
+# cas.authn.gua.ldap.blockWaitTime=5000
+# cas.authn.gua.ldap.useSsl=true
+# cas.authn.gua.ldap.useStartTls=false
+
+# cas.authn.gua.ldap.validator.type=NONE|SEARCH|COMPARE
+# cas.authn.gua.ldap.validator.baseDn=
+# cas.authn.gua.ldap.validator.searchFilter=(objectClass=*)
+# cas.authn.gua.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.gua.ldap.validator.attributeName=objectClass
+# cas.authn.gua.ldap.validator.attributeValues=top
+# cas.authn.gua.ldap.validator.dn=
+```
+
+### Static Resource Repository
+
+```properties
+# cas.authn.gua.resource.location=file:/path/to/image.jpg
+```
+
 ## JWT/Token Authentication
 
 To learn more about this topic, [please review this guide](JWT-Authentication.html).
