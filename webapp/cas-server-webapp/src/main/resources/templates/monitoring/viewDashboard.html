@@ -115,8 +115,8 @@
         <div class="app-launcher server-config">
             <h2 th:inline="text"><i class="fa fa-cogs"></i>[[#{cas.dashboard.section.configuration.title}]]</h2>
             <ul class="configserver">
-                <li th:if="${isDefaultProfile}"><a th:href="@{/configserver/cas/default}">Default Profile</a></li>
-                <li th:if="${isNativeProfile}"><a th:href="@{/configserver/cas/native}">Native Profile</a></li>
+                <li th:if="${isDefaultProfile}"><a th:href="@{/status/configserver/cas/default}">Default Profile</a></li>
+                <li th:if="${isNativeProfile}"><a th:href="@{/status/configserver/cas/native}">Native Profile</a></li>
             </ul>
         </div>
 

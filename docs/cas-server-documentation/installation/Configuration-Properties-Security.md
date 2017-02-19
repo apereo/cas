@@ -24,7 +24,7 @@ installed in your JVM version (if it’s not there by default).</p></div>
 To encrypt a given setting, use:
 
 ```bash
-curl https://sso.example.org/cas/configserver/encrypt -d sensitiveValue
+curl https://sso.example.org/cas/status/configserver/encrypt -d sensitiveValue
 ```
 
 Then, copy the encrypted setting into your CAS configuration using the method specified below.
@@ -36,9 +36,11 @@ to account for special characters such as <code>+</code>.</p></div>
 If you wish to manually encrypt and decrypt settings to ensure the functionality is sane, use:
 
 ```bash
-export ENCRYPTED=`curl https://sso.example.org/cas/configserver/encrypt -d sensitiveValue | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'`
+export ENCRYPTED=`curl https://sso.example.org/cas/status/configserver/encrypt -d sensitiveValue | python -c 'import sys,urllib;print urllib.quote(sys.stdin
+.read()
+.strip())'`
 echo $ENCRYPTED
-curl https://sso.exampple.org/cas/configserver/decrypt -d $ENCRYPTED | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'
+curl https://sso.exampple.org/cas/status/configserver/decrypt -d $ENCRYPTED | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'
 ```
 
 Properties that are prefixed with `{cipher}` are automatically decrypted by the CAS configuration server at runtime, such as:
