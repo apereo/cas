@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{cas.mfa.u2f.pagetitle}"></title>
+    <script th:src="@{/js/u2f/u2f-api.js}"></script>
+
+    <script>
+        setTimeout(function () {
+            var request = document.getElementById('challenge').value;
+            u2f.register(request.registerRequests, request.authenticateRequests,
+                function (data) {
+                    var form = document.getElementById('form');
+                    var reg = document.getElementById('tokenResponse');
+                    if (data.errorCode) {
+                        alert("U2F failed with error: " + data.errorCode);
+                        return;
+                    }
+                    reg.value = JSON.stringify(data);
+                    alert(reg.value)
+                    form.submit();
+                });
+        }, 1000);
+
+    </script>
+
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="box fl-panel" id="login">
+        
+                
+        <form method="POST" id="form">
+            <input type="hidden" name="username" th:value="${u2fReg.username}"/>
+            <input type="hidden" name="tokenResponse" id="tokenResponse"/>
+            <input type="hidden" name="challenge" id="challenge" th:value="${u2fReg.challenge}" />
+        </form>
+    </div>
+</div>
+</body>
+</html>

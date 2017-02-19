@@ -37,6 +37,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String grouperGroupField;
 
+    private U2F u2f = new U2F();
     private Azure azure = new Azure();
     private Trusted trusted = new Trusted();
     private YubiKey yubikey = new YubiKey();
@@ -44,6 +45,14 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private GAuth gauth = new GAuth();
     private List<Duo> duo = new ArrayList<>();
     private Authy authy = new Authy();
+
+    public U2F getU2f() {
+        return u2f;
+    }
+
+    public void setU2f(final U2F u2f) {
+        this.u2f = u2f;
+    }
 
     public Azure getAzure() {
         return azure;
@@ -296,6 +305,15 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
     }
 
+    public static class U2F extends BaseProvider {
+        private static final long serialVersionUID = 6151350313777066398L;
+
+        public U2F() {
+            setId("mfa-u2f");
+        }
+
+    }
+    
     public static class YubiKey extends BaseProvider {
         private static final long serialVersionUID = 9138057706201201089L;
         private Integer clientId;

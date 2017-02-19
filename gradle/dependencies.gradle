@@ -1915,6 +1915,15 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     force = true
                 },
+        u2flibserver               :
+                dependencies.create("com.yubico:u2flib-server-core:$yubicoU2fServerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    force = true
+                },
         duojava                 : [
                 dependencies.create("net.unicon.iam:duo-java:$duoVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

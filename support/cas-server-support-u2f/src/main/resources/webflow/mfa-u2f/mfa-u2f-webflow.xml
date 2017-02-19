@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+    
+    <on-start>
+        <evaluate expression="initialFlowSetupAction" />
+    </on-start>
+
+    <action-state id="initializeLoginForm">
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="viewRegistrationU2f"/>
+    </action-state>
+    
+    <view-state id="viewRegistrationU2f" view="casU2fRegistrationView">
+        <on-entry>
+            <evaluate expression="u2fStartRegistrationAction" />
+        </on-entry>
+    </view-state>
+
+    <action-state id="realSubmit">
+        <evaluate expression="u2fAuthenticationWebflowAction" />
+        <transition on="success" to="success" />
+        <transition on="error" to="initializeLoginForm" />
+    </action-state>
+
+    <end-state id="success" />
+
+</flow>

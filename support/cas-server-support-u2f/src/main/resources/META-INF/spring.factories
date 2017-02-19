@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.support.authentication.U2FAuthenticationEventExecutionPlanConfiguration,\
+org.apereo.cas.config.U2FConfiguration
