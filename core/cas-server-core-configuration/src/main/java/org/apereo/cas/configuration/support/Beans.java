@@ -688,16 +688,34 @@ public final class Beans {
     /**
      * Builds a new request.
      *
+     * @param baseDn           the base dn
+     * @param filter           the filter
+     * @param binaryAttributes the binary attributes
+     * @param returnAttributes the return attributes
+     * @return the search request
+     */
+    public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
+                                                         final SearchFilter filter,
+                                                         final String[] binaryAttributes,
+                                                         final String[] returnAttributes) {
+        final SearchRequest sr = new SearchRequest(baseDn, filter);
+        sr.setBinaryAttributes(binaryAttributes);
+        sr.setReturnAttributes(returnAttributes);
+        sr.setSearchScope(SearchScope.SUBTREE);
+        return sr;
+    }
+
+    /**
+     * New ldaptive search request.
+     * Returns all attributes.
+     *
      * @param baseDn the base dn
      * @param filter the filter
      * @return the search request
      */
-    public static SearchRequest newLdaptiveSearchRequest(final String baseDn, final SearchFilter filter) {
-        final SearchRequest sr = new SearchRequest(baseDn, filter);
-        sr.setBinaryAttributes(ReturnAttributes.ALL_USER.value());
-        sr.setReturnAttributes(ReturnAttributes.ALL_USER.value());
-        sr.setSearchScope(SearchScope.SUBTREE);
-        return sr;
+    public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
+                                                         final SearchFilter filter) {
+        return newLdaptiveSearchRequest(baseDn, filter, ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }
 
     /**
