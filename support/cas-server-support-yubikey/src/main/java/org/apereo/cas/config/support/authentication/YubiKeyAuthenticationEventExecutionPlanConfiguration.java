@@ -46,10 +46,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
     
     @Bean
     @RefreshScope
