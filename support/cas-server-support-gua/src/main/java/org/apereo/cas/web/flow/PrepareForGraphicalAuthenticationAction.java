@@ -28,6 +28,7 @@ public class PrepareForGraphicalAuthenticationAction extends InitializeLoginActi
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
+        requestContext.getFlowScope().put("guaEnabled", true);
         if (!requestContext.getFlowScope().contains("guaUsername")) {
             return new EventFactorySupport().event(this, GraphicalUserAuthenticationWebflowConfigurer.TRANSITION_ID_GUA_GET_USERID);
         }
