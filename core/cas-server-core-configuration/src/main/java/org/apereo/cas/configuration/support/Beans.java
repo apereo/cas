@@ -474,7 +474,7 @@ public final class Beans {
             cfg.setKeyStoreType(l.getKeystoreType());
             cc.setSslConfig(new SslConfig(cfg));
         } else {
-            LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore [{}]");
+            LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore");
             cc.setSslConfig(new SslConfig());
         }
         if (l.getSaslMechanism() != null) {
