@@ -20,5 +20,6 @@ Support is enabled by including the following module in the WAR overlay:
 ## Registration
 
 By default, an account registry implementation is included that collects user device registration and saves them into memory.
-This option should only be used for demo and testing purposes. Production deployments of this feature will require a separate
-implementation of the registry that is capable to register accounts into persistent storage.
+This option should only be used for demo and testing purposes. Production deployments of this feature today will require a separate
+implementation of the registry that is capable to register accounts into persistent storage. Additional options for storage may be added
+later based on demand and availability.
