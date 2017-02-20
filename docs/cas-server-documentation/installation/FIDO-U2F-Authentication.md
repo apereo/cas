@@ -17,6 +17,8 @@ Support is enabled by including the following module in the WAR overlay:
 </dependency>
 ```
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#fido-u2f).
+
 ## Registration
 
 By default, an account registry implementation is included that collects user device registration and saves them into memory.

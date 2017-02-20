@@ -2068,6 +2068,32 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
 ```
 
+### FIDO U2F
+
+To learn more about this topic, [please review this guide](FIDO-U2F-Authentication.html).
+
+```properties
+# cas.authn.mfa.u2f.rank=0
+# cas.authn.mfa.u2f.name=
+
+# cas.authn.mfa.u2f.bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.u2f.bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.u2f.bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.u2f.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.u2f.bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.u2f.bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.u2f.bypass.credentialClassType=UsernamePassword.+
+```
+
+#### FIDO U2F Memory
+
+```properties
+# cas.authn.mfa.u2f.expireRegistrations=30
+# cas.authn.mfa.u2f.expireRegistrationsTimeUnit=SECONDS
+# cas.authn.mfa.u2f.expireDevices=30
+# cas.authn.mfa.u2f.expireDevicesTimeUnit=DAYS
+```
+
 ### Microsoft Azure
 
 To learn more about this topic, [please review this guide](MicrosoftAzure-Authentication.html).
