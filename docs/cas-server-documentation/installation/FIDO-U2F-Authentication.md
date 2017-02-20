@@ -7,6 +7,8 @@ title: CAS - U2F - FIDO Universal 2nd Factor Authentication
 
 U2F is an open authentication standard that enables internet users to securely access any number of online services, with one single device, instantly and with no drivers, or client software needed. The CAS U2F implementation is built on top of [Yubico](https://www.yubico.com/about/background/fido/) and the technical specifications are hosted by the open-authentication industry consortium known as the [FIDO Alliance](https://fidoalliance.org/).
 
+Note that not all browsers today support U2F. While support in recent versions of Chrome and Opera seem to exist, you should [always verify](https://www.yubico.com/support/knowledge-base/categories/articles/browsers-support-u2f/) that U2F support is available for your target browser. 
+
 Support is enabled by including the following module in the WAR overlay:
 
 ```xml
