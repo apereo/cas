@@ -6,12 +6,20 @@ title: CAS - Home
 # Enterprise Single Sign-On
 
 * [Java (Spring Webflow/Spring Boot) server component](planning/Architecture.html)
-* [Pluggable authentication support](Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), [Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), [JAAS](installation/JAAS-Authentication.html), [JWT](installation/JWT-Authentication.html), etc)
-* Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML](protocol/SAML-Protocol.html), [OAuth](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html))
-* Support for [multifactor authentication](installation/Configuring-Multifactor-Authentication.html) via a variety of providers ([Duo Security](installation/DuoSecurity-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [YubiKey](installation/YubiKey-Authentication.html), etc)
+* [Pluggable authentication support](Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), 
+[Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), 
+[JAAS](installation/JAAS-Authentication.html), [JWT](installation/JWT-Authentication.html), 
+[RADIUS](installation/RADIUS-Authentication.html), [RADIUS](installation/MongoDb-Authentication.html) etc)
+* Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML](protocol/SAML-Protocol.html), 
+[OAuth2](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html))
+* Support for [multifactor authentication](installation/Configuring-Multifactor-Authentication.html) via a variety of 
+providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U2F](installation/FIDO-U2f-Authentication.html), 
+[YubiKey](installation/YubiKey-Authentication.html), etc)
+* Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as ADFS, Facebook, Twitter, SAML2 IdPs, etc.
 * Manage and register [client applications and services](installation/Service-Management.html) with specific authentication policies
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc)
-* Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday](integration/Configuring-SAML-SP-Integrations.html), uPortal, Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc
+* Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday](integration/Configuring-SAML-SP-Integrations.html), 
+uPortal, Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc
 
 CAS provides a friendly open source community that actively supports and contributes to the project.
 While the project is rooted in higher-ed open source, it has grown to an international audience spanning
