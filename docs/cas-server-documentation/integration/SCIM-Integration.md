@@ -9,9 +9,11 @@ The [SCIM standard](http://www.simplecloud.info/) is created to simplify user ma
 
 SCIM versions 1.1 and 2 are both supported, thanks to the SDK provided by [UnboundID](https://github.com/UnboundID).
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>SCIM functionality at this point is experimental.</p></div>
-
-Typical use case for enabling SCIM is to synchronize and provision user accounts, just in time, to services and applications that are integrated with CAS for single sign-on. In cases where the application also has its own account store, a mapping of user accounts between the CAS canonical account store (LDAP, JDBC, etc) and the application may be required. To accommodate this issue, CAS may be allowed to provision the authenticated principal via SCIM to a provisioning/identity/entity engine which would then dynamically synchronize user profiles to target systems.
+Typical use case for enabling SCIM is to synchronize and provision user accounts, just in time, to services and applications that are 
+integrated with CAS for single sign-on. In cases where the application also has its own account store, a mapping of user accounts between 
+the CAS canonical account store (LDAP, JDBC, etc) and the application may be required. To accommodate this issue, CAS may be allowed to 
+provision the authenticated principal via SCIM to a provisioning/identity/entity engine which would then dynamically 
+synchronize user profiles to target systems.
 
 ## Configuration
 

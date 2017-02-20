@@ -3,6 +3,8 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <var name="credential" class="org.apereo.cas.adaptors.u2f.U2FTokenCredential" />
     
     <on-start>
         <evaluate expression="initialFlowSetupAction" />
@@ -32,11 +34,15 @@
         <transition on="success" to="viewLoginForm"/>
     </action-state>
 
-    <view-state id="viewLoginForm" view="casU2fLoginView">
+    <view-state id="viewLoginForm" view="casU2fLoginView" model="credential">
+        <binder>
+            <binding property="token" required="true"/>
+        </binder>
         <on-entry>
+            <evaluate expression="u2fStartAuthenticationAction" />
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
-        <transition on="submit" to="realSubmit"/>
+        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
     </view-state>
     
     <action-state id="realSubmit">

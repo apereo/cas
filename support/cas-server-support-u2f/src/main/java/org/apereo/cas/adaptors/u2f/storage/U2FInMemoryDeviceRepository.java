@@ -36,6 +36,11 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
+    public void authenticateDevice(final String username, final DeviceRegistration registration) {
+        userStorage.getUnchecked(username).put(registration.getKeyHandle(), registration.toJson());
+    }
+
+    @Override
     public boolean isDeviceRegisteredFor(final String username) {
         return !userStorage.getUnchecked(username).values().isEmpty();
     }

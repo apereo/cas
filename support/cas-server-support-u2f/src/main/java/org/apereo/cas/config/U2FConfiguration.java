@@ -115,7 +115,7 @@ public class U2FConfiguration {
     @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
     @Bean
     public Action u2fStartAuthenticationAction() {
-        return new U2FStartAuthenticationAction(casProperties.getServer().getName());
+        return new U2FStartAuthenticationAction(casProperties.getServer().getName(), u2fDeviceRepository());
     }
 
     @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")

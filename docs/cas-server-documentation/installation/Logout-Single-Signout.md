@@ -63,8 +63,6 @@ CAS sends an HTTP POST message directly to the service. This is the traditional 
 CAS issues asynchronous AJAX `POST` logout requests via `JSONP` to authenticated services.
 The expected behaviour of the CAS client is to invalidate the application web session.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Front-channel SLO at this point is experimental.</p></div>
-
 ## SLO Requests
 
 The way the notification is done (_back_ or _front_ channel) is configured at a service level
