@@ -114,11 +114,11 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     public void buildMetadataResolverAggregate(final String entityId) {
         try {
             final Set<Map.Entry<Resource, MetadataFilterChain>> entries = this.metadataResources.entrySet();
-            for (final Map.Entry<Resource, MetadataFilterChain> entry : entries) {
+            entries.forEach(entry -> {
                 final Resource resource = entry.getKey();
                 LOGGER.debug("Loading [{}]", resource.getFilename());
                 loadMetadataFromResource(entry.getValue(), resource, entityId);
-            }
+            });
         } catch (final Exception ex) {
             throw Throwables.propagate(ex);
         }

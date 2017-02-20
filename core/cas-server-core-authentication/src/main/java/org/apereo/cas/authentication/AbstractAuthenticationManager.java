@@ -85,9 +85,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
                                                             final Collection<Credential> credentials) {
 
         final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(credentials);
-        for (final AuthenticationMetaDataPopulator populator : pops) {
-            credentials.stream().filter(populator::supports).forEach(credential -> populator.populateAttributes(builder, credential));
-        }
+        pops.forEach(populator -> credentials.stream().filter(populator::supports)
+                .forEach(credential -> populator.populateAttributes(builder, credential)));
     }
 
     /**
@@ -98,9 +97,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      */
     protected void addAuthenticationMethodAttribute(final AuthenticationBuilder builder,
                                                     final Authentication authentication) {
-        for (final HandlerResult result : authentication.getSuccesses().values()) {
-            builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName());
-        }
+        authentication.getSuccesses().values().forEach(result -> builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName()));
     }
 
     /**

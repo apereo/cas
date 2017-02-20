@@ -194,7 +194,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
 
-        for (final Client client : this.clients.findAllClients()) {
+        this.clients.findAllClients().forEach(client -> {
             try {
                 final IndirectClient indirectClient = (IndirectClient) client;
 
@@ -211,7 +211,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             } catch (final Exception e) {
                 LOGGER.error("Cannot process client [{}]", client, e);
             }
-        }
+        });
         if (!urls.isEmpty()) {
             context.getFlowScope().put(PAC4J_URLS, urls);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {

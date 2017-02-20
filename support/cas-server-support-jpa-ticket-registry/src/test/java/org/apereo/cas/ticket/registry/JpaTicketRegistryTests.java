@@ -38,6 +38,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -161,9 +162,7 @@ public class JpaTicketRegistryTests {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             final List<ServiceTicketGenerator> generators = new ArrayList<>(CONCURRENT_SIZE);
-            for (int i = 0; i < CONCURRENT_SIZE; i++) {
-                generators.add(new ServiceTicketGenerator(newTgt.getId(), this.ticketRegistry, this.txManager));
-            }
+            IntStream.range(0, CONCURRENT_SIZE).mapToObj(i -> new ServiceTicketGenerator(newTgt.getId(), this.ticketRegistry, this.txManager)).forEach(generators::add);
             final List<Future<String>> results = executor.invokeAll(generators);
             for (final Future<String> result : results) {
                 assertNotNull(result.get());

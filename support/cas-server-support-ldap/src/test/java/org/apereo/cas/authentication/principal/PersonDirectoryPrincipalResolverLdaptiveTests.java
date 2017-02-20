@@ -53,39 +53,38 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
 
     @Test
     public void verifyResolver() {
-        for (final LdapEntry entry : this.getEntries()) {
+        this.getEntries().forEach(entry -> {
             final String username = entry.getAttribute("sAMAccountName").getStringValue();
             final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeRepository);
-            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw), 
+            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw),
                     CoreAuthenticationTestUtils.getPrincipal(),
                     new SimpleTestUsernamePasswordAuthenticationHandler());
             assertNotNull(p);
             assertTrue(p.getAttributes().containsKey("displayName"));
-        }
+        });
     }
 
     @Test
     public void verifyChainedResolver() {
-        for (final LdapEntry entry : this.getEntries()) {
+        this.getEntries().forEach(entry -> {
             final String username = entry.getAttribute("sAMAccountName").getStringValue();
             final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeRepository);
-
             final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
             chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
             final Map<String, Object> attributes = new HashMap<>(2);
             attributes.put("a1", "v1");
             attributes.put("a2", "v2");
-            final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw), 
+            final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw),
                     CoreAuthenticationTestUtils.getPrincipal(username, attributes),
                     new SimpleTestUsernamePasswordAuthenticationHandler());
             assertNotNull(p);
             assertTrue(p.getAttributes().containsKey("displayName"));
             assertTrue(p.getAttributes().containsKey("a1"));
             assertTrue(p.getAttributes().containsKey("a2"));
-        }
+        });
     }
 }
