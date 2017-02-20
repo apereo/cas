@@ -66,8 +66,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         final SpnegoCredential ntlmCredential = (SpnegoCredential) credential;
         final byte[] src = ntlmCredential.getInitToken();
 
-        UniAddress dc;
-
+        final UniAddress dc;
         boolean success = false;
         try {
             if (this.loadBalance) {

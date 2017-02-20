@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.radius;
 
-import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

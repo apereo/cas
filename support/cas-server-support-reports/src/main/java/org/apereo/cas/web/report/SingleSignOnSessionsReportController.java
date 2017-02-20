@@ -120,7 +120,8 @@ public class SingleSignOnSessionsReportController extends AbstractNamedMvcEndpoi
         final Collection<Map<String, Object>> activeSessions = new ArrayList<>();
         final ISOStandardDateFormat dateFormat = new ISOStandardDateFormat();
 
-        getNonExpiredTicketGrantingTickets().stream().map(ticket -> (TicketGrantingTicket) ticket).filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null)).forEach(tgt -> {
+        getNonExpiredTicketGrantingTickets().stream().map(TicketGrantingTicket.class::cast)
+                .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null)).forEach(tgt -> {
             final Authentication authentication = tgt.getAuthentication();
             final Principal principal = authentication.getPrincipal();
             final Map<String, Object> sso = new HashMap<>(SsoSessionAttributeKeys.values().length);

@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,7 +55,7 @@ public final class SamlIdPUtils {
     public static ModelAndView produceUnauthorizedErrorView() {
         return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
     }
-    
+
     /**
      * Produce error view model and view.
      *
@@ -68,7 +67,7 @@ public final class SamlIdPUtils {
         model.put("rootCauseException", e);
         return new ModelAndView(SamlIdPConstants.ERROR_VIEW, model);
     }
-    
+
     /**
      * Prepare peer entity saml endpoint.
      *
@@ -116,7 +115,11 @@ public final class SamlIdPUtils {
             final List<MetadataResolver> resolvers;
             final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
-            resolvers = registeredServices.stream().map(SamlRegisteredService.class::cast).map(samlRegisteredService -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityID)).map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver).collect(Collectors.toList());
+            resolvers = registeredServices.stream()
+                    .map(SamlRegisteredService.class::cast)
+                    .map(samlRegisteredService -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityID))
+                    .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
+                    .collect(Collectors.toList());
             chainingMetadataResolver.setResolvers(resolvers);
             chainingMetadataResolver.setId(entityID);
             chainingMetadataResolver.initialize();
@@ -135,7 +138,7 @@ public final class SamlIdPUtils {
      * @return the assertion consumer service for
      */
     public static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest,
-                                                                          final ServicesManager servicesManager, 
+                                                                          final ServicesManager servicesManager,
                                                                           final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();

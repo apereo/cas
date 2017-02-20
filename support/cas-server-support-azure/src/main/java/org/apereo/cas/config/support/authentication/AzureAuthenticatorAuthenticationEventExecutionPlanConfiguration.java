@@ -6,10 +6,10 @@ import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationRequestBuilder;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.azure.web.flow.AzureAuthenticatorGenerateTokenAction;
-import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,7 +18,6 @@ import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,11 +43,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
-
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;

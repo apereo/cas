@@ -217,8 +217,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return the int
      */
     public int deleteTicketsFromResultList(final List<? extends Ticket> serviceTicketImpls) {
-        int failureCount = (int) serviceTicketImpls.stream().filter(serviceTicketImpl -> !removeTicket(serviceTicketImpl)).count();
-        return failureCount;
+        return (int) serviceTicketImpls.stream().filter(serviceTicketImpl -> !removeTicket(serviceTicketImpl)).count();
     }
 
     /**

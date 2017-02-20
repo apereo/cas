@@ -162,7 +162,9 @@ public class JpaTicketRegistryTests {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             final List<ServiceTicketGenerator> generators = new ArrayList<>(CONCURRENT_SIZE);
-            IntStream.range(0, CONCURRENT_SIZE).mapToObj(i -> new ServiceTicketGenerator(newTgt.getId(), this.ticketRegistry, this.txManager)).forEach(generators::add);
+            IntStream.range(0, CONCURRENT_SIZE)
+                    .mapToObj(i -> new ServiceTicketGenerator(newTgt.getId(), this.ticketRegistry, this.txManager))
+                    .forEach(generators::add);
             final List<Future<String>> results = executor.invokeAll(generators);
             for (final Future<String> result : results) {
                 assertNotNull(result.get());

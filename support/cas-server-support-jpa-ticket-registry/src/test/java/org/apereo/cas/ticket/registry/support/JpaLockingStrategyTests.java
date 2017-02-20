@@ -174,7 +174,8 @@ public class JpaLockingStrategyTests {
 
     private LockingStrategy[] getConcurrentLocks(final String appId) {
         final LockingStrategy[] locks = new LockingStrategy[CONCURRENT_SIZE];
-        IntStream.rangeClosed(1, locks.length).forEach(i -> locks[i - 1] = newLockTxProxy(appId, appId + '-' + i, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT));
+        IntStream.rangeClosed(1, locks.length)
+                .forEach(i -> locks[i - 1] = newLockTxProxy(appId, appId + '-' + i, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT));
         return locks;
     }
 
