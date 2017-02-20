@@ -9,13 +9,12 @@
         /*<![CDATA[*/
 
         setTimeout(function () {
-            var appId =  /*[[${u2fReg.appId}]]*/;
-            ;
-            var version =  /*[[${u2fReg.version}]]*/;
-            ;
-            var challenge =  /*[[${u2fReg.challenge}]]*/;
-            ;
-
+            var appId =  /*[[${u2fReg.appId}]]*/ ;
+            
+            var version =  /*[[${u2fReg.version}]]*/ ;
+            
+            var challenge =  /*[[${u2fReg.challenge}]]*/ ;
+            
             var registerRequests = [{version: version, challenge: challenge}];
             console.log(appId, registerRequests);
             u2f.register(appId, registerRequests, [], function (data) {

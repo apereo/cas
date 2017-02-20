@@ -29,6 +29,14 @@ public interface U2FDeviceRepository {
     void registerDevice(String username, DeviceRegistration registration);
 
     /**
+     * Deliver authenticated device upon successful authentication events.
+     *
+     * @param username     the username
+     * @param registration the registration
+     */
+    void authenticateDevice(String username, DeviceRegistration registration);
+
+    /**
      * Is registered ?
      *
      * @param username the username
@@ -46,6 +54,15 @@ public interface U2FDeviceRepository {
     String getDeviceRegistrationRequest(String requestId, String username);
 
     /**
+     * Gets device authentication request.
+     *
+     * @param requestId the request id
+     * @param username  the username
+     * @return the device authentication request
+     */
+    String getDeviceAuthenticationRequest(String requestId, String username);
+
+    /**
      * Request device registration.
      *
      * @param requestId            the request id
@@ -53,4 +70,15 @@ public interface U2FDeviceRepository {
      * @param registrationJsonData the registration json data
      */
     void requestDeviceRegistration(String requestId, String username, String registrationJsonData);
+
+    /**
+     * Request device authentication.
+     *
+     * @param requestId            the request id
+     * @param username             the username
+     * @param registrationJsonData the registration json data
+     */
+    void requestDeviceAuthentication(String requestId, String username, String registrationJsonData);
+
+
 }
