@@ -139,10 +139,10 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
 
         final Map<String, RegisteredServiceProperty> props = svc.getProperties();
         final Set<RegisteredServiceEditBean.ServiceData.PropertyBean> beanProps = bean.getProperties();
-        for (final Map.Entry<String, RegisteredServiceProperty> p : props.entrySet()) {
+        props.entrySet().forEach(p -> {
             final String set = org.springframework.util.StringUtils.collectionToCommaDelimitedString(p.getValue().getValues());
             beanProps.add(new RegisteredServiceEditBean.ServiceData.PropertyBean(p.getKey(), set));
-        }
+        });
 
     }
 
@@ -263,11 +263,11 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             }
 
             final Set<RegisteredServiceEditBean.ServiceData.PropertyBean> props = data.getProperties();
-            for (final RegisteredServiceEditBean.ServiceData.PropertyBean str : props) {
+            props.forEach(str -> {
                 final DefaultRegisteredServiceProperty value = new DefaultRegisteredServiceProperty();
                 value.setValues(org.springframework.util.StringUtils.commaDelimitedListToSet(str.getValue()));
                 regSvc.getProperties().put(str.getName(), value);
-            }
+            });
 
 
             return regSvc;

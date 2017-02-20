@@ -205,9 +205,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (attributeValue instanceof Collection<?>) {
             final Collection<?> c = (Collection<?>) attributeValue;
             LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
-            for (final Object value : c) {
-                attributeList.add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
-            }
+            c.stream().map(value -> newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME)).forEach(attributeList::add);
         } else {
             LOGGER.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
             attributeList.add(newAttributeValue(attributeValue, AttributeValue.DEFAULT_ELEMENT_NAME));

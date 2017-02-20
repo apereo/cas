@@ -68,15 +68,13 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     @Override
     public Principal resolve(final Credential credential, final Principal principal, final AuthenticationHandler handler) {
         final List<Principal> principals = new ArrayList<>();
-        for (final PrincipalResolver resolver : chain) {
-            if (resolver.supports(credential)) {
-                LOGGER.debug("Invoking principal resolver [{}]", resolver);
-                final Principal p = resolver.resolve(credential, principal, handler);
-                if (p != null) {
-                    principals.add(p);
-                }
+        chain.stream().filter(resolver -> resolver.supports(credential)).forEach(resolver -> {
+            LOGGER.debug("Invoking principal resolver [{}]", resolver);
+            final Principal p = resolver.resolve(credential, principal, handler);
+            if (p != null) {
+                principals.add(p);
             }
-        }
+        });
 
         if (principals.isEmpty()) {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");

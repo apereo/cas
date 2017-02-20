@@ -138,10 +138,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
         try {
             final Response<SearchResult> response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                for (final LdapEntry entry : response.getResult().getEntries()) {
-                    final RegisteredService svc = this.ldapServiceMapper.mapToRegisteredService(entry);
-                    list.add(svc);
-                }
+                response.getResult().getEntries().stream().map(this.ldapServiceMapper::mapToRegisteredService).forEach(list::add);
             }
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);

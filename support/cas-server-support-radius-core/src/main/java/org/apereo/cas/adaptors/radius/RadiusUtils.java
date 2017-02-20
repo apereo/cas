@@ -45,9 +45,7 @@ public final class RadiusUtils {
                 final RadiusResponse response = radiusServer.authenticate(username, password);
                 if (response != null) {
                     final Map<String, Object> attributes = new HashMap<>();
-                    for (final RadiusAttribute attribute : response.getAttributes()) {
-                        attributes.put(attribute.getAttributeName(), attribute.getValue().toString());
-                    }
+                    response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue().toString()));
                     return Pair.of(Boolean.TRUE, Optional.of(attributes));
                 }
 
