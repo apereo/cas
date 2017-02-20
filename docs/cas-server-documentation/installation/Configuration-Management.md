@@ -56,7 +56,7 @@ CAS settings, it also needs to contact the configuration server to retrieve and 
 
 The configuration server is controlled and defined by the `bootstrap.properties` file.
 
-The following endpoints are secured and exposed by the configuration server's `/configserver` endpoint:
+The following endpoints are secured and exposed by the configuration server's `/status/configserver` endpoint:
 
 | Parameter                         | Description
 |-----------------------------------|------------------------------------------
