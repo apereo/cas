@@ -202,7 +202,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final String id = getLdapPrincipalIdentifier(username, ldapEntry);
 
         final Map<String, Object> attributeMap = new LinkedHashMap<>(this.principalAttributeMap.size());
-        for (final Map.Entry<String, String> ldapAttr : this.principalAttributeMap.entrySet()) {
+        this.principalAttributeMap.entrySet().forEach(ldapAttr -> {
             final LdapAttribute attr = ldapEntry.getAttribute(ldapAttr.getKey());
             if (attr != null) {
                 LOGGER.debug("Found principal attribute: [{}]", attr);
@@ -217,7 +217,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 LOGGER.warn("Requested LDAP attribute [{}] could not be found on the resolved LDAP entry for [{}]",
                         ldapAttr.getKey(), ldapEntry.getDn());
             }
-        }
+        });
         final String dnAttribute = getName().concat(".").concat(username);
         LOGGER.debug("Recording principal DN attribute as [{}]", dnAttribute);
 

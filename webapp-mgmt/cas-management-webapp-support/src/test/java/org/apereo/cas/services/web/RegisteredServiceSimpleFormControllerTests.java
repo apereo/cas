@@ -92,9 +92,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for (final RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof RegexRegisteredService);
-        }
+        this.manager.getAllServices().forEach(rs -> assertTrue(rs instanceof RegexRegisteredService));
     }
 
     @Test
@@ -137,9 +135,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for (final RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof RegexRegisteredService);
-        }
+        this.manager.getAllServices().forEach(rs -> assertTrue(rs instanceof RegexRegisteredService));
     }
 
     @Test

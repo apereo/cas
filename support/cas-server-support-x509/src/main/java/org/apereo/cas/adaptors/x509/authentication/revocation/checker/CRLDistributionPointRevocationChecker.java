@@ -11,7 +11,6 @@ import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
-import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
 import org.slf4j.Logger;
@@ -28,6 +27,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 /**
  * Performs CRL-based revocation checking by consulting resources defined in
@@ -208,21 +209,17 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         final List<URI> urls = new ArrayList<>();
 
         if (points != null) {
-            for (final DistributionPoint point : points) {
-                final DistributionPointName pointName = point.getDistributionPoint();
-                if (pointName != null) {
-                    final ASN1Sequence nameSequence = ASN1Sequence.getInstance(pointName.getName());
-                    for (int i = 0; i < nameSequence.size(); i++) {
-                        final GeneralName name = GeneralName.getInstance(nameSequence.getObjectAt(i));
-                        LOGGER.debug("Found CRL distribution point [{}].", name);
-                        try {
-                            addURL(urls, DERIA5String.getInstance(name.getName()).getString());
-                        } catch (final RuntimeException e) {
-                            LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
-                        }
+            points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
+                final ASN1Sequence nameSequence = ASN1Sequence.getInstance(pointName.getName());
+                IntStream.range(0, nameSequence.size()).mapToObj(i -> GeneralName.getInstance(nameSequence.getObjectAt(i))).forEach(name -> {
+                    LOGGER.debug("Found CRL distribution point [{}].", name);
+                    try {
+                        addURL(urls, DERIA5String.getInstance(name.getName()).getString());
+                    } catch (final RuntimeException e) {
+                        LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
                     }
-                }
-            }
+                });
+            });
         }
 
         return urls.toArray(new URI[urls.size()]);

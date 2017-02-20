@@ -79,7 +79,7 @@ public class LoggingOutputSocketMessagingController {
     private void registerLogFileTailThreads() throws IOException {
         final Collection<String> outputFileNames = new HashSet<>();
         final Collection<Appender> loggerAppenders = this.loggerContext.getConfiguration().getAppenders().values();
-        for (final Appender appender : loggerAppenders) {
+        loggerAppenders.forEach(appender -> {
             if (appender instanceof FileAppender) {
                 outputFileNames.add(((FileAppender) appender).getFileName());
             } else if (appender instanceof RandomAccessFileAppender) {
@@ -91,7 +91,7 @@ public class LoggingOutputSocketMessagingController {
             } else if (appender instanceof RollingRandomAccessFileAppender) {
                 outputFileNames.add(((RollingRandomAccessFileAppender) appender).getFileName());
             }
-        }
+        });
 
         outputFileNames.forEach(s -> {
             final Tailer t = new Tailer(new File(s), new LogTailerListener(), 100, false, true);
