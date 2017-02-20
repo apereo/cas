@@ -5,6 +5,12 @@ title: CAS - Contributor Guidelines
 
 # Contributor Guidelines
 
+## First
+
+We want to start off by saying thank you for using CAS. This project is a labor of love, and we appreciate all of the users 
+that catch bugs, make performance improvements, and help with documentation. Every contribution is meaningful, so thank you 
+for participating. That being said, here are a few guidelines that we ask you to follow so we can successfully address your patch.
+
 ## Getting Started
 
 All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
