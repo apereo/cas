@@ -1,13 +1,19 @@
 <!--
 
-## Before you report issues
+# Thanks
+
+We want to start off by saying thank you for using CAS. This project is a labor of love, and we appreciate all of the users 
+that catch bugs, make performance improvements, and help with documentation. Every contribution is meaningful, so thank you 
+for participating. That being said, here are a few guidelines that we ask you to follow so we can successfully address your issue.
+
+# Before you report issues
 In order to streamline the process of evaluating issues, we ask that you:
 
 - First, check with CAS' user mailing list to see if the issue has been reported there and if there are any workarounds.
 - Cross check with the official CAS documentation to see if there are any missing steps in your configuration.
 - Check CAS' issue tracker to see if your issue has already been reported.
  
-## Remember that...
+# Remember that...
 If you have a question about how to configure a feature in CAS, please use the CAS mailing lists instead. If your submission is not an actual issue or does not carry enough diagnostic data, the issue may be automatically closed.
 
 ## To reproduce the issue
