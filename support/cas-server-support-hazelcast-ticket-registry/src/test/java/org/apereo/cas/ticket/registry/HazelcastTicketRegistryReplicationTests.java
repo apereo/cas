@@ -54,9 +54,7 @@ public class HazelcastTicketRegistryReplicationTests {
     @Test
     public void retrieveCollectionOfTickets() {
         Collection<Ticket> col = this.hzTicketRegistry1.getTickets();
-        for (final Ticket ticket : col) {
-            this.hzTicketRegistry1.deleteTicket(ticket.getId());
-        }
+        col.forEach(ticket -> this.hzTicketRegistry1.deleteTicket(ticket.getId()));
 
         col = hzTicketRegistry2.getTickets();
         assertEquals(0, col.size());

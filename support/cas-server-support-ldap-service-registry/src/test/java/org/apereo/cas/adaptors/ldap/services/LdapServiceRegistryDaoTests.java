@@ -63,9 +63,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Before
     public void setUp() throws Exception {
-        for (final RegisteredService service : this.dao.load()) {
-            this.dao.delete(service);
-        }
+        this.dao.load().forEach(service -> this.dao.delete(service));
     }
 
     @Test
@@ -178,9 +176,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         this.dao.save(getRegexRegisteredService());
         this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();
-        for (final RegisteredService registeredService : services) {
-            this.dao.delete(registeredService);
-        }
+        services.forEach(registeredService -> this.dao.delete(registeredService));
         assertEquals(0, this.dao.load().size());
     }
 
