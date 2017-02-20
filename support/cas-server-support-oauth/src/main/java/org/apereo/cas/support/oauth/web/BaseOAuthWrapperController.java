@@ -158,7 +158,7 @@ public abstract class BaseOAuthWrapperController {
                     LOGGER.debug("Added attribute [{}] with value [{}] to the authentication", k, v);
                     bldr.addAttribute(k, v);
                 } else {
-                    LOGGER.debug("Skipped over attribute [{}] since it's already contained by the principal", k, v);
+                    LOGGER.debug("Skipped over attribute [{}] since it's already contained by the principal", k);
                 }
             });
         }
