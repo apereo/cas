@@ -245,7 +245,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     LOGGER.warn("The principal id attribute [{}] is not found. CAS cannot construct the final authenticated principal "
                                  + "if it's unable to locate the attribute that is designated as the principal id. "
                                  + "Attributes available on the LDAP entry are [{}]. Since principal id attribute is not available, CAS will "
-                                 + "fallback to construct the principal based on the provided user id: [{}]",
+                                 + "fall back to construct the principal based on the provided user id: [{}]",
                             this.principalIdAttribute, ldapEntry.getAttributes(), username);
                     return username;
                 }
