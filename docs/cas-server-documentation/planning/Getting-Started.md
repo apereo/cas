@@ -50,7 +50,7 @@ This approach does not require the adopter to *explicitly* download any version 
 rather utilizes the overlay mechanism to combine CAS original artifacts and local 
 customizations to further ease future upgrades and maintenance.
 
-**Note: Do NOT clone or download the CAS codebase directly. That is ONLY required if you
+**Note**: Do NOT clone or download the CAS codebase directly. That is ONLY required if you
 wish to contribute to the development of the project. 
 
 It is **VERY IMPORTANT** that you try to get a functional baseline working before doing anything else.
