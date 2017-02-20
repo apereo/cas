@@ -3360,6 +3360,12 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 ## Maximum amount of time (in milliseconds) a connection allocation should block
 #  before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
 # cas.ticket.registry.redis.pool.maxWait=-1
+
+# cas.ticket.registry.redis.crypto.signing.key=
+# cas.ticket.registry.redis.crypto.signing.keySize=512
+# cas.ticket.registry.redis.crypto.encryption.key=
+# cas.ticket.registry.redis.crypto.encryption.keySize=16
+# cas.ticket.registry.redis.crypto.alg=AES
 ```
 
 ## Protocol Ticket Security
