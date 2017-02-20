@@ -2,6 +2,7 @@ package org.apereo.cas.config.support.authentication;
 
 import org.apereo.cas.adaptors.u2f.U2FAuthenticationHandler;
 import org.apereo.cas.adaptors.u2f.U2FMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -19,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link U2FAuthenticationEventExecutionPlanConfiguration}.
@@ -34,7 +36,12 @@ public class U2FAuthenticationEventExecutionPlanConfiguration implements Authent
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
+    @Lazy
+    @Autowired
+    @Qualifier("u2fDeviceRepository")
+    private U2FDeviceRepository u2fDeviceRepository;
+
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator() {
@@ -60,7 +67,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration implements Authent
     @RefreshScope
     public U2FAuthenticationHandler u2fAuthenticationHandler() {
         final MultifactorAuthenticationProperties.U2F u2f = this.casProperties.getAuthn().getMfa().getU2f();
-        final U2FAuthenticationHandler handler = new U2FAuthenticationHandler();
+        final U2FAuthenticationHandler handler = new U2FAuthenticationHandler(u2fDeviceRepository);
         handler.setPrincipalFactory(u2fPrincipalFactory());
         handler.setServicesManager(servicesManager);
         handler.setName(u2f.getName());
