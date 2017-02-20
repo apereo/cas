@@ -14,7 +14,7 @@ title: CAS - Home
 [OAuth2](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html))
 * Support for [multifactor authentication](installation/Configuring-Multifactor-Authentication.html) via a variety of 
 providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U2F](installation/FIDO-U2f-Authentication.html), 
-[YubiKey](installation/YubiKey-Authentication.html), etc)
+[YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), etc)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as ADFS, Facebook, Twitter, SAML2 IdPs, etc.
 * Manage and register [client applications and services](installation/Service-Management.html) with specific authentication policies
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc)
