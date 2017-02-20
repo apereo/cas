@@ -183,9 +183,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      * @param results the results
      */
     private void addCrls(final Collection<X509CRL> results) {
-        for (final X509CRL entry : results) {
-            addCRL(entry.getIssuerX500Principal(), entry);
-        }
+        results.forEach(entry -> addCRL(entry.getIssuerX500Principal(), entry));
     }
 
     /**

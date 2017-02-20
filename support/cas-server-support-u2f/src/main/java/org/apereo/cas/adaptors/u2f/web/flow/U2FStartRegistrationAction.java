@@ -1,10 +1,9 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.u2f.U2F;
 import com.yubico.u2f.data.messages.RegisterRequest;
 import com.yubico.u2f.data.messages.RegisterRequestData;
-import org.apereo.cas.adaptors.u2f.U2FDeviceRegistrationRepository;
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistrationRepository;
 import org.apereo.cas.adaptors.u2f.U2FRegistration;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.support.WebUtils;

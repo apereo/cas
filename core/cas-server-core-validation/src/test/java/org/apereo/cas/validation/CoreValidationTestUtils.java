@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,9 +29,7 @@ public final class CoreValidationTestUtils {
         final List<Authentication> list = new ArrayList<>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
-        for (final String extraPrincipal : extraPrincipals) {
-            list.add(CoreAuthenticationTestUtils.getAuthentication(extraPrincipal));
-        }
+        Arrays.stream(extraPrincipals).map(CoreAuthenticationTestUtils::getAuthentication).forEach(list::add);
         return new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
                 list, RegisteredServiceTestUtils.getService(), fromNewLogin);
     }

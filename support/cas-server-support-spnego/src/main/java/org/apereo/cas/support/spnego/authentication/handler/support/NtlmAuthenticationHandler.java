@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 
 /**
  * Implementation of an AuthenticationHandler for NTLM supports.
@@ -65,7 +66,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         final SpnegoCredential ntlmCredential = (SpnegoCredential) credential;
         final byte[] src = ntlmCredential.getInitToken();
 
-        UniAddress dc = null;
+        UniAddress dc;
 
         boolean success = false;
         try {
@@ -73,12 +74,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                 // find the first dc that matches the includepattern
                 if (StringUtils.isNotBlank(this.includePattern)) {
                     final NbtAddress[] dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
-                    for (final NbtAddress dc2 : dcs) {
-                        if (dc2.getHostAddress().matches(this.includePattern)) {
-                            dc = new UniAddress(dc2);
-                            break;
-                        }
-                    }
+                    dc = Arrays.stream(dcs).filter(dc2 -> dc2.getHostAddress().matches(this.includePattern)).findFirst().map(UniAddress::new).orElse(null);
                 } else {
                     dc = new UniAddress(NbtAddress.getByName(this.domainController, NBT_ADDRESS_TYPE, null));
                 }

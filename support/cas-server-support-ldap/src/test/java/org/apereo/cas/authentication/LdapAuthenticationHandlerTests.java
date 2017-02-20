@@ -102,12 +102,9 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         assertNotEquals(handler.size(), 0);
         this.thrown.expect(FailedLoginException.class);
         try {
-            for (final LdapEntry entry : this.getEntries()) {
-                final String username = entry.getAttribute("sAMAccountName").getStringValue();
-                this.handler.forEach(Unchecked.consumer(h -> {
-                    h.authenticate(new UsernamePasswordCredential(username, "badpassword"));
-                }));
-            }
+            this.getEntries().stream().map(entry -> entry.getAttribute("sAMAccountName").getStringValue()).forEach(username -> this.handler.forEach(Unchecked.consumer(h -> {
+                h.authenticate(new UsernamePasswordCredential(username, "badpassword"));
+            })));
         } catch (final Exception e) {
             throw e.getCause();
         }

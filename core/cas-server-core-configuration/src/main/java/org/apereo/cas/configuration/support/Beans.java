@@ -109,6 +109,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * A re-usable collection of utility methods for object instantiations and configurations used cross various
@@ -754,13 +755,13 @@ public final class Beans {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(filterQuery);
         if (params != null) {
-            for (int i = 0; i < params.size(); i++) {
+            IntStream.range(0, params.size()).forEach(i -> {
                 if (filter.getFilter().contains("{" + i + '}')) {
                     filter.setParameter(i, params.get(i));
                 } else {
                     filter.setParameter(paramName, params.get(i));
                 }
-            }
+            });
         }
         LOGGER.debug("Constructed LDAP search filter [{}]", filter.format());
         return filter;

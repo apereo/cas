@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.u2f;
+package org.apereo.cas.adaptors.u2f.storage;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -9,15 +9,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * This is {@link U2FDeviceRegistrationRepository}.
+ * This is {@link U2FInMemoryDeviceRegistrationRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class U2FDeviceRegistrationRepository {
-    private final Map<String, String> requestStorage = new HashMap<String, String>();
+public class U2FInMemoryDeviceRegistrationRepository implements U2FDeviceRegistrationRepository {
+    private final Map<String, String> requestStorage = new HashMap<>();
+    
     private final LoadingCache<String, Map<String, String>> userStorage =
             CacheBuilder.newBuilder().build(new CacheLoader<String, Map<String, String>>() {
                 @Override
@@ -26,35 +28,31 @@ public class U2FDeviceRegistrationRepository {
                 }
             });
 
-    public Map<String, String> getRequestStorage() {
-        return requestStorage;
-    }
-
-    public LoadingCache<String, Map<String, String>> getUserStorage() {
-        return userStorage;
-    }
-
-    /**
-     * Gets registrations.
-     *
-     * @param username the username
-     * @return the registrations
-     */
+    @Override
     public List<DeviceRegistration> getRegistrations(final String username) {
-        final List<DeviceRegistration> registrations = new ArrayList<>();
-        for (final String serialized : userStorage.getUnchecked(username).values()) {
-            registrations.add(DeviceRegistration.fromJson(serialized));
-        }
+        final List<DeviceRegistration> registrations = userStorage.getUnchecked(username).values()
+                .stream().map(DeviceRegistration::fromJson).collect(Collectors.toList());
         return registrations;
     }
 
-    /**
-     * Add registration.
-     *
-     * @param username     the username
-     * @param registration the registration
-     */
+ 
+    @Override
     public void addRegistration(final String username, final DeviceRegistration registration) {
         userStorage.getUnchecked(username).put(registration.getKeyHandle(), registration.toJson());
+    }
+
+    @Override
+    public boolean isRegistered(final String username) {
+        return !userStorage.getUnchecked(username).values().isEmpty();
+    }
+
+    @Override
+    public Map<String, String> getRequestStorage() {
+        return this.requestStorage;
+    }
+
+    @Override
+    public LoadingCache<String, Map<String, String>> getUserStorage() {
+        return this.userStorage;
     }
 }

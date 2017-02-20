@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -30,9 +31,7 @@ public abstract class AbstractTicketRegistryTests {
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
-        for (final Ticket ticket : this.ticketRegistry.getTickets()) {
-            this.ticketRegistry.deleteTicket(ticket.getId());
-        }
+        this.ticketRegistry.getTickets().forEach(ticket -> this.ticketRegistry.deleteTicket(ticket.getId()));
     }
 
     /**
@@ -135,11 +134,9 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyDeleteAllExistingTickets() {
         try {
-            for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
-                this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST" + i,
-                        CoreAuthenticationTestUtils.getAuthentication(),
-                        new NeverExpiresExpirationPolicy()));
-            }
+            IntStream.range(0, TICKETS_IN_REGISTRY).forEach(i -> this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST" + i,
+                    CoreAuthenticationTestUtils.getAuthentication(),
+                    new NeverExpiresExpirationPolicy())));
             assertEquals(TICKETS_IN_REGISTRY, this.ticketRegistry.deleteAll());
         } catch (final Exception e) {
             fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
@@ -195,7 +192,7 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyGetTicketsFromRegistryEqualToTicketsAdded() {
         final Collection<Ticket> tickets = new ArrayList<>();
 
-        for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
+        IntStream.range(0, TICKETS_IN_REGISTRY).forEach(i -> {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
                     CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i,
@@ -205,7 +202,7 @@ public abstract class AbstractTicketRegistryTests {
             tickets.add(st);
             this.ticketRegistry.addTicket(ticketGrantingTicket);
             this.ticketRegistry.addTicket(st);
-        }
+        });
 
         try {
             final Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();

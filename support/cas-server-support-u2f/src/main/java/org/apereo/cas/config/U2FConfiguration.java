@@ -1,7 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.u2f.U2FDeviceRegistrationRepository;
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistrationRepository;
+import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRegistrationRepository;
+import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationAction;
+import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurer;
@@ -114,6 +117,18 @@ public class U2FConfiguration {
     public Action u2fStartRegistrationAction() {
         return new U2FStartRegistrationAction(casProperties.getServer().getName(), deviceRegistrationRepository());
     }
+
+    @ConditionalOnMissingBean(name = "u2fCheckAccountRegistrationAction")
+    @Bean
+    public Action u2fCheckAccountRegistrationAction() {
+        return new U2FAccountCheckRegistrationAction(deviceRegistrationRepository());
+    }
+
+    @ConditionalOnMissingBean(name = "u2fSaveAccountRegistrationAction")
+    @Bean
+    public Action u2fSaveAccountRegistrationAction() {
+        return new U2FAccountSaveRegistrationAction(deviceRegistrationRepository());
+    }
     
     @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowEventResolver")
     @Bean
@@ -124,8 +139,9 @@ public class U2FConfiguration {
                 multifactorAuthenticationProviderSelector);
     }
 
+    @ConditionalOnMissingBean(name = "deviceRegistrationRepository")
     @Bean
     public U2FDeviceRegistrationRepository deviceRegistrationRepository() {
-        return new U2FDeviceRegistrationRepository();
+        return new U2FInMemoryDeviceRegistrationRepository();
     }
 }

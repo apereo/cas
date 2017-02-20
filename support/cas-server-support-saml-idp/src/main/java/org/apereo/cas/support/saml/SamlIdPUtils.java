@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlIdPUtils}.
@@ -112,16 +113,10 @@ public final class SamlIdPUtils {
                                                                          final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
-            final List<MetadataResolver> resolvers = new ArrayList<>();
+            final List<MetadataResolver> resolvers;
             final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
-            for (final RegisteredService registeredService : registeredServices) {
-                final SamlRegisteredService samlRegisteredService = SamlRegisteredService.class.cast(registeredService);
-
-                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
-                        SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityID);
-                resolvers.add(adaptor.getMetadataResolver());
-            }
+            resolvers = registeredServices.stream().map(SamlRegisteredService.class::cast).map(samlRegisteredService -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityID)).map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver).collect(Collectors.toList());
             chainingMetadataResolver.setResolvers(resolvers);
             chainingMetadataResolver.setId(entityID);
             chainingMetadataResolver.initialize();

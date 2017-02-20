@@ -11,6 +11,7 @@ import org.springframework.util.Assert;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * Credential that are a holder for SPNEGO init token.
@@ -117,12 +118,7 @@ public class SpnegoCredential implements Credential, Serializable {
         if (token == null || token.length < NTLM_TOKEN_MAX_LENGTH) {
             return false;
         }
-        for (int i = 0; i < NTLM_TOKEN_MAX_LENGTH; i++) {
-            if (NTLMSSP_SIGNATURE[i] != token[i]) {
-                return false;
-            }
-        }
-        return true;
+        return IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
     }
 
     @Override

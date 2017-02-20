@@ -496,9 +496,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     private void clearAllServices() {
         final Collection<RegisteredService> col = oAuth20AuthorizeEndpointController.getServicesManager().getAllServices();
 
-        for (final RegisteredService r : col) {
-            oAuth20AuthorizeEndpointController.getServicesManager().delete(r.getId());
-        }
+        col.forEach(r -> oAuth20AuthorizeEndpointController.getServicesManager().delete(r.getId()));
 
     }
 }

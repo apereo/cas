@@ -37,6 +37,8 @@
     <div class="box fl-panel" id="login">
         <form method="POST" id="form">
             <input type="hidden" name="tokenResponse" id="tokenResponse"/>
+            <input type="hidden" name="_eventId" value="submit"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
     </div>
 </div>

@@ -10,15 +10,35 @@
 
     <action-state id="initializeLoginForm">
         <evaluate expression="initializeLoginAction" />
-        <transition on="success" to="viewRegistrationU2f"/>
+        <transition on="success" to="accountRegistrationCheck"/>
+    </action-state>
+
+    <action-state id="accountRegistrationCheck">
+        <evaluate expression="u2fCheckAccountRegistrationAction" />
+        <transition on="register" to="viewRegistrationU2f"/>
+        <transition on="success" to="viewLoginForm"/>
     </action-state>
     
     <view-state id="viewRegistrationU2f" view="casU2fRegistrationView">
         <on-entry>
             <evaluate expression="u2fStartRegistrationAction" />
+            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
+        <transition on="submit" to="saveRegistration"/>
     </view-state>
 
+    <action-state id="saveRegistration">
+        <evaluate expression="u2fSaveAccountRegistrationAction" />
+        <transition on="success" to="viewLoginForm"/>
+    </action-state>
+
+    <view-state id="viewLoginForm" view="casU2fLoginView">
+        <on-entry>
+            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
+        </on-entry>
+        <transition on="submit" to="realSubmit"/>
+    </view-state>
+    
     <action-state id="realSubmit">
         <evaluate expression="u2fAuthenticationWebflowAction" />
         <transition on="success" to="success" />

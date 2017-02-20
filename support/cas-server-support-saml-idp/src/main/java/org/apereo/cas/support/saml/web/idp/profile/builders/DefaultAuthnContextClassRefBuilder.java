@@ -36,9 +36,7 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
             return AuthnContext.UNSPECIFIED_AUTHN_CTX;
         }
         LOGGER.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());
-        for (final AuthnContextClassRef authnContextClassRef : authnContextClassRefs) {
-            LOGGER.debug("Requested AuthN Context [{}]", authnContextClassRef.getAuthnContextClassRef());
-        }
+        authnContextClassRefs.forEach(authnContextClassRef -> LOGGER.debug("Requested AuthN Context [{}]", authnContextClassRef.getAuthnContextClassRef()));
         if (StringUtils.isNotBlank(service.getRequiredAuthenticationContextClass())) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                     service.getRequiredAuthenticationContextClass(),
