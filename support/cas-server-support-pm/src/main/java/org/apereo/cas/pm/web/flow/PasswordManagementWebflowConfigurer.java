@@ -55,7 +55,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             createViewState(flow, "casBadHoursView", "casBadHoursView");
             createViewState(flow, "casAccountLockedView", "casAccountLockedView");
             createViewState(flow, "casAccountDisabledView", "casAccountDisabledView");
-            createViewState(flow, "casAccountDisabledView", "casAccountDisabledView");
             createEndState(flow, "casPasswordUpdateSuccess", "casPasswordUpdateSuccessView");
 
             if (casProperties.getAuthn().getPm().isEnabled()) {
