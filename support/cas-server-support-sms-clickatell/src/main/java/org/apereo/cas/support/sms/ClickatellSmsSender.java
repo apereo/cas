@@ -81,10 +81,7 @@ public class ClickatellSmsSender implements SmsSender {
                 }
                 errors.forEach(LOGGER::error);
             }
-        } catch (
-                final Exception e)
-
-        {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return false;

@@ -318,7 +318,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         if (attributeValue instanceof Collection) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
             final Collection<String> values = (Collection<String>) attributeValue;
-            for (final String value : values) {
+            values.forEach(value -> {
                 try {
                     if (predicate.test(value)) {
                         LOGGER.debug("Attribute value predicate [{}] has successfully matched the [{}]", predicate, value);
@@ -339,7 +339,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 } catch (final Exception e) {
                     LOGGER.debug("Ignoring [{}] since no matching transition could be found", value);
                 }
-            }
+            });
             return events;
         }
         LOGGER.debug("Attribute value [{}] of type [{}] is not a multi-valued attribute",

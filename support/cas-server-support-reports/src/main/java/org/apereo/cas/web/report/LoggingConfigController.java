@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.appender.MemoryMappedFileAppender;
@@ -132,8 +131,7 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
     public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
-        for (final LoggerConfig config : getLoggerConfigurations()) {
-
+        getLoggerConfigurations().forEach(config -> {
             final Map<String, Object> loggerMap = new HashMap<>();
             loggerMap.put("name", StringUtils.defaultIfBlank(config.getName(), LOGGER_NAME_ROOT));
             loggerMap.put("state", config.getState());
@@ -142,16 +140,13 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
             }
             loggerMap.put("additive", config.isAdditive());
             loggerMap.put("level", config.getLevel().name());
-
             final Collection<String> appenders = new HashSet<>();
-            for (final String key : config.getAppenders().keySet()) {
-                final Appender appender = config.getAppenders().get(key);
+            config.getAppenders().keySet().stream().map(key -> config.getAppenders().get(key)).forEach(appender -> {
                 final ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
                 builder.append("name", appender.getName());
                 builder.append("state", appender.getState());
                 builder.append("layoutFormat", appender.getLayout().getContentFormat());
                 builder.append("layoutContentType", appender.getLayout().getContentType());
-
                 if (appender instanceof FileAppender) {
                     builder.append("file", ((FileAppender) appender).getFileName());
                     builder.append("filePattern", "(none)");
@@ -173,11 +168,10 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
                     builder.append("filePattern", ((RollingRandomAccessFileAppender) appender).getFilePattern());
                 }
                 appenders.add(builder.build());
-            }
+            });
             loggerMap.put("appenders", appenders);
-
             configuredLoggers.add(loggerMap);
-        }
+        });
         final Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("loggers", configuredLoggers);
         return responseMap;
