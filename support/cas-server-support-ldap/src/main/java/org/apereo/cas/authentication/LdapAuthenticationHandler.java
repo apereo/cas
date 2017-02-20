@@ -249,7 +249,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                             this.principalIdAttribute, ldapEntry.getAttributes(), username);
                     return username;
                 }
-                LOGGER.error("The principal id attribute [{}] is not found. CAS is configured to disallow missing principal attributes");
+                LOGGER.error("The principal id attribute [{}] is not found. CAS is configured to disallow missing principal attributes",
+                        this.principalIdAttribute);
                 throw new LoginException("Principal id attribute is not found for " + principalAttr);
             }
 
