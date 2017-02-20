@@ -1,17 +1,22 @@
 package org.apereo.cas.config;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistrationRepository;
-import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRegistrationRepository;
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepository;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurer;
-import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
+import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -23,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +37,9 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link U2FConfiguration}.
@@ -94,7 +100,7 @@ public class U2FConfiguration {
         return builder.build();
     }
 
-    @RefreshScope
+    @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowAction")
     @Bean
     public Action u2fAuthenticationWebflowAction() {
         return new U2FAuthenticationWebflowAction(u2fAuthenticationWebflowEventResolver());
@@ -115,21 +121,21 @@ public class U2FConfiguration {
     @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")
     @Bean
     public Action u2fStartRegistrationAction() {
-        return new U2FStartRegistrationAction(casProperties.getServer().getName(), deviceRegistrationRepository());
+        return new U2FStartRegistrationAction(casProperties.getServer().getName(), u2fDeviceRepository());
     }
 
     @ConditionalOnMissingBean(name = "u2fCheckAccountRegistrationAction")
     @Bean
     public Action u2fCheckAccountRegistrationAction() {
-        return new U2FAccountCheckRegistrationAction(deviceRegistrationRepository());
+        return new U2FAccountCheckRegistrationAction(u2fDeviceRepository());
     }
 
     @ConditionalOnMissingBean(name = "u2fSaveAccountRegistrationAction")
     @Bean
     public Action u2fSaveAccountRegistrationAction() {
-        return new U2FAccountSaveRegistrationAction(deviceRegistrationRepository());
+        return new U2FAccountSaveRegistrationAction(u2fDeviceRepository());
     }
-    
+
     @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowEventResolver")
     @Bean
     public CasWebflowEventResolver u2fAuthenticationWebflowEventResolver() {
@@ -139,9 +145,31 @@ public class U2FConfiguration {
                 multifactorAuthenticationProviderSelector);
     }
 
-    @ConditionalOnMissingBean(name = "deviceRegistrationRepository")
+    @ConditionalOnMissingBean(name = "u2fDeviceRepository")
     @Bean
-    public U2FDeviceRegistrationRepository deviceRegistrationRepository() {
-        return new U2FInMemoryDeviceRegistrationRepository();
+    public U2FDeviceRepository u2fDeviceRepository() {
+        final MultifactorAuthenticationProperties.U2F u2f = casProperties.getAuthn().getMfa().getU2f();
+
+        final LoadingCache<String, Map<String, String>> userStorage =
+                CacheBuilder.newBuilder()
+                        .expireAfterWrite(u2f.getMemory().getExpireDevices(), u2f.getMemory().getExpireDevicesTimeUnit())
+                        .build(new CacheLoader<String, Map<String, String>>() {
+                            @Override
+                            public Map<String, String> load(final String key) throws Exception {
+                                return new HashMap<>();
+                            }
+                        });
+
+        final LoadingCache<String, String> requestStorage =
+                CacheBuilder.newBuilder()
+                        .expireAfterWrite(u2f.getMemory().getExpireRegistrations(), u2f.getMemory().getExpireRegistrationsTimeUnit())
+                        .build(new CacheLoader<String, String>() {
+                            @Override
+                            public String load(final String key) throws Exception {
+                                return StringUtils.EMPTY;
+                            }
+                        });
+
+        return new U2FInMemoryDeviceRepository(userStorage, requestStorage);
     }
 }

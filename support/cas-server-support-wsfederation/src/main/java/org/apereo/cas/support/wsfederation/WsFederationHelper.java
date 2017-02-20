@@ -23,8 +23,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.saml1.core.Assertion;
-import org.opensaml.saml.saml1.core.Attribute;
-import org.opensaml.saml.saml1.core.AttributeStatement;
 import org.opensaml.saml.saml1.core.Conditions;
 import org.opensaml.saml.saml2.encryption.Decrypter;
 import org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver;
@@ -120,7 +118,9 @@ public class WsFederationHelper {
         final HashMap<String, List<Object>> attributes = new HashMap<>();
         assertion.getAttributeStatements().stream().flatMap(attributeStatement -> attributeStatement.getAttributes().stream()).forEach(item -> {
             LOGGER.debug("Processed attribute: [{}]", item.getAttributeName());
-            final List<Object> itemList = IntStream.range(0, item.getAttributeValues().size()).mapToObj(i -> ((XSAny) item.getAttributeValues().get(i)).getTextContent()).collect(Collectors.toList());
+            final List<Object> itemList = IntStream.range(0, item.getAttributeValues().size())
+                    .mapToObj(i -> ((XSAny) item.getAttributeValues().get(i)).getTextContent())
+                    .collect(Collectors.toList());
             if (!itemList.isEmpty()) {
                 attributes.put(item.getAttributeName(), itemList);
             }

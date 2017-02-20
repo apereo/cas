@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
