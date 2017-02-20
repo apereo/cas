@@ -66,6 +66,8 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Helper class that does the heavy lifting with the openSaml library.
@@ -116,20 +118,13 @@ public class WsFederationHelper {
 
         //retrieve an attributes from the assertion
         final HashMap<String, List<Object>> attributes = new HashMap<>();
-        for (final AttributeStatement attributeStatement : assertion.getAttributeStatements()) {
-            for (final Attribute item : attributeStatement.getAttributes()) {
-                LOGGER.debug("Processed attribute: [{}]", item.getAttributeName());
-
-                final List<Object> itemList = new ArrayList<>();
-                for (int i = 0; i < item.getAttributeValues().size(); i++) {
-                    itemList.add(((XSAny) item.getAttributeValues().get(i)).getTextContent());
-                }
-
-                if (!itemList.isEmpty()) {
-                    attributes.put(item.getAttributeName(), itemList);
-                }
+        assertion.getAttributeStatements().stream().flatMap(attributeStatement -> attributeStatement.getAttributes().stream()).forEach(item -> {
+            LOGGER.debug("Processed attribute: [{}]", item.getAttributeName());
+            final List<Object> itemList = IntStream.range(0, item.getAttributeValues().size()).mapToObj(i -> ((XSAny) item.getAttributeValues().get(i)).getTextContent()).collect(Collectors.toList());
+            if (!itemList.isEmpty()) {
+                attributes.put(item.getAttributeName(), itemList);
             }
-        }
+        });
 
         credential.setAttributes(attributes);
         LOGGER.debug("Credential: [{}]", credential);

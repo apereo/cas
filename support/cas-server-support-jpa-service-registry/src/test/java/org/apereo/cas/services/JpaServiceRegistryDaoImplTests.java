@@ -38,9 +38,7 @@ public class JpaServiceRegistryDaoImplTests {
     @Before
     public void setUp() {
         final List<RegisteredService> services = this.dao.load();
-        for (final RegisteredService service : services) {
-            this.dao.delete(service);
-        }
+        services.forEach(service -> this.dao.delete(service));
     }
 
     @Test
