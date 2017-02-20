@@ -53,13 +53,8 @@ public class LogoutAction extends AbstractLogoutAction {
         boolean needFrontSlo = false;
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
         if (logoutRequests != null) {
-            for (final LogoutRequest logoutRequest : logoutRequests) {
-                // if some logout request must still be attempted
-                if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
-                    needFrontSlo = true;
-                    break;
-                }
-            }
+            // if some logout request must still be attempted
+            needFrontSlo = logoutRequests.stream().anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED);
         }
 
         final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);

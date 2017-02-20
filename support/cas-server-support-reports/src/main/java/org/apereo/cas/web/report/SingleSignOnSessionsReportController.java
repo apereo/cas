@@ -120,16 +120,10 @@ public class SingleSignOnSessionsReportController extends AbstractNamedMvcEndpoi
         final Collection<Map<String, Object>> activeSessions = new ArrayList<>();
         final ISOStandardDateFormat dateFormat = new ISOStandardDateFormat();
 
-        for (final Ticket ticket : getNonExpiredTicketGrantingTickets()) {
-            final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
-
-            if (option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null) {
-                continue;
-            }
-
+        getNonExpiredTicketGrantingTickets().stream().map(TicketGrantingTicket.class::cast)
+                .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null)).forEach(tgt -> {
             final Authentication authentication = tgt.getAuthentication();
             final Principal principal = authentication.getPrincipal();
-
             final Map<String, Object> sso = new HashMap<>(SsoSessionAttributeKeys.values().length);
             sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString(), principal.getId());
             sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.toString(), authentication.getAuthenticationDate());
@@ -139,7 +133,6 @@ public class SingleSignOnSessionsReportController extends AbstractNamedMvcEndpoi
             sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString(), tgt.getId());
             sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.toString(), principal.getAttributes());
             sso.put(SsoSessionAttributeKeys.AUTHENTICATION_ATTRIBUTES.toString(), authentication.getAttributes());
-
             if (option != SsoSessionReportOptions.DIRECT) {
                 if (tgt.getProxiedBy() != null) {
                     sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), Boolean.TRUE);
@@ -148,11 +141,9 @@ public class SingleSignOnSessionsReportController extends AbstractNamedMvcEndpoi
                     sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), Boolean.FALSE);
                 }
             }
-
             sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.toString(), tgt.getServices());
-
             activeSessions.add(sso);
-        }
+        });
         return activeSessions;
     }
 
@@ -255,16 +246,14 @@ public class SingleSignOnSessionsReportController extends AbstractNamedMvcEndpoi
 
         final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
         final Collection<Map<String, Object>> collection = getActiveSsoSessions(option);
-        for (final Map<String, Object> sso : collection) {
-            final String ticketGrantingTicket =
-                    sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString();
+        collection.stream().map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString()).forEach(ticketGrantingTicket -> {
             try {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 failedTickets.put(ticketGrantingTicket, e.getMessage());
             }
-        }
+        });
 
         if (failedTickets.isEmpty()) {
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);

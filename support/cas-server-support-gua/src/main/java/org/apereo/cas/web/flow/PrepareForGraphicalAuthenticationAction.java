@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.services.ServicesManager;

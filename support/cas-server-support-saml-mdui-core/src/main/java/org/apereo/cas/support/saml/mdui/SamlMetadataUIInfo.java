@@ -101,13 +101,13 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     private static Collection<String> getStringValues(final List<?> items) {
         final List<String> list = new ArrayList<>();
-        for (final Object d : items) {
+        items.forEach(d -> {
             if (d instanceof XSURI) {
                 list.add(((XSURI) d).getValue());
             } else if (d instanceof XSString) {
                 list.add(((XSString) d).getValue());
             }
-        }
+        });
         return list;
     }
 

@@ -816,9 +816,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     private void clearAllServices() {
         final Collection<RegisteredService> col = servicesManager.getAllServices();
-        for (final RegisteredService r : col) {
-            servicesManager.delete(r.getId());
-        }
+        col.forEach(r -> servicesManager.delete(r.getId()));
         servicesManager.load();
     }
 

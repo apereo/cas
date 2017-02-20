@@ -59,6 +59,7 @@ layout: null
         *   [Google Authenticator](/$version/installation/GoogleAuthenticator-Authentication.html)
         *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
         *   [Microsoft Azure](/$version/installation/MicrosoftAzure-Authentication.html)
+        *   [FIDO U2F](/$version/installation/FIDO-U2F-Authentication.html)
         *   [Trusted Device](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
@@ -129,7 +130,7 @@ layout: null
     *   [OIDC Protocol](/$version/protocol/OIDC-Protocol.html)
     *   [SAML Protocol](#samlprotocol)
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
-        *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html) 
+        *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
     *   [REST Protocol](/$version/protocol/REST-Protocol.html)
 
 * [Integration](#appintegration)

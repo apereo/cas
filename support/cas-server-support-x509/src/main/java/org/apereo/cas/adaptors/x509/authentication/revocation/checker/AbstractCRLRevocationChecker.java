@@ -16,6 +16,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Base class for all CRL-based revocation checkers.
@@ -77,7 +79,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         }
 
         final List<X509CRL> expiredCrls = new ArrayList<>();
-        final List<X509CRLEntry> revokedCrls = new ArrayList<>();
+        final List<X509CRLEntry> revokedCrls;
 
         crls.stream().filter(CertUtils::isExpired).forEach(crl -> {
             LOGGER.warn("CRL data expired on [{}]", crl.getNextUpdate());
@@ -93,12 +95,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             crls.removeAll(expiredCrls);
             LOGGER.debug("Valid CRLs [{}] found that are not expired yet", crls);
 
-            for (final X509CRL crl : crls) {
-                final X509CRLEntry entry = crl.getRevokedCertificate(cert);
-                if (entry != null) {
-                    revokedCrls.add(entry);
-                }
-            }
+            revokedCrls = crls.stream().map(crl -> crl.getRevokedCertificate(cert)).filter(Objects::nonNull).collect(Collectors.toList());
 
             if (revokedCrls.size() == crls.size()) {
                 final X509CRLEntry entry = revokedCrls.get(0);
