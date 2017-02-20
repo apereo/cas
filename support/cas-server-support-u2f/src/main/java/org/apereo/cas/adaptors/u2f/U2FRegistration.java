@@ -10,16 +10,21 @@ import java.io.Serializable;
  */
 public class U2FRegistration implements Serializable {
     private static final long serialVersionUID = 8478965906212939618L;
-    private final String username;
     private final String challenge;
+    private final String appId;
 
-    public U2FRegistration(final String username, final String challenge) {
-        this.username = username;
+    public U2FRegistration(final String challenge, final String appId) {
         this.challenge = challenge;
+        this.appId = appId;
     }
 
-    public String getUsername() {
-        return username;
+
+    public String getVersion() {
+        return "U2F_V2";
+    }
+
+    public String getAppId() {
+        return appId;
     }
 
     public String getChallenge() {

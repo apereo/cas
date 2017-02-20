@@ -1,9 +1,13 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.u2f.U2F;
+import com.yubico.u2f.data.messages.RegisterRequest;
 import com.yubico.u2f.data.messages.RegisterRequestData;
 import org.apereo.cas.adaptors.u2f.U2FDeviceRegistrationRepository;
 import org.apereo.cas.adaptors.u2f.U2FRegistration;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -26,10 +30,14 @@ public class U2FStartRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final RegisterRequestData registerRequestData = u2f.startRegistration("https://localhost:8443",
-                u2FDeviceRegistrationRepository.getRegistrations("casuser"));
+        final Principal p = WebUtils.getAuthentication(requestContext).getPrincipal();
+        final RegisterRequestData registerRequestData = u2f.startRegistration(this.serverAddress,
+                u2FDeviceRegistrationRepository.getRegistrations(p.getId()));
         u2FDeviceRegistrationRepository.getRequestStorage().put(registerRequestData.getRequestId(), registerRequestData.toJson());
-        requestContext.getFlowScope().put("u2fReg", new U2FRegistration("casuser", registerRequestData.toJson()));
+        if (!registerRequestData.getRegisterRequests().isEmpty()) {
+            final RegisterRequest req = registerRequestData.getRegisterRequests().iterator().next();
+            requestContext.getFlowScope().put("u2fReg", new U2FRegistration(req.getChallenge(), req.getAppId()));
+        }
         return success();
     }
 }
