@@ -31,7 +31,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String globalAuthenticationAttributeNameTriggers;
     private String globalAuthenticationAttributeValueRegex;
-    
+
     private String contentType = "application/cas";
     private String globalProviderId;
 
@@ -308,12 +308,61 @@ public class MultifactorAuthenticationProperties implements Serializable {
     public static class U2F extends BaseProvider {
         private static final long serialVersionUID = 6151350313777066398L;
 
+        private Memory memory = new Memory();
+        
         public U2F() {
             setId("mfa-u2f");
         }
 
+        public Memory getMemory() {
+            return memory;
+        }
+
+        public void setMemory(final Memory memory) {
+            this.memory = memory;
+        }
+
+        public static class Memory {
+            private long expireRegistrations = 30;
+            private TimeUnit expireRegistrationsTimeUnit = TimeUnit.SECONDS;
+
+            private long expireDevices = 30;
+            private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
+            
+            public long getExpireRegistrations() {
+                return expireRegistrations;
+            }
+
+            public void setExpireRegistrations(final long expireRegistrations) {
+                this.expireRegistrations = expireRegistrations;
+            }
+
+            public TimeUnit getExpireRegistrationsTimeUnit() {
+                return expireRegistrationsTimeUnit;
+            }
+
+            public void setExpireRegistrationsTimeUnit(final TimeUnit expireRegistrationsTimeUnit) {
+                this.expireRegistrationsTimeUnit = expireRegistrationsTimeUnit;
+            }
+
+            public long getExpireDevices() {
+                return expireDevices;
+            }
+
+            public void setExpireDevices(final long expireDevices) {
+                this.expireDevices = expireDevices;
+            }
+
+            public TimeUnit getExpireDevicesTimeUnit() {
+                return expireDevicesTimeUnit;
+            }
+
+            public void setExpireDevicesTimeUnit(final TimeUnit expireDevicesTimeUnit) {
+                this.expireDevicesTimeUnit = expireDevicesTimeUnit;
+            }
+        }
     }
-    
+
     public static class YubiKey extends BaseProvider {
         private static final long serialVersionUID = 9138057706201201089L;
         private Integer clientId;
@@ -848,7 +897,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
              */
             PIN
         }
-        
+
         private String phoneAttributeName = "phone";
         private String configDir;
         private String privateKeyPassword;
@@ -874,7 +923,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         public void setMode(final AuthenticationModes mode) {
             this.mode = mode;
         }
-        
+
         public boolean isAllowInternationalCalls() {
             return allowInternationalCalls;
         }
@@ -899,7 +948,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.privateKeyPassword = privateKeyPassword;
         }
     }
-    
+
     public static class GAuth extends BaseProvider {
         private static final long serialVersionUID = -7401748853833491119L;
         private String issuer = "CASIssuer";
@@ -915,7 +964,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private Rest rest = new Rest();
 
         private Cleaner cleaner = new Cleaner();
-        
+
         public GAuth() {
             setId("mfa-gauth");
         }
@@ -1017,7 +1066,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         public static class Mongodb extends AbstractMongoClientProperties {
             private String tokenCollection;
-            
+
             public Mongodb() {
                 setCollection("MongoDbGoogleAuthenticatorRepository");
                 setTokenCollection("MongoDbGoogleAuthenticatorTokenRepository");
