@@ -63,14 +63,14 @@ can be used at the same time.
 
 ### XML
 
-There is a `deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings. 
+There is a `src/main/resources/deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings. 
 Note that in most cases, modifying this file should be unnecessary.
 
 ### Groovy
 
-The CAS application context is able to load a `deployerConfigContext.groovy`. 
+The CAS application context is able to load a `src/main/resources/deployerConfigContext.groovy`. 
 For advanced use cases, CAS beans can be dynamically defined via the [Groovy programming language](http://www.groovy-lang.org/).
-As an example, here is an `exampleBean` defined inside a `applicationContext.groovy` file:
+As an example, here is an `exampleBean`:
 
 
 ```groovy
@@ -85,7 +85,7 @@ beans {
 }
 ```
 
-Additionally, dynamic reloadable Groovy beans can be defined in the `deployerConfigContext.xml`. These definitions
+Additionally, dynamic reloadable Groovy beans can be defined in the `src/main/resources/deployerConfigContext.xml`. These definitions
 are directly read from a `.groovy` script which is monitored for changes and reloaded automatically.
 Here is a dynamic `messenger` bean defined whose definition is read from a `Messenger.groovy` file,
 and is monitored for changes every 5 seconds. 
