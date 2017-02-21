@@ -2234,6 +2234,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.testShib.signatureLocation=
 ```
 
+### Web Advisor
+
+```properties
+# cas.samlSP.webAdvisor.metadata=/path/to/webadvisor-metadata.xml
+# cas.samlSP.webAdvisor.name=Web Advisor
+# cas.samlSP.webAdvisor.description=Web Advisor Integration
+# cas.samlSP.webAdvisor.attributes=uid
+```
+
 ### Office365
 
 ```properties
