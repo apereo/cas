@@ -73,6 +73,23 @@ should support the duration syntax for full clarity on unit of measure:
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
 
+### Password Encoding
+
+Certain aspects of CAS such as authentication handling support configuration of
+password encoding. Most options are based on Spring Security's [support for password encoding](http://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/password/PasswordEncoder.html).
+
+The following options are supported:
+
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `NONE`                  | No password encoding (i.e. plain-text) takes place.     
+| `DEFAULT`               | Use the `DefaultPasswordEncoder` of CAS. For message-digest algorithms via `characterEncoding` and `encodingAlgorithm`.
+| `BCRYPT`                | Use the `BCryptPasswordEncoder` based on the `strength` provided and an optional `secret`.     
+| `SCRYPT`                | Use the `SCryptPasswordEncoder`.
+| `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.  
+| `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.  
+| `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
+
 ## Configuration Storage
 
 The following settings are to be loaded by the CAS configuration server, which bootstraps
