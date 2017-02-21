@@ -24,6 +24,15 @@ public class SamlServiceProviderProperties {
     private Evernote evernote = new Evernote();
     private Asana asana = new Asana();
     private Tableau tableau = new Tableau();
+    private WebAdvisor webAdvisor = new WebAdvisor();
+
+    public WebAdvisor getWebAdvisor() {
+        return webAdvisor;
+    }
+
+    public void setWebAdvisor(final WebAdvisor webAdvisor) {
+        this.webAdvisor = webAdvisor;
+    }
 
     public Tableau getTableau() {
         return tableau;
@@ -190,6 +199,13 @@ public class SamlServiceProviderProperties {
             setAttributes(Arrays.asList("IDPEmail,ImmutableID"));
         }
     }
+    
+    public static class WebAdvisor extends AbstractSamlSPProperties {
+        public WebAdvisor() {
+            setAttributes(Arrays.asList("uid"));
+        }
+    }
+    
     public static class Webex extends AbstractSamlSPProperties {
         public Webex() {
             setNameIdAttribute("email");
