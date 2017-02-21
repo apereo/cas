@@ -24,7 +24,7 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/cas/idp/profile/SAML2/Unsolicited/SSO`
 - `/cas/idp/profile/SAML2/SOAP/ECP`
 
-SAML2 IdP `Unsolicited/Initiated` SSO profile supports the following parameters:
+SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 
 | Parameter                         | Description
 |-----------------------------------|------------------------------------------
