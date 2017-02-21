@@ -109,7 +109,7 @@ The configured connector will look something like:
 ```
 
 The `clientAuth="want"` tells Tomcat to request that the browser provide a user certificate if one is available. If you want to force the use of user certificates, replace `"want"` with `"true"`.
-If you specify `"want"` and the browser does not have a certificate, then the CAS may forward the request to the userid/password form.
+If you specify `"want"` and the browser does not have a certificate, then CAS may forward the request to the login form.
 
 
 The keystore can be in `JKS` or `PKCS12` format when using Tomcat. When using both `PKCS12` and JKS keystore types then you should specify the type of each keystore by using the `keystoreType` and `truststoreType` attributes.
