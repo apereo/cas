@@ -208,6 +208,7 @@ public class CasPersonDirectoryConfiguration {
                 }
                 jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
                 jdbcDao.setUsernameCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
+                jdbcDao.setDefaultCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
                 jdbcDao.setQueryType(jdbc.getQueryType());
                 jdbcDao.setOrder(jdbc.getOrder());
                 list.add(jdbcDao);
