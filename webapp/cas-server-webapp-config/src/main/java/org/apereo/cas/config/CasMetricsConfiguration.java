@@ -54,18 +54,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
         metrics.register("jvm.fd.usage", new FileDescriptorRatioGauge());
         return metrics;
     }
-
-    @Bean
-    public ServletRegistrationBean metricsServlet() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("metricsServlet");
-        bean.setServlet(new MetricsServlet());
-        bean.setUrlMappings(Collections.singleton("/status/metrics"));
-        bean.setLoadOnStartup(1);
-        return bean;
-    }
-
+    
     @Bean
     public HealthCheckRegistry healthCheckMetrics() {
         return new HealthCheckRegistry();
