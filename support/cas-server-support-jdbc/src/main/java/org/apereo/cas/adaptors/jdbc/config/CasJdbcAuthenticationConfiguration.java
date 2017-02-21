@@ -67,14 +67,11 @@ public class CasJdbcAuthenticationConfiguration {
     @Bean
     public Collection<AuthenticationHandler> jdbcAuthenticationHandlers() {
         final Collection<AuthenticationHandler> handlers = new HashSet<>();
-        casProperties.getAuthn().getJdbc()
-                .getBind().forEach(b -> handlers.add(bindModeSearchDatabaseAuthenticationHandler(b)));
-        casProperties.getAuthn().getJdbc()
-                .getEncode().forEach(b -> handlers.add(queryAndEncodeDatabaseAuthenticationHandler(b)));
-        casProperties.getAuthn().getJdbc()
-                .getQuery().forEach(b -> handlers.add(queryDatabaseAuthenticationHandler(b)));
-        casProperties.getAuthn().getJdbc()
-                .getSearch().forEach(b -> handlers.add(searchModeSearchDatabaseAuthenticationHandler(b)));
+        final JdbcAuthenticationProperties jdbc = casProperties.getAuthn().getJdbc();
+        jdbc.getBind().forEach(b -> handlers.add(bindModeSearchDatabaseAuthenticationHandler(b)));
+        jdbc.getEncode().forEach(b -> handlers.add(queryAndEncodeDatabaseAuthenticationHandler(b)));
+        jdbc.getQuery().forEach(b -> handlers.add(queryDatabaseAuthenticationHandler(b)));
+        jdbc.getSearch().forEach(b -> handlers.add(searchModeSearchDatabaseAuthenticationHandler(b)));
         return handlers;
     }
 
