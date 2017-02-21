@@ -22,8 +22,7 @@ For any given credential the manager does the following:
 4. Check whether the security policy (e.g. any, all) is satisfied.
   1. If security policy is met return immediately.
   2. Continue if security policy is not met.
-5. After all credentials have been attempted check security policy again and throw `AuthenticationException`
-if not satisfied.
+5. After all credentials have been attempted check security policy again and throw `AuthenticationException` if not satisfied.
 
 There is an implicit security policy that requires at least one handler to successfully authenticate a credential.
 
@@ -32,7 +31,6 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ### Authentication Sequence
 
 At runtime, CAS maintains a collection of authentication handlers/strategies that typically execute one after another. Each CAS module that presents a form of authentication strategy will simply insert itself into this collection at bootstrap time. At the end of this process, the result of all authentication transactions is collected and optionally processed by an authentication policy where success/failure of certain strategies/sources may be taken into account to fully satisfy the authentication requirements. The collection of authentication handlers tries to preserve order in a rather more deterministic way. The idea is that adopters can assign an `order` value to an authentication handler thereby explicitly positioning it in the collection and controlling its execution sequence.
-
 
 ## Authentication Handlers
 
@@ -44,6 +42,26 @@ configured via the static authencation handler, and <strong>MUST</strong> be rem
 prior to production rollouts.</p></div>
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#accept-users-authentication).
+
+## Authentication Policy
+
+CAS presents a number of strategies for handling authentication security policies. Policies in general control the following:
+
+1. Should the authentication chain be stopped after a certain kind of authentication failure?
+2. Given multiple authentication handlers in a chain, what constitutes a successful authentication event?
+
+Policies are typically activated after:
+
+1. An authentication failure has occurred.
+2. The authentication chain has finished execution.
+
+Typical use cases of authentication policies may include:
+
+1. Enforce a specific authentication's successful execution, for the entire authentication event to be considered successful.
+2. Ensure a specific class of failure is not evident in the authentication chain's execution log.
+3. Ensure that all authentication schemes in the chain are executed successfully, for the entire authentication event to be considered successful.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-policy).
 
 ## Principal Resolution
 
