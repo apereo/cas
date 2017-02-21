@@ -60,7 +60,7 @@ public class MetricsController extends AbstractNamedMvcEndpoint {
     }
 
     private class DelegatingServletConfig implements ServletConfig {
-        private DelegatingServletConfig() {
+        protected DelegatingServletConfig() {
         }
 
         @Override
