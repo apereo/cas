@@ -118,7 +118,7 @@ function generateSidebarLinksForActiveVersion() {
     });
 }
 
-function generateiIcons() {
+function generateToolbarIcons() {
     var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
     var activeVersion = getActiveDocumentationVersionInView(true);
 
