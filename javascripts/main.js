@@ -16,7 +16,12 @@ function generateNavigationBarAndCrumbs() {
     
 
     for (var i = 1; i < segments.length; i++) {
-        crumbs += "<li class='breadcrumb-item'><a href='#'>" + segments[i] + "</a></li>";
+	var clz = ((i + 1) == segments.length) ? 'breadcrumb-item' : 'breadcrumb-item active';
+	clz += "capitalize";      
+	    
+	var page = segments[i].replace(".html", "");    
+	    
+        crumbs += "<li class='" + clz + "'><a href='#'>" + page + "</a></li>";
     }
 
     crumbs += "</ol>";
