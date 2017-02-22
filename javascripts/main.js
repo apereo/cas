@@ -102,6 +102,8 @@ function hideDevelopmentVersionWarning() {
     var formattedVersion = getActiveDocumentationVersionInView(true);
     if (formattedVersion != CONST_CURRENT_VER || formattedVersion == "") {
         $("#dev-doc-info").hide();
+    } else {
+	$("#dev-doc-info").show();    
     }
 }
 
@@ -116,7 +118,7 @@ function generateSidebarLinksForActiveVersion() {
     });
 }
 
-function generateToolbarIcons() {
+function generateiIcons() {
     var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
     var activeVersion = getActiveDocumentationVersionInView(true);
 
