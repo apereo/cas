@@ -730,7 +730,6 @@ grouperClient.webService.login = banderson
 grouperClient.webService.password = password
 ```
 
-
 ### Shibboleth Attribute Resolver
 
 To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
@@ -772,6 +771,8 @@ how the final principal should be constructed by default.
 ```
 
 ## Authentication Policy
+
+To learn more about this topic, [please review this guide](Configuring-Authentication-Components.html#authentication-policy).
 
 Global authentication policy that is applied when
 CAS attempts to vend and validate tickets.
@@ -841,7 +842,7 @@ same IP address.
 
 ```properties
 # cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? \
-            AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
+#                                    AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
 # cas.authn.throttle.jdbc.healthQuery=
 # cas.authn.throttle.jdbc.isolateInternalQueries=false
 # cas.authn.throttle.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
@@ -1369,7 +1370,8 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].allowMultipleDns=false
 
 # cas.authn.ldap[0].searchEntryHandlers[0].type=CASE_CHANGE|DN_ATTRIBUTE_ENTRY|MERGE| \
-            OBJECT_GUID|OBJECT_SID|PRIMARY_GROUP|RANGE_ENTRY|RECURSIVE_ENTRY
+#                                               OBJECT_GUID|OBJECT_SID|PRIMARY_GROUP| \
+#                                               RANGE_ENTRY|RECURSIVE_ENTRY
 
 # cas.authn.ldap[0].searchEntryHandlers[0].caseChange.dnCaseChange=NONE|LOWER|UPPER
 # cas.authn.ldap[0].searchEntryHandlers[0].caseChange.attributeNameCaseChange=NONE|LOWER|UPPER
@@ -2391,9 +2393,9 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.subjectTypes=public,pairwise
 # cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
 # cas.authn.oidc.claims=sub,name,preferred_username,family_name, \
-    given_name,middle_name,given_name,profile, \
-    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
-    email,email_verified,phone_number,phone_number_verified,address
+#    given_name,middle_name,given_name,profile, \
+#    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
+#    email,email_verified,phone_number,phone_number_verified,address
 
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
 # cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
