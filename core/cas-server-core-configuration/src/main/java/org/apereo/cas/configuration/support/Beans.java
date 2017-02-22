@@ -911,17 +911,17 @@ public final class Beans {
 
     private static Authenticator getSaslAuthenticator(final AbstractLdapAuthenticationProperties l) {
         if (StringUtils.isBlank(l.getUserFilter())) {
-            throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
+            throw new IllegalArgumentException("User filter cannot be empty/blank for sasl authentication");
         }
 
-        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
+        final PooledConnectionFactory connectionFactoryForSearch = Beans.newLdaptivePooledConnectionFactory(l);
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
-        resolver.setConnectionFactory(factory);
+        resolver.setConnectionFactory(connectionFactoryForSearch);
         resolver.setUserFilter(l.getUserFilter());
-        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
+        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l, Beans.newLdaptivePooledConnectionFactory(l)));
     }
 
     private static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final AbstractLdapAuthenticationProperties l) {
@@ -931,23 +931,23 @@ public final class Beans {
         if (StringUtils.isBlank(l.getUserFilter())) {
             throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
         }
-        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
+        final PooledConnectionFactory connectionFactoryForSearch = Beans.newLdaptivePooledConnectionFactory(l);
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
-        resolver.setConnectionFactory(Beans.newLdaptivePooledConnectionFactory(l));
+        resolver.setConnectionFactory(connectionFactoryForSearch);
         resolver.setUserFilter(l.getUserFilter());
 
         final Authenticator auth;
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
-            auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
+            auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, Beans.newLdaptivePooledConnectionFactory(l)));
         } else {
-            auth = new Authenticator(resolver, getPooledCompareAuthenticationHandler(l, factory));
+            auth = new Authenticator(resolver, getPooledCompareAuthenticationHandler(l, Beans.newLdaptivePooledConnectionFactory(l)));
         }
 
         if (l.isEnhanceWithEntryResolver()) {
-            auth.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, factory));
+            auth.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, Beans.newLdaptivePooledConnectionFactory(l)));
         }
         return auth;
     }
@@ -956,12 +956,11 @@ public final class Beans {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
         }
-        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
-        final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
+        final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, Beans.newLdaptivePooledConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
-            authenticator.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, factory));
+            authenticator.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, Beans.newLdaptivePooledConnectionFactory(l)));
         }
         return authenticator;
     }
@@ -970,12 +969,11 @@ public final class Beans {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
         }
-        final PooledConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(l);
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
-        final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, factory));
+        final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, Beans.newLdaptivePooledConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
-            authn.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, factory));
+            authn.setEntryResolver(Beans.newLdaptiveSearchEntryResolver(l, Beans.newLdaptivePooledConnectionFactory(l)));
         }
         return authn;
     }
