@@ -21,7 +21,7 @@ function generateNavigationBarAndCrumbs() {
 
     crumbs += "</ol>";
 
-    $("#navBar").prepend(crumbs);
+    $("#docsNavBar").prepend(crumbs);
 
 }
 
