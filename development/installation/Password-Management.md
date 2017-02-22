@@ -13,9 +13,7 @@ application that is fully in charge of managing the account password and associa
 CAS may also allow users to reset their passwords voluntarily. Those who have forgotten their account password
 may receive a secure link with a time-based expiration policy at their registered email address and/or phone. The link
 will allow the user to provide answers to his/her pre-defined security questions, which if successfully done,
-will allow the user to next reset their password and login again.
-
-To learn more about available options, please [see this guide](SMS-Messaging-Configuration.html)
+will allow the user to next reset their password and login again. To learn more about available notification options, please [see this guide](SMS-Messaging-Configuration.html)
 or [this guide](Sending-Email-Configuration.html).
 
 You may also specify a pattern for accepted passwords. 
