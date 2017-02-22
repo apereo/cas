@@ -14,6 +14,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.BaseGroovyScriptDaoImpl;
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
+import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao;
@@ -68,6 +69,7 @@ public class CasPersonDirectoryConfiguration {
         addJdbcAttributeRepository(list);
         addJsonAttributeRepository(list);
         addGroovyAttributeRepository(list);
+        addGrouperAttributeRepository(list);
         addStubAttributeRepositoryIfNothingElse(list);
         OrderComparator.sort(list);
         return list;
@@ -145,6 +147,17 @@ public class CasPersonDirectoryConfiguration {
         return impl;
     }
 
+    private void addGrouperAttributeRepository(final List<IPersonAttributeDao> list) {
+        final PrincipalAttributesProperties.Grouper gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
+
+        if (gp.isEnabled()) {
+            final GrouperPersonAttributeDao dao = new GrouperPersonAttributeDao();
+            dao.setOrder(gp.getOrder());
+            LOGGER.debug("Configured Grouper attribute source");
+            list.add(dao);
+        }
+    }
+
     private void addStubAttributeRepositoryIfNothingElse(final List<IPersonAttributeDao> list) {
         final Map<String, String> attrs = casProperties.getAuthn().getAttributeRepository().getAttributes();
         if (!attrs.isEmpty() && list.isEmpty()) {
@@ -195,6 +208,7 @@ public class CasPersonDirectoryConfiguration {
                 }
                 jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
                 jdbcDao.setUsernameCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
+                jdbcDao.setDefaultCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
                 jdbcDao.setQueryType(jdbc.getQueryType());
                 jdbcDao.setOrder(jdbc.getOrder());
                 list.add(jdbcDao);

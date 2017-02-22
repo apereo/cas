@@ -6,5 +6,6 @@ dependencies {
     compile libraries.spring
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-webflow")
+    compile project(":support:cas-server-support-duo-core")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

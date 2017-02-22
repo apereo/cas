@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -29,7 +30,7 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
     }
 
     @Override
-    public Principal resolve(final Credential credential, final Principal currentPrincipal) {
+    public Principal resolve(final Credential credential, final Principal currentPrincipal, final AuthenticationHandler handler) {
         return this.principalFactory.createPrincipal(credential.getId());
     }
 

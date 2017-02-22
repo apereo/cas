@@ -30,6 +30,11 @@ Note that the return of the credential is only carried out by the CAS validation
 application issues a request to the `/p3/serviceValidate` endpoint  (or `/p3/proxyValidate`). Other means of
 returning attributes to CAS, such as SAML1 will **not** support the additional returning of this value.
 
+Also note that CAS by default attempts to encrypt the cached credential in memory via its own pre-generated keys
+for signing and encryption. When the attribute is to be released to the application, CAS will internally decode
+the credential first and then will attempt to encrypt it again this time using the service's public key credentials.
+This behavior can be controlled via [settings](../installation/Configuration-Properties.html#clearpass).
+
 <div class="alert alert-info"><strong>ClearPass via Proxying!</strong><p>CAS no longer supports retrieving
 the credential via the proxying mechanism. Applications that intend to obtain the credential
 need to be updated to account for the following approach described here.</p></div>
@@ -51,7 +56,7 @@ openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
 ```
 
-## Register Service
+## Register Public Key
 
 Once you have received the public key from the client application owner, it must be first
 registered inside the CAS server's service registry. The service that holds the public key above must also

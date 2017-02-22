@@ -202,7 +202,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final String id = getLdapPrincipalIdentifier(username, ldapEntry);
 
         final Map<String, Object> attributeMap = new LinkedHashMap<>(this.principalAttributeMap.size());
-        for (final Map.Entry<String, String> ldapAttr : this.principalAttributeMap.entrySet()) {
+        this.principalAttributeMap.entrySet().forEach(ldapAttr -> {
             final LdapAttribute attr = ldapEntry.getAttribute(ldapAttr.getKey());
             if (attr != null) {
                 LOGGER.debug("Found principal attribute: [{}]", attr);
@@ -217,7 +217,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 LOGGER.warn("Requested LDAP attribute [{}] could not be found on the resolved LDAP entry for [{}]",
                         ldapAttr.getKey(), ldapEntry.getDn());
             }
-        }
+        });
         final String dnAttribute = getName().concat(".").concat(username);
         LOGGER.debug("Recording principal DN attribute as [{}]", dnAttribute);
 
@@ -245,11 +245,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     LOGGER.warn("The principal id attribute [{}] is not found. CAS cannot construct the final authenticated principal "
                                  + "if it's unable to locate the attribute that is designated as the principal id. "
                                  + "Attributes available on the LDAP entry are [{}]. Since principal id attribute is not available, CAS will "
-                                 + "fallback to construct the principal based on the provided user id: [{}]",
+                                 + "fall back to construct the principal based on the provided user id: [{}]",
                             this.principalIdAttribute, ldapEntry.getAttributes(), username);
                     return username;
                 }
-                LOGGER.error("The principal id attribute [{}] is not found. CAS is configured to disallow missing principal attributes");
+                LOGGER.error("The principal id attribute [{}] is not found. CAS is configured to disallow missing principal attributes",
+                        this.principalIdAttribute);
                 throw new LoginException("Principal id attribute is not found for " + principalAttr);
             }
 

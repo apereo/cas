@@ -5,8 +5,6 @@ title: CAS - Trusted Device Multifactor Authentication
 
 # Multifactor Authentication Trusted Device/Browser
 
-<div class="alert alert-warning"><strong>Achtung, liebe Leser</strong><p>This feature swings more towards the experimental.</p></div>
-
 In addition to triggers that are provided by the [MFA functionality](Configuring-Multifactor-Authentication.html) of CAS, there may be
 cases where you wish to let the user decide if the current browser/device should be trusted so as to skip subsequent MFA requests. The
 objective is for CAS to remember that decision for a configurable period of time and not bother the user with MFA until the decision

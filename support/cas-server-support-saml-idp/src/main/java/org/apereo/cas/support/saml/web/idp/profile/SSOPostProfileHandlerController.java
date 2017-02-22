@@ -10,7 +10,8 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
@@ -54,7 +55,7 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
      * @param forceSignedLogoutRequests                    the force signed logout requests
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
      */
-    public SSOPostProfileHandlerController(final SamlObjectSigner samlObjectSigner,
+    public SSOPostProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                            final ParserPool parserPool,
                                            final AuthenticationSystemSupport authenticationSystemSupport,
                                            final ServicesManager servicesManager,
@@ -69,7 +70,8 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                                            final String loginUrl,
                                            final String logoutUrl,
                                            final boolean forceSignedLogoutRequests,
-                                           final boolean singleLogoutCallbacksDisabled) {
+                                           final boolean singleLogoutCallbacksDisabled,
+                                           final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner,
                 parserPool,
                 authenticationSystemSupport,
@@ -85,7 +87,8 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                 loginUrl,
                 logoutUrl,
                 forceSignedLogoutRequests,
-                singleLogoutCallbacksDisabled);
+                singleLogoutCallbacksDisabled,
+                samlObjectSignatureValidator);
     }
 
 

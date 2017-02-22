@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
  * This is {@link AbstractSaml20ObjectBuilder}.
@@ -330,12 +331,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         generator.nextBytes(bytes);
 
         final char[] chars = new char[charsLength];
-        for (int i = 0; i < bytes.length; i++) {
+        IntStream.range(0, bytes.length).forEach(i -> {
             final int left = bytes[i] >> shiftLength & HEX_HIGH_BITS_BITWISE_FLAG;
             final int right = bytes[i] & HEX_HIGH_BITS_BITWISE_FLAG;
             chars[i * 2] = charMappings[left];
             chars[i * 2 + 1] = charMappings[right];
-        }
+        });
         return String.valueOf(chars);
     }
 

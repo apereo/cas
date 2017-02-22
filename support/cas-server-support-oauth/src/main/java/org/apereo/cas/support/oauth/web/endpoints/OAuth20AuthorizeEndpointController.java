@@ -13,8 +13,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
@@ -26,6 +27,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -68,9 +70,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
                                               final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                               final OAuthCodeFactory oAuthCodeFactory,
                                               final ConsentApprovalViewResolver consentApprovalViewResolver,
+                                              final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                               final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, casProperties);
+                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
         this.oAuthCodeFactory = oAuthCodeFactory;
         this.consentApprovalViewResolver = consentApprovalViewResolver;
     }
@@ -85,9 +88,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
      */
     @GetMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL)
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
-        final J2EContext context = new J2EContext(request, response);
-        final ProfileManager manager = new ProfileManager(context);
+        final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
 
         if (!verifyAuthorizeRequest(request) || !isRequestAuthenticated(manager, context)) {
             LOGGER.error("Authorize request verification failed");
@@ -95,7 +97,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
         }
 
         final String clientId = context.getRequestParameter(OAuthConstants.CLIENT_ID);
-        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
+        final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
@@ -110,6 +112,16 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
 
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
 
+    }
+
+    /**
+     * Gets registered service by client id.
+     *
+     * @param clientId the client id
+     * @return the registered service by client id
+     */
+    protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
+        return OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
     }
 
     private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
@@ -133,12 +145,15 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
                                                          final String clientId) throws Exception {
         final Optional<UserProfile> profile = manager.get(true);
         if (profile == null || !profile.isPresent()) {
-            LOGGER.error("Unexpected null profile from profile manager");
+            LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");
             return OAuthUtils.produceUnauthorizedErrorView();
         }
 
-        final Service service = createService(registeredService);
-        final Authentication authentication = createAuthentication(profile.get(), registeredService, context);
+        final Service service = createService(registeredService, context);
+        LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
+
+        final Authentication authentication = createAuthentication(profile.get(), registeredService, context, service);
+        LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
@@ -148,12 +163,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
         }
 
         final String redirectUri = context.getRequestParameter(OAuthConstants.REDIRECT_URI);
-        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]",
-                clientId, redirectUri);
+        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
 
         final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
 
-        String callbackUrl = null;
+        final String callbackUrl;
         if (isResponseType(responseType, OAuth20ResponseTypes.CODE)) {
             callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri);
         } else if (isResponseType(responseType, OAuth20ResponseTypes.TOKEN)) {
@@ -293,7 +307,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
         final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
+        final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
 
         return checkParameterExist
                 && checkResponseTypes(responseType, OAuth20ResponseTypes.values())

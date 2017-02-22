@@ -47,7 +47,7 @@ public class SamlRegisteredServiceTests {
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("SAMLService");
         service.setServiceId("http://mmoayyed.unicon.net");
-        service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
+        service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
 
         final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
         dao.save(service);
@@ -59,7 +59,7 @@ public class SamlRegisteredServiceTests {
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("SAMLService");
         service.setServiceId("http://mmoayyed.unicon.net");
-        service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
+        service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
         final InCommonRSAttributeReleasePolicy policy = new InCommonRSAttributeReleasePolicy();
         final ChainingAttributeReleasePolicy chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
@@ -75,7 +75,7 @@ public class SamlRegisteredServiceTests {
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("SAMLService");
         service.setServiceId("^http://.+");
-        service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
+        service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
 
         final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(Collections.singletonList(service));
@@ -92,7 +92,7 @@ public class SamlRegisteredServiceTests {
         final SamlRegisteredService serviceWritten = new SamlRegisteredService();
         serviceWritten.setName("SAMLService");
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
-        serviceWritten.setMetadataLocation("classpath:/sample-idp-metadata.xml");
+        serviceWritten.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, SamlRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);

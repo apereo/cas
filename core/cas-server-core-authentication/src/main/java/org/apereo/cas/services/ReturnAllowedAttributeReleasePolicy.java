@@ -52,8 +52,17 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attrs,
-                                                        final RegisteredService service) {
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attrs, final RegisteredService service) {
+        return authorizeReleaseOfAllowedAttributes(attrs);
+    }
+
+    /**
+     * Authorize release of allowed attributes map.
+     *
+     * @param attrs the attrs
+     * @return the map
+     */
+    protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Map<String, Object> attrs) {
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());

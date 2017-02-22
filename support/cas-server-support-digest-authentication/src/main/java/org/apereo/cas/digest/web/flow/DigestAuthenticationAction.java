@@ -10,7 +10,6 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.http.credentials.DigestCredentials;
 import org.pac4j.http.credentials.extractor.DigestAuthExtractor;
@@ -56,7 +55,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
             final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
 
             final DigestAuthExtractor extractor = new DigestAuthExtractor(this.getClass().getSimpleName());
-            final WebContext webContext = new J2EContext(request, response);
+            final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
 
             final DigestCredentials credentials = extractor.extract(webContext);
             if (credentials == null) {

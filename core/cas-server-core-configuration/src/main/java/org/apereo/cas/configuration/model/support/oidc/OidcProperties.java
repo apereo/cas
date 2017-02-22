@@ -4,7 +4,9 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link OidcProperties}.
@@ -25,7 +27,17 @@ public class OidcProperties {
             "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
             "birthdate", "email", "email_verified", "phone_number",
             "phone_number_verified", "address");
-    private List<String> subjectTypes = Arrays.asList("public", "pairwise");
+    private List<String> subjectTypes = Arrays.asList("public");
+
+    private Map<String, String> userDefinedScopes = new HashMap<>();
+
+    public Map<String, String> getUserDefinedScopes() {
+        return userDefinedScopes;
+    }
+
+    public void setUserDefinedScopes(final Map<String, String> userDefinedScopes) {
+        this.userDefinedScopes = userDefinedScopes;
+    }
 
     public int getJwksCacheInMinutes() {
         return jwksCacheInMinutes;

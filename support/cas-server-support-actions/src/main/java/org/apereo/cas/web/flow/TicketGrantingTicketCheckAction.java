@@ -77,7 +77,7 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
                 eventId = VALID;
             }
         } catch (final AbstractTicketException e) {
-            LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e);
+            LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e.getMessage());
         }
         return new Event(this, eventId);
     }

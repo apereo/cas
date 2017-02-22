@@ -21,6 +21,9 @@ CAS is configured for SLO, it attempts to send logout messages to every applicat
 CAS during the SSO session. While this is a best-effort process, in many cases it works well and provides a consistent
 user experience by creating symmetry between login and logout.
 
+<div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
+and determine if CAS itself maintains an active SSO session via the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+
 
 ## CAS Logout
 
@@ -59,8 +62,6 @@ CAS sends an HTTP POST message directly to the service. This is the traditional 
 
 CAS issues asynchronous AJAX `POST` logout requests via `JSONP` to authenticated services.
 The expected behaviour of the CAS client is to invalidate the application web session.
-
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Front-channel SLO at this point is experimental.</p></div>
 
 ## SLO Requests
 

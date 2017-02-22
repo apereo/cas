@@ -77,7 +77,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                 final RequireAnyRoleAuthorizer authorizer = new RequireAnyRoleAuthorizer(adminPagesSecurityProperties.getAdminRoles());
                 LOGGER.debug("Executing authorization for expected admin roles [{}]", authorizer.getElements());
 
-                final J2EContext context = new J2EContext(
+                final J2EContext context = WebUtils.getPac4jJ2EContext(
                         WebUtils.getHttpServletRequestFromRequestAttributes(),
                         WebUtils.getHttpServletResponseFromRequestAttributes());
 

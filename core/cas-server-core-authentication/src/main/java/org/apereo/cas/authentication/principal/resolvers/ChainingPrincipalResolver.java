@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -56,6 +57,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     }
 
     /**
+     * {@inheritDoc}
      * Resolves a credential by delegating to each of the configured resolvers in sequence. Note that the
      * final principal is taken from the first resolved principal in the chain, yet attributes are merged.
      *
@@ -64,17 +66,15 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      * @return The principal from the last configured resolver in the chain.
      */
     @Override
-    public Principal resolve(final Credential credential, final Principal principal) {
+    public Principal resolve(final Credential credential, final Principal principal, final AuthenticationHandler handler) {
         final List<Principal> principals = new ArrayList<>();
-        for (final PrincipalResolver resolver : chain) {
-            if (resolver.supports(credential)) {
-                LOGGER.debug("Invoking principal resolver [{}]", resolver);
-                final Principal p = resolver.resolve(credential, principal);
-                if (p != null) {
-                    principals.add(p);
-                }
+        chain.stream().filter(resolver -> resolver.supports(credential)).forEach(resolver -> {
+            LOGGER.debug("Invoking principal resolver [{}]", resolver);
+            final Principal p = resolver.resolve(credential, principal, handler);
+            if (p != null) {
+                principals.add(p);
             }
-        }
+        });
 
         if (principals.isEmpty()) {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
@@ -92,7 +92,11 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             }
         });
 
-        final long count = principals.stream().map(p -> p.getId().trim().toLowerCase()).distinct().collect(Collectors.toSet()).size();
+        final long count = principals.stream()
+                .map(p -> p.getId().trim().toLowerCase())
+                .distinct()
+                .collect(Collectors.toSet()).size();
+        
         if (count > 1) {
             throw new PrincipalException("Resolved principals by the chain are not unique because principal resolvers have produced CAS principals "
                     + "with different identifiers which typically is the result of a configuration issue.",

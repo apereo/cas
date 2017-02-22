@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.junit.Before;
@@ -45,10 +46,10 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @DirtiesContext
-@TestPropertySource(properties = "cas.clearpass.cacheCredential=true")
+@TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.cipherEnabled=false"})
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(Cas30ResponseViewTests.class);
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -77,7 +78,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
-        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager);
+        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, NoOpCipherExecutor.getInstance());
         final View viewDelegated = new View() {
             @Override
             public String getContentType() {

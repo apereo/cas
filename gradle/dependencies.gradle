@@ -19,7 +19,14 @@ ext.libraries = [
                     force = true
                 }
         ],
-
+        sentry                  : [
+                dependencies.create("com.getsentry.raven:raven:$sentryRavenVersion") {
+                    force = true
+                },
+                dependencies.create("com.getsentry.raven:raven-log4j2:$sentryRavenVersion") {
+                    force = true
+                }
+        ],
         casclient               : dependencies.create("org.jasig.cas.client:cas-client-core:$casClientVersion") {
             exclude(group: "javax.servlet", module: "servlet-api")
             exclude(group: "org.slf4j", module: "log4j-over-slf4j")
@@ -1906,6 +1913,15 @@ ext.libraries = [
                 dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-codec", module: "commons-codec")
+                    force = true
+                },
+        u2flibserver               :
+                dependencies.create("com.yubico:u2flib-server-core:$yubicoU2fServerVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     force = true
                 },
         duojava                 : [

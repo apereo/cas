@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.views;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
@@ -21,9 +22,17 @@ import java.util.Map;
 public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20ConsentApprovalViewResolver.class);
 
+    /**
+     * CAS settings.
+     */
+    protected final CasConfigurationProperties casProperties;
+
+    public OAuth20ConsentApprovalViewResolver(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
+    }
+
     @Override
     public ModelAndView resolve(final J2EContext context, final OAuthRegisteredService service) {
-
         final String bypassApprovalParameter = context.getRequestParameter(OAuthConstants.BYPASS_APPROVAL_PROMPT);
         LOGGER.debug("bypassApprovalParameter: [{}]", bypassApprovalParameter);
 
@@ -46,7 +55,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
     protected boolean isConsentApprovalBypassed(final J2EContext context, final OAuthRegisteredService service) {
         return service.isBypassApprovalPrompt();
     }
-    
+
     /**
      * Redirect to approve view model and view.
      *
@@ -57,10 +66,44 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
     protected ModelAndView redirectToApproveView(final J2EContext ctx, final OAuthRegisteredService svc) {
         String callbackUrl = ctx.getFullRequestURL();
         callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.BYPASS_APPROVAL_PROMPT, "true");
+        LOGGER.debug("callbackUrl: [{}]", callbackUrl);
+
         final Map<String, Object> model = new HashMap<>();
+        model.put("service", svc);
         model.put("callbackUrl", callbackUrl);
         model.put("serviceName", svc.getName());
-        LOGGER.debug("callbackUrl: [{}]", callbackUrl);
-        return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
+        model.put("deniedApprovalUrl", svc.getAccessStrategy().getUnauthorizedRedirectUrl());
+
+        prepareApprovalViewModel(model, ctx, svc);
+        return getApprovalModelAndView(model);
+    }
+
+    /**
+     * Gets approval model and view.
+     *
+     * @param model the model
+     * @return the approval model and view
+     */
+    protected ModelAndView getApprovalModelAndView(final Map<String, Object> model) {
+        return new ModelAndView(getApprovalViewName(), model);
+    }
+
+    /**
+     * Gets approval view name.
+     *
+     * @return the approval view name
+     */
+    protected String getApprovalViewName() {
+        return OAuthConstants.CONFIRM_VIEW;
+    }
+
+    /**
+     * Prepare approval view model.
+     *
+     * @param model the model
+     * @param ctx   the ctx
+     * @param svc   the svc
+     */
+    protected void prepareApprovalViewModel(final Map<String, Object> model, final J2EContext ctx, final OAuthRegisteredService svc) {
     }
 }

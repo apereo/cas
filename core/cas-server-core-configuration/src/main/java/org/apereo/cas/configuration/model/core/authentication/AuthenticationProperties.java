@@ -137,6 +137,16 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
 
+    private boolean releaseProtocolAttributes = true;
+
+    public boolean isReleaseProtocolAttributes() {
+        return releaseProtocolAttributes;
+    }
+
+    public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
+        this.releaseProtocolAttributes = releaseProtocolAttributes;
+    }
+
     public TokenAuthenticationProperties getToken() {
         return token;
     }

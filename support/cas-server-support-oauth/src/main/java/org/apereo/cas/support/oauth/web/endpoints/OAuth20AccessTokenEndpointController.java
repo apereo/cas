@@ -10,9 +10,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -27,6 +28,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -69,9 +71,10 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                 final RefreshTokenFactory refreshTokenFactory,
                                                 final AccessTokenResponseGenerator accessTokenResponseGenerator,
+                                                final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                 final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory, casProperties);
+                principalFactory, webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
         this.refreshTokenFactory = refreshTokenFactory;
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
     }
@@ -101,8 +104,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
             final boolean generateRefreshToken;
             final OAuthRegisteredService registeredService;
 
-            final J2EContext context = new J2EContext(request, response);
-            final ProfileManager manager = new ProfileManager(context);
+            final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
+            final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
 
             if (isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE) || isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
                 final Optional<UserProfile> profile = manager.get(true);
@@ -137,13 +140,12 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     // resource owner password grant type
                     final Optional<OAuthUserProfile> profile = manager.get(true);
                     if (!profile.isPresent()) {
-                        throw new UnauthorizedServiceException("Oauth user profile cannot be determined");
+                        throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
                     }
-                    service = createService(registeredService);
-                    authentication = createAuthentication(profile.get(), registeredService, context);
+                    service = createService(registeredService, context);
+                    authentication = createAuthentication(profile.get(), registeredService, context, service);
 
-                    RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                            registeredService, authentication);
+                    RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
                 } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
                     return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
@@ -219,8 +221,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
         }
 
         // must be authenticated (client or user)
-        final J2EContext context = new J2EContext(request, response);
-        final ProfileManager manager = new ProfileManager(context);
+        final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
         final Optional<UserProfile> profile = manager.get(true);
         if (profile == null || !profile.isPresent()) {
             return false;

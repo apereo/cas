@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * The {@link ServiceFactory} is responsible for creating service objects.
+ *
  * @author Misagh Moayyed
  * @param <T> the type parameter
  * @since 4.2
@@ -26,14 +27,13 @@ public interface ServiceFactory<T extends Service> {
      */
     T createService(String id);
 
-
     /**
      * Create the service object based on an identifier.
      * Allows the final service object to be casted to the desired service class
      * that may not immediately inherit from {@link Service} itself.
      *
-     * @param <T> the type parameter
-     * @param id the id
+     * @param <T>   the type parameter
+     * @param id    the id
      * @param clazz the clazz
      * @return the t
      */
@@ -44,9 +44,9 @@ public interface ServiceFactory<T extends Service> {
      * Allows the final service object to be casted to the desired service class
      * that may not immediately inherit from {@link Service} itself.
      *
-     * @param <T> the type parameter
+     * @param <T>     the type parameter
      * @param request the request
-     * @param clazz the clazz
+     * @param clazz   the clazz
      * @return the t
      */
     <T extends Service> T createService(HttpServletRequest request, Class<? extends Service> clazz);

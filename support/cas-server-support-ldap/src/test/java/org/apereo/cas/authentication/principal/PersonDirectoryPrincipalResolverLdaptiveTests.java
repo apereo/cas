@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
@@ -11,7 +12,6 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,35 +52,38 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
 
     @Test
     public void verifyResolver() {
-        for (final LdapEntry entry : this.getEntries()) {
+        this.getEntries().forEach(entry -> {
             final String username = entry.getAttribute("sAMAccountName").getStringValue();
             final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeRepository);
-            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw), CoreAuthenticationTestUtils.getPrincipal());
+            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw),
+                    CoreAuthenticationTestUtils.getPrincipal(),
+                    new SimpleTestUsernamePasswordAuthenticationHandler());
             assertNotNull(p);
             assertTrue(p.getAttributes().containsKey("displayName"));
-        }
+        });
     }
 
     @Test
     public void verifyChainedResolver() {
-        for (final LdapEntry entry : this.getEntries()) {
+        this.getEntries().forEach(entry -> {
             final String username = entry.getAttribute("sAMAccountName").getStringValue();
             final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeRepository);
-
             final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
             chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
             final Map<String, Object> attributes = new HashMap<>(2);
             attributes.put("a1", "v1");
             attributes.put("a2", "v2");
-            final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw), CoreAuthenticationTestUtils.getPrincipal(username, attributes));
+            final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw),
+                    CoreAuthenticationTestUtils.getPrincipal(username, attributes),
+                    new SimpleTestUsernamePasswordAuthenticationHandler());
             assertNotNull(p);
             assertTrue(p.getAttributes().containsKey("displayName"));
             assertTrue(p.getAttributes().containsKey("a1"));
             assertTrue(p.getAttributes().containsKey("a2"));
-        }
+        });
     }
 }

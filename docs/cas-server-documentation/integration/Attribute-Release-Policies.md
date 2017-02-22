@@ -10,10 +10,11 @@ the ability to apply an optional filter.
 
 The following settings are shared by all attribute release policies:
 
-| Name                    | Value
-|---------------------------------------|----------------------------------------------------------------
+| Name                                    | Value
+|-----------------------------------------|----------------------------------------------------------------
 | `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
 | `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
+| `excludeDefaultAttributes` | Boolean to define whether this policy should exclude the default global bundle of attributes for release.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
 may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
@@ -220,7 +221,7 @@ class SampleGroovyPersonAttributeDao {
 Let an external javascript or python script decide how principal attributes should be released.
 This approach takes advantage of scripting functionality built into the Java platform.
 While Javascript and Groovy should be natively supported by CAS, python scripts may need
-to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22). 
+to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
 
 ```json
 {
@@ -241,23 +242,46 @@ that receives a list of parameters. The collection of current attributes in proc
 as well as a logger object are passed to this function. The result must produce a
 map whose `key`s are attributes names and whose `value`s are a list of attribute values.
 
+## Chaining Policies
+
+Attribute release policies can be chained together to process multiple rules.
+The order of policy invocation is the same as the definition order defined for the service itself.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+          {"@class": "..."},
+          {"@class": "..."}
+      ]
+    ]
+  }
+}
+```
+
 ## Attribute Filters
 
 While each policy defines what principal attributes may be allowed for a given service,
-there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**.
+there are optional attribute filters that can be set per policy to further weed out attributes based on their *values**.
 
 ### Regex
 
 The regex filter that is responsible to make sure only attributes whose value
-matches a certain regex pattern are released. 
+matches a certain regex pattern are released.
 
 Suppose that the following attributes are resolved:
 
-| Name                                   | Value
-|---------------------------------------|----------------------------------------------------------------
-| `uid`                                    | jsmith
-| `groupMembership`            | std  
-| `cn`                                    | JohnSmith   
+| Name                                    | Value
+|-----------------------------------------|----------------------------------------------------------------
+| `uid`                                   | jsmith
+| `groupMembership`                       | std
+| `cn`                                    | JohnSmith
 
 The following configuration for instance considers the initial list of `uid`,
 `groupMembership` and then only allows and releases attributes whose value's length

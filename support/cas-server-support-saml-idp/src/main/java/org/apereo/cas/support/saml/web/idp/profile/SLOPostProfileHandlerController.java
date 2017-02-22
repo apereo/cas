@@ -13,7 +13,8 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
@@ -40,7 +41,7 @@ import java.util.Set;
  */
 public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(SLOPostProfileHandlerController.class);
-    
+
     /**
      * Instantiates a new slo saml profile handler controller.
      *
@@ -61,7 +62,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
      * @param forceSignedLogoutRequests                    the force signed logout requests
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
      */
-    public SLOPostProfileHandlerController(final SamlObjectSigner samlObjectSigner,
+    public SLOPostProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                            final ParserPool parserPool,
                                            final AuthenticationSystemSupport authenticationSystemSupport,
                                            final ServicesManager servicesManager,
@@ -76,7 +77,8 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                                            final String loginUrl,
                                            final String logoutUrl,
                                            final boolean forceSignedLogoutRequests,
-                                           final boolean singleLogoutCallbacksDisabled) {
+                                           final boolean singleLogoutCallbacksDisabled,
+                                           final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner,
                 parserPool,
                 authenticationSystemSupport,
@@ -92,7 +94,8 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                 loginUrl,
                 logoutUrl,
                 forceSignedLogoutRequests,
-                singleLogoutCallbacksDisabled);
+                singleLogoutCallbacksDisabled,
+                samlObjectSignatureValidator);
     }
 
     /**
@@ -134,7 +137,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
             final MetadataResolver resolver = SamlIdPUtils.getMetadataResolverForAllSamlServices(this.servicesManager,
                     SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest),
                     this.samlRegisteredServiceCachingMetadataResolver);
-            this.samlObjectSigner.verifySamlProfileRequestIfNeeded(logoutRequest, resolver, request, ctx);
+            this.samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(logoutRequest, resolver, request, ctx);
         }
         SamlUtils.logSamlObject(this.configBean, logoutRequest);
         response.sendRedirect(this.logoutUrl);

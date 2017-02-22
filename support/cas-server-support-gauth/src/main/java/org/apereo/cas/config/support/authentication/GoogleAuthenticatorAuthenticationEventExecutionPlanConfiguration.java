@@ -129,9 +129,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {
+        final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
         return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry,
-                casProperties.getAuthn().getMfa().getGauth().getLabel(),
-                casProperties.getAuthn().getMfa().getGauth().getIssuer());
+                gauth.getLabel(),
+                gauth.getIssuer());
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)

@@ -65,6 +65,7 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     @Lazy
+    @Autowired
     @Bean
     public EhCacheFactoryBean ehcacheTicketsCache(@Qualifier("cacheManager") final CacheManager manager) {
         final EhcacheProperties ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();

@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -33,9 +34,10 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
                                            final PrincipalFactory principalFactory,
                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                            final OidcServerDiscoverySettings discovery,
+                                           final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                            final CasConfigurationProperties casProperties) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory, casProperties);
+                principalFactory, webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
         this.discovery = discovery;
     }
 
@@ -43,9 +45,10 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
      * Gets well known discovery configuration.
      *
      * @return the well known discovery configuration
+     * @throws Exception the exception
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
+    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() throws Exception {
         return new ResponseEntity(this.discovery, HttpStatus.OK);
     }
 
@@ -53,9 +56,10 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
      * Gets well known openid discovery configuration.
      *
      * @return the well known discovery configuration
+     * @throws Exception the exception
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration() {
+    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration() throws Exception {
         return getWellKnownDiscoveryConfiguration();
     }
 }

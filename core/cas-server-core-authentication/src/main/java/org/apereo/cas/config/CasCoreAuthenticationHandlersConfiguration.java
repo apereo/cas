@@ -102,6 +102,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean(name = "proxyPrincipalResolver")
     @Bean
     public PrincipalResolver proxyPrincipalResolver() {
         return new ProxyingPrincipalResolver(proxyPrincipalFactory());

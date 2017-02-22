@@ -3,6 +3,7 @@ dependencies {
     compile project(":core:cas-server-core-tickets")
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-pac4j-core")
+    compile project(":support:cas-server-support-pac4j-core-clients")
     compile libraries.pac4j
     compile libraries.opensaml
     compileOnly libraries.springcloud

@@ -125,7 +125,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
                     return r.getId();
                 }, r -> r, (r, s) -> s == null ? r : s));
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
-        LOGGER.info("Loaded [{}] services from [{}].", this.services.size(), this.serviceRegistryDao);
+        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
     }
 
     @Override

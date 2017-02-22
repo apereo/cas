@@ -7,6 +7,8 @@ title: CAS - SAML2 Authentication
 
 CAS can act as a SAML2 identity provider accepting authentication requests and producing SAML assertions.
 
+If you intend to allow CAS to delegate authentication to an external SAML2 identity provider, you need to [review this guide](../integration/Delegate-Authentication.html).
+
 <div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on
 SAML2 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure about the
 concepts referred to on this page,
@@ -22,7 +24,7 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/cas/idp/profile/SAML2/Unsolicited/SSO`
 - `/cas/idp/profile/SAML2/SOAP/ECP`
 
-SAML2 IdP `Unsolicited/Initiated` SSO profile supports the following parameters:
+SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 
 | Parameter                         | Description
 |-----------------------------------|------------------------------------------
@@ -190,7 +192,9 @@ via CAS properties. To see the relevant list of CAS properties, please [review t
 Attribute filtering and release policies are defined per SAML service.
 See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
-#### InCommon Research and Scholardship
+A few additional policies specific to SAML services are also provided below.
+
+#### InCommon Research and Scholarship
 
 A specific attribute release policy is available to release the [attribute bundles](https://spaces.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
 needed for InCommon's Research and Scholarship service providers:
@@ -205,10 +209,30 @@ needed for InCommon's Research and Scholarship service providers:
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [ "java.util.ArrayList",
-      [{
-          "@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"
-      }]
+      [
+         {"@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"}
+      ]
     ]
+  }
+}
+```
+
+#### Pattern Matching Entity Ids
+
+In the event that an aggregate is defined containing multiple entity ids, the below attribute release policy may be used to release a collection of allowed attributes to entity ids grouped together by a regular expression pattern:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
+    "fullMatch" : "true",
+    "entityIds" : "entityId1|entityId2|somewhere.+"
   }
 }
 ```

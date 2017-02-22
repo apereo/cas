@@ -26,6 +26,7 @@ import org.apereo.cas.util.RegexUtils;
 import java.net.URL;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Default mapper for converting {@link RegisteredService} to/from {@link RegisteredServiceEditBean.ServiceData}.
@@ -73,6 +74,13 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 oidcBean.setEncrypt(oidc.isEncryptIdToken());
                 oidcBean.setEncryptAlg(oidc.getIdTokenEncryptionAlg());
                 oidcBean.setEncryptEnc(oidc.getIdTokenEncryptionEncoding());
+
+                oidcBean.setDynamic(oidc.isDynamicallyRegistered());
+                if (oidc.isDynamicallyRegistered()) {
+                    oidcBean.setDynamicDate(oidc.getDynamicRegistrationDateTime().toString());
+                }
+
+                oidcBean.setScopes(oidc.getScopes().stream().collect(Collectors.joining(",")));
             }
 
         }
@@ -131,10 +139,10 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
 
         final Map<String, RegisteredServiceProperty> props = svc.getProperties();
         final Set<RegisteredServiceEditBean.ServiceData.PropertyBean> beanProps = bean.getProperties();
-        for (final Map.Entry<String, RegisteredServiceProperty> p : props.entrySet()) {
+        props.entrySet().forEach(p -> {
             final String set = org.springframework.util.StringUtils.collectionToCommaDelimitedString(p.getValue().getValues());
             beanProps.add(new RegisteredServiceEditBean.ServiceData.PropertyBean(p.getKey(), set));
-        }
+        });
 
     }
 
@@ -181,6 +189,8 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                     ((OidcRegisteredService) regSvc).setEncryptIdToken(data.getOidc().isEncrypt());
                     ((OidcRegisteredService) regSvc).setIdTokenEncryptionAlg(data.getOidc().getEncryptAlg());
                     ((OidcRegisteredService) regSvc).setIdTokenEncryptionEncoding(data.getOidc().getEncryptEnc());
+                    ((OidcRegisteredService) regSvc).setScopes(
+                            org.springframework.util.StringUtils.commaDelimitedListToSet(data.getOidc().getScopes()));
                 }
             } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.SAML.toString())) {
                 regSvc = new SamlRegisteredService();
@@ -253,11 +263,11 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             }
 
             final Set<RegisteredServiceEditBean.ServiceData.PropertyBean> props = data.getProperties();
-            for (final RegisteredServiceEditBean.ServiceData.PropertyBean str : props) {
+            props.forEach(str -> {
                 final DefaultRegisteredServiceProperty value = new DefaultRegisteredServiceProperty();
                 value.setValues(org.springframework.util.StringUtils.commaDelimitedListToSet(str.getValue()));
                 regSvc.getProperties().put(str.getName(), value);
-            }
+            });
 
 
             return regSvc;

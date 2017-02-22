@@ -43,7 +43,7 @@ import java.util.Set;
         columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService> {
+public abstract class AbstractRegisteredService implements RegisteredService {
 
     private static final long serialVersionUID = 7645279151115635245L;
 

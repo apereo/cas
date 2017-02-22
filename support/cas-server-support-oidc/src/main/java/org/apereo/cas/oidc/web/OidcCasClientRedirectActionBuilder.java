@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
-import org.apereo.cas.support.oauth.DefaultOAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.redirect.RedirectAction;
@@ -17,7 +17,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcCasClientRedirectActionBuilder extends DefaultOAuth20CasClientRedirectActionBuilder {
+public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientRedirectActionBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcCasClientRedirectActionBuilder.class);
 

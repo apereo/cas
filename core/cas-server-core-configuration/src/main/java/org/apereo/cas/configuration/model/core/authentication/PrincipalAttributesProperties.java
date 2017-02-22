@@ -33,6 +33,15 @@ public class PrincipalAttributesProperties {
     private List<Groovy> groovy = new ArrayList();
     private List<Ldap> ldap = new ArrayList();
     private List<Json> json = new ArrayList();
+    private Grouper grouper = new Grouper();
+
+    public Grouper getGrouper() {
+        return grouper;
+    }
+
+    public void setGrouper(final Grouper grouper) {
+        this.grouper = grouper;
+    }
 
     public List<Groovy> getGroovy() {
         return groovy;
@@ -104,6 +113,28 @@ public class PrincipalAttributesProperties {
 
     public void setDefaultAttributesToRelease(final Set<String> defaultAttributesToRelease) {
         this.defaultAttributesToRelease = defaultAttributesToRelease;
+    }
+
+    public static class Grouper {
+        private int order;
+        private boolean enabled;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+
     }
 
     public static class Jdbc extends AbstractJpaProperties {

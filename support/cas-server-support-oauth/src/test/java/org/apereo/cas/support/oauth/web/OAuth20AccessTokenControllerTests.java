@@ -17,8 +17,8 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -101,7 +101,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("accessTokenController")
     private OAuth20AccessTokenEndpointController oAuth20AccessTokenController;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -497,7 +497,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
+        assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
@@ -513,7 +513,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
+        assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
@@ -816,9 +816,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     private void clearAllServices() {
         final Collection<RegisteredService> col = servicesManager.getAllServices();
-        for (final RegisteredService r : col) {
-            servicesManager.delete(r.getId());
-        }
+        col.forEach(r -> servicesManager.delete(r.getId()));
         servicesManager.load();
     }
 

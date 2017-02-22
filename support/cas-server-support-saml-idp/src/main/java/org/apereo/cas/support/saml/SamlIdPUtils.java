@@ -4,6 +4,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -25,11 +26,14 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlIdPUtils}.
@@ -41,6 +45,27 @@ public final class SamlIdPUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPUtils.class);
 
     private SamlIdPUtils() {
+    }
+
+    /**
+     * Produce unauthorized error view model and view.
+     *
+     * @return the model and view
+     */
+    public static ModelAndView produceUnauthorizedErrorView() {
+        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+    }
+
+    /**
+     * Produce error view model and view.
+     *
+     * @param e the e
+     * @return the model and view
+     */
+    public static ModelAndView produceErrorView(final Exception e) {
+        final Map model = new HashMap<>();
+        model.put("rootCauseException", e);
+        return new ModelAndView(SamlIdPConstants.ERROR_VIEW, model);
     }
 
     /**
@@ -87,16 +112,14 @@ public final class SamlIdPUtils {
                                                                          final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
-            final List<MetadataResolver> resolvers = new ArrayList<>();
+            final List<MetadataResolver> resolvers;
             final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
-            for (final RegisteredService registeredService : registeredServices) {
-                final SamlRegisteredService samlRegisteredService = SamlRegisteredService.class.cast(registeredService);
-
-                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
-                        SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityID);
-                resolvers.add(adaptor.getMetadataResolver());
-            }
+            resolvers = registeredServices.stream()
+                    .map(SamlRegisteredService.class::cast)
+                    .map(samlRegisteredService -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityID))
+                    .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
+                    .collect(Collectors.toList());
             chainingMetadataResolver.setResolvers(resolvers);
             chainingMetadataResolver.setId(entityID);
             chainingMetadataResolver.initialize();
@@ -115,7 +138,7 @@ public final class SamlIdPUtils {
      * @return the assertion consumer service for
      */
     public static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest,
-                                                                          final ServicesManager servicesManager, 
+                                                                          final ServicesManager servicesManager,
                                                                           final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();

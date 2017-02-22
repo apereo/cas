@@ -11,7 +11,8 @@ The following endpoints are secured and available:
 |-----------------------------------|------------------------------------------
 | `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management.
 | `/status`                         | [Monitor CAS status and other underlying components](Configuring-Monitoring.html).
-| `/status/autoconfig`              | Describes how the CAS application context is auto-configured.
+| `/status/sso`                     | Describes how the CAS application context is auto-configured.
+| `/status/autoconfig`              | Describes if there exists an active SSO session for this session.
 | `/status/beans`                   | Displays all CAS application context **internal** Spring beans.
 | `/status/configprops`             | List of **internal** configuration properties.
 | `/status/dump`                    | Produces a thread dump for the running CAS server.
@@ -45,7 +46,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ### Spring Security
 
-Alternative, you may design the security of CAS `/status` endpoints to take advantage 
+Alternative, you may design the security of CAS `/status` endpoints to take advantage
 of [Spring Security](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-monitoring.html).
 Using this model and via CAS settings, you get to define the authentication scheme (i.e. `BASIC`) as well
 as the protected/ignored paths and pre-defined "master" username/password that is used for authentication.

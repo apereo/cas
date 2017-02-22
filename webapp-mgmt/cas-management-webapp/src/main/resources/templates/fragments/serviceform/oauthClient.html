@@ -18,13 +18,26 @@
                 </label>
 
                 <div class="col-sm-8">
-                    <div class="input-group">
-                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
-                            <i class="fa fa-exclamation-triangle"></i>
-                        </div>
-                        <input type="text" autocomplete="off" class="form-control" id="oidcJwks"
-                               ng-model="serviceFormCtrl.serviceData.oidc.jwks"/>
-                    </div>
+                    <input type="text" autocomplete="off" class="form-control" id="oidcJwks"
+                           ng-model="serviceFormCtrl.serviceData.oidc.jwks"/>
+
+                </div>
+            </div>
+
+            <!-- OIDC Scopes -->
+            <div class="form-group" ng-show="serviceFormCtrl.serviceData.type=='oidc'">
+                <label class="col-sm-4" for="scopes">
+                    <span th:remove="tag" th:text="#{services.form.label.oidc.scopes}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.oidc.scopes}"></i>
+                </label>
+
+                <div class="col-sm-8">
+                    <input type="text" autocomplete="off" class="form-control" id="scopes"
+                           ng-model="serviceFormCtrl.serviceData.oidc.scopes"/>
+
                 </div>
             </div>
 
@@ -152,7 +165,8 @@
                 </div>
             </div>
 
-            
+
+            <!-- OIDC Enc Alg -->
             <div class="form-group" ng-show="serviceFormCtrl.serviceData.type=='oidc'">
                 <label class="col-sm-4" for="oidcEncryptAlg">
                     <span th:remove="tag" th:text="#{services.form.label.oidc.encryptAlg}"/>
@@ -163,16 +177,13 @@
                 </label>
 
                 <div class="col-sm-8">
-                    <div class="input-group">
-                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
-                            <i class="fa fa-exclamation-triangle"></i>
-                        </div>
-                        <input type="text" autocomplete="off" class="form-control" id="oidcEncryptAlg"
-                               ng-model="serviceFormCtrl.serviceData.oidc.encryptAlg"/>
-                    </div>
+                    <input type="text" autocomplete="off" class="form-control" id="oidcEncryptAlg"
+                           ng-model="serviceFormCtrl.serviceData.oidc.encryptAlg"/>
                 </div>
             </div>
 
+
+            <!-- OIDC Enc Encoding -->
             <div class="form-group" ng-show="serviceFormCtrl.serviceData.type=='oidc'">
                 <label class="col-sm-4" for="oidcEncryptEnc">
                     <span th:remove="tag" th:text="#{services.form.label.oidc.encryptEnc}"/>
@@ -183,17 +194,44 @@
                 </label>
 
                 <div class="col-sm-8">
-                    <div class="input-group">
-                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
-                            <i class="fa fa-exclamation-triangle"></i>
-                        </div>
-                        <input type="text" autocomplete="off" class="form-control" id="oidcEncryptEnc"
-                               ng-model="serviceFormCtrl.serviceData.oidc.encryptEnc"/>
-                    </div>
+                    <input type="text" autocomplete="off" class="form-control" id="oidcEncryptEnc"
+                           ng-model="serviceFormCtrl.serviceData.oidc.encryptEnc"/>
                 </div>
             </div>
 
 
+            <!-- OIDC Dynamic Registration -->
+            <div class="form-group" ng-show="serviceFormCtrl.serviceData.type=='oidc'">
+                <div class="col-sm-6 checkbox">
+                    <label class="col-sm-12" for="dynamic">
+                        <input type="checkbox" id="dynamic" disabled
+                               ng-model="serviceFormCtrl.serviceData.oidc.dynamic"/>
+                        <span th:remove="tag" th:text="#{services.form.label.oidc.dynamic}"/>
+                        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                           data-toggle="tooltip"
+                           data-placement="top"
+                           th:title="#{services.form.tooltip.oidc.dynamic}"></i>
+                    </label>
+                </div>
+            </div>
+
+            <!-- OIDC Dynamic Registration Date -->
+            <div class="form-group" ng-show="serviceFormCtrl.serviceData.type=='oidc' && serviceFormCtrl.serviceData.oidc.dynamic">
+                <label class="col-sm-4" for="oidcDynamicDate">
+                    <span th:remove="tag" th:text="#{services.form.label.oidc.dynamicDate}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.oidc.dynamicDate}"></i>
+                </label>
+
+                <div class="col-sm-8">
+                    <input type="text" disabled readonly
+                           autocomplete="off" class="form-control"
+                           id="oidcDynamicDate"
+                           ng-model="serviceFormCtrl.serviceData.oidc.dynamicDate"/>
+                </div>
+            </div>
         </div>
 
     </div>

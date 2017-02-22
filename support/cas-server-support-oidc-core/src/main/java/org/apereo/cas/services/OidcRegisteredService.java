@@ -9,6 +9,11 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.PostLoad;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is {@link OidcRegisteredService}.
@@ -27,7 +32,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Column(updatable = true, insertable = true)
     private boolean signIdToken = true;
-    
+
     @Column(updatable = true, insertable = true)
     private boolean encryptIdToken;
 
@@ -36,9 +41,19 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Column(length = 255, updatable = true, insertable = true)
     private String idTokenEncryptionEncoding;
-    
+
+    @Column(updatable = true, insertable = true)
+    private boolean dynamicallyRegistered;
+
     @Column(updatable = true, insertable = true)
     private boolean implicit;
+
+    @Column(name = "DYNAMIC_REG_TIME")
+    private ZonedDateTime dynamicRegistrationDateTime;
+
+    @Lob
+    @Column(name = "scopes", length = Integer.MAX_VALUE)
+    private HashSet<String> scopes = new HashSet<>();
 
     public OidcRegisteredService() {
         setJsonFormat(Boolean.TRUE);
@@ -92,6 +107,61 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         this.idTokenEncryptionEncoding = idTokenEncryptionEncoding;
     }
 
+    public boolean isDynamicallyRegistered() {
+        return dynamicallyRegistered;
+    }
+
+    /**
+     * Indicates the service was dynamically registered.
+     * Records the registration time automatically.
+     * @param dynamicallyRegistered dynamically registered.
+     */
+    public void setDynamicallyRegistered(final boolean dynamicallyRegistered) {
+        this.dynamicallyRegistered = dynamicallyRegistered;
+        setDynamicRegistrationDateTime(ZonedDateTime.now());
+    }
+
+    /**
+     * Gets scopes.
+     *
+     * @return the scopes
+     */
+    public Set<String> getScopes() {
+        if (this.scopes == null) {
+            this.scopes = new HashSet<>();
+        }
+        return scopes;
+    }
+
+    /**
+     * Sets scopes.
+     *
+     * @param scopes the scopes
+     */
+    public void setScopes(final Set<String> scopes) {
+        getScopes().clear();
+        getScopes().addAll(scopes);
+    }
+
+    public ZonedDateTime getDynamicRegistrationDateTime() {
+        return dynamicRegistrationDateTime;
+    }
+
+    public void setDynamicRegistrationDateTime(final ZonedDateTime dynamicRegistrationDateTime) {
+        this.dynamicRegistrationDateTime = dynamicRegistrationDateTime;
+    }
+
+    /**
+     * Initializes the registered service with default values
+     * for fields that are unspecified. Only triggered by JPA.
+     */
+    @PostLoad
+    public void postLoad() {
+        if (this.scopes == null) {
+            this.scopes = new HashSet<>();
+        }
+    }
+
     @Override
     protected AbstractRegisteredService newInstance() {
         return new OidcRegisteredService();
@@ -118,6 +188,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
                 .append(this.encryptIdToken, rhs.encryptIdToken)
                 .append(this.idTokenEncryptionAlg, rhs.idTokenEncryptionAlg)
                 .append(this.idTokenEncryptionEncoding, rhs.idTokenEncryptionEncoding)
+                .append(this.getScopes(), rhs.getScopes())
                 .isEquals();
     }
 
@@ -131,6 +202,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
                 .append(encryptIdToken)
                 .append(idTokenEncryptionAlg)
                 .append(idTokenEncryptionEncoding)
+                .append(dynamicallyRegistered)
+                .append(getScopes())
                 .toHashCode();
     }
 
@@ -144,6 +217,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
                 .append("idTokenEncryptionAlg", idTokenEncryptionAlg)
                 .append("idTokenEncryptionEncoding", idTokenEncryptionEncoding)
                 .append("encryptIdToken", encryptIdToken)
+                .append("dynamicallyRegistered", dynamicallyRegistered)
+                .append("scopes", getScopes())
                 .toString();
     }
 
@@ -158,8 +233,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
             setIdTokenEncryptionAlg(oidcService.getIdTokenEncryptionAlg());
             setIdTokenEncryptionEncoding(oidcService.idTokenEncryptionEncoding);
             setEncryptIdToken(oidcService.isEncryptIdToken());
+            setDynamicallyRegistered(oidcService.isDynamicallyRegistered());
+            setScopes(oidcService.getScopes());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
+
+
 }

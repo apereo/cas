@@ -2,6 +2,7 @@ package org.apereo.cas.mgmt.services.web.beans;
 
 /**
  * Defines service type for oidc, etc.
+ *
  * @author Misagh Moayyed
  * @since 5.0
  */
@@ -13,7 +14,33 @@ public class RegisteredServiceOidcTypeEditBean extends RegisteredServiceOAuthTyp
     private boolean encrypt;
     private String encryptAlg;
     private String encryptEnc;
+    private String dynamicDate;
+    private boolean dynamic;
+    private String scopes;
 
+    public String getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(final String scopes) {
+        this.scopes = scopes;
+    }
+
+    public String getDynamicDate() {
+        return dynamicDate;
+    }
+
+    public void setDynamicDate(final String dynamicDate) {
+        this.dynamicDate = dynamicDate;
+    }
+
+    public boolean isDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(final boolean dynamic) {
+        this.dynamic = dynamic;
+    }
 
     public boolean isEncrypt() {
         return encrypt;
