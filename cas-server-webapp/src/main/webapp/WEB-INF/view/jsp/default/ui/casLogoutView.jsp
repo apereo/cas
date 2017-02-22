@@ -135,10 +135,12 @@
 					var decodedUrl = decodeURIComponent(serviceUrl);
 					var tenantBrandingImageUrl = createLocation(decodedUrl) + '/scim/v2/TenantImage/jpegPhoto/appBranding';
 					var tenantBrandingOnErrorUrl = createLocation(decodedUrl) + '/scim/v2/TenantImage/jpegPhoto/primary';
-					document.getElementById("tenantBranding").setAttribute("src", tenantBrandingImageUrl);
-					document.getElementById("tenantBranding").on("error", function(){
-						document.getElementById(this).unbind("error").setAttribute('src', tenantBrandingOnErrorUrl);
-				    });			
+					var tenantBranding = document.getElementById("tenantBranding");
+					tenantBranding.setAttribute("src", tenantBrandingImageUrl);
+					tenantBranding.onerror = function(){
+						this.onerror = null;
+						this.setAttribute('src', tenantBrandingOnErrorUrl);
+					};
 				}
 				
 				updateTenantBranding();
