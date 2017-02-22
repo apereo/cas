@@ -5,6 +5,26 @@ function isDocumentationSiteViewedLocally() {
     return location.href.indexOf(CONST_SITE_TARGET_DIR) != -1;
 }
 
+function generateNavigationBarAndCrumbs() {
+    var crumbs = "<ol class='breadcrumb'>";
+
+
+    var activeVersion = getActiveDocumentationVersionInView(true);
+
+    var uri = new URI(document.location);
+    var segments = uri.segment();
+    
+
+    for (var i = 1; i < segments.length; i++) {
+        crumbs += "<li class='breadcrumb-item'><a href='#'>" + segments[i] + "</a></li>";
+    }
+
+    crumbs += "</ol>";
+
+    $("#navBar").prepend(crumbs);
+
+}
+
 function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
     var currentVersion = CONST_CURRENT_VER;
     var href = location.href;
@@ -354,7 +374,8 @@ $(function () {
     generateTableOfContentsForPage();
     generateDependencyLangFragments();
     generateToolbarIcons();
-
+    generateNavigationBarAndCrumbs();
+	
     responsiveImages();
     responsiveTables();
 
