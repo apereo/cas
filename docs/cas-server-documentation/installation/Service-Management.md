@@ -95,4 +95,4 @@ The following options may be used to store services in CAS.
 
 ### Couchbase
 
-[See this guide](Couchbase-Service-Management.htmll) for more info please.
+[See this guide](Couchbase-Service-Management.html) for more info please.
