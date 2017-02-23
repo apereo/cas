@@ -53,14 +53,16 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     /**
      * Gets availability times of the server.
      *
-     * @param httpServletRequest  the http servlet request
-     * @param httpServletResponse the http servlet response
+     * @param request  the http servlet request
+     * @param response the http servlet response
      * @return the availability
      */
     @GetMapping(value = "/getAvailability")
     @ResponseBody
-    public Map<String, Object> getAvailability(final HttpServletRequest httpServletRequest,
-                                               final HttpServletResponse httpServletResponse) {
+    public Map<String, Object> getAvailability(final HttpServletRequest request,
+                                               final HttpServletResponse response) {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
         final Duration diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
         model.put("upTime", diff.getSeconds());
@@ -70,14 +72,16 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     /**
      * Gets memory stats.
      *
-     * @param httpServletRequest  the http servlet request
-     * @param httpServletResponse the http servlet response
+     * @param request  the http servlet request
+     * @param response the http servlet response
      * @return the memory stats
      */
     @GetMapping(value = "/getMemStats")
     @ResponseBody
-    public Map<String, Object> getMemoryStats(final HttpServletRequest httpServletRequest,
-                                              final HttpServletResponse httpServletResponse) {
+    public Map<String, Object> getMemoryStats(final HttpServletRequest request,
+                                              final HttpServletResponse response) {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
         model.put("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
         model.put("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
@@ -88,14 +92,16 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     /**
      * Gets ticket stats.
      *
-     * @param httpServletRequest  the http servlet request
-     * @param httpServletResponse the http servlet response
+     * @param request  the http servlet request
+     * @param response the http servlet response
      * @return the ticket stats
      */
     @GetMapping(value = "/getTicketStats")
     @ResponseBody
-    public Map<String, Object> getTicketStats(final HttpServletRequest httpServletRequest,
-                                              final HttpServletResponse httpServletResponse) {
+    public Map<String, Object> getTicketStats(final HttpServletRequest request,
+                                              final HttpServletResponse response) {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
 
         int unexpiredTgts = 0;
@@ -140,6 +146,8 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest,
                                                  final HttpServletResponse httpServletResponse) throws Exception {
+        ensureEndpointAccessIsAuthorized(httpServletRequest, httpServletResponse);
+        
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());

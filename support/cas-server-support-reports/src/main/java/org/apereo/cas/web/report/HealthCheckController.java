@@ -50,6 +50,8 @@ public class HealthCheckController extends BaseCasMvcEndpoint {
     @ResponseBody
     protected WebAsyncTask<HealthStatus> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
+        ensureEndpointAccessIsAuthorized(request, response);
+        
         final Callable<HealthStatus> asyncTask = () -> {
             final HealthStatus healthStatus = healthCheckMonitor.observe();
             response.setStatus(healthStatus.getCode().value());

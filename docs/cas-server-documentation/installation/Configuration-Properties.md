@@ -3672,7 +3672,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 ### Acceptable Usage Policy
 
 Decide how CAS should attempt to determine whether AUP is accepted.
-To learn more about this topic, [please review this guide](User-Interface-Customization-AUP.html).
+To learn more about this topic, [please review this guide](Webflow-Customization-AUP.html).
 
 
 ```properties
