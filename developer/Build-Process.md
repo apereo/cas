@@ -44,9 +44,11 @@ The following commandline boolean flags are supported by the build:
 | `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
 
 
-Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test/javadoc`)
+Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`)
 
 ## IDE Setup
+
+CAS development may be carried out using any modern IDE. 
 
 ### IntelliJ IDEA
 
@@ -57,7 +59,7 @@ cd cas-server
 ./gradlew idea
 ```
 
-Then, open the project directory as you would for any other project and let IDEA resolve the Gradle dependencies. 
+Then, open the project as you would for any other project and let IDEA resolve the Gradle dependencies. 
 
 The following IDEA settings for Gradle may also be useful:
 
@@ -71,7 +73,6 @@ You may also need to adjust the 'Compiler' settings so modules are built in para
 
 ![image](https://cloud.githubusercontent.com/assets/1205228/23251099/31d8f250-f9c1-11e6-9ca1-64489bc1a948.png)
 
-
 ### Eclipse
 
 For Eclipse, execute the following commands:
@@ -80,6 +81,28 @@ For Eclipse, execute the following commands:
 cd cas-server
 ./gradlew eclipse
 ```
+
+Then, open the project as you would for any other project. 
+
+## Testing Modules
+
+To test the functionality provided by a given CAS module, execute the following steps:
+
+1. Add the module reference to the build script (i.e. `build.gradle`) of web application you intend to run (i.e Web App, Management Web App, etc)
+
+```gradle
+compile project(":support:cas-server-support-modulename")
+```
+
+2. In the command prompt/terminal, `cd` into the web application directory where the build script is found.
+3. Execute:
+
+```bash
+gradlew build install bootRun --parallel --offline
+```
+
+This will attempt to launch the web application via the embedded container. You may use any of the provided flags above to adjust build behavior and performance.
+
 
 ## Embedded Tomcat
 
