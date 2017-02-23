@@ -35,14 +35,13 @@ import java.util.concurrent.Callable;
  * @author Dmitriy Kopylenko
  * @since 4.1
  */
-public class SingleSignOnSessionsReportController extends AbstractNamedMvcEndpoint {
+public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
     private static final String STATUS = "status";
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
-
-    @Autowired
+    
     private CasConfigurationProperties casProperties;
 
     private enum SsoSessionReportOptions {
@@ -105,9 +104,11 @@ public class SingleSignOnSessionsReportController extends AbstractNamedMvcEndpoi
 
     private final CentralAuthenticationService centralAuthenticationService;
 
-    public SingleSignOnSessionsReportController(final CentralAuthenticationService centralAuthenticationService) {
-        super("ssosessions", "/ssosessions", true, true);
+    public SingleSignOnSessionsReportController(final CentralAuthenticationService centralAuthenticationService,
+                                                final CasConfigurationProperties casProperties) {
+        super("ssosessions", "/ssosessions", casProperties.getMonitor().getEndpoints().getSingleSignOnReport());
         this.centralAuthenticationService = centralAuthenticationService;
+        this.casProperties = casProperties;
     }
 
     /**

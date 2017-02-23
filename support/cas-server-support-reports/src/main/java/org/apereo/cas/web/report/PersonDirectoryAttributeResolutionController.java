@@ -24,17 +24,14 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class PersonDirectoryAttributeResolutionController extends AbstractNamedMvcEndpoint {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndpoint {
+    
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
 
-    public PersonDirectoryAttributeResolutionController() {
-        super("attrresolution", "/attrresolution", true, true);
+    public PersonDirectoryAttributeResolutionController(final CasConfigurationProperties casProperties) {
+        super("attrresolution", "/attrresolution", casProperties.getMonitor().getEndpoints().getAttributeResolution());
     }
 
     /**

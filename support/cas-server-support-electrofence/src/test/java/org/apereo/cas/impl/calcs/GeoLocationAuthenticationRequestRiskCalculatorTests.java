@@ -26,6 +26,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -75,6 +76,7 @@ import static org.junit.Assert.*;
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasEventsInMemoryRepositoryConfiguration.class,
         CasCoreEventsConfiguration.class})
 @TestPropertySource(properties = "cas.authn.adaptive.risk.geoLocation.enabled=true")
 @DirtiesContext

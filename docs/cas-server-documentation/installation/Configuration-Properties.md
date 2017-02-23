@@ -373,6 +373,12 @@ The format of the file is as such:
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
 - `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
 
+### CAS Endpoints Security
+
+```properties
+
+```
+
 ### Admin Status Endpoints With Spring Security
 
 Status endpoints may also be secured by Spring Security. You can define the authentication scheme/paths via the below settings.
