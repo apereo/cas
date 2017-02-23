@@ -152,10 +152,10 @@ The response will look something like this:
 INFO [org.apache.catalina.core.StandardService] - <Starting service Tomcat>
 INFO [org.apache.catalina.core.StandardEngine] - <Starting Servlet Engine: Apache Tomcat/x.y.z>
 INFO [org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/cas]] - <Initializing Spring embedded WebApplicationContext>
-INFO [org.jasig.cas.web.CasWebApplication] - <Started CasWebApplication in 21.485 seconds (JVM running for 22.895)>
+INFO [org.apereo.cas.web.CasWebApplication] - <Started CasWebApplication in 21.485 seconds (JVM running for 22.895)>
 ```
 
-CAS will be available at `https://mymachine.domain.edu:8443/cas`
+By default CAS will be available at `https://mymachine.domain.edu:8443/cas`
 
 ### Remote Debugging
 
