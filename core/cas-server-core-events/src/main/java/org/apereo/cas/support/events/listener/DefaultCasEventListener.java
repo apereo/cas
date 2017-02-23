@@ -2,9 +2,9 @@ package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.events.CasConfigurationModifiedEvent;
-import org.apereo.cas.support.events.CasRiskyAuthenticationDetectedEvent;
-import org.apereo.cas.support.events.CasTicketGrantingTicketCreatedEvent;
+import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.util.DateTimeUtils;

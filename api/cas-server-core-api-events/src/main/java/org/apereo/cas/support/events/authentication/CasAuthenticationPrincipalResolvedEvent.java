@@ -1,6 +1,7 @@
-package org.apereo.cas.support.events;
+package org.apereo.cas.support.events.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.support.events.AbstractCasEvent;
 
 /**
  * This is {@link CasAuthenticationPrincipalResolvedEvent}.

@@ -1,5 +1,6 @@
-package org.apereo.cas.support.events;
+package org.apereo.cas.support.events.audit;
 
+import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.inspektr.audit.AuditActionContext;
 
 /**
