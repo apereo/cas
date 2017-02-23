@@ -1,7 +1,9 @@
 package org.apereo.cas.support.events.authentication;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.support.events.AbstractCasEvent;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -14,7 +16,7 @@ public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
     private static final long serialVersionUID = 8059647975948452375L;
 
     private Map<String, Class<? extends Exception>> failures;
-
+    private Collection<Credential> credential;
 
     /**
      * Instantiates a new Abstract cas sso event.
@@ -22,9 +24,16 @@ public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
      * @param source   the source
      * @param failures the failures
      */
-    public CasAuthenticationTransactionFailureEvent(final Object source, final Map<String, Class<? extends Exception>> failures) {
+    public CasAuthenticationTransactionFailureEvent(final Object source, 
+                                                    final Map<String, Class<? extends Exception>> failures,
+                                                    final Collection<Credential> credential) {
         super(source);
         this.failures = failures;
+        this.credential= credential;
+    }
+
+    public Credential getCredential() {
+        return credential.iterator().next();
     }
 
     public Map<String, Class<? extends Exception>> getFailures() {

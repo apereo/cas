@@ -1,6 +1,8 @@
 package org.apereo.cas.support.events.authentication;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.Credential;
 
 import java.util.Map;
 
@@ -14,9 +16,11 @@ public class CasAuthenticationPolicyFailureEvent extends CasAuthenticationTransa
     private static final long serialVersionUID = 2208076621158767073L;
     private final Authentication authentication;
 
-    public CasAuthenticationPolicyFailureEvent(final Object source, final Map<String, Class<? extends Exception>> failures,
+    public CasAuthenticationPolicyFailureEvent(final Object source,
+                                               final Map<String, Class<? extends Exception>> failures,
+                                               final AuthenticationTransaction transaction,
                                                final Authentication authentication) {
-        super(source, failures);
+        super(source, failures, transaction.getCredentials());
         this.authentication = authentication;
     }
 

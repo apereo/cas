@@ -1,7 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.web.bind.annotation.GetMapping;

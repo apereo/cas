@@ -1,4 +1,6 @@
-package org.apereo.cas.support.events.dao;
+package org.apereo.cas.support.events;
+
+import org.apereo.cas.support.events.dao.CasEvent;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
