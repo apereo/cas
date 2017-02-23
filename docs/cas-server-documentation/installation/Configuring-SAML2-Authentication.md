@@ -144,9 +144,6 @@ SAML relying parties and services must be registered within the CAS service regi
 }
 ```
 
-<div class="alert alert-info"><strong>Aggregated Metadata</strong><p>If metadata
-contains data for more than one relying party, (i.e. InCommon) those relying parties need to be defined by their entity id, explicitly via the <code>serviceId</code> field, given the field accepts regular expressions.</p></div>
-
 The following fields are available for SAML services:
 
 | Field                                | Description
@@ -165,6 +162,28 @@ The following fields are available for SAML services:
 | `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entities descriptors that contain no entity descriptors. Default is `true`.
 | `metadataCriteriaRemoveRolelessEntityDescriptors` | Controls whether to keep entity descriptors that contain no roles. Default is `true`.
 | `attributeNameFormats` | Map that defines attribute name formats for a given attribute name to be encoded in the SAML response.
+
+### Metadata Aggregates
+
+CAS services are fundamentally recognized and loaded by service identifiers taught to CAS typically via
+regular expressions. This allows for common groupings of applications and services by
+url patterns (i.e. "Everything that belongs to `example.org` is registered with CAS).
+With aggregated metadata, CAS essentially does double
+authorization checks because it will first attempt to find the entity id
+in its collection of resolved metadata components and then it looks to
+see if that entity id is authorized via the pattern that is assigned to
+that service definition. This means you can do one of several things:
+
+1. Open up the pattern to allow everything that is authorized in the metadata.
+2. Restrict the pattern to only a select few entity ids found in the
+metadata. This is essentially the same thing as defining metadata criteria
+to filter down the list of resolved relying parties and entity ids except that its done
+after the fact once the metadata is fully loaded and parsed.
+3. You can also instruct CAS to filter metadata
+entities by a defined criteria at resolution time when it reads the
+metadata itself. This is essentially the same thing as forcing the pattern
+to match entity ids, except that it's done while CAS is reading the
+metadata and thus load times are improved.
 
 ### Attribute Name Formats
 
