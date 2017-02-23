@@ -2,11 +2,14 @@ package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.support.events.AbstractCasEvent;
+import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
+import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
-import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
+import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -114,8 +117,7 @@ public class DefaultCasEventListener {
      * Rebind cas configuration properties.
      */
     public void rebindCasConfigurationProperties() {
-        final Map<String, CasConfigurationProperties> map =
-                this.applicationContext.getBeansOfType(CasConfigurationProperties.class);
+        final Map<String, CasConfigurationProperties> map = this.applicationContext.getBeansOfType(CasConfigurationProperties.class);
         final String name = map.keySet().iterator().next();
         LOGGER.debug("Reloading CAS configuration via [{}]", name);
         final Object e = this.applicationContext.getBean(name);
@@ -133,22 +135,40 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
         if (this.casEventRepository != null) {
-
-            final CasEvent dto = new CasEvent();
-            dto.setType(event.getClass().getCanonicalName());
-            dto.putTimestamp(event.getTimestamp());
+            final CasEvent dto = prepareCasEvent(event);
             dto.putCreationTime(event.getTicketGrantingTicket().getCreationTime());
             dto.putId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
             dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+            this.casEventRepository.save(dto);
+        }
+    }
 
-            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-            dto.putClientIpAddress(clientInfo.getClientIpAddress());
-            dto.putServerIpAddress(clientInfo.getServerIpAddress());
-            dto.putAgent(WebUtils.getHttpServletRequestUserAgent());
+    /**
+     * Handle cas authentication policy failure event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleCasAuthenticationPolicyFailureEvent(final CasAuthenticationTransactionFailureEvent event) {
+        if (this.casEventRepository != null) {
+            final CasEvent dto = prepareCasEvent(event);
+            dto.setPrincipalId(event.getCredential().getId());
+            dto.putId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
+            this.casEventRepository.save(dto);
+        }
+    }
 
-            final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
-            dto.putGeoLocation(location);
-
+    /**
+     * Handle cas authentication policy failure event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleCasAuthenticationPolicyFailureEvent(final CasAuthenticationPolicyFailureEvent event) {
+        if (this.casEventRepository != null) {
+            final CasEvent dto = prepareCasEvent(event);
+            dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
+            dto.putId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
             this.casEventRepository.save(dto);
         }
     }
@@ -161,24 +181,27 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasRiskyAuthenticationDetectedEvent(final CasRiskyAuthenticationDetectedEvent event) {
         if (this.casEventRepository != null) {
-
-            final CasEvent dto = new CasEvent();
-            dto.setType(event.getClass().getCanonicalName());
-            dto.putTimestamp(event.getTimestamp());
-            dto.putCreationTime(DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
+            final CasEvent dto = prepareCasEvent(event);
             dto.putId(event.getService().getName());
             dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
-
-            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-            dto.putClientIpAddress(clientInfo.getClientIpAddress());
-            dto.putServerIpAddress(clientInfo.getServerIpAddress());
-            dto.putAgent(WebUtils.getHttpServletRequestUserAgent());
-
-            final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
-            dto.putGeoLocation(location);
-
             this.casEventRepository.save(dto);
         }
+    }
+
+    private CasEvent prepareCasEvent(final AbstractCasEvent event) {
+        final CasEvent dto = new CasEvent();
+        dto.setType(event.getClass().getCanonicalName());
+        dto.putTimestamp(event.getTimestamp());
+        dto.putCreationTime(DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
+
+        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        dto.putClientIpAddress(clientInfo.getClientIpAddress());
+        dto.putServerIpAddress(clientInfo.getServerIpAddress());
+        dto.putAgent(WebUtils.getHttpServletRequestUserAgent());
+
+        final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
+        dto.putGeoLocation(location);
+        return dto;
     }
 
     public CasEventRepository getCasEventRepository() {

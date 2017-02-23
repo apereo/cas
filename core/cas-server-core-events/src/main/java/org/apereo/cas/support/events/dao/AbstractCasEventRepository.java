@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import org.apereo.cas.support.events.CasEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
