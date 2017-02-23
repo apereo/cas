@@ -43,8 +43,8 @@ via the CAS admin screens.
 
 ### Other Profiles
 
-Any changes you make to the externally-defined `application.properties|yml` or `cas.properties|yml`
-file [MUST be refreshed manually](Monitoring-Statistics.html).
+Any changes you make to the externally-defined `[application|cas].[properties|yml]` file
+[MUST be refreshed manually](Monitoring-Statistics.html).
 If you are using the CAS admin screens to update and edit properties,
 the configuration state of the CAS server
 is refreshed seamlessly and automatically without your resorting
