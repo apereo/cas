@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class HazelcastMonitor extends AbstractCacheMonitor {
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastMonitor.class);
-    
+
     public HazelcastMonitor() {
         super(HazelcastMonitor.class.getSimpleName());
     }
@@ -33,7 +33,7 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
         LOGGER.debug("Locating hazelcast map [{}] from instance [{}]...", hz.getMapName(), hz.getCluster().getInstanceName());
         final IMap map = instance.getMap(hz.getMapName());
         LOGGER.debug("Starting to collect hazelcast statistics...");
-        statsList.add(new HazelcastStatistics(map));
+        statsList.add(new HazelcastStatistics(map, hz.getCluster().getMembers().size()));
 
         return statsList.toArray(new CacheStatistics[statsList.size()]);
     }
@@ -45,9 +45,11 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
         private static final int PERCENTAGE_VALUE = 100;
 
         private IMap map;
+        private int clusterSize;
 
-        protected HazelcastStatistics(final IMap map) {
+        protected HazelcastStatistics(final IMap map, final int clusterSize) {
             this.map = map;
+            this.clusterSize = clusterSize;
         }
 
         @Override
@@ -89,6 +91,9 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
             builder.append("Creation time: ")
                     .append(localMapStats.getCreationTime())
                     .append(", ")
+                    .append("Cluster size: ")
+                    .append(clusterSize)
+                    .append(", ")
                     .append("Owned entry count: ")
                     .append(localMapStats.getOwnedEntryCount())
                     .append(", ")
@@ -124,11 +129,18 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
                     .append(", ")
                     .append("Heap cost: ")
                     .append(localMapStats.getHeapCost());
-                    
+
             if (localMapStats.getNearCacheStats() != null) {
                 builder.append(", Misses: ")
                         .append(localMapStats.getNearCacheStats().getMisses());
             }
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder builder = new StringBuilder();
+            this.toString(builder);
+            return builder.toString();
         }
     }
 }

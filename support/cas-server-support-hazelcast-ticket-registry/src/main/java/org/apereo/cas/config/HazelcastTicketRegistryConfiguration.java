@@ -15,9 +15,14 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
+import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
+import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -50,6 +55,10 @@ public class HazelcastTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("logoutManager")
+    private LogoutManager logoutManager;
+    
     @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry hazelcastTicketRegistry() {
@@ -59,6 +68,11 @@ public class HazelcastTicketRegistryConfiguration {
                 hz.getPageSize());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
+    }
+
+    @Bean
+    public TicketRegistryCleaner ticketRegistryCleaner() {
+        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, hazelcastTicketRegistry(), false);
     }
 
     @Bean
