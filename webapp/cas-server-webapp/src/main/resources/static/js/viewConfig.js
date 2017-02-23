@@ -31,21 +31,11 @@ var viewConfigs = (function () {
                 "url": urls.getConfiguration,
                 "dataSrc": function (json) {
                     var return_data = new Array();
-                    for (var section in json) {
-                        var sectionName;
-                        if (section.indexOf("applicationConfig") != -1) {
-                            sectionName = "applicationConfig";
-                        } else {
-                            sectionName = section;
-                        }
-                        var object = json[section];
-                        for (var item in object) {
-                            return_data.push({
-                                'key': sectionName + "." + item,
-                                'value': object[item],
-                            })
-                        }
-
+                    for (var item in json) {
+                        return_data.push({
+                            'key': '<code>' + item + '</code>',
+                            'value': '' + json[item] + ''
+                        })
                     }
                     return return_data;
                 }
@@ -54,6 +44,7 @@ var viewConfigs = (function () {
                 {"data": "key", 'className': 'col-xs-6 key'},
                 {"data": "value", 'className': 'col-xs-6 value'}
             ],
+            "pageLength": 50
         });
     };
 
@@ -97,7 +88,8 @@ var viewConfigs = (function () {
                     var result = "Saved settings successfully.";
                     $('#alertWrapper').removeClass('alert-warning');
                     $('#alertWrapper').addClass('alert-success');
-                    $('#alertWrapper').prepend(result);
+
+                    $('#resultText').text(result);
                     $('#alertWrapper').show();
                 })
 
