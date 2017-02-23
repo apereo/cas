@@ -94,17 +94,9 @@ To test the functionality provided by a given CAS module, execute the following 
 compile project(":support:cas-server-support-modulename")
 ```
 
-2. In the command prompt/terminal, `cd` into the web application directory where the build script is found.
-3. Execute:
+2. Prepare the embedded container, as described below, to run and deploy the web application
 
-```bash
-gradlew build install bootRun --parallel --offline
-```
-
-This will attempt to launch the web application via the embedded container. You may use any of the provided flags above to adjust build behavior and performance.
-
-
-## Embedded Tomcat
+## Embedded Container
 
 The CAS project is pre-configured with an embedded Tomcat instance for both the server web application as well as the management web application.
 
