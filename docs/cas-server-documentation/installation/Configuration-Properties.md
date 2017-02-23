@@ -1268,7 +1268,7 @@ Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
 server, simply increment the index and specify the settings for the next LDAP server.
 
-**Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
+**Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, etc
 will simply deactivate LDAP authentication altogether silently.
 
 **Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes
@@ -1279,7 +1279,7 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 
 ### Active Directory
 
-Users authenticate with `sAMAccountName`.
+Users authenticate with `sAMAccountName` typically using a DN format.
 
 ### Authenticated Search
 
@@ -1290,14 +1290,14 @@ Manager bind/search type of authentication.
 
 ### Anonymous Search
 
-Anonymous search.
+Similar semantics as Authentication Search except no `bindDn` and `bindCredential` may be specified to initialize the connection.
 
 - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
 - Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 
 ### Direct Bind
 
-Compute user DN from format string and perform simple bind. This is relevant when
+Compute user DN from a format string and perform simple bind. This is relevant when
 no search is required to compute the DN needed for a bind operation.
 
 There are two requirements for this use case:
@@ -1310,12 +1310,24 @@ There are two requirements for this use case:
 If multiple URLs are provided as the ldapURL this describes how each URL will be processed.
 
 | Provider              | Description              
-|-----------------------|-----------------
+|-----------------------|-----------------------------------------------------------------------------------------------
 | `DEFAULT`             | The default JNDI provider behavior will be used.    
 | `ACTIVE_PASSIVE`      | First LDAP will be used for every request unless it fails and then the next shall be used.    
 | `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
 | `RANDOM`              | For each new connection a random LDAP url will be selected.
 | `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
+
+### Connection Initialization
+
+LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters:
+
+| Behavior                               | Description              
+|----------------------------------------|-------------------------------------------------------------------
+| `bindDn`/`bindCredential` provided     | Use the provided credentials to bind when initializing connections.
+| `bindDn`/`bindCredential` set to `*`   | Use a fast-bind strategy to initialize the pool.   
+| `bindDn`/`bindCredential` set to blank | Skip connection initializing; perform operations anonymously.
+| SASL mechanism provided                | Use the given SASL mechanism to bind when initializing connections.
+
 
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
