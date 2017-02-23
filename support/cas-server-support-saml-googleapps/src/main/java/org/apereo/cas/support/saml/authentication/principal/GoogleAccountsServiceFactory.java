@@ -132,7 +132,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         bean.afterPropertiesSet();
 
 
-        logger.debug("Creating Google Apps private key instance via {}", this.publicKeyLocation);
+        logger.debug("Creating Google Apps private key instance via {}", this.privateKeyLocation);
         this.privateKey = bean.getObject();
     }
 
