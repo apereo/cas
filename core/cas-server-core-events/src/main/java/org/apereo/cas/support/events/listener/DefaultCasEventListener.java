@@ -149,7 +149,7 @@ public class DefaultCasEventListener {
      * @param event the event
      */
     @EventListener
-    public void handleCasAuthenticationPolicyFailureEvent(final CasAuthenticationTransactionFailureEvent event) {
+    public void handleCasAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent event) {
         if (this.casEventRepository != null) {
             final CasEvent dto = prepareCasEvent(event);
             dto.setPrincipalId(event.getCredential().getId());
