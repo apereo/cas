@@ -23,6 +23,7 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
     /**
      * Instantiates a new Base cas mvc endpoint.
      * Endpoints are by default sensitive.
+     *
      * @param name     the name
      * @param path     the path
      * @param endpoint the endpoint
@@ -38,11 +39,9 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
      *
      * @param request  the request
      * @param response the response
-     * @throws Exception the exception
      */
-
     protected void ensureEndpointAccessIsAuthorized(final HttpServletRequest request,
-                                                    final HttpServletResponse response) throws Exception {
+                                                    final HttpServletResponse response) {
         if (!isEnabled()) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             throw new UnuauthorizedEndpointException();

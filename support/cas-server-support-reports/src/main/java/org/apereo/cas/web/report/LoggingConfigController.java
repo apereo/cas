@@ -90,11 +90,16 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     /**
      * Gets default view.
      *
+     * @param request  the request
+     * @param response the response
      * @return the default view
      * @throws Exception the exception
      */
     @GetMapping
-    public ModelAndView getDefaultView() throws Exception {
+    public ModelAndView getDefaultView(final HttpServletRequest request,
+                                       final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
         model.put("logConfigurationFile", logConfigurationFile.getURI().toString());
         return new ModelAndView(VIEW_CONFIG, model);
@@ -111,6 +116,8 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> responseMap = new HashMap<>();
         final Map<String, Logger> loggers = getActiveLoggersInFactory();
         responseMap.put("activeLoggers", loggers.values());
@@ -130,6 +137,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @GetMapping(value = "/getConfiguration")
     @ResponseBody
     public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
@@ -222,8 +230,9 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
                                   @RequestParam final String loggerLevel,
                                   @RequestParam(defaultValue = "false") final boolean additive,
                                   final HttpServletRequest request,
-                                  final HttpServletResponse response)
-            throws Exception {
+                                  final HttpServletResponse response) throws Exception {
+
+        ensureEndpointAccessIsAuthorized(request, response);
 
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
         loggerConfigs.stream().
@@ -246,6 +255,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @GetMapping(value = "/getAuditLog")
     @ResponseBody
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
         return this.auditTrailManager.get();
     }
 }

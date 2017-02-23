@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
@@ -47,20 +48,28 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         return new ModelAndView("monitoring/viewTrustedDevices");
     }
 
     /**
      * Gets records.
      *
+     * @param request  the request
+     * @param response the response
      * @return the records
      * @throws Exception the exception
      */
     @GetMapping(value = "/getRecords")
     @ResponseBody
-    public Set<MultifactorAuthenticationTrustRecord> getRecords() throws Exception {
-        final LocalDate onOrAfter = LocalDate.now().minus(casProperties.getAuthn().getMfa().getTrusted().getExpiration(),
-                DateTimeUtils.toChronoUnit(casProperties.getAuthn().getMfa().getTrusted().getTimeUnit()));
+    public Set<MultifactorAuthenticationTrustRecord> getRecords(final HttpServletRequest request,
+                                                                final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
+        final MultifactorAuthenticationProperties.Trusted trusted = casProperties.getAuthn().getMfa().getTrusted();
+        final LocalDate onOrAfter = LocalDate.now().minus(trusted.getExpiration(), DateTimeUtils.toChronoUnit(trusted.getTimeUnit()));
+
         this.mfaTrustEngine.expire(onOrAfter);
         return this.mfaTrustEngine.get(onOrAfter);
     }
@@ -68,14 +77,18 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
     /**
      * Revoke record.
      *
-     * @param key     the key
-     * @param request the request
+     * @param key      the key
+     * @param request  the request
+     * @param response the response
      * @return the integer
      * @throws Exception the exception
      */
     @PostMapping(value = "/revokeRecord")
     @ResponseBody
-    public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request) throws Exception {
+    public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request,
+                                final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         this.mfaTrustEngine.expire(key);
         return HttpStatus.OK.value();
     }

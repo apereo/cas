@@ -7,7 +7,6 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
 import org.springframework.context.ApplicationEventPublisher;
@@ -80,6 +79,8 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+        
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
         ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);
@@ -96,6 +97,8 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @GetMapping("/getConfiguration")
     @ResponseBody
     protected Map getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
+        ensureEndpointAccessIsAuthorized(request, response);
+        
         final String patternStr = String.format("(%s|configService:|applicationConfig:).+(application|cas).+", CasOverridingPropertySource.SOURCE_NAME);
         final Pattern pattern = RegexUtils.createPattern(patternStr);
 
@@ -135,6 +138,8 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
                                        final HttpServletRequest request,
                                        final HttpServletResponse response) {
 
+        ensureEndpointAccessIsAuthorized(request, response);
+        
         final Map<String, String> oldData = jsonInput.get("old");
         final Map<String, String> newData = jsonInput.get("new");
 

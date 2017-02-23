@@ -5,7 +5,6 @@ import com.codahale.metrics.servlets.MetricsServlet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.WebApplicationContext;
@@ -47,6 +46,7 @@ public class MetricsController extends BaseCasMvcEndpoint {
      */
     @GetMapping
     public void handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
         final MetricsServlet servlet = new MetricsServlet(this.metrics);
         servlet.init(new DelegatingServletConfig());
         servlet.service(request, response);
