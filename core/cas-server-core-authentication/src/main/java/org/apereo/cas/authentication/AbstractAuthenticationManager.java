@@ -7,9 +7,9 @@ import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.support.events.CasAuthenticationPrincipalResolvedEvent;
-import org.apereo.cas.support.events.CasAuthenticationTransactionStartedEvent;
-import org.apereo.cas.support.events.CasAuthenticationTransactionSuccessfulEvent;
+import org.apereo.cas.support.events.authentication.CasAuthenticationPrincipalResolvedEvent;
+import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionStartedEvent;
+import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -248,7 +248,12 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(credential);
     }
 
-    private void publishEvent(final ApplicationEvent event) {
+    /**
+     * Publish event.
+     *
+     * @param event the event
+     */
+    protected void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
         }

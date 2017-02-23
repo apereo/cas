@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
-import org.apereo.cas.support.events.CasRegisteredServiceSavedEvent;
-import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

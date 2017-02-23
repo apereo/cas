@@ -1,4 +1,6 @@
-package org.apereo.cas.support.events;
+package org.apereo.cas.support.events.config;
+
+import org.apereo.cas.support.events.AbstractCasEvent;
 
 import java.nio.file.Path;
 

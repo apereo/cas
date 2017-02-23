@@ -1,7 +1,8 @@
-package org.apereo.cas.support.events;
+package org.apereo.cas.support.events.service;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.events.AbstractCasEvent;
 
 /**
  * This is {@link CasRegisteredServiceSavedEvent} that is signaled
