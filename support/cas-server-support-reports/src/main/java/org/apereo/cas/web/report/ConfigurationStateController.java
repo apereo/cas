@@ -1,11 +1,16 @@
 package org.apereo.cas.web.report;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,5 +54,22 @@ public class ConfigurationStateController extends AbstractNamedMvcEndpoint {
         final String path = request.getContextPath();
         ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);
         return new ModelAndView(VIEW_CONFIG, model);
+    }
+
+    /**
+     * Update configuration map.
+     *
+     * @param jsonInput the json input
+     * @param request   the request
+     * @param response  the response
+     * @return the map
+     */
+    @PostMapping("/updateConfiguration")
+    @ResponseBody
+    protected Map<String, Object> updateConfiguration(@RequestBody final Map jsonInput,
+                                                      final HttpServletRequest request,
+                                                      final HttpServletResponse response) {
+        
+        return new HashMap<>();
     }
 }

@@ -31,14 +31,18 @@ import java.util.List;
 @Configuration("casConfigurationSupportUtilitiesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConfigurationSupportUtilitiesConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationSupportUtilitiesConfiguration.class);
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     /**
      * The watch configuration.
      */
     @Configuration("casCoreConfigurationWatchConfiguration")
     @Profile("native")
     @AutoConfigureAfter(value = {EnvironmentRepositoryConfiguration.class, EnvironmentRepositoryConfiguration.class})
-    public static class CasCoreConfigurationWatchConfiguration {
-        private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreConfigurationWatchConfiguration.class);
+    public class CasCoreConfigurationWatchConfiguration {
 
         @Autowired
         private ResourceLoader resourceLoader;
@@ -62,11 +66,15 @@ public class CasConfigurationSupportUtilitiesConfiguration {
                     throw new BeanCreationException("No search locations are defined for the native configuration profile");
                 }
                 final String loc = locs.get(0);
-                LOGGER.debug("Starting to watch configuration directory [{}]", loc);
+                if (casProperties.getEvents().isTrackConfigurationModifications()) {
+                    LOGGER.debug("Starting to watch configuration directory [{}]", loc);
 
-                final Path directory = resourceLoader.getResource(loc).getFile().toPath();
-                final Thread th = new Thread(new ConfigurationDirectoryPathWatchService(directory, eventPublisher));
-                th.start();
+                    final Path directory = resourceLoader.getResource(loc).getFile().toPath();
+                    final Thread th = new Thread(new ConfigurationDirectoryPathWatchService(directory, eventPublisher));
+                    th.start();
+                } else {
+                    LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", loc);
+                }
             } catch (final Exception e) {
                 throw Throwables.propagate(e);
             }
