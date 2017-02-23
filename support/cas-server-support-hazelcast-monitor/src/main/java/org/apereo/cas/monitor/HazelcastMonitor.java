@@ -30,8 +30,8 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         LOGGER.debug("Locating hazelcast instance [{}]...", hz.getCluster().getInstanceName());
         final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(hz.getCluster().getInstanceName());
-        LOGGER.debug("Locating hazelcast map [{}] from instance [{}]...", hz.getMapName(), hz.getCluster().getInstanceName());
-        final IMap map = instance.getMap(hz.getMapName());
+        LOGGER.debug("Locating hazelcast map [{}] from instance [{}]...", hz.getTicketGrantingTicketsMapName(), hz.getCluster().getInstanceName());
+        final IMap map = instance.getMap(hz.getTicketGrantingTicketsMapName());
         LOGGER.debug("Starting to collect hazelcast statistics...");
         statsList.add(new HazelcastStatistics(map, hz.getCluster().getMembers().size()));
 

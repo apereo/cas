@@ -109,14 +109,14 @@
     <bean id="hzTicketRegistry1"
           class="org.apereo.cas.ticket.registry.HazelcastTicketRegistry">
         <constructor-arg name="hz" ref="hzInstance1"/>
-        <constructor-arg name="mapName" value="tickets"/>
+        <constructor-arg name="ticketGrantingTicketsMapName" value="tickets"/>
         <constructor-arg name="pageSize" value="100"/>
     </bean>
 
     <bean id="hzTicketRegistry2"
           class="org.apereo.cas.ticket.registry.HazelcastTicketRegistry">
         <constructor-arg name="hz" ref="hzInstance2"/>
-        <constructor-arg name="mapName" value="tickets"/>
+        <constructor-arg name="ticketGrantingTicketsMapName" value="tickets"/>
         <constructor-arg name="pageSize" value="100"/>
     </bean>
 

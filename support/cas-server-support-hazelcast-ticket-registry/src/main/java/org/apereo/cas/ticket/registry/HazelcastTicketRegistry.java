@@ -4,7 +4,9 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.query.PagingPredicate;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,22 +33,25 @@ import java.util.stream.Collectors;
  */
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastTicketRegistry.class);
-    
-    private IMap<String, Ticket> registry;
+
+    private IMap<String, Ticket> ticketGrantingTicketsRegistry;
+    private IMap<String, Ticket> serviceTicketsRegistry;
 
     private HazelcastInstance hazelcastInstance;
 
     private int pageSize;
 
     /**
-     * Instantiates a new Hazelcast ticket registry.
+     * Instantiates a new Hazelcast ticket ticketGrantingTicketsRegistry.
      *
-     * @param hz       An instance of {@code HazelcastInstance}
-     * @param mapName  Name of map to use
-     * @param pageSize the page size
+     * @param hz        An instance of {@code HazelcastInstance}
+     * @param mapName   Name of map to use
+     * @param stMapName the st map name
+     * @param pageSize  the page size
      */
-    public HazelcastTicketRegistry(final HazelcastInstance hz, final String mapName, final int pageSize) {
-        this.registry = hz.getMap(mapName);
+    public HazelcastTicketRegistry(final HazelcastInstance hz, final String mapName, final String stMapName, final int pageSize) {
+        this.ticketGrantingTicketsRegistry = hz.getMap(mapName);
+        this.serviceTicketsRegistry = hz.getMap(stMapName);
         this.hazelcastInstance = hz;
         this.pageSize = pageSize;
     }
@@ -56,7 +61,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
      */
     @PostConstruct
     public void init() {
-        LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}] with name [{}]", this.hazelcastInstance, registry.getName());
+        LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}] with name [{}]", this.hazelcastInstance, ticketGrantingTicketsRegistry.getName());
     }
 
     @Override
@@ -69,15 +74,27 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     public void addTicket(final Ticket ticket) {
         LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
         final Ticket encTicket = encodeTicket(ticket);
-        this.registry.set(encTicket.getId(), encTicket, ticket.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS);
+
+        if (ticket instanceof TicketGrantingTicket) {
+            addTicketInternal(ticketGrantingTicketsRegistry, encTicket, ticket.getExpirationPolicy().getTimeToLive());
+        } else if (ticket instanceof ServiceTicket) {
+            addTicketInternal(serviceTicketsRegistry, encTicket, ticket.getExpirationPolicy().getTimeToLive());
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("Invalid ticket type [%s]. Expecting either [TicketGrantingTicket] or [ServiceTicket]",
+                            ticket.getClass().getName()));
+        }
     }
 
+    private void addTicketInternal(final IMap registry, final Ticket ticket, final long timeToLive) {
+        registry.set(ticket.getId(), ticket, timeToLive, TimeUnit.SECONDS);
+    }
 
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isNotBlank(encTicketId)) {
-            final Ticket ticket = this.registry.get(encTicketId);
+            final Ticket ticket = this.ticketGrantingTicketsRegistry.get(encTicketId);
             return decodeTicket(ticket);
         }
         return null;
@@ -85,17 +102,17 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        return this.registry.remove(ticketId) != null;
+        return this.ticketGrantingTicketsRegistry.remove(ticketId) != null;
     }
 
     @Override
     public long deleteAll() {
-        final int size = this.registry.size();
-        this.registry.evictAll();
-        this.registry.clear();
+        final int size = this.ticketGrantingTicketsRegistry.size();
+        this.ticketGrantingTicketsRegistry.evictAll();
+        this.ticketGrantingTicketsRegistry.clear();
         return size;
     }
-    
+
     @Override
     public Collection<Ticket> getTickets() {
         final Collection<Ticket> collection = new HashSet<>();
@@ -110,13 +127,13 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
             final PagingPredicate pagingPredicate = new PagingPredicate(this.pageSize);
 
             LOGGER.debug("Retrieving the initial collection of tickets from Hazelcast instance...");
-            Collection<Ticket> entrySet = this.registry.values(pagingPredicate);
+            Collection<Ticket> entrySet = this.ticketGrantingTicketsRegistry.values(pagingPredicate);
 
             while (!entrySet.isEmpty()) {
                 collection.addAll(entrySet.stream().map(this::decodeTicket).collect(Collectors.toList()));
 
                 pagingPredicate.nextPage();
-                entrySet = this.registry.values(pagingPredicate);
+                entrySet = this.ticketGrantingTicketsRegistry.values(pagingPredicate);
             }
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
