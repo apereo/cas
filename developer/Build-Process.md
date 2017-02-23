@@ -145,7 +145,7 @@ Execute the following command:
 
 ```bash
 CD cas-server-webapp
-./gradlew build bootRun --parallel -x test -DskipCheckstyle=true -x javadoc -DskipFindbugs=true 
+./gradlew build bootRun --parallel --offline
 ```
 
 The response will look something like this:
