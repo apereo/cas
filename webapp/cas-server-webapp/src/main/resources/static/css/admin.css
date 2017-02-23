@@ -417,6 +417,491 @@ footer a:link, footer a:visited {
   color: white;
 }
 
+/**
+ * Admin Panels
+ */
+.adminPanels .users-panel.panel-default > .panel-heading::after {
+  content: "\f0c0";
+}
+
+.adminPanels .usage-panel.panel-default > .panel-heading::after {
+  content: "\f201";
+}
+
+.adminPanels .tickets-panel.panel-default > .panel-heading::after {
+  content: "\f145";
+}
+
+.adminPanels .panel-body {
+  padding-top: 5px;
+}
+
+.adminPanels .panel-body span {
+  font-family: 'Lato', sans-serif;
+  font-size: 30pt;
+  font-weight: 100;
+}
+
+.casTooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.casTooltip .tooltiptext {
+  visibility: hidden;
+  width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-left: -125px;
+  margin-top: 10px;
+  opacity: 0;
+  -webkit-transition: opacity 1s;
+  transition: opacity 1s;
+  -webkit-transition-delay: 2s;
+          transition-delay: 2s;
+  font-size: 1.5rem;
+  font-weight: 300;
+  font-family: Lato;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.casTooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.casTooltip .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;
+  /* At the top of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #333 transparent;
+}
+
+.alert-default {
+  color: #333;
+  background-color: #dedede;
+  border-color: #3d3d3d;
+}
+
+/**
+ * Statistics View
+ */
+.statisticsView {
+  display: none;
+  /**
+   * Runtime Statistics Gauge styles
+   */
+}
+
+.statisticsView .progress-meter .background {
+  fill: #DFEAFD;
+}
+
+.statisticsView .progress-meter .foreground {
+  fill: #2E7AF9;
+}
+
+.statisticsView .progress-meter text {
+  font-family: 'Lato', sans-serif;
+  font-size: 25pt;
+  font-weight: 300;
+}
+
+.statisticsView .progress-meter .text2 {
+  font-family: 'Georgia', sans-serif;
+  font-size: 10pt;
+}
+
+.statisticsView .runtimeStatistics .background {
+  fill: #DFEAFD;
+}
+
+.statisticsView .runtimeStatistics .foreground {
+  fill: #2E7AF9;
+}
+
+.statisticsView .runtimeStatistics text {
+  font-family: 'Lato', sans-serif;
+  font-size: 25pt;
+  font-weight: 300;
+}
+
+.statisticsView .runtimeStatistics .text2 {
+  font-family: 'Georgia', sans-serif;
+  font-size: 10pt;
+}
+
+.statisticsView .equal, .statisticsView .equal > div[class*='col-'] {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+}
+
+.statisticsView .section {
+  margin-bottom: 25px;
+}
+
+.statisticsView .adminPanels.container-fluid {
+  padding-right: 0;
+}
+
+#uptime-panel {
+  display: none;
+}
+
+#uptime {
+  font-family: 'Lato', sans-serif;
+  font-size: 16pt;
+}
+
+.thread-dump-view {
+  height: 600px;
+  overflow-y: auto;
+}
+
+#metricsGauges strong {
+  display: block;
+}
+
+#metricsGauges .panel {
+  width: 100%;
+}
+
+#metricsGauges ul {
+  height: auto;
+  overflow: hidden;
+}
+
+#metricsGauges li {
+  float: left;
+  width: 80px;
+  height: 80px;
+  margin: 0 0 10px 10px;
+  background: #d8d8d8;
+}
+
+#metricsGauges li:nth-child(5n + 1) {
+  clear: left;
+}
+
+#viewSsoSessions {
+  color: white;
+}
+
+/**
+ * View Configuration Styles
+ */
+#viewConfigError {
+  display: none;
+}
+
+#view-configuration {
+  display: none;
+}
+
+.confirmView .btn-row, .loginMessageView .btn-row {
+  text-align: center;
+}
+
+/*
+Modals
+*/
+.viewDashboard h2 {
+  font-size: 2rem;
+  margin-left: 10px;
+  border-bottom: solid 1px #efefef;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.viewDashboard h2 i {
+  font-size: 2.3rem;
+}
+
+.viewDashboard > div {
+  clear: both;
+}
+
+.viewDashboard ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  clear: both;
+}
+
+.viewDashboard ul li {
+  list-style: none;
+  position: relative;
+}
+
+.viewDashboard .app-launcher {
+  clear: both;
+  margin-bottom: 2em;
+}
+
+.viewDashboard .app-launcher ul li {
+  margin: 10px;
+  width: 140px;
+  height: 140px;
+  float: left;
+  border: 5px solid #ccc;
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  font-size: 1.7rem;
+  text-align: center;
+  background-color: #efefef;
+  border-radius: 50%;
+  -webkit-transition: box-shadow 0.5s ease;
+  transition: box-shadow 0.5s ease;
+  display: table;
+}
+
+.viewDashboard .app-launcher ul li:hover, .viewDashboard .app-launcher ul li:focus, .viewDashboard .app-launcher ul li:active {
+  box-shadow: 0px 0px 20px rgba(20, 144, 179, 0.8);
+  border-color: white;
+}
+
+.viewDashboard .app-launcher ul li a {
+  text-decoration: none;
+  display: table-cell;
+  vertical-align: middle;
+  line-height: normal;
+  -webkit-transition: font-weight .2s ease-out;
+  transition: font-weight .2s ease-out;
+  border-radius: 50%;
+  color: #045183;
+}
+
+.viewDashboard .app-launcher ul li a:hover, .viewDashboard .app-launcher ul li a:focus {
+  color: white;
+  background-color: #1490b3;
+}
+
+.viewDashboard .server-functions ul li {
+  display: inline-block;
+  margin: 10px;
+}
+
+.viewDashboard .btn {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857;
+  border-radius: 4px;
+}
+
+.viewDashboard .btn:focus, .viewDashboard .btn.focus, .viewDashboard .btn:active:focus, .viewDashboard .btn:active.focus, .viewDashboard .btn.active:focus, .viewDashboard .btn.active.focus {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+.viewDashboard .btn:hover, .viewDashboard .btn:focus, .viewDashboard .btn.focus {
+  color: #333;
+  text-decoration: none;
+}
+
+.viewDashboard .btn:active, .viewDashboard .btn.active {
+  outline: 0;
+  background-image: none;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
+.viewDashboard .btn.disabled, .viewDashboard .btn[disabled],
+fieldset[disabled] .viewDashboard .btn {
+  cursor: not-allowed;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  box-shadow: none;
+}
+
+.viewDashboard a.btn.disabled,
+fieldset[disabled] .viewDashboard a.btn {
+  pointer-events: none;
+}
+
+.viewDashboard .btn-restart {
+  color: #fff;
+  background-color: #2d872d;
+  border-color: #277427;
+}
+
+.viewDashboard .btn-restart:focus, .viewDashboard .btn-restart.focus {
+  color: #fff;
+  background-color: #206120;
+  border-color: #071407;
+}
+
+.viewDashboard .btn-restart:hover {
+  color: #fff;
+  background-color: #206120;
+  border-color: #174617;
+}
+
+.viewDashboard .btn-restart:active, .viewDashboard .btn-restart.active,
+.open > .viewDashboard .btn-restart.dropdown-toggle {
+  color: #fff;
+  background-color: #206120;
+  border-color: #174617;
+}
+
+.viewDashboard .btn-restart:active:hover, .viewDashboard .btn-restart:active:focus, .viewDashboard .btn-restart:active.focus, .viewDashboard .btn-restart.active:hover, .viewDashboard .btn-restart.active:focus, .viewDashboard .btn-restart.active.focus,
+.open > .viewDashboard .btn-restart.dropdown-toggle:hover,
+.open > .viewDashboard .btn-restart.dropdown-toggle:focus,
+.open > .viewDashboard .btn-restart.dropdown-toggle.focus {
+  color: #fff;
+  background-color: #174617;
+  border-color: #071407;
+}
+
+.viewDashboard .btn-restart:active, .viewDashboard .btn-restart.active,
+.open > .viewDashboard .btn-restart.dropdown-toggle {
+  background-image: none;
+}
+
+.viewDashboard .btn-restart.disabled:hover, .viewDashboard .btn-restart.disabled:focus, .viewDashboard .btn-restart.disabled.focus, .viewDashboard .btn-restart[disabled]:hover, .viewDashboard .btn-restart[disabled]:focus, .viewDashboard .btn-restart[disabled].focus,
+fieldset[disabled] .viewDashboard .btn-restart:hover,
+fieldset[disabled] .viewDashboard .btn-restart:focus,
+fieldset[disabled] .viewDashboard .btn-restart.focus {
+  background-color: #2d872d;
+  border-color: #277427;
+}
+
+.viewDashboard .btn-restart .badge {
+  color: #2d872d;
+  background-color: #fff;
+}
+
+.viewDashboard .btn-refresh {
+  color: #fff;
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+
+.viewDashboard .btn-refresh:focus, .viewDashboard .btn-refresh.focus {
+  color: #fff;
+  background-color: #ec971f;
+  border-color: #985f0d;
+}
+
+.viewDashboard .btn-refresh:hover {
+  color: #fff;
+  background-color: #ec971f;
+  border-color: #d58512;
+}
+
+.viewDashboard .btn-refresh:active, .viewDashboard .btn-refresh.active,
+.open > .viewDashboard .btn-refresh.dropdown-toggle {
+  color: #fff;
+  background-color: #ec971f;
+  border-color: #d58512;
+}
+
+.viewDashboard .btn-refresh:active:hover, .viewDashboard .btn-refresh:active:focus, .viewDashboard .btn-refresh:active.focus, .viewDashboard .btn-refresh.active:hover, .viewDashboard .btn-refresh.active:focus, .viewDashboard .btn-refresh.active.focus,
+.open > .viewDashboard .btn-refresh.dropdown-toggle:hover,
+.open > .viewDashboard .btn-refresh.dropdown-toggle:focus,
+.open > .viewDashboard .btn-refresh.dropdown-toggle.focus {
+  color: #fff;
+  background-color: #d58512;
+  border-color: #985f0d;
+}
+
+.viewDashboard .btn-refresh:active, .viewDashboard .btn-refresh.active,
+.open > .viewDashboard .btn-refresh.dropdown-toggle {
+  background-image: none;
+}
+
+.viewDashboard .btn-refresh.disabled:hover, .viewDashboard .btn-refresh.disabled:focus, .viewDashboard .btn-refresh.disabled.focus, .viewDashboard .btn-refresh[disabled]:hover, .viewDashboard .btn-refresh[disabled]:focus, .viewDashboard .btn-refresh[disabled].focus,
+fieldset[disabled] .viewDashboard .btn-refresh:hover,
+fieldset[disabled] .viewDashboard .btn-refresh:focus,
+fieldset[disabled] .viewDashboard .btn-refresh.focus {
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+
+.viewDashboard .btn-refresh .badge {
+  color: #f0ad4e;
+  background-color: #fff;
+}
+
+.viewDashboard .btn-shutdown {
+  color: #fff;
+  background-color: #c74b47;
+  border-color: #bb3d39;
+}
+
+.viewDashboard .btn-shutdown:focus, .viewDashboard .btn-shutdown.focus {
+  color: #fff;
+  background-color: #a83733;
+  border-color: #5a1d1b;
+}
+
+.viewDashboard .btn-shutdown:hover {
+  color: #fff;
+  background-color: #a83733;
+  border-color: #8d2e2b;
+}
+
+.viewDashboard .btn-shutdown:active, .viewDashboard .btn-shutdown.active,
+.open > .viewDashboard .btn-shutdown.dropdown-toggle {
+  color: #fff;
+  background-color: #a83733;
+  border-color: #8d2e2b;
+}
+
+.viewDashboard .btn-shutdown:active:hover, .viewDashboard .btn-shutdown:active:focus, .viewDashboard .btn-shutdown:active.focus, .viewDashboard .btn-shutdown.active:hover, .viewDashboard .btn-shutdown.active:focus, .viewDashboard .btn-shutdown.active.focus,
+.open > .viewDashboard .btn-shutdown.dropdown-toggle:hover,
+.open > .viewDashboard .btn-shutdown.dropdown-toggle:focus,
+.open > .viewDashboard .btn-shutdown.dropdown-toggle.focus {
+  color: #fff;
+  background-color: #8d2e2b;
+  border-color: #5a1d1b;
+}
+
+.viewDashboard .btn-shutdown:active, .viewDashboard .btn-shutdown.active,
+.open > .viewDashboard .btn-shutdown.dropdown-toggle {
+  background-image: none;
+}
+
+.viewDashboard .btn-shutdown.disabled:hover, .viewDashboard .btn-shutdown.disabled:focus, .viewDashboard .btn-shutdown.disabled.focus, .viewDashboard .btn-shutdown[disabled]:hover, .viewDashboard .btn-shutdown[disabled]:focus, .viewDashboard .btn-shutdown[disabled].focus,
+fieldset[disabled] .viewDashboard .btn-shutdown:hover,
+fieldset[disabled] .viewDashboard .btn-shutdown:focus,
+fieldset[disabled] .viewDashboard .btn-shutdown.focus {
+  background-color: #c74b47;
+  border-color: #bb3d39;
+}
+
+.viewDashboard .btn-shutdown .badge {
+  color: #c74b47;
+  background-color: #fff;
+}
+
 .btn-social, .btn-social-icon {
   background-color: slategray;
 }
