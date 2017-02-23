@@ -376,7 +376,44 @@ The format of the file is as such:
 ### CAS Endpoints Security
 
 ```properties
+# cas.monitor.endpoints.dashboard.enabled=false
+# cas.monitor.endpoints.dashboard.sensitive=true
 
+# cas.monitor.endpoints.auditEvents.enabled=false
+# cas.monitor.endpoints.auditEvents.sensitive=true
+
+# cas.monitor.endpoints.authenticationEvents.enabled=false
+# cas.monitor.endpoints.authenticationEvents.sensitive=true
+
+# cas.monitor.endpoints.configState.enabled=false
+# cas.monitor.endpoints.configState.sensitive=true
+
+# cas.monitor.endpoints.healthCheck.enabled=false
+# cas.monitor.endpoints.healthCheck.sensitive=true
+
+# cas.monitor.endpoints.loggingConfig.enabled=false
+# cas.monitor.endpoints.loggingConfig.sensitive=true
+
+# cas.monitor.endpoints.metrics.enabled=false
+# cas.monitor.endpoints.metrics.sensitive=true
+
+# cas.monitor.endpoints.attributeResolution.enabled=false
+# cas.monitor.endpoints.attributeResolution.sensitive=true
+
+# cas.monitor.endpoints.singleSignOnReport.enabled=false
+# cas.monitor.endpoints.singleSignOnReport.sensitive=true
+
+# cas.monitor.endpoints.statistics.enabled=false
+# cas.monitor.endpoints.statistics.sensitive=true
+
+# cas.monitor.endpoints.trustedDevices.enabled=false
+# cas.monitor.endpoints.trustedDevices.sensitive=true
+
+# cas.monitor.endpoints.status.enabled=false
+# cas.monitor.endpoints.status.sensitive=true
+
+# cas.monitor.endpoints.singleSignOnStatus.enabled=false
+# cas.monitor.endpoints.singleSignOnStatus.sensitive=true
 ```
 
 ### Admin Status Endpoints With Spring Security
