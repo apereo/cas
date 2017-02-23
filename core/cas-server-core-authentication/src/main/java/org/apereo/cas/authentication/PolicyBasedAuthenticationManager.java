@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
+import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,10 +156,14 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
      */
     protected void evaluateProducedAuthenticationContext(final AuthenticationBuilder builder) throws AuthenticationException {
         if (builder.getSuccesses().isEmpty()) {
+            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures()));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
         LOGGER.debug("Executing authentication policy [{}]", this.authenticationPolicy);
-        if (!this.authenticationPolicy.isSatisfiedBy(builder.build())) {
+        
+        final Authentication authentication = builder.build();
+        if (!this.authenticationPolicy.isSatisfiedBy(authentication)) {
+            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), authentication));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
     }
