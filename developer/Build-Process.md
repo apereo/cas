@@ -136,7 +136,11 @@ Is CN=$FULL_MACHINE_NAME, OU=Test, O=Test, L=Test, ST=Test, C=US correct?
 Execute the following command:
 
 ```bash
-CD cas-server-webapp
+cd webapp/cas-server-webapp
+
+# Or for the management-webapp:
+# cd webapp-mgmt/cas-management-webapp;
+
 ./gradlew build bootRun --parallel --offline
 ```
 
