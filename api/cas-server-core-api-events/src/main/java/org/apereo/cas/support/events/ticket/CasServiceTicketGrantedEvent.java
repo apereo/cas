@@ -1,6 +1,7 @@
-package org.apereo.cas.support.events;
+package org.apereo.cas.support.events.ticket;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 

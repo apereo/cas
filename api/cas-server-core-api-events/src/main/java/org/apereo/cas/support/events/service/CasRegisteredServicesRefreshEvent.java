@@ -1,4 +1,6 @@
-package org.apereo.cas.support.events;
+package org.apereo.cas.support.events.service;
+
+import org.apereo.cas.support.events.AbstractCasEvent;
 
 /**
  * This is {@link CasRegisteredServicesRefreshEvent} that is signaled

@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
-import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;

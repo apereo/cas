@@ -1,7 +1,8 @@
-package org.apereo.cas.support.events;
+package org.apereo.cas.support.events.authentication.adaptive;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.events.AbstractCasEvent;
 
 /**
  * This is {@link CasRiskBasedAuthenticationEvaluationStartedEvent}.

@@ -2,9 +2,9 @@ package org.apereo.cas.config.monitor;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.support.events.CasConfigurationCreatedEvent;
-import org.apereo.cas.support.events.CasConfigurationDeletedEvent;
-import org.apereo.cas.support.events.CasConfigurationModifiedEvent;
+import org.apereo.cas.support.events.config.CasConfigurationCreatedEvent;
+import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
+import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
