@@ -8,7 +8,7 @@ import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.report.AuthenticationEventsController;
