@@ -223,7 +223,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         LOGGER.debug("Loading Google Apps private key from [{}] with key algorithm [{}]",
                 bean.getLocation(), bean.getAlgorithm());
         bean.afterPropertiesSet();
-        LOGGER.debug("Creating Google Apps private key instance via [{}]", this.publicKeyLocation);
+        LOGGER.debug("Creating Google Apps private key instance via [{}]", this.privateKeyLocation);
         this.privateKey = bean.getObject();
     }
 
