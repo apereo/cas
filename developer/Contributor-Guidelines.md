@@ -31,6 +31,9 @@ git fetch --all
 
 We encourage reading [Pro Git](http://git-scm.com/book/) prior to beginning development if you are unfamiliar with Git.
 
+## Functional Build
+
+Before you do anything else, make sure you have a [functional build](Build-Process.html). 
 
 ## Development Process
 
@@ -50,6 +53,7 @@ that have a high likelihood of acceptance:
 
 
 #### 2. Edit Source and Commit
+
 Edit source files and commit in logical chunks. We encourage numerous small commits over one large commit. Small,
 focused commits facilitate review and will be more likely to be accepted. It is vital to summarize changes with
 succinct commit messages. You SHOULD follow the
@@ -59,6 +63,7 @@ succinct commit messages. You SHOULD follow the
     git commit -am "Update X to handle Y such that ..."
     
 #### 3. Push to Forked Repository
+
 You must push your local branch to your forked repository to facilitate a pull request.
 
     git push origin CAS-123
