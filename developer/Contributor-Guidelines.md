@@ -14,9 +14,7 @@ for participating. That being said, here are a few guidelines that we ask you to
 ## Getting Started
 
 All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
-a fork of the Apereo CAS repository:
-
-[https://github.com/apereo/CAS](https://github.com/apereo/CAS)
+a fork of the [apereo CAS repository](https://github.com/apereo/CAS):
 
 Refer to the GitHub [Fork a Repo](http://help.github.com/fork-a-repo/) page for help with forking.
 
