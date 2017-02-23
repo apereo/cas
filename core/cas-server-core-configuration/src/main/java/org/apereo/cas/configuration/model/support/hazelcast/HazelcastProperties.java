@@ -25,7 +25,9 @@ public class HazelcastProperties {
      */
     public static final String MAX_HEARTBEAT_SECONDS_PROP = "hazelcast.max.no.heartbeat.seconds";
 
-    private String mapName = "tickets";
+    private String ticketGrantingTicketsMapName = "tickets";
+    private String serviceTicketsMapName = "service_tickets";
+    
     private int pageSize = 500;
     private Resource configLocation;
     
@@ -252,11 +254,19 @@ public class HazelcastProperties {
         }
     }
 
-    public String getMapName() {
-        return mapName;
+    public String getTicketGrantingTicketsMapName() {
+        return ticketGrantingTicketsMapName;
+    }
+    
+    public void setTicketGrantingTicketsMapName(final String ticketGrantingTicketsMapName) {
+        this.ticketGrantingTicketsMapName = ticketGrantingTicketsMapName;
     }
 
-    public void setMapName(final String mapName) {
-        this.mapName = mapName;
+    public String getServiceTicketsMapName() {
+        return serviceTicketsMapName;
+    }
+
+    public void setServiceTicketsMapName(final String serviceTicketsMapName) {
+        this.serviceTicketsMapName = serviceTicketsMapName;
     }
 }
