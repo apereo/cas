@@ -84,6 +84,8 @@ cd cas-server
 
 Then, open the project as you would for any other project. 
 
+<div class="alert alert-warning"><strong>YMMV</strong><p>We have had a less than ideal experience with Eclipse and its support for Gradle-based projects. While time changes everything and docs grow old, it is likely that you may experience issues with how Eclipse manages to resolve Gradle dependencies and build the project. In the end, you're welcome to use what works best for you as the ultimate goal is to find the appropriate tooling to build and contribute to CAS.</p></div>
+
 ## Testing Modules
 
 To test the functionality provided by a given CAS module, execute the following steps:
