@@ -67,6 +67,11 @@ The following IDEA settings for Gradle may also be useful:
 - Note how 'Offline work' is enabled. This is equivalent to Gradle's own `--offline` flag, forcing the build to not contact Maven/Gradle repositories for resolving dependencies. Working offline usually results in much better performance.
 - You may also decide to use the `default gradle wrapper' option as opposed to your own local Gradle installation. 
 
+You may also need to adjust the 'Compiler' settings so modules are built in parallel and automatically:
+
+![image](https://cloud.githubusercontent.com/assets/1205228/23251099/31d8f250-f9c1-11e6-9ca1-64489bc1a948.png)
+
+
 ### Eclipse
 
 For Eclipse, execute the following commands:
