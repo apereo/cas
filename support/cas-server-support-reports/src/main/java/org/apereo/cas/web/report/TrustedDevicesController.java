@@ -4,8 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,16 +24,16 @@ import java.util.Set;
  * @since 5.0.0
  */
 @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-public class TrustedDevicesController extends AbstractNamedMvcEndpoint {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
+public class TrustedDevicesController extends BaseCasMvcEndpoint {
 
     private final MultifactorAuthenticationTrustStorage mfaTrustEngine;
+    private final CasConfigurationProperties casProperties;
 
-    public TrustedDevicesController(final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
-        super("trustedDevs", "/trustedDevs", true, true);
+    public TrustedDevicesController(final MultifactorAuthenticationTrustStorage mfaTrustEngine,
+                                    final CasConfigurationProperties casProperties) {
+        super("trustedDevs", "/trustedDevs", casProperties.getMonitor().getEndpoints().getTrustedDevices());
         this.mfaTrustEngine = mfaTrustEngine;
+        this.casProperties = casProperties;
     }
 
     /**

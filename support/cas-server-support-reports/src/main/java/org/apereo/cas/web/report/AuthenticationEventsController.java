@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
@@ -19,12 +20,12 @@ import java.util.Collection;
  * @since 5.0.0
  */
 @ConditionalOnClass(value = CasEventRepository.class)
-public class AuthenticationEventsController extends AbstractNamedMvcEndpoint {
+public class AuthenticationEventsController extends BaseCasMvcEndpoint {
 
     private CasEventRepository eventRepository;
 
-    public AuthenticationEventsController(final CasEventRepository eventRepository) {
-        super("casauthnevents", "/authnEvents", true, true);
+    public AuthenticationEventsController(final CasEventRepository eventRepository, final CasConfigurationProperties casProperties) {
+        super("casauthnevents", "/authnEvents", casProperties.getMonitor().getEndpoints().getAuthenticationEvents());
         this.eventRepository = eventRepository;
     }
 

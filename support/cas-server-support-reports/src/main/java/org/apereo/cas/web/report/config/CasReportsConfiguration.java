@@ -30,6 +30,7 @@ import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -80,52 +81,62 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     private HealthCheckRegistry healthCheckRegistry;
 
     @Bean
+    @RefreshScope
     public MvcEndpoint dashboardController() {
-        return new DashboardController();
+        return new DashboardController(casProperties);
     }
 
     @Bean
+    @RefreshScope
     public MvcEndpoint personDirectoryAttributeResolutionController() {
-        return new PersonDirectoryAttributeResolutionController();
+        return new PersonDirectoryAttributeResolutionController(casProperties);
     }
 
     @Bean
+    @RefreshScope
     public MvcEndpoint internalConfigController() {
-        return new ConfigurationStateController();
+        return new ConfigurationStateController(casProperties);
     }
 
     @Bean
+    @RefreshScope
     public MvcEndpoint healthCheckController() {
-        return new HealthCheckController(healthCheckMonitor, casProperties.getHttpClient().getAsyncTimeout());
+        return new HealthCheckController(healthCheckMonitor, casProperties);
     }
 
     @Bean
+    @RefreshScope
     public MvcEndpoint singleSignOnSessionsReportController() {
-        return new SingleSignOnSessionsReportController(centralAuthenticationService);
+        return new SingleSignOnSessionsReportController(centralAuthenticationService, casProperties);
     }
 
     @Bean
+    @RefreshScope
     @Autowired
     public MvcEndpoint loggingConfigController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
-        return new LoggingConfigController(auditTrailManager);
+        return new LoggingConfigController(auditTrailManager, casProperties);
     }
 
     @Bean
+    @RefreshScope
     public MvcEndpoint ssoStatusController() {
-        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
+        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
     }
 
     @Bean
+    @RefreshScope
     public MvcEndpoint statisticsController() {
-        return new StatisticsController(centralAuthenticationService, metricsRegistry, healthCheckRegistry, casProperties.getHost().getName());
+        return new StatisticsController(centralAuthenticationService, metricsRegistry, healthCheckRegistry, casProperties);
     }
 
     @Bean
+    @RefreshScope
     public MvcEndpoint metricsController() {
-        return new MetricsController();
+        return new MetricsController(casProperties);
     }
 
     @Bean
+    @RefreshScope
     public LoggingOutputSocketMessagingController loggingOutputController() {
         return new LoggingOutputSocketMessagingController();
     }
@@ -150,12 +161,12 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @Configuration("trustedDevicesConfiguration")
-    public static class TrustedDevicesConfiguration {
+    public class TrustedDevicesConfiguration {
 
         @Autowired
         @Bean
         public MvcEndpoint trustedDevicesController(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
-            return new TrustedDevicesController(mfaTrustEngine);
+            return new TrustedDevicesController(mfaTrustEngine, casProperties);
         }
     }
 
@@ -164,12 +175,12 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnClass(value = CasEventRepository.class)
     @Configuration("authenticationEventsConfiguration")
-    public static class AuthenticationEventsConfiguration {
+    public class AuthenticationEventsConfiguration {
 
         @Autowired
         @Bean
         public MvcEndpoint authenticationEventsController(@Qualifier("casEventRepository") final CasEventRepository eventRepository) {
-            return new AuthenticationEventsController(eventRepository);
+            return new AuthenticationEventsController(eventRepository, casProperties);
         }
     }
 }

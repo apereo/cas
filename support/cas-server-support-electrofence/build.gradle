@@ -14,6 +14,7 @@ dependencies {
     testCompile project(path: ":core:cas-server-core")
     testCompile project(":core:cas-server-core-logout")
     testCompile project(":support:cas-server-support-cookie")
+    testCompile project(":support:cas-server-support-events-memory")
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
 }
