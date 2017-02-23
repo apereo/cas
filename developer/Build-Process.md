@@ -90,13 +90,13 @@ Then, open the project as you would for any other project.
 
 To test the functionality provided by a given CAS module, execute the following steps:
 
-1. Add the module reference to the build script (i.e. `build.gradle`) of web application you intend to run (i.e Web App, Management Web App, etc)
+- Add the module reference to the build script (i.e. `build.gradle`) of web application you intend to run (i.e Web App, Management Web App, etc)
 
 ```gradle
 compile project(":support:cas-server-support-modulename")
 ```
 
-2. Prepare the embedded container, as described below, to run and deploy the web application
+- Prepare the embedded container, as described below, to run and deploy the web application
 
 ## Embedded Container
 
