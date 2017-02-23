@@ -2,7 +2,6 @@ package org.apereo.cas.support.events.authentication;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationTransaction;
-import org.apereo.cas.authentication.Credential;
 
 import java.util.Map;
 

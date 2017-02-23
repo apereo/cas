@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,8 +41,9 @@ public class SingleSignOnSessionStatusController extends BaseCasMvcEndpoint {
      */
     @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getStatus(final HttpServletRequest request,
-                            final HttpServletResponse response) {
+    public String getStatus(final HttpServletRequest request, final HttpServletResponse response) {
+        ensureEndpointAccessIsAuthorized(request, response);
+        
         final String tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isBlank(tgtId)) {
             response.setStatus(HttpStatus.GONE.value());
