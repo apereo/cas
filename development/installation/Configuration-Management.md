@@ -67,6 +67,13 @@ The following endpoints are secured and exposed by the configuration server's `/
 | `/bus/refresh`       | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.      |
 | `/bus/env`           | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
 
+### Security 
+
+As the URL suggests, the configuration server is exposed as part of CAS dashboard and monitoring facilities
+whose security is controlled via the same mechanism as the rest of the [administrative endpoints](Monitoring-Statistics.html#security].
+The Spring Cloud project also provides a few guidelines on 
+how [the configuration server can be secured](https://cloud.spring.io/spring-cloud-config/spring-cloud-config.html#_security).
+
 ## Auto Configuration Strategy
 
 To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
