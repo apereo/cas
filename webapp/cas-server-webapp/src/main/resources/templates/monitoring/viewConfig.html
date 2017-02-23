@@ -13,7 +13,7 @@
 
         <script type="text/javascript" th:inline="javascript">
             var urls = {
-                getConfiguration: /*[[@{/status/env}]]*/,
+                getConfiguration: /*[[@{/status/config/getConfiguration}]]*/,
                 updateConfiguration: /*[[@{/status/config/updateConfiguration}]]*/,
             };
             function jqueryReady() {
@@ -25,8 +25,6 @@
 
         <div class="viewConfig">
             <div id="loadingMessage"><h3 th:text="#{cas.viewconfig.loading}" /></div>
-
-
             <div id="viewConfigError">
                 <h2 th:text="#{cas.viewconfig.errormessage}"></h2>
                 <div>
@@ -35,11 +33,9 @@
                 </div>
             </div>
 
+            <div id="alert-container" class="alert alert-info" th:text="#{cas.viewconfig.persistence}" />
+            
             <div id="view-configuration">
-                <div id="alertWrapper" style="display:none" class="alert alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 th:text="#{cas.viewconfig.pagetitle}">
@@ -47,6 +43,11 @@
                         </h4>
                     </div>
                     <div class="panel-body">
+                        <div id="alertWrapper" style="display:none" class="alert alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <p id="resultText"></p>
+                        </div>
+                        
                         <div id="containers-table" class="container-fluid">
                             
                             <table id="viewConfigsTable" class="display table table-striped table-bordered">
