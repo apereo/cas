@@ -5,13 +5,25 @@ title: CAS - Monitoring & Statistics
 
 # Monitoring / Statistics
 
-The following endpoints are secured and available:
+The following endpoints are secured and available by CAS:
 
-| Parameter                         | Description
+| URL                               | Description
 |-----------------------------------|------------------------------------------
-| `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management.
+| `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management. *
 | `/status`                         | [Monitor CAS status and other underlying components](Configuring-Monitoring.html).
 | `/status/sso`                     | Describes how the CAS application context is auto-configured.
+| `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
+| `/status/logging`                 | Monitor CAS logs in a streaming fashion, and review the audit log.
+| `/status/config`                  | Visual representation of **CAS** application properties and configuration.
+| `/status/ssosessions`             | Report of active SSO sessions and authentications. Examine attributes, services and log users out.
+| `/status/trustedDevs`             | Reports on the [registered trusted devices/browsers](Multifactor-TrustedDevice-Authentication.html).
+| `/status/authnEvents`             | When enabled, report on the [events captured by CAS](Configuring-Authentication-Events.html).
+| `/status/attrresolution`          | Examine resolution of user attributes via [CAS attribute resolution](../integration/Attribute-Resolution.html).
+
+The following endpoints are secured and available by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
+
+| URL                               | Description
+|-----------------------------------|-------------------------------------------------------------------------------------
 | `/status/autoconfig`              | Describes if there exists an active SSO session for this session.
 | `/status/beans`                   | Displays all CAS application context **internal** Spring beans.
 | `/status/configprops`             | List of **internal** configuration properties.
@@ -21,26 +33,30 @@ The following endpoints are secured and available:
 | `/status/info`                    | CAS version information and other system traits.
 | `/status/metrics`                 | Runtime metrics and stats.
 | `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
-| `/status/logging`                 | Monitor CAS logs in a streaming fashion, and review the audit log.
-| `/status/config`                  | Visual representation of **CAS** application properties and configuration.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
 | `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
 | `/status/restart`                 | Restart the application via a `POST`. Disabled by default.
 | `/status/refresh`                 | Refresh the application configuration via a `POST` to let components reload and recognize new values.
-| `/status/ssosessions`             | Report of active SSO sessions and authentications. Examine attributes, services and administratively log users out.
-| `/status/trustedDevs`             | When enabled, reports on the [registered trusted devices/browsers](Multifactor-TrustedDevice-Authentication.html).
-| `/status/authnEvents`             | When enabled, report on the [events captured by CAS](Configuring-Authentication-Events.html).
-| `/status/attrresolution`          | Examine resolution of user attributes via [CAS attribute resolution](../integration/Attribute-Resolution.html).
 
 ## Security
 
-The `/status` endpoint is always protected by an IP pattern. The other administrative
-endpoints however can optionally be protected by the CAS server.
-Failing to secure these endpoints via a CAS instance will have CAS fallback onto the IP range.
+All urls that are scoped to the `/status` endpoint are modeled after Spring Boot's own actuator endpoints
+and by default are considered `sensitive`. By default, no endpoint is enabled or allowed access.
 
-If you decide to protect other administrative endpoints via CAS itself, you will need to provide
-a reference to the list of authorized users in the CAS configuration. You may also enforce authorization
-rules via [Service-based Access Strategy](Configuring-Service-Access-Strategy.html) features of CAS.
+Endpoints may go through multiple levels and layers of security described here:
+
+- All endpoints may be globally considered `sensitive`.
+- Spring Boot's actuator endpoints may be individually marked as `sensitive` or `enabled`.
+- Similarly, CAS endpoints may be individually marked as `sensitive` or `enabled`.
+- In the event that access to an endpoint is allowed, (i.e endpoint is enabled and is not marked as sensitive), CAS will attempt
+to control access by enforcing rules via IP address matching, delegating to itself, etc. The `/status` endpoint is always protected by an IP pattern. The other administrative endpoints however can optionally be protected by the CAS server. Failing to secure these endpoints via a CAS instance will have CAS fallback onto the IP range.
+    - If you decide to protect other administrative endpoints via CAS itself, you will need to provide
+    a reference to the list of authorized users in the CAS configuration. You may also enforce authorization
+    rules via [Service-based Access Strategy](Configuring-Service-Access-Strategy.html) features of CAS.
+
+<div class="alert alert-warning"><strong>Reverse Proxies</strong><p>Allowing access to the <code>/status</code> endpoint
+via IP address matching needs to be very carefully designed, specially in cases where CAS is deployed behind a proxy
+such as Apache. Be sure to test access rules and policies carefully or otherwise devise your own.</p></div>
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#admin-status-endpoints).
 

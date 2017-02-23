@@ -352,7 +352,7 @@ management.security.sessions=if_required
 
 # IP address may be enough to protect all endpoints.
 # If you wish to protect the admin pages via CAS itself, configure the rest.
-# cas.adminPagesSecurity.ip=127\.0\.0\.1
+# cas.adminPagesSecurity.ip=a^
 # cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
 # cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
 # cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
@@ -372,6 +372,49 @@ The format of the file is as such:
 - `casuser`: This is the authenticated user id received from CAS
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
 - `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
+
+### CAS Endpoints Security
+
+```properties
+# cas.monitor.endpoints.dashboard.enabled=false
+# cas.monitor.endpoints.dashboard.sensitive=true
+
+# cas.monitor.endpoints.auditEvents.enabled=false
+# cas.monitor.endpoints.auditEvents.sensitive=true
+
+# cas.monitor.endpoints.authenticationEvents.enabled=false
+# cas.monitor.endpoints.authenticationEvents.sensitive=true
+
+# cas.monitor.endpoints.configState.enabled=false
+# cas.monitor.endpoints.configState.sensitive=true
+
+# cas.monitor.endpoints.healthCheck.enabled=false
+# cas.monitor.endpoints.healthCheck.sensitive=true
+
+# cas.monitor.endpoints.loggingConfig.enabled=false
+# cas.monitor.endpoints.loggingConfig.sensitive=true
+
+# cas.monitor.endpoints.metrics.enabled=false
+# cas.monitor.endpoints.metrics.sensitive=true
+
+# cas.monitor.endpoints.attributeResolution.enabled=false
+# cas.monitor.endpoints.attributeResolution.sensitive=true
+
+# cas.monitor.endpoints.singleSignOnReport.enabled=false
+# cas.monitor.endpoints.singleSignOnReport.sensitive=true
+
+# cas.monitor.endpoints.statistics.enabled=false
+# cas.monitor.endpoints.statistics.sensitive=true
+
+# cas.monitor.endpoints.trustedDevices.enabled=false
+# cas.monitor.endpoints.trustedDevices.sensitive=true
+
+# cas.monitor.endpoints.status.enabled=false
+# cas.monitor.endpoints.status.sensitive=true
+
+# cas.monitor.endpoints.singleSignOnStatus.enabled=false
+# cas.monitor.endpoints.singleSignOnStatus.sensitive=true
+```
 
 ### Admin Status Endpoints With Spring Security
 
@@ -2891,7 +2934,11 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 
 
 ```properties
+# Whether geolocation tracking should be turned on and requested from the browser.
 # cas.events.trackGeolocation=false
+
+# Control whether CAS should monitor configuration files and auto-refresh context.
+# cas.events.trackConfigurationModifications=true
 ```
 
 ### Database Events
@@ -3625,7 +3672,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 ### Acceptable Usage Policy
 
 Decide how CAS should attempt to determine whether AUP is accepted.
-To learn more about this topic, [please review this guide](User-Interface-Customization-AUP.html).
+To learn more about this topic, [please review this guide](Webflow-Customization-AUP.html).
 
 
 ```properties
