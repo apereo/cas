@@ -27,11 +27,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DashboardController extends AbstractNamedMvcEndpoint {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+public class DashboardController extends BaseCasMvcEndpoint {
+    
     @Autowired(required = false)
     private BusProperties busProperties;
 
@@ -56,8 +53,11 @@ public class DashboardController extends AbstractNamedMvcEndpoint {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public DashboardController() {
-        super("casdashboard", "/dashboard", true, true);
+    private CasConfigurationProperties casProperties;
+    
+    public DashboardController(final CasConfigurationProperties casProperties) {
+        super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard());
+        this.casProperties = casProperties;
     }
 
     /**

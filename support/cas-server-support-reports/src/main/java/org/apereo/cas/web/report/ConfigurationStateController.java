@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apache.commons.collections.map.LinkedMap;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.report.util.ControllerUtils;
@@ -37,7 +38,7 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class ConfigurationStateController extends AbstractNamedMvcEndpoint {
+public class ConfigurationStateController extends BaseCasMvcEndpoint {
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 
@@ -56,8 +57,8 @@ public class ConfigurationStateController extends AbstractNamedMvcEndpoint {
     @Autowired
     private ConfigurableEnvironment environment;
 
-    public ConfigurationStateController() {
-        super("configstate", "/config", true, true);
+    public ConfigurationStateController(final CasConfigurationProperties casProperties) {
+        super("configstate", "/config", casProperties.getMonitor().getEndpoints().getConfigurationState());
     }
 
     /**
