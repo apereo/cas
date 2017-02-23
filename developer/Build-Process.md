@@ -48,12 +48,26 @@ Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. 
 
 ## IDE Setup
 
+### IntelliJ IDEA
+
 For IntelliJ IDEA, execute the following commands:
 
 ```bash
 cd cas-server
 ./gradlew idea
 ```
+
+Then, open the project directory as you would for any other project and let IDEA resolve the Gradle dependencies. 
+
+The following IDEA settings for Gradle may also be useful:
+
+![image](https://cloud.githubusercontent.com/assets/1205228/23250938/68e0b7ac-f9c0-11e6-9ce1-cb1fae07c6ae.png)
+
+- Note how 'Use auto-import' is turned off. To resolve Gradle modules and dependencies, you are required to force refresh the project rather than have IDEA auto-refresh the project as you make changes to the build script. Disabling auto-import usually results in much better performance.
+- Note how 'Offline work' is enabled. This is equivalent to Gradle's own `--offline` flag, forcing the build to not contact Maven/Gradle repositories for resolving dependencies. Working offline usually results in much better performance.
+- You may also decide to use the `default gradle wrapper' option as opposed to your own local Gradle installation. 
+
+### Eclipse
 
 For Eclipse, execute the following commands:
 
