@@ -59,6 +59,7 @@ public class JdbcAuthenticationProperties {
         private String fieldPassword;
         private String fieldExpired;
         private String fieldDisabled;
+        private List principalAttributeList = new ArrayList();
 
         @NestedConfigurationProperty
         private PrincipalTransformationProperties principalTransformation =
@@ -70,6 +71,14 @@ public class JdbcAuthenticationProperties {
         private String name;
 
         private int order = Integer.MAX_VALUE;
+
+        public List getPrincipalAttributeList() {
+            return principalAttributeList;
+        }
+
+        public void setPrincipalAttributeList(final List principalAttributeList) {
+            this.principalAttributeList = principalAttributeList;
+        }
 
         public int getOrder() {
             return order;

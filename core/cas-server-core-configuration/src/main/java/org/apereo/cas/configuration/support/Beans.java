@@ -415,6 +415,36 @@ public final class Beans {
 
 
     /**
+     * Transform principal attributes into map.
+     * Items in the list are defined in the syntax of "cn", or "cn:commonName" for virtual renaming and maps.
+     *
+     * @param list the list
+     * @return the map
+     */
+    public static Map<String, String> transformPrincipalAttributesListIntoMap(final List<String> list) {
+        final Map<String, String> attributes = new HashMap<>();
+
+        if (list.isEmpty()) {
+            LOGGER.debug("No principal attributes are defined");
+        } else {
+            list.forEach(a -> {
+                final String attributeName = a.trim();
+                if (attributeName.contains(":")) {
+                    final String[] attrCombo = attributeName.split(":");
+                    final String name = attrCombo[0].trim();
+                    final String value = attrCombo[1].trim();
+                    LOGGER.debug("Mapped principal attribute name [{}] to [{}]", name, value);
+                    attributes.put(name, value);
+                } else {
+                    LOGGER.debug("Mapped principal attribute name [{}]", attributeName);
+                    attributes.put(attributeName, attributeName);
+                }
+            });
+        }
+        return attributes;
+    }
+
+    /**
      * New connection config connection config.
      *
      * @param l the ldap properties
