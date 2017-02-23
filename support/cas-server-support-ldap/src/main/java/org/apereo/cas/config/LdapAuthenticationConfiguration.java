@@ -37,7 +37,6 @@ import org.springframework.context.annotation.Configuration;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +85,10 @@ public class LdapAuthenticationConfiguration {
                 .stream()
                 .filter(ldapInstanceConfigurationPredicate())
                 .forEach(l -> {
-                    final Map<String, String> attributes = buildPrincipalAttributeMap(l);
+                    final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(l.getPrincipalAttributeList());
+                    attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
+                    LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, l.getLdapUrl());
+                    
                     LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
                     final Authenticator authenticator = Beans.newLdaptiveAuthenticator(l);
                     authenticator.setReturnAttributes(attributes.keySet().toArray(new String[]{}));
@@ -136,32 +138,7 @@ public class LdapAuthenticationConfiguration {
                 });
         return handlers;
     }
-
-    private Map<String, String> buildPrincipalAttributeMap(final LdapAuthenticationProperties l) {
-        final Map<String, String> attributes = new HashMap<>();
-
-        if (l.getPrincipalAttributeList().isEmpty()) {
-            LOGGER.debug("No principal attributes are defined for [{}]", l.getLdapUrl());
-        } else {
-            l.getPrincipalAttributeList().forEach(a -> {
-                final String attributeName = a.toString().trim();
-                if (attributeName.contains(":")) {
-                    final String[] attrCombo = attributeName.split(":");
-                    final String name = attrCombo[0].trim();
-                    final String value = attrCombo[1].trim();
-                    LOGGER.debug("Mapped principal attribute name [{}] to [{}] for [{}]", name, value, l.getLdapUrl());
-                    attributes.put(name, value);
-                } else {
-                    LOGGER.debug("Mapped principal attribute name [{}] for [{}]", attributeName, l.getLdapUrl());
-                    attributes.put(attributeName, attributeName);
-                }
-            });
-        }
-        attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
-
-        LOGGER.debug("Ldap authentication for [{}] is configured with principal attributes [{}]...", l.getLdapUrl(), attributes);
-        return attributes;
-    }
+    
 
     private Predicate<LdapAuthenticationProperties> ldapInstanceConfigurationPredicate() {
         return l -> {

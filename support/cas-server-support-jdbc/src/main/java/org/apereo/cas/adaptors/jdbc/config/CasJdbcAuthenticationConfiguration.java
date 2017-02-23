@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -132,8 +133,13 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
+        final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(b.getPrincipalAttributeList());
+        attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
+        LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
+        
         final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getSql(),
-                b.getFieldPassword(), b.getFieldExpired(), b.getFieldDisabled());
+                b.getFieldPassword(), b.getFieldExpired(), b.getFieldDisabled(), attributes);
+        
         h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));

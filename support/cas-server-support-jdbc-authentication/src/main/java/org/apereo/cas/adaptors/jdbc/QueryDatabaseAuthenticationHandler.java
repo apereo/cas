@@ -7,12 +7,16 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -28,16 +32,24 @@ import java.util.Map;
  */
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryDatabaseAuthenticationHandler.class);
+
     private final String sql;
     private final String fieldPassword;
     private final String fieldExpired;
     private final String fieldDisabled;
+    private Map<String, String> principalAttributeMap = Collections.emptyMap();
 
-    public QueryDatabaseAuthenticationHandler(final String sql, final String fieldPassword, final String fieldExpired, final String fieldDisabled) {
+    public QueryDatabaseAuthenticationHandler(final String sql,
+                                              final String fieldPassword,
+                                              final String fieldExpired,
+                                              final String fieldDisabled,
+                                              final Map<String, String> attributes) {
         this.sql = sql;
         this.fieldPassword = fieldPassword;
         this.fieldExpired = fieldExpired;
         this.fieldDisabled = fieldDisabled;
+        this.principalAttributeMap = attributes;
     }
 
     @Override
@@ -49,6 +61,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                     + "No SQL statement or JDBC template is found.");
         }
 
+        final Map<String, Object> attributes = new LinkedHashMap<>(this.principalAttributeMap.size());
         final String username = credential.getUsername();
         final String password = credential.getPassword();
         try {
@@ -71,6 +84,22 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
+
+            this.principalAttributeMap.entrySet().forEach(a -> {
+                final Object attribute = dbFields.get(a.getKey());
+                if (attribute != null) {
+                    LOGGER.debug("Found attribute [{}] from the query results", a);
+
+                    if (attribute != null) {
+                        LOGGER.debug("Found attribute [{}] from the query results", a);
+                        final String principalAttrName = a.getValue();
+                        attributes.put(principalAttrName, attribute.toString());
+                    } else {
+                        LOGGER.warn("Requested attribute [{}] could not be found in the query results", a.getKey());
+                    }
+                }
+            });
+
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
                 throw new AccountNotFoundException(username + " not found with SQL query");
@@ -79,6 +108,6 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username, attributes), null);
     }
 }
