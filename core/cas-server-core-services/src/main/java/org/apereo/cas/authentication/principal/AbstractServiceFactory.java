@@ -67,8 +67,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .toString();
+        return new ToStringBuilder(this).toString();
     }
 }
 
