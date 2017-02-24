@@ -34,13 +34,14 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
     @Override
     public MemoryStatus observe() {
         final StatusCode code;
-        final long free = Runtime.getRuntime().freeMemory();
-        final long total = Runtime.getRuntime().totalMemory();
+        final long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        final long total = Runtime.getRuntime().maxMemory();
+        final long free = total - used;
         if (free * PERCENTAGE_VALUE / total < this.freeMemoryWarnThreshold) {
             code = StatusCode.WARN;
         } else {
             code = StatusCode.OK;
         }
-        return new MemoryStatus(code, free, total);
+        return new MemoryStatus(code, free, total, used);
     }
 }

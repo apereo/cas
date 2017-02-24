@@ -352,7 +352,7 @@ management.security.sessions=if_required
 
 # IP address may be enough to protect all endpoints.
 # If you wish to protect the admin pages via CAS itself, configure the rest.
-# cas.adminPagesSecurity.ip=127\.0\.0\.1
+# cas.adminPagesSecurity.ip=a^
 # cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
 # cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
 # cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
@@ -372,6 +372,49 @@ The format of the file is as such:
 - `casuser`: This is the authenticated user id received from CAS
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
 - `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
+
+### CAS Endpoints Security
+
+```properties
+# cas.monitor.endpoints.dashboard.enabled=false
+# cas.monitor.endpoints.dashboard.sensitive=true
+
+# cas.monitor.endpoints.auditEvents.enabled=false
+# cas.monitor.endpoints.auditEvents.sensitive=true
+
+# cas.monitor.endpoints.authenticationEvents.enabled=false
+# cas.monitor.endpoints.authenticationEvents.sensitive=true
+
+# cas.monitor.endpoints.configState.enabled=false
+# cas.monitor.endpoints.configState.sensitive=true
+
+# cas.monitor.endpoints.healthCheck.enabled=false
+# cas.monitor.endpoints.healthCheck.sensitive=true
+
+# cas.monitor.endpoints.loggingConfig.enabled=false
+# cas.monitor.endpoints.loggingConfig.sensitive=true
+
+# cas.monitor.endpoints.metrics.enabled=false
+# cas.monitor.endpoints.metrics.sensitive=true
+
+# cas.monitor.endpoints.attributeResolution.enabled=false
+# cas.monitor.endpoints.attributeResolution.sensitive=true
+
+# cas.monitor.endpoints.singleSignOnReport.enabled=false
+# cas.monitor.endpoints.singleSignOnReport.sensitive=true
+
+# cas.monitor.endpoints.statistics.enabled=false
+# cas.monitor.endpoints.statistics.sensitive=true
+
+# cas.monitor.endpoints.trustedDevices.enabled=false
+# cas.monitor.endpoints.trustedDevices.sensitive=true
+
+# cas.monitor.endpoints.status.enabled=false
+# cas.monitor.endpoints.status.sensitive=true
+
+# cas.monitor.endpoints.singleSignOnStatus.enabled=false
+# cas.monitor.endpoints.singleSignOnStatus.sensitive=true
+```
 
 ### Admin Status Endpoints With Spring Security
 
@@ -1094,10 +1137,11 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].credentialCriteria=
 # cas.authn.jdbc.query[0].name=
 # cas.authn.jdbc.query[0].order=0
+
 # cas.authn.jdbc.query[0].fieldPassword=password
 # cas.authn.jdbc.query[0].fieldExpired=
 # cas.authn.jdbc.query[0].fieldDisabled=
-
+# cas.authn.jdbc.query[0].principalAttributeList=sn,cn:commonName,givenName
 
 # cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
@@ -1268,7 +1312,7 @@ Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
 server, simply increment the index and specify the settings for the next LDAP server.
 
-**Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
+**Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, etc
 will simply deactivate LDAP authentication altogether silently.
 
 **Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes
@@ -1279,7 +1323,7 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 
 ### Active Directory
 
-Users authenticate with `sAMAccountName`.
+Users authenticate with `sAMAccountName` typically using a DN format.
 
 ### Authenticated Search
 
@@ -1290,14 +1334,14 @@ Manager bind/search type of authentication.
 
 ### Anonymous Search
 
-Anonymous search.
+Similar semantics as Authentication Search except no `bindDn` and `bindCredential` may be specified to initialize the connection.
 
 - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
 - Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 
 ### Direct Bind
 
-Compute user DN from format string and perform simple bind. This is relevant when
+Compute user DN from a format string and perform simple bind. This is relevant when
 no search is required to compute the DN needed for a bind operation.
 
 There are two requirements for this use case:
@@ -1310,12 +1354,24 @@ There are two requirements for this use case:
 If multiple URLs are provided as the ldapURL this describes how each URL will be processed.
 
 | Provider              | Description              
-|-----------------------|-----------------
+|-----------------------|-----------------------------------------------------------------------------------------------
 | `DEFAULT`             | The default JNDI provider behavior will be used.    
 | `ACTIVE_PASSIVE`      | First LDAP will be used for every request unless it fails and then the next shall be used.    
 | `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
 | `RANDOM`              | For each new connection a random LDAP url will be selected.
 | `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
+
+### Connection Initialization
+
+LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters:
+
+| Behavior                               | Description              
+|----------------------------------------|-------------------------------------------------------------------
+| `bindDn`/`bindCredential` provided     | Use the provided credentials to bind when initializing connections.
+| `bindDn`/`bindCredential` set to `*`   | Use a fast-bind strategy to initialize the pool.   
+| `bindDn`/`bindCredential` set to blank | Skip connection initializing; perform operations anonymously.
+| SASL mechanism provided                | Use the given SASL mechanism to bind when initializing connections.
+
 
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
@@ -1662,7 +1718,7 @@ To learn more about this topic, [please review this guide](Remote-Address-Authen
 
 <div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
 use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
-configured via the static authencation handler, and <strong>MUST</strong> be removed from the configuration
+configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
 ```properties
@@ -2878,7 +2934,11 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 
 
 ```properties
+# Whether geolocation tracking should be turned on and requested from the browser.
 # cas.events.trackGeolocation=false
+
+# Control whether CAS should monitor configuration files and auto-refresh context.
+# cas.events.trackConfigurationModifications=true
 ```
 
 ### Database Events
@@ -3612,7 +3672,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 ### Acceptable Usage Policy
 
 Decide how CAS should attempt to determine whether AUP is accepted.
-To learn more about this topic, [please review this guide](User-Interface-Customization-AUP.html).
+To learn more about this topic, [please review this guide](Webflow-Customization-AUP.html).
 
 
 ```properties

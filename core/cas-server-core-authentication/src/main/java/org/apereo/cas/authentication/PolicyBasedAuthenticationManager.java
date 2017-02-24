@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
+import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +51,7 @@ import java.util.Set;
  */
 public class PolicyBasedAuthenticationManager extends AbstractAuthenticationManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(PolicyBasedAuthenticationManager.class);
-    
+
     /**
      * Authentication security policy.
      */
@@ -101,7 +103,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
         final Collection<Credential> credentials = transaction.getCredentials();
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.stream().forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
-        
+
         final Set<AuthenticationHandler> handlerSet = getAuthenticationHandlersForThisTransaction(transaction);
         Assert.notNull(handlerSet, "Resolved authentication handlers for this transaction cannot be null");
         if (handlerSet.isEmpty()) {
@@ -137,27 +139,33 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
         });
 
         if (!success) {
-            evaluateProducedAuthenticationContext(builder);
+            evaluateProducedAuthenticationContext(builder, transaction);
         }
 
         return builder;
     }
-    
+
 
     /**
      * Evaluate produced authentication context.
      * We apply an implicit security policy of at least one successful authentication.
      * Then, we apply the configured security policy.
      *
-     * @param builder the builder
+     * @param builder     the builder
+     * @param transaction the transaction
      * @throws AuthenticationException the authentication exception
      */
-    protected void evaluateProducedAuthenticationContext(final AuthenticationBuilder builder) throws AuthenticationException {
+    protected void evaluateProducedAuthenticationContext(final AuthenticationBuilder builder,
+                                                         final AuthenticationTransaction transaction) throws AuthenticationException {
         if (builder.getSuccesses().isEmpty()) {
+            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials()));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
         LOGGER.debug("Executing authentication policy [{}]", this.authenticationPolicy);
-        if (!this.authenticationPolicy.isSatisfiedBy(builder.build())) {
+
+        final Authentication authentication = builder.build();
+        if (!this.authenticationPolicy.isSatisfiedBy(authentication)) {
+            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
     }

@@ -25,7 +25,8 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -71,6 +72,7 @@ import static org.junit.Assert.*;
         CasCoreTicketsConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
+        CasEventsInMemoryRepositoryConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreEventsConfiguration.class})
 @TestPropertySource(properties = "cas.authn.adaptive.risk.dateTime.enabled=true")
