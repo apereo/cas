@@ -37,7 +37,19 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
   <version>${cas.version}</version>
 </dependency>
 ```
+You may also need to declare the following Maven repository in
+your CAS overlay to be able to resolve dependencies:
 
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>jasig-releases</id>
+        <url>http://developer.jasig.org/repo/content/groups/m2-legacy</url>
+    </repository>
+    ...
+</repositories>
+```
 ## Configuration
 
 ### Create SPN Account
