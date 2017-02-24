@@ -18,7 +18,7 @@
             </div>
 
             <section class="row btn-row">
-                <input type="hidden" name="execution" value="${flowExecutionKey}" />
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                 <input type="hidden" name="_eventId" value="submit" />
                 <input class="btn-submit"
                        name="submit"
