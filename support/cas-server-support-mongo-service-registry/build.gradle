@@ -4,7 +4,7 @@ dependencies {
     implementation libraries.mongo
     
     implementation libraries.persondirectory
-    runtimeOnly libraries.hibernate
+
     
     testCompileOnly project(":core:cas-server-core-authentication")
     testCompileOnly project(":support:cas-server-support-oauth-core")

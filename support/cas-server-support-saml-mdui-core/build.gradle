@@ -4,5 +4,5 @@ dependencies {
     compile project(":support:cas-server-support-saml")
     compile project(":core:cas-server-core-configuration")
     implementation libraries.opensaml
-    runtimeOnly libraries.hibernate
+
 }

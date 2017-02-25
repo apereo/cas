@@ -5,7 +5,7 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     
     implementation libraries.quartz
-    implementation libraries.hibernate
+
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 

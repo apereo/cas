@@ -4,7 +4,7 @@ dependencies {
     
     implementation libraries.memcached
     implementation libraries.kryo
-    implementation libraries.hibernate
+
     testCompileOnly project(":core:cas-server-core-authentication")
     testCompileOnly project(path: ":support:cas-server-support-memcached-ticket-registry", configuration: "tests")
     testCompileOnly project(":support:cas-server-support-cookie")

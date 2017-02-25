@@ -98,6 +98,6 @@ dependencies {
     
     implementation libraries.cassecurityfilter
     implementation libraries.metrics
-    implementation libraries.hibernate
+
     implementation libraries.bouncycastle
 }

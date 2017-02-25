@@ -2,7 +2,7 @@ description = "Apereo CAS Web Application Security Configuration"
 dependencies {
     implementation libraries.pac4j
     implementation libraries.groovy
-    implementation libraries.hibernate
+
     implementation libraries.springsecurity
     implementation libraries.ldaptive
     implementation libraries.springsecuritywebconfig

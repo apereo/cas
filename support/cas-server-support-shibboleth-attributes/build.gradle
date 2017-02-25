@@ -7,7 +7,7 @@ dependencies {
     
     implementation libraries.shibattributes
     
-    implementation libraries.hibernate
+
     compile project(":support:cas-server-support-saml-core")
     
     testCompileOnly libraries.tests

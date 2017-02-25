@@ -3,7 +3,7 @@ dependencies {
     implementation libraries.groovy
     implementation libraries.pac4j
     implementation libraries.cassecurityfilter
-    implementation libraries.hibernate
+
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-actions")
     testCompileOnly project(":support:cas-server-support-themes")
