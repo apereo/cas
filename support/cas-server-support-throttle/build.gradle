@@ -6,7 +6,7 @@ dependencies {
 
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-util")
-    runtime libraries.javaximpl
+    runtimeOnly libraries.javaximpl
 
     testCompile project(":core:cas-server-core-authentication")
     testCompile project(":core:cas-server-core-audit")

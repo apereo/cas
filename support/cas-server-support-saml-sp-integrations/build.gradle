@@ -6,7 +6,7 @@ dependencies {
     compile project(":support:cas-server-support-saml-idp-core")
     compile libraries.casclient
     compile libraries.shibidp
-    runtime libraries.hibernate
-    runtime libraries.groovy
+    runtimeOnly libraries.hibernate
+    runtimeOnly libraries.groovy
     compileOnly libraries.springcloud
 }
