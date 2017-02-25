@@ -12,6 +12,6 @@ dependencies {
     compile libraries.jose4j
     compile libraries.httpclient
     compile libraries.bouncycastle
-    runtime libraries.hibernate
+    runtimeOnly libraries.hibernate
 }
 

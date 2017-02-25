@@ -3,6 +3,6 @@ dependencies {
     compile project(":support:cas-server-support-trusted-mfa")
     compile project(":support:cas-server-support-jpa-util")
     compile libraries.quartz
-    runtime libraries.hibernate
-    runtime project(":support:cas-server-support-jdbc-drivers")
+    runtimeOnly libraries.hibernate
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

@@ -8,8 +8,8 @@ dependencies {
     compile libraries.casclient
     compile libraries.shibidp
     compile libraries.httpclient
-    runtime libraries.hibernate
-    runtime libraries.groovy
+    runtimeOnly libraries.hibernate
+    runtimeOnly libraries.groovy
     compileOnly libraries.springcloud
     testCompile libraries.metrics
     testCompile libraries.log4j
