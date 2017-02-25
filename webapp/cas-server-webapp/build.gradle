@@ -77,11 +77,6 @@ dependencies {
     compile project(":support:cas-server-support-themes")
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
-
-    compile project(":support:cas-server-support-duo")
-    compile project(":support:cas-server-support-saml-idp")
-    compile project(":support:cas-server-support-oauth-webflow")
-    compile project(":support:cas-server-support-oidc")
     
     compile project(":webapp:cas-server-webapp-init")
     compile project(":webapp:cas-server-webapp-config")
@@ -91,13 +86,9 @@ dependencies {
     //providedRuntime libraries.springbootundertow
 
     implementation libraries.pac4j
-    
-    
     implementation libraries.thymeleaf
     implementation libraries.groovy
-    
     implementation libraries.cassecurityfilter
     implementation libraries.metrics
-
     implementation libraries.bouncycastle
 }

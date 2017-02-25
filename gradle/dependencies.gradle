@@ -21,9 +21,13 @@ ext.libraries = [
         ],
         sentry                  : [
                 dependencies.create("com.getsentry.raven:raven:$sentryRavenVersion") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 },
                 dependencies.create("com.getsentry.raven:raven-log4j2:$sentryRavenVersion") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 }
         ],
