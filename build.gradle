@@ -268,8 +268,8 @@ subprojects {
         implementation libraries.aspectj
         implementation libraries.validationapi
         api libraries.log4j
-        implementation libraries.guava
-        implementation libraries.commons
+        api libraries.guava
+        api libraries.commons
         api libraries.jodatime
         api libraries.inspektr
         api libraries.spring
