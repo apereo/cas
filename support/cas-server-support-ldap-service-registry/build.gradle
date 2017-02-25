@@ -3,7 +3,7 @@ dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":support:cas-server-support-ldap-core")
     implementation libraries.ldaptive
-    runtimeOnly libraries.hibernate
+
     testCompileOnly libraries.tests
     testCompileOnly project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testCompileOnly project(":core:cas-server-core-authentication")

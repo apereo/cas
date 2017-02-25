@@ -9,7 +9,7 @@ dependencies {
     implementation libraries.metrics
     implementation libraries.persondirectory
     
-    implementation libraries.hibernate
+
     testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testCompileOnly project(path: ":core:cas-server-core-logout", configuration: "tests")
     testCompileOnly project(":core:cas-server-core-util")

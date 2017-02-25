@@ -42,7 +42,7 @@ dependencies {
     runtimeOnly project(":webapp-mgmt:cas-management-webapp-support")
 
     providedRuntime libraries.springboottomcat
-    runtimeOnly libraries.hibernate
+
     runtimeOnly libraries.groovy
     
     implementation libraries.thymeleaf

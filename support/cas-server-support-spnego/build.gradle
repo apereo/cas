@@ -7,7 +7,7 @@ dependencies {
     implementation libraries.ldaptive
     implementation libraries.jcifs
     implementation libraries.persondirectory
-    runtimeOnly libraries.hibernate
+
     testCompileOnly project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompileOnly project(":core:cas-server-core")

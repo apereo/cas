@@ -9,9 +9,9 @@ dependencies {
     compile project(":support:cas-server-support-jpa-util")
     provided project(":support:cas-server-support-actions")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
-    api libraries.jackson
+
     implementation libraries.ldaptive
-    implementation libraries.hibernate
+
     testCompileOnly libraries.tests
     testCompileOnly project(":core:cas-server-core-services")
 }

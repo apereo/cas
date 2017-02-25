@@ -6,10 +6,10 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-ldap-core")
     compile project(":core:cas-server-core-configuration")
-    api libraries.jackson
+
     implementation libraries.ldaptive
     implementation libraries.pac4j
-    implementation libraries.hibernate
+
     testCompileOnly libraries.tests
     testCompileOnly project(":core:cas-server-core-services")
 }

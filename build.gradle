@@ -273,6 +273,8 @@ subprojects {
         api libraries.jodatime
         api libraries.inspektr
         api libraries.spring
+        api libraries.jackson
+        api libraries.hibernate
         api libraries.springcloud
         api libraries.springboot
 

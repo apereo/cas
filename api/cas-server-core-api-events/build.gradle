@@ -6,7 +6,7 @@ dependencies {
     compile project(":core:cas-server-core-util")
     
     
-    implementation libraries.hibernate
+
 }
 
 

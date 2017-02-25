@@ -1,10 +1,10 @@
 description = "Apereo CAS Core Services"
 dependencies {
     compile project(":api:cas-server-core-api-services")
-    implementation libraries.hibernate
+
     
     implementation libraries.quartz
-    api libraries.jackson
+
     implementation libraries.httpclient
 
     compileOnly project(":core:cas-server-core-util")

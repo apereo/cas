@@ -1,6 +1,6 @@
 description = "Apereo CAS Couchbase Support Core"
 dependencies {
-    implementation libraries.hibernate
+
     api libraries.couchbase
 }
 

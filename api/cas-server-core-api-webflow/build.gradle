@@ -2,5 +2,5 @@ description = "Apereo CAS Core Webflow APIs"
 dependencies {
     
     
-    implementation libraries.hibernate
+
 }

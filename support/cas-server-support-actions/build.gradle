@@ -10,7 +10,7 @@ dependencies {
     compile project(":support:cas-server-support-geolocation")
     compile project(":core:cas-server-core-logout")
     implementation libraries.pac4j
-    runtimeOnly libraries.hibernate
+
     testCompileOnly project(":core:cas-server-core")
     testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompileOnly project(path: ":core:cas-server-core", configuration: "tests")

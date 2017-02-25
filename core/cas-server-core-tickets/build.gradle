@@ -1,9 +1,9 @@
 description = "Apereo CAS Core Tickets"
 dependencies {
     compile project(":api:cas-server-core-api-ticket")
-    implementation libraries.hibernate
+
     implementation libraries.quartz
-    api libraries.jackson
+
 
     compile project(":core:cas-server-core-authentication")
     compileOnly project(":core:cas-server-core-services")

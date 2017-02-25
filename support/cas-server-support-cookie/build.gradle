@@ -1,7 +1,7 @@
 description = "Apereo CAS Web Application Cookie Management"
 dependencies {
     
-    implementation libraries.hibernate
+
     implementation libraries.thymeleaf
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-web")

@@ -3,6 +3,6 @@ dependencies {
     compile project(":support:cas-server-support-trusted-mfa")
     
     
-    api libraries.jackson
+
     implementation libraries.httpclient
 }

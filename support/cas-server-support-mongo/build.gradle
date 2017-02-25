@@ -6,7 +6,7 @@ dependencies {
     implementation libraries.pac4j
     
     implementation libraries.mongo
-    runtimeOnly libraries.hibernate
+
     testCompileOnly project(":core:cas-server-core-services")
     testCompileOnly project(":core:cas-server-core-authentication")
     testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")

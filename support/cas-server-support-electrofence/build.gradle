@@ -7,7 +7,7 @@ dependencies {
     compile project(":support:cas-server-support-geolocation")
     compile project(":support:cas-server-support-geolocation-googlemaps")
     
-    implementation libraries.hibernate
+
     testCompileOnly project(path: ":core:cas-server-core")
     testCompileOnly project(":core:cas-server-core-logout")
     testCompileOnly project(":support:cas-server-support-cookie")

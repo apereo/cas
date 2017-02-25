@@ -4,8 +4,7 @@ dependencies {
     compile project(":core:cas-server-core-web")
     compileOnly project(":core:cas-server-core-tickets")
     api libraries.pac4j
-    api libraries.jackson
-    implementation libraries.hibernate
+
     testCompileOnly project(":core:cas-server-core-util")
     testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompileOnly project(":core:cas-server-core-logout")

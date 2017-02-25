@@ -6,10 +6,10 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-services")
     compile project(":support:cas-server-support-pac4j-authentication")
-    api libraries.jackson
+
     implementation libraries.pac4j
     
-    runtimeOnly libraries.hibernate
+
     testCompileOnly project(":core:cas-server-core-authentication")
     testCompileOnly project(":core:cas-server-core")
     testCompileOnly project(":core:cas-server-core-logout")
