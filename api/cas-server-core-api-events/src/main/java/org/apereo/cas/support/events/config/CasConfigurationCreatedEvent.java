@@ -19,9 +19,14 @@ public class CasConfigurationCreatedEvent extends AbstractCasEvent {
      * Instantiates a new Abstract cas sso event.
      *
      * @param source the source
+     * @param file   the file
      */
     public CasConfigurationCreatedEvent(final Object source, final Path file) {
         super(source);
         this.file = file;
+    }
+
+    public Path getFile() {
+        return file;
     }
 }

@@ -3,13 +3,13 @@ dependencies {
 
     compile project(":core:cas-server-core-monitor")
     compile project(":core:cas-server-core-authentication")
-    compile libraries.spring
-    compile libraries.quartz
-    compile libraries.hibernate
-    runtimeOnly libraries.javaximpl
+    
+    implementation libraries.quartz
+    implementation libraries.hibernate
+    
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
-    testCompile libraries.tests
-    testCompile project(":core:cas-server-core-authentication")
-    testCompile project(":core:cas-server-core-util")
+    testCompileOnly libraries.tests
+    testCompileOnly project(":core:cas-server-core-authentication")
+    testCompileOnly project(":core:cas-server-core-util")
 }
