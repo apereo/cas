@@ -9,9 +9,9 @@ dependencies {
     implementation libraries.shibidp
     implementation libraries.httpclient
     implementation libraries.pac4j
-    runtimeOnly libraries.hibernate
+
     runtimeOnly libraries.groovy
-    implementation libraries.hibernate
+
     testCompileOnly libraries.metrics
     testCompileOnly libraries.log4j
     testCompileOnly project(":core:cas-server-core-util")
