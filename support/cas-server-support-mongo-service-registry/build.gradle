@@ -4,7 +4,7 @@ dependencies {
     compile libraries.mongo
     compile libraries.spring
     compile libraries.persondirectory
-    runtime libraries.hibernate
+    runtimeOnly libraries.hibernate
     compileOnly libraries.springcloud
     testCompile project(":core:cas-server-core-authentication")
     testCompile project(":support:cas-server-support-oauth-core")

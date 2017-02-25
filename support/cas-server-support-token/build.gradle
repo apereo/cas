@@ -9,7 +9,7 @@ dependencies {
     compile libraries.jackson
     compile libraries.pac4j
     compile libraries.spring
-    runtime libraries.hibernate
+    runtimeOnly libraries.hibernate
     testCompile project(":core:cas-server-core-authentication")
     testCompile project(":core:cas-server-core")
     testCompile project(":core:cas-server-core-logout")
