@@ -45,9 +45,6 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     **/
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
 
