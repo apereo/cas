@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import java.util.Map;
 
 /**
- * Helper strategy API to ease retrieving CAS' <code>Authentication</code> object and its associated components
+ * Helper strategy API to ease retrieving CAS' {@code Authentication} object and its associated components
  * from available CAS SSO String token called <i>Ticket Granting Ticket (TGT)</i>.
  *
  * @author Misagh Moayyed
