@@ -113,7 +113,7 @@ import java.util.stream.IntStream;
 
 /**
  * A re-usable collection of utility methods for object instantiations and configurations used cross various
- * <code>@Bean</code> creation methods throughout CAS server.
+ * {@code @Bean} creation methods throughout CAS server.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

@@ -8,6 +8,7 @@ import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http2.Http2Protocol;
+import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.slf4j.Logger;
@@ -33,30 +34,25 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 /**
- * This is {@link CasEmbeddedContainerConfiguration}.
+ * This is {@link CasEmbeddedContainerTomcatConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casEmbeddedContainerConfiguration")
+@Configuration("casEmbeddedContainerTomcatConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(name = CasEmbeddedContainerConfiguration.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
+@ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @AutoConfigureBefore(EmbeddedServletContainerAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-public class CasEmbeddedContainerConfiguration {
-    /**
-     * Property to dictate to the environment whether embedded container is running CAS.
-     */
-    public static final String EMBEDDED_CONTAINER_CONFIG_ACTIVE = "CasEmbeddedContainerConfigurationActive";
-
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasEmbeddedContainerConfiguration.class);
+public class CasEmbeddedContainerTomcatConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasEmbeddedContainerTomcatConfiguration.class);
 
     @Autowired
     private ServerProperties serverProperties;
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
 
     @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
     @Bean
@@ -167,4 +163,5 @@ public class CasEmbeddedContainerConfiguration {
             tomcat.addAdditionalTomcatConnectors(ajpConnector);
         }
     }
+
 }

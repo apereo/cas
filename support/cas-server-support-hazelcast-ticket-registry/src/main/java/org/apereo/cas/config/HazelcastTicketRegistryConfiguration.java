@@ -35,12 +35,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Spring's Java configuration component for <code>HazelcastInstance</code> that is consumed and used by
+ * Spring's Java configuration component for {@code HazelcastInstance} that is consumed and used by
  * {@link HazelcastTicketRegistry}.
  * <p>
  * This configuration class has the smarts to choose the configuration source for the {@link HazelcastInstance}
  * that it produces by either loading the native hazelcast XML config file from a resource location indicated by
- * <code>hz.config.location</code> property or if that property is
+ * {@code hz.config.location} property or if that property is
  * not set nor a valid location, creates HazelcastInstance programmatically
  * with a handful properties and their defaults (if not set) that it exposes to CAS deployers.
  *
@@ -81,7 +81,7 @@ public class HazelcastTicketRegistryConfiguration {
     }
 
     /**
-     * Get Hazelcast <code>Config</code> instance.
+     * Get Hazelcast {@code Config} instance.
      *
      * @return Hazelcast Config
      */
