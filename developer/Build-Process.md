@@ -42,6 +42,7 @@ The following commandline boolean flags are supported by the build:
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `genConfigMetadata`               | Generate CAS configuration metadata for `@ConfigurationProperties` classes.
 | `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
+| `enableIncremental`               | Enable Gradle's incremental compilation feature.
 
 
 Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`)
