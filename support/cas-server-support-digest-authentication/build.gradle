@@ -5,7 +5,7 @@ dependencies {
     compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-web")
     implementation libraries.pac4j
-    api libraries.jackson
+
     implementation libraries.httpclient
     testCompileOnly libraries.tests
 }

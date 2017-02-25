@@ -3,7 +3,7 @@ dependencies {
     
     
     
-    runtimeOnly libraries.hibernate
+
     implementation libraries.infinispan
     compile project(":api:cas-server-core-api")
     compile project(":core:cas-server-core-tickets")

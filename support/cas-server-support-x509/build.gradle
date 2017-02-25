@@ -7,7 +7,7 @@ dependencies {
     implementation libraries.bouncycastle
     implementation libraries.ehcache
     implementation libraries.ldaptive
-    implementation libraries.hibernate
+
     api libraries.persondirectory
     implementation libraries.httpclient
 

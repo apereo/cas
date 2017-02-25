@@ -6,7 +6,7 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
 
     api libraries.persondirectory
-    implementation libraries.hibernate
+
 
     testCompileOnly project(":core:cas-server-core")
     testCompileOnly project(":core:cas-server-core-tickets")

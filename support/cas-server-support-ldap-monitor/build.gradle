@@ -7,6 +7,6 @@ dependencies {
     testCompileOnly project(":core:cas-server-core-logout")
     testCompileOnly project(":core:cas-server-core-services")
     testCompileOnly project(path: ":support:cas-server-support-ldap", configuration: "tests")
-    runtimeOnly libraries.hibernate
+
     testCompileOnly libraries.tests
 }

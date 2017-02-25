@@ -5,7 +5,7 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile project(":support:cas-server-support-jpa-util")
     
-    api libraries.hibernate
+
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
     testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")

@@ -5,7 +5,7 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile project(":support:cas-server-support-couchbase-core")
     
-    implementation libraries.hibernate
+
     
     testCompileOnly project(":core:cas-server-core-tickets")
     testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")

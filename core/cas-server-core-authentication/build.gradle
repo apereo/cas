@@ -9,7 +9,7 @@ dependencies {
     implementation libraries.httpclient
     implementation libraries.ldaptive
     implementation libraries.groovy
-    implementation libraries.hibernate
+
     implementation libraries.springsecurity
     testCompileOnly project(":core:cas-server-core-web")
 }
