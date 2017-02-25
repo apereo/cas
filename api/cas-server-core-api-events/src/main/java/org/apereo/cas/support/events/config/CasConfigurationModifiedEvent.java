@@ -23,15 +23,29 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
      * Instantiates a new Abstract cas sso event.
      *
      * @param source the source
+     * @param file   the file
      */
     public CasConfigurationModifiedEvent(final Object source, final Path file) {
         this(source, file, false);
     }
 
+    /**
+     * Instantiates a new Cas configuration modified event.
+     *
+     * @param source   the source
+     * @param override the override
+     */
     public CasConfigurationModifiedEvent(final Object source, final boolean override) {
         this(source, null, override);
     }
 
+    /**
+     * Instantiates a new Cas configuration modified event.
+     *
+     * @param source   the source
+     * @param file     the file
+     * @param override the override
+     */
     public CasConfigurationModifiedEvent(final Object source, final Path file, final boolean override) {
         super(source);
         this.file = file;
