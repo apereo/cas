@@ -2,16 +2,16 @@ description = "Apereo CAS JDBC Support"
 dependencies {
 
     compile project(":core:cas-server-core-authentication")
-    compile libraries.spring
-    compile libraries.quartz
-    compile libraries.hibernate
-    compile libraries.shiro
-    runtimeOnly libraries.javaximpl
+    
+    implementation libraries.quartz
+    implementation libraries.hibernate
+    implementation libraries.shiro
+    
     compile project(":support:cas-server-support-jdbc-authentication")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
-    testCompile libraries.tests
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(":core:cas-server-core-util")
-    testCompile project(":core:cas-server-core-services")
+    testCompileOnly libraries.tests
+    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompileOnly project(":core:cas-server-core-util")
+    testCompileOnly project(":core:cas-server-core-services")
 }

@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.validator;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -9,7 +11,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
-import org.jasig.cas.client.util.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,8 @@ public class OAuth20AuthenticationRequestServiceSelectionStrategy implements Aut
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-        final Optional<URIBuilder.BasicNameValuePair> clientId = resolveClientIdFromService(service);
-        final Optional<URIBuilder.BasicNameValuePair> redirectUri = resolveRedirectUri(service);
+        final Optional<NameValuePair> clientId = resolveClientIdFromService(service);
+        final Optional<NameValuePair> redirectUri = resolveRedirectUri(service);
 
         if (clientId.isPresent() && redirectUri.isPresent()) {
             return this.webApplicationServiceFactory.createService(redirectUri.get().getValue());
@@ -51,14 +52,24 @@ public class OAuth20AuthenticationRequestServiceSelectionStrategy implements Aut
         return service;
     }
 
-    private Optional<URIBuilder.BasicNameValuePair> resolveClientIdFromService(final Service service) {
-        final URIBuilder builder = new URIBuilder(service.getId());
-        return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuthConstants.CLIENT_ID)).findFirst();
+    private Optional<NameValuePair> resolveClientIdFromService(final Service service) {
+        try {
+            final URIBuilder builder = new URIBuilder(service.getId());
+            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuthConstants.CLIENT_ID)).findFirst();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return Optional.empty();
     }
 
-    private Optional<URIBuilder.BasicNameValuePair> resolveRedirectUri(final Service service) {
-        final URIBuilder builder = new URIBuilder(service.getId());
-        return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuthConstants.REDIRECT_URI)).findFirst();
+    private Optional<NameValuePair> resolveRedirectUri(final Service service) {
+        try {
+            final URIBuilder builder = new URIBuilder(service.getId());
+            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuthConstants.REDIRECT_URI)).findFirst();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return Optional.empty();
     }
 
     @Override

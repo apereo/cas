@@ -4,5 +4,5 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-pac4j-core")
-    compile libraries.pac4j
+    implementation libraries.pac4j
 }

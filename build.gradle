@@ -193,6 +193,7 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     compileJava.options.fork = true
+    
 
     if (Boolean.getBoolean("enableIncremental")) {
         compileJava.options.incremental = true
@@ -264,13 +265,16 @@ subprojects {
     }
 
     dependencies {
-        compile libraries.aspectj
-        compile libraries.validationapi
-        compile libraries.log4j
-        compile libraries.guava
-        compile libraries.commons
-        compile libraries.jodatime
-        compile libraries.inspektr
+        implementation libraries.aspectj
+        implementation libraries.validationapi
+        api libraries.log4j
+        implementation libraries.guava
+        implementation libraries.commons
+        api libraries.jodatime
+        api libraries.inspektr
+        api libraries.spring
+        api libraries.springcloud
+        api libraries.springboot
 
         compileOnly libraries.javax
 
@@ -285,7 +289,7 @@ subprojects {
             findbugsPlugins libraries.findbugssec
         }
 
-        testCompile libraries.tests
+        testCompileOnly libraries.tests
         runtimeOnly libraries.javaximpl
     }
 

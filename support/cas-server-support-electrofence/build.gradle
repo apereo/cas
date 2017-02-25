@@ -6,15 +6,12 @@ dependencies {
     compile project(":core:cas-server-core-events")
     compile project(":support:cas-server-support-geolocation")
     compile project(":support:cas-server-support-geolocation-googlemaps")
-    compile libraries.spring
-    compile libraries.guava
-    compile libraries.springcloud
-    compile libraries.springboot
-    compile libraries.hibernate
-    testCompile project(path: ":core:cas-server-core")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(":support:cas-server-support-cookie")
-    testCompile project(":support:cas-server-support-events-memory")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+    
+    implementation libraries.hibernate
+    testCompileOnly project(path: ":core:cas-server-core")
+    testCompileOnly project(":core:cas-server-core-logout")
+    testCompileOnly project(":support:cas-server-support-cookie")
+    testCompileOnly project(":support:cas-server-support-events-memory")
+    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apache.shiro.util.Assert;
 import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -9,6 +8,7 @@ import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailu
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.security.GeneralSecurityException;
 import java.util.Collection;

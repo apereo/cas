@@ -1,22 +1,21 @@
 description = "Apereo CAS Web Application Authentication Throttling"
 dependencies {
-    compile libraries.spring
-    compile libraries.quartz
-    compile libraries.hibernate
+    api libraries.quartz
+    api libraries.httpclient
+    implementation libraries.hibernate
 
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-util")
-    runtimeOnly libraries.javaximpl
+    
 
-    testCompile project(":core:cas-server-core-authentication")
-    testCompile project(":core:cas-server-core-audit")
-    testCompile project(":core:cas-server-core")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(":core:cas-server-core-monitor")
-    testCompile project(path: ":core:cas-server-core", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(":support:cas-server-support-cookie")
-    testCompile libraries.tests
-    testCompile libraries.javax
-    testCompile libraries.inspektr
+    testCompileOnly project(":core:cas-server-core-authentication")
+    testCompileOnly project(":core:cas-server-core-audit")
+    testCompileOnly project(":core:cas-server-core")
+    testCompileOnly project(":core:cas-server-core-logout")
+    testCompileOnly project(":core:cas-server-core-monitor")
+    testCompileOnly project(path: ":core:cas-server-core", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompileOnly project(":support:cas-server-support-cookie")
+    testCompileOnly libraries.tests
+    testCompileOnly libraries.javax
 }
