@@ -9,7 +9,7 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-validation")
     compile libraries.jdom
-    runtime libraries.hibernate
-    runtime libraries.xmlapis
+    runtimeOnly libraries.hibernate
+    runtimeOnly libraries.xmlapis
 
 }

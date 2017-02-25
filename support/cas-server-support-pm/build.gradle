@@ -13,7 +13,7 @@ dependencies {
     compile libraries.jackson
     compile libraries.ldaptive
     compile libraries.pac4j
-    runtime libraries.hibernate
+    runtimeOnly libraries.hibernate
     testCompile libraries.tests
     testCompile project(":core:cas-server-core-services")
 }

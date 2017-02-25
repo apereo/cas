@@ -4,5 +4,5 @@ dependencies {
     compile libraries.spring
     compile libraries.springcloud
     compile libraries.springsession
-    runtime libraries.mongo
+    runtimeOnly libraries.mongo
 }

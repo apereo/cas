@@ -2,7 +2,7 @@ description = "Apereo CAS LDAP Service Registry Support"
 dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":support:cas-server-support-ldap-core")
-    runtime libraries.hibernate
+    runtimeOnly libraries.hibernate
     testCompile libraries.tests
     testCompile project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testCompile project(":core:cas-server-core-authentication")

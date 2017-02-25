@@ -5,7 +5,7 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile libraries.mongo
     compile libraries.spring
-    runtime libraries.hibernate
+    runtimeOnly libraries.hibernate
     compileOnly libraries.springcloud
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")

@@ -4,7 +4,7 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile libraries.mongo
     compile libraries.spring
-    runtime libraries.hibernate
+    runtimeOnly libraries.hibernate
     compileOnly libraries.springcloud
     testCompile project(":core:cas-server-core-logout")
 }

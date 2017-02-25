@@ -6,8 +6,8 @@ dependencies {
     compile project(":support:cas-server-support-jpa-util")
     compileOnly libraries.springcloud
     compile libraries.spring
-    runtime libraries.hibernate
-    runtime project(":support:cas-server-support-jdbc-drivers")
+    runtimeOnly libraries.hibernate
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")

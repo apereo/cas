@@ -7,7 +7,7 @@ dependencies {
     compile libraries.ldaptive
     compile libraries.jcifs
     compile libraries.spring
-    runtime libraries.hibernate
+    runtimeOnly libraries.hibernate
     compileOnly libraries.springcloud
 
     testCompile project(path: ":support:cas-server-support-ldap", configuration: "tests")

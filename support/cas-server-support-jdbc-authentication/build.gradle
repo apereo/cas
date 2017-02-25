@@ -6,8 +6,8 @@ dependencies {
     compile libraries.quartz
     compile libraries.hibernate
     compile libraries.shiro
-    runtime libraries.javaximpl
-    runtime project(":support:cas-server-support-jdbc-drivers")
+    runtimeOnly libraries.javaximpl
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
     testCompile libraries.tests
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")

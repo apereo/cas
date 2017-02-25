@@ -13,5 +13,5 @@ dependencies {
     compile project(":support:cas-server-support-ldap-core")
     compile project(":core:cas-server-core-configuration")
     compile project(":core:cas-server-core-services")
-    runtime project(":support:cas-server-support-jdbc-drivers")
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }

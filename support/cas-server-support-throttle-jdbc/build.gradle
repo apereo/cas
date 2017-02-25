@@ -7,7 +7,7 @@ dependencies {
     compile project(":support:cas-server-support-audit-jdbc")
     compile project(":core:cas-server-core-audit")
     compile project(":support:cas-server-support-throttle")
-    runtime project(":support:cas-server-support-jdbc-drivers")
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     testCompile project(path: ":support:cas-server-support-throttle", configuration: "tests")
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":core:cas-server-core")
