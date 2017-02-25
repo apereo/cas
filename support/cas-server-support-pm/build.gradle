@@ -1,19 +1,15 @@
 description = "Apereo CAS Password Management"
 dependencies {
-
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-ldap-core")
     compile project(":core:cas-server-core-configuration")
-
-    compile libraries.spring
-    compile libraries.springcloud
-    compile libraries.jackson
-    compile libraries.ldaptive
-    compile libraries.pac4j
-    runtimeOnly libraries.hibernate
-    testCompile libraries.tests
-    testCompile project(":core:cas-server-core-services")
+    api libraries.jackson
+    implementation libraries.ldaptive
+    implementation libraries.pac4j
+    implementation libraries.hibernate
+    testCompileOnly libraries.tests
+    testCompileOnly project(":core:cas-server-core-services")
 }
