@@ -208,9 +208,9 @@ via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htm
 # spring.cloud.stream.kafka.binder.brokers=...
 ```
 
-## Embedded Tomcat
+## Embedded Container
 
-The following properties are related to the embedded Tomcat container that ships with CAS.
+The following properties are related to the embedded containers that ships with CAS.
 
 ```properties
 server.contextPath=/cas
@@ -233,25 +233,27 @@ server.connectionTimeout=20000
 # server.ssl.trustStorePassword=
 # server.ssl.trustStoreProvider=
 # server.ssl.trustStoreType=
-
-server.tomcat.basedir=build/tomcat
-
-server.tomcat.accesslog.enabled=true
-server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
-server.tomcat.accesslog.suffix=.log
-
-server.tomcat.maxHttpPostSize=20971520
-server.tomcat.maxThreads=5
-server.tomcat.portHeader=X-Forwarded-Port
-server.tomcat.protocolHeader=X-Forwarded-Proto
-server.tomcat.protocolHeaderHttpsValue=https
-server.tomcat.remoteIpHeader=X-FORWARDED-FOR
-server.tomcat.uriEncoding=UTF-8
-
-server.useForwardHeaders=true
 ```
 
-### HTTP/AJP
+### Embedded Tomcat Container
+
+```properties
+# server.tomcat.basedir=build/tomcat
+
+# server.tomcat.accesslog.enabled=true
+# server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
+# server.tomcat.accesslog.suffix=.log
+
+# server.tomcat.maxHttpPostSize=20971520
+# server.tomcat.maxThreads=5
+# server.tomcat.portHeader=X-Forwarded-Port
+# server.tomcat.protocolHeader=X-Forwarded-Proto
+# server.tomcat.protocolHeaderHttpsValue=https
+# server.tomcat.remoteIpHeader=X-FORWARDED-FOR
+# server.tomcat.uriEncoding=UTF-8
+```
+
+#### HTTP/AJP
 
 Enable HTTP/AJP connections for the embedded Tomcat container.
 
@@ -273,7 +275,7 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.ajp.allowTrace=false
 ```
 
-### Rewrite Valve
+#### Rewrite Valve
 
 If and when you choose to deploy CAS at root and remove the default context path,
 CAS by default attempts to deploy a special [`RewriteValve`](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.htm)
@@ -283,7 +285,7 @@ for the embedded container that knows how to reroute urls and such for backward 
 # cas.server.rewriteValveConfigLocation=classpath:/container/tomcat/rewrite.config
 ```
 
-### Extended Access Log
+#### Extended Access Log
 
 Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
 for the embedded Tomcat container.
@@ -352,7 +354,7 @@ management.security.sessions=if_required
 
 # IP address may be enough to protect all endpoints.
 # If you wish to protect the admin pages via CAS itself, configure the rest.
-# cas.adminPagesSecurity.ip=127\.0\.0\.1
+# cas.adminPagesSecurity.ip=a^
 # cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
 # cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
 # cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
@@ -372,6 +374,49 @@ The format of the file is as such:
 - `casuser`: This is the authenticated user id received from CAS
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
 - `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
+
+### CAS Endpoints Security
+
+```properties
+# cas.monitor.endpoints.dashboard.enabled=false
+# cas.monitor.endpoints.dashboard.sensitive=true
+
+# cas.monitor.endpoints.auditEvents.enabled=false
+# cas.monitor.endpoints.auditEvents.sensitive=true
+
+# cas.monitor.endpoints.authenticationEvents.enabled=false
+# cas.monitor.endpoints.authenticationEvents.sensitive=true
+
+# cas.monitor.endpoints.configState.enabled=false
+# cas.monitor.endpoints.configState.sensitive=true
+
+# cas.monitor.endpoints.healthCheck.enabled=false
+# cas.monitor.endpoints.healthCheck.sensitive=true
+
+# cas.monitor.endpoints.loggingConfig.enabled=false
+# cas.monitor.endpoints.loggingConfig.sensitive=true
+
+# cas.monitor.endpoints.metrics.enabled=false
+# cas.monitor.endpoints.metrics.sensitive=true
+
+# cas.monitor.endpoints.attributeResolution.enabled=false
+# cas.monitor.endpoints.attributeResolution.sensitive=true
+
+# cas.monitor.endpoints.singleSignOnReport.enabled=false
+# cas.monitor.endpoints.singleSignOnReport.sensitive=true
+
+# cas.monitor.endpoints.statistics.enabled=false
+# cas.monitor.endpoints.statistics.sensitive=true
+
+# cas.monitor.endpoints.trustedDevices.enabled=false
+# cas.monitor.endpoints.trustedDevices.sensitive=true
+
+# cas.monitor.endpoints.status.enabled=false
+# cas.monitor.endpoints.status.sensitive=true
+
+# cas.monitor.endpoints.singleSignOnStatus.enabled=false
+# cas.monitor.endpoints.singleSignOnStatus.sensitive=true
+```
 
 ### Admin Status Endpoints With Spring Security
 
@@ -1433,7 +1478,6 @@ LDAP connection configuration injected into the LDAP connection pool can be init
 # cas.authn.ldap[0].passwordPolicy.displayWarningOnMatch=true
 # cas.authn.ldap[0].passwordPolicy.warnAll=true
 # cas.authn.ldap[0].passwordPolicy.warningDays=30
-# cas.authn.ldap[0].passwordPolicy.url=https://password.example.edu/change
 ```
 
 ## REST Authentication
@@ -1675,7 +1719,7 @@ To learn more about this topic, [please review this guide](Remote-Address-Authen
 
 <div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
 use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
-configured via the static authencation handler, and <strong>MUST</strong> be removed from the configuration
+configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
 ```properties
@@ -2891,7 +2935,11 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 
 
 ```properties
+# Whether geolocation tracking should be turned on and requested from the browser.
 # cas.events.trackGeolocation=false
+
+# Control whether CAS should monitor configuration files and auto-refresh context.
+# cas.events.trackConfigurationModifications=true
 ```
 
 ### Database Events
@@ -3625,7 +3673,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 ### Acceptable Usage Policy
 
 Decide how CAS should attempt to determine whether AUP is accepted.
-To learn more about this topic, [please review this guide](User-Interface-Customization-AUP.html).
+To learn more about this topic, [please review this guide](Webflow-Customization-AUP.html).
 
 
 ```properties

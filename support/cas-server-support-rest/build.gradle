@@ -4,8 +4,8 @@ dependencies {
     provided project(":core:cas-server-core-services")
     provided project(":core:cas-server-core-authentication")
     provided project(":core:cas-server-core-tickets")
-    testCompile project(":core:cas-server-core-util")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
-    testCompile libraries.tests
+    testCompileOnly project(":core:cas-server-core-util")
+    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
+    testCompileOnly libraries.tests
 }

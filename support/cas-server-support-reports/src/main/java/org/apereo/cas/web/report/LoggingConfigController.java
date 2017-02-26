@@ -16,12 +16,12 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.slf4j.Log4jLoggerFactory;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -47,7 +47,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class LoggingConfigController extends AbstractNamedMvcEndpoint {
+public class LoggingConfigController extends BaseCasMvcEndpoint {
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
 
@@ -63,8 +63,9 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
 
     private Resource logConfigurationFile;
 
-    public LoggingConfigController(final DelegatingAuditTrailManager auditTrailManager) {
-        super("casloggingconfig", "/logging", true, true);
+    public LoggingConfigController(final DelegatingAuditTrailManager auditTrailManager,
+                                   final CasConfigurationProperties casProperties) {
+        super("casloggingconfig", "/logging", casProperties.getMonitor().getEndpoints().getLoggingConfig());
         this.auditTrailManager = auditTrailManager;
     }
 
@@ -89,11 +90,16 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
     /**
      * Gets default view.
      *
+     * @param request  the request
+     * @param response the response
      * @return the default view
      * @throws Exception the exception
      */
     @GetMapping
-    public ModelAndView getDefaultView() throws Exception {
+    public ModelAndView getDefaultView(final HttpServletRequest request,
+                                       final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
         model.put("logConfigurationFile", logConfigurationFile.getURI().toString());
         return new ModelAndView(VIEW_CONFIG, model);
@@ -110,6 +116,8 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
     @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> responseMap = new HashMap<>();
         final Map<String, Logger> loggers = getActiveLoggersInFactory();
         responseMap.put("activeLoggers", loggers.values());
@@ -129,6 +137,7 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
     @GetMapping(value = "/getConfiguration")
     @ResponseBody
     public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
@@ -221,8 +230,9 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
                                   @RequestParam final String loggerLevel,
                                   @RequestParam(defaultValue = "false") final boolean additive,
                                   final HttpServletRequest request,
-                                  final HttpServletResponse response)
-            throws Exception {
+                                  final HttpServletResponse response) throws Exception {
+
+        ensureEndpointAccessIsAuthorized(request, response);
 
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
         loggerConfigs.stream().
@@ -245,6 +255,7 @@ public class LoggingConfigController extends AbstractNamedMvcEndpoint {
     @GetMapping(value = "/getAuditLog")
     @ResponseBody
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
         return this.auditTrailManager.get();
     }
 }
