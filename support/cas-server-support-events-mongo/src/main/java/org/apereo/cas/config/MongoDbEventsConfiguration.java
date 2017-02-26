@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import com.mongodb.MongoClientURI;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;

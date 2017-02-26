@@ -2,7 +2,7 @@ package org.apereo.cas.support.events;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
 

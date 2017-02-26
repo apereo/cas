@@ -2,12 +2,12 @@ description = "Apereo CAS Hazelcast Integration"
 dependencies {
 
     compile project(":core:cas-server-core-tickets")
-    compile libraries.hazelcast
-    compileOnly libraries.springcloud
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(":core:cas-server-core-util")
-    testCompile project(":core:cas-server-core-services")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompile project(":core:cas-server-core-logout")
+    implementation libraries.hazelcast
+    
+    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompileOnly project(":core:cas-server-core-util")
+    testCompileOnly project(":core:cas-server-core-services")
+    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testCompileOnly project(":core:cas-server-core-logout")
 }

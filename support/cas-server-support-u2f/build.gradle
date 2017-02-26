@@ -4,8 +4,8 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-webflow")
 
-    compile libraries.yubicoapi
-    compile libraries.u2flibserver
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    implementation libraries.yubicoapi
+    implementation libraries.u2flibserver
+    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

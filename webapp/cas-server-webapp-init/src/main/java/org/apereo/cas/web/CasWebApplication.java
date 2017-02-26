@@ -1,8 +1,8 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.config.CasEmbeddedContainerConfiguration;
+import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.spring.boot.CasBanner;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -25,7 +25,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.util.Collections;
+import java.util.Map;
 
 /**
  * This is {@link CasWebApplication}.
@@ -68,9 +68,11 @@ public class CasWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
+        final Map<String, Object> properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
+        final Banner banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
-                .banner(new CasBanner())
-                .properties(Collections.singletonMap(CasEmbeddedContainerConfiguration.EMBEDDED_CONTAINER_CONFIG_ACTIVE, Boolean.TRUE))
+                .banner(banner)
+                .properties(properties)
                 .logStartupInfo(true)
                 .run(args);
     }

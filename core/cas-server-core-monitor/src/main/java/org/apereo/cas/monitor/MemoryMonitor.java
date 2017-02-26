@@ -20,17 +20,11 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
         this.freeMemoryWarnThreshold = threshold;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return MemoryMonitor.class.getSimpleName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public MemoryStatus observe() {
         final StatusCode code;

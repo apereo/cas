@@ -27,7 +27,8 @@ public class MemoryStatus extends Status {
      * @param code  Status code.
      * @param free  JVM free memory in bytes.
      * @param total JVM total memory in bytes.
-     * @see #getCode()
+     * @param used  the used
+     * @see #getCode() #getCode()
      */
     public MemoryStatus(final StatusCode code, final long free, final long total, final long used) {
         super(code, String.format("%.2fMB free (%.2f%%), %.2fMB used, %.2fMB total.", free / BYTES_PER_MB,

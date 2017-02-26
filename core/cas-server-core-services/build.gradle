@@ -1,20 +1,20 @@
 description = "Apereo CAS Core Services"
 dependencies {
     compile project(":api:cas-server-core-api-services")
-    compile libraries.hibernate
-    compile libraries.spring
-    compile libraries.quartz
-    compile libraries.jackson
-    compile libraries.httpclient
+
+    
+    implementation libraries.quartz
+
+    implementation libraries.httpclient
 
     compileOnly project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-configuration")
     
-    testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
-    testCompile project(":core:cas-server-core-authentication")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-util", configuration: "tests")
+    testCompileOnly project(":core:cas-server-core-authentication")
+    testCompileOnly project(":core:cas-server-core-logout")
+    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }
 

@@ -51,6 +51,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreServicesConfiguration.class,
+        CasCoreLogoutConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreLogoutConfiguration.class})
 @ContextConfiguration("classpath:HazelcastInstanceConfigurationTests-config.xml")

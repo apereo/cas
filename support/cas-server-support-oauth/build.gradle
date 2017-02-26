@@ -1,11 +1,11 @@
 description = "Apereo CAS Server OAuth Provider Support"
 dependencies {
-    compileOnly libraries.springcloud
+    implementation libraries.httpclient
     compile project(":support:cas-server-support-oauth-core")
     compileOnly project(":core:cas-server-core-tickets")
-    testCompile project(":core:cas-server-core-util")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile libraries.tests
+    testCompileOnly project(":core:cas-server-core-util")
+    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
+    testCompileOnly project(":core:cas-server-core-logout")
+    testCompileOnly libraries.tests
 }

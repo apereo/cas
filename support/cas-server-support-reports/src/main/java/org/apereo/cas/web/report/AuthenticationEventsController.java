@@ -1,8 +1,8 @@
 package org.apereo.cas.web.report;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.support.events.dao.CasEventRepository;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,12 +19,12 @@ import java.util.Collection;
  * @since 5.0.0
  */
 @ConditionalOnClass(value = CasEventRepository.class)
-public class AuthenticationEventsController extends AbstractNamedMvcEndpoint {
+public class AuthenticationEventsController extends BaseCasMvcEndpoint {
 
     private CasEventRepository eventRepository;
 
-    public AuthenticationEventsController(final CasEventRepository eventRepository) {
-        super("casauthnevents", "/authnEvents", true, true);
+    public AuthenticationEventsController(final CasEventRepository eventRepository, final CasConfigurationProperties casProperties) {
+        super("casauthnevents", "/authnEvents", casProperties.getMonitor().getEndpoints().getAuthenticationEvents());
         this.eventRepository = eventRepository;
     }
 
@@ -39,6 +39,7 @@ public class AuthenticationEventsController extends AbstractNamedMvcEndpoint {
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
         return new ModelAndView("monitoring/viewAuthenticationEvents");
     }
 
@@ -53,6 +54,7 @@ public class AuthenticationEventsController extends AbstractNamedMvcEndpoint {
     @GetMapping(value = "/getEvents")
     @ResponseBody
     public Collection<CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
         return this.eventRepository.load();
     }
 }

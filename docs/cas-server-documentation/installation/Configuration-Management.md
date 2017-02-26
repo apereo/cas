@@ -123,6 +123,9 @@ cas.server.name=...
 
 You could have just as well used a `cas.yml` file to host the changes.
 
+The `native` profile has the ability to monitor auto-reload the applicationc context upon receiving change
+notifications. Please [review this guide](Configuration-Management-Reload.html#reload-strategy) to learn more.
+
 ### Default
 
 CAS is also able to handle git-based repositories that host CAS configuration.

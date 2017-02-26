@@ -117,16 +117,19 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
 
+    @RefreshScope
     @Bean
     public String casOAuthCallbackUrl() {
         return casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
     }
 
+    @RefreshScope
     @Bean
     public UrlResolver casCallbackUrlResolver() {
         return new OAuth20CasCallbackUrlResolver(casOAuthCallbackUrl());
     }
 
+    @RefreshScope
     @Bean
     public Config oauthSecConfig() {
         final CasConfiguration cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
@@ -151,18 +154,21 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
+    @RefreshScope
     public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
         return new SecurityInterceptor(oauthSecConfig(), Authenticators.CAS_OAUTH_CLIENT);
     }
 
     @ConditionalOnMissingBean(name = "consentApprovalViewResolver")
     @Bean
+    @RefreshScope
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OAuth20ConsentApprovalViewResolver(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
     @Bean
+    @RefreshScope
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
         return new OAuth20CallbackAuthorizeViewResolver() {
         };
@@ -170,6 +176,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
+    @RefreshScope
     public HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor() {
         final String clients = Stream.of(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
                 Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
@@ -179,6 +186,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "oauthInterceptor")
     @Bean
+    @RefreshScope
     public HandlerInterceptorAdapter oauthInterceptor() {
         return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor());
     }
@@ -189,30 +197,35 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @RefreshScope
     public OAuth20CasClientRedirectActionBuilder defaultOAuthCasClientRedirectActionBuilder() {
         return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
 
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
+    @RefreshScope
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
         return new OAuthClientAuthenticator(oAuthValidator(), this.servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
+    @RefreshScope
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
         return new OAuthUserAuthenticator(authenticationSystemSupport, servicesManager, webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "oAuthValidator")
     @Bean
+    @RefreshScope
     public OAuth20Validator oAuthValidator() {
         return new OAuth20Validator(webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
     @Bean
+    @RefreshScope
     public AccessTokenResponseGenerator oauthAccessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
     }
@@ -237,11 +250,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @RefreshScope
     public UniqueTicketIdGenerator oAuthCodeIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();
     }
 
     @Bean
+    @RefreshScope
     public UniqueTicketIdGenerator refreshTokenIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();
     }
@@ -261,6 +276,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     @ConditionalOnMissingBean(name = "callbackAuthorizeController")
+    @RefreshScope
     public OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController() {
         return new OAuth20CallbackAuthorizeEndpointController(servicesManager, ticketRegistry,
                 oAuthValidator(), defaultAccessTokenFactory(), oauthPrincipalFactory(), webApplicationServiceFactory,
@@ -270,6 +286,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "accessTokenController")
     @Bean
+    @RefreshScope
     public OAuth20AccessTokenEndpointController accessTokenController() {
         return new OAuth20AccessTokenEndpointController(
                 servicesManager,
@@ -287,6 +304,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "profileController")
     @Bean
+    @RefreshScope
     public OAuth20UserProfileControllerController profileController() {
         return new OAuth20UserProfileControllerController(servicesManager,
                 ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
@@ -296,6 +314,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "authorizeController")
     @Bean
+    @RefreshScope
     public OAuth20AuthorizeEndpointController authorizeController() {
         return new OAuth20AuthorizeEndpointController(
                 servicesManager, ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
@@ -306,6 +325,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "oauthPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory oauthPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
@@ -323,20 +343,22 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")
+    @RefreshScope
     public AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy() {
         return new OAuth20AuthenticationRequestServiceSelectionStrategy(servicesManager,
                 webApplicationServiceFactory, casOAuthCallbackUrl());
     }
 
     @Bean
+    @RefreshScope
     public CallbackController callbackController() {
         final CallbackController c = new CallbackController();
         c.setConfig(oauthSecConfig());
         return c;
     }
-
-
+    
     @Bean
+    @RefreshScope
     public UniqueTicketIdGenerator accessTokenIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();
     }

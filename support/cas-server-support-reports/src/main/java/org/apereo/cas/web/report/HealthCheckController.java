@@ -2,11 +2,11 @@ package org.apereo.cas.web.report;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.io.IOUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.util.JsonUtils;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,15 +27,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Marvin S. Addison
  * @since 3.5
  */
-public class HealthCheckController extends AbstractNamedMvcEndpoint {
+public class HealthCheckController extends BaseCasMvcEndpoint {
 
     private final Monitor<HealthStatus> healthCheckMonitor;
-    private final long timeout;
+    private CasConfigurationProperties casProperties;
 
-    public HealthCheckController(final Monitor<HealthStatus> healthCheckMonitor, final long timeout) {
-        super("status", "", true, true);
+    public HealthCheckController(final Monitor<HealthStatus> healthCheckMonitor, final CasConfigurationProperties casProperties) {
+        super("status", "", casProperties.getMonitor().getEndpoints().getStatus());
         this.healthCheckMonitor = healthCheckMonitor;
-        this.timeout = timeout;
+        this.casProperties = casProperties;
     }
 
     /**
@@ -50,6 +50,8 @@ public class HealthCheckController extends AbstractNamedMvcEndpoint {
     @ResponseBody
     protected WebAsyncTask<HealthStatus> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
+        ensureEndpointAccessIsAuthorized(request, response);
+        
         final Callable<HealthStatus> asyncTask = () -> {
             final HealthStatus healthStatus = healthCheckMonitor.observe();
             response.setStatus(healthStatus.getCode().value());
@@ -81,6 +83,6 @@ public class HealthCheckController extends AbstractNamedMvcEndpoint {
             return null;
         };
 
-        return new WebAsyncTask<>(timeout, asyncTask);
+        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
     }
 }

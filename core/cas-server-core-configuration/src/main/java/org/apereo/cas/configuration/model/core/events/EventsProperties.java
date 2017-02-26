@@ -13,7 +13,8 @@ import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientPrope
 public class EventsProperties {
 
     private boolean trackGeolocation;
-
+    private boolean trackConfigurationModifications = true;
+    
     private Jpa jpa = new Jpa();
 
     private Mongodb mongodb = new Mongodb();
@@ -32,6 +33,14 @@ public class EventsProperties {
 
     public void setTrackGeolocation(final boolean trackGeolocation) {
         this.trackGeolocation = trackGeolocation;
+    }
+
+    public boolean isTrackConfigurationModifications() {
+        return trackConfigurationModifications;
+    }
+
+    public void setTrackConfigurationModifications(final boolean trackConfigurationModifications) {
+        this.trackConfigurationModifications = trackConfigurationModifications;
     }
 
     public Jpa getJpa() {

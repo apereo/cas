@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.EndpointProperties;
 import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
 import org.springframework.boot.actuate.endpoint.ShutdownEndpoint;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
 import org.springframework.cloud.context.restart.RestartEndpoint;
@@ -27,11 +26,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DashboardController extends AbstractNamedMvcEndpoint {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+public class DashboardController extends BaseCasMvcEndpoint {
+    
     @Autowired(required = false)
     private BusProperties busProperties;
 
@@ -56,8 +52,11 @@ public class DashboardController extends AbstractNamedMvcEndpoint {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public DashboardController() {
-        super("casdashboard", "/dashboard", true, true);
+    private CasConfigurationProperties casProperties;
+    
+    public DashboardController(final CasConfigurationProperties casProperties) {
+        super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard());
+        this.casProperties = casProperties;
     }
 
     /**
@@ -71,6 +70,9 @@ public class DashboardController extends AbstractNamedMvcEndpoint {
     @GetMapping
     public ModelAndView handle(final HttpServletRequest request,
                                final HttpServletResponse response) throws Exception {
+        
+        ensureEndpointAccessIsAuthorized(request, response);
+        
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
         ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);

@@ -1,4 +1,3 @@
-
 description = "Apereo CAS Core APIs"
 dependencies {
     compile project(":api:cas-server-core-api-protocol")

@@ -180,6 +180,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param logoutUrl                                    the logout url
      * @param forceSignedLogoutRequests                    the force signed logout requests
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
+     * @param samlObjectSignatureValidator                 the saml object signature validator
      */
     public AbstractSamlProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                                 final ParserPool parserPool,

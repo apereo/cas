@@ -6,8 +6,8 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":api:cas-server-core-api-logout")
     compile project(":core:cas-server-core-util")
-    compile libraries.pac4j
-    compile libraries.spring
-    compile libraries.springboot
-    compile libraries.thymeleaf
+    implementation libraries.pac4j
+    
+    
+    implementation libraries.thymeleaf
 }

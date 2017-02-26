@@ -1,11 +1,10 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,16 +25,16 @@ import java.util.Set;
  * @since 5.0.0
  */
 @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-public class TrustedDevicesController extends AbstractNamedMvcEndpoint {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
+public class TrustedDevicesController extends BaseCasMvcEndpoint {
 
     private final MultifactorAuthenticationTrustStorage mfaTrustEngine;
+    private final CasConfigurationProperties casProperties;
 
-    public TrustedDevicesController(final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
-        super("trustedDevs", "/trustedDevs", true, true);
+    public TrustedDevicesController(final MultifactorAuthenticationTrustStorage mfaTrustEngine,
+                                    final CasConfigurationProperties casProperties) {
+        super("trustedDevs", "/trustedDevs", casProperties.getMonitor().getEndpoints().getTrustedDevices());
         this.mfaTrustEngine = mfaTrustEngine;
+        this.casProperties = casProperties;
     }
 
     /**
@@ -49,20 +48,28 @@ public class TrustedDevicesController extends AbstractNamedMvcEndpoint {
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         return new ModelAndView("monitoring/viewTrustedDevices");
     }
 
     /**
      * Gets records.
      *
+     * @param request  the request
+     * @param response the response
      * @return the records
      * @throws Exception the exception
      */
     @GetMapping(value = "/getRecords")
     @ResponseBody
-    public Set<MultifactorAuthenticationTrustRecord> getRecords() throws Exception {
-        final LocalDate onOrAfter = LocalDate.now().minus(casProperties.getAuthn().getMfa().getTrusted().getExpiration(),
-                DateTimeUtils.toChronoUnit(casProperties.getAuthn().getMfa().getTrusted().getTimeUnit()));
+    public Set<MultifactorAuthenticationTrustRecord> getRecords(final HttpServletRequest request,
+                                                                final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
+        final MultifactorAuthenticationProperties.Trusted trusted = casProperties.getAuthn().getMfa().getTrusted();
+        final LocalDate onOrAfter = LocalDate.now().minus(trusted.getExpiration(), DateTimeUtils.toChronoUnit(trusted.getTimeUnit()));
+
         this.mfaTrustEngine.expire(onOrAfter);
         return this.mfaTrustEngine.get(onOrAfter);
     }
@@ -70,14 +77,18 @@ public class TrustedDevicesController extends AbstractNamedMvcEndpoint {
     /**
      * Revoke record.
      *
-     * @param key     the key
-     * @param request the request
+     * @param key      the key
+     * @param request  the request
+     * @param response the response
      * @return the integer
      * @throws Exception the exception
      */
     @PostMapping(value = "/revokeRecord")
     @ResponseBody
-    public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request) throws Exception {
+    public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request,
+                                final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         this.mfaTrustEngine.expire(key);
         return HttpStatus.OK.value();
     }

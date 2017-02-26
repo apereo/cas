@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryPro
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * Configuration properties class for <code>ticket</code>.
+ * Configuration properties class for {@code ticket}.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

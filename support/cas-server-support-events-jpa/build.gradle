@@ -4,15 +4,14 @@ dependencies {
     compile project(":core:cas-server-core-events")
     compile project(":core:cas-server-core-util")
     compile project(":support:cas-server-support-jpa-util")
-    compileOnly libraries.springcloud
-    compile libraries.spring
-    runtime libraries.hibernate
-    runtime project(":support:cas-server-support-jdbc-drivers")
+    
 
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-events", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-tickets")
-    testCompile project(path: ":core:cas-server-core-services")
-    testCompile project(path: ":core:cas-server-core-logout")
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+
+    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-events", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-tickets")
+    testCompileOnly project(path: ":core:cas-server-core-services")
+    testCompileOnly project(path: ":core:cas-server-core-logout")
 }

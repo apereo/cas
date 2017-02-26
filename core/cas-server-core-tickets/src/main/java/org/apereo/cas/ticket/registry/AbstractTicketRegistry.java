@@ -46,7 +46,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @return specified ticket from the registry
      * @throws IllegalArgumentException if class is null.

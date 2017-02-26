@@ -32,9 +32,6 @@ public class LockedOutputStream extends BufferedOutputStream {
         this.lock = out.getChannel().lock();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void close() throws IOException {
         if (this.closed) {

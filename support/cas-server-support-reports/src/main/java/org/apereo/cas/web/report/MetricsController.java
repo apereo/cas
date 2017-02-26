@@ -2,9 +2,9 @@ package org.apereo.cas.web.report;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlets.MetricsServlet;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.WebApplicationContext;
@@ -22,7 +22,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class MetricsController extends AbstractNamedMvcEndpoint {
+public class MetricsController extends BaseCasMvcEndpoint {
 
     private Properties initParameters = new Properties();
 
@@ -33,8 +33,8 @@ public class MetricsController extends AbstractNamedMvcEndpoint {
     @Qualifier("metrics")
     private MetricRegistry metrics;
 
-    public MetricsController() {
-        super("casmetrics", "/metrics", true, true);
+    public MetricsController(final CasConfigurationProperties casProperties) {
+        super("casmetrics", "/metrics", casProperties.getMonitor().getEndpoints().getMetrics());
     }
 
     /**
@@ -46,6 +46,7 @@ public class MetricsController extends AbstractNamedMvcEndpoint {
      */
     @GetMapping
     public void handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
         final MetricsServlet servlet = new MetricsServlet(this.metrics);
         servlet.init(new DelegatingServletConfig());
         servlet.service(request, response);

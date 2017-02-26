@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link AllTestsSuite}.
+ * This is {@link AllServicesTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
