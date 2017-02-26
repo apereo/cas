@@ -221,10 +221,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     public static void setInResponseToForSamlResponseIfNeeded(final Service service, final SignableSAMLObject samlResponse) {
         if (service instanceof SamlService) {
             final SamlService samlService = (SamlService) service;
-
             final String requestId = samlService.getRequestID();
             if (StringUtils.isNotBlank(requestId)) {
-
                 if (samlResponse instanceof org.opensaml.saml.saml1.core.Response) {
                     ((org.opensaml.saml.saml1.core.Response) samlResponse).setInResponseTo(requestId);
                 }
