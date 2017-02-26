@@ -4,6 +4,7 @@ title: CAS - Configuring Authentication Events
 ---
 
 # Authentication Events
+
 CAS provides a facility for consuming and recording authentication events into persistent storage. This functionality is similar to the records
 kept by the [Audit log](Audits.html) except that the functionality and storage format is controlled via CAS itself rather than the audit engine.
 Additionally, while audit data may be used for reporting and monitoring, events stored into storage via this functionality may later be assessed
@@ -13,6 +14,7 @@ designed to be consumed by the developer and subsequent CAS modules, while audit
 By default, no events are recorded by this functionality.
 
 ## Recorded Data
+
 The following metadata is captured and recorded by the event machinery when enabled:
 
 | Field                             | Description
@@ -36,7 +38,7 @@ record the event. To learn more, please [review this guide](GeoTracking-Authenti
 
 ## Configuration
 
-The following storage backends are available for consumption of events:
+The following storage backends are available for consumption of events.
 
 ### MongoDb
 
@@ -53,6 +55,7 @@ Stores authentication events into a MongoDb NoSQL database.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-events).
 
 ### JPA
+
 Stores authentication events into a RDBMS.
 
 ```xml
@@ -64,3 +67,15 @@ Stores authentication events into a RDBMS.
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-events).
+
+### Memory
+
+Stores authentication events into memory for a very limited time period.
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-events-memory</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```

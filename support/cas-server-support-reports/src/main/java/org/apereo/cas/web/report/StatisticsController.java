@@ -5,9 +5,9 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
@@ -27,7 +27,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-public class StatisticsController extends AbstractNamedMvcEndpoint implements ServletContextAware {
+public class StatisticsController extends BaseCasMvcEndpoint implements ServletContextAware {
 
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
     private static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
@@ -37,30 +37,32 @@ public class StatisticsController extends AbstractNamedMvcEndpoint implements Se
     private final CentralAuthenticationService centralAuthenticationService;
     private final MetricRegistry metricsRegistry;
     private final HealthCheckRegistry healthCheckRegistry;
-    private final String hostName;
+    private final CasConfigurationProperties casProperties;
 
     public StatisticsController(final CentralAuthenticationService centralAuthenticationService,
                                 final MetricRegistry metricsRegistry,
                                 final HealthCheckRegistry healthCheckRegistry,
-                                final String hostName) {
-        super("casstats", "/stats", true, true);
+                                final CasConfigurationProperties casProperties) {
+        super("casstats", "/stats", casProperties.getMonitor().getEndpoints().getStatistics());
         this.centralAuthenticationService = centralAuthenticationService;
         this.metricsRegistry = metricsRegistry;
         this.healthCheckRegistry = healthCheckRegistry;
-        this.hostName = hostName;
+        this.casProperties = casProperties;
     }
 
     /**
      * Gets availability times of the server.
      *
-     * @param httpServletRequest  the http servlet request
-     * @param httpServletResponse the http servlet response
+     * @param request  the http servlet request
+     * @param response the http servlet response
      * @return the availability
      */
     @GetMapping(value = "/getAvailability")
     @ResponseBody
-    public Map<String, Object> getAvailability(final HttpServletRequest httpServletRequest,
-                                               final HttpServletResponse httpServletResponse) {
+    public Map<String, Object> getAvailability(final HttpServletRequest request,
+                                               final HttpServletResponse response) {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
         final Duration diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
         model.put("upTime", diff.getSeconds());
@@ -70,14 +72,16 @@ public class StatisticsController extends AbstractNamedMvcEndpoint implements Se
     /**
      * Gets memory stats.
      *
-     * @param httpServletRequest  the http servlet request
-     * @param httpServletResponse the http servlet response
+     * @param request  the http servlet request
+     * @param response the http servlet response
      * @return the memory stats
      */
     @GetMapping(value = "/getMemStats")
     @ResponseBody
-    public Map<String, Object> getMemoryStats(final HttpServletRequest httpServletRequest,
-                                              final HttpServletResponse httpServletResponse) {
+    public Map<String, Object> getMemoryStats(final HttpServletRequest request,
+                                              final HttpServletResponse response) {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
         model.put("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
         model.put("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
@@ -88,14 +92,16 @@ public class StatisticsController extends AbstractNamedMvcEndpoint implements Se
     /**
      * Gets ticket stats.
      *
-     * @param httpServletRequest  the http servlet request
-     * @param httpServletResponse the http servlet response
+     * @param request  the http servlet request
+     * @param response the http servlet response
      * @return the ticket stats
      */
     @GetMapping(value = "/getTicketStats")
     @ResponseBody
-    public Map<String, Object> getTicketStats(final HttpServletRequest httpServletRequest,
-                                              final HttpServletResponse httpServletResponse) {
+    public Map<String, Object> getTicketStats(final HttpServletRequest request,
+                                              final HttpServletResponse response) {
+        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
 
         int unexpiredTgts = 0;
@@ -140,10 +146,12 @@ public class StatisticsController extends AbstractNamedMvcEndpoint implements Se
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest,
                                                  final HttpServletResponse httpServletResponse) throws Exception {
+        ensureEndpointAccessIsAuthorized(httpServletRequest, httpServletResponse);
+        
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
-        modelAndView.addObject("casTicketSuffix", hostName);
+        modelAndView.addObject("casTicketSuffix", casProperties.getHost().getName());
         modelAndView.getModel().putAll(getAvailability(httpServletRequest, httpServletResponse));
         modelAndView.addObject("startTime", this.upTimeStartDate.toLocalDateTime());
 
