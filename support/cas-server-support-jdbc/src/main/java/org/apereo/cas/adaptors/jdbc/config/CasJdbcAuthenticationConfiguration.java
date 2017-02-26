@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -65,7 +66,10 @@ public class CasJdbcAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+
+    @ConditionalOnMissingBean(name = "jdbcAuthenticationHandlers")
     @Bean
+    @RefreshScope
     public Collection<AuthenticationHandler> jdbcAuthenticationHandlers() {
         final Collection<AuthenticationHandler> handlers = new HashSet<>();
         final JdbcAuthenticationProperties jdbc = casProperties.getAuthn().getJdbc();
@@ -194,6 +198,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "jdbcPrincipalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory jdbcPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
