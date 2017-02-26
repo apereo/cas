@@ -3,9 +3,9 @@ package org.apereo.cas.web.report;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,13 +20,14 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SingleSignOnSessionStatusController extends AbstractNamedMvcEndpoint {
+public class SingleSignOnSessionStatusController extends BaseCasMvcEndpoint {
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
 
     public SingleSignOnSessionStatusController(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                               final TicketRegistrySupport ticketRegistrySupport) {
-        super("ssostatus", "/sso", true, true);
+                                               final TicketRegistrySupport ticketRegistrySupport,
+                                               final CasConfigurationProperties casProperties) {
+        super("ssostatus", "/sso", casProperties.getMonitor().getEndpoints().getSingleSignOnStatus());
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.ticketRegistrySupport = ticketRegistrySupport;
     }
@@ -40,8 +41,9 @@ public class SingleSignOnSessionStatusController extends AbstractNamedMvcEndpoin
      */
     @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getStatus(final HttpServletRequest request,
-                            final HttpServletResponse response) {
+    public String getStatus(final HttpServletRequest request, final HttpServletResponse response) {
+        ensureEndpointAccessIsAuthorized(request, response);
+        
         final String tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isBlank(tgtId)) {
             response.setStatus(HttpStatus.GONE.value());

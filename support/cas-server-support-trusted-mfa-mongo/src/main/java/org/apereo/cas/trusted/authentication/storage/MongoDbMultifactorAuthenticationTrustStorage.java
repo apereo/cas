@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
-import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -58,7 +57,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
             query.addCriteria(Criteria.where("key").is(key));
             final WriteResult res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
             LOGGER.info("Found and removed [{}]", res.getN());
-        } catch (final NoResultException e) {
+        } catch (final Exception e) {
             LOGGER.info("No trusted authentication records could be found");
         }
     }
@@ -70,7 +69,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
             query.addCriteria(Criteria.where("date").lte(onOrBefore));
             final WriteResult res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
             LOGGER.info("Found and removed [{}]", res.getN());
-        } catch (final NoResultException e) {
+        } catch (final Exception e) {
             LOGGER.info("No trusted authentication records could be found");
         }
     }

@@ -7,7 +7,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.type.SimpleType;
-import org.apache.shiro.util.ClassUtils;
+import com.google.common.base.Throwables;
+import org.apache.commons.lang3.ClassUtils;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,16 +31,20 @@ public class JasigRegisteredServiceDeserializationProblemHandler extends Deseria
                                         final String subTypeId, final TypeIdResolver idResolver,
                                         final String failureMsg) throws IOException {
 
-        if (subTypeId.contains("org.jasig.")) {
-            final String newTypeName = subTypeId.replaceAll("jasig", "apereo");
-            LOGGER.warn("Found legacy CAS JSON definition type identified as [{}]. "
-                            + "While CAS will attempt to convert the legacy definition to [{}] for the time being, "
-                            + "the definition SHOULD manually be upgraded to the new supported syntax",
-                    subTypeId, newTypeName);
-            final Class newType = ClassUtils.forName(newTypeName);
-            return SimpleType.construct(newType);
+        try {
+            if (subTypeId.contains("org.jasig.")) {
+                final String newTypeName = subTypeId.replaceAll("jasig", "apereo");
+                LOGGER.warn("Found legacy CAS JSON definition type identified as [{}]. "
+                                + "While CAS will attempt to convert the legacy definition to [{}] for the time being, "
+                                + "the definition SHOULD manually be upgraded to the new supported syntax",
+                        subTypeId, newTypeName);
+                final Class newType = ClassUtils.getClass(newTypeName);
+                return SimpleType.construct(newType);
+            }
+            return null;
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
         }
-        return null;
     }
 
     @Override
