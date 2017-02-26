@@ -278,7 +278,7 @@ subprojects {
         api libraries.springcloud
         api libraries.springboot
 
-        compileOnly libraries.javax
+        provided libraries.javax
 
         if (Boolean.getBoolean("genConfigMetadata")) {
             optional libraries.springbootconfigmetadata

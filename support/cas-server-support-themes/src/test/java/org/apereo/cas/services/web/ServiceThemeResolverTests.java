@@ -16,8 +16,8 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
         
 /**
  * @author Scott Battaglia
@@ -69,7 +69,6 @@ public class ServiceThemeResolverTests {
     @Test
     public void verifyGetDefaultServiceWithNoServicesManager() {
         this.serviceThemeResolver = new ServiceThemeResolver("test", null, mobileBrowsers);
-
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
         request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");
