@@ -1,0 +1,5 @@
+description = "Apereo CAS OAuth Server API Support"
+dependencies {
+    compileOnly project(":core:cas-server-core-tickets")
+    api libraries.pac4j
+}
