@@ -118,4 +118,9 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     public TicketGrantingTicket getGrantingTicket() {
         return null;
     }
+
+    @Override
+    public String getPrefix() {
+        return OAuthCode.PREFIX;
+    }
 }
