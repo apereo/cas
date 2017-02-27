@@ -3,12 +3,12 @@ package org.apereo.cas.ticket;
 import java.util.Collection;
 
 /**
- * This is {@link TicketMetadataCatalogRegistrationPlan}.
+ * This is {@link TicketMetadataRegistrationPlan}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface TicketMetadataCatalogRegistrationPlan {
+public interface TicketMetadataRegistrationPlan {
 
     /**
      * Register ticket metadata.
@@ -16,6 +16,21 @@ public interface TicketMetadataCatalogRegistrationPlan {
      * @param metadata the metadata
      */
     void registerTicketMetadata(TicketMetadata metadata);
+
+    /**
+     * Update ticket metadata.
+     *
+     * @param metadata the metadata
+     */
+    void updateTicketMetadata(TicketMetadata metadata);
+
+    /**
+     * Contains ticket metadata.
+     *
+     * @param ticketId the ticket id
+     * @return the boolean
+     */
+    boolean containsTicketMetadata(String ticketId);
 
     /**
      * Find ticket metadata ticket metadata.
