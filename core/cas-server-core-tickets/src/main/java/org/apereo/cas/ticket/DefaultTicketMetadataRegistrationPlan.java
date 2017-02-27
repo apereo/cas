@@ -1,24 +1,25 @@
 package org.apereo.cas.ticket;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
 /**
- * This is {@link DefaultTicketMetadataCatalogRegistrationPlan}.
+ * This is {@link DefaultTicketMetadataRegistrationPlan}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class DefaultTicketMetadataCatalogRegistrationPlan implements TicketMetadataCatalogRegistrationPlan {
-    private final Set<TicketMetadata> ticketMetadatas = new HashSet<>();
+public class DefaultTicketMetadataRegistrationPlan implements TicketMetadataRegistrationPlan {
+    private final Map<String, TicketMetadata> ticketMetadataMap = new HashMap<>();
 
-    public DefaultTicketMetadataCatalogRegistrationPlan() {
+    public DefaultTicketMetadataRegistrationPlan() {
     }
 
     @Override
     public TicketMetadata findTicketMetadata(final String ticketId) {
-        return ticketMetadatas.stream().filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().get();
+        return ticketMetadataMap.values().stream().filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().get();
     }
 
     @Override
@@ -28,7 +29,17 @@ public class DefaultTicketMetadataCatalogRegistrationPlan implements TicketMetad
 
     @Override
     public void registerTicketMetadata(final TicketMetadata ticketMetadata) {
-        ticketMetadatas.add(ticketMetadata);
+        ticketMetadataMap.put(ticketMetadata.getPrefix(), ticketMetadata);
+    }
+
+    @Override
+    public void updateTicketMetadata(final TicketMetadata metadata) {
+        registerTicketMetadata(metadata);
+    }
+
+    @Override
+    public boolean containsTicketMetadata(final String ticketId) {
+        return ticketMetadataMap.containsKey(ticketId);
     }
 
     /**
@@ -44,6 +55,6 @@ public class DefaultTicketMetadataCatalogRegistrationPlan implements TicketMetad
 
     @Override
     public Collection<TicketMetadata> findAllTicketMetadata() {
-        return new HashSet<>(ticketMetadatas);
+        return new HashSet<>(ticketMetadataMap.values());
     }
 }

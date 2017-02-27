@@ -12,6 +12,6 @@ public interface TicketMetadataRegistrationConfigurer {
      *
      * @param plan the plan
      */
-    default void configureTicketMetadataRegistrationPlan(final TicketMetadataCatalogRegistrationPlan plan) {
+    default void configureTicketMetadataRegistrationPlan(final TicketMetadataRegistrationPlan plan) {
     }
 }

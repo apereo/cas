@@ -16,7 +16,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.TicketMetadataCatalogRegistrationPlan;
+import org.apereo.cas.ticket.TicketMetadataRegistrationPlan;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
@@ -65,21 +65,21 @@ public class HazelcastTicketRegistryConfiguration {
 
     @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
     @RefreshScope
-    public TicketRegistry hazelcastTicketRegistry(@Qualifier("ticketMetadataCatalogRegistrationPlan")
-                                                  final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan) {
+    public TicketRegistry hazelcastTicketRegistry(@Qualifier("ticketMetadataRegistrationPlan")
+                                                  final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
-                ticketMetadataCatalogRegistrationPlan,
+                ticketMetadataRegistrationPlan,
                 hz.getPageSize());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
     }
 
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketMetadataCatalogRegistrationPlan")
-                                                       final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan) {
+    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketMetadataRegistrationPlan")
+                                                       final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan) {
         return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager,
-                hazelcastTicketRegistry(ticketMetadataCatalogRegistrationPlan), false);
+                hazelcastTicketRegistry(ticketMetadataRegistrationPlan), false);
     }
 
     @Bean

@@ -4,7 +4,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketMetadata;
-import org.apereo.cas.ticket.TicketMetadataCatalogRegistrationPlan;
+import org.apereo.cas.ticket.TicketMetadataRegistrationPlan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -14,7 +14,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,17 +30,20 @@ import java.util.concurrent.atomic.AtomicLong;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class JpaTicketRegistry extends AbstractTicketRegistry {
+    /** Property name registered in ticket metadata to note TGTs must be cascaded on removals. */
+    public static final String TICKET_REGISTRY_PROPERTY_NAME_TGT_CASCADE = "cascade";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistry.class);
 
-    private final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan;
+    private final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan;
     private final LockModeType lockType;
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
-    public JpaTicketRegistry(final LockModeType lockType, final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan) {
+    public JpaTicketRegistry(final LockModeType lockType, final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan) {
         this.lockType = lockType;
-        this.ticketMetadataCatalogRegistrationPlan = ticketMetadataCatalogRegistrationPlan;
+        this.ticketMetadataRegistrationPlan = ticketMetadataRegistrationPlan;
     }
 
     @Override
@@ -59,7 +61,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final Collection<TicketMetadata> tkts = this.ticketMetadataCatalogRegistrationPlan.findAllTicketMetadata();
+        final Collection<TicketMetadata> tkts = this.ticketMetadataRegistrationPlan.findAllTicketMetadata();
         final AtomicLong count = new AtomicLong();
         tkts.forEach(t -> count.addAndGet(entityManager.createQuery("delete from " + getTicketEntityName(t)).executeUpdate()));
         return count.get();
@@ -79,7 +81,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      */
     public Ticket getRawTicket(final String ticketId) {
         try {
-            final TicketMetadata tkt = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(ticketId);
+            final TicketMetadata tkt = this.ticketMetadataRegistrationPlan.findTicketMetadata(ticketId);
             return this.entityManager.find(tkt.getImplementationClass(), ticketId, this.lockType);
         } catch (final Exception e) {
             LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
@@ -89,7 +91,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<TicketMetadata> tkts = this.ticketMetadataCatalogRegistrationPlan.findAllTicketMetadata();
+        final Collection<TicketMetadata> tkts = this.ticketMetadataRegistrationPlan.findAllTicketMetadata();
         final List<Ticket> tickets = new ArrayList<>();
         tkts.forEach(t -> {
             final Query query = this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass());
@@ -100,22 +102,22 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long sessionCount() {
-        final TicketMetadata md = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(TicketGrantingTicket.PREFIX);
+        final TicketMetadata md = this.ticketMetadataRegistrationPlan.findTicketMetadata(TicketGrantingTicket.PREFIX);
         return countToLong(this.entityManager.createQuery("select count(t) from " + getTicketEntityName(md) + " t").getSingleResult());
     }
 
     @Override
     public long serviceTicketCount() {
-        final TicketMetadata md = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(ServiceTicket.PREFIX);
+        final TicketMetadata md = this.ticketMetadataRegistrationPlan.findTicketMetadata(ServiceTicket.PREFIX);
         return countToLong(this.entityManager.createQuery("select count(t) from " + getTicketEntityName(md) + " t").getSingleResult());
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final int failureCount;
-        final TicketMetadata md = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(ticketId);
+        final TicketMetadata md = this.ticketMetadataRegistrationPlan.findTicketMetadata(ticketId);
 
-        if (md.isCascading()) {
+        if (md.getPropertyAsBoolean(TICKET_REGISTRY_PROPERTY_NAME_TGT_CASCADE)) {
             failureCount = deleteTicketGrantingTickets(ticketId);
         } else {
             final Query query = entityManager.createQuery("delete from " + getTicketEntityName(md) + " o where o.id = :id");
@@ -138,13 +140,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private int deleteTicketGrantingTickets(final String ticketId) {
         int failureCount = 0;
 
-        final TicketMetadata st = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(ServiceTicket.PREFIX);
+        final TicketMetadata st = this.ticketMetadataRegistrationPlan.findTicketMetadata(ServiceTicket.PREFIX);
 
         Query query = entityManager.createQuery("delete from " + getTicketEntityName(st) + " s where s.ticketGrantingTicket.id = :id");
         query.setParameter("id", ticketId);
         failureCount += query.executeUpdate();
 
-        final TicketMetadata tgt = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(TicketGrantingTicket.PREFIX);
+        final TicketMetadata tgt = this.ticketMetadataRegistrationPlan.findTicketMetadata(TicketGrantingTicket.PREFIX);
         query = entityManager.createQuery("delete from " + getTicketEntityName(tgt) + " t where t.ticketGrantingTicket.id = :id");
         query.setParameter("id", ticketId);
         failureCount += query.executeUpdate();

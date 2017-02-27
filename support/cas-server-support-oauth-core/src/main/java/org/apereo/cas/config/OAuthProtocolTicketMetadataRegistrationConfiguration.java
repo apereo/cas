@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketMetadata;
-import org.apereo.cas.ticket.TicketMetadataCatalogRegistrationPlan;
+import org.apereo.cas.ticket.TicketMetadataRegistrationPlan;
 import org.apereo.cas.ticket.TicketMetadataRegistrationConfigurer;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
@@ -27,7 +27,7 @@ public class OAuthProtocolTicketMetadataRegistrationConfiguration implements Tic
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthProtocolTicketMetadataRegistrationConfiguration.class);
     
     @Override
-    public void configureTicketMetadataRegistrationPlan(final TicketMetadataCatalogRegistrationPlan plan) {
+    public void configureTicketMetadataRegistrationPlan(final TicketMetadataRegistrationPlan plan) {
         LOGGER.debug("Registering core OAuth protocol ticket metadata types...");
         plan.registerTicketMetadata(new TicketMetadata(OAuthCodeImpl.class, OAuthCode.PREFIX));
         plan.registerTicketMetadata(new TicketMetadata(AccessTokenImpl.class, AccessToken.PREFIX));
