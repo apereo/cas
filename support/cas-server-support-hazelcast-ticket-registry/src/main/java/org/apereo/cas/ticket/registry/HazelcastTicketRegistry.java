@@ -61,7 +61,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
      */
     @PostConstruct
     public void init() {
-        LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}] with name [{}]", this.hazelcastInstance, ticketGrantingTicketsRegistry.getName());
+        LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}] with name [{}]", this.hazelcastInstance);
     }
 
     @Override

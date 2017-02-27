@@ -115,7 +115,7 @@ subprojects {
 	
     apply from: rootProject.file("gradle/tasks.gradle")
 
-    ext.libraries = rootProject.ext.libraries;
+    ext.libraries = rootProject.ext.libraries
 
     repositories {
         mavenLocal()
