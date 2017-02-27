@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.TicketMetadataCatalogRegistrationPlan;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
@@ -41,13 +42,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static final String TABLE_SERVICE_TICKETS = ServiceTicketImpl.class.getSimpleName();
     private static final String TABLE_TICKET_GRANTING_TICKETS = TicketGrantingTicketImpl.class.getSimpleName();
 
+    
+    private final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan;
     private final boolean lockTgt;
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
-    public JpaTicketRegistry(final boolean lockingTgtEnabled) {
+    public JpaTicketRegistry(final boolean lockingTgtEnabled, final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan) {
         this.lockTgt = lockingTgtEnabled;
+        this.ticketMetadataCatalogRegistrationPlan = ticketMetadataCatalogRegistrationPlan;
     }
 
     @Override

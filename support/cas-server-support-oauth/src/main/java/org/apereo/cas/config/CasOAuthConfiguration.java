@@ -72,7 +72,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
+import static org.apereo.cas.support.oauth.OAuthConstants.*;
 
 /**
  * This this {@link CasOAuthConfiguration}.
@@ -117,9 +117,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
 
-    @RefreshScope
-    @Bean
-    public String casOAuthCallbackUrl() {
+    private String casOAuthCallbackUrl() {
         return casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
     }
 
@@ -356,7 +354,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         c.setConfig(oauthSecConfig());
         return c;
     }
-    
+
+    @ConditionalOnMissingBean(name = "accessTokenIdGenerator")
     @Bean
     @RefreshScope
     public UniqueTicketIdGenerator accessTokenIdGenerator() {

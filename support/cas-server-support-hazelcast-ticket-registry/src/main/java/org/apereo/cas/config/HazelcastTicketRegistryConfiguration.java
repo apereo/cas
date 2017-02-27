@@ -68,6 +68,7 @@ public class HazelcastTicketRegistryConfiguration {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
                 hz.getTicketGrantingTicketsMapName(),
+                hz.getServiceTicketsMapName(),
                 hz.getPageSize());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
