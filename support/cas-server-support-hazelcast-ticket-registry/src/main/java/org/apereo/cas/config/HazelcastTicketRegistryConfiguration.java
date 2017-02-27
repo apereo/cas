@@ -16,6 +16,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.ticket.TicketMetadataCatalogRegistrationPlan;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
@@ -64,19 +65,21 @@ public class HazelcastTicketRegistryConfiguration {
 
     @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
     @RefreshScope
-    public TicketRegistry hazelcastTicketRegistry() {
+    public TicketRegistry hazelcastTicketRegistry(@Qualifier("ticketMetadataCatalogRegistrationPlan")
+                                                  final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
-                hz.getTicketGrantingTicketsMapName(),
-                hz.getServiceTicketsMapName(),
+                ticketMetadataCatalogRegistrationPlan,
                 hz.getPageSize());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
     }
 
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner() {
-        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, hazelcastTicketRegistry(), false);
+    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketMetadataCatalogRegistrationPlan")
+                                                       final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan) {
+        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager,
+                hazelcastTicketRegistry(ticketMetadataCatalogRegistrationPlan), false);
     }
 
     @Bean
@@ -157,38 +160,36 @@ public class HazelcastTicketRegistryConfiguration {
 
     private Map<String, MapConfig> buildHazelcastMapConfigurations() {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final HazelcastProperties.Cluster cluster = hz.getCluster();
         final Map<String, MapConfig> mapConfigs = new HashMap<>();
 
-        final EvictionPolicy evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
-
         // TGT Map
-        final MapConfig mapConfig = new MapConfig()
-                .setName(hz.getTicketGrantingTicketsMapName())
-                .setMaxIdleSeconds(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds())
-                .setBackupCount(cluster.getBackupCount())
-                .setAsyncBackupCount(cluster.getAsyncBackupCount())
-                .setEvictionPolicy(evictionPolicy)
-                .setMaxSizeConfig(new MaxSizeConfig()
-                        .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
-                        .setSize(cluster.getMaxHeapSizePercentage()));
+        final MapConfig mapConfig = createMapConfig(hz.getTicketGrantingTicketsMapName(), casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
         LOGGER.debug("Created Hazelcast map configuration for [{}]", mapConfig);
 
         // ST Map
-        final MapConfig mapConfigSTs = new MapConfig()
-                .setName(hz.getServiceTicketsMapName())
-                .setMaxIdleSeconds((int) casProperties.getTicket().getSt().getTimeToKillInSeconds())
-                .setBackupCount(cluster.getBackupCount())
-                .setAsyncBackupCount(cluster.getAsyncBackupCount())
-                .setEvictionPolicy(evictionPolicy)
-                .setMaxSizeConfig(new MaxSizeConfig()
-                        .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
-                        .setSize(cluster.getMaxHeapSizePercentage()));
+        final MapConfig mapConfigSTs = createMapConfig(hz.getServiceTicketsMapName(), casProperties.getTicket().getSt().getTimeToKillInSeconds());
         LOGGER.debug("Created Hazelcast map configuration for [{}]", mapConfigSTs);
+
 
         mapConfigs.put(hz.getTicketGrantingTicketsMapName(), mapConfig);
         mapConfigs.put(hz.getServiceTicketsMapName(), mapConfigSTs);
 
         return mapConfigs;
+    }
+
+    private MapConfig createMapConfig(final String mapName, final long maxIdleSeconds) {
+        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final HazelcastProperties.Cluster cluster = hz.getCluster();
+        final EvictionPolicy evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
+
+        return new MapConfig()
+                .setName(mapName)
+                .setMaxIdleSeconds((int) maxIdleSeconds)
+                .setBackupCount(cluster.getBackupCount())
+                .setAsyncBackupCount(cluster.getAsyncBackupCount())
+                .setEvictionPolicy(evictionPolicy)
+                .setMaxSizeConfig(new MaxSizeConfig()
+                        .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
+                        .setSize(cluster.getMaxHeapSizePercentage()));
     }
 }

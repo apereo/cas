@@ -26,6 +26,14 @@ public interface TicketMetadataCatalogRegistrationPlan {
     TicketMetadata findTicketMetadata(String ticketId);
 
     /**
+     * Find ticket metadata ticket metadata.
+     *
+     * @param ticket the ticket
+     * @return the ticket metadata
+     */
+    TicketMetadata findTicketMetadata(Ticket ticket);
+
+    /**
      * Find all ticket metadata collection.
      *
      * @return the collection
@@ -39,5 +47,5 @@ public interface TicketMetadataCatalogRegistrationPlan {
      * @return the class
      */
     Class<? extends Ticket> findTicketImplementationClass(String ticketId);
-    
+
 }

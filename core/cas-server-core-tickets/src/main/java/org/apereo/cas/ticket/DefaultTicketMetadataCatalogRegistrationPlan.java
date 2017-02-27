@@ -22,6 +22,11 @@ public class DefaultTicketMetadataCatalogRegistrationPlan implements TicketMetad
     }
 
     @Override
+    public TicketMetadata findTicketMetadata(final Ticket ticket) {
+        return findTicketMetadata(ticket.getPrefix());
+    }
+
+    @Override
     public void registerTicketMetadata(final TicketMetadata ticketMetadata) {
         ticketMetadatas.add(ticketMetadata);
     }

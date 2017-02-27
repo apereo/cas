@@ -2,11 +2,12 @@ package org.apereo.cas.ticket.registry;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.hazelcast.query.PagingPredicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketMetadata;
+import org.apereo.cas.ticket.TicketMetadataCatalogRegistrationPlan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -32,28 +33,27 @@ import java.util.stream.Collectors;
  * @since 4.1.0
  */
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements Closeable {
+    /**
+     * Hazelcast map name in the ticket metadata.
+     */
+    public static final String HAZELCAST_PROPERTY_NAME_MAP = "hazelcastMapName";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastTicketRegistry.class);
 
-    private IMap<String, Ticket> ticketGrantingTicketsRegistry;
-    private IMap<String, Ticket> serviceTicketsRegistry;
-
-    private HazelcastInstance hazelcastInstance;
-
-    private int pageSize;
+    private final HazelcastInstance hazelcastInstance;
+    private final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan;
+    private final int pageSize;
 
     /**
      * Instantiates a new Hazelcast ticket ticketGrantingTicketsRegistry.
      *
-     * @param hz        An instance of {@code HazelcastInstance}
-     * @param mapName   Name of map to use
-     * @param stMapName the st map name
-     * @param pageSize  the page size
+     * @param hz       An instance of {@code HazelcastInstance}
+     * @param pageSize the page size
      */
-    public HazelcastTicketRegistry(final HazelcastInstance hz, final String mapName, final String stMapName, final int pageSize) {
-        this.ticketGrantingTicketsRegistry = hz.getMap(mapName);
-        this.serviceTicketsRegistry = hz.getMap(stMapName);
+    public HazelcastTicketRegistry(final HazelcastInstance hz, final TicketMetadataCatalogRegistrationPlan plan, final int pageSize) {
         this.hazelcastInstance = hz;
         this.pageSize = pageSize;
+        this.ticketMetadataCatalogRegistrationPlan = plan;
     }
 
     /**
@@ -75,26 +75,22 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
         final Ticket encTicket = encodeTicket(ticket);
 
-        if (ticket instanceof TicketGrantingTicket) {
-            addTicketInternal(ticketGrantingTicketsRegistry, encTicket, ticket.getExpirationPolicy().getTimeToLive());
-        } else if (ticket instanceof ServiceTicket) {
-            addTicketInternal(serviceTicketsRegistry, encTicket, ticket.getExpirationPolicy().getTimeToLive());
-        } else {
-            throw new IllegalArgumentException(
-                    String.format("Invalid ticket type [%s]. Expecting either [TicketGrantingTicket] or [ServiceTicket]",
-                            ticket.getClass().getName()));
-        }
+        final TicketMetadata metadata = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(ticket);
+        final IMap<String, Ticket> ticketMap = getTicketMapInstanceByMetadata(metadata);
+        ticketMap.set(encTicket.getId(), encTicket, ticket.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS);
     }
 
-    private void addTicketInternal(final IMap registry, final Ticket ticket, final long timeToLive) {
-        registry.set(ticket.getId(), ticket, timeToLive, TimeUnit.SECONDS);
+    private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketMetadata metadata) {
+        final String mapName = metadata.getPropertyAsString(HAZELCAST_PROPERTY_NAME_MAP);
+        return getTicketMapInstance(mapName);
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isNotBlank(encTicketId)) {
-            final Ticket ticket = this.ticketGrantingTicketsRegistry.get(encTicketId);
+            final TicketMetadata metadata = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(ticketId);
+            final Ticket ticket = getTicketMapInstanceByMetadata(metadata).get(encTicketId);
             return decodeTicket(ticket);
         }
         return null;
@@ -102,45 +98,40 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        return this.ticketGrantingTicketsRegistry.remove(ticketId) != null;
+        final TicketMetadata metadata = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(ticketId);
+        return getTicketMapInstanceByMetadata(metadata).remove(ticketId) != null;
     }
 
     @Override
     public long deleteAll() {
-        final int size = this.ticketGrantingTicketsRegistry.size();
-        this.ticketGrantingTicketsRegistry.evictAll();
-        this.ticketGrantingTicketsRegistry.clear();
-        return size;
+        final Collection<TicketMetadata> metadata = this.ticketMetadataCatalogRegistrationPlan.findAllTicketMetadata();
+        final AtomicLong count = new AtomicLong();
+        metadata.forEach(r -> {
+            final IMap<String, Ticket> instance = getTicketMapInstanceByMetadata(r);
+            if (instance != null) {
+                count.addAndGet(instance.size());
+                instance.evictAll();
+                instance.clear();
+            }
+        });
+        return count.get();
     }
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<Ticket> collection = new HashSet<>();
-
-        LOGGER.debug("Attempting to acquire lock from Hazelcast instance...");
-        final Lock lock = this.hazelcastInstance.getLock(getClass().getName());
-        lock.lock();
-        LOGGER.debug("Hazelcast instance lock acquired");
+        Collection<Ticket> tickets = new HashSet<>();
 
         try {
-            LOGGER.debug("Setting up the paging predicate with page size of [{}]", this.pageSize);
-            final PagingPredicate pagingPredicate = new PagingPredicate(this.pageSize);
+            final TicketMetadata tgts = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(TicketGrantingTicket.PREFIX);
+            final TicketMetadata sts = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(ServiceTicket.PREFIX);
 
-            LOGGER.debug("Retrieving the initial collection of tickets from Hazelcast instance...");
-            Collection<Ticket> entrySet = this.ticketGrantingTicketsRegistry.values(pagingPredicate);
-
-            while (!entrySet.isEmpty()) {
-                collection.addAll(entrySet.stream().map(this::decodeTicket).collect(Collectors.toList()));
-
-                pagingPredicate.nextPage();
-                entrySet = this.ticketGrantingTicketsRegistry.values(pagingPredicate);
-            }
+            tickets = getTicketMapInstanceByMetadata(tgts).values().stream().limit(this.pageSize).collect(Collectors.toList());
+            tickets.addAll(getTicketMapInstanceByMetadata(sts).values());
+            return tickets;
         } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
-        } finally {
-            lock.unlock();
+            LOGGER.warn(e.getMessage(), e);
         }
-        return collection;
+        return tickets;
     }
 
     /**
@@ -159,5 +150,26 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     @Override
     public void close() throws IOException {
         shutdown();
+    }
+
+    @Override
+    public long sessionCount() {
+        final TicketMetadata metadata = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(TicketGrantingTicket.PREFIX);
+        return getTicketMapInstanceByMetadata(metadata).size();
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        final TicketMetadata metadata = this.ticketMetadataCatalogRegistrationPlan.findTicketMetadata(ServiceTicket.PREFIX);
+        return getTicketMapInstanceByMetadata(metadata).size();
+    }
+
+    private IMap<String, Ticket> getTicketMapInstance(final String mapName) {
+        try {
+            return hazelcastInstance.getMap(mapName);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 }
