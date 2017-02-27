@@ -3186,7 +3186,9 @@ which may not be appropriate for use in production. Setting the value to
 * `create-drop` - drop the schema at the end of the session.
 
 ```properties
+# cas.ticket.registry.jpa.ticketLockType=NONE
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
+
 # cas.ticket.registry.jpa.healthQuery=
 # cas.ticket.registry.jpa.isolateInternalQueries=false
 # cas.ticket.registry.jpa.url=jdbc:hsqldb:mem:cas-ticket-registry
