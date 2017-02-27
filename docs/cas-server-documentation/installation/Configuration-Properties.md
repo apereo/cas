@@ -2144,6 +2144,14 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
 ```
 
+The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo. 
+You can generate a random string in Python with:
+
+```python
+import os, hashlib
+print hashlib.sha1(os.urandom(32)).hexdigest()
+```
+
 ### FIDO U2F
 
 To learn more about this topic, [please review this guide](FIDO-U2F-Authentication.html).
