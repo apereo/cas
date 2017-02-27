@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +17,11 @@ public class DefaultTicketMetadataCatalogRegistrationPlan implements TicketMetad
     }
 
     @Override
+    public TicketMetadata findTicketMetadata(final String ticketId) {
+        return ticketMetadatas.stream().filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().get();
+    }
+
+    @Override
     public void registerTicketMetadata(final TicketMetadata ticketMetadata) {
         ticketMetadatas.add(ticketMetadata);
     }
@@ -26,17 +32,13 @@ public class DefaultTicketMetadataCatalogRegistrationPlan implements TicketMetad
      * @param ticketId the ticket id
      * @return the class
      */
+    @Override
     public Class<? extends Ticket> findTicketImplementationClass(final String ticketId) {
-        return ticketMetadatas.stream().filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().get().getImplementationClass();
+        return findTicketMetadata(ticketId).getImplementationClass();
     }
 
-    /**
-     * Find ticket implementation class simple name string.
-     *
-     * @param ticketId the ticket id
-     * @return the string
-     */
-    public String findTicketImplementationClassSimpleName(final String ticketId) {
-        return findTicketImplementationClass(ticketId).getSimpleName();
+    @Override
+    public Collection<TicketMetadata> findAllTicketMetadata() {
+        return new HashSet<>(ticketMetadatas);
     }
 }
