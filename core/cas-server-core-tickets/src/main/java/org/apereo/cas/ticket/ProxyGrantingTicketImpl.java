@@ -85,4 +85,8 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
         return serviceTicket;
     }
 
+    @Override
+    public String getPrefix() {
+        return ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX;
+    }
 }

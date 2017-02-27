@@ -57,5 +57,11 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      * @return the expiration policy
      */
     ExpirationPolicy getExpirationPolicy();
-    
+
+    /**
+     * Gets prefix.
+     *
+     * @return the prefix
+     */
+    String getPrefix();
 }

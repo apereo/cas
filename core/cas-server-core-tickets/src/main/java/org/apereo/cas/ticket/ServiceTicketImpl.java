@@ -172,4 +172,9 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     public void setService(final Service service) {
         this.service = service;
     }
+
+    @Override
+    public String getPrefix() {
+        return ServiceTicket.PREFIX;
+    }
 }

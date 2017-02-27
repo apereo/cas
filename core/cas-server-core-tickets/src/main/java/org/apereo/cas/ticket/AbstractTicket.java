@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 /**
  * Abstract implementation of a ticket that handles all ticket state for
  * policies. Also incorporates properties common among all tickets. As this is
- * an abstract class, it cannnot be instanciated. It is recommended that
+ * an abstract class, it cannot be created. It is recommended that
  * implementations of the Ticket interface extend the AbstractTicket as it
  * handles common functionality amongst different ticket types (such as state
  * updating).

@@ -313,4 +313,9 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
                 .append(ticket.getId(), this.getId())
                 .isEquals();
     }
+
+    @Override
+    public String getPrefix() {
+        return TicketGrantingTicket.PREFIX;
+    }
 }
