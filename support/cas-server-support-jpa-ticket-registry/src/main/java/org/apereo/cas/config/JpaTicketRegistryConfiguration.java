@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryPro
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.ticket.TicketMetadataCatalogRegistrationPlan;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
@@ -39,25 +40,16 @@ public class JpaTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-        
-    /**
-     * Jpa packages to scan string [].
-     *
-     * @return the string [ ]
-     */
+
     @Bean
     public String[] ticketPackagesToScan() {
-        return new String[] {
+        return new String[]{
                 "org.apereo.cas.ticket",
                 "org.apereo.cas.adaptors.jdbc"
         };
     }
 
-    /**
-     * Entity manager factory local container.
-     *
-     * @return the local container entity manager factory bean
-     */
+
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
@@ -67,16 +59,9 @@ public class JpaTicketRegistryConfiguration {
                         "jpaTicketRegistryContext",
                         ticketPackagesToScan(),
                         dataSourceTicket()),
-                        casProperties.getTicket().getRegistry().getJpa());
+                casProperties.getTicket().getRegistry().getJpa());
     }
 
-    /**
-     * Transaction manager events jpa transaction manager.
-     *
-     * @param emf the emf
-     *
-     * @return the jpa transaction manager
-     */
     @Bean
     public PlatformTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
@@ -84,11 +69,6 @@ public class JpaTicketRegistryConfiguration {
         return mgmr;
     }
 
-    /**
-     * Data source ticket combo pooled data source.
-     *
-     * @return the combo pooled data source
-     */
     @RefreshScope
     @Bean
     public DataSource dataSourceTicket() {
@@ -97,9 +77,10 @@ public class JpaTicketRegistryConfiguration {
 
     @Bean(name = {"jpaTicketRegistry", "ticketRegistry"})
     @RefreshScope
-    public TicketRegistry jpaTicketRegistry() {
+    public TicketRegistry jpaTicketRegistry(@Qualifier("ticketMetadataCatalogRegistrationPlan")
+                                            final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan) {
         final JpaTicketRegistryProperties jpa = casProperties.getTicket().getRegistry().getJpa();
-        final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.isJpaLockingTgtEnabled());
+        final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.isJpaLockingTgtEnabled(), ticketMetadataCatalogRegistrationPlan);
         bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(jpa.getCrypto()));
         return bean;
     }
