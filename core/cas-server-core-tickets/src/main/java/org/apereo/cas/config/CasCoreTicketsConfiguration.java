@@ -1,15 +1,19 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.ticket.DefaultTicketMetadataCatalogRegistrationPlan;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.TicketMetadataRegistrationConfigurer;
+import org.apereo.cas.ticket.TicketMetadataCatalogRegistrationPlan;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
@@ -59,6 +63,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -294,5 +299,18 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {
         return ticketTransactionManager();
+    }
+
+    @ConditionalOnMissingBean(name = "ticketMetadataCatalogRegistrationPlan")
+    @Autowired
+    @Bean
+    public TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan(final List<TicketMetadataRegistrationConfigurer> configurers) {
+        final DefaultTicketMetadataCatalogRegistrationPlan plan = new DefaultTicketMetadataCatalogRegistrationPlan();
+        configurers.forEach(c -> {
+            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.debug("Configuring ticket metadata registration plan [{}]", name);
+            c.configureTicketMetadataRegistrationPlan(plan);
+        });
+        return plan;
     }
 }
