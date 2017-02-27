@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ProxyTicketImpl;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -30,9 +31,9 @@ public class CasProtocolCoreTicketMetadataRegistrationConfiguration implements T
     @Override
     public void configureTicketMetadataRegistrationPlan(final TicketMetadataCatalogRegistrationPlan plan) {
         LOGGER.debug("Registering core CAS protocol ticket metadata types...");
-        plan.registerTicketMetadata(new TicketMetadata(TicketGrantingTicketImpl.class, TicketGrantingTicket.PREFIX));
-        plan.registerTicketMetadata(new TicketMetadata(ServiceTicketImpl.class, TicketGrantingTicket.PREFIX));
-        plan.registerTicketMetadata(new TicketMetadata(ProxyGrantingTicketImpl.class, ProxyGrantingTicket.PREFIX));
-        plan.registerTicketMetadata(new TicketMetadata(ProxyTicketImpl.class, ProxyTicket.PREFIX));
+        plan.registerTicketMetadata(new TicketMetadata(TicketGrantingTicketImpl.class, TicketGrantingTicket.PREFIX, true));
+        plan.registerTicketMetadata(new TicketMetadata(ServiceTicketImpl.class, ServiceTicket.PREFIX));
+        plan.registerTicketMetadata(new TicketMetadata(ProxyGrantingTicketImpl.class, ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
+        plan.registerTicketMetadata(new TicketMetadata(ProxyTicketImpl.class, ProxyTicket.PROXY_TICKET_PREFIX));
     }
 }

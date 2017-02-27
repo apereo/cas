@@ -80,7 +80,7 @@ public class JpaTicketRegistryConfiguration {
     public TicketRegistry jpaTicketRegistry(@Qualifier("ticketMetadataCatalogRegistrationPlan")
                                             final TicketMetadataCatalogRegistrationPlan ticketMetadataCatalogRegistrationPlan) {
         final JpaTicketRegistryProperties jpa = casProperties.getTicket().getRegistry().getJpa();
-        final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.isJpaLockingTgtEnabled(), ticketMetadataCatalogRegistrationPlan);
+        final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketMetadataCatalogRegistrationPlan);
         bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(jpa.getCrypto()));
         return bean;
     }
