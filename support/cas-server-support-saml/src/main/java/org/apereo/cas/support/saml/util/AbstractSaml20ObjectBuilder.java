@@ -76,7 +76,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_20);
-        samlResponse.setInResponseTo(recipient);
 
         if (service instanceof SamlService) {
             final SamlService samlService = (SamlService) service;
