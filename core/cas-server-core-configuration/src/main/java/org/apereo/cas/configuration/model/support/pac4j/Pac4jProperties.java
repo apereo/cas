@@ -101,7 +101,7 @@ public class Pac4jProperties {
         this.cas = cas;
     }
 
-    public void setLinkedIn(LinkedIn linkedIn) {
+    public void setLinkedIn(final LinkedIn linkedIn) {
         this.linkedIn = linkedIn;
     }
 
