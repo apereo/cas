@@ -7,7 +7,7 @@ title: CAS - Home
 
 * Spring Webflow/Spring Boot [Java server component](planning/Architecture.html).
 * [Pluggable authentication support](Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), 
-[Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), 
+[Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), [SPNEGO](installation/SPNEGO-Authentication.html), 
 [JAAS](installation/JAAS-Authentication.html), [JWT](installation/JWT-Authentication.html), 
 [RADIUS](installation/RADIUS-Authentication.html), [MongoDb](installation/MongoDb-Authentication.html), etc)
 * Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML](protocol/SAML-Protocol.html), 
