@@ -64,7 +64,7 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      @Test
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyInvalidHttpsUrl() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> HttpClient client = <strong class="jxr_keyword">this</strong>.getHttpClient();
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>          assertFalse(client.isValidEndPoint(<span class="jxr_string">"https://static.ak.connect.facebook.com"</span>));
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>          assertFalse(client.isValidEndPoint(<span class="jxr_string">"https://wrong.host.badssl.com/"</span>));
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      }
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      @Test
@@ -74,7 +74,7 @@
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          clientFactory.setHostnameVerifier(<strong class="jxr_keyword">new</strong> NoopHostnameVerifier());
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          clientFactory.setAcceptableCodes(<strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[] {200, 403});
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">final</strong> SimpleHttpClient client = clientFactory.getObject();
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          assertTrue(client.isValidEndPoint(<span class="jxr_string">"https://static.ak.connect.facebook.com"</span>));
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          assertTrue(client.isValidEndPoint(<span class="jxr_string">"https://wrong.host.badssl.com/"</span>));
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      }
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() <strong class="jxr_keyword">throws</strong> Exception {
