@@ -25,14 +25,14 @@ public class HazelcastTicketRegistryMapsConfiguration extends CasProtocolCoreTic
     @Override
     protected void buildAndRegisterServiceTicketMetadata(final TicketMetadataRegistrationPlan plan, final TicketMetadata metadata) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        metadata.setProperty(TICKET_CACHE_NAME, hz.getServiceTicketsMapName());
+        metadata.setTicketCacheName(hz.getServiceTicketsMapName());
         super.buildAndRegisterServiceTicketMetadata(plan, metadata);
     }
 
     @Override
     protected void buildAndRegisterTicketGrantingTicketMetadata(final TicketMetadataRegistrationPlan plan, final TicketMetadata metadata) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        metadata.setProperty(TICKET_CACHE_NAME, hz.getTicketGrantingTicketsMapName());
+        metadata.setTicketCacheName(hz.getTicketGrantingTicketsMapName());
         super.buildAndRegisterTicketGrantingTicketMetadata(plan, metadata);
     }
 }
