@@ -33,7 +33,14 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
             final ActionState spnego = createSpnegoActionState(flow);
             registerMultifactorProvidersStateTransitionsIntoWebflow(spnego);
+
+            augmentWebflowToStartSpnego(flow);
         }
+    }
+
+    private void augmentWebflowToStartSpnego(final Flow flow) {
+        final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, START_SPNEGO_AUTHENTICATE, true);
     }
 
     private void createStartSpnegoAction(final Flow flow) {
