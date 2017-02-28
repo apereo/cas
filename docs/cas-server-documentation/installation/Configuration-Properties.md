@@ -1476,7 +1476,6 @@ LDAP connection configuration injected into the LDAP connection pool can be init
 # cas.authn.ldap[0].passwordPolicy.displayWarningOnMatch=true
 # cas.authn.ldap[0].passwordPolicy.warnAll=true
 # cas.authn.ldap[0].passwordPolicy.warningDays=30
-# cas.authn.ldap[0].passwordPolicy.url=https://password.example.edu/change
 ```
 
 ## REST Authentication
@@ -2141,6 +2140,14 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.duo[0].bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
+```
+
+The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo. 
+You can generate a random string in Python with:
+
+```python
+import os, hashlib
+print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
 ### FIDO U2F
