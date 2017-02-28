@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
 
@@ -79,5 +80,12 @@ public final class ClientCredential implements Credential, Serializable {
 
     public void setTypedIdUsed(final boolean typedIdUsed) {
         this.typedIdUsed = typedIdUsed;
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", getId())
+                .toString();
     }
 }

@@ -15,11 +15,11 @@ WAR overlay projects are provided for reference and study.
 
 ## Gradle
 
-- [https://github.com/apereo/cas-gradle-overlay-template](https://github.com/apereo/cas-gradle-overlay-template)
+- [CAS Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template/tree/4.2)
 
 ## Maven
 
-- [https://github.com/apereo/cas-overlay-template](https://github.com/apereo/cas-overlay-template)
+- [CAS Maven Overlay](https://github.com/apereo/cas-overlay-template/tree/4.2)
 
 
 CAS uses Spring Webflow to drive the login process in a modular and configurable fashion; the `login-webflow.xml`

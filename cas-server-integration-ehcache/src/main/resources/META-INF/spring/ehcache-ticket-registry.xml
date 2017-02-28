@@ -46,7 +46,8 @@
         <property name="timeToLive" value="${ehcache.cache.st.timeAlive:300}" />
     </bean>
 
-    <bean id="ticketGrantingTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <bean id="ticketGrantingTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+          parent="abstractTicketCache">
         <property name="cacheName" value="${ehcache.cache.tgt.name:org.jasig.cas.ticket.TicketGrantingTicket}" />
         <property name="cacheEventListeners">
             <ref bean="ticketRMIAsynchronousCacheReplicator" />

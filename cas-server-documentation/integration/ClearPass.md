@@ -12,10 +12,8 @@ applications with CAS.
 No applications will be able to obtain the user credentials unless ClearPass is explicitly turned on by the
 below configuration.</p></div>
 
-<div class="alert alert-info"><strong>ClearPass via Proxying!</strong><p>If you wish to review the configuration
-for ClearPass via proxying, please <a href="ClearPass-Proxy-Authentication.html">see this link instead</a>.</p></div>
-
 ## Architecture
+
 CAS is able to issue the credential password directly in the CAS validation response. This previously was handled
 via a proxy authentication sequence and obtaining a proxy-granting ticket for the ClearPass service and was necessary
 in order to establish trust between the client application and the CAS server. This document describes the configuration that can be applied in order to receive the credential password as an attribute in the CAS validation response.
@@ -28,6 +26,9 @@ password and will issue a new attribute `<credential>` in the validation respons
 Note that the return of the credential is only carried out by the CAS validation response, provided the client
 application issues a request to the `/p3/serviceValidate` endpoint  (or `/p3/proxyValidate`). Other means of
 returning attributes to CAS, such as SAML1 will **not** support the additional returning of this value.
+
+<div class="alert alert-info"><strong>ClearPass via Proxying!</strong><p>If you wish to review the configuration
+for ClearPass via proxying, please <a href="ClearPass-Proxy-Authentication.html">see this link instead</a>.</p></div>
 
 ## Configuration
 
@@ -49,6 +50,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 ```
 
 ### Register Service
+
 Once you have received the public key from the client application owner, it must be first
 registered inside the CAS server's service registry. The service that holds the public key above must also
 be authorized to receive the password
@@ -78,6 +80,7 @@ as an attribute for the given attribute release policy of choice.
 ```
 
 ### Decrypt the Password
+
 Once the client application has received the `credential` attribute in the CAS validation response, it can decrypt
 it via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
 decryption can occur. Here's a sample code snippet:
@@ -94,5 +97,4 @@ final byte[] cred64 = decodeBase64ToByteArray(encodedPsw);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
-
 ```

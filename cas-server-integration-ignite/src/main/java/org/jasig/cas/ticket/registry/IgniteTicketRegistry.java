@@ -54,7 +54,7 @@ public final class IgniteTicketRegistry extends AbstractCrypticTicketRegistry {
 
     @Autowired
     @NotNull
-    @Value("${ignite.ticketsCache.name:serviceTicketsCache}")
+    @Value("${ignite.servicesCache.name:serviceTicketsCache}")
     private String servicesCacheName;
 
     @NotNull

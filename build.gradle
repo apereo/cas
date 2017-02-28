@@ -88,11 +88,7 @@ subprojects {
     }
 
     configurations.all {
-        resolutionStrategy {
-            if (!Boolean.getBoolean("skipVersionConflict")) {
-                failOnVersionConflict()
-            }
-        }
+
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")
     }

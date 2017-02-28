@@ -2,6 +2,9 @@ package org.jasig.cas.extension.clearpass;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import org.jasig.cas.ticket.registry.DefaultTicketRegistrySupport;
+import org.jasig.cas.web.support.NoOpCookieValueManager;
+import org.jasig.cas.web.support.TGCCookieRetrievingCookieGenerator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +42,8 @@ public class ClearPassControllerTests {
     @Test
     public void verifyClearPassWithNoUsername() throws Exception {
         final ClearPassController controller = new ClearPassController(this.map);
+        controller.setTicketGrantingTicketCookieGenerator(new TGCCookieRetrievingCookieGenerator(new NoOpCookieValueManager()));
+        controller.setTicketRegistrySupport(new DefaultTicketRegistrySupport());
         final ModelAndView mv = controller.handleRequestInternal(new MockHttpServletRequest(),
                 new MockHttpServletResponse());
         assertEquals(mv.getViewName(), ClearPassController.DEFAULT_SERVICE_FAILURE_VIEW_NAME);
@@ -50,8 +55,7 @@ public class ClearPassControllerTests {
         final ClearPassController controller = new ClearPassController(this.map);
         final MockHttpServletRequest req = new MockHttpServletRequest();
         req.setRemoteUser("casuser");
-        final ModelAndView mv = controller.handleRequestInternal(req,
-                new MockHttpServletResponse());
+        final ModelAndView mv = controller.handleRequestInternal(req, new MockHttpServletResponse());
         assertEquals(mv.getViewName(), ClearPassController.DEFAULT_SERVICE_FAILURE_VIEW_NAME);
         assertTrue(mv.getModel().containsKey(ClearPassController.MODEL_FAILURE_DESCRIPTION));
     }

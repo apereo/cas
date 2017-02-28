@@ -37,6 +37,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
         this.action.setAuthenticationSystemSupport(getAuthenticationSystemSupport());
         this.action.setTicketRegistrySupport(getTicketRegistrySupport());
+        this.action.setServicesManager(getServicesManager());
         this.action.afterPropertiesSet();
 
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
