@@ -55,28 +55,44 @@ import java.util.Map;
  */
 public class AuthenticationViaFormAction {
 
-    /** Authentication success result. */
+    /**
+     * Authentication success result.
+     */
     public static final String SUCCESS = "success";
 
-    /** Authentication succeeded with warnings from authn subsystem that should be displayed to user. */
+    /**
+     * Authentication succeeded with warnings from authn subsystem that should be displayed to user.
+     */
     public static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
 
-    /** Authentication success with "warn" enabled. */
+    /**
+     * Authentication success with "warn" enabled.
+     */
     public static final String WARN = "warn";
 
-    /** Authentication failure result. */
+    /**
+     * Authentication failure result.
+     */
     public static final String AUTHENTICATION_FAILURE = "authenticationFailure";
 
-    /** Error result. */
+    /**
+     * Error result.
+     */
     public static final String ERROR = "error";
 
-    /** Flow scope attribute that determines if authn is happening at a public workstation. */
+    /**
+     * Flow scope attribute that determines if authn is happening at a public workstation.
+     */
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
-    /** Logger instance. **/
+    /**
+     * Logger instance.
+     **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** Core we delegate to for handling all ticket related tasks. */
+    /**
+     * Core we delegate to for handling all ticket related tasks.
+     */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -87,14 +103,14 @@ public class AuthenticationViaFormAction {
     /**
      * Handle the submission of credentials from the post.
      *
-     * @param context the context
-     * @param credential the credential
+     * @param context        the context
+     * @param credential     the credential
      * @param messageContext the message context
      * @return the event
      * @since 4.1.0
      */
     public final Event submit(final RequestContext context, final Credential credential,
-                              final MessageContext messageContext)  {
+                              final MessageContext messageContext) {
         if (!checkLoginTicketIfExists(context)) {
             return returnInvalidLoginTicketEvent(context, messageContext);
         }
@@ -127,7 +143,7 @@ public class AuthenticationViaFormAction {
     /**
      * Return invalid login ticket event.
      *
-     * @param context the context
+     * @param context        the context
      * @param messageContext the message context
      * @return the error event
      * @since 4.1.0
@@ -158,7 +174,7 @@ public class AuthenticationViaFormAction {
      * Grant service ticket for the given credential based on the service and tgt
      * that are found in the request context.
      *
-     * @param context the context
+     * @param context    the context
      * @param credential the credential
      * @return the resulting event. Warning, authentication failure or error.
      * @since 4.1.0
@@ -167,14 +183,16 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
-                    ticketGrantingTicketId, service, credential);
+            logger.debug("Attempting to grant service ticket to [{}]", service);
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credential);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             putWarnCookieIfRequestParameterPresent(context);
             return newEvent(WARN);
         } catch (final AuthenticationException e) {
+            logger.warn("Could not grant service ticket due to authentication error [{}]", e.getMessage());
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final TicketException e) {
+            logger.error(e.getMessage(), e);
             if (e instanceof TicketCreationException) {
                 logger.warn("Invalid attempt to access service using renew=true with different credential. "
                         + "Ending SSO session.");
@@ -183,12 +201,13 @@ public class AuthenticationViaFormAction {
             return newEvent(ERROR, e);
         }
     }
+
     /**
      * Create ticket granting ticket for the given credentials.
      * Adds all warnings into the message context.
      *
-     * @param context the context
-     * @param credential the credential
+     * @param context        the context
+     * @param credential     the credential
      * @param messageContext the message context
      * @return the resulting event.
      * @since 4.1.0
@@ -216,7 +235,7 @@ public class AuthenticationViaFormAction {
     /**
      * Add warning messages to message context if needed.
      *
-     * @param tgtId the tgt id
+     * @param tgtId          the tgt id
      * @param messageContext the message context
      * @return true if warnings were found and added, false otherwise.
      * @since 4.1.0
@@ -232,6 +251,7 @@ public class AuthenticationViaFormAction {
         return foundAndAddedWarnings;
 
     }
+
     /**
      * Put warn cookie if request parameter present.
      *
@@ -272,7 +292,7 @@ public class AuthenticationViaFormAction {
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
      *
-     * @param id the id
+     * @param id    the id
      * @param error the error
      * @return the event
      */

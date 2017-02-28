@@ -24,6 +24,8 @@ import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -40,8 +42,11 @@ import javax.validation.constraints.NotNull;
  * @since 3.0.0.4
  */
 public final class GenerateServiceTicketAction extends AbstractAction {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Instance of CentralAuthenticationService. */
+    /**
+     * Instance of CentralAuthenticationService.
+     */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -50,13 +55,17 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         final Service service = WebUtils.getService(context);
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
+        logger.debug("Attempting to generate service ticket based on [{}] and for [{}]", ticketGrantingTicket, service);
         try {
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                .grantServiceTicket(ticketGrantingTicket, service);
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service);
+            logger.debug("Created service ticket [{}]", serviceTicketId);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
         } catch (final TicketException e) {
+            logger.error(e.getMessage(), e);
+
             if (e instanceof InvalidTicketException) {
+                logger.debug("Ticket is deemed invalid. Destroying [{}]", ticketGrantingTicket);
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
@@ -67,8 +76,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         }
     }
 
-    public void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
@@ -79,14 +87,13 @@ public final class GenerateServiceTicketAction extends AbstractAction {
      * @return true, if gateway present
      */
     protected boolean isGatewayPresent(final RequestContext context) {
-        return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get("gateway"));
+        return StringUtils.hasText(context.getExternalContext().getRequestParameterMap().get("gateway"));
     }
 
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
      *
-     * @param id the id
+     * @param id    the id
      * @param error the error
      * @return the event
      */
