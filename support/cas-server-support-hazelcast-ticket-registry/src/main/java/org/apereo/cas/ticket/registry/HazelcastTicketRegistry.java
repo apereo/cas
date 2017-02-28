@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import static org.apereo.cas.ticket.TicketMetadata.TicketMetadataProperties.*;
-
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
  * <p>This implementation just wraps the Hazelcast's {@link IMap}
@@ -78,7 +76,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     }
 
     private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketMetadata metadata) {
-        final String mapName = metadata.getPropertyAsString(TICKET_CACHE_NAME);
+        final String mapName = metadata.getTicketCacheName();
         return getTicketMapInstance(mapName);
     }
 
