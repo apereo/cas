@@ -184,7 +184,8 @@ public class AuthenticationViaFormAction {
         try {
             final Service service = WebUtils.getService(context);
             logger.debug("Attempting to grant service ticket to [{}]", service);
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credential);
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, 
+                    service, credential);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             putWarnCookieIfRequestParameterPresent(context);
             return newEvent(WARN);
