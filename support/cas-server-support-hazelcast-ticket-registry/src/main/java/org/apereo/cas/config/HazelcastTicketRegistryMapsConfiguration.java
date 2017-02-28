@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import static org.apereo.cas.ticket.TicketMetadata.TicketMetadataProperties.*;
-
 /**
  * This is {@link HazelcastTicketRegistryMapsConfiguration}.
  *
