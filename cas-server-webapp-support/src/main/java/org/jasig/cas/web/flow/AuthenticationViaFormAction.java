@@ -194,8 +194,7 @@ public class AuthenticationViaFormAction {
         } catch (final TicketException e) {
             logger.error(e.getMessage(), e);
             if (e instanceof TicketCreationException) {
-                logger.warn("Invalid attempt to access service using renew=true with different credential. "
-                        + "Ending SSO session.");
+                logger.warn("Invalid attempt to access service using renew=true with different credential. Ending SSO session.");
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
             }
             return newEvent(ERROR, e);

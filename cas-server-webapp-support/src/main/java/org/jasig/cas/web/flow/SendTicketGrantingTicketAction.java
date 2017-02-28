@@ -50,7 +50,9 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     @NotNull
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    /** Instance of CentralAuthenticationService. */
+    /**
+     * Instance of CentralAuthenticationService.
+     */
     @NotNull
     private final CentralAuthenticationService centralAuthenticationService;
 
@@ -61,8 +63,8 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
      * Instantiates a new Send ticket granting ticket action.
      *
      * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
-     * @param centralAuthenticationService the central authentication service
-     * @param servicesManager the services manager
+     * @param centralAuthenticationService        the central authentication service
+     * @param servicesManager                     the services manager
      */
     public SendTicketGrantingTicketAction(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                           final CentralAuthenticationService centralAuthenticationService,
@@ -82,7 +84,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
             return success();
         }
 
-        if (isAuthenticatingAtPublicWorkstation(context))  {
+        if (isAuthenticatingAtPublicWorkstation(context)) {
             LOGGER.info("Authentication is at a public workstation. "
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
         } else if (!this.createSsoSessionCookieOnRenewAuthentications && isAuthenticationRenewed(context)) {
@@ -90,20 +92,20 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
         } else {
             this.ticketGrantingTicketCookieGenerator.addCookie(WebUtils.getHttpServletRequest(context), WebUtils
-                .getHttpServletResponse(context), ticketGrantingTicketId);
+                    .getHttpServletResponse(context), ticketGrantingTicketId);
         }
 
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {
-            this.centralAuthenticationService
-                .destroyTicketGrantingTicket(ticketGrantingTicketValueFromCookie);
+            LOGGER.debug("Found Ticket-granting ticket mismatch. Removing [{}]", ticketGrantingTicketValueFromCookie);
+            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketValueFromCookie);
         }
 
         return success();
     }
 
     /**
-     * @deprecated As of 4.1, use constructors instead.
      * @param ticketGrantingTicketCookieGenerator the id generator
+     * @deprecated As of 4.1, use constructors instead.
      */
     @Deprecated
     public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
@@ -111,12 +113,12 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     }
 
     /**
+     * @param centralAuthenticationService cas instance
      * @deprecated As of 4.1, use constructors instead.
-     * @param centralAuthenticationService  cas instance
      */
     @Deprecated
     public void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
+            final CentralAuthenticationService centralAuthenticationService) {
         logger.warn("setCentralAuthenticationService() is deprecated and has no effect. Use constructors instead.");
     }
 
@@ -125,8 +127,8 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     }
 
     /**
+     * @param servicesManager the service manager
      * @deprecated As of 4.1, use constructors instead.
-     * @param servicesManager  the service manager
      */
     @Deprecated
     public void setServicesManager(final ServicesManager servicesManager) {
