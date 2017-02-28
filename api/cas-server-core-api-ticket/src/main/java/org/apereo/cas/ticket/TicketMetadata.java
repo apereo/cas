@@ -101,7 +101,7 @@ public class TicketMetadata {
      * @param key   the key
      * @param value the value
      */
-    public void setProperty(final String key, final Object value) {
+    private void setProperty(final String key, final Object value) {
         properties.put(key, value);
     }
 
@@ -131,6 +131,29 @@ public class TicketMetadata {
                 .toString();
     }
 
+    public Boolean isCascadingTicket() {
+        return getPropertyAsBoolean(TicketMetadataProperties.CASCADE_TICKET);
+    }
+
+    /**
+     * Sets cascading ticket.
+     */
+    public void setCascadingTicket() {
+        setProperty(TicketMetadataProperties.CASCADE_TICKET, Boolean.TRUE);
+    }
+
+    /**
+     * Sets ticket cache name.
+     *
+     * @param name the name
+     */
+    public void setTicketCacheName(final String name) {
+        setProperty(TicketMetadataProperties.TICKET_CACHE_NAME, name);
+    }
+
+    public String getTicketCacheName() {
+        return getPropertyAsString(TicketMetadataProperties.TICKET_CACHE_NAME);
+    }
 
     @Override
     public boolean equals(final Object obj) {

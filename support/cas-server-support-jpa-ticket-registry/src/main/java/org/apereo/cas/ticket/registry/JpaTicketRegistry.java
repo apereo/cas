@@ -19,8 +19,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.apereo.cas.ticket.TicketMetadata.TicketMetadataProperties.*;
-
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
  * ticket registry is suitable for HA environments.
@@ -117,7 +115,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         final int failureCount;
         final TicketMetadata md = this.ticketMetadataRegistrationPlan.findTicketMetadata(ticketId);
 
-        if (md.getPropertyAsBoolean(CASCADE_TICKET)) {
+        if (md.isCascadingTicket()) {
             failureCount = deleteTicketGrantingTickets(ticketId);
         } else {
             final Query query = entityManager.createQuery("delete from " + getTicketEntityName(md) + " o where o.id = :id");
