@@ -127,7 +127,7 @@ layout: null
     *   [CAS](/$version/protocol/CAS-Protocol.html)
     *   [OpenID](/$version/protocol/OpenID-Protocol.html)
     *   [OAuth](/$version/protocol/OAuth-Protocol.html)
-    *   [OpenID Coonnect](/$version/protocol/OIDC-Protocol.html)
+    *   [OpenID Connect](/$version/protocol/OIDC-Protocol.html)
     *   [SAML](#samlprotocol)
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
