@@ -8,7 +8,6 @@ function isDocumentationSiteViewedLocally() {
 function generateNavigationBarAndCrumbs() {
     var crumbs = "<ol class='breadcrumb'>";
 
-
     var activeVersion = getActiveDocumentationVersionInView(true);
 
     var uri = new URI(document.location);
@@ -19,7 +18,7 @@ function generateNavigationBarAndCrumbs() {
 	var clz = ((i + 1) >= segments.length) ? 'breadcrumb-item active' : 'breadcrumb-item ';
 	clz += "capitalize";      
 	    
-	var page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ");    
+	var page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ").replace(/index/g, "");    
 	    
         crumbs += "<li class='" + clz + "'><a href='#'>" + page + "</a></li>";
     }
