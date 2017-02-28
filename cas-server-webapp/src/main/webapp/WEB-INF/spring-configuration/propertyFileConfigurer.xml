@@ -17,7 +17,10 @@
     </description>
 
     <util:properties id="casProperties" location="${cas.properties.filepath:/WEB-INF/cas.properties}"/>
-
-    <context:property-placeholder properties-ref="casProperties"/>
+    
+    <bean  class="org.jasig.cas.util.EncryptationAwarePropertyPlaceholderConfigurer">
+      <property name="properties" ref="casProperties" />
+    </bean>
+    
 
 </beans>

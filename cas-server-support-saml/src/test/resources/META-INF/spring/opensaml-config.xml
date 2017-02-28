@@ -13,11 +13,13 @@
                            http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:property-placeholder location="classpath:cas.properties"
-                                  ignore-resource-not-found="false"
-                                  ignore-unresolvable="false"/>
-
-    <util:properties id="casProperties"/>
+    <util:properties id="casProperties" location="classpath:cas.properties"/>    
+    <bean class="org.jasig.cas.util.EncryptationAwarePropertyPlaceholderConfigurer">
+    	<property name="properties" ref="casProperties" />
+    	<property name="ignoreResourceNotFound" value="false"/>
+    	<property name="ignoreUnresolvable" value="false"/>
+    </bean>
+    
     <context:component-scan base-package="org.jasig.cas" annotation-config="true" />
     <context:annotation-config />
 

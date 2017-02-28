@@ -12,7 +12,10 @@
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <context:property-placeholder location="cas.properties" ignore-resource-not-found="true" />
+  <bean class="org.jasig.cas.util.EncryptationAwarePropertyPlaceholderConfigurer">
+    <property name="location" value="cas.properties"/>
+    <property name="ignoreResourceNotFound" value="true"/>
+  </bean>
 
     <bean id="igniteTicketRegistry" class="org.jasig.cas.ticket.registry.IgniteTicketRegistry"
       p:igniteConfiguration-ref="igniteConfiguration" />

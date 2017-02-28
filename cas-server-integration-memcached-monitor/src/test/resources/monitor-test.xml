@@ -15,8 +15,12 @@
 
     <context:component-scan base-package="org.jasig.cas" />
     <context:annotation-config />
-    <context:property-placeholder location="cas.properties" ignore-resource-not-found="true" />
-    <util:properties id="casProperties" />
+    <util:properties id="casProperties" location="cas.properties"/>    
+    <bean class="org.jasig.cas.util.EncryptationAwarePropertyPlaceholderConfigurer">
+    	<property name="properties" ref="casProperties" />
+    	<property name="ignoreResourceNotFound" value="true"/>
+    </bean>
+    
 
     <bean
           id="memcachedClient"

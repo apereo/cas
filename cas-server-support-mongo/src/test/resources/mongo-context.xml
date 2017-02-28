@@ -16,9 +16,11 @@
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
 
-    <context:property-placeholder location="classpath:cas.properties"
-                                  ignore-resource-not-found="true"
-                                  ignore-unresolvable="false"/>
+   <bean class="org.jasig.cas.util.EncryptationAwarePropertyPlaceholderConfigurer">
+    	<property name="location" value="classpath:cas.properties" />
+    	<property name="ignoreResourceNotFound" value="true"/>
+    	<property name="ignoreUnresolvable" value="false"/>
+    </bean>
 
     <context:annotation-config/>
     <context:component-scan base-package="org.jasig.cas" />

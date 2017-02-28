@@ -11,9 +11,11 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:property-placeholder location="classpath:cas.properties"
-                                  ignore-resource-not-found="false"
-                                  ignore-unresolvable="false"/>
+  <bean class="org.jasig.cas.util.EncryptationAwarePropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:cas.properties"/>
+    <property name="ignoreResourceNotFound" value="false"/>
+    <property name="ignoreUnresolvable" value="false"/>
+  </bean>
 
     <context:component-scan base-package="org.jasig.cas"
                             annotation-config="true" />
