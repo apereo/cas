@@ -159,4 +159,20 @@ public class TicketMetadata {
                 .append(properties)
                 .toHashCode();
     }
+
+    /**
+     * Generic property names and constants used for and by various modules
+     * to attach metadata to a solid ticket implementation.
+     */
+    public interface TicketMetadataProperties {
+        /**
+         * Property name registered in ticket metadata to note tickets (i.e TGTs) must be cascaded on removals.
+         */
+        String CASCADE_TICKET = "cascadeTicket";
+
+        /**
+         * Generic term used to indicate the cache/storage name that would hold onto this ticket.
+         */
+        String TICKET_CACHE_NAME = "ticketCacheName";
+    }
 }

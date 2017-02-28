@@ -3,9 +3,10 @@ package org.apereo.cas.util;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -67,8 +69,11 @@ public final class SamlSPUtils {
             }
             if (StringUtils.isNotBlank(sp.getNameIdFormat())) {
                 service.setRequiredNameIdFormat(sp.getNameIdFormat());
-            }            
-            service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(attributesToRelease));
+            }
+
+            final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(attributesToRelease);
+            service.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(attributes));
+            
             service.setMetadataCriteriaRoles(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart());
             service.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
             service.setMetadataCriteriaRemoveRolelessEntityDescriptors(true);

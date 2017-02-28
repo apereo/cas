@@ -3,11 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketMetadata;
 import org.apereo.cas.ticket.TicketMetadataRegistrationPlan;
-import org.apereo.cas.ticket.registry.JpaTicketRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import static org.apereo.cas.ticket.TicketMetadata.TicketMetadataProperties.*;
 
 /**
  * This is {@link JpaTicketRegistryTicketMetadataConfiguration}.
@@ -18,11 +17,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("hazelcastTicketRegistryMapsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JpaTicketRegistryTicketMetadataConfiguration extends CasProtocolCoreTicketMetadataRegistrationConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistryTicketMetadataConfiguration.class);
-
     @Override
     protected void buildAndRegisterTicketGrantingTicketMetadata(final TicketMetadataRegistrationPlan plan, final TicketMetadata metadata) {
-        metadata.setProperty(JpaTicketRegistry.TICKET_REGISTRY_PROPERTY_NAME_TGT_CASCADE, Boolean.TRUE);
+        metadata.setProperty(CASCADE_TICKET, Boolean.TRUE);
         super.buildAndRegisterTicketGrantingTicketMetadata(plan, metadata);
     }
 }
