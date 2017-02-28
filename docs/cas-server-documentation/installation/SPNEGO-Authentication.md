@@ -150,17 +150,6 @@ zone.
 * Firefox - Set the `network.negotiate-auth.trusted-uris` configuration parameter in `about:config` to the CAS server
 URL, e.g. `https://cas.example.com`.
 
-### Webflow Configuration
-
-Replace the success transition of `initializeLoginForm` from `viewLoginForm` to `startSpnegoAuthenticate`:
-
-```xml
-<action-state id="initializeLoginForm">
-    <evaluate expression="initializeLoginAction" />
-    <transition on="success" to="startSpnegoAuthenticate"/>
-</action-state>
-```
-
 ### Authentication Configuration
 
 Make sure you have at least specified the JCIFS Service Principal in the CAS configuration.
