@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.profile;
 
-import org.apache.shiro.util.ClassUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -18,6 +17,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.J2EContext;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -62,10 +62,10 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
         final Set<Class<? extends BaseOidcScopeAttributeReleasePolicy>> subTypes =
                 reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
-        subTypes.forEach(t -> {
-            final BaseOidcScopeAttributeReleasePolicy ex = (BaseOidcScopeAttributeReleasePolicy) ClassUtils.newInstance(t);
+        subTypes.forEach(Unchecked.consumer(t -> {
+            final BaseOidcScopeAttributeReleasePolicy ex = t.newInstance();
             filters.put(ex.getScopeName(), ex);
-        });
+        }));
 
         userScopes.forEach(t -> filters.put(t.getScopeName(), t));
 

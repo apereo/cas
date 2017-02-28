@@ -175,4 +175,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     public int hashCode() {
         return this.id.hashCode();
     }
+
+    @Override
+    public String getPrefix() {
+        return "MOCKTGT";
+    }
 }

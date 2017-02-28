@@ -103,7 +103,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     /**
      * Indicates whether the registry supports automatic ticket cleanup.
      * Generally, a registry that is able to return a collection of available
-     * tickets should be able to support the cleanup process. Default is <code>true</code>.
+     * tickets should be able to support the cleanup process. Default is {@code true}.
      *
      * @return true/false.
      */

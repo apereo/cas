@@ -4,11 +4,11 @@ dependencies {
     compile project(":core:cas-server-core-tickets")
     compile project(":core:cas-server-core-util")
     compile project(":support:cas-server-support-couchbase-core")
-    compile libraries.spring
-    compile libraries.hibernate
-    compileOnly libraries.springcloud
-    testCompile project(":core:cas-server-core-tickets")
-    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
+    
+
+    
+    testCompileOnly project(":core:cas-server-core-tickets")
+    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testCompileOnly project(path: ":core:cas-server-core-util", configuration: "tests")
     compile project(":support:cas-server-support-oauth-core")
 }
