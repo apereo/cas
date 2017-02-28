@@ -19,7 +19,7 @@ import static org.apereo.cas.ticket.TicketMetadata.TicketMetadataProperties.*;
 public class JpaTicketRegistryTicketMetadataConfiguration extends CasProtocolCoreTicketMetadataRegistrationConfiguration {
     @Override
     protected void buildAndRegisterTicketGrantingTicketMetadata(final TicketMetadataRegistrationPlan plan, final TicketMetadata metadata) {
-        metadata.setProperty(CASCADE_TICKET, Boolean.TRUE);
+        metadata.setCascadingTicket();
         super.buildAndRegisterTicketGrantingTicketMetadata(plan, metadata);
     }
 }
