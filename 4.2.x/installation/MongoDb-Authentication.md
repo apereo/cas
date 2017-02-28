@@ -9,6 +9,16 @@ Verify and authenticate credentials against a [MongoDb](https://www.mongodb.org/
 ```xml
 <alias name="mongoAuthenticationHandler" alias="primaryAuthenticationHandler" />
 ```
+Default password encoder is NopPasswordEncoder (plain text).
+
+To enable SHA512 and salt add:
+```xml
+<bean id="mongoPac4jPasswordEncoder"
+ 		class="org.pac4j.http.credentials.password.BasicSaltedSha512PasswordEncoder">
+ 		<property name="salt"
+ 			value="salt_value" />
+ 	</bean>
+```
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
