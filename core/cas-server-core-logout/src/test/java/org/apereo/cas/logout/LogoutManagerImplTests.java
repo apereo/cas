@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,8 +62,10 @@ public class LogoutManagerImplTests {
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
 
-        singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client, new SamlCompliantLogoutMessageCreator(), servicesManager,
-                new DefaultSingleLogoutServiceLogoutUrlBuilder(), true);
+        singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client, 
+                new SamlCompliantLogoutMessageCreator(), servicesManager,
+                new DefaultSingleLogoutServiceLogoutUrlBuilder(), true,
+                Arrays.asList(new DefaultAuthenticationRequestServiceSelectionStrategy()));
 
         final Map<String, Service> services = new HashMap<>();
         this.simpleWebApplicationServiceImpl = RegisteredServiceTestUtils.getService(URL);
