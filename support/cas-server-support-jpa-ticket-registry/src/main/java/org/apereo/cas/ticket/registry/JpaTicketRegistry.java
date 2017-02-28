@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static org.apereo.cas.ticket.TicketMetadata.TicketMetadataProperties.*;
+
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
  * ticket registry is suitable for HA environments.
@@ -30,9 +32,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class JpaTicketRegistry extends AbstractTicketRegistry {
-    /** Property name registered in ticket metadata to note TGTs must be cascaded on removals. */
-    public static final String TICKET_REGISTRY_PROPERTY_NAME_TGT_CASCADE = "cascade";
-    
+   
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistry.class);
 
     private final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan;
@@ -117,7 +117,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         final int failureCount;
         final TicketMetadata md = this.ticketMetadataRegistrationPlan.findTicketMetadata(ticketId);
 
-        if (md.getPropertyAsBoolean(TICKET_REGISTRY_PROPERTY_NAME_TGT_CASCADE)) {
+        if (md.getPropertyAsBoolean(CASCADE_TICKET)) {
             failureCount = deleteTicketGrantingTickets(ticketId);
         } else {
             final Query query = entityManager.createQuery("delete from " + getTicketEntityName(md) + " o where o.id = :id");
