@@ -148,7 +148,9 @@ URL, e.g. `https://cas.example.com`.
 
 ### Webflow Configuration
 
-Replace the success transition of `initializeLoginForm` from `viewLoginForm` to `startSpnegoAuthenticate`:
+First create `login-webflow.xml` into `src/main/resources/webflow/login/login-webflow.xml`.
+
+Then replace the success transition of `initializeLoginForm` from `viewLoginForm` to `startSpnegoAuthenticate`:
 
 ```xml
 <action-state id="initializeLoginForm">
