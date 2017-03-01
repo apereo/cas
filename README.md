@@ -77,7 +77,7 @@ CAS development is powered by: <br/>
 [releasenotes]: https://github.com/apereo/cas/releases
 [casimg]: https://cloud.githubusercontent.com/assets/1205228/14939607/7cd35c3c-0f02-11e6-9564-80d8dfc0a064.png
 [caswebheroku]: https://jasigcas.heroku.com/cas
-[casmgheroku]: https://jasigcasmgmt.heroku.com/cas-services
+[casmgheroku]: https://jasigcasmgmt.heroku.com/cas-management
 [cassupport]: https://apereo.github.io/cas/Support.html
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
