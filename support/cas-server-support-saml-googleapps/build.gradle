@@ -4,12 +4,12 @@ dependencies {
 
     compile project(":support:cas-server-support-saml")
     compile project(":core:cas-server-core-services")
-    testCompileOnly project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-util")
     testCompileOnly libraries.metrics
     testCompileOnly libraries.log4j
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(path: ":support:cas-server-support-saml", configuration: "tests")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":support:cas-server-support-cookie")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-cookie")
 }

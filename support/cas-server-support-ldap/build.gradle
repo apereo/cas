@@ -10,7 +10,7 @@ dependencies {
     implementation libraries.ldaptive
     implementation libraries.pac4j
 
-    testCompileOnly libraries.tests
-    testCompileOnly project(":core:cas-server-core-services")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }

@@ -1,12 +1,12 @@
 description = "Apereo CAS SAML Server and Validation Support"
 dependencies {
     compile project(":support:cas-server-support-saml-core")
-    testCompileOnly project(":core:cas-server-core-util")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
     testCompileOnly libraries.log4j
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
-    testCompileOnly project(":support:cas-server-support-cookie")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":support:cas-server-support-cookie")
     testCompileOnly libraries.metrics
 }

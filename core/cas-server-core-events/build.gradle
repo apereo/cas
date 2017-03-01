@@ -8,7 +8,7 @@ dependencies {
     compile project(":core:cas-server-core-util")
     
 
-    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
 }
 
 

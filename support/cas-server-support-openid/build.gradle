@@ -8,10 +8,10 @@ dependencies {
     api libraries.persondirectory
     
     compile project(":core:cas-server-core-authentication")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":core:cas-server-core-util")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":support:cas-server-support-cookie")
     testCompileOnly libraries.metrics
 }

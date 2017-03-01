@@ -9,8 +9,8 @@ dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":core:cas-server-core-authentication")
 
-    testCompileOnly project(":core:cas-server-core-util")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }
 
 

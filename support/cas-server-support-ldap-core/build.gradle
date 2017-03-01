@@ -5,7 +5,7 @@ dependencies {
     api libraries.ldaptive
     implementation libraries.shiro
     implementation libraries.pac4j
-    testCompileOnly libraries.tests
-    testCompileOnly project(":core:cas-server-core-services")
-    testCompileOnly project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
 }
