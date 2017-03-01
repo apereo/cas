@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link DefaultTicketDefinition}.
@@ -14,6 +15,7 @@ public class DefaultTicketDefinition implements TicketDefinition {
     private Class<? extends Ticket> implementationClass;
     private String prefix;
     private TicketDefinitionProperties properties = new DefaultTicketDefinitionProperties();
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     /**
      * Instantiates a new Ticket definition.
@@ -21,17 +23,22 @@ public class DefaultTicketDefinition implements TicketDefinition {
      * @param implementationClass the implementation class
      * @param prefix              the prefix
      */
-    public DefaultTicketDefinition(final Class<? extends Ticket> implementationClass, final String prefix) {
+    public DefaultTicketDefinition(final Class<? extends Ticket> implementationClass, final String prefix,
+                                   final int order) {
         this.implementationClass = implementationClass;
         this.prefix = prefix;
+        this.order = order;
     }
-    
-    
+
+    public DefaultTicketDefinition(final Class<? extends Ticket> implementationClass, final String prefix) {
+        this(implementationClass, prefix, Ordered.LOWEST_PRECEDENCE);
+    }
+
     @Override
     public Class<? extends Ticket> getImplementationClass() {
         return implementationClass;
     }
-    
+
     @Override
     public String getPrefix() {
         return prefix;
@@ -78,5 +85,8 @@ public class DefaultTicketDefinition implements TicketDefinition {
                 .toHashCode();
     }
 
-
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
 }
