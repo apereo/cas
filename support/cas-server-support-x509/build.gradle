@@ -11,14 +11,14 @@ dependencies {
     api libraries.persondirectory
     implementation libraries.httpclient
 
-    testCompileOnly project(":support:cas-server-support-generic")
-    testCompileOnly project(path: ":support:cas-server-support-ldap", configuration: "tests")
-    testCompileOnly libraries.tests
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":core:cas-server-core-services")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":core:cas-server-core-monitor")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core", configuration: "tests")
-    testCompileOnly project(":support:cas-server-support-cookie")
+    testImplementation project(":support:cas-server-support-generic")
+    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(":support:cas-server-support-cookie")
 }

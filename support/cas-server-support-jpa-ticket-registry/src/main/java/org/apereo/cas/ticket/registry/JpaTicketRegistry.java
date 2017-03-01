@@ -112,17 +112,17 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final int failureCount;
+        final int totalCount;
         final TicketDefinition md = this.ticketMetadataCatalog.findTicketMetadata(ticketId);
 
         if (md.getProperties().isCascade()) {
-            failureCount = deleteTicketGrantingTickets(ticketId);
+            totalCount = deleteTicketGrantingTickets(ticketId);
         } else {
             final Query query = entityManager.createQuery("delete from " + getTicketEntityName(md) + " o where o.id = :id");
             query.setParameter("id", ticketId);
-            failureCount = query.executeUpdate();
+            totalCount = query.executeUpdate();
         }
-        return failureCount == 0;
+        return totalCount != 0;
     }
 
     private String getTicketEntityName(final TicketDefinition tk) {
@@ -136,24 +136,24 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return the int
      */
     private int deleteTicketGrantingTickets(final String ticketId) {
-        int failureCount = 0;
+        int totalCount = 0;
 
         final TicketDefinition st = this.ticketMetadataCatalog.findTicketMetadata(ServiceTicket.PREFIX);
 
         Query query = entityManager.createQuery("delete from " + getTicketEntityName(st) + " s where s.ticketGrantingTicket.id = :id");
         query.setParameter("id", ticketId);
-        failureCount += query.executeUpdate();
+        totalCount += query.executeUpdate();
 
         final TicketDefinition tgt = this.ticketMetadataCatalog.findTicketMetadata(TicketGrantingTicket.PREFIX);
         query = entityManager.createQuery("delete from " + getTicketEntityName(tgt) + " t where t.ticketGrantingTicket.id = :id");
         query.setParameter("id", ticketId);
-        failureCount += query.executeUpdate();
+        totalCount += query.executeUpdate();
 
         query = entityManager.createQuery("delete from " + getTicketEntityName(tgt) + " t where t.id = :id");
         query.setParameter("id", ticketId);
-        failureCount += query.executeUpdate();
+        totalCount += query.executeUpdate();
 
-        return failureCount;
+        return totalCount;
     }
 
     private static long countToLong(final Object result) {

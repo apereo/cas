@@ -8,10 +8,10 @@ dependencies {
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-events", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-tickets")
-    testCompileOnly project(path: ":core:cas-server-core-services")
-    testCompileOnly project(path: ":core:cas-server-core-logout")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-events", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets")
+    testImplementation project(path: ":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-logout")
 }

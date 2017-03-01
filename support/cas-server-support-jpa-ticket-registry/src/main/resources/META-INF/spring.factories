@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.JpaTicketRegistryConfiguration,\
-org.apereo.cas.config.JpaTicketRegistryTicketMetadataConfiguration
+org.apereo.cas.config.JpaTicketRegistryTicketMetadataCatalogConfiguration

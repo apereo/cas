@@ -9,12 +9,12 @@ dependencies {
     implementation libraries.quartz
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
-    testCompileOnly project(path: ":core:cas-server-core-util", configuration: "tests")
-    testCompileOnly libraries.tests
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":core:cas-server-core-services")
-    testCompileOnly project(":support:cas-server-support-cookie")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
 }

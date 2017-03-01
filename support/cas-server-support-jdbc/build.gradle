@@ -10,8 +10,8 @@ dependencies {
     compile project(":support:cas-server-support-jdbc-authentication")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
-    testCompileOnly libraries.tests
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(":core:cas-server-core-util")
-    testCompileOnly project(":core:cas-server-core-services")
+    
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-services")
 }
