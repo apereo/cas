@@ -107,7 +107,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
-    private HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor;
+    private SecurityInterceptor requiresAuthenticationAccessTokenInterceptor;
 
     @Autowired(required = false)
     @Qualifier("multifactorAuthenticationProviderSelector")
