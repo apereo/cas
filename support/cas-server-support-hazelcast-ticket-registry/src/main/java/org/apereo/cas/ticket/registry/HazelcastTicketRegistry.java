@@ -164,6 +164,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         try {
             final IMap<String, Ticket> inst = hazelcastInstance.getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}] for [{}]", inst, mapName);
+            return inst;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -8,10 +8,10 @@ dependencies {
     compile project(":support:cas-server-support-geolocation-googlemaps")
     
 
-    testCompileOnly project(path: ":core:cas-server-core")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":support:cas-server-support-cookie")
-    testCompileOnly project(":support:cas-server-support-events-memory")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":support:cas-server-support-events-memory")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

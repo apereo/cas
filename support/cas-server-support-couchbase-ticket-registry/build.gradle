@@ -7,8 +7,8 @@ dependencies {
     
 
     
-    testCompileOnly project(":core:cas-server-core-tickets")
-    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     compile project(":support:cas-server-support-oauth-core")
 }

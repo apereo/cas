@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -73,6 +74,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasProtocolCoreTicketMetadataCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreUtilConfiguration.class,

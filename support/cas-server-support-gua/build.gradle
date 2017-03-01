@@ -12,6 +12,6 @@ dependencies {
 
     implementation libraries.ldaptive
 
-    testCompileOnly libraries.tests
-    testCompileOnly project(":core:cas-server-core-services")
+    
+    testImplementation project(":core:cas-server-core-services")
 }

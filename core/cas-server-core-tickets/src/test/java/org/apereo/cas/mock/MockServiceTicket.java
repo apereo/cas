@@ -69,7 +69,7 @@ public class MockServiceTicket implements ServiceTicket {
 
     @Override
     public String getPrefix() {
-        return "MOCKST";
+        return ServiceTicket.PREFIX;
     }
 
     @Override
