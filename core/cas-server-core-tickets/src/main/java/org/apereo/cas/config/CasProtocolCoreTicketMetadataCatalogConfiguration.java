@@ -6,9 +6,9 @@ import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketImpl;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketMetadataCatalog;
 import org.apereo.cas.ticket.TicketMetadataCatalogConfigurer;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link CasProtocolCoreTicketMetadataCatalogConfiguration}.
@@ -32,18 +33,20 @@ public class CasProtocolCoreTicketMetadataCatalogConfiguration implements Ticket
     @Override
     public final void configureTicketMetadataCatalog(final TicketMetadataCatalog plan) {
         LOGGER.debug("Registering core CAS protocol ticket metadata types...");
-
-        buildAndRegisterProxyGrantingTicketMetadata(plan,
-                buildTicketMetadata(plan, ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX, ProxyGrantingTicketImpl.class));
-
+        
         buildAndRegisterProxyTicketMetadata(plan,
-                buildTicketMetadata(plan, ProxyTicket.PROXY_TICKET_PREFIX, ProxyTicketImpl.class));
+                buildTicketMetadata(plan, ProxyTicket.PROXY_TICKET_PREFIX, ProxyTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
 
         buildAndRegisterServiceTicketMetadata(plan,
-                buildTicketMetadata(plan, ServiceTicket.PREFIX, ServiceTicketImpl.class));
+                buildTicketMetadata(plan, ServiceTicket.PREFIX, ServiceTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
 
+        buildAndRegisterProxyGrantingTicketMetadata(plan,
+                buildTicketMetadata(plan, ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX,
+                        ProxyGrantingTicketImpl.class, Ordered.LOWEST_PRECEDENCE));
+        
         buildAndRegisterTicketGrantingTicketMetadata(plan,
-                buildTicketMetadata(plan, TicketGrantingTicket.PREFIX, TicketGrantingTicketImpl.class));
+                buildTicketMetadata(plan, TicketGrantingTicket.PREFIX,
+                        TicketGrantingTicketImpl.class, Ordered.LOWEST_PRECEDENCE));
     }
 
     protected void buildAndRegisterProxyGrantingTicketMetadata(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
@@ -62,11 +65,11 @@ public class CasProtocolCoreTicketMetadataCatalogConfiguration implements Ticket
         registerTicketMetadata(plan, metadata);
     }
 
-    private TicketDefinition buildTicketMetadata(final TicketMetadataCatalog plan, final String prefix, final Class impl) {
+    private TicketDefinition buildTicketMetadata(final TicketMetadataCatalog plan, final String prefix, final Class impl, final int order) {
         if (plan.containsTicketMetadata(prefix)) {
             return plan.findTicketMetadata(prefix);
         }
-        return new DefaultTicketDefinition(impl, prefix);
+        return new DefaultTicketDefinition(impl, prefix, order);
     }
 
     /**

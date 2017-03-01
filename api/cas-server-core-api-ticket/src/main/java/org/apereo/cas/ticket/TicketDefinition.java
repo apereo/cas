@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import org.springframework.core.Ordered;
+
 /**
  * This is {@link TicketDefinition}. Ticket definition describes additional Properties and misc settings
  * that may be associated with a given ticket to be used by registries. Each CAS module on start up
@@ -12,7 +14,7 @@ package org.apereo.cas.ticket;
  * @see TicketMetadataCatalog
  * @since 5.1.0
  */
-public interface TicketDefinition {
+public interface TicketDefinition extends Ordered {
     /**
      * Gets prefix.
      *
@@ -33,4 +35,13 @@ public interface TicketDefinition {
      * @return the properties
      */
     TicketDefinitionProperties getProperties();
+
+    /**
+     * Returns order/priority associated with this definition.
+     * Typically used in collection sorting and compare operations.
+     * @return the order.
+     */
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
 }

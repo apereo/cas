@@ -1,8 +1,11 @@
 package org.apereo.cas.ticket;
 
+import org.springframework.core.OrderComparator;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,19 +45,10 @@ public class DefaultTicketMetadataCatalog implements TicketMetadataCatalog {
         return ticketMetadataMap.containsKey(ticketId);
     }
 
-    /**
-     * Find ticket implementation class class.
-     *
-     * @param ticketId the ticket id
-     * @return the class
-     */
-    @Override
-    public Class<? extends Ticket> findTicketImplementationClass(final String ticketId) {
-        return findTicketMetadata(ticketId).getImplementationClass();
-    }
-
     @Override
     public Collection<TicketDefinition> findAllTicketMetadata() {
-        return new HashSet<>(ticketMetadataMap.values());
+        final List list = new ArrayList<>(ticketMetadataMap.values());
+        OrderComparator.sort(list);
+        return list;
     }
 }

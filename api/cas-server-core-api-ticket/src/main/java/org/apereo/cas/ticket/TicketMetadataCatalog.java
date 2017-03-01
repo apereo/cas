@@ -54,13 +54,4 @@ public interface TicketMetadataCatalog {
      * @return the collection
      */
     Collection<TicketDefinition> findAllTicketMetadata();
-
-    /**
-     * Find ticket implementation class.
-     *
-     * @param ticketId the ticket id
-     * @return the class
-     */
-    Class<? extends Ticket> findTicketImplementationClass(String ticketId);
-
 }

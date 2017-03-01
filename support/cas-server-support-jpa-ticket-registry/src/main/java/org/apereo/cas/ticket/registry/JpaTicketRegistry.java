@@ -2,8 +2,8 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketMetadataCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +61,15 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public long deleteAll() {
         final Collection<TicketDefinition> tkts = this.ticketMetadataCatalog.findAllTicketMetadata();
         final AtomicLong count = new AtomicLong();
-        tkts.forEach(t -> count.addAndGet(entityManager.createQuery("delete from " + getTicketEntityName(t)).executeUpdate()));
+        tkts.forEach(t -> {
+            final String entityName = getTicketEntityName(t);
+            final Query query = entityManager.createQuery("delete from " + entityName);
+            LOGGER.debug("Deleting ticket entity [{}]", entityName);
+            count.addAndGet(query.executeUpdate());
+        });
         return count.get();
     }
-
+    
     @Override
     public Ticket getTicket(final String ticketId) {
         return getRawTicket(ticketId);

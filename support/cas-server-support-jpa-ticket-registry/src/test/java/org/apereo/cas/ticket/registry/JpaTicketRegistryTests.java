@@ -52,7 +52,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -81,7 +80,9 @@ import static org.junit.Assert.*;
         JpaTicketRegistryTicketMetadataCatalogConfiguration.class,
         JpaTicketRegistryConfiguration.class})
 public class JpaTicketRegistryTests {
-    /** Number of clients contending for operations in concurrent test. */
+    /**
+     * Number of clients contending for operations in concurrent test.
+     */
     private static final int CONCURRENT_SIZE = 20;
 
     private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
@@ -95,7 +96,7 @@ public class JpaTicketRegistryTests {
     private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistryTests.class);
-    
+
     @Autowired
     @Qualifier("ticketTransactionManager")
     private PlatformTransactionManager txManager;
@@ -114,11 +115,11 @@ public class JpaTicketRegistryTests {
         final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
         final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
         final ProxyTicket newPt = grantProxyTicketInTransaction(pgtFromDb);
-        
+
         getTicketInTransaction(newPt.getId());
         deleteTicketsInTransaction();
     }
-    
+
 
     @Test
     public void verifyTicketCreationAndDeletion() throws Exception {
@@ -191,9 +192,9 @@ public class JpaTicketRegistryTests {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             final List<ServiceTicketGenerator> generators = new ArrayList<>(CONCURRENT_SIZE);
-            IntStream.range(0, CONCURRENT_SIZE)
-                    .mapToObj(i -> new ServiceTicketGenerator(newTgt.getId(), this.ticketRegistry, this.txManager))
-                    .forEach(generators::add);
+            for (int i = 0; i < CONCURRENT_SIZE; i++) {
+                generators.add(new ServiceTicketGenerator(newTgt.getId(), this.ticketRegistry, this.txManager));
+            }
             final List<Future<String>> results = executor.invokeAll(generators);
             for (final Future<String> result : results) {
                 assertNotNull(result.get());
@@ -205,11 +206,9 @@ public class JpaTicketRegistryTests {
             executor.shutdownNow();
         }
 
-        final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
-        assertEquals(CONCURRENT_SIZE, tgtFromDb.getCountOfUses());
+        assertEquals(CONCURRENT_SIZE, this.ticketRegistry.getTickets().size() - 1);
     }
-
-
+    
     static TicketGrantingTicket newTGT() {
         final Principal principal = new DefaultPrincipalFactory().createPrincipal(
                 "bob", Collections.singletonMap("displayName", "Bob"));
@@ -220,12 +219,12 @@ public class JpaTicketRegistryTests {
     }
 
     static ServiceTicket newST(final TicketGrantingTicket parent) {
-       return parent.grantServiceTicket(
-               ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
-               new MockService("https://service.example.com"),
-               EXP_POLICY_ST,
-               false,
-               true);
+        return parent.grantServiceTicket(
+                ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
+                new MockService("https://service.example.com"),
+                EXP_POLICY_ST,
+                false,
+                true);
     }
 
     static ProxyGrantingTicket newPGT(final ServiceTicket parent) {
@@ -260,7 +259,7 @@ public class JpaTicketRegistryTests {
             return null;
         });
     }
-    
+
     private void deleteTicketInTransaction(final String ticketId) {
         new TransactionTemplate(txManager).execute((TransactionCallback<Void>) status -> {
             ticketRegistry.deleteTicket(ticketId);
@@ -302,7 +301,7 @@ public class JpaTicketRegistryTests {
         private final TicketRegistry jpaTicketRegistry;
 
         ServiceTicketGenerator(final String tgtId, final TicketRegistry jpaTicketRegistry,
-                                      final PlatformTransactionManager txManager) {
+                               final PlatformTransactionManager txManager) {
             parentTgtId = tgtId;
             this.jpaTicketRegistry = jpaTicketRegistry;
             this.txManager = txManager;
