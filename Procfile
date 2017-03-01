@@ -1,1 +1,1 @@
-web:    java $JAVA_OPTS --server.port=$PORT -jar target/cas.war --server.ssl.enabled=false --cas.server.http.enabled=false --cas.server.name=https://jasigcas.herokuapp.com --cas.adminPagesSecurity.ip=.+ --endpoints.enabled=true --endpoints.sensitive=false --logging.level.org.apereo=DEBUG
+web:    java $JAVA_OPTS -jar target/cas.war --server.ssl.enabled=false --cas.server.http.enabled=false --cas.server.name=https://jasigcas.herokuapp.com --cas.adminPagesSecurity.ip=.+ --endpoints.enabled=true --endpoints.sensitive=false --logging.level.org.apereo=DEBUG --server.port=$PORT
