@@ -444,6 +444,15 @@ public final class WebUtils {
     }
 
     /**
+     * Gets pac4j context.
+     *
+     * @return the pac4j context
+     */
+    public static J2EContext getPac4jJ2EContext() {
+        return getPac4jJ2EContext(getHttpServletRequestFromRequestAttributes(), getHttpServletResponseFromRequestAttributes());
+    }
+
+    /**
      * Is authenticating at a public workstation?
      *
      * @param ctx the ctx

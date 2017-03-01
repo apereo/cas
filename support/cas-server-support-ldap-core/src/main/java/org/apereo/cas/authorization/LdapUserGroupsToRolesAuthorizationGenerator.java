@@ -61,7 +61,7 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
     }
 
     @Override
-    protected void generateAuthorizationForLdapEntry(final CommonProfile profile, final LdapEntry userEntry) {
+    protected CommonProfile generateAuthorizationForLdapEntry(final CommonProfile profile, final LdapEntry userEntry) {
         try {
             LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
             final Response<SearchResult> response = this.groupSearchExecutor.search(
@@ -82,5 +82,6 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
         } catch (final LdapException e) {
             throw new RuntimeException("LDAP error fetching roles for user.", e);
         }
+        return profile;
     }
 }

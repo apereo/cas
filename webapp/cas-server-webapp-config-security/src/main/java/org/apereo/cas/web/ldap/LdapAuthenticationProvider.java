@@ -67,7 +67,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
 
                 LOGGER.debug("Collected user profile [{}]", profile);
 
-                this.authorizationGenerator.generate(profile);
+                this.authorizationGenerator.generate(WebUtils.getPac4jJ2EContext(), profile);
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
 
                 final Collection<GrantedAuthority> authorities = new ArrayList<>();
@@ -77,9 +77,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                 final RequireAnyRoleAuthorizer authorizer = new RequireAnyRoleAuthorizer(adminPagesSecurityProperties.getAdminRoles());
                 LOGGER.debug("Executing authorization for expected admin roles [{}]", authorizer.getElements());
 
-                final J2EContext context = WebUtils.getPac4jJ2EContext(
-                        WebUtils.getHttpServletRequestFromRequestAttributes(),
-                        WebUtils.getHttpServletResponseFromRequestAttributes());
+                final J2EContext context = WebUtils.getPac4jJ2EContext();
 
                 if (authorizer.isAllAuthorized(context, Arrays.asList(profile))) {
                     return new UsernamePasswordAuthenticationToken(username, password, authorities);

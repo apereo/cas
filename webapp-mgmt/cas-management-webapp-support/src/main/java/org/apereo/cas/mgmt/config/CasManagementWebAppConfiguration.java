@@ -85,7 +85,7 @@ import java.util.Properties;
 @Configuration("casManagementWebAppConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
-    
+
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
     private List formDataPopulators = new ArrayList<>();
@@ -164,7 +164,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
         return new CasManagementSecurityInterceptor();
     }
-    
+
     @RefreshScope
     @Bean
     public Properties userProperties() {
@@ -184,7 +184,10 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         final List<String> authzAttributes = casProperties.getMgmt().getAuthzAttributes();
         if (!authzAttributes.isEmpty()) {
             if ("*".equals(authzAttributes)) {
-                return commonProfile -> commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
+                return (webContext, commonProfile) -> {
+                    commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
+                    return commonProfile;
+                };
             }
             return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[]{}), new String[]{});
         }
@@ -214,7 +217,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
-   
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
