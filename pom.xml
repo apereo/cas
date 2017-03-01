@@ -48,6 +48,29 @@
                     </overlays>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <id>cas-exec</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>rm</executable>
+                    <arguments>
+                        <argument>-Rf</argument>
+                        <argument>./target/war</argument>
+                        <argument>./target/cas</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
 
         </plugins>
         <finalName>cas</finalName>

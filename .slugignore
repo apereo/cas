@@ -5,4 +5,5 @@
 test
 **/*.md
 cas-server-documentation/
-target/
+target
+*.jar
