@@ -1,1 +1,1 @@
-web:    java $JAVA_OPTS -jar target/cas.war
+web:    java $JAVA_OPTS -jar target/cas.war -Dserver.ssl.enabled=false -Dcas.server.http.enabled=false -Dcas.server.name=https://jasigcas.herokuapp.com -Dcas.adminPagesSecurity.ip=.+ -Dendpoints.enabled=true -Dendpoints.sensitive=false

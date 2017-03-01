@@ -8,6 +8,7 @@ bin/
 target
 *.ipr
 *.iml
+.vscode/
 *.iws
 *.orig
 .idea/
