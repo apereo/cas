@@ -2,8 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
-import org.apereo.cas.ticket.TicketMetadata;
-import org.apereo.cas.ticket.TicketMetadataRegistrationPlan;
+import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketMetadataCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -16,21 +16,21 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("hazelcastTicketRegistryMapsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class HazelcastTicketRegistryMapsConfiguration extends CasProtocolCoreTicketMetadataRegistrationConfiguration {
+public class HazelcastTicketRegistryMapsConfiguration extends CasProtocolCoreTicketMetadataCatalogConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Override
-    protected void buildAndRegisterServiceTicketMetadata(final TicketMetadataRegistrationPlan plan, final TicketMetadata metadata) {
+    protected void buildAndRegisterServiceTicketMetadata(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        metadata.setTicketCacheName(hz.getServiceTicketsMapName());
+        metadata.getProperties().setCacheName(hz.getServiceTicketsMapName());
         super.buildAndRegisterServiceTicketMetadata(plan, metadata);
     }
 
     @Override
-    protected void buildAndRegisterTicketGrantingTicketMetadata(final TicketMetadataRegistrationPlan plan, final TicketMetadata metadata) {
+    protected void buildAndRegisterTicketGrantingTicketMetadata(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        metadata.setTicketCacheName(hz.getTicketGrantingTicketsMapName());
+        metadata.getProperties().setCacheName(hz.getTicketGrantingTicketsMapName());
         super.buildAndRegisterTicketGrantingTicketMetadata(plan, metadata);
     }
 }
