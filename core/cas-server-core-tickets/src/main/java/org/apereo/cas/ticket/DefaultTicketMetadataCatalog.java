@@ -6,34 +6,34 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * This is {@link DefaultTicketMetadataRegistrationPlan}.
+ * This is {@link DefaultTicketMetadataCatalog}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class DefaultTicketMetadataRegistrationPlan implements TicketMetadataRegistrationPlan {
-    private final Map<String, TicketMetadata> ticketMetadataMap = new HashMap<>();
+public class DefaultTicketMetadataCatalog implements TicketMetadataCatalog {
+    private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>();
 
-    public DefaultTicketMetadataRegistrationPlan() {
+    public DefaultTicketMetadataCatalog() {
     }
 
     @Override
-    public TicketMetadata findTicketMetadata(final String ticketId) {
+    public TicketDefinition findTicketMetadata(final String ticketId) {
         return ticketMetadataMap.values().stream().filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().get();
     }
 
     @Override
-    public TicketMetadata findTicketMetadata(final Ticket ticket) {
+    public TicketDefinition findTicketMetadata(final Ticket ticket) {
         return findTicketMetadata(ticket.getPrefix());
     }
 
     @Override
-    public void registerTicketMetadata(final TicketMetadata ticketMetadata) {
-        ticketMetadataMap.put(ticketMetadata.getPrefix(), ticketMetadata);
+    public void registerTicketMetadata(final TicketDefinition ticketDefinition) {
+        ticketMetadataMap.put(ticketDefinition.getPrefix(), ticketDefinition);
     }
 
     @Override
-    public void updateTicketMetadata(final TicketMetadata metadata) {
+    public void updateTicketMetadata(final TicketDefinition metadata) {
         registerTicketMetadata(metadata);
     }
 
@@ -54,7 +54,7 @@ public class DefaultTicketMetadataRegistrationPlan implements TicketMetadataRegi
     }
 
     @Override
-    public Collection<TicketMetadata> findAllTicketMetadata() {
+    public Collection<TicketDefinition> findAllTicketMetadata() {
         return new HashSet<>(ticketMetadataMap.values());
     }
 }
