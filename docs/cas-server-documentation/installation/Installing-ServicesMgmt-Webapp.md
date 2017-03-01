@@ -22,7 +22,7 @@ A sample overlay for the services management webapp is provided
 
 ## Demo
 
-A demo is available at [https://jasigcasmgmt.herokuapp.com/cas-services](https://jasigcasmgmt.herokuapp.com/cas-services)
+A demo is available at [https://jasigcasmgmt.herokuapp.com/cas-management](https://jasigcasmgmt.herokuapp.com/cas-management)
 It is important to note that this is a public demo site, used by the project for basic showcases and integration tests. It is NOT set up for internal demos and it may go down and up as the project needs without notice. If you have a need for a demo instance with a modified UI, that would be one you set up for your deployment.
 
 ## Services Registry
