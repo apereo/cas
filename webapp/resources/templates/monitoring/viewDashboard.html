@@ -136,19 +136,6 @@
                         </button>
                     </form>
                 </li>
-                <li>
-                    <form th:method="${refreshMethod}" th:action="${refreshEndpoint}">
-                        <button class="btn btn-refresh"
-                                type="button"
-                                data-toggle="modal"
-                                data-target="#myModal"
-                                th:inline="text"
-                                th:attr="data-title=#{cas.dashboard.action.button.refresh.modal.title},data-message=#{cas.dashboard.action.button.refresh.modal.message}"
-                        >
-                            <i class="fa fa-refresh"></i>[[#{cas.dashboard.action.button.refresh}]]
-                        </button>
-                    </form>
-                </li>
                 <li th:if="${shutdownEndpointEnabled}">
                     <form method="post" th:action="/status/shutdown">
                         <button type="button" class="btn btn-shutdown"
