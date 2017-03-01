@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryPro
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.ticket.TicketMetadataRegistrationPlan;
+import org.apereo.cas.ticket.TicketMetadataCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
@@ -76,10 +76,10 @@ public class JpaTicketRegistryConfiguration {
 
     @Bean(name = {"jpaTicketRegistry", "ticketRegistry"})
     @RefreshScope
-    public TicketRegistry jpaTicketRegistry(@Qualifier("ticketMetadataRegistrationPlan")
-                                            final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan) {
+    public TicketRegistry jpaTicketRegistry(@Qualifier("ticketMetadataCatalog")
+                                            final TicketMetadataCatalog ticketMetadataCatalog) {
         final JpaTicketRegistryProperties jpa = casProperties.getTicket().getRegistry().getJpa();
-        final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketMetadataRegistrationPlan);
+        final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketMetadataCatalog);
         bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(jpa.getCrypto()));
         return bean;
     }

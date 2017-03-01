@@ -16,7 +16,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.TicketMetadataRegistrationPlan;
+import org.apereo.cas.ticket.TicketMetadataCatalog;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
@@ -65,21 +65,21 @@ public class HazelcastTicketRegistryConfiguration {
 
     @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
     @RefreshScope
-    public TicketRegistry hazelcastTicketRegistry(@Qualifier("ticketMetadataRegistrationPlan")
-                                                  final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan) {
+    public TicketRegistry hazelcastTicketRegistry(@Qualifier("ticketMetadataCatalog")
+                                                  final TicketMetadataCatalog ticketMetadataCatalog) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
-                ticketMetadataRegistrationPlan,
+                ticketMetadataCatalog,
                 hz.getPageSize());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
     }
 
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketMetadataRegistrationPlan")
-                                                       final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan) {
+    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketMetadataCatalog")
+                                                       final TicketMetadataCatalog ticketMetadataCatalog) {
         return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager,
-                hazelcastTicketRegistry(ticketMetadataRegistrationPlan), false);
+                hazelcastTicketRegistry(ticketMetadataCatalog), false);
     }
 
     @Bean
