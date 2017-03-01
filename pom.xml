@@ -13,6 +13,7 @@
                 <version>0.0.4</version>
             </plugin>
 
+<!--
             <plugin>
                 <groupId>com.heroku.sdk</groupId>
                 <artifactId>heroku-maven-plugin</artifactId>
@@ -50,6 +51,8 @@
                     </execution>
                 </executions>
             </plugin>
+-->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
