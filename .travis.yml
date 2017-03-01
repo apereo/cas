@@ -38,7 +38,7 @@ before_install:
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
 install:
-- ./gradlew clean bootRepackage install --parallel -x test --stacktrace
+- ./gradlew clean bootRepackage install --parallel -x test --stacktrace --refresh-dependencies
 script:
 - travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
 after_success:
