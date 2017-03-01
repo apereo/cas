@@ -67,17 +67,17 @@ CAS development is powered by: <br/>
 
 <a href="http://www.jetbrains.com/idea/" target="_blank"><img src="https://apereo.github.io/cas/images/intellijidea.gif" valign="middle" style="vertical-align:middle"></a>
 
-[wiki]: http://apereo.github.io/cas
-[overlay]: http://apereo.github.io/cas/development/installation/Maven-Overlay-Installation.html
-[contribute]: http://apereo.github.io/cas/developer/Contributor-Guidelines.html
+[wiki]: https://apereo.github.io/cas
+[overlay]: https://apereo.github.io/cas/development/installation/Maven-Overlay-Installation.html
+[contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
 [downloadcas]: http://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/
 [casmavencentral]: http://mvnrepository.com/artifact/org.apereo.cas
 [downloadcasgithub]: https://github.com/apereo/cas/archive/master.zip
 [releasenotes]: https://github.com/apereo/cas/releases
 [casimg]: https://cloud.githubusercontent.com/assets/1205228/14939607/7cd35c3c-0f02-11e6-9564-80d8dfc0a064.png
-[caswebheroku]: http://jasigcas.heroku.com/cas
-[casmgheroku]: http://jasigcasmgmt.heroku.com/cas-services
-[cassupport]: http://apereo.github.io/cas/Support.html
+[caswebheroku]: https://jasigcas.heroku.com/cas
+[casmgheroku]: https://jasigcasmgmt.heroku.com/cas-management
+[cassupport]: https://apereo.github.io/cas/Support.html
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 

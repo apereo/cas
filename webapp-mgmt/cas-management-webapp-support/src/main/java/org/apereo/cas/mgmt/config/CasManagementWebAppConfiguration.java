@@ -41,6 +41,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.exception.HttpAction;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,7 +86,7 @@ import java.util.Properties;
 @Configuration("casManagementWebAppConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
-    
+
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
     private List formDataPopulators = new ArrayList<>();
@@ -164,7 +165,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
         return new CasManagementSecurityInterceptor();
     }
-    
+
     @RefreshScope
     @Bean
     public Properties userProperties() {
@@ -184,7 +185,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         final List<String> authzAttributes = casProperties.getMgmt().getAuthzAttributes();
         if (!authzAttributes.isEmpty()) {
             if ("*".equals(authzAttributes)) {
-                return commonProfile -> commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
+                return new PermitAllAuthorizationGenerator();
             }
             return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[]{}), new String[]{});
         }
@@ -214,7 +215,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
-   
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
@@ -340,6 +340,17 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 v.setExposePathVariables(false);
                 modelAndView.setView(v);
             }
+        }
+    }
+
+    /**
+     * The Permit all authorization generator.
+     */
+    public class PermitAllAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
+        @Override
+        public CommonProfile generate(final WebContext webContext, final CommonProfile commonProfile) {
+            commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
+            return commonProfile;
         }
     }
 }
