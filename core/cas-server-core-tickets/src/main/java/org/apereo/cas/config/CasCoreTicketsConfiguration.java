@@ -7,13 +7,13 @@ import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProper
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.DefaultTicketMetadataRegistrationPlan;
+import org.apereo.cas.ticket.DefaultTicketMetadataCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-import org.apereo.cas.ticket.TicketMetadataRegistrationConfigurer;
-import org.apereo.cas.ticket.TicketMetadataRegistrationPlan;
+import org.apereo.cas.ticket.TicketMetadataCatalog;
+import org.apereo.cas.ticket.TicketMetadataCatalogConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
@@ -301,15 +301,15 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         return ticketTransactionManager();
     }
 
-    @ConditionalOnMissingBean(name = "ticketMetadataCatalogRegistrationPlan")
+    @ConditionalOnMissingBean(name = "ticketMetadataCatalog")
     @Autowired
     @Bean
-    public TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan(final List<TicketMetadataRegistrationConfigurer> configurers) {
-        final DefaultTicketMetadataRegistrationPlan plan = new DefaultTicketMetadataRegistrationPlan();
+    public TicketMetadataCatalog ticketMetadataCatalog(final List<TicketMetadataCatalogConfigurer> configurers) {
+        final DefaultTicketMetadataCatalog plan = new DefaultTicketMetadataCatalog();
         configurers.forEach(c -> {
             final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring ticket metadata registration plan [{}]", name);
-            c.configureTicketMetadataRegistrationPlan(plan);
+            c.configureTicketMetadataCatalog(plan);
         });
         return plan;
     }

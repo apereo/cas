@@ -3,8 +3,8 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketMetadata;
-import org.apereo.cas.ticket.TicketMetadataRegistrationPlan;
+import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketMetadataCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -33,15 +33,15 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
    
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistry.class);
 
-    private final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan;
+    private final TicketMetadataCatalog ticketMetadataCatalog;
     private final LockModeType lockType;
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
-    public JpaTicketRegistry(final LockModeType lockType, final TicketMetadataRegistrationPlan ticketMetadataRegistrationPlan) {
+    public JpaTicketRegistry(final LockModeType lockType, final TicketMetadataCatalog ticketMetadataCatalog) {
         this.lockType = lockType;
-        this.ticketMetadataRegistrationPlan = ticketMetadataRegistrationPlan;
+        this.ticketMetadataCatalog = ticketMetadataCatalog;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final Collection<TicketMetadata> tkts = this.ticketMetadataRegistrationPlan.findAllTicketMetadata();
+        final Collection<TicketDefinition> tkts = this.ticketMetadataCatalog.findAllTicketMetadata();
         final AtomicLong count = new AtomicLong();
         tkts.forEach(t -> count.addAndGet(entityManager.createQuery("delete from " + getTicketEntityName(t)).executeUpdate()));
         return count.get();
@@ -79,7 +79,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      */
     public Ticket getRawTicket(final String ticketId) {
         try {
-            final TicketMetadata tkt = this.ticketMetadataRegistrationPlan.findTicketMetadata(ticketId);
+            final TicketDefinition tkt = this.ticketMetadataCatalog.findTicketMetadata(ticketId);
             return this.entityManager.find(tkt.getImplementationClass(), ticketId, this.lockType);
         } catch (final Exception e) {
             LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
@@ -89,7 +89,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<TicketMetadata> tkts = this.ticketMetadataRegistrationPlan.findAllTicketMetadata();
+        final Collection<TicketDefinition> tkts = this.ticketMetadataCatalog.findAllTicketMetadata();
         final List<Ticket> tickets = new ArrayList<>();
         tkts.forEach(t -> {
             final Query query = this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass());
@@ -100,22 +100,22 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long sessionCount() {
-        final TicketMetadata md = this.ticketMetadataRegistrationPlan.findTicketMetadata(TicketGrantingTicket.PREFIX);
+        final TicketDefinition md = this.ticketMetadataCatalog.findTicketMetadata(TicketGrantingTicket.PREFIX);
         return countToLong(this.entityManager.createQuery("select count(t) from " + getTicketEntityName(md) + " t").getSingleResult());
     }
 
     @Override
     public long serviceTicketCount() {
-        final TicketMetadata md = this.ticketMetadataRegistrationPlan.findTicketMetadata(ServiceTicket.PREFIX);
+        final TicketDefinition md = this.ticketMetadataCatalog.findTicketMetadata(ServiceTicket.PREFIX);
         return countToLong(this.entityManager.createQuery("select count(t) from " + getTicketEntityName(md) + " t").getSingleResult());
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final int failureCount;
-        final TicketMetadata md = this.ticketMetadataRegistrationPlan.findTicketMetadata(ticketId);
+        final TicketDefinition md = this.ticketMetadataCatalog.findTicketMetadata(ticketId);
 
-        if (md.isCascadingTicket()) {
+        if (md.getProperties().isCascade()) {
             failureCount = deleteTicketGrantingTickets(ticketId);
         } else {
             final Query query = entityManager.createQuery("delete from " + getTicketEntityName(md) + " o where o.id = :id");
@@ -125,7 +125,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return failureCount == 0;
     }
 
-    private String getTicketEntityName(final TicketMetadata tk) {
+    private String getTicketEntityName(final TicketDefinition tk) {
         return tk.getImplementationClass().getSimpleName();
     }
 
@@ -138,13 +138,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private int deleteTicketGrantingTickets(final String ticketId) {
         int failureCount = 0;
 
-        final TicketMetadata st = this.ticketMetadataRegistrationPlan.findTicketMetadata(ServiceTicket.PREFIX);
+        final TicketDefinition st = this.ticketMetadataCatalog.findTicketMetadata(ServiceTicket.PREFIX);
 
         Query query = entityManager.createQuery("delete from " + getTicketEntityName(st) + " s where s.ticketGrantingTicket.id = :id");
         query.setParameter("id", ticketId);
         failureCount += query.executeUpdate();
 
-        final TicketMetadata tgt = this.ticketMetadataRegistrationPlan.findTicketMetadata(TicketGrantingTicket.PREFIX);
+        final TicketDefinition tgt = this.ticketMetadataCatalog.findTicketMetadata(TicketGrantingTicket.PREFIX);
         query = entityManager.createQuery("delete from " + getTicketEntityName(tgt) + " t where t.ticketGrantingTicket.id = :id");
         query.setParameter("id", ticketId);
         failureCount += query.executeUpdate();
