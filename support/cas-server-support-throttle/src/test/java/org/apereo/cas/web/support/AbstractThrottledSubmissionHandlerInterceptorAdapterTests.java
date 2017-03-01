@@ -32,8 +32,10 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, CasCoreUtilConfiguration.class,
-        AopAutoConfiguration.class, CasThrottlingConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, 
+        CasCoreUtilConfiguration.class,
+        AopAutoConfiguration.class, 
+        CasThrottlingConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @EnableScheduling

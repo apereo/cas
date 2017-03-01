@@ -175,7 +175,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
     @RefreshScope
-    public HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor() {
+    public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
         final String clients = Stream.of(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
                 Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
                 Authenticators.CAS_OAUTH_CLIENT_USER_FORM).collect(Collectors.joining(","));
