@@ -3,17 +3,15 @@ dependencies {
     compile project(":api:cas-server-core-api")
     implementation libraries.pac4j
     implementation libraries.persondirectory
-    
-
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-util")
     compile project(":api:cas-server-core-api-events")
     compile project(":core:cas-server-core-authentication")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":core:cas-server-core-monitor")
-    testCompileOnly project(":core:cas-server-core-util")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":support:cas-server-support-cookie")
-    testCompileOnly project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
 }

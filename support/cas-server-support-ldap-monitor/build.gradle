@@ -3,10 +3,8 @@ dependencies {
     implementation libraries.ldaptive
     compile project(":support:cas-server-support-ldap")
     compile project(":core:cas-server-core-monitor")
-    testCompileOnly project(":core:cas-server-core-tickets")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":core:cas-server-core-services")
-    testCompileOnly project(path: ":support:cas-server-support-ldap", configuration: "tests")
-
-    testCompileOnly libraries.tests
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
 }

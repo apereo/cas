@@ -178,6 +178,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     @Override
     public String getPrefix() {
-        return "MOCKTGT";
+        return TicketGrantingTicket.PREFIX;
     }
 }

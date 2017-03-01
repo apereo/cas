@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasFiltersConfiguration;
 import org.apereo.cas.config.CasMetricsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
+import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
 import org.apereo.cas.config.CasSecurityContextConfiguration;
 import org.apereo.cas.config.CasWebAppConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -68,6 +69,7 @@ import static org.junit.Assert.*;
                 CasWebApplicationServiceFactoryConfiguration.class,
                 CasCoreHttpConfiguration.class,
                 CasCoreTicketsConfiguration.class,
+                CasProtocolCoreTicketMetadataCatalogConfiguration.class,
                 CasThemesConfiguration.class,
                 CasLoggingConfiguration.class,
                 CasCoreServicesConfiguration.class,

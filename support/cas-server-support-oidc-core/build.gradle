@@ -3,6 +3,6 @@ dependencies {
 
     api libraries.httpclient
     compile project(":support:cas-server-support-oauth-core")
-    testCompileOnly project(":core:cas-server-core-util")
-    testCompileOnly project(path: ":support:cas-server-support-json-service-registry")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(path: ":support:cas-server-support-json-service-registry")
 }

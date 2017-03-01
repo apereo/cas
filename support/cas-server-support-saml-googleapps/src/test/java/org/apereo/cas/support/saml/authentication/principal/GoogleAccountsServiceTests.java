@@ -23,6 +23,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -91,6 +92,7 @@ import static org.mockito.Mockito.*;
         CasCoreValidationConfiguration.class,
         CasCoreConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasProtocolCoreTicketMetadataCatalogConfiguration.class,
         CasCoreUtilConfiguration.class})
 @TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {

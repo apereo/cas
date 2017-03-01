@@ -5,13 +5,13 @@ dependencies {
     implementation libraries.memcached
     implementation libraries.kryo
 
-    testCompileOnly project(":core:cas-server-core-authentication")
-    testCompileOnly project(path: ":support:cas-server-support-memcached-ticket-registry", configuration: "tests")
-    testCompileOnly project(":support:cas-server-support-cookie")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(path: ":support:cas-server-support-memcached-ticket-registry", configuration: "tests")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
     compileOnly project(":support:cas-server-support-saml")
-    testCompileOnly libraries.tests
+    
     testCompileOnly libraries.metrics
 
 }

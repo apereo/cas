@@ -3,10 +3,10 @@ dependencies {
 
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-tickets")
-    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompileOnly project(":core:cas-server-core-services")
-    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
-    testCompileOnly project(":core:cas-server-core-util")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core-util")
 }
 
 

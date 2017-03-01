@@ -11,5 +11,5 @@ dependencies {
     implementation libraries.groovy
 
     implementation libraries.springsecurity
-    testCompileOnly project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-web")
 }

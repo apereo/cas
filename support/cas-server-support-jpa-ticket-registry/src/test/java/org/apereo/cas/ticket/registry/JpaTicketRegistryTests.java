@@ -4,7 +4,21 @@ import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
+import org.apereo.cas.config.JpaTicketRegistryTicketMetadataCatalogConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockService;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -50,7 +64,22 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, JpaTicketRegistryConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasProtocolCoreTicketMetadataCatalogConfiguration.class,
+        JpaTicketRegistryTicketMetadataCatalogConfiguration.class,
+        JpaTicketRegistryConfiguration.class})
 public class JpaTicketRegistryTests {
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
@@ -85,8 +114,8 @@ public class JpaTicketRegistryTests {
         final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
         final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
         final ProxyTicket newPt = grantProxyTicketInTransaction(pgtFromDb);
-        final ProxyTicket ptFromDb = (ProxyTicket) getTicketInTransaction(newPt.getId());
         
+        getTicketInTransaction(newPt.getId());
         deleteTicketsInTransaction();
     }
     
@@ -183,7 +212,7 @@ public class JpaTicketRegistryTests {
 
     static TicketGrantingTicket newTGT() {
         final Principal principal = new DefaultPrincipalFactory().createPrincipal(
-                "bob", Collections.singletonMap("displayName", (Object) "Bob"));
+                "bob", Collections.singletonMap("displayName", "Bob"));
         return new TicketGrantingTicketImpl(
                 ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
                 CoreAuthenticationTestUtils.getAuthentication(principal),

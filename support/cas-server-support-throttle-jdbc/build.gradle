@@ -8,8 +8,8 @@ dependencies {
     compile project(":core:cas-server-core-audit")
     compile project(":support:cas-server-support-throttle")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
-    testCompileOnly project(path: ":support:cas-server-support-throttle", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core")
-    testCompileOnly project(path: ":core:cas-server-core-logout")
+    testImplementation project(path: ":support:cas-server-support-throttle", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core")
+    testImplementation project(path: ":core:cas-server-core-logout")
 }

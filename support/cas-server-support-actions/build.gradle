@@ -11,10 +11,10 @@ dependencies {
     compile project(":core:cas-server-core-logout")
     implementation libraries.pac4j
 
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core", configuration: "tests")
-    testCompileOnly project(":core:cas-server-core-monitor")
-    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

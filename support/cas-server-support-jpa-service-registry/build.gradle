@@ -10,10 +10,10 @@ dependencies {
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
-    testCompileOnly libraries.tests
-    testCompileOnly project(":core:cas-server-core-authentication")
-    testCompileOnly project(":core:cas-server-core-tickets")
-    testCompileOnly project(":support:cas-server-support-oauth-core")
-    testCompileOnly project(":support:cas-server-support-saml-idp-core")
-    testCompileOnly project(":core:cas-server-core-logout")
+    
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":support:cas-server-support-oauth-core")
+    testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":core:cas-server-core-logout")
 }

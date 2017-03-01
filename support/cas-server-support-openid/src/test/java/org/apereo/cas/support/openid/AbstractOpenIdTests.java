@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
 import org.apereo.cas.config.OpenIdConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.OpenIdAuthenticationEventExecutionPlanConfiguration;
@@ -73,6 +74,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreValidationConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasCoreTicketsConfiguration.class,
+                CasProtocolCoreTicketMetadataCatalogConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreUtilConfiguration.class})
 @ContextConfiguration(locations = "classpath:/openid-config.xml")

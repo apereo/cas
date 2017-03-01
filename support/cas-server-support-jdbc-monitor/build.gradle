@@ -9,7 +9,7 @@ dependencies {
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
-    testCompileOnly libraries.tests
-    testCompileOnly project(":core:cas-server-core-authentication")
-    testCompileOnly project(":core:cas-server-core-util")
+    
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-util")
 }

@@ -10,13 +10,13 @@ dependencies {
     implementation libraries.persondirectory
     
 
-    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-logout", configuration: "tests")
-    testCompileOnly project(":core:cas-server-core-util")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":core:cas-server-core-monitor")
-    testCompileOnly project(":support:cas-server-support-cookie")
-    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-logout", configuration: "tests")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }
 

@@ -7,5 +7,5 @@ dependencies {
     implementation libraries.pac4j
 
     implementation libraries.httpclient
-    testCompileOnly libraries.tests
+    
 }

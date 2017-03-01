@@ -6,13 +6,13 @@ dependencies {
 
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-actions")
-    testCompileOnly project(":support:cas-server-support-themes")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":core:cas-server-core-audit")
-    testCompileOnly project(":core:cas-server-core-logging")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":core:cas-server-core-validation")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":support:cas-server-support-cookie")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-logging")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-validation")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":support:cas-server-support-cookie")
     compileOnly libraries.bouncycastle
 }

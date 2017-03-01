@@ -3,8 +3,6 @@ dependencies {
     compile project(":support:cas-server-support-gauth")
     compile project(":core:cas-server-core-util")
     implementation libraries.mongo
-    
-
-    
-    testCompileOnly project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
 }

@@ -8,10 +8,10 @@ dependencies {
     implementation libraries.jcifs
     implementation libraries.persondirectory
 
-    testCompileOnly project(path: ":support:cas-server-support-ldap", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":support:cas-server-support-cookie")
-    testCompileOnly libraries.tests
+    testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-cookie")
+    
 }

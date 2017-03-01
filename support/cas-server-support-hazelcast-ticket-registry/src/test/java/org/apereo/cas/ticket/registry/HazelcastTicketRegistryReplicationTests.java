@@ -3,6 +3,20 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.HazelcastTicketRegistryTicketMetadataCatalogConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -33,7 +47,21 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(locations = {"classpath:HazelcastTicketRegistryTests-context.xml"})
-@SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, 
+        CasCoreTicketsConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        HazelcastTicketRegistryTicketMetadataCatalogConfiguration.class,
+        CasProtocolCoreTicketMetadataCatalogConfiguration.class})
 public class HazelcastTicketRegistryReplicationTests {
     @Autowired
     @Qualifier("hzTicketRegistry1")
@@ -42,7 +70,7 @@ public class HazelcastTicketRegistryReplicationTests {
     @Autowired
     @Qualifier("hzTicketRegistry2")
     private TicketRegistry hzTicketRegistry2;
-    
+
     public void setHzTicketRegistry1(final HazelcastTicketRegistry hzTicketRegistry1) {
         this.hzTicketRegistry1 = hzTicketRegistry1;
     }

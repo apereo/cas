@@ -3,10 +3,10 @@ description = "Apereo CAS WS-Federation Support"
 dependencies {
   
   compile project(":support:cas-server-support-saml") 
-  testCompileOnly project(":core:cas-server-core")
-  testCompileOnly project(":core:cas-server-core-logout")
-  testCompileOnly project(path: ":support:cas-server-support-saml", configuration: "tests")
-  testCompileOnly project(":core:cas-server-core-authentication")
-  testCompileOnly project(":support:cas-server-support-cookie")
+  testImplementation project(":core:cas-server-core")
+  testImplementation project(":core:cas-server-core-logout")
+  testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
+  testImplementation project(":core:cas-server-core-authentication")
+  testImplementation project(":support:cas-server-support-cookie")
   testCompileOnly libraries.metrics
 }

@@ -291,7 +291,7 @@ subprojects {
             findbugsPlugins libraries.findbugssec
         }
 
-        testCompileOnly libraries.tests
+        testImplementation libraries.tests
         runtimeOnly libraries.javaximpl
     }
 

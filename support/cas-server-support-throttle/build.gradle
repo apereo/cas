@@ -8,14 +8,14 @@ dependencies {
     compile project(":core:cas-server-core-util")
     
 
-    testCompileOnly project(":core:cas-server-core-authentication")
-    testCompileOnly project(":core:cas-server-core-audit")
-    testCompileOnly project(":core:cas-server-core")
-    testCompileOnly project(":core:cas-server-core-logout")
-    testCompileOnly project(":core:cas-server-core-monitor")
-    testCompileOnly project(path: ":core:cas-server-core", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(":support:cas-server-support-cookie")
-    testCompileOnly libraries.tests
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(":support:cas-server-support-cookie")
+    
     testCompileOnly libraries.javax
 }

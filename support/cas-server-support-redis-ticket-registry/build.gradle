@@ -10,10 +10,10 @@ dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":core:cas-server-core-configuration")
 
-    testCompileOnly project(":core:cas-server-core-util")
-    testCompileOnly libraries.tests
+    testImplementation project(":core:cas-server-core-util")
+    
     testCompileOnly libraries.metrics
-    testCompileOnly project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompileOnly project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

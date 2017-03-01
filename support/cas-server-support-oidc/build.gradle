@@ -6,6 +6,6 @@ dependencies {
     implementation libraries.jose4j
     compileOnly project(":support:cas-server-support-cookie")
     compileOnly project(":core:cas-server-core-webflow")
-    testCompileOnly project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-util")
     
 }

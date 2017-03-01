@@ -169,8 +169,7 @@ public class HazelcastTicketRegistryConfiguration {
         // ST Map
         final MapConfig mapConfigSTs = createMapConfig(hz.getServiceTicketsMapName(), casProperties.getTicket().getSt().getTimeToKillInSeconds());
         LOGGER.debug("Created Hazelcast map configuration for [{}]", mapConfigSTs);
-
-
+        
         mapConfigs.put(hz.getTicketGrantingTicketsMapName(), mapConfig);
         mapConfigs.put(hz.getServiceTicketsMapName(), mapConfigSTs);
 

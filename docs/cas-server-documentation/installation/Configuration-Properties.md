@@ -387,8 +387,8 @@ The format of the file is as such:
 # cas.monitor.endpoints.authenticationEvents.enabled=false
 # cas.monitor.endpoints.authenticationEvents.sensitive=true
 
-# cas.monitor.endpoints.configState.enabled=false
-# cas.monitor.endpoints.configState.sensitive=true
+# cas.monitor.endpoints.configurationState.enabled=false
+# cas.monitor.endpoints.configurationState.sensitive=true
 
 # cas.monitor.endpoints.healthCheck.enabled=false
 # cas.monitor.endpoints.healthCheck.sensitive=true

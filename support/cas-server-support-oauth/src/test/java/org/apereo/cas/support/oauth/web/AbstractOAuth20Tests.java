@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -14,6 +15,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasOAuthConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -59,6 +61,9 @@ import java.util.List;
                 CasCoreServicesConfiguration.class,
                 CasOAuthConfiguration.class,
                 CasCoreTicketsConfiguration.class,
+                CasCoreConfiguration.class,
+                CasProtocolCoreTicketMetadataCatalogConfiguration.class,
+                CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
                 AbstractOAuth20Tests.OAuthTestConfiguration.class,
                 RefreshAutoConfiguration.class,
@@ -77,7 +82,7 @@ public abstract class AbstractOAuth20Tests {
         private AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy;
 
         @Bean
-        public List authenticationRequestServiceSelectionStrategies() {
+        public List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies() {
             final List l = new ArrayList();
             l.add(oauth20AuthenticationRequestServiceSelectionStrategy);
             return l;
