@@ -1,8 +1,8 @@
 
 description = "Apereo CAS Captcha Support"
 dependencies {
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-util")
+    api project(":core:cas-server-core-webflow")
+    api project(":core:cas-server-core-webflow")
+    api project(":core:cas-server-core-util")
 
 }

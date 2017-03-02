@@ -4,8 +4,8 @@ dependencies {
     api libraries.httpclient
 
 
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-util")
+    api project(":core:cas-server-core-web")
+    api project(":core:cas-server-core-util")
     
 
     testImplementation project(":core:cas-server-core-authentication")

@@ -1,8 +1,8 @@
 description = "Apereo CAS RADIUS RSA MFA Support"
 dependencies {
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-web")
-    compile project(":support:cas-server-support-radius-core")
+    api project(":core:cas-server-core-webflow")
+    api project(":core:cas-server-core-web")
+    api project(":support:cas-server-support-radius-core")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }
 

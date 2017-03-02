@@ -4,10 +4,10 @@ dependencies {
     implementation libraries.shibidp
     api libraries.bouncycastle
 
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-services")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":support:cas-server-support-validation")
+    api project(":core:cas-server-core-web")
+    api project(":core:cas-server-core-services")
+    api project(":core:cas-server-core-authentication")
+    api project(":support:cas-server-support-validation")
     api libraries.jdom
 
     api libraries.xmlapis
