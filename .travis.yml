@@ -40,7 +40,7 @@ before_install:
 - sudo apt-get install -y nodejs
 - sudo ./gradlew gulpSetup --stacktrace
 install:
-- ./gradlew clean bootRepackage install --parallel -x test --stacktrace 
+- sudo ./gradlew clean bootRepackage install --parallel -x test --stacktrace 
 script:
 - travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
 after_success:
