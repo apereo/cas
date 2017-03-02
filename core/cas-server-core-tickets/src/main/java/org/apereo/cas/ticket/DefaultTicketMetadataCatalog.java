@@ -22,7 +22,7 @@ public class DefaultTicketMetadataCatalog implements TicketMetadataCatalog {
 
     @Override
     public TicketDefinition findTicketMetadata(final String ticketId) {
-        return ticketMetadataMap.values().stream().filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().get();
+        return ticketMetadataMap.values().stream().filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().orElse(null);
     }
 
     @Override
