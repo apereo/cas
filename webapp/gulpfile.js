@@ -8,7 +8,7 @@ var argv = require('yargs')
     .option('sassPath', {
         alias: 's',
         describe: "where's your sass?",
-        default: './src/main/resources/static/sass'
+        default: './resources/static/sass'
     })
     .option('npmPath', {
         alias: 'n',
@@ -18,7 +18,7 @@ var argv = require('yargs')
     .option('cssPath', {
         alias: 'c',
         describe: "where do you want your css?",
-        default: './src/main/resources/static/css'
+        default: './resources/static/css'
     })
     .help('help')
     .argv;
