@@ -16,8 +16,9 @@ javadoc {
 }
 
 
-task gulpSetup(dependsOn: ["npmInstall","installGulp"], description: "Install npm and Gulp") {}
+task gulpSetup(dependsOn: ["npmInstall", "installGulp"], description: "Install npm and Gulp") {}
 task gulpRun(dependsOn: gulp_default, description: "Runs Gulp default task") {}
+processResources.dependsOn gulpRun
 
 node {
     nodeModulesDir = project(":webapp").projectDir
