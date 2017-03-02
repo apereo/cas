@@ -36,15 +36,15 @@ public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfigurati
     private LogoutManager logoutManager;
 
     @RefreshScope
-    @Bean(name = {"mongoTicketRegistry", "ticketRegistry"})
-    public TicketRegistry mongoTicketRegistry() throws Exception {
+    @Bean
+    public TicketRegistry ticketRegistry() throws Exception {
         final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
         return new MongoDbTicketRegistry(mongo.getCollectionName(), mongo.isDropCollection(), mongoTemplate());
     }
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() throws Exception {
-        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, mongoTicketRegistry(), false);
+        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry(), false);
     }
 
     @Override

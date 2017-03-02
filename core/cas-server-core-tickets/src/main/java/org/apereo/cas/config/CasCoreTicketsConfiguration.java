@@ -181,8 +181,10 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @ConditionalOnMissingBean(name = "ticketRegistry")
     @RefreshScope
-    @Bean(name = {"defaultTicketRegistry", "ticketRegistry"})
-    public TicketRegistry defaultTicketRegistry() {
+    @Bean
+    public TicketRegistry ticketRegistry() {
+        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
+                + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
         final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
         return new DefaultTicketRegistry(
                 mem.getInitialCapacity(),

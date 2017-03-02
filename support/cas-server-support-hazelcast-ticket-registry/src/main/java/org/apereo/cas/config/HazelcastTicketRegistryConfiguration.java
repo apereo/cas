@@ -63,9 +63,9 @@ public class HazelcastTicketRegistryConfiguration {
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
 
-    @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
+    @Bean
     @RefreshScope
-    public TicketRegistry hazelcastTicketRegistry(@Qualifier("ticketMetadataCatalog")
+    public TicketRegistry ticketRegistry(@Qualifier("ticketMetadataCatalog")
                                                   final TicketMetadataCatalog ticketMetadataCatalog) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
@@ -79,7 +79,7 @@ public class HazelcastTicketRegistryConfiguration {
     public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketMetadataCatalog")
                                                        final TicketMetadataCatalog ticketMetadataCatalog) {
         return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager,
-                hazelcastTicketRegistry(ticketMetadataCatalog), false);
+                ticketRegistry(ticketMetadataCatalog), false);
     }
 
     @Bean
