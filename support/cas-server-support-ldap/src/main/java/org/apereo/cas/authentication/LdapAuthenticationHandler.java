@@ -85,9 +85,11 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
      *
+     * @param name the name
      * @param authenticator Ldaptive authenticator component.
      */
-    public LdapAuthenticationHandler(final Authenticator authenticator) {
+    public LdapAuthenticationHandler(final String name, final Authenticator authenticator) {
+        super(name);
         this.authenticator = authenticator;
     }
 

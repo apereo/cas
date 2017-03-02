@@ -45,8 +45,8 @@ public class UsernamePasswordWrapperAuthenticationHandler
     /**
      * Default constructor.
      */
-    public UsernamePasswordWrapperAuthenticationHandler() {
-
+    public UsernamePasswordWrapperAuthenticationHandler(final String name) {
+        super(name);
     }
 
     @Override

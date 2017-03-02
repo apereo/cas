@@ -18,6 +18,10 @@ import java.security.GeneralSecurityException;
  */
 public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
 
+    public DigestAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
         final DigestCredential c = (DigestCredential) credential;

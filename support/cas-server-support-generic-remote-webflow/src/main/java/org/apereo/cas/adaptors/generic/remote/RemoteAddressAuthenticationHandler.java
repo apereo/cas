@@ -24,7 +24,6 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
 
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 0xff;
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteAddressAuthenticationHandler.class);
-    
 
     /**
      * The network netmask.
@@ -35,6 +34,10 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      * The network base address.
      */
     private InetAddress inetNetwork;
+
+    public RemoteAddressAuthenticationHandler(final String name) {
+        super(name);
+    }
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
