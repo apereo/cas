@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,9 +27,12 @@ import org.springframework.context.annotation.Configuration;
 public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthProtocolTicketCatalogConfiguration.class);
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Override
     public void configureTicketCatalog(final TicketCatalog plan) {
-        LOGGER.debug("Registering core OAuth protocol ticket metadata types...");
+        LOGGER.debug("Registering core OAuth protocol ticket definitions...");
 
         buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuthCode.PREFIX, OAuthCodeImpl.class));
         buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, AccessToken.PREFIX, AccessTokenImpl.class));
@@ -36,14 +40,20 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
     }
 
     protected void buildAndRegisterAccessTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+        metadata.getProperties().setCacheName("oauthAccessTokensCache");
+        metadata.getProperties().setCacheTimeout(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds());
         registerTicketDefinition(plan, metadata);
     }
 
     protected void buildAndRegisterRefreshTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+        metadata.getProperties().setCacheName("oauthRefreshTokensCache");
+        metadata.getProperties().setCacheTimeout(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds());
         registerTicketDefinition(plan, metadata);
     }
 
     protected void buildAndRegisterOAuthCodeDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+        metadata.getProperties().setCacheName("oauthCodesCache");
+        metadata.getProperties().setCacheTimeout(casProperties.getAuthn().getOauth().getCode().getTimeToKillInSeconds());
         registerTicketDefinition(plan, metadata);
     }
 }

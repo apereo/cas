@@ -17,6 +17,7 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
@@ -27,12 +28,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -63,36 +64,30 @@ public class HazelcastTicketRegistryConfiguration {
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
 
+    @Autowired
     @Bean
-    @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog")
-                                         final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
+        final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
                 ticketCatalog,
                 hz.getPageSize());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
     }
 
+    @Autowired
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketCatalog")
-                                                       final TicketCatalog ticketCatalog) {
-        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager,
-                ticketRegistry(ticketCatalog), false);
+    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry(ticketCatalog), false);
     }
 
+    @Autowired
     @Bean
-    public HazelcastInstance hazelcast() {
-        return Hazelcast.newHazelcastInstance(getConfig());
+    public HazelcastInstance hazelcast(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+        return Hazelcast.newHazelcastInstance(getConfig(ticketCatalog));
     }
 
-    /**
-     * Get Hazelcast {@code Config} instance.
-     *
-     * @return Hazelcast Config
-     */
-    private Config getConfig() {
+    private Config getConfig(final TicketCatalog ticketCatalog) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastProperties.Cluster cluster = hz.getCluster();
 
@@ -150,7 +145,7 @@ public class HazelcastTicketRegistryConfiguration {
             LOGGER.debug("Created Hazelcast network configuration [{}]", networkConfig);
 
             // Finally aggregate all those config into the main Config
-            config.setMapConfigs(buildHazelcastMapConfigurations()).setNetworkConfig(networkConfig);
+            config.setMapConfigs(buildHazelcastMapConfigurations(ticketCatalog)).setNetworkConfig(networkConfig);
         }
         // Add additional default config properties regardless of the configuration source
         return config.setInstanceName(cluster.getInstanceName())
@@ -158,32 +153,29 @@ public class HazelcastTicketRegistryConfiguration {
                 .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
     }
 
-    private Map<String, MapConfig> buildHazelcastMapConfigurations() {
-        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
+    private Map<String, MapConfig> buildHazelcastMapConfigurations(final TicketCatalog ticketCatalog) {
         final Map<String, MapConfig> mapConfigs = new HashMap<>();
 
-        // TGT Map
-        final MapConfig mapConfig = createMapConfig(hz.getTicketGrantingTicketsMapName(), casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-        LOGGER.debug("Created Hazelcast map configuration for [{}]", mapConfig);
-
-        // ST Map
-        final MapConfig mapConfigSTs = createMapConfig(hz.getServiceTicketsMapName(), casProperties.getTicket().getSt().getTimeToKillInSeconds());
-        LOGGER.debug("Created Hazelcast map configuration for [{}]", mapConfigSTs);
-
-        mapConfigs.put(hz.getTicketGrantingTicketsMapName(), mapConfig);
-        mapConfigs.put(hz.getServiceTicketsMapName(), mapConfigSTs);
-
+        final Collection<TicketDefinition> definitions = ticketCatalog.findAll();
+        definitions.forEach(t -> {
+            final MapConfig mapConfig = createMapConfig(t);
+            LOGGER.debug("Created Hazelcast map configuration for [{}]", t);
+            mapConfigs.put(t.getProperties().getCacheName(), mapConfig);
+        });
         return mapConfigs;
     }
 
-    private MapConfig createMapConfig(final String mapName, final long maxIdleSeconds) {
+    private MapConfig createMapConfig(final TicketDefinition definition) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastProperties.Cluster cluster = hz.getCluster();
         final EvictionPolicy evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
 
+        LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeout [{}] second(s)",
+                definition.getProperties().getCacheName(), definition.getProperties().getCacheTimeout());
+        
         return new MapConfig()
-                .setName(mapName)
-                .setMaxIdleSeconds((int) maxIdleSeconds)
+                .setName(definition.getProperties().getCacheName())
+                .setMaxIdleSeconds((int) definition.getProperties().getCacheTimeout())
                 .setBackupCount(cluster.getBackupCount())
                 .setAsyncBackupCount(cluster.getAsyncBackupCount())
                 .setEvictionPolicy(evictionPolicy)
