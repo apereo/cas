@@ -208,9 +208,9 @@ via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htm
 # spring.cloud.stream.kafka.binder.brokers=...
 ```
 
-## Embedded Tomcat
+## Embedded Container
 
-The following properties are related to the embedded Tomcat container that ships with CAS.
+The following properties are related to the embedded containers that ships with CAS.
 
 ```properties
 server.contextPath=/cas
@@ -233,25 +233,27 @@ server.connectionTimeout=20000
 # server.ssl.trustStorePassword=
 # server.ssl.trustStoreProvider=
 # server.ssl.trustStoreType=
-
-server.tomcat.basedir=build/tomcat
-
-server.tomcat.accesslog.enabled=true
-server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
-server.tomcat.accesslog.suffix=.log
-
-server.tomcat.maxHttpPostSize=20971520
-server.tomcat.maxThreads=5
-server.tomcat.portHeader=X-Forwarded-Port
-server.tomcat.protocolHeader=X-Forwarded-Proto
-server.tomcat.protocolHeaderHttpsValue=https
-server.tomcat.remoteIpHeader=X-FORWARDED-FOR
-server.tomcat.uriEncoding=UTF-8
-
-server.useForwardHeaders=true
 ```
 
-### HTTP/AJP
+### Embedded Tomcat Container
+
+```properties
+# server.tomcat.basedir=build/tomcat
+
+# server.tomcat.accesslog.enabled=true
+# server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
+# server.tomcat.accesslog.suffix=.log
+
+# server.tomcat.maxHttpPostSize=20971520
+# server.tomcat.maxThreads=5
+# server.tomcat.portHeader=X-Forwarded-Port
+# server.tomcat.protocolHeader=X-Forwarded-Proto
+# server.tomcat.protocolHeaderHttpsValue=https
+# server.tomcat.remoteIpHeader=X-FORWARDED-FOR
+# server.tomcat.uriEncoding=UTF-8
+```
+
+#### HTTP/AJP
 
 Enable HTTP/AJP connections for the embedded Tomcat container.
 
@@ -273,7 +275,7 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.ajp.allowTrace=false
 ```
 
-### Rewrite Valve
+#### Rewrite Valve
 
 If and when you choose to deploy CAS at root and remove the default context path,
 CAS by default attempts to deploy a special [`RewriteValve`](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.htm)
@@ -283,7 +285,7 @@ for the embedded container that knows how to reroute urls and such for backward 
 # cas.server.rewriteValveConfigLocation=classpath:/container/tomcat/rewrite.config
 ```
 
-### Extended Access Log
+#### Extended Access Log
 
 Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
 for the embedded Tomcat container.
@@ -385,8 +387,8 @@ The format of the file is as such:
 # cas.monitor.endpoints.authenticationEvents.enabled=false
 # cas.monitor.endpoints.authenticationEvents.sensitive=true
 
-# cas.monitor.endpoints.configState.enabled=false
-# cas.monitor.endpoints.configState.sensitive=true
+# cas.monitor.endpoints.configurationState.enabled=false
+# cas.monitor.endpoints.configurationState.sensitive=true
 
 # cas.monitor.endpoints.healthCheck.enabled=false
 # cas.monitor.endpoints.healthCheck.sensitive=true
@@ -3192,7 +3194,9 @@ which may not be appropriate for use in production. Setting the value to
 * `create-drop` - drop the schema at the end of the session.
 
 ```properties
+# cas.ticket.registry.jpa.ticketLockType=NONE
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
+
 # cas.ticket.registry.jpa.healthQuery=
 # cas.ticket.registry.jpa.isolateInternalQueries=false
 # cas.ticket.registry.jpa.url=jdbc:hsqldb:mem:cas-ticket-registry
@@ -3248,7 +3252,7 @@ To learn more about this topic, [please review this guide](Hazelcast-Ticket-Regi
 
 ```properties
 # cas.ticket.registry.hazelcast.pageSize=500
-# cas.ticket.registry.hazelcast.mapName=tickets
+# cas.ticket.registry.hazelcast.ticketGrantingTicketsMapName=tickets
 # cas.ticket.registry.hazelcast.configLocation=
 
 # cas.ticket.registry.hazelcast.cluster.evictionPolicy=LRU
