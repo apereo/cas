@@ -27,8 +27,7 @@ public class RedisTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-
+    
     @Bean
     @RefreshScope
     public RedisConnectionFactory redisConnectionFactory() {
@@ -50,7 +49,7 @@ public class RedisTicketRegistryConfiguration {
 
     private JedisPoolConfig jedisPoolConfig() {
         final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
-        
+
         final JedisPoolConfig config = new JedisPoolConfig();
         final RedisTicketRegistryProperties.Pool props = redis.getPool();
         config.setMaxTotal(props.getMaxActive());
@@ -67,9 +66,9 @@ public class RedisTicketRegistryConfiguration {
         return new TicketRedisTemplate(redisConnectionFactory());
     }
 
-    @Bean(name = {"redisTicketRegistry", "ticketRegistry"})
+    @Bean
     @RefreshScope
-    public TicketRegistry redisTicketRegistry() {
+    public TicketRegistry ticketRegistry() {
         final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
         final RedisTicketRegistry r = new RedisTicketRegistry(ticketRedisTemplate());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(redis.getCrypto()));
