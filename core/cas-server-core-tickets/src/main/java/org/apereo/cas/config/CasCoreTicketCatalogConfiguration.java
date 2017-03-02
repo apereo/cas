@@ -9,7 +9,7 @@ import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.TicketMetadataCatalog;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigur
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreTicketCatalogConfiguration.class);
 
     @Override
-    public final void configureTicketCatalog(final TicketMetadataCatalog plan) {
+    public final void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.debug("Registering core CAS protocol ticket definitions...");
 
         buildAndRegisterProxyTicketDefinition(plan,
@@ -48,19 +48,19 @@ public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigur
                         TicketGrantingTicketImpl.class, Ordered.LOWEST_PRECEDENCE));
     }
 
-    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         registerTicketDefinition(plan, metadata);
     }
 
-    protected void buildAndRegisterProxyTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         registerTicketDefinition(plan, metadata);
     }
 
-    protected void buildAndRegisterServiceTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         registerTicketDefinition(plan, metadata);
     }
 
-    protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         registerTicketDefinition(plan, metadata);
     }
 }
