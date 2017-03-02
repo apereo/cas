@@ -9,39 +9,39 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link HazelcastTicketRegistryTicketMetadataCatalogConfiguration}.
+ * This is {@link HazelcastTicketRegistryTicketCatalogConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Configuration("hazelcastTicketRegistryTicketMetadataCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class HazelcastTicketRegistryTicketMetadataCatalogConfiguration extends CasProtocolCoreTicketMetadataCatalogConfiguration {
+public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Override
-    protected void buildAndRegisterServiceTicketMetadata(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterServiceTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
         setServiceTicketDefinitionProperties(plan, metadata);
-        super.buildAndRegisterServiceTicketMetadata(plan, metadata);
+        super.buildAndRegisterServiceTicketDefinition(plan, metadata);
     }
 
     @Override
-    protected void buildAndRegisterProxyTicketMetadata(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterProxyTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
         setServiceTicketDefinitionProperties(plan, metadata);
-        super.buildAndRegisterServiceTicketMetadata(plan, metadata);
+        super.buildAndRegisterServiceTicketDefinition(plan, metadata);
     }
     
     @Override
-    protected void buildAndRegisterTicketGrantingTicketMetadata(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
         setTicketGrantingTicketProperties(metadata);
-        super.buildAndRegisterTicketGrantingTicketMetadata(plan, metadata);
+        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
     }
 
     @Override
-    protected void buildAndRegisterProxyGrantingTicketMetadata(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
         setTicketGrantingTicketProperties(metadata);
-        super.buildAndRegisterTicketGrantingTicketMetadata(plan, metadata);
+        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
     }
 
     private void setTicketGrantingTicketProperties(final TicketDefinition metadata) {
