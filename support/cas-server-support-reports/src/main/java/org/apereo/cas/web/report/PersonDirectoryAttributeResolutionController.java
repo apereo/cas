@@ -30,7 +30,7 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
     private PrincipalResolver personDirectoryPrincipalResolver;
 
     public PersonDirectoryAttributeResolutionController(final CasConfigurationProperties casProperties) {
-        super("attrresolution", "/attrresolution", casProperties.getMonitor().getEndpoints().getAttributeResolution());
+        super("attrresolution", "/attrresolution", casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties);
     }
 
     /**
