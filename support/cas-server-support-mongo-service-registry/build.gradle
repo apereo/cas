@@ -1,6 +1,6 @@
 description = "Apereo CAS Mongo Integration"
 dependencies {
-    api project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-services")
     implementation libraries.mongo
     
     implementation libraries.persondirectory

@@ -1,6 +1,6 @@
 description = "Apereo CAS Core Services"
 dependencies {
-    api project(":api:cas-server-core-api-services")
+    compile project(":api:cas-server-core-api-services")
 
     
     implementation libraries.quartz
@@ -8,9 +8,9 @@ dependencies {
     implementation libraries.httpclient
 
     compileOnly project(":core:cas-server-core-util")
-    api project(":core:cas-server-core-web")
-    api project(":core:cas-server-core-authentication")
-    api project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-configuration")
     
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(":core:cas-server-core-authentication")

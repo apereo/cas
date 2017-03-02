@@ -1,9 +1,9 @@
 description = "Apereo CAS RADIUS Support"
 dependencies {
 
-    api project(":support:cas-server-support-radius-core")
-    api project(":core:cas-server-core-authentication")
-    api project(":core:cas-server-core-web")
+    compile project(":support:cas-server-support-radius-core")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-web")
     implementation libraries.jradius
     
 }

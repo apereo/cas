@@ -2,8 +2,8 @@ description = "Apereo CAS Core Google Authenticator Support"
 dependencies {
     api libraries.googleauth
     api libraries.zxingbarcode
-    api project(":core:cas-server-core-authentication")
-    api project(":core:cas-server-core-webflow")
-    api project(":support:cas-server-support-otp-mfa")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-webflow")
+    compile project(":support:cas-server-support-otp-mfa")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

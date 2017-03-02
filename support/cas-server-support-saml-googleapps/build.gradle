@@ -2,8 +2,8 @@ description = "Apereo CAS SAML Server Google Apps SAML Support"
 dependencies {
 
 
-    api project(":support:cas-server-support-saml")
-    api project(":core:cas-server-core-services")
+    compile project(":support:cas-server-support-saml")
+    compile project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
     testCompileOnly libraries.metrics
     testCompileOnly libraries.log4j

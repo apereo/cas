@@ -2,7 +2,7 @@
 description = "Apereo CAS WS-Federation Support"
 dependencies {
   
-  api project(":support:cas-server-support-saml") 
+  compile project(":support:cas-server-support-saml") 
   testImplementation project(":core:cas-server-core")
   testImplementation project(":core:cas-server-core-logout")
   testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")

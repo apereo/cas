@@ -1,7 +1,7 @@
 description = "Apereo CAS JDBC Support"
 dependencies {
 
-    api project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-authentication")
     
     implementation libraries.quartz
 

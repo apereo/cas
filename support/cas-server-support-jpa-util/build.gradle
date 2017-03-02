@@ -1,6 +1,6 @@
 description = "Apereo CAS JPA Utilities and Support"
 dependencies {
-    api project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-util")
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }
