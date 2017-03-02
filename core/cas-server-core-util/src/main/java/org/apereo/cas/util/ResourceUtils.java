@@ -63,8 +63,13 @@ public final class ResourceUtils {
      * @return the boolean
      */
     public static boolean doesResourceExist(final String resource, final ResourceLoader resourceLoader) {
-        final Resource res = resourceLoader.getResource(resource);
-        return doesResourceExist(res);
+        try {
+            final Resource res = resourceLoader.getResource(resource);
+            return doesResourceExist(res);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+        return false;
     }
 
     /**

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import com.google.common.base.Throwables;
 import org.apereo.cas.config.monitor.ConfigurationDirectoryPathWatchService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -66,9 +67,9 @@ public class CasConfigurationSupportUtilitiesConfiguration {
                     throw new BeanCreationException("No search locations are defined for the native configuration profile");
                 }
                 final String loc = locs.get(0);
-                if (casProperties.getEvents().isTrackConfigurationModifications()) {
+                if (casProperties.getEvents().isTrackConfigurationModifications()
+                        && ResourceUtils.doesResourceExist(loc, this.resourceLoader)) {
                     LOGGER.debug("Starting to watch configuration directory [{}]", loc);
-
                     final Path directory = resourceLoader.getResource(loc).getFile().toPath();
                     final Thread th = new Thread(new ConfigurationDirectoryPathWatchService(directory, eventPublisher));
                     th.start();

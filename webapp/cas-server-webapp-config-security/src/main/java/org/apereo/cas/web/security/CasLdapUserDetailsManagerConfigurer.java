@@ -46,6 +46,7 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
         final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(adminPagesSecurityProperties.getLdap());
 
         if (isGroupBasedAuthorization()) {
+            LOGGER.debug("Handling LDAP authorization based on groups");
             return new LdapUserGroupsToRolesAuthorizationGenerator(connectionFactory,
                     ldapAuthorizationGeneratorUserSearchExecutor(),
                     ldapAuthz.isAllowMultipleResults(),
@@ -53,6 +54,7 @@ public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilde
                     ldapAuthz.getGroupPrefix(),
                     ldapAuthorizationGeneratorGroupSearchExecutor());
         }
+        LOGGER.debug("Handling LDAP authorization based on attributes and roles");
         return new LdapUserAttributesToRolesAuthorizationGenerator(connectionFactory,
                 ldapAuthorizationGeneratorUserSearchExecutor(),
                 ldapAuthz.isAllowMultipleResults(),
