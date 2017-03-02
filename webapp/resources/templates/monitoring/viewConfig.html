@@ -24,11 +24,9 @@
                 );
             }
         </script>
-
-
+        
         <div class="viewConfig">
             <div id="loadingMessage"><h3 th:text="#{cas.viewconfig.loading}"/></div>
-
 
             <div id="viewConfigError">
                 <h2 th:text="#{cas.viewconfig.errormessage}"></h2>
@@ -38,7 +36,7 @@
                 </div>
             </div>
 
-            <div id="alert-container" class="alert alert-info" th:text="#{cas.viewconfig.persistence}"></div>
+            <div id="alert-container" class="alert alert-info" th:unless="${enableRefresh}" th:text="#{cas.viewconfig.persistence}"></div>
 
             <div id="view-configuration">
 
