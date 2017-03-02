@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
+import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
 import org.junit.Test;
@@ -44,6 +45,8 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
         HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        HazelcastTicketRegistryTicketCatalogConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryConfiguration.class,
@@ -80,11 +83,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertEquals(Arrays.asList("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());
         assertEquals(5701, config.getNetworkConfig().getPort());
-
-        final MapConfig mapConfig = config.getMapConfig("tickets");
-        assertNotNull(mapConfig);
-        assertEquals(28800, mapConfig.getMaxIdleSeconds());
-        assertEquals(EvictionPolicy.LRU, mapConfig.getEvictionPolicy());
+        assertEquals(2, config.getMapConfigs().size());
     }
 
     @After
