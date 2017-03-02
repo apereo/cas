@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
         HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
-        CasProtocolCoreTicketMetadataCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreLogoutConfiguration.class,

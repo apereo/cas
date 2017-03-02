@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.HazelcastTicketRegistryConfiguration,\
-org.apereo.cas.config.HazelcastTicketRegistryTicketMetadataCatalogConfiguration
+org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration

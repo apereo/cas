@@ -12,9 +12,9 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
-import org.apereo.cas.config.HazelcastTicketRegistryTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +34,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = {
         HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
-        CasProtocolCoreTicketMetadataCatalogConfiguration.class,
-        HazelcastTicketRegistryTicketMetadataCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        HazelcastTicketRegistryTicketCatalogConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreLogoutConfiguration.class,

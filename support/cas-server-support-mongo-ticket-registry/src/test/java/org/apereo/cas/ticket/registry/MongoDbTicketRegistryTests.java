@@ -12,7 +12,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.Before;
@@ -49,7 +49,7 @@ import org.springframework.test.context.junit4.SpringRunner;
         CasCoreLogoutConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreTicketsConfiguration.class,
-        CasProtocolCoreTicketMetadataCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
         MongoDbTicketRegistryConfiguration.class})
 @EnableScheduling
 @TestPropertySource(locations = {"classpath:/mongoregistry.properties"})

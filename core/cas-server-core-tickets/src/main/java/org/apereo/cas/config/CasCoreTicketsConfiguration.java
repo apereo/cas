@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketMetadataCatalog;
-import org.apereo.cas.ticket.TicketMetadataCatalogConfigurer;
+import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
@@ -306,12 +306,12 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "ticketMetadataCatalog")
     @Autowired
     @Bean
-    public TicketMetadataCatalog ticketMetadataCatalog(final List<TicketMetadataCatalogConfigurer> configurers) {
+    public TicketMetadataCatalog ticketMetadataCatalog(final List<TicketCatalogConfigurer> configurers) {
         final DefaultTicketMetadataCatalog plan = new DefaultTicketMetadataCatalog();
         configurers.forEach(c -> {
             final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring ticket metadata registration plan [{}]", name);
-            c.configureTicketMetadataCatalog(plan);
+            c.configureTicketCatalog(plan);
         });
         return plan;
     }
