@@ -3262,7 +3262,6 @@ To learn more about this topic, [please review this guide](Hazelcast-Ticket-Regi
 
 ```properties
 # cas.ticket.registry.hazelcast.pageSize=500
-# cas.ticket.registry.hazelcast.ticketGrantingTicketsMapName=tickets
 # cas.ticket.registry.hazelcast.configLocation=
 
 # cas.ticket.registry.hazelcast.cluster.evictionPolicy=LRU

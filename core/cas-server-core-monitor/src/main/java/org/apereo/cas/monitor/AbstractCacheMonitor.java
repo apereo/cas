@@ -35,7 +35,8 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
                 return new CacheStatus(StatusCode.ERROR, "Cache statistics not available.");
             }
             final StatusCode[] overall = {StatusCode.OK};
-            Arrays.stream(statistics).map(this::status)
+            Arrays.stream(statistics)
+                    .map(this::status)
                     .filter(code -> code.value() > overall[0].value())
                     .forEach(code -> overall[0] = code);
             status = new CacheStatus(overall[0], null, statistics);
