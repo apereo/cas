@@ -1,9 +1,9 @@
 description = "Apereo CAS X.509 Client Certificate Support"
 dependencies {
-    api project(":core:cas-server-core-authentication")
-    api project(":core:cas-server-core-util")
-    api project(":core:cas-server-core-web")
-    api project(":support:cas-server-support-ldap-core")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-web")
+    compile project(":support:cas-server-support-ldap-core")
     implementation libraries.bouncycastle
     implementation libraries.ehcache
     implementation libraries.ldaptive

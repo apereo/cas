@@ -4,8 +4,8 @@ dependencies {
     implementation libraries.pac4j
     implementation libraries.cassecurityfilter
 
-    api project(":core:cas-server-core-web")
-    api project(":support:cas-server-support-actions")
+    compile project(":core:cas-server-core-web")
+    compile project(":support:cas-server-support-actions")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")

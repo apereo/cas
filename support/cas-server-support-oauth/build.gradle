@@ -1,7 +1,7 @@
 description = "Apereo CAS Server OAuth Provider Support"
 dependencies {
     implementation libraries.httpclient
-    api project(":support:cas-server-support-oauth-core")
+    compile project(":support:cas-server-support-oauth-core")
     compileOnly project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
