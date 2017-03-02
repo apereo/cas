@@ -65,7 +65,7 @@ public class SessionMonitorJpaTests {
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     @Autowired
-    @Qualifier("jpaTicketRegistry")
+    @Qualifier("ticketRegistry")
     private TicketRegistry jpaRegistry;
 
     @Test
