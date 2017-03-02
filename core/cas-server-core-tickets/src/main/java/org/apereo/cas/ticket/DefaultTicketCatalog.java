@@ -9,44 +9,44 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is {@link DefaultTicketMetadataCatalog}.
+ * This is {@link DefaultTicketCatalog}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class DefaultTicketMetadataCatalog implements TicketMetadataCatalog {
+public class DefaultTicketCatalog implements TicketCatalog {
     private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>();
 
-    public DefaultTicketMetadataCatalog() {
+    public DefaultTicketCatalog() {
     }
 
     @Override
-    public TicketDefinition findTicketMetadata(final String ticketId) {
+    public TicketDefinition find(final String ticketId) {
         return ticketMetadataMap.values().stream().filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().orElse(null);
     }
 
     @Override
-    public TicketDefinition findTicketMetadata(final Ticket ticket) {
-        return findTicketMetadata(ticket.getPrefix());
+    public TicketDefinition find(final Ticket ticket) {
+        return find(ticket.getPrefix());
     }
 
     @Override
-    public void registerTicketMetadata(final TicketDefinition ticketDefinition) {
+    public void register(final TicketDefinition ticketDefinition) {
         ticketMetadataMap.put(ticketDefinition.getPrefix(), ticketDefinition);
     }
 
     @Override
-    public void updateTicketMetadata(final TicketDefinition metadata) {
-        registerTicketMetadata(metadata);
+    public void update(final TicketDefinition metadata) {
+        register(metadata);
     }
 
     @Override
-    public boolean containsTicketMetadata(final String ticketId) {
+    public boolean contains(final String ticketId) {
         return ticketMetadataMap.containsKey(ticketId);
     }
 
     @Override
-    public Collection<TicketDefinition> findAllTicketMetadata() {
+    public Collection<TicketDefinition> findAll() {
         final List list = new ArrayList<>(ticketMetadataMap.values());
         OrderComparator.sort(list);
         return list;

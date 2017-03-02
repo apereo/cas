@@ -12,6 +12,6 @@ public interface TicketCatalogConfigurer {
      *
      * @param plan the plan
      */
-    default void configureTicketCatalog(final TicketMetadataCatalog plan) {
+    default void configureTicketCatalog(final TicketCatalog plan) {
     }
 }
