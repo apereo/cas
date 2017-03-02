@@ -3,11 +3,9 @@ package org.apereo.cas.ticket.registry;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketDefinition;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,14 +117,13 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public Collection<Ticket> getTickets() {
-        Collection<Ticket> tickets = new HashSet<>();
-
+        final Collection<Ticket> tickets = new HashSet<>();
         try {
-            final TicketDefinition tgts = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
-            final TicketDefinition sts = this.ticketCatalog.find(ServiceTicket.PREFIX);
-
-            tickets = getTicketMapInstanceByMetadata(tgts).values().stream().limit(this.pageSize).collect(Collectors.toList());
-            tickets.addAll(getTicketMapInstanceByMetadata(sts).values());
+            final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
+            metadata.forEach(t -> {
+                final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(t);
+                tickets.addAll(map.values().stream().limit(this.pageSize).collect(Collectors.toList()));
+            });
             return tickets;
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
@@ -151,19 +148,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     public void close() throws IOException {
         shutdown();
     }
-
-    @Override
-    public long sessionCount() {
-        final TicketDefinition metadata = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
-        return getTicketMapInstanceByMetadata(metadata).size();
-    }
-
-    @Override
-    public long serviceTicketCount() {
-        final TicketDefinition metadata = this.ticketCatalog.find(ServiceTicket.PREFIX);
-        return getTicketMapInstanceByMetadata(metadata).size();
-    }
-
+    
     private IMap<String, Ticket> getTicketMapInstance(final String mapName) {
         try {
             final IMap<String, Ticket> inst = hazelcastInstance.getMap(mapName);

@@ -41,6 +41,14 @@ public interface TicketCatalog {
     TicketDefinition find(String ticketId);
 
     /**
+     * Find collection.
+     *
+     * @param ticketClass the ticket class
+     * @return the collection
+     */
+    Collection<TicketDefinition> find(Class<Ticket> ticketClass);
+
+    /**
      * Find ticket definition.
      *
      * @param ticket the ticket

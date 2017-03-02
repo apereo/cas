@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultTicketCatalog}.
@@ -56,7 +57,18 @@ public class DefaultTicketCatalog implements TicketCatalog {
     public Collection<TicketDefinition> findAll() {
         final List list = new ArrayList<>(ticketMetadataMap.values());
         OrderComparator.sort(list);
-        LOGGER.debug("Located all registered and known sorted ticket definitions ", list);
+        LOGGER.debug("Located all registered and known sorted ticket definitions [{}]", list);
+        return list;
+    }
+
+    @Override
+    public Collection<TicketDefinition> find(final Class<Ticket> ticketClass) {
+        final List list = ticketMetadataMap.values()
+                .stream()
+                .filter(t -> t.getImplementationClass().isInstance(ticketClass))
+                .collect(Collectors.toList());
+        OrderComparator.sort(list);
+        LOGGER.debug("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
         return list;
     }
 }
