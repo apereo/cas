@@ -3,12 +3,11 @@ description = "Apereo CAS Management Web Application Support"
 dependencies {
     implementation libraries.pac4j
     implementation libraries.casclient
-
     implementation libraries.groovy
     implementation libraries.persondirectory
     compile project(":core:cas-server-core-configuration")
     compile project(":core:cas-server-core-services")
-    compile project(":support:cas-server-support-oauth-core")
+    compile project(":support:cas-server-support-oauth-services")
     compile project(":support:cas-server-support-saml-idp-core")
     compile project(":support:cas-server-support-oidc-core")
     compile project(":support:cas-server-support-grouper")
