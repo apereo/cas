@@ -1,5 +1,5 @@
 apply plugin: "war"
-apply plugin: "com.moowork.node"
+apply plugin: "com.moowork.gulp"
 
 description = "Apereo CAS Web Application"
 
@@ -13,6 +13,20 @@ sourceSets {
 
 javadoc {
     enabled false
+}
+
+
+task gulpSetup(dependsOn: ["npmInstall","installGulp"], description: "Install npm and Gulp") {}
+task gulpRun(dependsOn: gulp_default, description: "Runs Gulp default task") {}
+
+node {
+    nodeModulesDir = project(":webapp").projectDir
+}
+
+gulp {
+    workDir =  project(":webapp").projectDir
+    colors = true
+    bufferOutput = true
 }
 
 war {
