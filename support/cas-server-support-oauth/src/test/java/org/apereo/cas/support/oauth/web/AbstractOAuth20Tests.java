@@ -15,7 +15,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasOAuthConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -62,7 +62,7 @@ import java.util.List;
                 CasOAuthConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreConfiguration.class,
-                CasProtocolCoreTicketMetadataCatalogConfiguration.class,
+                CasCoreTicketCatalogConfiguration.class,
                 CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
                 AbstractOAuth20Tests.OAuthTestConfiguration.class,

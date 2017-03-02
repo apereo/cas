@@ -15,9 +15,9 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
-import org.apereo.cas.config.JpaTicketRegistryTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockService;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -76,8 +76,8 @@ import static org.junit.Assert.*;
         CasCoreLogoutConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreTicketsConfiguration.class,
-        CasProtocolCoreTicketMetadataCatalogConfiguration.class,
-        JpaTicketRegistryTicketMetadataCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        JpaTicketRegistryTicketCatalogConfiguration.class,
         JpaTicketRegistryConfiguration.class})
 public class JpaTicketRegistryTests {
     /**

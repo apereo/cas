@@ -14,8 +14,8 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
-import org.apereo.cas.config.HazelcastTicketRegistryTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -60,8 +60,8 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasPersonDirectoryConfiguration.class,
-        HazelcastTicketRegistryTicketMetadataCatalogConfiguration.class,
-        CasProtocolCoreTicketMetadataCatalogConfiguration.class})
+        HazelcastTicketRegistryTicketCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class})
 public class HazelcastTicketRegistryReplicationTests {
     @Autowired
     @Qualifier("hzTicketRegistry1")
