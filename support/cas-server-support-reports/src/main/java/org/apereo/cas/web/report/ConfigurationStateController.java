@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
+import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -45,6 +46,9 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     private BusProperties busProperties;
 
     @Autowired
+    private RefreshEndpoint refreshEndpoint;
+
+    @Autowired
     private ConfigServerProperties configServerProperties;
 
     @Autowired
@@ -56,8 +60,11 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @Autowired
     private ConfigurableEnvironment environment;
 
+    private CasConfigurationProperties casProperties;
+
     public ConfigurationStateController(final CasConfigurationProperties casProperties) {
         super("configstate", "/config", casProperties.getMonitor().getEndpoints().getConfigurationState());
+        this.casProperties = casProperties;
     }
 
     /**
@@ -77,13 +84,13 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
      * @throws Exception the exception
      */
     @GetMapping
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                              final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
-        
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
         ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);
+        model.put("enableRefresh", !casProperties.getEvents().isTrackConfigurationModifications() && refreshEndpoint.isEnabled());
         return new ModelAndView(VIEW_CONFIG, model);
     }
 
@@ -96,9 +103,9 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
      */
     @GetMapping("/getConfiguration")
     @ResponseBody
-    protected Map getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
+    public Map getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        
+
         final String patternStr = String.format("(%s|configService:|applicationConfig:).+(application|cas).+", CasOverridingPropertySource.SOURCE_NAME);
         final Pattern pattern = RegexUtils.createPattern(patternStr);
 
@@ -134,12 +141,12 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
      */
     @PostMapping("/updateConfiguration")
     @ResponseBody
-    protected void updateConfiguration(@RequestBody final Map<String, Map<String, String>> jsonInput,
-                                       final HttpServletRequest request,
-                                       final HttpServletResponse response) {
+    public void updateConfiguration(@RequestBody final Map<String, Map<String, String>> jsonInput,
+                                    final HttpServletRequest request,
+                                    final HttpServletResponse response) {
 
         ensureEndpointAccessIsAuthorized(request, response);
-        
+
         final Map<String, String> oldData = jsonInput.get("old");
         final Map<String, String> newData = jsonInput.get("new");
 
@@ -151,7 +158,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
         if (src.isPresent()) {
             source = (CasOverridingPropertySource) src.get();
             source.setProperty(newData.get("key"), newData.get("value"));
-            eventPublisher.publishEvent(new CasConfigurationModifiedEvent(source, true));
+            eventPublisher.publishEvent(new CasConfigurationModifiedEvent(source, casProperties.getEvents().isTrackConfigurationModifications()));
         }
     }
 

@@ -80,13 +80,13 @@
                 </div>
             </div>
             <div th:replace="fragments/footerButtons"></div>
-            <div>
+            
+            <div th:if="${enableRefresh}">
                 <form th:method="${refreshMethod}" th:action="${refreshEndpoint}" id="formRefreshCAS">
                     <button class="btn btn-refresh"
                             type="button"
                             th:inline="text"
-                            th:attr="data-disabled=true,data-title=foo,data-message=bar"
-                    >
+                            th:attr="data-disabled=true,data-title=foo,data-message=bar">
                         <i class="fa fa-refresh"></i> [[#{cas.dashboard.action.button.refresh}]]
                     </button>
                 </form>
@@ -105,54 +105,6 @@
             </div>
         </div>
     </div>
-    <script>
-
-        $('#formRefreshCAS button').on('click', function (e) {
-            e.preventDefault();
-
-            // Show the refreshModal
-            var myModal = $('#refreshModal').modal({
-                keyboard: false,
-                backdrop: 'static'
-            });
-
-            var primaryButton = myModal.find('.modal-footer button.btn-primary');
-
-            // Disable the primary button
-            primaryButton.prop('disabled', true).text('Refreshing...');
-
-            $.post(e.target.parentNode.action, function (data) {
-                if (data.length != 0) {
-                    $('#refreshModal-label').text('Refreshed Properties');
-                    myModal.find('.modal-content .modal-body').html(
-                        "<pre>" + data + "</pre>" +
-                        "<p>Click &quot;OK&quot; to reload page.</p>"
-                    );
-                } else {
-                    myModal.find('.modal-header .modal-title').text('Properties Refreshed');
-                    myModal.find('.modal-content .modal-body').html(
-                        "<p>Click &quot;OK&quot; to reload page.</p>"
-                    );
-                }
-            })
-                .done(function () {
-                    primaryButton.prop('disabled', false).text('Reload page').on('click', function (e) {
-                        e.preventDefault();
-                        location.reload();
-                    });
-                })
-                .fail(function () {
-                    $('#refreshModal-label').text('Problem With Refreshing Properties');
-                    myModal.find('.modal-content .modal-body').html(
-                        '<div class="alert alert-warning">Unable to refresh the properties.  Please try again.</div>'
-                    );
-                    primaryButton.prop('disabled', false).on('click', function (e) {
-                        myModal.modal('hide');
-                    });
-                });
-
-        });
-    </script>
 </div>
 </body>
 </html>
