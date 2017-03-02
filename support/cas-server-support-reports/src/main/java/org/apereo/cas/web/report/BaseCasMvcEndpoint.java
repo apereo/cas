@@ -37,9 +37,11 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
     public BaseCasMvcEndpoint(final String name, final String path,
                               final MonitorProperties.BaseEndpoint endpoint,
                               final CasConfigurationProperties casProperties) {
-        super(name, path, casProperties.getMonitor().getEndpoints().isSensitive());
-        setSensitive(endpoint.isSensitive());
+        super(name, path, true);
 
+        final boolean s = casProperties.getMonitor().getEndpoints().isSensitive() || BooleanUtils.toBoolean(endpoint.isSensitive());
+        setSensitive(s);
+        
         final boolean b = casProperties.getMonitor().getEndpoints().isEnabled() || BooleanUtils.toBoolean(endpoint.isEnabled());
         setEnabled(b);
     }
@@ -53,7 +55,7 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
     protected void ensureEndpointAccessIsAuthorized(final HttpServletRequest request,
                                                     final HttpServletResponse response) {
         if (!isEnabled()) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            LOGGER.warn("Access to endpoint [{}] is not enabled", getName());
             throw new UnuauthorizedEndpointException();
         }
     }
