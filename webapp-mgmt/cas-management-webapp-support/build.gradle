@@ -9,6 +9,6 @@ dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":support:cas-server-support-oauth-services")
     compile project(":support:cas-server-support-saml-idp-core")
-    compile project(":support:cas-server-support-oidc-core")
+    compile project(":support:cas-server-support-oidc-services")
     compile project(":support:cas-server-support-grouper")
 }
