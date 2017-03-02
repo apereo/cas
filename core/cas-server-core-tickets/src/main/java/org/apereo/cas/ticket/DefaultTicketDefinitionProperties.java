@@ -14,6 +14,17 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
 
     private boolean cascadeTicket;
     private String cacheName;
+    private long cacheTimeout;
+
+    @Override
+    public long getCacheTimeout() {
+        return cacheTimeout;
+    }
+
+    @Override
+    public void setCacheTimeout(final long cacheTimeout) {
+        this.cacheTimeout = cacheTimeout;
+    }
 
     @Override
     public boolean isCascade() {
@@ -50,6 +61,7 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
         return new EqualsBuilder()
                 .append(this.cascadeTicket, rhs.cascadeTicket)
                 .append(this.cacheName, rhs.cacheName)
+                .append(this.cacheTimeout, rhs.cacheTimeout)
                 .isEquals();
     }
 
@@ -58,15 +70,16 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
         return new HashCodeBuilder()
                 .append(cascadeTicket)
                 .append(cacheName)
+                .append(cacheTimeout)
                 .toHashCode();
     }
-
-
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("cascadeTicket", cascadeTicket)
                 .append("cacheName", cacheName)
+                .append("cacheTimeout", cacheTimeout)
                 .toString();
     }
 }

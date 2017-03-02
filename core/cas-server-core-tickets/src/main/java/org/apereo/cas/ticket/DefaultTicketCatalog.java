@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class DefaultTicketCatalog implements TicketCatalog {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketCatalog.class);
+    
     private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>();
 
     public DefaultTicketCatalog() {
@@ -27,11 +31,13 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public TicketDefinition find(final Ticket ticket) {
+        LOGGER.debug("Locating ticket definition for ticket [{}]", ticket);
         return find(ticket.getPrefix());
     }
 
     @Override
     public void register(final TicketDefinition ticketDefinition) {
+        LOGGER.debug("Registering/Updating ticket definition [{}]", ticketDefinition);
         ticketMetadataMap.put(ticketDefinition.getPrefix(), ticketDefinition);
     }
 
@@ -42,6 +48,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public boolean contains(final String ticketId) {
+        LOGGER.debug("Locating ticket definition for [{}]", ticketId);
         return ticketMetadataMap.containsKey(ticketId);
     }
 
@@ -49,6 +56,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     public Collection<TicketDefinition> findAll() {
         final List list = new ArrayList<>(ticketMetadataMap.values());
         OrderComparator.sort(list);
+        LOGGER.debug("Located all registered and known sorted ticket definitions ", list);
         return list;
     }
 }
