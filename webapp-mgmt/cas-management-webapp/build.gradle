@@ -38,13 +38,9 @@ war {
 }
 
 dependencies {
-    
     runtimeOnly project(":webapp-mgmt:cas-management-webapp-support")
-
     providedRuntime libraries.springboottomcat
-
     runtimeOnly libraries.groovy
-    
     implementation libraries.thymeleaf
     implementation libraries.thymeleafdialect
     implementation libraries.thymeleafboot
