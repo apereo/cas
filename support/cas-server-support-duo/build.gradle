@@ -4,8 +4,8 @@ dependencies {
     implementation libraries.duojavaauth
 
     
-    compile project(":core:cas-server-core-authentication")
-    compile project(":core:cas-server-core-webflow")
-    compile project(":support:cas-server-support-duo-core")
+    api project(":core:cas-server-core-authentication")
+    api project(":core:cas-server-core-webflow")
+    api project(":support:cas-server-support-duo-core")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

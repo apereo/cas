@@ -5,5 +5,5 @@ dependencies {
     implementation libraries.persondirectory
     implementation libraries.shibidp
     implementation libraries.shibattributes
-    compile project(":support:cas-server-support-saml-core")
+    api project(":support:cas-server-support-saml-core")
 }

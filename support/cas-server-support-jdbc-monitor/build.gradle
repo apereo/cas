@@ -1,8 +1,8 @@
 description = "Apereo CAS JDBC Monitor Support"
 dependencies {
 
-    compile project(":core:cas-server-core-monitor")
-    compile project(":core:cas-server-core-authentication")
+    api project(":core:cas-server-core-monitor")
+    api project(":core:cas-server-core-authentication")
     
     implementation libraries.quartz
 

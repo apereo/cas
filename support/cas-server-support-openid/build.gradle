@@ -1,13 +1,13 @@
 description = "Apereo CAS OpenId Server Support"
 dependencies {
-    compile project(":core:cas-server-core-services")
-    compile project(":support:cas-server-support-validation")
+    api project(":core:cas-server-core-services")
+    api project(":support:cas-server-support-validation")
     
     implementation libraries.openid4java
     implementation libraries.httpclient
     api libraries.persondirectory
     
-    compile project(":core:cas-server-core-authentication")
+    api project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")

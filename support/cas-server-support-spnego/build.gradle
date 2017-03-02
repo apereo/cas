@@ -1,9 +1,9 @@
 description = "Apereo CAS SPNEGO/NTLM Support"
 dependencies {
 
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-authentication")
-    compile project(":core:cas-server-core-util")
+    api project(":core:cas-server-core-web")
+    api project(":core:cas-server-core-authentication")
+    api project(":core:cas-server-core-util")
     implementation libraries.ldaptive
     implementation libraries.jcifs
     implementation libraries.persondirectory

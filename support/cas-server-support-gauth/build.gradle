@@ -2,6 +2,6 @@ description = "Apereo CAS Google Authenticator Support"
 dependencies {
     
     
-    compile project(":support:cas-server-support-gauth-core")
+    api project(":support:cas-server-support-gauth-core")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

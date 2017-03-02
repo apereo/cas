@@ -1,10 +1,10 @@
 description = "Apereo CAS JPA Ticket Registry Support"
 dependencies {
-    compile project(":core:cas-server-core-tickets")
-    compile project(":core:cas-server-core-monitor")
-    compile project(":core:cas-server-core-util")
-    compile project(":support:cas-server-support-jpa-util")
-    compile project(":core:cas-server-core-configuration")
+    api project(":core:cas-server-core-tickets")
+    api project(":core:cas-server-core-monitor")
+    api project(":core:cas-server-core-util")
+    api project(":support:cas-server-support-jpa-util")
+    api project(":core:cas-server-core-configuration")
 
     implementation libraries.quartz
     

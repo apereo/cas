@@ -1,9 +1,9 @@
 description = "Apereo CAS TextMagic SMS Support"
 dependencies {
 
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-webflow")
-    compile project(":core:cas-server-core-authentication")
+    api project(":core:cas-server-core-web")
+    api project(":core:cas-server-core-webflow")
+    api project(":core:cas-server-core-authentication")
     
 
     implementation libraries.textmagic

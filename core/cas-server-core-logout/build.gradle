@@ -1,8 +1,8 @@
 description = "Apereo CAS Core Logout"
 dependencies {
 
-    compile project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-tickets")
+    api project(":core:cas-server-core-util")
+    api project(":core:cas-server-core-tickets")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
