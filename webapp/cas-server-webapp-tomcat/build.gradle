@@ -4,5 +4,5 @@ apply from: project.file("../gradle/bootwebapp.gradle")
 description = "Apereo CAS Web Application via Apache Tomcat"
 
 dependencies {
-    compile libraries.springboottomcat
+    implementation libraries.springboottomcat
 }
