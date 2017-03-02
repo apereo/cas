@@ -16,7 +16,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.TicketMetadataCatalog;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
@@ -65,21 +65,21 @@ public class HazelcastTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ticketMetadataCatalog")
-                                                  final TicketMetadataCatalog ticketMetadataCatalog) {
+    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog")
+                                         final TicketCatalog ticketCatalog) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
-                ticketMetadataCatalog,
+                ticketCatalog,
                 hz.getPageSize());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
     }
 
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketMetadataCatalog")
-                                                       final TicketMetadataCatalog ticketMetadataCatalog) {
+    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketCatalog")
+                                                       final TicketCatalog ticketCatalog) {
         return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager,
-                ticketRegistry(ticketMetadataCatalog), false);
+                ticketRegistry(ticketCatalog), false);
     }
 
     @Bean
@@ -169,7 +169,7 @@ public class HazelcastTicketRegistryConfiguration {
         // ST Map
         final MapConfig mapConfigSTs = createMapConfig(hz.getServiceTicketsMapName(), casProperties.getTicket().getSt().getTimeToKillInSeconds());
         LOGGER.debug("Created Hazelcast map configuration for [{}]", mapConfigSTs);
-        
+
         mapConfigs.put(hz.getTicketGrantingTicketsMapName(), mapConfig);
         mapConfigs.put(hz.getServiceTicketsMapName(), mapConfigSTs);
 

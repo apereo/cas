@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import org.springframework.core.Ordered;
+
 /**
  * This is {@link BaseTicketCatalogConfigurer}.
  *
@@ -16,11 +18,26 @@ public abstract class BaseTicketCatalogConfigurer implements TicketCatalogConfig
      * @param order  the order
      * @return the ticket definition
      */
-    protected TicketDefinition buildTicketDefinition(final TicketMetadataCatalog plan, final String prefix, final Class impl, final int order) {
-        if (plan.containsTicketMetadata(prefix)) {
-            return plan.findTicketMetadata(prefix);
+    protected TicketDefinition buildTicketDefinition(final TicketCatalog plan, final String prefix, final Class impl, final int order) {
+        if (plan.contains(prefix)) {
+            return plan.find(prefix);
         }
         return new DefaultTicketDefinition(impl, prefix, order);
+    }
+
+    /**
+     * Build ticket definition ticket.
+     *
+     * @param plan   the plan
+     * @param prefix the prefix
+     * @param impl   the
+     * @return the ticket definition
+     */
+    protected TicketDefinition buildTicketDefinition(final TicketCatalog plan, final String prefix, final Class impl) {
+        if (plan.contains(prefix)) {
+            return plan.find(prefix);
+        }
+        return new DefaultTicketDefinition(impl, prefix, Ordered.LOWEST_PRECEDENCE);
     }
 
     /**
@@ -29,8 +46,8 @@ public abstract class BaseTicketCatalogConfigurer implements TicketCatalogConfig
      * @param plan     the plan
      * @param metadata the metadata
      */
-    protected void registerTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
-        plan.registerTicketMetadata(metadata);
+    protected void registerTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+        plan.register(metadata);
     }
 
 }

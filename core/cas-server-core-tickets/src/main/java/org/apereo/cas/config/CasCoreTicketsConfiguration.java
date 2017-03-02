@@ -7,12 +7,12 @@ import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProper
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.DefaultTicketMetadataCatalog;
+import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-import org.apereo.cas.ticket.TicketMetadataCatalog;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
@@ -303,11 +303,11 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         return ticketTransactionManager();
     }
 
-    @ConditionalOnMissingBean(name = "ticketMetadataCatalog")
+    @ConditionalOnMissingBean(name = "ticketCatalog")
     @Autowired
     @Bean
-    public TicketMetadataCatalog ticketMetadataCatalog(final List<TicketCatalogConfigurer> configurers) {
-        final DefaultTicketMetadataCatalog plan = new DefaultTicketMetadataCatalog();
+    public TicketCatalog ticketCatalog(final List<TicketCatalogConfigurer> configurers) {
+        final DefaultTicketCatalog plan = new DefaultTicketCatalog();
         configurers.forEach(c -> {
             final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring ticket metadata registration plan [{}]", name);

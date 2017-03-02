@@ -9,7 +9,7 @@ package org.apereo.cas.ticket;
  * wouldn't have to statically link to all modules and APIs.
  *
  * @author Misagh Moayyed
- * @see TicketMetadataCatalog
+ * @see TicketCatalog
  * @since 5.1.0
  */
 public interface TicketDefinitionProperties {

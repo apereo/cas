@@ -2,8 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.apereo.cas.ticket.TicketMetadataCatalog;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.code.OAuthCode;
@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 
 /**
  * This is {@link OAuthProtocolTicketCatalogConfiguration}.
@@ -28,23 +27,23 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthProtocolTicketCatalogConfiguration.class);
 
     @Override
-    public void configureTicketCatalog(final TicketMetadataCatalog plan) {
+    public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.debug("Registering core OAuth protocol ticket metadata types...");
 
-        buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuthCode.PREFIX, OAuthCodeImpl.class, Ordered.LOWEST_PRECEDENCE));
-        buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, AccessToken.PREFIX, AccessTokenImpl.class, Ordered.LOWEST_PRECEDENCE));
-        buildAndRegisterRefreshTokenDefinition(plan, buildTicketDefinition(plan, RefreshToken.PREFIX, RefreshTokenImpl.class, Ordered.LOWEST_PRECEDENCE));
+        buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuthCode.PREFIX, OAuthCodeImpl.class));
+        buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, AccessToken.PREFIX, AccessTokenImpl.class));
+        buildAndRegisterRefreshTokenDefinition(plan, buildTicketDefinition(plan, RefreshToken.PREFIX, RefreshTokenImpl.class));
     }
 
-    protected void buildAndRegisterAccessTokenDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterAccessTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         registerTicketDefinition(plan, metadata);
     }
 
-    protected void buildAndRegisterRefreshTokenDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterRefreshTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         registerTicketDefinition(plan, metadata);
     }
 
-    protected void buildAndRegisterOAuthCodeDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterOAuthCodeDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         registerTicketDefinition(plan, metadata);
     }
 }

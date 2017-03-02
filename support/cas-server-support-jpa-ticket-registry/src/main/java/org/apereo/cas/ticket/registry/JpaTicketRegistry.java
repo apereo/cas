@@ -2,9 +2,9 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketMetadataCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -33,15 +33,15 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
    
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistry.class);
 
-    private final TicketMetadataCatalog ticketMetadataCatalog;
+    private final TicketCatalog ticketCatalog;
     private final LockModeType lockType;
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
-    public JpaTicketRegistry(final LockModeType lockType, final TicketMetadataCatalog ticketMetadataCatalog) {
+    public JpaTicketRegistry(final LockModeType lockType, final TicketCatalog ticketCatalog) {
         this.lockType = lockType;
-        this.ticketMetadataCatalog = ticketMetadataCatalog;
+        this.ticketCatalog = ticketCatalog;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final Collection<TicketDefinition> tkts = this.ticketMetadataCatalog.findAllTicketMetadata();
+        final Collection<TicketDefinition> tkts = this.ticketCatalog.findAll();
         final AtomicLong count = new AtomicLong();
         tkts.forEach(t -> {
             final String entityName = getTicketEntityName(t);
@@ -84,7 +84,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      */
     public Ticket getRawTicket(final String ticketId) {
         try {
-            final TicketDefinition tkt = this.ticketMetadataCatalog.findTicketMetadata(ticketId);
+            final TicketDefinition tkt = this.ticketCatalog.find(ticketId);
             return this.entityManager.find(tkt.getImplementationClass(), ticketId, this.lockType);
         } catch (final Exception e) {
             LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
@@ -94,7 +94,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<TicketDefinition> tkts = this.ticketMetadataCatalog.findAllTicketMetadata();
+        final Collection<TicketDefinition> tkts = this.ticketCatalog.findAll();
         final List<Ticket> tickets = new ArrayList<>();
         tkts.forEach(t -> {
             final Query query = this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass());
@@ -105,20 +105,20 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long sessionCount() {
-        final TicketDefinition md = this.ticketMetadataCatalog.findTicketMetadata(TicketGrantingTicket.PREFIX);
+        final TicketDefinition md = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
         return countToLong(this.entityManager.createQuery("select count(t) from " + getTicketEntityName(md) + " t").getSingleResult());
     }
 
     @Override
     public long serviceTicketCount() {
-        final TicketDefinition md = this.ticketMetadataCatalog.findTicketMetadata(ServiceTicket.PREFIX);
+        final TicketDefinition md = this.ticketCatalog.find(ServiceTicket.PREFIX);
         return countToLong(this.entityManager.createQuery("select count(t) from " + getTicketEntityName(md) + " t").getSingleResult());
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final int totalCount;
-        final TicketDefinition md = this.ticketMetadataCatalog.findTicketMetadata(ticketId);
+        final TicketDefinition md = this.ticketCatalog.find(ticketId);
 
         if (md.getProperties().isCascade()) {
             totalCount = deleteTicketGrantingTickets(ticketId);
@@ -143,13 +143,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private int deleteTicketGrantingTickets(final String ticketId) {
         int totalCount = 0;
 
-        final TicketDefinition st = this.ticketMetadataCatalog.findTicketMetadata(ServiceTicket.PREFIX);
+        final TicketDefinition st = this.ticketCatalog.find(ServiceTicket.PREFIX);
 
         Query query = entityManager.createQuery("delete from " + getTicketEntityName(st) + " s where s.ticketGrantingTicket.id = :id");
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();
 
-        final TicketDefinition tgt = this.ticketMetadataCatalog.findTicketMetadata(TicketGrantingTicket.PREFIX);
+        final TicketDefinition tgt = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
         query = entityManager.createQuery("delete from " + getTicketEntityName(tgt) + " t where t.ticketGrantingTicket.id = :id");
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();

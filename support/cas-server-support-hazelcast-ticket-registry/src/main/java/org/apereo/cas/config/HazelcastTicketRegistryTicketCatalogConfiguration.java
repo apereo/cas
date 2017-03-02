@@ -2,8 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.apereo.cas.ticket.TicketMetadataCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -21,25 +21,25 @@ public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTi
     private CasConfigurationProperties casProperties;
 
     @Override
-    protected void buildAndRegisterServiceTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         setServiceTicketDefinitionProperties(plan, metadata);
         super.buildAndRegisterServiceTicketDefinition(plan, metadata);
     }
 
     @Override
-    protected void buildAndRegisterProxyTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         setServiceTicketDefinitionProperties(plan, metadata);
         super.buildAndRegisterServiceTicketDefinition(plan, metadata);
     }
     
     @Override
-    protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         setTicketGrantingTicketProperties(metadata);
         super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
     }
 
     @Override
-    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         setTicketGrantingTicketProperties(metadata);
         super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
     }
@@ -50,7 +50,7 @@ public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTi
     }
 
 
-    private void setServiceTicketDefinitionProperties(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    private void setServiceTicketDefinitionProperties(final TicketCatalog plan, final TicketDefinition metadata) {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         metadata.getProperties().setCacheName(hz.getServiceTicketsMapName());
     }
