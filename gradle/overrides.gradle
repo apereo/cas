@@ -16,6 +16,7 @@ ext["hsqlVersion"] = "2.3.4"
 ext["httpCoreVersion"] = "4.4.4"
 ext["hikariVersion"] = "2.6.0"
 ext["groovyVersion"] = "2.4.8"
+ext["log4jVersion"] = "2.8"
 
 ext["commons-beanutils.version"] = "1.8.3"
 ext["hazelcast.version"] = ext["hazelcastVersion"]
@@ -31,3 +32,4 @@ ext["hsqldb.version"] = ext["hsqlVersion"]
 ext["httpcore.version"] = ext["httpCoreVersion"]
 ext["hikaricp.version"] = ext["hikariVersion"]
 ext["groovy.version"] = ext["groovyVersion"]
+ext["log4j2.version"] = ext["log4jVersion"]

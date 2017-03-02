@@ -74,10 +74,10 @@ public class CasAppender extends AbstractAppender {
             if (appender != null) {
                 appender.append(newLogEvent);
             } else {
-                throw new IllegalArgumentException("No log appender could be found for " + refName);
+                LOGGER.warn("No log appender could be found for [{}]", refName);
             }
         } else {
-            throw new IllegalArgumentException("No log appender reference could be located in your logging configuration.");
+            LOGGER.warn("No log appender reference could be located in your logging configuration.");
         }
     }
 
