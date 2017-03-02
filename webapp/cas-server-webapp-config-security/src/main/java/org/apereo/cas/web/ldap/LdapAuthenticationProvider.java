@@ -52,12 +52,16 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
             final String username = authentication.getPrincipal().toString();
             final Object credentials = authentication.getCredentials();
             final String password = credentials == null ? null : credentials.toString();
-            final AuthenticationRequest request = new AuthenticationRequest(username,
-                    new org.ldaptive.Credential(password), ReturnAttributes.ALL.value());
+
+            LOGGER.debug("Preparing LDAP authentication request for user [{}]", username);
+
+            final AuthenticationRequest request = new AuthenticationRequest(username, new org.ldaptive.Credential(password), ReturnAttributes.ALL.value());
             final Authenticator authenticator = Beans.newLdaptiveAuthenticator(adminPagesSecurityProperties.getLdap());
+            LOGGER.debug("Executing LDAP authentication request for user [{}]", username);
+            
             final AuthenticationResponse response = authenticator.authenticate(request);
             LOGGER.debug("LDAP response: [{}]", response);
-
+            
             if (response.getResult()) {
                 final LdapEntry entry = response.getLdapEntry();
 
@@ -84,7 +88,10 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                 }
                 LOGGER.warn("User [{}] is not authorized to access the requested resource allowed to roles [{}]",
                         username, authorizer.getElements());
+            } else {
+                LOGGER.warn("LDAP authentication response produced no results for [{}]", username);
             }
+
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new InsufficientAuthenticationException("Unexpected LDAP error", e);

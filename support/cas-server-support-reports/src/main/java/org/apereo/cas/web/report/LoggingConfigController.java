@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,6 +49,8 @@ import java.util.Set;
  * @since 4.2
  */
 public class LoggingConfigController extends BaseCasMvcEndpoint {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingConfigController.class);
+
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
 
@@ -78,10 +81,19 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     public void initialize() {
         try {
             final String logFile = environment.getProperty("logging.config");
-            this.logConfigurationFile = this.resourceLoader.getResource(logFile);
+            LOGGER.debug("Located logging configuration reference in the environment as [{}]", logFile);
 
-            this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
-            this.loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
+            if (StringUtils.isNotBlank(logFile)) {
+                this.logConfigurationFile = this.resourceLoader.getResource(logFile);
+                LOGGER.debug("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
+
+                this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
+
+                LOGGER.debug("Installing log configuration listener to detect changes and update");
+                this.loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
+            } else {
+                LOGGER.warn("Logging configuration cannot be found in the environment settings");
+            }
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -118,6 +130,8 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
 
+        Assert.notNull(this.loggerContext);
+
         final Map<String, Object> responseMap = new HashMap<>();
         final Map<String, Logger> loggers = getActiveLoggersInFactory();
         responseMap.put("activeLoggers", loggers.values());
@@ -138,6 +152,8 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @ResponseBody
     public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
+
+        Assert.notNull(this.loggerContext);
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
@@ -231,8 +247,9 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
                                   @RequestParam(defaultValue = "false") final boolean additive,
                                   final HttpServletRequest request,
                                   final HttpServletResponse response) throws Exception {
-
         ensureEndpointAccessIsAuthorized(request, response);
+
+        Assert.notNull(this.loggerContext);
 
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
         loggerConfigs.stream().
@@ -256,6 +273,8 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @ResponseBody
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
+        Assert.notNull(this.loggerContext);
+
         return this.auditTrailManager.get();
     }
 }
