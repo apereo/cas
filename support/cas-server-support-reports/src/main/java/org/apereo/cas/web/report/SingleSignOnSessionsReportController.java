@@ -105,7 +105,7 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
 
     public SingleSignOnSessionsReportController(final CentralAuthenticationService centralAuthenticationService,
                                                 final CasConfigurationProperties casProperties) {
-        super("ssosessions", "/ssosessions", casProperties.getMonitor().getEndpoints().getSingleSignOnReport());
+        super("ssosessions", "/ssosessions", casProperties.getMonitor().getEndpoints().getSingleSignOnReport(), casProperties);
         this.centralAuthenticationService = centralAuthenticationService;
         this.casProperties = casProperties;
     }

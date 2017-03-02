@@ -33,7 +33,7 @@ public class HealthCheckController extends BaseCasMvcEndpoint {
     private CasConfigurationProperties casProperties;
 
     public HealthCheckController(final Monitor<HealthStatus> healthCheckMonitor, final CasConfigurationProperties casProperties) {
-        super("status", "", casProperties.getMonitor().getEndpoints().getStatus());
+        super("status", "", casProperties.getMonitor().getEndpoints().getStatus(), casProperties);
         this.healthCheckMonitor = healthCheckMonitor;
         this.casProperties = casProperties;
     }

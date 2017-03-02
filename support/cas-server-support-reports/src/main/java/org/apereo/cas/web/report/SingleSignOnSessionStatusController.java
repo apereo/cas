@@ -27,7 +27,7 @@ public class SingleSignOnSessionStatusController extends BaseCasMvcEndpoint {
     public SingleSignOnSessionStatusController(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                final TicketRegistrySupport ticketRegistrySupport,
                                                final CasConfigurationProperties casProperties) {
-        super("ssostatus", "/sso", casProperties.getMonitor().getEndpoints().getSingleSignOnStatus());
+        super("ssostatus", "/sso", casProperties.getMonitor().getEndpoints().getSingleSignOnStatus(), casProperties);
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.ticketRegistrySupport = ticketRegistrySupport;
     }

@@ -63,7 +63,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     private CasConfigurationProperties casProperties;
 
     public ConfigurationStateController(final CasConfigurationProperties casProperties) {
-        super("configstate", "/config", casProperties.getMonitor().getEndpoints().getConfigurationState());
+        super("configstate", "/config", casProperties.getMonitor().getEndpoints().getConfigurationState(), casProperties);
         this.casProperties = casProperties;
     }
 
