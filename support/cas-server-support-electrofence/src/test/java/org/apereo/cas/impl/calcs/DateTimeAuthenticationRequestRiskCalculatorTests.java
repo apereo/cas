@@ -18,7 +18,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
@@ -71,7 +71,7 @@ import static org.junit.Assert.*;
         CasCoreWebflowConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreTicketsConfiguration.class,
-        CasProtocolCoreTicketMetadataCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
         CasEventsInMemoryRepositoryConfiguration.class,

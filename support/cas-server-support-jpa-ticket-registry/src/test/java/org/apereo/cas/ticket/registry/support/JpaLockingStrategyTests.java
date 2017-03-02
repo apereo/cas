@@ -10,9 +10,9 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
-import org.apereo.cas.config.JpaTicketRegistryTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -67,8 +67,8 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
-        CasProtocolCoreTicketMetadataCatalogConfiguration.class,
-        JpaTicketRegistryTicketMetadataCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        JpaTicketRegistryTicketCatalogConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         JpaTicketRegistryConfiguration.class})
 public class JpaLockingStrategyTests {

@@ -12,7 +12,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.GoogleAuthentiacatorMongoDbConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(
         classes = {GoogleAuthentiacatorMongoDbConfiguration.class,
                 CasCoreTicketsConfiguration.class,
-                CasProtocolCoreTicketMetadataCatalogConfiguration.class,
+                CasCoreTicketCatalogConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 CasCoreHttpConfiguration.class,
                 CasCoreServicesConfiguration.class,

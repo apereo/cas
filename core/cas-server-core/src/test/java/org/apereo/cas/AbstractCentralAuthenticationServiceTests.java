@@ -18,7 +18,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasProtocolCoreTicketMetadataCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -63,7 +63,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreHttpConfiguration.class,
                 CasCoreConfiguration.class,
                 CasCoreTicketsConfiguration.class,
-                CasProtocolCoreTicketMetadataCatalogConfiguration.class,
+                CasCoreTicketCatalogConfiguration.class,
                 CasCookieConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasCoreLogoutConfiguration.class,

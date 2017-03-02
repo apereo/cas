@@ -7,23 +7,23 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link JpaTicketRegistryTicketMetadataCatalogConfiguration}.
+ * This is {@link JpaTicketRegistryTicketCatalogConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Configuration("hazelcastTicketRegistryMapsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class JpaTicketRegistryTicketMetadataCatalogConfiguration extends CasProtocolCoreTicketMetadataCatalogConfiguration {
+public class JpaTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
     @Override
-    protected void buildAndRegisterTicketGrantingTicketMetadata(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setCascade(true);
-        super.buildAndRegisterTicketGrantingTicketMetadata(plan, metadata);
+        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
     }
 
     @Override
-    protected void buildAndRegisterProxyGrantingTicketMetadata(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
+    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketMetadataCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setCascade(true);
-        super.buildAndRegisterProxyGrantingTicketMetadata(plan, metadata);
+        super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
     }
 }
