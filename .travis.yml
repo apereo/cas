@@ -38,9 +38,10 @@ before_install:
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
 - sudo apt-get install -y nodejs
-- sudo ./gradlew gulpSetup --stacktrace
+- sudo ./gradlew gulpSetup --stacktrace -q
+- sudo ./gradlew clean --parallel -q
 install:
-- ./gradlew clean bootRepackage install --parallel -x test --stacktrace 
+- ./gradlew bootRepackage install --parallel -x test --stacktrace 
 script:
 - travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
 after_success:
