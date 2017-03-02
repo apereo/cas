@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import com.google.common.base.Throwables;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.FileAppender;
@@ -10,7 +11,7 @@ import org.apache.logging.log4j.core.appender.MemoryMappedFileAppender;
 import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
-import org.apache.logging.log4j.core.config.Configurator;
+import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -65,12 +66,12 @@ public class LoggingOutputSocketMessagingController {
     @PostConstruct
     public void initialize() {
         try {
-            final String logFile = environment.getProperty("logging.config");
-            this.logConfigurationFile = this.resourceLoader.getResource(logFile);
-
-            this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
-            this.loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
-            registerLogFileTailThreads();
+            final Pair<Resource, LoggerContext> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
+            if (pair != null) {
+                this.logConfigurationFile = pair.getKey();
+                this.loggerContext = pair.getValue();
+                registerLogFileTailThreads();
+            }
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

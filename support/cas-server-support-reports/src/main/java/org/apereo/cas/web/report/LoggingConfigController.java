@@ -1,9 +1,9 @@
 package org.apereo.cas.web.report;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.FileAppender;
@@ -12,11 +12,11 @@ import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.slf4j.Log4jLoggerFactory;
 import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.report.util.ControllerUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
@@ -79,23 +79,10 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @PostConstruct
     public void initialize() {
-        try {
-            final String logFile = environment.getProperty("logging.config");
-            LOGGER.debug("Located logging configuration reference in the environment as [{}]", logFile);
-
-            if (StringUtils.isNotBlank(logFile)) {
-                this.logConfigurationFile = this.resourceLoader.getResource(logFile);
-                LOGGER.debug("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
-
-                this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
-
-                LOGGER.debug("Installing log configuration listener to detect changes and update");
-                this.loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
-            } else {
-                LOGGER.warn("Logging configuration cannot be found in the environment settings");
-            }
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
+        final Pair<Resource, LoggerContext> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
+        if (pair != null) {
+            this.logConfigurationFile = pair.getKey();
+            this.loggerContext = pair.getValue();
         }
     }
 
