@@ -55,7 +55,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
     private CasConfigurationProperties casProperties;
     
     public DashboardController(final CasConfigurationProperties casProperties) {
-        super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard());
+        super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
         this.casProperties = casProperties;
     }
 

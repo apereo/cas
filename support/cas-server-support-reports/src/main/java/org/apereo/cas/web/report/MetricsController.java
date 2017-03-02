@@ -34,7 +34,7 @@ public class MetricsController extends BaseCasMvcEndpoint {
     private MetricRegistry metrics;
 
     public MetricsController(final CasConfigurationProperties casProperties) {
-        super("casmetrics", "/metrics", casProperties.getMonitor().getEndpoints().getMetrics());
+        super("casmetrics", "/metrics", casProperties.getMonitor().getEndpoints().getMetrics(), casProperties);
     }
 
     /**

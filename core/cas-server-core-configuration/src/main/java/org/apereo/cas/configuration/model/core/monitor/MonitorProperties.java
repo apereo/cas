@@ -24,7 +24,7 @@ public class MonitorProperties {
     private Warn warn = new Warn();
 
     private Endpoints endpoints = new Endpoints();
-    
+
     private Jdbc jdbc = new Jdbc();
 
     private Ldap ldap = new Ldap();
@@ -185,7 +185,29 @@ public class MonitorProperties {
 
     }
 
-    public static class Endpoints {
+    public abstract class BaseEndpoint {
+        private Boolean enabled;
+        private Boolean sensitive;
+
+        public Boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public Boolean isSensitive() {
+            return sensitive;
+        }
+
+        public void setSensitive(final Boolean sensitive) {
+            this.sensitive = sensitive;
+        }
+    }
+
+    public class Endpoints extends BaseEndpoint {
+        
         private Dashboard dashboard = new Dashboard();
         private AuditEvents auditEvents = new AuditEvents();
         private AuthenticationEvents authenticationEvents = new AuthenticationEvents();
@@ -200,6 +222,11 @@ public class MonitorProperties {
         private Status status = new Status();
         private SingleSignOnStatus singleSignOnStatus = new SingleSignOnStatus();
 
+        public Endpoints() {
+            setSensitive(Boolean.TRUE);
+            setEnabled(Boolean.TRUE);
+        }
+        
         public SingleSignOnStatus getSingleSignOnStatus() {
             return singleSignOnStatus;
         }
@@ -304,38 +331,43 @@ public class MonitorProperties {
             this.trustedDevices = trustedDevices;
         }
 
-        public static class BaseEndpoint {
-            private boolean enabled;
-            private boolean sensitive = true;
-
-            public boolean isEnabled() {
-                return enabled;
-            }
-
-            public void setEnabled(final boolean enabled) {
-                this.enabled = enabled;
-            }
-
-            public boolean isSensitive() {
-                return sensitive;
-            }
-
-            public void setSensitive(final boolean sensitive) {
-                this.sensitive = sensitive;
-            }
+        public class Dashboard extends BaseEndpoint {
         }
-        public static class Dashboard extends BaseEndpoint {}
-        public static class AuditEvents extends BaseEndpoint {}
-        public static class AuthenticationEvents extends BaseEndpoint {}
-        public static class ConfigurationState extends BaseEndpoint {}
-        public static class HealthCheck extends BaseEndpoint {}
-        public static class LoggingConfig extends BaseEndpoint {}
-        public static class Metrics extends BaseEndpoint {}
-        public static class AttributeResolution extends BaseEndpoint {}
-        public static class SingleSignOnReport extends BaseEndpoint {}
-        public static class Statistics extends BaseEndpoint {}
-        public static class TrustedDevices extends BaseEndpoint {}
-        public static class Status extends BaseEndpoint {}
-        public static class SingleSignOnStatus extends BaseEndpoint {}
+
+        public class AuditEvents extends BaseEndpoint {
+        }
+
+        public class AuthenticationEvents extends BaseEndpoint {
+        }
+
+        public class ConfigurationState extends BaseEndpoint {
+        }
+
+        public class HealthCheck extends BaseEndpoint {
+        }
+
+        public class LoggingConfig extends BaseEndpoint {
+        }
+
+        public class Metrics extends BaseEndpoint {
+        }
+
+        public class AttributeResolution extends BaseEndpoint {
+        }
+
+        public class SingleSignOnReport extends BaseEndpoint {
+        }
+
+        public class Statistics extends BaseEndpoint {
+        }
+
+        public class TrustedDevices extends BaseEndpoint {
+        }
+
+        public class Status extends BaseEndpoint {
+        }
+
+        public class SingleSignOnStatus extends BaseEndpoint {
+        }
     }
 }

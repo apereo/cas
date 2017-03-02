@@ -32,7 +32,7 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
 
     public TrustedDevicesController(final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                     final CasConfigurationProperties casProperties) {
-        super("trustedDevs", "/trustedDevs", casProperties.getMonitor().getEndpoints().getTrustedDevices());
+        super("trustedDevs", "/trustedDevs", casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties);
         this.mfaTrustEngine = mfaTrustEngine;
         this.casProperties = casProperties;
     }

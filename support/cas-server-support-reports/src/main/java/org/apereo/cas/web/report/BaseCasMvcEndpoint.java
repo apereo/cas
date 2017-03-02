@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,9 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
+    /**
+     * The constant LOGGER.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseCasMvcEndpoint.class);
 
 
@@ -24,14 +29,19 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
      * Instantiates a new Base cas mvc endpoint.
      * Endpoints are by default sensitive.
      *
-     * @param name     the name
-     * @param path     the path
-     * @param endpoint the endpoint
+     * @param name          the name
+     * @param path          the path
+     * @param endpoint      the endpoint
+     * @param casProperties the cas properties
      */
-    public BaseCasMvcEndpoint(final String name, final String path, final MonitorProperties.Endpoints.BaseEndpoint endpoint) {
-        super(name, path, true);
+    public BaseCasMvcEndpoint(final String name, final String path,
+                              final MonitorProperties.BaseEndpoint endpoint,
+                              final CasConfigurationProperties casProperties) {
+        super(name, path, casProperties.getMonitor().getEndpoints().isSensitive());
         setSensitive(endpoint.isSensitive());
-        setEnabled(endpoint.isEnabled());
+
+        final boolean b = casProperties.getMonitor().getEndpoints().isEnabled() || BooleanUtils.toBoolean(endpoint.isEnabled());
+        setEnabled(b);
     }
 
     /**
@@ -48,8 +58,14 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
         }
     }
 
+    /**
+     * The type Unuauthorized endpoint exception.
+     */
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Access Denied")
     private static class UnuauthorizedEndpointException extends RuntimeException {
+        /**
+         * The constant serialVersionUID.
+         */
         private static final long serialVersionUID = 3192230382776656678L;
     }
 }

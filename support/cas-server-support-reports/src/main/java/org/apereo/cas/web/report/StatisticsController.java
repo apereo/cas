@@ -43,11 +43,11 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                                 final MetricRegistry metricsRegistry,
                                 final HealthCheckRegistry healthCheckRegistry,
                                 final CasConfigurationProperties casProperties) {
-        super("casstats", "/stats", casProperties.getMonitor().getEndpoints().getStatistics());
+        super("casstats", "/stats", casProperties.getMonitor().getEndpoints().getStatistics(), casProperties);
         this.centralAuthenticationService = centralAuthenticationService;
         this.metricsRegistry = metricsRegistry;
         this.healthCheckRegistry = healthCheckRegistry;
-        this.casProperties = casProperties;
+        this.casProperties = casProperties; 
     }
 
     /**

@@ -24,7 +24,7 @@ public class AuthenticationEventsController extends BaseCasMvcEndpoint {
     private CasEventRepository eventRepository;
 
     public AuthenticationEventsController(final CasEventRepository eventRepository, final CasConfigurationProperties casProperties) {
-        super("casauthnevents", "/authnEvents", casProperties.getMonitor().getEndpoints().getAuthenticationEvents());
+        super("casauthnevents", "/authnEvents", casProperties.getMonitor().getEndpoints().getAuthenticationEvents(), casProperties);
         this.eventRepository = eventRepository;
     }
 
