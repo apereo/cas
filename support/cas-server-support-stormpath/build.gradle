@@ -1,8 +1,8 @@
 description = "Apereo CAS Stormpath Authentication Support"
 dependencies {
 
-    api project(":core:cas-server-core-authentication")
-    api project(":support:cas-server-support-pac4j-authentication")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":support:cas-server-support-pac4j-authentication")
     
     implementation libraries.pac4j
 

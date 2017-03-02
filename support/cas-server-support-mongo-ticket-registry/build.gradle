@@ -1,7 +1,7 @@
 description = "Apereo CAS MongoDB Ticket Registry"
 dependencies {
-    api project(":core:cas-server-core-tickets")
-    api project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-tickets")
+    compile project(":core:cas-server-core-util")
     implementation libraries.mongo
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")

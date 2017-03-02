@@ -4,9 +4,9 @@ dependencies {
     implementation libraries.quartz
 
 
-    api project(":support:cas-server-support-audit-jdbc")
-    api project(":core:cas-server-core-audit")
-    api project(":support:cas-server-support-throttle")
+    compile project(":support:cas-server-support-audit-jdbc")
+    compile project(":core:cas-server-core-audit")
+    compile project(":support:cas-server-support-throttle")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     testImplementation project(path: ":support:cas-server-support-throttle", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

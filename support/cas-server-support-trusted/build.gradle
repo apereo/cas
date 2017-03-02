@@ -1,9 +1,9 @@
 description = "Apereo CAS Trusted User Support"
 dependencies {
 
-    api project(":core:cas-server-core-web")
-    api project(":core:cas-server-core-webflow")
-    api project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-authentication")
 
     api libraries.persondirectory
 

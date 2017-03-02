@@ -2,7 +2,7 @@ description = "Apereo CAS Configuration Support"
 dependencies {
     
     
-    api project(":core:cas-server-core-events")
-    api project(":core:cas-server-core-util")
-    api project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-events")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-configuration")
 }

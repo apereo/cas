@@ -1,14 +1,14 @@
 description = "Apereo CAS Web Application Spring Webflow Actions"
 dependencies {
-    api project(":support:cas-server-support-cookie")
-    api project(":core:cas-server-core-web")
-    api project(":core:cas-server-core-webflow")
-    api project(":core:cas-server-core-authentication")
-    api project(":core:cas-server-core-tickets")
-    api project(":core:cas-server-core-services")
-    api project(":core:cas-server-core-configuration")
-    api project(":support:cas-server-support-geolocation")
-    api project(":core:cas-server-core-logout")
+    compile project(":support:cas-server-support-cookie")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-tickets")
+    compile project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-configuration")
+    compile project(":support:cas-server-support-geolocation")
+    compile project(":core:cas-server-core-logout")
     implementation libraries.pac4j
 
     testImplementation project(":core:cas-server-core")

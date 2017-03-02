@@ -1,8 +1,8 @@
 description = "Apereo CAS LDAP Monitor Support"
 dependencies {
     implementation libraries.ldaptive
-    api project(":support:cas-server-support-ldap")
-    api project(":core:cas-server-core-monitor")
+    compile project(":support:cas-server-support-ldap")
+    compile project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-services")

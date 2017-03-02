@@ -55,6 +55,7 @@ buildscript {
         classpath "com.gradle:build-scan-plugin:1.0"
         classpath "org.ajoberstar:grgit:1.7.2"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
     }
 }
 
