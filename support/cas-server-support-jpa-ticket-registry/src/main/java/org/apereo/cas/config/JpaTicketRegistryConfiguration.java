@@ -74,9 +74,9 @@ public class JpaTicketRegistryConfiguration {
         return Beans.newHickariDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
-    @Bean(name = {"jpaTicketRegistry", "ticketRegistry"})
+    @Bean
     @RefreshScope
-    public TicketRegistry jpaTicketRegistry(@Qualifier("ticketMetadataCatalog")
+    public TicketRegistry ticketRegistry(@Qualifier("ticketMetadataCatalog")
                                             final TicketMetadataCatalog ticketMetadataCatalog) {
         final JpaTicketRegistryProperties jpa = casProperties.getTicket().getRegistry().getJpa();
         final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketMetadataCatalog);
