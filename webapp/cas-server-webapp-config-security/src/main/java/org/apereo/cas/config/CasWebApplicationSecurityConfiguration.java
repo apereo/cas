@@ -9,6 +9,7 @@ import org.apereo.cas.web.security.CasLdapUserDetailsManagerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 
@@ -32,6 +33,15 @@ public class CasWebApplicationSecurityConfiguration extends GlobalAuthentication
         }
         if (isLdapAuthorizationActive()) {
             auth.apply(new CasLdapUserDetailsManagerConfigurer<>(casProperties.getAdminPagesSecurity()));
+        }
+
+        final AdminPagesSecurityProperties.Jaas jaas = casProperties.getAdminPagesSecurity().getJaas();
+        if (jaas.getLoginConfig() != null) {
+            final JaasAuthenticationProvider p = new JaasAuthenticationProvider();
+            p.setLoginConfig(jaas.getLoginConfig());
+            p.setLoginContextName(jaas.getLoginContextName());
+            p.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
+            auth.authenticationProvider(p);
         }
     }
 

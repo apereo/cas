@@ -444,7 +444,15 @@ security.basic.path=/cas/status/**
 security.basic.realm=CAS
 ```
 
-#### JDBC
+#### JAAS Authentication
+
+```properties
+# cas.adminPagesSecurity.jaas.loginConfig=file:/path/to/config
+# cas.adminPagesSecurity.jaas.refreshConfigurationOnStartup=true
+# cas.adminPagesSecurity.jaas.loginContextName=
+```
+
+#### JDBC Authentication
 
 ```properties
 # cas.adminPagesSecurity.jdbc.query=SELECT username,password,enabled FROM users WHERE username=?
@@ -466,8 +474,7 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.jdbc.idleTimeout=5000
 ```
 
-#### LDAP
-
+#### LDAP Authentication
 
 ```properties
 # cas.adminPagesSecurity.ldap.type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
