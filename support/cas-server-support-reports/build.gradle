@@ -1,11 +1,11 @@
 description = "Apereo CAS Web Application Reports"
 dependencies {
-    api project(":api:cas-server-core-api")
+    compile project(":api:cas-server-core-api")
     api libraries.metrics
 
-    api project(":core:cas-server-core-util")
-    api project(":core:cas-server-core-monitor")
-    api project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-monitor")
+    compile project(":core:cas-server-core-authentication")
     compileOnly project(":support:cas-server-support-trusted-mfa")
     compileOnly project(":core:cas-server-core-events")
     provided project(":support:cas-server-support-cookie")

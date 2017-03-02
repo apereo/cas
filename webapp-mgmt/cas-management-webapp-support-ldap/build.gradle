@@ -1,5 +1,5 @@
 description = "Apereo CAS Management Web Application LDAP Support"
 dependencies {
-    api project(":support:cas-server-support-ldap-core")
+    compile project(":support:cas-server-support-ldap-core")
     api libraries.pac4j
 }
