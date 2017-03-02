@@ -168,10 +168,10 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     .findFirst().orElse(OAuth20ResponseTypes.CODE);
 
             this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
-                    accessToken, refreshToken,
-                    casProperties.getTicket().getTgt().getTimeToKillInSeconds(),
-                    type);
+                    accessToken, refreshToken, casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
 
+            getTicketRegistry().addTicket(accessToken);
+            
             response.setStatus(HttpServletResponse.SC_OK);
             return null;
         } catch (final Exception e) {

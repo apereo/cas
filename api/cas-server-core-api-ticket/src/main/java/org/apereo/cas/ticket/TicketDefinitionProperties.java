@@ -18,7 +18,7 @@ public interface TicketDefinitionProperties {
      * Generically describes if this ticket is linked to all ticket entities
      * such that for normal CRUD operations, cascades may be required.
      *
-     * @return true/false
+     * @return true /false
      */
     boolean isCascade();
 
@@ -43,4 +43,19 @@ public interface TicketDefinitionProperties {
      * @param cacheName the cache name
      */
     void setCacheName(String cacheName);
+
+    /**
+     * Cache timeout long.
+     *
+     * @return the long
+     */
+    long getCacheTimeout();
+
+    /**
+     * Sets cache timeout.
+     *
+     * @param cacheTimeout the cache timeout
+     */
+    void setCacheTimeout(long cacheTimeout);
+
 }
