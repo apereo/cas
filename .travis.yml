@@ -37,7 +37,7 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
-- sudo ./gradlew gulpSetup
+- sudo npm install -g gulp
 install:
 - ./gradlew clean bootRepackage install --parallel -x test --stacktrace 
 script:
