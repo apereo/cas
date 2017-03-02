@@ -2,6 +2,59 @@ var viewConfigs = (function () {
 
     var origData;
 
+    var setupButtonClickOnRefreshedProperties = function () {
+
+        $('#formRefreshCAS button').on('click', function (e) {
+            e.preventDefault();
+
+            // Show the refreshModal
+            var myModal = $('#refreshModal').modal({
+                keyboard: false,
+                backdrop: 'static'
+            });
+
+            var primaryButton = myModal.find('.modal-footer button.btn-primary');
+
+            // Disable the primary button
+            primaryButton.prop('disabled', true).text('Refreshing...');
+
+            $.post(e.target.parentNode.action, function (data) {
+                if (data.length != 0) {
+                    $('#refreshModal-label').text('Refreshed Properties');
+                    myModal.find('.modal-content .modal-body').html(
+                        "<pre>" + data + "</pre>" +
+                        "<p>Click &quot;OK&quot; to reload page.</p>"
+                    );
+                } else {
+                    myModal.find('.modal-header .modal-title').text('Properties Refreshed');
+                    myModal.find('.modal-content .modal-body').html(
+                        "<p>Click &quot;OK&quot; to reload page.</p>"
+                    );
+                }
+            })
+                .done(function () {
+                    primaryButton.prop('disabled', false).text('Reload page').on('click', function (e) {
+                        e.preventDefault();
+                        location.reload();
+                    });
+                })
+                .fail(function (jqXHR) {
+                    $('#refreshModal-label').text('Problem With Refreshing Properties');
+                    myModal.find('.modal-content .modal-body').html(
+                        '<div class="alert alert-warning"> \
+                        <strong>Status: ' + jqXHR.status + '</strong><p/> \
+                        Unable to refresh the properties. Please try again.</div> \
+                        '
+                    );
+                    primaryButton.prop('disabled', false).text('OK').on('click', function (e) {
+                        myModal.modal('hide');
+                    });
+                });
+
+        });
+
+
+    };
 
     var createDataTable = function () {
         $('#viewConfigsTable').DataTable({
@@ -80,7 +133,7 @@ var viewConfigs = (function () {
                     var result = "Failed to save settings.";
                     $('#alertWrapper').addClass('alert-warning');
                     $('#alertWrapper').removeClass('alert-success');
-                    
+
                     $('#alertWrapper').prepend(result);
                     $('#alertWrapper').show();
                 })
@@ -102,6 +155,7 @@ var viewConfigs = (function () {
     // initialization *******
     (function init() {
         createDataTable();
+        setupButtonClickOnRefreshedProperties();
     })();
 
     // Public Methods
