@@ -143,20 +143,4 @@
       pointer-events: none; // Future-proof disabling of clicks on `<a>` elements
     }
   }
-
-
-  // Success appears as green
-  .btn-restart {
-    @include button-variant($btn-success-color, $btn-success-bg, $btn-success-border);
-  }
-  // Warning appears as orange
-  .btn-refresh {
-    @include button-variant($btn-warning-color, $btn-warning-bg, $btn-warning-border);
-  }
-  // Danger and error appear as red
-  .btn-shutdown {
-    @include button-variant($btn-danger-color, $btn-danger-bg, $btn-danger-border);
-  }
-
-
 }
