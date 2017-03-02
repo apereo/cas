@@ -378,6 +378,9 @@ The format of the file is as such:
 ### CAS Endpoints Security
 
 ```properties
+# cas.monitor.endpoints.enabled=false
+# cas.monitor.endpoints.sensitive=true
+
 # cas.monitor.endpoints.dashboard.enabled=false
 # cas.monitor.endpoints.dashboard.sensitive=true
 
@@ -2144,7 +2147,7 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
 ```
 
-The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo. 
+The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo.
 You can generate a random string in Python with:
 
 ```python

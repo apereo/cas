@@ -65,7 +65,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
 
     public LoggingConfigController(final DelegatingAuditTrailManager auditTrailManager,
                                    final CasConfigurationProperties casProperties) {
-        super("casloggingconfig", "/logging", casProperties.getMonitor().getEndpoints().getLoggingConfig());
+        super("casloggingconfig", "/logging", casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
         this.auditTrailManager = auditTrailManager;
     }
 
