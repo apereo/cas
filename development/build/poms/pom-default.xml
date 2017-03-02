@@ -2301,7 +2301,7 @@
     <dependency>
       <groupId>org.springframework.integration</groupId>
       <artifactId>spring-integration-core</artifactId>
-      <version>4.3.6.RELEASE</version>
+      <version>4.3.7.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
