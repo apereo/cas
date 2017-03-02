@@ -2,7 +2,7 @@
 # Central Authentication Service (CAS)
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
 [![](https://heroku-badge.herokuapp.com/?app=jasigcas&root=/cas/login)][caswebheroku]
-[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt&root=/cas-services/login)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
+[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt&root=/cas-management/login)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
 [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b)
 [![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.apereo.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
@@ -76,8 +76,8 @@ CAS development is powered by: <br/>
 [downloadcasgithub]: https://github.com/apereo/cas/archive/master.zip
 [releasenotes]: https://github.com/apereo/cas/releases
 [casimg]: https://cloud.githubusercontent.com/assets/1205228/14939607/7cd35c3c-0f02-11e6-9564-80d8dfc0a064.png
-[caswebheroku]: https://jasigcas.heroku.com/cas
-[casmgheroku]: https://jasigcasmgmt.heroku.com/cas-management
+[caswebheroku]: https://jasigcas.herokuapp.com/cas
+[casmgheroku]: https://jasigcasmgmt.herokuapp.com/cas-management
 [cassupport]: https://apereo.github.io/cas/Support.html
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
