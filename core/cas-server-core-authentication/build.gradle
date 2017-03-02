@@ -1,9 +1,9 @@
 description = "Apereo CAS Core Authentication"
 dependencies {
-    compile project(":api:cas-server-core-api-services")
-    compile project(":api:cas-server-core-api-ticket")
-    compile project(":core:cas-server-core-configuration")
-    compile project(":api:cas-server-core-api-events")
+    api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":core:cas-server-core-configuration")
+    api project(":api:cas-server-core-api-events")
     api libraries.metrics
     api libraries.persondirectory
     implementation libraries.httpclient

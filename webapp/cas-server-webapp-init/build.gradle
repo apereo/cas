@@ -4,7 +4,7 @@ dependencies {
     
     
 
-    compile project(":core:cas-server-core-web")
-    compile project(":core:cas-server-core-util")
+    api project(":core:cas-server-core-web")
+    api project(":core:cas-server-core-util")
     provided project(":webapp:cas-server-webapp-config")
 }

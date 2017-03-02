@@ -1,6 +1,6 @@
 description = "Apereo CAS SAML Server and Validation Support"
 dependencies {
-    compile project(":support:cas-server-support-saml-core")
+    api project(":support:cas-server-support-saml-core")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
