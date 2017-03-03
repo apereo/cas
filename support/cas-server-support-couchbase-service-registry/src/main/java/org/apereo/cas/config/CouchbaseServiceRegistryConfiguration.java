@@ -41,9 +41,9 @@ public class CouchbaseServiceRegistryConfiguration {
         return new CouchbaseClientFactory(nodes, couchbase.getBucket(), couchbase.getPassword(), couchbase.getTimeout());
     }
 
-    @Bean(name = {"couchbaseServiceRegistryDao", "serviceRegistryDao"})
+    @Bean
     @RefreshScope
-    public ServiceRegistryDao couchbaseServiceRegistryDao() {
+    public ServiceRegistryDao serviceRegistryDao() {
         return new CouchbaseServiceRegistryDao(serviceRegistryCouchbaseClientFactory(), new RegisteredServiceJsonSerializer(),
                 casProperties.getServiceRegistry().getCouchbase().isQueryEnabled());
     }

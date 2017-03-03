@@ -7,6 +7,7 @@ import org.apereo.cas.services.web.ServiceThemeResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -104,8 +105,9 @@ public class CasThemesConfiguration {
         return r;
     }
 
-    @Bean(name = {"serviceThemeResolver", "themeResolver"})
-    public ThemeResolver serviceThemeResolver() {
+    @ConditionalOnMissingBean(name = "themeResolver")
+    @Bean
+    public ThemeResolver themeResolver() {
         final String defaultThemeName = casProperties.getTheme().getDefaultThemeName();
         return new ServiceThemeResolver(defaultThemeName, servicesManager, serviceThemeResolverSupportedBrowsers);
     }
@@ -116,7 +118,7 @@ public class CasThemesConfiguration {
      */
     public static class CasThymeleafOutputTemplateHandler extends AbstractTemplateHandler {
         private boolean writeWhitespace;
-        
+
         public CasThymeleafOutputTemplateHandler() {
         }
 

@@ -24,6 +24,8 @@ import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,7 +48,8 @@ import java.util.List;
 @Configuration("casCoreServicesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreServicesConfiguration {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreServicesConfiguration.class);
+    
     private static final String BEAN_NAME_SERVICE_REGISTRY_DAO = "serviceRegistryDao";
 
     @Autowired
@@ -110,8 +113,12 @@ public class CasCoreServicesConfiguration {
     }
 
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
-    @Bean(name = {BEAN_NAME_SERVICE_REGISTRY_DAO, "inMemoryServiceRegistryDao"})
-    public ServiceRegistryDao inMemoryServiceRegistryDao() {
+    @Bean
+    public ServiceRegistryDao serviceRegistryDao() {
+        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
+                + "Changes that are made to service definitions during runtime "
+                + "WILL be LOST upon container restarts.");
+        
         final InMemoryServiceRegistry impl = new InMemoryServiceRegistry();
         if (context.containsBean("inMemoryRegisteredServices")) {
             final List list = context.getBean("inMemoryRegisteredServices", List.class);
