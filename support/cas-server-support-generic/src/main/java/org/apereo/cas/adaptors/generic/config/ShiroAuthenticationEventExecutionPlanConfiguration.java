@@ -59,7 +59,7 @@ public class ShiroAuthenticationEventExecutionPlanConfiguration implements Authe
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
         final ShiroAuthenticationProperties shiro = casProperties.getAuthn().getShiro();
-        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getRequiredRoles(), shiro.getRequiredPermissions());
+        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getName(), shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
         h.setPrincipalFactory(shiroPrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -69,7 +69,6 @@ public class ShiroAuthenticationEventExecutionPlanConfiguration implements Authe
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(shiro.getPrincipalTransformation()));
-        h.setName(shiro.getName());
         return h;
     }
 

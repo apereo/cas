@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
@@ -43,10 +44,10 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration implements Auth
     
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
-        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler(ticketRegistry);
+        final OpenIdProperties openid = casProperties.getAuthn().getOpenid();
+        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler(openid.getName(), ticketRegistry);
         h.setPrincipalFactory(openidPrincipalFactory());
         h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getOpenid().getName());
         return h;
     }
 
