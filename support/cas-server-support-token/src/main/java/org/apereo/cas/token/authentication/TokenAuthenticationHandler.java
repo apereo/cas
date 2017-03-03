@@ -34,7 +34,11 @@ import java.util.Set;
  */
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationHandler.class);
-    
+
+    public TokenAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     @Override
     protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
         final TokenCredential tokenCredential = (TokenCredential) credential;

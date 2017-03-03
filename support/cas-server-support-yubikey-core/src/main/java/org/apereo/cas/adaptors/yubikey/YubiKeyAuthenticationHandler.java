@@ -31,6 +31,7 @@ import java.security.GeneralSecurityException;
  * @since 4.1
  */
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(YubiKeyAuthenticationHandler.class);
     
     private final YubiKeyAccountRegistry registry;
@@ -46,7 +47,8 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
      * @param secretKey the secret key
      * @param registry  the account registry which holds registrations.
      */
-    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey, final YubiKeyAccountRegistry registry) {
+    public YubiKeyAuthenticationHandler(final String name, final Integer clientId, final String secretKey, final YubiKeyAccountRegistry registry) {
+        super(name);
         this.registry = registry;
         this.client = YubicoClient.getClient(clientId, secretKey);
 
@@ -58,7 +60,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     }
 
     public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey) {
-        this(clientId, secretKey, null);
+        this("", clientId, secretKey, null);
     }   
     
     @Override

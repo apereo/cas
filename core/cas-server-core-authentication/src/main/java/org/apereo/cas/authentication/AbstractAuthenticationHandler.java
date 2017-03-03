@@ -25,33 +25,27 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     protected ServicesManager servicesManager;
 
     /**
-     * Configurable handler name.
+     * Sets the authentication handler name. Authentication handler names SHOULD be unique within an
+     * {@link AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best
+     * practice generally.
      */
-    private String name;
+    private final String name;
 
     private Integer order;
 
     /**
      * Instantiates a new Abstract authentication handler.
+     *
+     * @param name Handler name.
      */
-    public AbstractAuthenticationHandler() {
+    public AbstractAuthenticationHandler(final String name) {
+        this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName();
     }
 
     @Override
     public String getName() {
-        return StringUtils.isNotBlank(this.name) ? this.name : getClass().getSimpleName();
-    }
-
-    /**
-     * Sets the authentication handler name. Authentication handler names SHOULD be unique within an
-     * {@link AuthenticationManager}, and particular implementations
-     * may require uniqueness. Uniqueness is a best
-     * practice generally.
-     *
-     * @param name Handler name.
-     */
-    public void setName(final String name) {
-        this.name = name;
+        return this.name;
     }
 
     /**

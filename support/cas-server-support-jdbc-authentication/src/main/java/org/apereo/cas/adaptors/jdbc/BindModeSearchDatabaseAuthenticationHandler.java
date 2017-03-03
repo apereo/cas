@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.security.auth.login.FailedLoginException;
+import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,9 +24,12 @@ import java.sql.SQLException;
  */
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
+    public BindModeSearchDatabaseAuthenticationHandler(final String name, final DataSource dataSource) {
+        super(name, dataSource);
+    }
+
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         if (getDataSource() == null) {

@@ -28,7 +28,8 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     private Boolean forceVerification = Boolean.FALSE;
     private final AuthyClientInstance instance;
 
-    public AuthyAuthenticationHandler(final AuthyClientInstance instance, final boolean forceVerification) {
+    public AuthyAuthenticationHandler(final String name, final AuthyClientInstance instance, final boolean forceVerification) {
+        super(name);
         this.instance = instance;
         this.forceVerification = forceVerification;
     }

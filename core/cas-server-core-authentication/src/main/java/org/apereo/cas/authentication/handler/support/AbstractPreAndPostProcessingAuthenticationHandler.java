@@ -24,6 +24,10 @@ import java.util.List;
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler {
 
+    public AbstractPreAndPostProcessingAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     /**
      * Template method to perform arbitrary pre-authentication actions.
      *

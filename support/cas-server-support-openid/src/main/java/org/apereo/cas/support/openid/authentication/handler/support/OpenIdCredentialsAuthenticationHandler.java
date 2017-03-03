@@ -25,7 +25,8 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
     
     private final TicketRegistry ticketRegistry;
 
-    public OpenIdCredentialsAuthenticationHandler(final TicketRegistry ticketRegistry) {
+    public OpenIdCredentialsAuthenticationHandler(final String name, final TicketRegistry ticketRegistry) {
+        super(name);
         this.ticketRegistry = ticketRegistry;
     }
 

@@ -34,6 +34,15 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     /** Instance of Apache Commons HttpClient. */
     private HttpClient httpClient;
 
+    /**
+     * Instantiates a new Abstract authentication handler.
+     *
+     * @param name Handler name.
+     */
+    public HttpBasedServiceCredentialsAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
