@@ -26,15 +26,16 @@ import java.util.ArrayList;
  * @since 5.0.0
  */
 public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private RestAuthenticationApi api;
 
-    public void setApi(final RestAuthenticationApi api) {
+    private final RestAuthenticationApi api;
+
+    public RestAuthenticationHandler(final String name, final RestAuthenticationApi api) {
+        super(name);
         this.api = api;
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
-                                                                 final String originalPassword)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c, final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         try {

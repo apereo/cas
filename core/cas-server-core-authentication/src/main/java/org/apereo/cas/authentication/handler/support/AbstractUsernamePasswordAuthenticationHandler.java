@@ -36,6 +36,10 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
+    public AbstractUsernamePasswordAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 

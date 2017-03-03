@@ -124,19 +124,20 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @RefreshScope
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
-        final DuoAuthenticationHandler h = new DuoAuthenticationHandler(duoMultifactorAuthenticationProvider());
+        final DuoAuthenticationHandler h;
         final List<MultifactorAuthenticationProperties.Duo> duos = casProperties.getAuthn().getMfa().getDuo();
-        h.setPrincipalFactory(duoPrincipalFactory());
-        h.setServicesManager(servicesManager);
         if (!duos.isEmpty()) {
             final String name = duos.get(0).getName();
             if (duos.size() > 1) {
                 LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after [{}]", name);
             }
-            h.setName(name);
+            h = new DuoAuthenticationHandler(name, duoMultifactorAuthenticationProvider());
         } else {
+            h = new DuoAuthenticationHandler("", duoMultifactorAuthenticationProvider());
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
+        h.setPrincipalFactory(duoPrincipalFactory());
+        h.setServicesManager(servicesManager);
 
         return h;
     }

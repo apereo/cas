@@ -28,7 +28,8 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     private final U2F u2f = new U2F();
     private final U2FDeviceRepository u2FDeviceRepository;
 
-    public U2FAuthenticationHandler(final U2FDeviceRepository u2FDeviceRepository) {
+    public U2FAuthenticationHandler(final String name, final U2FDeviceRepository u2FDeviceRepository) {
+        super(name);
         this.u2FDeviceRepository = u2FDeviceRepository;
     }
 

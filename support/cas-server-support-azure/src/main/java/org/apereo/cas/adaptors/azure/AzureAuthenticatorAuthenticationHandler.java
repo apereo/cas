@@ -30,8 +30,9 @@ public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostP
     private final PFAuth azureAuthenticatorInstance;
     private final AzureAuthenticatorAuthenticationRequestBuilder authenticationRequestBuilder;
 
-    public AzureAuthenticatorAuthenticationHandler(final PFAuth azureAuthenticatorInstance,
+    public AzureAuthenticatorAuthenticationHandler(final String name, final PFAuth azureAuthenticatorInstance,
                                                    final AzureAuthenticatorAuthenticationRequestBuilder builder) {
+        super(name);
         this.azureAuthenticatorInstance = azureAuthenticatorInstance;
         this.authenticationRequestBuilder = builder;
     }

@@ -29,7 +29,8 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     /**
      * Default constructor.
      */
-    public AbstractTokenWrapperAuthenticationHandler() {
+    public AbstractTokenWrapperAuthenticationHandler(final String name) {
+        super(name);
     }
 
     @Override

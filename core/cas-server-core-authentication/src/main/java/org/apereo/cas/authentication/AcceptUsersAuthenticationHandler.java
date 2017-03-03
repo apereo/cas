@@ -38,8 +38,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * Instantiates a new Accept users authentication handler.
      */
-    public AcceptUsersAuthenticationHandler() {
-        this(new HashMap<>());
+    public AcceptUsersAuthenticationHandler(final String name) {
+        this(name, new HashMap<>());
     }
     
     /**
@@ -47,7 +47,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      *
      * @param users the users
      */
-    public AcceptUsersAuthenticationHandler(final Map<String, String> users) {
+    public AcceptUsersAuthenticationHandler(final String name, final Map<String, String> users) {
+        super(name);
         this.users = users;
     }
 

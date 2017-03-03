@@ -29,13 +29,13 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      */
     private final Set<String> users;
 
-    public RejectUsersAuthenticationHandler(final Set<String> rejectedUsers) {
+    public RejectUsersAuthenticationHandler(final String name, final Set<String> rejectedUsers) {
+        super(name);
         this.users = rejectedUsers;
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();

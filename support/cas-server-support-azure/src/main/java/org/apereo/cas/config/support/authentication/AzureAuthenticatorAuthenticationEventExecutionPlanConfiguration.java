@@ -79,11 +79,10 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
     @Bean
     @RefreshScope
     public AuthenticationHandler azureAuthenticatorAuthenticationHandler() {
-        final AzureAuthenticatorAuthenticationHandler h =
-                new AzureAuthenticatorAuthenticationHandler(azureAuthenticatorInstance(), azureAuthenticationRequestBuilder());
+        final AzureAuthenticatorAuthenticationHandler h = new AzureAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getAzure().getName(),
+                azureAuthenticatorInstance(), azureAuthenticationRequestBuilder());
         h.setPrincipalFactory(azurePrincipalFactory());
         h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getMfa().getAzure().getName());
         return h;
     }
 
