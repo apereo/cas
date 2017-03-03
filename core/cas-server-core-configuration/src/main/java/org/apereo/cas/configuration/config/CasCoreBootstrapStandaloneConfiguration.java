@@ -33,7 +33,6 @@ import java.util.Properties;
 @Profile("standalone")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
 @Configuration("casStandaloneBootstrapConfiguration")
-
 public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreBootstrapStandaloneConfiguration.class);
 
@@ -64,7 +63,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         } else {
             LOGGER.warn("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
         }
-        LOGGER.info("Found and loaded [{}] setting(s) from [{}] in standalone mode", props.size(), config);
+        LOGGER.info("Found and loaded [{}] setting(s) from [{}]", props.size(), config);
         return new PropertiesPropertySource("standaloneCasConfigService", props);
     }
 }
