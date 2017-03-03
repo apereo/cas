@@ -18,6 +18,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
@@ -37,6 +38,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,7 +51,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreServicesConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreServicesConfiguration.class);
-    
+
     private static final String BEAN_NAME_SERVICE_REGISTRY_DAO = "serviceRegistryDao";
 
     @Autowired
@@ -116,15 +118,13 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ServiceRegistryDao serviceRegistryDao() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime "
-                + "WILL be LOST upon container restarts.");
-        
-        final InMemoryServiceRegistry impl = new InMemoryServiceRegistry();
+                + "Changes that are made to service definitions during runtime WILL be LOST upon container restarts.");
+
+        final List<RegisteredService> services = new ArrayList<>();
         if (context.containsBean("inMemoryRegisteredServices")) {
-            final List list = context.getBean("inMemoryRegisteredServices", List.class);
-            impl.setRegisteredServices(list);
-        }
-        return impl;
+            services.addAll(context.getBean("inMemoryRegisteredServices", List.class));
+        }         
+        return new InMemoryServiceRegistry(services);
     }
 
     @Autowired
