@@ -87,9 +87,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getGauth().getName(),
-                googleAuthenticatorInstance(), oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
+                servicesManager, googleAuthenticatorInstance(), oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
         h.setPrincipalFactory(googlePrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 
