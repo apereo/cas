@@ -455,8 +455,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected String constructServiceUrl(final HttpServletRequest request,
                                          final HttpServletResponse response,
-                                         final Pair<? extends SignableSAMLObject, MessageContext> pair)
-            throws SamlException {
+                                         final Pair<? extends SignableSAMLObject, MessageContext> pair) throws SamlException {
         final AuthnRequest authnRequest = AuthnRequest.class.cast(pair.getLeft());
         final MessageContext messageContext = pair.getRight();
 
@@ -565,9 +564,10 @@ public abstract class AbstractSamlProfileHandlerController {
                                      final Pair<AuthnRequest, MessageContext> authenticationContext,
                                      final Assertion casAssertion) {
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authenticationContext.getKey());
+        LOGGER.debug("Located issuer [{}] from authentication context", issuer);
+
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
-                getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
 
         LOGGER.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
         this.responseBuilder.build(authenticationContext.getKey(), request, response, casAssertion, registeredService, adaptor);
