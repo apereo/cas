@@ -69,7 +69,8 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         final String myKerberosUser = "Username@DOMAIN.COM";
 
         final PrincipalFactory factory = new DefaultPrincipalFactory();
-        final JcifsSpnegoAuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, new MockJcifsAuthentication(true), true, true);
+        final JcifsSpnegoAuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, new MockJcifsAuthentication(true),
+                true, true);
 
         assertEquals(factory.createPrincipal(myNtlmUser), authenticationHandler.getPrincipal(myNtlmUser, true));
         assertEquals(factory.createPrincipal(myNtlmUserWithNoDomain), authenticationHandler.getPrincipal(myNtlmUserWithNoDomain, false));
