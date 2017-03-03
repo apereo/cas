@@ -8,6 +8,10 @@ package org.apereo.cas.ticket;
  * to dynamically register ticket types and associated properties so modules that deal with registry functionality
  * wouldn't have to statically link to all modules and APIs.
  *
+ * Ticket definition properties are intended to be treated as generally as possible, so common settings
+ * can be shared across all modules that may have similar needs. When adding additional properties, be careful
+ * to not tie the setting to a specific technology or terminology, and opt for generality as much as possible.
+ * 
  * @author Misagh Moayyed
  * @see TicketCatalog
  * @since 5.1.0
@@ -30,32 +34,33 @@ public interface TicketDefinitionProperties {
     void setCascade(boolean cascadeTicket);
 
     /**
-     * Generic cache name this ticket may want to associate with itself
+     * Generic cache/storage name this ticket may want to associate with itself
      * in cases where persistence is handled by an underlying cache, etc.
      *
      * @return the cache name
      */
-    String getCacheName();
+    String getStorageName();
 
     /**
-     * Sets cache name.
+     * Sets store name.
      *
-     * @param cacheName the cache name
+     * @param storageName the cache name
      */
-    void setCacheName(String cacheName);
+    void setStorageName(String storageName);
 
     /**
-     * Cache timeout long.
-     *
+     * Describes how long may this ticket definition
+     * exist in the underlying storage unit. For cache-based storage
+     * services, this may translate to idle/max time-to-live, etc.
      * @return the long
      */
-    long getCacheTimeout();
+    long getStorageTimeout();
 
     /**
      * Sets cache timeout.
      *
-     * @param cacheTimeout the cache timeout
+     * @param timeout the cache timeout
      */
-    void setCacheTimeout(long cacheTimeout);
+    void setStorageTimeout(long timeout);
 
 }
