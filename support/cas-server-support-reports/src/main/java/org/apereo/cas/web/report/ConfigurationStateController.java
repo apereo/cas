@@ -39,10 +39,10 @@ import java.util.stream.StreamSupport;
 public class ConfigurationStateController extends BaseCasMvcEndpoint {
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
-    
+
     @Autowired
     private RefreshEndpoint refreshEndpoint;
-    
+
     @Autowired
     private EnvironmentEndpoint environmentEndpoint;
 
@@ -76,8 +76,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
      * @throws Exception the exception
      */
     @GetMapping
-    public ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                              final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
