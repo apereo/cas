@@ -18,26 +18,25 @@
                 getConfiguration: /*[[@{/status/config/getConfiguration}]]*/,
                 updateConfiguration: /*[[@{/status/config/updateConfiguration}]]*/,
             };
+            var updateEnabled = /*[[${enableUpdate}]]*/ === "true" ;
+            
             function jqueryReady() {
                 head.load(
                         /*[[@{/js/viewConfig.js}]]*/
                 );
             }
         </script>
-        
+
         <div class="viewConfig">
             <div id="loadingMessage"><h3 th:text="#{cas.viewconfig.loading}"/></div>
 
             <div id="viewConfigError">
                 <h2 th:text="#{cas.viewconfig.errormessage}"></h2>
                 <div>
-                    <input class="btn btn-success" type="button" onclick="location.reload();"
-                           th:value="#{cas.viewconfig.button.refresh}"/>
+                    <input class="btn btn-success" type="button" onclick="location.reload();" th:value="#{cas.viewconfig.button.refresh}"/>
                 </div>
             </div>
-
-            <div id="alert-container" class="alert alert-info" th:unless="${enableRefresh}" th:text="#{cas.viewconfig.persistence}"></div>
-
+            
             <div id="view-configuration">
 
                 <div class="panel panel-default">
@@ -78,7 +77,7 @@
                 </div>
             </div>
             <div th:replace="fragments/footerButtons"></div>
-            
+
             <div th:if="${enableRefresh}">
                 <form th:method="${refreshMethod}" th:action="${refreshEndpoint}" id="formRefreshCAS">
                     <button class="btn btn-refresh"
