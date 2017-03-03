@@ -52,7 +52,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @ConfigurationProperties(value = "cas")
 public class CasConfigurationProperties {
-
+    
     @NestedConfigurationProperty
     private ScimProperties scim = new ScimProperties();
     
