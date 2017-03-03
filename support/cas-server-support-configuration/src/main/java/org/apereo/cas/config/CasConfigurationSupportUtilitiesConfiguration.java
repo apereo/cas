@@ -38,10 +38,6 @@ public class CasConfigurationSupportUtilitiesConfiguration {
     @Profile("standalone")
     @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
     public class CasCoreConfigurationWatchConfiguration {
-
-        @Autowired
-        private ResourceLoader resourceLoader;
-
         @Autowired
         private ApplicationEventPublisher eventPublisher;
 
