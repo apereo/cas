@@ -7,8 +7,6 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
-import org.springframework.cloud.bus.BusProperties;
-import org.springframework.cloud.config.server.config.ConfigServerProperties;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -41,16 +39,10 @@ import java.util.stream.StreamSupport;
 public class ConfigurationStateController extends BaseCasMvcEndpoint {
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
-
-    @Autowired(required = false)
-    private BusProperties busProperties;
-
+    
     @Autowired
     private RefreshEndpoint refreshEndpoint;
-
-    @Autowired
-    private ConfigServerProperties configServerProperties;
-
+    
     @Autowired
     private EnvironmentEndpoint environmentEndpoint;
 
@@ -89,7 +81,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
         ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
-        ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);
+        ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(path, model);
         model.put("enableRefresh", !casProperties.getEvents().isTrackConfigurationModifications() && refreshEndpoint.isEnabled());
         return new ModelAndView(VIEW_CONFIG, model);
     }

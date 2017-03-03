@@ -34,6 +34,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.StringWriter;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -74,6 +75,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     @JsonProperty
     private int skewAllowance;
 
+    @JsonProperty
+    private String casServerPrefix;
+    
     /**
      * Instantiates a new Google accounts service response builder.
      *
@@ -83,18 +87,21 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @param servicesManager    the services manager
      * @param samlObjectBuilder  the saml object builder
      * @param skewAllowance      the skew allowance
+     * @param casServerPrefix    the cas server prefix
      */
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
                                                 final String publicKeyLocation,
                                                 final String keyAlgorithm,
                                                 final ServicesManager servicesManager,
                                                 final GoogleSaml20ObjectBuilder samlObjectBuilder,
-                                                final int skewAllowance) {
+                                                final int skewAllowance,
+                                                final String casServerPrefix) {
 
         this(privateKeyLocation, publicKeyLocation, keyAlgorithm, 0);
         this.samlObjectBuilder = samlObjectBuilder;
         this.servicesManager = servicesManager;
         this.skewAllowance = skewAllowance;
+        this.casServerPrefix = casServerPrefix;
     }
 
     /**
@@ -160,10 +167,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                 this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, service.getId(), service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        final AuthnStatement authnStatement = this.samlObjectBuilder.newAuthnStatement(
-                AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
-        final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement,
-                "https://www.opensaml.org/IDP",
+        final String sessionIndex = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
+        final AuthnStatement authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
+        final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
                 notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
 
         final Conditions conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
