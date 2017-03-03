@@ -68,14 +68,14 @@ public class CasManagementAuditConfiguration {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
-                auditablePrincipalResolver(), Collections.singletonList(slf4jAuditTrailManager()),
+                auditablePrincipalResolver(), Collections.singletonList(auditTrailManager()),
                 auditActionResolverMap(),
                 auditResourceResolverMap());
     }
 
-    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
+    @Bean
     @RefreshScope
-    public AuditTrailManager slf4jAuditTrailManager() {
+    public AuditTrailManager auditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
 
