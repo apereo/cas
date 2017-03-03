@@ -45,9 +45,8 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration implements Auth
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
         final OpenIdProperties openid = casProperties.getAuthn().getOpenid();
-        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler(openid.getName(), ticketRegistry);
+        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager, ticketRegistry);
         h.setPrincipalFactory(openidPrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 

@@ -49,8 +49,7 @@ public class ClientAuthenticationHandlerTests {
     public void setUp() {
         this.fbClient = new FacebookClient();
         final Clients clients = new Clients(CALLBACK_URL, fbClient);
-        this.handler = new ClientAuthenticationHandler("", clients);
-        this.handler.setServicesManager(mock(ServicesManager.class));
+        this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), clients);
         this.handler.setTypedIdUsed(true);
 
         final Credentials credentials = new OAuth20Credentials(null, fbClient.getName());

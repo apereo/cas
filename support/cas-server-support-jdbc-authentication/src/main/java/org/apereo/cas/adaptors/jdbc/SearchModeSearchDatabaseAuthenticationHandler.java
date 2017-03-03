@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -31,9 +32,9 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     private final String fieldPassword;
     private final String tableUsers;
 
-    public SearchModeSearchDatabaseAuthenticationHandler(final String name, final DataSource datasource, final String fieldUser, final String fieldPassword,
-                                                         final String tableUsers) {
-        super(name, datasource);
+    public SearchModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final DataSource datasource,
+                                                         final String fieldUser, final String fieldPassword, final String tableUsers) {
+        super(name, servicesManager, datasource);
         this.fieldUser = fieldUser;
         this.fieldPassword = fieldPassword;
         this.tableUsers = tableUsers;

@@ -73,10 +73,9 @@ public class CasRemoteAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
         final RemoteAddressAuthenticationProperties remoteAddress = casProperties.getAuthn().getRemoteAddress();
-        final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName());
+        final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(), servicesManager);
         bean.setIpNetworkRange(remoteAddress.getIpAddressRange());
         bean.setPrincipalFactory(remoteAddressPrincipalFactory());
-        bean.setServicesManager(servicesManager);
         return bean;
     }
 

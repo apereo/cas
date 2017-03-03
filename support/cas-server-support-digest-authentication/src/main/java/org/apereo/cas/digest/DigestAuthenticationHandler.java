@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -18,8 +19,8 @@ import java.security.GeneralSecurityException;
  */
 public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    public DigestAuthenticationHandler(final String name) {
-        super(name);
+    public DigestAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override
