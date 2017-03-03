@@ -50,6 +50,6 @@ public class CasWebApplicationSecurityConfiguration extends GlobalAuthentication
         final LdapAuthorizationProperties authZ = ldap.getLdapAuthz();
         return StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())
                 && StringUtils.isNotBlank(ldap.getUserFilter())
-                && (StringUtils.isNotBlank(authZ.getRoleAttribute()) || StringUtils.isNotBlank(authZ.getRoleAttribute()));
+                && (StringUtils.isNotBlank(authZ.getRoleAttribute()) || StringUtils.isNotBlank(authZ.getGroupAttribute()));
     }
 }
