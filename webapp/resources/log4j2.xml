@@ -65,7 +65,7 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.apereo" level="warn" additivity="false" includeLocation="true">
+        <AsyncLogger name="org.apereo" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -77,15 +77,11 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.server" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.cloud" level="info" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.client" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.bus" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.boot" level="info" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -94,10 +90,6 @@
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
         <AsyncLogger name="org.springframework.aop" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
