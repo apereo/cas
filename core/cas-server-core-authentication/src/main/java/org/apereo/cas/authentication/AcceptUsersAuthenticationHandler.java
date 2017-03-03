@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,18 +38,22 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     /**
      * Instantiates a new Accept users authentication handler.
+     *
+     * @param name the name
      */
     public AcceptUsersAuthenticationHandler(final String name) {
-        this(name, new HashMap<>());
+        this(name, null, new HashMap<>());
     }
     
     /**
      * Instantiates a new Accept users authentication handler.
      *
+     * @param name the name
+     * @param servicesManager the services manager
      * @param users the users
      */
-    public AcceptUsersAuthenticationHandler(final String name, final Map<String, String> users) {
-        super(name);
+    public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager, final Map<String, String> users) {
+        super(name, servicesManager);
         this.users = users;
     }
 

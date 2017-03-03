@@ -1,10 +1,11 @@
 package org.apereo.cas.adaptors.generic.remote;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +36,8 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      */
     private InetAddress inetNetwork;
 
-    public RemoteAddressAuthenticationHandler(final String name) {
-        super(name);
+    public RemoteAddressAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override

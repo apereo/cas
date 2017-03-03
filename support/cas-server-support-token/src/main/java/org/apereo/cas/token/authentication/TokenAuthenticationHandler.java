@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractTokenWrapperAuthenticationHandler;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.token.TokenConstants;
 import org.pac4j.core.credentials.TokenCredentials;
@@ -35,8 +36,8 @@ import java.util.Set;
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationHandler.class);
 
-    public TokenAuthenticationHandler(final String name) {
-        super(name);
+    public TokenAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override
