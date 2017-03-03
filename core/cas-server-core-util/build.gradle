@@ -5,10 +5,8 @@ dependencies {
     compile project(":api:cas-server-core-api-util")
     implementation libraries.shiro
     api libraries.quartz
-
     api libraries.jose4j
     api libraries.httpclient
     implementation libraries.bouncycastle
-
 }
 
