@@ -17,6 +17,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 
@@ -96,7 +97,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      */
     protected String staticSalt;
 
-    public QueryAndEncodeDatabaseAuthenticationHandler(final String algorithmName,
+    public QueryAndEncodeDatabaseAuthenticationHandler(final String name, final DataSource dataSource, final String algorithmName,
                                                        final String sql,
                                                        final String passwordFieldName,
                                                        final String saltFieldName,
@@ -105,6 +106,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                                                        final String numberOfIterationsFieldName,
                                                        final long numberOfIterations,
                                                        final String staticSalt) {
+        super(name, dataSource);
         this.algorithmName = algorithmName;
         this.sql = sql;
         this.passwordFieldName = passwordFieldName;

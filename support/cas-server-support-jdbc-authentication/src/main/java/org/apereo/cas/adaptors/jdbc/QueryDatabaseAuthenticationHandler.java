@@ -14,6 +14,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -40,11 +41,12 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private final String fieldDisabled;
     private Map<String, String> principalAttributeMap = Collections.emptyMap();
 
-    public QueryDatabaseAuthenticationHandler(final String sql,
+    public QueryDatabaseAuthenticationHandler(final String name, final DataSource dataSource, final String sql,
                                               final String fieldPassword,
                                               final String fieldExpired,
                                               final String fieldDisabled,
                                               final Map<String, String> attributes) {
+        super(name, dataSource);
         this.sql = sql;
         this.fieldPassword = fieldPassword;
         this.fieldExpired = fieldExpired;
