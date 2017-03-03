@@ -47,7 +47,11 @@ ext.libraries = [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
                     force = true
                 },
+                dependencies.create("commons-beanutils:commons-beanutils:$commonsBeansVersion") {
+                    force = true
+                },
                 dependencies.create("org.apache.commons:commons-configuration2:$commonsConfigVersion") {
+                    exclude(group: "commons-beanutils", module: "commons-beanutils")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "commons-codec", module: "commons-codec")
@@ -1237,6 +1241,7 @@ ext.libraries = [
         shiro                   : [
                 dependencies.create("org.apache.shiro:shiro-core:$shiroVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-beanutils", module: "commons-beanutils")
                     force = true
                 }
         ],
