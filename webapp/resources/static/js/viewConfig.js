@@ -134,7 +134,7 @@ var viewConfigs = (function () {
                     $('#alertWrapper').addClass('alert-warning');
                     $('#alertWrapper').removeClass('alert-success');
 
-                    $('#alertWrapper').prepend(result);
+                    $('#alertWrapper').text(result);
                     $('#alertWrapper').show();
                 })
                 .success(function () {
