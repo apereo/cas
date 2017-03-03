@@ -1,18 +1,18 @@
 package org.apereo.cas.authentication.handler.support;
 
-import java.net.URL;
-import java.security.GeneralSecurityException;
-
-import javax.security.auth.login.FailedLoginException;
-
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.security.auth.login.FailedLoginException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -38,9 +38,10 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
      * Instantiates a new Abstract authentication handler.
      *
      * @param name Handler name.
+     * @param servicesManager the services manager.
      */
-    public HttpBasedServiceCredentialsAuthenticationHandler(final String name) {
-        super(name);
+    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override

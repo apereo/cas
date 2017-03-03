@@ -3,6 +3,7 @@ package org.apereo.cas.integration.pac4j.authentication.handler.support;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,8 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     /**
      * Default constructor.
      */
-    public AbstractTokenWrapperAuthenticationHandler(final String name) {
-        super(name);
+    public AbstractTokenWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+        super(name, servicesManager);
     }
 
     @Override

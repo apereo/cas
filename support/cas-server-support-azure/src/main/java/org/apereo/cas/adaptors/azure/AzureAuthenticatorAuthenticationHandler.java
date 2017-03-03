@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,9 @@ public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostP
     private final PFAuth azureAuthenticatorInstance;
     private final AzureAuthenticatorAuthenticationRequestBuilder authenticationRequestBuilder;
 
-    public AzureAuthenticatorAuthenticationHandler(final String name, final PFAuth azureAuthenticatorInstance,
+    public AzureAuthenticatorAuthenticationHandler(final String name, final ServicesManager servicesManager, final PFAuth azureAuthenticatorInstance,
                                                    final AzureAuthenticatorAuthenticationRequestBuilder builder) {
-        super(name);
+        super(name, servicesManager);
         this.azureAuthenticatorInstance = azureAuthenticatorInstance;
         this.authenticationRequestBuilder = builder;
     }

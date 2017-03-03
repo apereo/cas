@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -29,8 +30,8 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      */
     private final Set<String> users;
 
-    public RejectUsersAuthenticationHandler(final String name, final Set<String> rejectedUsers) {
-        super(name);
+    public RejectUsersAuthenticationHandler(final String name, final ServicesManager servicesManager, final Set<String> rejectedUsers) {
+        super(name, servicesManager);
         this.users = rejectedUsers;
     }
 

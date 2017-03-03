@@ -1,12 +1,13 @@
 package org.apereo.cas.adaptors.radius.authentication.handler.support;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +49,9 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      * @param failoverOnException boolean on whether to failover or not.
      * @param failoverOnAuthenticationFailure boolean on whether to failover or not.
      */
-    public RadiusAuthenticationHandler(final String name, final List<RadiusServer> servers, final boolean failoverOnException,
-                                       final boolean failoverOnAuthenticationFailure) {
-        super(name);
+    public RadiusAuthenticationHandler(final String name, final ServicesManager servicesManager, final List<RadiusServer> servers,
+                                       final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
+        super(name, servicesManager);
         LOGGER.debug("Using [{}]", getClass().getSimpleName());
 
         this.servers = servers;
