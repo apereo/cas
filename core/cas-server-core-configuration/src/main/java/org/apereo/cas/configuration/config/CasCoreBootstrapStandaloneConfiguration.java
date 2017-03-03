@@ -11,7 +11,6 @@ import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -34,17 +33,17 @@ import java.util.Properties;
 @Profile("standalone")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
 @Configuration("casStandaloneBootstrapConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+
 public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreBootstrapStandaloneConfiguration.class);
-    private static final String PROPERTY_NAME_CAS_STANDALONE_CONFIG = "cas.standalone.config";
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
         final Properties props = new Properties();
+        
+        final File config = CasConfigurationProperties.getStandaloneProfileConfigurationDirectory(environment);
+        LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
 
-        LOGGER.debug("Locating CAS standalone configuration directory under setting [{}]", PROPERTY_NAME_CAS_STANDALONE_CONFIG);
-        final File config = environment.getProperty(PROPERTY_NAME_CAS_STANDALONE_CONFIG, File.class, new File("/etc/cas/config"));
         if (config.isDirectory() && config.exists()) {
             final Collection<File> configFiles = FileUtils.listFiles(config,
                     new RegexFileFilter("(cas|application)\\.(yml|properties)", IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
