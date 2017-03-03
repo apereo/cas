@@ -1,5 +1,14 @@
 package org.apereo.cas.configuration;
 
+import com.google.common.base.Throwables;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfigurationLayout;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.HostProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
@@ -43,6 +52,11 @@ import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.env.Environment;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 /**
  * This is {@link CasConfigurationProperties}.
@@ -55,7 +69,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private ScimProperties scim = new ScimProperties();
-    
+
     @NestedConfigurationProperty
     private AuthenticationProperties authn = new AuthenticationProperties();
 
@@ -502,5 +516,37 @@ public class CasConfigurationProperties {
 
     public void setClickatell(final ClickatellProperties clickatell) {
         this.clickatell = clickatell;
+    }
+
+    /**
+     * Gets standalone profile configuration directory.
+     *
+     * @param environment the environment
+     * @return the standalone profile configuration directory
+     */
+    public static File getStandaloneProfileConfigurationDirectory(final Environment environment) {
+        return environment.getProperty("cas.standalone.config", File.class, new File("/etc/cas/config"));
+    }
+
+    /**
+     * Save property for standalone profile.
+     *
+     * @param pair        the pair
+     * @param environment the environment
+     */
+    public static void savePropertyForStandaloneProfile(final Pair<String, String> pair, final Environment environment) {
+        try {
+            final File file = getStandaloneProfileConfigurationDirectory(environment);
+            final Parameters params = new Parameters();
+            final FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
+                    new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+                            .configure(params.properties().setFile(new File(file, "cas.properties")));
+
+            final Configuration config = builder.getConfiguration();
+            config.setProperty(pair.getKey(), pair.getValue());
+            builder.save();
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 }

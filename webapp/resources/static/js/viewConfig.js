@@ -50,10 +50,7 @@ var viewConfigs = (function () {
                         myModal.modal('hide');
                     });
                 });
-
         });
-
-
     };
 
     var createDataTable = function () {
@@ -77,7 +74,9 @@ var viewConfigs = (function () {
                     $('#' + $.fn.dataTable.tables()[0].id + '_paginate')[0].style.display = "none";
                 }
 
-                editTable();
+                if (updateEnabled) {
+                    editTable();
+                }
             },
             "processing": true,
             "ajax": {
@@ -119,12 +118,10 @@ var viewConfigs = (function () {
 
         $('#viewConfigsTable td').on('focus', function (evt, newValue) {
             delete origData;
-
             origData = getRowData($(this).closest("tr"));
         });
 
         $('#viewConfigsTable tr').on('change', function (evt, newValue) {
-
             newChanges = getRowData($(this));
 
             var data = {old: origData, new: newChanges};
@@ -134,7 +131,7 @@ var viewConfigs = (function () {
                     $('#alertWrapper').addClass('alert-warning');
                     $('#alertWrapper').removeClass('alert-success');
 
-                    $('#alertWrapper').prepend(result);
+                    $('#alertWrapper').text(result);
                     $('#alertWrapper').show();
                 })
                 .success(function () {
@@ -145,11 +142,7 @@ var viewConfigs = (function () {
                     $('#resultText').text(result);
                     $('#alertWrapper').show();
                 })
-
-
         });
-
-
     };
 
     // initialization *******

@@ -70,8 +70,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
         final List<Statement> statements = new ArrayList<>();
         statements.add(this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
-        statements.add(this.samlProfileSamlAttributeStatementBuilder.build(authnRequest,
-                request, response, casAssertion, service, adaptor));
+        statements.add(this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
 
         final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
         final Assertion assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
