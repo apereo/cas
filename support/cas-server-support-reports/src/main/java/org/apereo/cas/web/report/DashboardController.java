@@ -1,7 +1,6 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.EndpointProperties;
 import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
@@ -60,12 +59,9 @@ public class DashboardController extends BaseCasMvcEndpoint {
      */
     @GetMapping
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
         ensureEndpointAccessIsAuthorized(request, response);
 
         final Map<String, Object> model = new HashMap<>();
-        final String path = request.getContextPath();
-        ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(path, model);
         model.put("restartEndpointEnabled", restartEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("environmentEndpointEnabled", environmentEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());
