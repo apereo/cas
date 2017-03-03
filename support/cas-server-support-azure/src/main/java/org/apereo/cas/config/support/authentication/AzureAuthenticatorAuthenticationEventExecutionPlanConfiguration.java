@@ -80,9 +80,8 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
     @RefreshScope
     public AuthenticationHandler azureAuthenticatorAuthenticationHandler() {
         final AzureAuthenticatorAuthenticationHandler h = new AzureAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getAzure().getName(),
-                azureAuthenticatorInstance(), azureAuthenticationRequestBuilder());
+                servicesManager, azureAuthenticatorInstance(), azureAuthenticationRequestBuilder());
         h.setPrincipalFactory(azurePrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 
