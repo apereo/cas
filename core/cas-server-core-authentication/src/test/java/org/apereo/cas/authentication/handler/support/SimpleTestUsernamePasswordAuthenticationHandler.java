@@ -35,6 +35,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTestUsernamePasswordAuthenticationHandler.class);
 
     /**
@@ -42,15 +43,12 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
      */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 
-
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
-
 
     /**
      * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
      */
     private Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
-
 
     static {
         DEFAULT_USERNAME_ERROR_MAP.put("accountDisabled", new AccountDisabledException("Account disabled"));
@@ -59,7 +57,11 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
         DEFAULT_USERNAME_ERROR_MAP.put("badWorkstation", new InvalidLoginLocationException("Invalid workstation"));
         DEFAULT_USERNAME_ERROR_MAP.put("passwordExpired", new CredentialExpiredException("Password expired"));
     }
-    
+
+    public SimpleTestUsernamePasswordAuthenticationHandler() {
+        super("");
+    }
+
     @PostConstruct
     private void init() {
         LOGGER.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",

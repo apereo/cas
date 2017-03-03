@@ -23,7 +23,11 @@ import java.security.GeneralSecurityException;
 public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalBearingCredentialsAuthenticationHandler.class);
-    
+
+    public PrincipalBearingCredentialsAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         LOGGER.debug("Trusting credential for: [{}]", credential);
