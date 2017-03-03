@@ -20,6 +20,10 @@ import java.util.Map;
  */
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
+    public WsFederationAuthenticationHandler(final String name) {
+        super(name);
+    }
+
     /**
      * Determines if this handler can support the credentials provided.
      *
