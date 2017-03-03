@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -43,12 +42,11 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
     @Override
     public PropertySource<?> locate(final Environment environment) {
         final Properties props = new Properties();
-        
+
         LOGGER.debug("Locating CAS standalone configuration directory under setting [{}]", PROPERTY_NAME_CAS_STANDALONE_CONFIG);
-        final File config = environment.getProperty(PROPERTY_NAME_CAS_STANDALONE_CONFIG, File.class);
-        
-        if (config.isDirectory()) {
-            final Collection<File> configFiles = FileUtils.listFiles(config, 
+        final File config = environment.getProperty(PROPERTY_NAME_CAS_STANDALONE_CONFIG, File.class, new File("/etc/cas/config"));
+        if (config.isDirectory() && config.exists()) {
+            final Collection<File> configFiles = FileUtils.listFiles(config,
                     new RegexFileFilter("(cas|application)\\.(yml|properties)", IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
 
             LOGGER.debug("Configuration files found at [{}] are [{}]", config, configFiles);
@@ -65,10 +63,9 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
                 }
             }));
         } else {
-            LOGGER.warn("Configuration directory [{}] is not a directory and no settings are loaded by CAS", config);
+            LOGGER.warn("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
         }
-
-        LOGGER.info("Found and loaded [{}] setting(s) at [{}]", props.size(), config);
+        LOGGER.info("Found and loaded [{}] setting(s) from [{}] in standalone mode", props.size(), config);
         return new PropertiesPropertySource("standaloneCasConfigService", props);
     }
 }
