@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -71,7 +72,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
         final JaasAuthenticationProperties jaas = casProperties.getAuthn().getJaas();
-        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName());
+        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(), servicesManager);
 
         h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
         h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
@@ -84,16 +85,14 @@ public class CasCoreAuthenticationHandlersConfiguration {
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
 
         h.setPrincipalFactory(jaasPrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
-        final HttpBasedServiceCredentialsAuthenticationHandler h = new HttpBasedServiceCredentialsAuthenticationHandler("");
+        final HttpBasedServiceCredentialsAuthenticationHandler h = new HttpBasedServiceCredentialsAuthenticationHandler("", servicesManager);
         h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
         h.setPrincipalFactory(proxyPrincipalFactory());
-        h.setServicesManager(servicesManager);
         h.setOrder(Integer.MIN_VALUE);
         return h;
     }
@@ -114,7 +113,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final AcceptAuthenticationProperties acceptAuthenticationProperties = casProperties.getAuthn().getAccept();
-        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(acceptAuthenticationProperties.getName());
+        final HashMap<String, String> users = new HashMap<>();
+        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(acceptAuthenticationProperties.getName(), servicesManager, users);
         h.setUsers(getParsedUsers());
         h.setPasswordEncoder(Beans.newPasswordEncoder(acceptAuthenticationProperties.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
@@ -122,7 +122,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(acceptAuthenticationProperties.getPrincipalTransformation()));
         h.setPrincipalFactory(acceptUsersPrincipalFactory());
-        h.setServicesManager(servicesManager);
         return h;
     }
 
