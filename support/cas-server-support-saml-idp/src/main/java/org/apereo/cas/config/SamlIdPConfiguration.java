@@ -135,12 +135,7 @@ public class SamlIdPConfiguration {
         this.authenticationRequestServiceSelectionStrategies.add(0, samlIdPEntityIdValidationServiceSelectionStrategy());
     }
 
-    /**
-     * Saml id p single logout service logout url builder saml id p single logout service logout url builder.
-     *
-     * @return the saml idp single logout service logout url builder
-     */
-    @Bean(name = {"defaultSingleLogoutServiceLogoutUrlBuilder", "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
+    @Bean
     public SingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {
         return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver());
     }

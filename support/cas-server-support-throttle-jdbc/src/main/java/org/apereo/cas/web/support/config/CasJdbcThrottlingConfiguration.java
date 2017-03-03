@@ -34,9 +34,9 @@ public class CasJdbcThrottlingConfiguration {
     }
 
     @Autowired
-    @Bean(name = {"inspektrIpAddressUsernameThrottle", "authenticationThrottle"})
+    @Bean
     @RefreshScope
-    public ThrottledSubmissionHandlerInterceptor inspektrIpAddressUsernameThrottle(@Qualifier("auditTrailManager") final AuditTrailManager auditTrailManager) {
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(@Qualifier("auditTrailManager") final AuditTrailManager auditTrailManager) {
         final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
         final String appcode = throttle.getAppcode();
         final String sqlQueryAudit = throttle.getJdbc().getAuditQuery();

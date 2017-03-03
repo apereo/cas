@@ -4,7 +4,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -35,16 +34,6 @@ public class InMemoryServiceRegistry implements ServiceRegistryDao {
     public InMemoryServiceRegistry(final List<RegisteredService> registeredServices) {
         this.registeredServices = registeredServices;
     }
-
-    /**
-     * Init.
-     */
-    @PostConstruct
-    public void init() {
-        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime "
-                + "WILL be LOST upon container restarts.");
-    }
     
     @Override
     public boolean delete(final RegisteredService registeredService) {
@@ -68,8 +57,6 @@ public class InMemoryServiceRegistry implements ServiceRegistryDao {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        
-
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) registeredService).setId(findHighestId() + 1);
         }

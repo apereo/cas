@@ -37,8 +37,8 @@ public class CasCoreAuthenticationPolicyConfiguration {
     private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "authenticationPolicy")
-    @Bean(name = {"authenticationPolicy", "defaultAuthenticationPolicy"})
-    public AuthenticationPolicy defaultAuthenticationPolicy() {
+    @Bean
+    public AuthenticationPolicy authenticationPolicy() {
         final AuthenticationPolicyProperties police = casProperties.getAuthn().getPolicy();
         if (police.getReq().isEnabled()) {
             return new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll());

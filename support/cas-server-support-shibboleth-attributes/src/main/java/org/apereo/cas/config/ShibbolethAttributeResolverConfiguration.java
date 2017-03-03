@@ -52,8 +52,8 @@ public class ShibbolethAttributeResolverConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Bean(name = {"shibbolethPersonAttributeDao", "attributeRepository"})
-    public IPersonAttributeDao shibbolethPersonAttributeDao() {
+    @Bean
+    public IPersonAttributeDao attributeRepository() {
         try {
             final PropertyPlaceholderConfigurer cfg = new PropertyPlaceholderConfigurer();
             final Map<String, Object> result = new HashMap<>();
