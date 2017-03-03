@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
-    @Qualifier("ldapServiceRegistryDao")
+    @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao dao;
 
     @BeforeClass
