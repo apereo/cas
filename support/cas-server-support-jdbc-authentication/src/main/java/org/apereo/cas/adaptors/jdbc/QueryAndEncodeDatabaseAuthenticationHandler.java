@@ -1,17 +1,17 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.ConfigurableHashService;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
@@ -97,16 +97,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      */
     protected String staticSalt;
 
-    public QueryAndEncodeDatabaseAuthenticationHandler(final String name, final DataSource dataSource, final String algorithmName,
-                                                       final String sql,
-                                                       final String passwordFieldName,
-                                                       final String saltFieldName,
-                                                       final String expiredFieldName,
-                                                       final String disabledFieldName,
-                                                       final String numberOfIterationsFieldName,
-                                                       final long numberOfIterations,
+    public QueryAndEncodeDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final DataSource dataSource,
+                                                       final String algorithmName, final String sql, final String passwordFieldName,
+                                                       final String saltFieldName, final String expiredFieldName, final String disabledFieldName,
+                                                       final String numberOfIterationsFieldName, final long numberOfIterations,
                                                        final String staticSalt) {
-        super(name, dataSource);
+        super(name, servicesManager, dataSource);
         this.algorithmName = algorithmName;
         this.sql = sql;
         this.passwordFieldName = passwordFieldName;
