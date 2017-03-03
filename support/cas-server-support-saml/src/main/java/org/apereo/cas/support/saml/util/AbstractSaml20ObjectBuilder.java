@@ -246,9 +246,11 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      *
      * @param contextClassRef the context class ref such as {@link AuthnContext#PASSWORD_AUTHN_CTX}
      * @param authnInstant    the authn instant
+     * @param sessionIndex    the session index
      * @return the authn statement
      */
-    public AuthnStatement newAuthnStatement(final String contextClassRef, final ZonedDateTime authnInstant) {
+    public AuthnStatement newAuthnStatement(final String contextClassRef, final ZonedDateTime authnInstant,
+                                            final String sessionIndex) {
         final AuthnStatement stmt = newSamlObject(AuthnStatement.class);
         final AuthnContext ctx = newSamlObject(AuthnContext.class);
 
@@ -258,7 +260,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         ctx.setAuthnContextClassRef(classRef);
         stmt.setAuthnContext(ctx);
         stmt.setAuthnInstant(DateTimeUtils.dateTimeOf(authnInstant));
-
+        stmt.setSessionIndex(sessionIndex);
         return stmt;
     }
 
