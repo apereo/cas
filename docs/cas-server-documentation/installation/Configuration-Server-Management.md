@@ -46,8 +46,10 @@ talks to the configuration server to locate settings and move on.
 
 A full comprehensive guide is provided by the [Spring Cloud project](https://cloud.spring.io/spring-cloud-config/spring-cloud-config.html).
 
+#### Overlay
+
 The configuration server itself, similar to CAS, is a Spring-Boot application and can be deployed
-via the following module in its own WAR overlay:
+via the following module in it own [WAR overlay](https://github.com/apereo/cas-configserver-overlay):
 
 ```xml
 <dependency>
