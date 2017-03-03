@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 public class JpaServiceRegistryDaoImplTests {
 
     @Autowired
-    @Qualifier("jpaServiceRegistryDao")
+    @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao dao;
 
     @Before
