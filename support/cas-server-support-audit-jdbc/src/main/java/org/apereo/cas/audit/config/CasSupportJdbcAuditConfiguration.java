@@ -41,8 +41,8 @@ public class CasSupportJdbcAuditConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Bean(name = {"jdbcAuditTrailManager", "auditTrailManager"})
-    public DelegatingAuditTrailManager jdbcAuditTrailManager() {
+    @Bean
+    public DelegatingAuditTrailManager auditTrailManager() {
         final AuditProperties.Jdbc jdbc = casProperties.getAudit().getJdbc();
         final JdbcAuditTrailManager t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
         t.setCleanupCriteria(auditCleanupCriteria());

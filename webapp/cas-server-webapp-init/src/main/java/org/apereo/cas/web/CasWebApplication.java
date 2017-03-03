@@ -3,9 +3,8 @@ package org.apereo.cas.web;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.Banner;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
@@ -19,7 +18,6 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -36,8 +34,7 @@ import java.util.Map;
 @ImportResource(locations = {
         "classpath:/deployerConfigContext.groovy",
         "classpath:/deployerConfigContext.xml"})
-@SpringBootConfiguration
-@EnableAutoConfiguration(
+@SpringBootApplication(
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
@@ -50,7 +47,6 @@ import java.util.Map;
                 DataSourceTransactionManagerAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 RedisRepositoriesAutoConfiguration.class})
-@EnableConfigServer
 @EnableAsync
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -61,7 +57,7 @@ public class CasWebApplication {
      */
     protected CasWebApplication() {
     }
-
+        
     /**
      * Main entry point of the CAS web application.
      *

@@ -118,8 +118,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
 
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
-            LOGGER.error("Can not validate the request because no [{}] is provided via the request",
-                    CasProtocolConstants.PARAMETER_TICKET);
+            LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }

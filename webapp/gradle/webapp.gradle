@@ -78,4 +78,5 @@ dependencies {
     implementation libraries.cassecurityfilter
     implementation libraries.metrics
     implementation libraries.bouncycastle
+    compile libraries.springcloudconfigclient
 }

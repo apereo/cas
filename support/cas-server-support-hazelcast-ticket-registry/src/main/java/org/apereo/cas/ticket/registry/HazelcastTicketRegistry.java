@@ -54,7 +54,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
      */
     @PostConstruct
     public void init() {
-        LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}] with name [{}]", this.hazelcastInstance);
+        LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}]", this.hazelcastInstance);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
         final String mapName = metadata.getProperties().getStorageName();
-        LOGGER.debug("Locating map name [{}] for ticket definition [{}]", metadata);
+        LOGGER.debug("Locating map name [{}] for ticket definition [{}]", mapName, metadata);
         return getTicketMapInstance(mapName);
     }
 
