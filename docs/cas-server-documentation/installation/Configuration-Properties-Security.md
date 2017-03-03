@@ -9,7 +9,9 @@ This document describes how to retrieve and secure CAS configuration and propert
 
 ## Spring Cloud
 
-Securing CAS settings and decrypting them is entirely handled by the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) project.
+Securing CAS settings and decrypting them is entirely handled by
+the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) project
+as [described in this guide](Configuration-Server-Management.html).
 
 The CAS configuration server exposes `/encrypt` and `/decrypt` endpoints to support encrypting and decrypting values.
 Both endpoints accept a `POST` payload; you can use `/encrypt` to secure and encrypt settings and place them inside your CAS configuration.
@@ -24,7 +26,7 @@ installed in your JVM version (if it’s not there by default).</p></div>
 To encrypt a given setting, use:
 
 ```bash
-curl https://sso.example.org/cas/status/configserver/encrypt -d sensitiveValue
+curl https://config.server.endpoint/encrypt -d sensitiveValue
 ```
 
 Then, copy the encrypted setting into your CAS configuration using the method specified below.
@@ -36,11 +38,11 @@ to account for special characters such as <code>+</code>.</p></div>
 If you wish to manually encrypt and decrypt settings to ensure the functionality is sane, use:
 
 ```bash
-export ENCRYPTED=`curl https://sso.example.org/cas/status/configserver/encrypt -d sensitiveValue | python -c 'import sys,urllib;print urllib.quote(sys.stdin
+export ENCRYPTED=`curl https://config.server.endpoint/encrypt -d sensitiveValue | python -c 'import sys,urllib;print urllib.quote(sys.stdin
 .read()
 .strip())'`
 echo $ENCRYPTED
-curl https://sso.exampple.org/cas/status/configserver/decrypt -d $ENCRYPTED | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'
+curl https://config.server.endpoint/decrypt -d $ENCRYPTED | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'
 ```
 
 Properties that are prefixed with `{cipher}` are automatically decrypted by the CAS configuration server at runtime, such as:
