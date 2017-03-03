@@ -43,6 +43,9 @@ import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.env.Environment;
+
+import java.io.File;
 
 /**
  * This is {@link CasConfigurationProperties}.
@@ -52,10 +55,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @ConfigurationProperties(value = "cas")
 public class CasConfigurationProperties {
-    
+
     @NestedConfigurationProperty
     private ScimProperties scim = new ScimProperties();
-    
+
     @NestedConfigurationProperty
     private AuthenticationProperties authn = new AuthenticationProperties();
 
@@ -502,5 +505,15 @@ public class CasConfigurationProperties {
 
     public void setClickatell(final ClickatellProperties clickatell) {
         this.clickatell = clickatell;
+    }
+
+    /**
+     * Gets standalone profile configuration directory.
+     *
+     * @param environment the environment
+     * @return the standalone profile configuration directory
+     */
+    public static File getStandaloneProfileConfigurationDirectory(final Environment environment) {
+        return environment.getProperty("cas.standalone.config", File.class, new File("/etc/cas/config"));
     }
 }
