@@ -74,7 +74,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     }
 
     private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
-        final String mapName = metadata.getProperties().getCacheName();
+        final String mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating map name [{}] for ticket definition [{}]", metadata);
         return getTicketMapInstance(mapName);
     }

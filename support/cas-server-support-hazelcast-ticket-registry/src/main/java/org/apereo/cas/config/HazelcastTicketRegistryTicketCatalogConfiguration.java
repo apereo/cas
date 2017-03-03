@@ -48,12 +48,12 @@ public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTi
     }
 
     private void setTicketGrantingTicketProperties(final TicketDefinition metadata) {
-        metadata.getProperties().setCacheName("ticketGrantingTicketsCache");
-        metadata.getProperties().setCacheTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
+        metadata.getProperties().setStorageName("ticketGrantingTicketsCache");
+        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
     }
 
     private void setServiceTicketDefinitionProperties(final TicketDefinition metadata) {
-        metadata.getProperties().setCacheName("serviceTicketsCache");
-        metadata.getProperties().setCacheTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+        metadata.getProperties().setStorageName("serviceTicketsCache");
+        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
     }
 }

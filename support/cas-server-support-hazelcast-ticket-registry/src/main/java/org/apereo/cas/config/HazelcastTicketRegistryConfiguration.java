@@ -160,7 +160,7 @@ public class HazelcastTicketRegistryConfiguration {
         definitions.forEach(t -> {
             final MapConfig mapConfig = createMapConfig(t);
             LOGGER.debug("Created Hazelcast map configuration for [{}]", t);
-            mapConfigs.put(t.getProperties().getCacheName(), mapConfig);
+            mapConfigs.put(t.getProperties().getStorageName(), mapConfig);
         });
         return mapConfigs;
     }
@@ -171,11 +171,11 @@ public class HazelcastTicketRegistryConfiguration {
         final EvictionPolicy evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
 
         LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeout [{}] second(s)",
-                definition.getProperties().getCacheName(), definition.getProperties().getCacheTimeout());
+                definition.getProperties().getStorageName(), definition.getProperties().getStorageTimeout());
         
         return new MapConfig()
-                .setName(definition.getProperties().getCacheName())
-                .setMaxIdleSeconds((int) definition.getProperties().getCacheTimeout())
+                .setName(definition.getProperties().getStorageName())
+                .setMaxIdleSeconds((int) definition.getProperties().getStorageTimeout())
                 .setBackupCount(cluster.getBackupCount())
                 .setAsyncBackupCount(cluster.getAsyncBackupCount())
                 .setEvictionPolicy(evictionPolicy)

@@ -17,13 +17,13 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
     private long cacheTimeout;
 
     @Override
-    public long getCacheTimeout() {
+    public long getStorageTimeout() {
         return cacheTimeout;
     }
 
     @Override
-    public void setCacheTimeout(final long cacheTimeout) {
-        this.cacheTimeout = cacheTimeout;
+    public void setStorageTimeout(final long timeout) {
+        this.cacheTimeout = timeout;
     }
 
     @Override
@@ -37,13 +37,13 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
     }
 
     @Override
-    public String getCacheName() {
+    public String getStorageName() {
         return cacheName;
     }
 
     @Override
-    public void setCacheName(final String cacheName) {
-        this.cacheName = cacheName;
+    public void setStorageName(final String storageName) {
+        this.cacheName = storageName;
     }
     
     @Override

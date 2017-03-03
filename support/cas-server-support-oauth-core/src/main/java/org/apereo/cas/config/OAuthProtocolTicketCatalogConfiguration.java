@@ -40,20 +40,20 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
     }
 
     protected void buildAndRegisterAccessTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setCacheName("oauthAccessTokensCache");
-        metadata.getProperties().setCacheTimeout(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds());
+        metadata.getProperties().setStorageName("oauthAccessTokensCache");
+        metadata.getProperties().setStorageTimeout(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds());
         registerTicketDefinition(plan, metadata);
     }
 
     protected void buildAndRegisterRefreshTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setCacheName("oauthRefreshTokensCache");
-        metadata.getProperties().setCacheTimeout(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds());
+        metadata.getProperties().setStorageName("oauthRefreshTokensCache");
+        metadata.getProperties().setStorageTimeout(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds());
         registerTicketDefinition(plan, metadata);
     }
 
     protected void buildAndRegisterOAuthCodeDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setCacheName("oauthCodesCache");
-        metadata.getProperties().setCacheTimeout(casProperties.getAuthn().getOauth().getCode().getTimeToKillInSeconds());
+        metadata.getProperties().setStorageName("oauthCodesCache");
+        metadata.getProperties().setStorageTimeout(casProperties.getAuthn().getOauth().getCode().getTimeToKillInSeconds());
         registerTicketDefinition(plan, metadata);
     }
 }
