@@ -16,7 +16,7 @@ The output of a WAR overlay build is a `cas.war` file that can be deployed to a 
 Overlays are a strategy to combat repetitive code and/or resources. Rather than downloading the CAS codebase and building from source,
 overlays allow you to download a pre-built vanilla CAS web application server provided by the project itself and override/insert specific behavior into it.
 At build time, the Maven/Gradle installation process will attempt to download the provided binary artifact first. Then the tool will locate your configuration files and settings made available inside the same project directory and will merge those into the downloaded artifact in order to produce
-one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include resources, java classes, images, CSS and javascript files. In order for the merge 
+one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include resources, java classes, images, CSS and javascript files. In order for the merge
 process is successfully execute, the location and names of the overridden artifacts locally must **EXACTLY** match that of those provided by the project
 inside the originally downloaded archive.
 
@@ -46,13 +46,13 @@ The process of working with an overlay, whether Maven or Gradle, can be summariz
 
 <div class="alert alert-warning"><strong>Be Exact</strong><p>Do NOT copy everything produced by the build. Attempt to keep changes and customizations to a minimum and only grab what you actually need. Make sure the deployment environment is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</p></div>
 
-## WAR Overlay Projects
+## CAS WAR Overlay Projects
 
-WAR overlay projects are provided for reference and study.
+CAS WAR overlay projects are provided for reference and study.
 
-<div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch. 
-You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code> 
-branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate, 
+<div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch.
+You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code>
+branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate,
 use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
 
 ### Gradle
@@ -80,6 +80,12 @@ So you may need to do that step manually yourself to learn what files/directorie
 
 Copy directories and files in the build directory over to the source directory.
 
+## CAS Configuration Server Overlay Projects
+
+- [WAR overlay](https://github.com/apereo/cas-configserver-overlay)
+
+To learn more about the configuration server, please [review this guide](Configuration-Server-Management.html).
+
 ## Dockerized Deployment
 
 - See [this guide](Docker-Installation.html) for more info.
@@ -100,7 +106,7 @@ Note that in most cases, modifying this file should be unnecessary.
 
 ### Groovy
 
-The CAS application context is able to load a `src/main/resources/deployerConfigContext.groovy`. 
+The CAS application context is able to load a `src/main/resources/deployerConfigContext.groovy`.
 For advanced use cases, CAS beans can be dynamically defined via the [Groovy programming language](http://www.groovy-lang.org/).
 
 
@@ -134,7 +140,7 @@ The contents of the `Messenger.groovy` must resolve to a valid Java/Groovy class
 ```groovy
 class ExampleMessenger implements Messenger {
     String message = "Welcome"
-    
+
     String getMessage() {
         this.message
     }
@@ -175,7 +181,7 @@ the relevant dependency in the overlay `pom.xml` or `build.gradle` file. In orde
 
 ### Maven Caveat
 
-Also, note that for any custom Java component to compile and be included in the final `cas.war` file, the `pom.xml` 
+Also, note that for any custom Java component to compile and be included in the final `cas.war` file, the `pom.xml`
 in the Maven overlay must include a reference to the Maven Java compiler so classes can compile.
 
 Here is a *sample* Maven build configuration:
@@ -204,7 +210,7 @@ Here is a *sample* Maven build configuration:
 
 ## Dependency Management
 
-Each release of CAS provides a curated list of dependencies it supports. In practice, you do not need to provide a version for any of 
+Each release of CAS provides a curated list of dependencies it supports. In practice, you do not need to provide a version for any of
 these dependencies in your build configuration as the CAS distribution is managing that for you. When you upgrade CAS itself, these dependencies will be upgraded as well in a consistent way.
 
 The curated list of dependencies contains a refined list of third party libraries. The list is available as a standard Bills of Materials (BOM).
@@ -221,12 +227,12 @@ To configure your project to inherit from the BOM, simply set the parent:
 </parent>
 ```
 
-Not everyone likes inheriting from the BOM. 
-You may have your own corporate standard parent that you need to use, 
+Not everyone likes inheriting from the BOM.
+You may have your own corporate standard parent that you need to use,
 or you may just prefer to explicitly declare all your Maven configuration.
 
-If you don’t want to use the `cas-server-support-bom`, you can still 
-keep the benefit of the dependency management (but not the plugin management) 
+If you don’t want to use the `cas-server-support-bom`, you can still
+keep the benefit of the dependency management (but not the plugin management)
 by using a `scope=import` dependency:
 
 ```xml
