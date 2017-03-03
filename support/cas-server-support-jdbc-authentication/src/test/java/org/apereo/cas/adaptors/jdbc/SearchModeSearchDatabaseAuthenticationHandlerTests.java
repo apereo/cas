@@ -48,7 +48,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-        this.handler = new SearchModeSearchDatabaseAuthenticationHandler("", this.dataSource, "username", "password", "cassearchusers");
+        this.handler = new SearchModeSearchDatabaseAuthenticationHandler("", null, this.dataSource, "username", "password", "cassearchusers");
 
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
