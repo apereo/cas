@@ -69,6 +69,7 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
                 casProperties.getGoogleApps().getKeyAlgorithm(),
                 servicesManager,
                 googleSaml20ObjectBuilder(),
-                casProperties.getSamlCore().getSkewAllowance());
+                casProperties.getSamlCore().getSkewAllowance(),
+                casProperties.getServer().getPrefix());
     }
 }

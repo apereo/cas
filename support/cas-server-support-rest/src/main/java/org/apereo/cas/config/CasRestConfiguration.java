@@ -61,7 +61,7 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(defaultRestAuthenticationThrottle()).addPathPatterns("/v1/**");
+        registry.addInterceptor(restAuthenticationThrottle()).addPathPatterns("/v1/**");
     }
 
     @Bean
@@ -71,8 +71,8 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
-    @Bean(name = {"defaultRestAuthenticationThrottle", "restAuthenticationThrottle"})
-    public HandlerInterceptor defaultRestAuthenticationThrottle() {
+    @Bean
+    public HandlerInterceptor restAuthenticationThrottle() {
         final String throttler = casProperties.getRest().getThrottler();
         if (StringUtils.isNotBlank(throttler) && this.applicationContext.containsBean(throttler)) {
             return this.applicationContext.getBean(throttler, HandlerInterceptor.class);

@@ -32,8 +32,8 @@ public class JsonServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Bean(name = {"jsonServiceRegistryDao", "serviceRegistryDao"})
-    public ServiceRegistryDao jsonServiceRegistryDao() {
+    @Bean
+    public ServiceRegistryDao serviceRegistryDao() {
         final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
         if (registry.getConfig().getLocation() == null) {
             LOGGER.warn("The location of service definitions is undefined for the service registry");
