@@ -107,8 +107,8 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "attributeRepository")
-    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao stubAttributeRepository() {
+    @Bean
+    public IPersonAttributeDao attributeRepository() {
         return Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
     }
 
@@ -232,7 +232,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public FormDataPopulator attributeFormDataPopulator() {
-        return new AttributeFormDataPopulator(stubAttributeRepository());
+        return new AttributeFormDataPopulator(attributeRepository());
     }
 
     @Bean

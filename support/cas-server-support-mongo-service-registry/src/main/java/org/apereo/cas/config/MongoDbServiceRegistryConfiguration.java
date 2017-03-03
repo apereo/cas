@@ -66,8 +66,8 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
         ));
     }
 
-    @Bean(name = {"mongoServiceRegistryDao", "serviceRegistryDao"})
-    public ServiceRegistryDao mongoServiceRegistryDao() throws Exception {
+    @Bean
+    public ServiceRegistryDao serviceRegistryDao() throws Exception {
         final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoServiceRegistryDao(
                 mongoTemplate(),

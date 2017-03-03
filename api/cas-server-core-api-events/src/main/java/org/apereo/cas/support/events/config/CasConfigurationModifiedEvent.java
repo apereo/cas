@@ -1,5 +1,7 @@
 package org.apereo.cas.support.events.config;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.support.events.AbstractCasEvent;
 
 import java.io.File;
@@ -75,5 +77,15 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
             return CONFIG_FILE_PATTERN.matcher(file.getName()).find();
         }
         return false;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
+                .appendSuper(super.toString())
+                .append("file", file)
+                .append("override", override)
+                .toString();
     }
 }

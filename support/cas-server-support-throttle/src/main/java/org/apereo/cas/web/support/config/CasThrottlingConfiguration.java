@@ -38,8 +38,8 @@ public class CasThrottlingConfiguration {
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationThrottle")
-    @Bean(name = {"defaultAuthenticationThrottle", "authenticationThrottle"})
-    public ThrottledSubmissionHandlerInterceptor defaultAuthenticationThrottle() {
+    @Bean
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
         final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
         if (throttle.getFailure().getThreshold() > 0
                 && throttle.getFailure().getRangeSeconds() > 0) {
