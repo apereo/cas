@@ -1,0 +1,34 @@
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+
+description = "Apereo CAS Spring Cloud Configuration Server"
+
+javadoc {
+    enabled false
+}
+
+bootRun {
+    addResources = true
+    if (Boolean.getBoolean("enableRemoteDebugging")) {
+        jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+    }
+}
+
+war {
+    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+}
+
+springBoot  {
+    mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
+}
+
+bootRepackage {
+    mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
+    enabled = !rootProject.publishReleases
+}
+
+dependencies {
+    providedRuntime libraries.springboottomcat
+    runtimeOnly libraries.springsecuritywebconfig
+    compile project(":core:cas-server-core-util")
+}
