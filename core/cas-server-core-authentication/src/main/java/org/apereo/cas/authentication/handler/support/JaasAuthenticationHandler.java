@@ -71,7 +71,6 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * The realm that contains the login module information.
      */
-
     private String realm = "CAS";
 
     /**
@@ -88,14 +87,14 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Instantiates a new Jaas authentication handler,
      * and attempts to load/verify the configuration.
      */
-    public JaasAuthenticationHandler() {
+    public JaasAuthenticationHandler(final String name) {
+        super(name);
         Assert.notNull(Configuration.getConfiguration(),
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         if (this.kerberosKdcSystemProperty != null) {
@@ -110,9 +109,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final String username = credential.getUsername();
         final String password = credential.getPassword();
         
-        final LoginContext lc = new LoginContext(
-                this.realm,
-                new UsernamePasswordCallbackHandler(username, password));
+        final LoginContext lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
         try {
             LOGGER.debug("Attempting authentication for: [{}]", username);
             lc.login();
@@ -199,22 +196,19 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
          * @param userName name to be used for authentication
          * @param password Password to be used for authentication
          */
-        protected UsernamePasswordCallbackHandler(final String userName,
-                                                  final String password) {
+        protected UsernamePasswordCallbackHandler(final String userName, final String password) {
             this.userName = userName;
             this.password = password;
         }
 
         @Override
-        public void handle(final Callback[] callbacks)
-                throws UnsupportedCallbackException {
+        public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
             Arrays.stream(callbacks).filter(callback -> {
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);
                     return false;
                 } else if (callback.getClass().equals(PasswordCallback.class)) {
-                    ((PasswordCallback) callback).setPassword(this.password
-                            .toCharArray());
+                    ((PasswordCallback) callback).setPassword(this.password.toCharArray());
                     return false;
                 }
                 return true;
