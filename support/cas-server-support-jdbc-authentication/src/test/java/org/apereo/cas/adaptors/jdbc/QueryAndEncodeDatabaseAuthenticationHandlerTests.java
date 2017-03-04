@@ -100,8 +100,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME, buildSql(),
-                PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(AccountNotFoundException.class);
         this.thrown.expectMessage("test not found with SQL query");
@@ -122,8 +122,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationMultipleAccounts() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME, buildSql(),
-                PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(FailedLoginException.class);
         this.thrown.expectMessage("Multiple records found for user0");
@@ -133,8 +133,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessful() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME, buildSql(),
-                PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
         final HandlerResult r = q.authenticate(c);
@@ -145,8 +145,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationWithExpiredField() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME, buildSql(),
-                PASSWORD_FIELD_NAME, "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountPasswordMustChangeException.class);
         this.thrown.expectMessage("Password has expired");
@@ -157,8 +157,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationWithDisabledField() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME, buildSql(),
-                PASSWORD_FIELD_NAME, "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountDisabledException.class);
         this.thrown.expectMessage("Account has been disabled");
@@ -169,8 +169,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME, buildSql(),
-                PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+                buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
             public String encode(final CharSequence password) {

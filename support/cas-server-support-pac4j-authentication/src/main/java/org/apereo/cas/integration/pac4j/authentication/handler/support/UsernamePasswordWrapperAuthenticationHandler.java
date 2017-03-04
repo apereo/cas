@@ -44,7 +44,8 @@ public class UsernamePasswordWrapperAuthenticationHandler
      */
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
-    public UsernamePasswordWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, PrincipalFactory principalFactory, Integer order) {
+    public UsernamePasswordWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                        final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 
