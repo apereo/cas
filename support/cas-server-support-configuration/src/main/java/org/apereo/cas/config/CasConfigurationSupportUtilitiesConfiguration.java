@@ -3,15 +3,16 @@ package org.apereo.cas.config;
 import com.google.common.base.Throwables;
 import org.apereo.cas.config.monitor.ConfigurationDirectoryPathWatchService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -30,6 +31,10 @@ public class CasConfigurationSupportUtilitiesConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("configurationPropertiesEnvironmentManager")
+    private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
+    
     /**
      * The watch configuration.
      */
@@ -39,10 +44,7 @@ public class CasConfigurationSupportUtilitiesConfiguration {
     public class CasCoreConfigurationWatchConfiguration {
         @Autowired
         private ApplicationEventPublisher eventPublisher;
-
-        @Autowired
-        private Environment environment;
-
+        
         @PostConstruct
         public void init() {
             runNativeConfigurationDirectoryPathWatchService();
@@ -50,7 +52,7 @@ public class CasConfigurationSupportUtilitiesConfiguration {
 
         public void runNativeConfigurationDirectoryPathWatchService() {
             try {
-                final File config = CasConfigurationProperties.getStandaloneProfileConfigurationDirectory(environment);
+                final File config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
                 if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
                     LOGGER.debug("Starting to watch configuration directory [{}]", config);
                     final Thread th = new Thread(new ConfigurationDirectoryPathWatchService(config.toPath(), eventPublisher));
