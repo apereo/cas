@@ -5,15 +5,19 @@ import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.CreateTableResult;
+import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbProperties;
 import org.apereo.cas.ticket.Ticket;
@@ -42,11 +46,11 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
                                   final TicketCatalog ticketCatalog,
                                   final DynamoDbProperties dynamoDbProperties) {
         setCipherExecutor(cipher);
-        
+
         this.ticketCatalog = ticketCatalog;
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = initializeAmazonDynamoDBClient();
-        
+
         createTables();
     }
 
@@ -94,19 +98,38 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
             cfg.setProtocol(Protocol.valueOf(dynamoDbProperties.getProtocol().toUpperCase()));
             cfg.setClientExecutionTimeout(dynamoDbProperties.getClientExecutionTimeout());
             cfg.setCacheResponseMetadata(dynamoDbProperties.isCacheResponseMetadata());
-            cfg.setLocalAddress(InetAddress.getByName(dynamoDbProperties.getLocalAddress()));
-            
-            final AWSCredentials credentials;
+
+            if (StringUtils.isNotBlank(dynamoDbProperties.getLocalAddress())) {
+                cfg.setLocalAddress(InetAddress.getByName(dynamoDbProperties.getLocalAddress()));
+            }
+
+            AWSCredentials credentials = null;
             if (dynamoDbProperties.getCredentialsPropertiesFile() != null) {
                 credentials = new PropertiesCredentials(dynamoDbProperties.getCredentialsPropertiesFile().getInputStream());
-            } else {
+            } else if (StringUtils.isNotBlank(dynamoDbProperties.getCredentialAccessKey()) && StringUtils.isNotBlank(dynamoDbProperties.getCredentialSecretKey())) {
                 credentials = new BasicAWSCredentials(dynamoDbProperties.getCredentialAccessKey(), dynamoDbProperties.getCredentialSecretKey());
             }
 
+            final AmazonDynamoDBClient client;
             if (credentials == null) {
-                return new AmazonDynamoDBClient(cfg);
+                client = new AmazonDynamoDBClient(cfg);
+            } else {
+                client = new AmazonDynamoDBClient(credentials, cfg);
             }
-            return new AmazonDynamoDBClient(credentials, cfg);
+
+            if (StringUtils.isNotBlank(dynamoDbProperties.getEndpoint())) {
+                client.setEndpoint(dynamoDbProperties.getEndpoint());
+            }
+
+            if (StringUtils.isNotBlank(dynamoDbProperties.getRegion())) {
+                client.setRegion(Region.getRegion(Regions.valueOf(dynamoDbProperties.getRegion())));
+            }
+
+            if (StringUtils.isNotBlank(dynamoDbProperties.getRegionOverride())) {
+                client.setSignerRegionOverride(dynamoDbProperties.getRegionOverride());
+            }
+
+            return client;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -116,20 +139,16 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
         metadata.forEach(r -> {
             final CreateTableRequest request = new CreateTableRequest()
-                    .withAttributeDefinitions(
-                            new AttributeDefinition("id", ScalarAttributeType.S),
-                            new AttributeDefinition("prefix", ScalarAttributeType.S),
-                            new AttributeDefinition("countOfUses", ScalarAttributeType.N),
-                            new AttributeDefinition("timeToIdle", ScalarAttributeType.N),
-                            new AttributeDefinition("timeToLive", ScalarAttributeType.N),
-                            new AttributeDefinition("creationTime", ScalarAttributeType.S),
-                            new AttributeDefinition("encoded", ScalarAttributeType.B))
-
-                    .withKeySchema(new KeySchemaElement("id", KeyType.HASH))
-                    .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(), dynamoDbProperties.getWriteCapacity()))
-                    .withTableName(r.getProperties().getStorageName());
-
-            final CreateTableResult result = amazonDynamoDBClient.createTable(request);
+                    .withAttributeDefinitions(new AttributeDefinition("id", ScalarAttributeType.S))
+                            .withKeySchema(new KeySchemaElement("id", KeyType.HASH))
+                            .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(), dynamoDbProperties.getWriteCapacity()))
+                            .withTableName(r.getProperties().getStorageName());
+            
+            if (dynamoDbProperties.isDropTablesOnStartup()) {
+                final DeleteTableRequest delete = new DeleteTableRequest(r.getProperties().getStorageName());
+                TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
+            }
+            TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
         });
     }
 }

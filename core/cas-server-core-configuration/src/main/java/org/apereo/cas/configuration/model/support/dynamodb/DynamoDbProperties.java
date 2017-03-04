@@ -19,8 +19,14 @@ public class DynamoDbProperties {
     private String credentialAccessKey;
     private String credentialSecretKey;
     
-    private long readCapacity;
-    private long writeCapacity;
+    private String endpoint;
+    private String region;
+    private String regionOverride;
+    
+    private boolean dropTablesOnStartup;
+    
+    private long readCapacity = 10;
+    private long writeCapacity = 10;
     private int connectionTimeout = 5000;
     private int requestTimeout = 5000;
     private int socketTimeout = 5000;
@@ -29,10 +35,42 @@ public class DynamoDbProperties {
     private boolean useThrottleRetries;
     private boolean useTcpKeepAlive;
     private String protocol = "HTTPS";
-    private int clientExecutionTimeout = 5000;
+    private int clientExecutionTimeout = 10000;
     private boolean cacheResponseMetadata;
     private String localAddress;
     private int maxConnections = 10;
+
+    public boolean isDropTablesOnStartup() {
+        return dropTablesOnStartup;
+    }
+
+    public void setDropTablesOnStartup(final boolean dropTablesOnStartup) {
+        this.dropTablesOnStartup = dropTablesOnStartup;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(final String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(final String region) {
+        this.region = region;
+    }
+
+    public String getRegionOverride() {
+        return regionOverride;
+    }
+
+    public void setRegionOverride(final String regionOverride) {
+        this.regionOverride = regionOverride;
+    }
 
     public Resource getCredentialsPropertiesFile() {
         return credentialsPropertiesFile;

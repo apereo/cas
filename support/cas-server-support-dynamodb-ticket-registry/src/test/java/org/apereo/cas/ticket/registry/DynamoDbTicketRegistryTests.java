@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -42,7 +44,11 @@ import org.springframework.test.context.junit4.SpringRunner;
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         RefreshAutoConfiguration.class})
+@TestPropertySource(properties = {"cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
+        "cas.ticket.registry.dynamoDb.credentialAccessKey=AKIAIPPIGGUNIO74C63Q",
+        "cas.ticket.registry.dynamoDb.credentialSecretKey=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"})
 public class DynamoDbTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Autowired
