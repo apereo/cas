@@ -66,8 +66,8 @@ public class CasCoreAuditConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "auditTrailManager")
-    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
-    public DelegatingAuditTrailManager slf4jAuditTrailManager() {
+    @Bean
+    public DelegatingAuditTrailManager auditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(casProperties.getAudit().isUseSingleLine());
         mgmr.setEntrySeparator(casProperties.getAudit().getSinglelineSeparator());

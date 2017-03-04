@@ -49,14 +49,14 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CasJdbcThrottlingConfiguration.class, 
+@SpringBootTest(classes = {CasJdbcThrottlingConfiguration.class,
         CasCoreAuditConfiguration.class,
-        CasCoreConfiguration.class, 
+        CasCoreConfiguration.class,
         CasCoreServicesConfiguration.class,
-        CasCoreUtilConfiguration.class, 
+        CasCoreUtilConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class, 
+        CasCoreLogoutConfiguration.class,
         RefreshAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
@@ -68,7 +68,7 @@ import static org.junit.Assert.*;
         CasCoreHttpConfiguration.class,
         CasSupportJdbcAuditConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jdbc-audit-context.xml"})
-@TestPropertySource(locations={"classpath:/casthrottle.properties"})
+@TestPropertySource(locations = {"classpath:/casthrottle.properties"})
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
@@ -92,8 +92,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         throttle.preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(),
-                    badCredentials(username)));
+            authenticationManager.authenticate(AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(), badCredentials(username)));
         } catch (final AuthenticationException e) {
             throttle.postHandle(request, response, null, null);
             return response;
