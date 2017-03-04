@@ -18,12 +18,17 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreBootstrapStandaloneConfiguration}.
@@ -50,7 +55,12 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
 
         if (config.isDirectory() && config.exists()) {
-            final String regex = String.format("(%s|application)\\.(yml|properties)", configurationPropertiesEnvironmentManager().getApplicationName());
+
+            final List<String> profiles = new ArrayList<>();
+            profiles.add(configurationPropertiesEnvironmentManager().getApplicationName());
+            profiles.addAll(Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList()));
+            final String propertyNames = profiles.stream().collect(Collectors.joining("|"));
+            final String regex = String.format("(%s|application)\\.(yml|properties)", propertyNames);
             LOGGER.debug("Looking for configuration files at [{}] that match the pattern [{}]", config, regex);
             
             final Collection<File> configFiles = FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
