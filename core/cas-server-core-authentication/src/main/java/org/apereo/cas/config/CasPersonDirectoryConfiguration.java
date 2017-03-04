@@ -76,7 +76,7 @@ public class CasPersonDirectoryConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "attributeRepository")
-    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
+    @Bean
     public IPersonAttributeDao attributeRepository() {
         return composeMergedAndCachedAttributeRepositories(attributeRepositories());
     }

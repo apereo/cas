@@ -31,17 +31,16 @@ public class CasCoreAuthenticationPrincipalConfiguration {
 
     @ConditionalOnMissingBean(name = "principalElectionStrategy")
     @Autowired
-    @Bean(name = {"defaultPrincipalElectionStrategy", "principalElectionStrategy"})
-    public PrincipalElectionStrategy defaultPrincipalElectionStrategy(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+    @Bean
+    public PrincipalElectionStrategy principalElectionStrategy(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
         return new DefaultPrincipalElectionStrategy(principalFactory);
     }
 
     @ConditionalOnMissingBean(name = "principalFactory")
-    @Bean(name = {"defaultPrincipalFactory", "principalFactory"})
-    public PrincipalFactory defaultPrincipalFactory() {
+    @Bean
+    public PrincipalFactory principalFactory() {
         return new DefaultPrincipalFactory();
     }
-
     
     @Autowired
     @RefreshScope
