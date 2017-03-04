@@ -270,24 +270,42 @@ ext.libraries = [
                     force = true
                 }
         ],
+        awsjavadynamodb : [
+                dependencies.create("com.amazonaws:aws-java-sdk-s3") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    force = true
+                },
+                dependencies.create("com.amazonaws:aws-java-sdk-dynamodb") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    force = true
+                }
+        ],
         shibattributes          : [
-                dependencies.create("net.shibboleth.idp:idp-attribute-resolver-impl:${idpVersion}") {
+                dependencies.create("net.shibboleth.idp:idp-attribute-resolver-impl:$idpVersion") {
                     transitive = false
                     force = true
                 },
-                dependencies.create("net.shibboleth.idp:idp-attribute-resolver-spring:${idpVersion}") {
+                dependencies.create("net.shibboleth.idp:idp-attribute-resolver-spring:$idpVersion") {
                     transitive = false
                     force = true
                 }
         ],
         googleauth              : [
-                dependencies.create("com.warrenstrange:googleauth:${googleAuthVersion}") {
+                dependencies.create("com.warrenstrange:googleauth:$googleAuthVersion") {
                     transitive = false
                     force = true
                 }
         ],
         zxingbarcode            : [
-                dependencies.create("com.google.zxing:core:${googleZxingVersion}") {
+                dependencies.create("com.google.zxing:core:$googleZxingVersion") {
                     force = true
                 }
         ],
