@@ -158,8 +158,8 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyFindUserAndExpired() throws Exception {
-        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD, "expired",
-                null, Collections.emptyMap());
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
+                "expired", null, Collections.emptyMap());
         this.thrown.expect(AccountPasswordMustChangeException.class);
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20"));
         fail("Shouldn't get here");
