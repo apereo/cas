@@ -2,10 +2,12 @@ package org.apereo.cas.web.report;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.context.ApplicationEventPublisher;
@@ -47,6 +49,10 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @Autowired
     private ConfigurableEnvironment environment;
 
+    @Autowired
+    @Qualifier("configurationPropertiesEnvironmentManager")
+    private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
+        
     private CasConfigurationProperties casProperties;
 
     public ConfigurationStateController(final CasConfigurationProperties casProperties) {
@@ -133,7 +139,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
         ensureEndpointAccessIsAuthorized(request, response);
         if (isUpdateEnabled()) {
             final Map<String, String> newData = jsonInput.get("new");
-            CasConfigurationProperties.savePropertyForStandaloneProfile(Pair.of(newData.get("key"), newData.get("value")), environment);
+            configurationPropertiesEnvironmentManager.savePropertyForStandaloneProfile(Pair.of(newData.get("key"), newData.get("value")));
             eventPublisher.publishEvent(new CasConfigurationModifiedEvent(this, !casProperties.getEvents().isTrackConfigurationModifications()));
         }
     }
