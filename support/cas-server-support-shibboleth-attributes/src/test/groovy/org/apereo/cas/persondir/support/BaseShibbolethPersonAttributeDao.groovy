@@ -21,7 +21,7 @@ import javax.annotation.Resource
 @SpringBootTest(classes = [ShibbolethAttributeResolverConfiguration, CasCoreUtilConfiguration])
 @ContextConfiguration
 abstract class BaseShibbolethPersonAttributeDao extends Specification {
-    @Resource(name = 'shibbolethPersonAttributeDao')
+    @Resource(name = 'attributeRepository')
     IPersonAttributeDao iPersonAttributeDao
 
     def setupSpec() {}
