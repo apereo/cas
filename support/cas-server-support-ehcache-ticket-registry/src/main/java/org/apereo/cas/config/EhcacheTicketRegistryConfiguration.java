@@ -95,6 +95,7 @@ public class EhcacheTicketRegistryConfiguration {
         return bean;
     }
 
+    @Autowired
     @RefreshScope
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ehcacheTicketsCache") final Cache ehcacheTicketsCache) {

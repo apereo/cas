@@ -20,6 +20,7 @@ layout: null
 
 * [Configuration](#casconfigmgmt)
     *   [Overview](/$version/installation/Configuration-Management.html)
+    *   [Configuration Server](/$version/installation/Configuration-Server-Management.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
     *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
