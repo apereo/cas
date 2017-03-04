@@ -91,7 +91,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
             cfg.setUseReaper(dynamoDbProperties.isUseReaper());
             cfg.setUseThrottleRetries(dynamoDbProperties.isUseThrottleRetries());
             cfg.setUseTcpKeepAlive(dynamoDbProperties.isUseTcpKeepAlive());
-            cfg.setProtocol(Protocol.HTTP);
+            cfg.setProtocol(Protocol.valueOf(dynamoDbProperties.getProtocol().toUpperCase()));
             cfg.setClientExecutionTimeout(dynamoDbProperties.getClientExecutionTimeout());
             cfg.setCacheResponseMetadata(dynamoDbProperties.isCacheResponseMetadata());
             cfg.setLocalAddress(InetAddress.getByName(dynamoDbProperties.getLocalAddress()));
