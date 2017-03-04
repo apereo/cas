@@ -56,7 +56,7 @@ public class CasCoreConfiguration {
     @Qualifier("defaultTicketFactory")
     private TicketFactory ticketFactory;
         
-    @Bean(name={"authenticationPolicyFactory", "defaultAuthenticationPolicyFactory"})
+    @Bean
     public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
             return new RequiredHandlerAuthenticationPolicyFactory();

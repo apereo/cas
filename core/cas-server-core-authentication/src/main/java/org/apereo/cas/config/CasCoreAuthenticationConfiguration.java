@@ -33,13 +33,13 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuthenticationConfiguration.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
-    public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier("casAuthenticationManager")
-                                                                                    final AuthenticationManager authenticationManager) {
+
+    @Bean
+    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager")
+                                                                             final AuthenticationManager authenticationManager) {
         return new DefaultAuthenticationTransactionManager(authenticationManager);
     }
 
@@ -47,11 +47,11 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     @Bean
     public AuthenticationManager casAuthenticationManager(@Qualifier("authenticationPolicy")
-                                                       final AuthenticationPolicy authenticationPolicy,
-                                                       @Qualifier("registeredServiceAuthenticationHandlerResolver")
-                                                       final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
-                                                       @Qualifier("authenticationEventExecutionPlan")
-                                                       final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+                                                          final AuthenticationPolicy authenticationPolicy,
+                                                          @Qualifier("registeredServiceAuthenticationHandlerResolver")
+                                                          final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
+                                                          @Qualifier("authenticationEventExecutionPlan")
+                                                          final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
         return new PolicyBasedAuthenticationManager(
                 authenticationEventExecutionPlan,
                 registeredServiceAuthenticationHandlerResolver,
@@ -59,7 +59,7 @@ public class CasCoreAuthenticationConfiguration {
                 casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal()
         );
     }
-    
+
     @ConditionalOnMissingBean(name = "authenticationEventExecutionPlan")
     @Autowired
     @Bean
