@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -43,11 +44,8 @@ public class UsernamePasswordWrapperAuthenticationHandler
      */
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
-    /**
-     * Default constructor.
-     */
-    public UsernamePasswordWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager) {
-        super(name, servicesManager);
+    public UsernamePasswordWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, PrincipalFactory principalFactory, Integer order) {
+        super(name, servicesManager, principalFactory, order);
     }
 
     @Override

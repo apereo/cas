@@ -28,7 +28,7 @@ public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration imp
         credentials.put("bob", "62831");
         credentials.put("mallory", "14142");
 
-        plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler("", null, users));
+        plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler("", null, null, null, users));
         plan.registerAuthenticationHandler(new TestOneTimePasswordAuthenticationHandler(credentials));
     }
 }

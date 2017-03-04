@@ -67,9 +67,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration implements Authent
     @RefreshScope
     public U2FAuthenticationHandler u2fAuthenticationHandler() {
         final MultifactorAuthenticationProperties.U2F u2f = this.casProperties.getAuthn().getMfa().getU2f();
-        final U2FAuthenticationHandler handler = new U2FAuthenticationHandler(u2f.getName(), servicesManager, u2fDeviceRepository);
-        handler.setPrincipalFactory(u2fPrincipalFactory());
-        return handler;
+        return new U2FAuthenticationHandler(u2f.getName(), servicesManager, u2fPrincipalFactory(), u2fDeviceRepository);
     }
 
     @Bean

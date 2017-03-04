@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,8 +92,8 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param name the name
      * @param servicesManager the services manager
      */
-    public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager) {
-        super(name, servicesManager);
+    public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
+        super(name, servicesManager, principalFactory, order);
         Assert.notNull(Configuration.getConfiguration(),
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
