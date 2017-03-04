@@ -47,6 +47,15 @@ The following commandline boolean flags are supported by the build:
 
 Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`)
 
+## Tasks
+
+Available build tasks can be found using the command `./gradlew tasks`.
+
+### Sass Compilation
+
+The build is automatically wired to compile `.scss` files into `.css` via a [Gulp](http://gulpjs.com/).
+To initialize the plugin once, you may need to invoke `sudo ./gradlew gulpSetup` once at the root directory. 
+
 ## IDE Setup
 
 CAS development may be carried out using any modern IDE. 
