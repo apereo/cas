@@ -20,6 +20,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -45,7 +46,7 @@ import java.util.stream.Collectors;
  */
 public class DynamoDbTicketRegistryFacilitator {
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbTicketRegistryFacilitator.class);
-
+    
     private enum ColumnNames {
         ID("id"),
         PREFIX("prefix"),
@@ -233,4 +234,6 @@ public class DynamoDbTicketRegistryFacilitator {
         values.put(ColumnNames.ENCODED.getName(), new AttributeValue().withB(ByteBuffer.wrap(SerializationUtils.serialize(encTicket))));
         return values;
     }
+    
+    
 }
