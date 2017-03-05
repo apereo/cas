@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileReader;

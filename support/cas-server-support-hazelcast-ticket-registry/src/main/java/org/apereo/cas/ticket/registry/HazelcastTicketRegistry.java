@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.Closeable;
 import java.io.IOException;
@@ -122,7 +121,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
-        return tickets;
+        return decodeTickets(tickets);
     }
 
     /**
