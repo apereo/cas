@@ -1,12 +1,4 @@
-apply plugin: "io.spring.dependency-management"
-
 description = "Apereo CAS DynamoDb Ticket Registry"
-
-dependencyManagement {
-    imports {
-        mavenBom "com.amazonaws:aws-java-sdk-bom:$amazonSdkVersion"
-    }
-}
 
 dependencies {
     api libraries.awsjavadynamodb

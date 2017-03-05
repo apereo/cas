@@ -271,7 +271,7 @@ ext.libraries = [
                 }
         ],
         awsjavadynamodb : [
-                dependencies.create("com.amazonaws:aws-java-sdk-s3") {
+                dependencies.create("com.amazonaws:aws-java-sdk-s3:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -279,7 +279,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 },
-                dependencies.create("com.amazonaws:aws-java-sdk-dynamodb") {
+                dependencies.create("com.amazonaws:aws-java-sdk-dynamodb:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
