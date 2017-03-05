@@ -29,7 +29,9 @@ public abstract class AbstractTicketRegistryTests {
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
-        this.ticketRegistry.deleteAll();
+        if (ticketRegistry != null) {
+            this.ticketRegistry.deleteAll();
+        }
     }
 
     /**
