@@ -4,25 +4,38 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
+import com.amazonaws.services.dynamodbv2.model.DeleteItemResult;
 import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
+import com.amazonaws.services.dynamodbv2.model.PutItemResult;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DynamoDbTicketRegistryFacilitator}.
@@ -63,6 +76,65 @@ public class DynamoDbTicketRegistryFacilitator {
         this.ticketCatalog = ticketCatalog;
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = amazonDynamoDBClient;
+
+        createTicketTables(dynamoDbProperties.isDropTablesOnStartup());
+    }
+
+    /**
+     * Delete.
+     *
+     * @param ticketId the ticket id
+     * @return the boolean
+     */
+    public boolean delete(final String ticketId) {
+        final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
+        if (metadata != null) {
+            final DeleteItemRequest del = new DeleteItemRequest()
+                    .withTableName(metadata.getProperties().getStorageName())
+                    .withKey(Collections.singletonMap(ColumnNames.ID.getName(), new AttributeValue(ticketId)));
+
+            final DeleteItemResult res = amazonDynamoDBClient.deleteItem(del);
+            return res != null;
+        }
+        return false;
+    }
+
+    /**
+     * Delete all.
+     *
+     * @return the int
+     */
+    public int deleteAll() {
+        final AtomicInteger count = new AtomicInteger();
+        final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
+        metadata.forEach(r -> {
+            final ScanRequest scan = new ScanRequest(r.getProperties().getStorageName());
+            count.addAndGet(this.amazonDynamoDBClient.scan(scan).getCount());
+        });
+        createTicketTables(true);
+        return count.get();
+    }
+
+    /**
+     * Gets all.
+     *
+     * @return the all
+     */
+    public Collection<Ticket> getAll() {
+        final Collection<Ticket> tickets = new ArrayList<>();
+        final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
+        metadata.forEach(r -> {
+            final ScanRequest scan = new ScanRequest(r.getProperties().getStorageName());
+            LOGGER.debug("Scanning table with request [{}]", scan);
+            final ScanResult result = this.amazonDynamoDBClient.scan(scan);
+            LOGGER.debug("Scanned table with result [{}]", scan);
+            
+            tickets.addAll(result.getItems()
+                    .stream()
+                    .map(this::deserializeTicket)
+                    .collect(Collectors.toList()));
+        });
+        return tickets;
     }
 
     /**
@@ -83,14 +155,19 @@ public class DynamoDbTicketRegistryFacilitator {
 
             final Map<String, AttributeValue> returnItem = amazonDynamoDBClient.getItem(request).getItem();
             if (returnItem != null) {
-                final ByteBuffer bb = returnItem.get(ColumnNames.ENCODED.getName()).getB();
-                final Ticket ticket = SerializationUtils.deserialize(bb.array());
+                final Ticket ticket = deserializeTicket(returnItem);
                 LOGGER.debug("Located ticket [{}]", ticket);
+                return ticket;
             }
         } else {
             LOGGER.warn("No ticket definition could be found in the catalog to match [{}]", ticketId);
         }
         return null;
+    }
+
+    private Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
+        final ByteBuffer bb = returnItem.get(ColumnNames.ENCODED.getName()).getB();
+        return SerializationUtils.deserialize(bb.array());
     }
 
     /**
@@ -102,15 +179,21 @@ public class DynamoDbTicketRegistryFacilitator {
     public void put(final Ticket ticket, final Ticket encodedTicket) {
         final TicketDefinition metadata = this.ticketCatalog.find(ticket);
         final Map<String, AttributeValue> values = buildTableAttributeValuesMapFromTicket(ticket, encodedTicket);
-        amazonDynamoDBClient.putItem(metadata.getProperties().getStorageName(), values);
+        LOGGER.debug("Adding ticket id [{}] with values [{}]", encodedTicket.getId(), values);
+        final PutItemRequest putItemRequest = new PutItemRequest(metadata.getProperties().getStorageName(), values);
+        final PutItemResult putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
+        LOGGER.debug("Ticket added with result [{}]", putItemResult);
+        getAll();
     }
 
     /**
      * Create ticket tables.
+     *
+     * @param deleteTables the delete tables
      */
-    public void createTicketTables() {
+    public void createTicketTables(final boolean deleteTables) {
         final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-        metadata.forEach(r -> {
+        metadata.forEach(Unchecked.consumer(r -> {
             final CreateTableRequest request = new CreateTableRequest()
                     .withAttributeDefinitions(new AttributeDefinition(ColumnNames.ID.getName(), ScalarAttributeType.S))
                     .withKeySchema(new KeySchemaElement(ColumnNames.ID.getName(), KeyType.HASH))
@@ -118,12 +201,17 @@ public class DynamoDbTicketRegistryFacilitator {
                             dynamoDbProperties.getWriteCapacity()))
                     .withTableName(r.getProperties().getStorageName());
 
-            if (dynamoDbProperties.isDropTablesOnStartup()) {
+            if (deleteTables) {
                 final DeleteTableRequest delete = new DeleteTableRequest(r.getProperties().getStorageName());
                 TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
             }
             TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-        });
+            TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
+
+            final DescribeTableRequest describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+            final TableDescription tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+            LOGGER.debug("Table description: [{}]", tableDescription);
+        }));
     }
 
     /**
@@ -139,22 +227,10 @@ public class DynamoDbTicketRegistryFacilitator {
         values.put(ColumnNames.ID.getName(), new AttributeValue(encTicket.getId()));
         values.put(ColumnNames.PREFIX.getName(), new AttributeValue(encTicket.getPrefix()));
         values.put(ColumnNames.CREATION_TIME.getName(), new AttributeValue(ticket.getCreationTime().toString()));
-
-        final AttributeValue vCount = new AttributeValue();
-        vCount.setN(String.valueOf(ticket.getCountOfUses()));
-        values.put(ColumnNames.COUNT_OF_USES.getName(), vCount);
-
-        final AttributeValue vLive = new AttributeValue();
-        vLive.setN(String.valueOf(ticket.getExpirationPolicy().getTimeToLive()));
-        values.put(ColumnNames.TIME_TO_LIVE.getName(), vLive);
-
-        final AttributeValue vIdle = new AttributeValue();
-        vIdle.setN(String.valueOf(ticket.getExpirationPolicy().getTimeToIdle()));
-        values.put(ColumnNames.TIME_TO_IDLE.getName(), vIdle);
-
-        final AttributeValue vBin = new AttributeValue();
-        vBin.setB(ByteBuffer.wrap(SerializationUtils.serialize(encTicket)));
-        values.put(ColumnNames.ENCODED.getName(), vBin);
+        values.put(ColumnNames.COUNT_OF_USES.getName(), new AttributeValue().withN(Integer.toString(ticket.getCountOfUses())));
+        values.put(ColumnNames.TIME_TO_LIVE.getName(), new AttributeValue().withN(Long.toString(ticket.getExpirationPolicy().getTimeToLive())));
+        values.put(ColumnNames.TIME_TO_IDLE.getName(), new AttributeValue().withN(Long.toString(ticket.getExpirationPolicy().getTimeToIdle())));
+        values.put(ColumnNames.ENCODED.getName(), new AttributeValue().withB(ByteBuffer.wrap(SerializationUtils.serialize(encTicket))));
         return values;
     }
 }
