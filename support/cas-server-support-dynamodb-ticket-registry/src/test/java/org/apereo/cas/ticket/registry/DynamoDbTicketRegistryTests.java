@@ -15,11 +15,13 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -29,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@IfProfileValue(name = "dynamoDbEnabled", value = "true")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {DynamoDbTicketRegistryConfiguration.class,
         DynamoDbTicketRegistryTicketCatalogConfiguration.class,
