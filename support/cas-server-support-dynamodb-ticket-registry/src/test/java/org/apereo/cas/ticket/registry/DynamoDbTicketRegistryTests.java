@@ -48,6 +48,7 @@ import org.springframework.test.context.junit4.SpringRunner;
         RefreshAutoConfiguration.class})
 @TestPropertySource(properties = {"cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
         "cas.ticket.registry.dynamoDb.credentialAccessKey=AKIAIPPIGGUNIO74C63Q",
+        "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
         "cas.ticket.registry.dynamoDb.credentialSecretKey=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"})
 public class DynamoDbTicketRegistryTests extends AbstractTicketRegistryTests {
 
