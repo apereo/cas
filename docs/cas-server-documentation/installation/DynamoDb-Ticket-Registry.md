@@ -15,10 +15,12 @@ DynamoDb ticket registry integration is enabled by including the following depen
 </dependency>
 ```
 
-This registry stores tickets in [DynamoDb](https://aws.amazon.com/dynamodb/) instances.
+This registry stores tickets in [DynamoDb](https://aws.amazon.com/dynamodb/) instances. Each ticket type is linked to a distinct table.
 
 ## Configuration
 
+You will need to provide CAS with your [AWS credentials](https://aws.amazon.com/console/). Also, to gain a better understanding
+of DynamoDb's core components and concepts, please [start with this guide](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) first.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#dynamodb-ticket-registry).
 
 ## Troubleshooting
