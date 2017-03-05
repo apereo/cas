@@ -23,6 +23,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
                                   final DynamoDbTicketRegistryFacilitator dbTableService) {
         setCipherExecutor(cipher);
         this.dbTableService = dbTableService;
+        LOGGER.info("Setting up DynamoDb Ticket Registry instance");
     }
 
     @Override

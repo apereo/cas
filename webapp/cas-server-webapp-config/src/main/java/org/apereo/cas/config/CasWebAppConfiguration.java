@@ -39,13 +39,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Lazy
-    @Bean
-    public LocalValidatorFactoryBean credentialsValidator() {
-        return new LocalValidatorFactoryBean();
-    }
-
+    
     @RefreshScope
     @Bean
     public ThemeChangeInterceptor themeChangeInterceptor() {
