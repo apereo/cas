@@ -48,12 +48,12 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        return 0;
+        return this.dbTableService.deleteAll();
     }
 
     @Override
     public Collection<Ticket> getTickets() {
-        return null;
+        return decodeTickets(this.dbTableService.getAll());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        return false;
+        return this.dbTableService.delete(ticketId);
     }
 
 }

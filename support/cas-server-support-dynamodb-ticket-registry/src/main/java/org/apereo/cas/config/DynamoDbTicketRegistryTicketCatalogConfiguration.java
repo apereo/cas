@@ -25,35 +25,29 @@ public class DynamoDbTicketRegistryTicketCatalogConfiguration extends CasCoreTic
 
     @Override
     protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        setServiceTicketDefinitionProperties(metadata);
+        metadata.getProperties().setStorageName("serviceTicketsTable");
+        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
         super.buildAndRegisterServiceTicketDefinition(plan, metadata);
     }
 
     @Override
     protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        setServiceTicketDefinitionProperties(metadata);
+        metadata.getProperties().setStorageName("proxyTicketsTable");
+        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
         super.buildAndRegisterServiceTicketDefinition(plan, metadata);
     }
 
     @Override
     protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        setTicketGrantingTicketProperties(metadata);
+        metadata.getProperties().setStorageName("ticketGrantingTicketsTable");
+        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
         super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
     }
 
     @Override
     protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        setTicketGrantingTicketProperties(metadata);
-        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
-    }
-
-    private void setTicketGrantingTicketProperties(final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("ticketGrantingTicketsTable");
+        metadata.getProperties().setStorageName("proxyGrantingTicketsTable");
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-    }
-
-    private void setServiceTicketDefinitionProperties(final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("serviceTicketsTable");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
     }
 }

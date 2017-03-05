@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -38,6 +37,21 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public EhCacheTicketRegistry(final Cache ticketCache, final CipherExecutor cipher) {
         this.ehcacheTicketsCache = ticketCache;
         setCipherExecutor(cipher);
+
+        LOGGER.info("Setting up Ehcache Ticket Registry...");
+
+        Assert.notNull(this.ehcacheTicketsCache, "Ehcache Tickets cache cannot nbe null");
+        if (LOGGER.isDebugEnabled()) {
+            final CacheConfiguration config = this.ehcacheTicketsCache.getCacheConfiguration();
+            LOGGER.debug("TicketCache.maxEntriesLocalHeap=[{}]", config.getMaxEntriesLocalHeap());
+            LOGGER.debug("TicketCache.maxEntriesLocalDisk=[{}]", config.getMaxEntriesLocalDisk());
+            LOGGER.debug("TicketCache.maxEntriesInCache=[{}]", config.getMaxEntriesInCache());
+            LOGGER.debug("TicketCache.persistenceConfiguration=[{}]", config.getPersistenceConfiguration().getStrategy());
+            LOGGER.debug("TicketCache.synchronousWrites=[{}]", config.getPersistenceConfiguration().getSynchronousWrites());
+            LOGGER.debug("TicketCache.timeToLive=[{}]", config.getTimeToLiveSeconds());
+            LOGGER.debug("TicketCache.timeToIdle=[{}]", config.getTimeToIdleSeconds());
+            LOGGER.debug("TicketCache.cacheManager=[{}]", this.ehcacheTicketsCache.getCacheManager().getName());
+        }
     }
 
     @Override
@@ -131,27 +145,6 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
         return ticket;
-    }
-    
-    /**
-     * Init.
-     */
-    @PostConstruct
-    public void init() {
-        LOGGER.info("Setting up Ehcache Ticket Registry...");
-
-        Assert.notNull(this.ehcacheTicketsCache, "Ehcache Tickets cache cannot nbe null");
-        if (LOGGER.isDebugEnabled()) {
-            final CacheConfiguration config = this.ehcacheTicketsCache.getCacheConfiguration();
-            LOGGER.debug("TicketCache.maxEntriesLocalHeap=[{}]", config.getMaxEntriesLocalHeap());
-            LOGGER.debug("TicketCache.maxEntriesLocalDisk=[{}]", config.getMaxEntriesLocalDisk());
-            LOGGER.debug("TicketCache.maxEntriesInCache=[{}]", config.getMaxEntriesInCache());
-            LOGGER.debug("TicketCache.persistenceConfiguration=[{}]", config.getPersistenceConfiguration().getStrategy());
-            LOGGER.debug("TicketCache.synchronousWrites=[{}]", config.getPersistenceConfiguration().getSynchronousWrites());
-            LOGGER.debug("TicketCache.timeToLive=[{}]", config.getTimeToLiveSeconds());
-            LOGGER.debug("TicketCache.timeToIdle=[{}]", config.getTimeToIdleSeconds());
-            LOGGER.debug("TicketCache.cacheManager=[{}]", this.ehcacheTicketsCache.getCacheManager().getName());
-        }
     }
     
     @Override
