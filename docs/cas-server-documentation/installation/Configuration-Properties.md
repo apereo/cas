@@ -3412,6 +3412,48 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.crypto.alg=AES
 ```
 
+### DynamoDb Ticket Registry
+
+To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html).
+
+```properties
+# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
+# cas.ticket.registry.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
+
+# Alternatively, you may directly provide credentials to CAS
+# cas.ticket.registry.dynamoDb.credentialAccessKey=
+# cas.ticket.registry.dynamoDb.credentialSecretKey=
+
+# cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000
+# cas.ticket.registry.dynamoDb.region=
+# cas.ticket.registry.dynamoDb.regionOverride=
+# cas.ticket.registry.dynamoDb.serviceNameIntern=
+
+# cas.ticket.registry.dynamoDb.dropTablesOnStartup=false
+# cas.ticket.registry.dynamoDb.timeOffset=0
+
+# cas.ticket.registry.dynamoDb.readCapacity=10
+# cas.ticket.registry.dynamoDb.writeCapacity=10
+# cas.ticket.registry.dynamoDb.connectionTimeout=5000
+# cas.ticket.registry.dynamoDb.requestTimeout=5000
+# cas.ticket.registry.dynamoDb.socketTimeout=5000
+# cas.ticket.registry.dynamoDb.useGzip=false
+# cas.ticket.registry.dynamoDb.useReaper=false
+# cas.ticket.registry.dynamoDb.useThrottleRetries=false
+# cas.ticket.registry.dynamoDb.useTcpKeepAlive=false
+# cas.ticket.registry.dynamoDb.protocol=HTTPS
+# cas.ticket.registry.dynamoDb.clientExecutionTimeout=10000
+# cas.ticket.registry.dynamoDb.cacheResponseMetadata=false
+# cas.ticket.registry.dynamoDb.localAddress=
+# cas.ticket.registry.dynamoDb.maxConnections=10
+
+# cas.ticket.registry.dynamoDb.crypto.signing.key=
+# cas.ticket.registry.dynamoDb.crypto.signing.keySize=512
+# cas.ticket.registry.dynamoDb.crypto.encryption.key=
+# cas.ticket.registry.dynamoDb.crypto.encryption.keySize=16
+# cas.ticket.registry.dynamoDb.crypto.alg=AES
+```
+
 ### MongoDb Ticket Registry
 
 To learn more about this topic, [please review this guide](MongoDb-Ticket-Registry.html).
