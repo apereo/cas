@@ -96,7 +96,7 @@ public abstract class AbstractTicketRegistryTests {
         } catch (final ClassCastException e) {
             return;
         }
-        fail("ClassCastfinal Exception expected.");
+        fail("ClassCastException expected.");
     }
 
     @Test
