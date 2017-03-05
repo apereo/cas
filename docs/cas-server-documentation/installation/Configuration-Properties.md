@@ -3425,7 +3425,7 @@ To learn more about this topic, [please review this guide](DynamoDb-Ticket-Regis
 # cas.ticket.registry.dynamoDb.credentialSecretKey=
 
 # cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000
-# cas.ticket.registry.dynamoDb.region=
+# cas.ticket.registry.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
 # cas.ticket.registry.dynamoDb.regionOverride=
 # cas.ticket.registry.dynamoDb.serviceNameIntern=
 
