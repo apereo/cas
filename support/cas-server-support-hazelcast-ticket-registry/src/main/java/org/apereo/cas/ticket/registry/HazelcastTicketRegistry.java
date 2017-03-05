@@ -47,16 +47,10 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         this.hazelcastInstance = hz;
         this.pageSize = pageSize;
         this.ticketCatalog = plan;
-    }
 
-    /**
-     * Init.
-     */
-    @PostConstruct
-    public void init() {
         LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}]", this.hazelcastInstance);
     }
-
+    
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);

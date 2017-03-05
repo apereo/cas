@@ -22,8 +22,10 @@ public class DynamoDbProperties {
     private String endpoint;
     private String region;
     private String regionOverride;
+    private String serviceNameIntern;
     
     private boolean dropTablesOnStartup;
+    private int timeOffset;
     
     private long readCapacity = 10;
     private long writeCapacity = 10;
@@ -39,6 +41,22 @@ public class DynamoDbProperties {
     private boolean cacheResponseMetadata;
     private String localAddress;
     private int maxConnections = 10;
+
+    public String getServiceNameIntern() {
+        return serviceNameIntern;
+    }
+
+    public void setServiceNameIntern(final String serviceNameIntern) {
+        this.serviceNameIntern = serviceNameIntern;
+    }
+
+    public int getTimeOffset() {
+        return timeOffset;
+    }
+
+    public void setTimeOffset(final int timeOffset) {
+        this.timeOffset = timeOffset;
+    }
 
     public boolean isDropTablesOnStartup() {
         return dropTablesOnStartup;
