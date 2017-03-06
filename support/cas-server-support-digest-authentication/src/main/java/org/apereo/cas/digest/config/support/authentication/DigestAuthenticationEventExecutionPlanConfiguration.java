@@ -48,9 +48,7 @@ public class DigestAuthenticationEventExecutionPlanConfiguration implements Auth
     @RefreshScope
     public AuthenticationHandler digestAuthenticationHandler() {
         final DigestProperties digest = casProperties.getAuthn().getDigest();
-        final DigestAuthenticationHandler r = new DigestAuthenticationHandler(digest.getName(), servicesManager);
-        r.setPrincipalFactory(digestAuthenticationPrincipalFactory());
-        return r;
+        return new DigestAuthenticationHandler(digest.getName(), servicesManager, digestAuthenticationPrincipalFactory());
     }
     
     @Override

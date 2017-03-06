@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
@@ -25,8 +26,9 @@ import java.util.List;
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    public AbstractPreAndPostProcessingAuthenticationHandler(final String name, final ServicesManager servicesManager) {
-        super(name, servicesManager);
+    public AbstractPreAndPostProcessingAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                             final Integer order) {
+        super(name, servicesManager, principalFactory, order);
     }
 
     /**
