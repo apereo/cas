@@ -214,10 +214,16 @@ The following properties are related to the embedded containers that ships with 
 
 ```properties
 server.contextPath=/cas
+
+# By default and if you remove this setting, CAS runs on port 8080
 server.port=8443
+
+# To disable SSL configuration, comment out the following settings
+# Or set to blank values.
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
+
 server.maxHttpHeaderSize=2097152
 server.useForwardHeaders=true
 server.connectionTimeout=20000
@@ -253,15 +259,35 @@ server.connectionTimeout=20000
 # server.tomcat.uriEncoding=UTF-8
 ```
 
-#### HTTP/AJP
+#### HTTP Proxying
 
-Enable HTTP/AJP connections for the embedded Tomcat container.
+In the event that you decide to run CAS without any SSL configuration in the embedded Tomcat container and on a non-secure port
+yet wish to customize the connector configuration that is linked to the running port (i.e. `8080`), the following settings may apply:
+
+```properties
+# cas.server.httpProxy.enabled=true
+# cas.server.httpProxy.secure=true
+# cas.server.httpProxy.scheme=https
+# cas.server.httpProxy.redirectPort=
+# cas.server.httpProxy.proxyPort=
+```
+
+#### HTTP
+
+Enable HTTP connections for the embedded Tomcat container, in addition to the configuration
+linked to the `server.port` setting.
 
 ```properties
 # cas.server.http.port=8080
 # cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
 # cas.server.http.enabled=true
+```
 
+#### AJP
+
+Enable AJP connections for the embedded Tomcat container, 
+
+```properties
 # cas.server.ajp.secure=false
 # cas.server.ajp.enabled=false
 # cas.server.ajp.proxyPort=-1
