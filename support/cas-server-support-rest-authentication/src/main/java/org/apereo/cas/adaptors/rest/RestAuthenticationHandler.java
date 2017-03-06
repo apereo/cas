@@ -30,7 +30,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private final RestAuthenticationApi api;
 
     public RestAuthenticationHandler(final String name, final RestAuthenticationApi api) {
-        super(name, null);
+        super(name, null, null, null);
         this.api = api;
     }
 

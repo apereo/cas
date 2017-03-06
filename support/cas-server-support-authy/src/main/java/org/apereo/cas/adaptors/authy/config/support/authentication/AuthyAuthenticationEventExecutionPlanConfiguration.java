@@ -66,9 +66,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration implements Authe
         try {
             final MultifactorAuthenticationProperties.Authy authy = casProperties.getAuthn().getMfa().getAuthy();
             final boolean forceVerification = authy.isForceVerification();
-            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authy.getName(), servicesManager, authyClientInstance(), forceVerification);
-            h.setPrincipalFactory(authyPrincipalFactory());
-            return h;
+            return new AuthyAuthenticationHandler(authy.getName(), servicesManager, authyPrincipalFactory(), authyClientInstance(), forceVerification);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

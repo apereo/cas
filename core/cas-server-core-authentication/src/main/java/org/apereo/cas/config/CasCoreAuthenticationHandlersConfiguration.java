@@ -72,7 +72,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
         final JaasAuthenticationProperties jaas = casProperties.getAuthn().getJaas();
-        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(), servicesManager);
+        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(), servicesManager, jaasPrincipalFactory(), null);
 
         h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
         h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
@@ -84,17 +84,13 @@ public class CasCoreAuthenticationHandlersConfiguration {
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
 
-        h.setPrincipalFactory(jaasPrincipalFactory());
         return h;
     }
 
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
-        final HttpBasedServiceCredentialsAuthenticationHandler h = new HttpBasedServiceCredentialsAuthenticationHandler("", servicesManager);
-        h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
-        h.setPrincipalFactory(proxyPrincipalFactory());
-        h.setOrder(Integer.MIN_VALUE);
-        return h;
+        return new HttpBasedServiceCredentialsAuthenticationHandler("", servicesManager, proxyPrincipalFactory(), Integer.MIN_VALUE,
+                supportsTrustStoreSslSocketFactoryHttpClient);
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
@@ -114,14 +110,14 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final AcceptAuthenticationProperties acceptAuthenticationProperties = casProperties.getAuthn().getAccept();
         final HashMap<String, String> users = new HashMap<>();
-        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(acceptAuthenticationProperties.getName(), servicesManager, users);
+        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(acceptAuthenticationProperties.getName(), servicesManager,
+                acceptUsersPrincipalFactory(), null, users);
         h.setUsers(getParsedUsers());
         h.setPasswordEncoder(Beans.newPasswordEncoder(acceptAuthenticationProperties.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(acceptAuthenticationProperties.getPrincipalTransformation()));
-        h.setPrincipalFactory(acceptUsersPrincipalFactory());
         return h;
     }
 

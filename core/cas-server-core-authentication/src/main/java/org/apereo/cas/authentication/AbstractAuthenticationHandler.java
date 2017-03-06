@@ -17,7 +17,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     /**
      * Factory to create the principal type.
      **/
-    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    protected final PrincipalFactory principalFactory;
 
     /**
      * The services manager instance, as the entry point to the registry.
@@ -32,17 +32,35 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      */
     private final String name;
 
-    private Integer order;
+    /**
+     * Sets order. If order is undefined, generates a random order value.
+     * Since handlers are generally sorted by this order, it's important that
+     * order numbers be unique on a best-effort basis.
+     */
+    private final int order;
 
     /**
      * Instantiates a new Abstract authentication handler.
      *
      * @param name Handler name.
      * @param servicesManager the services manager.
+     * @param principalFactory the principal factory
+     * @param order the order
      */
-    public AbstractAuthenticationHandler(final String name, final ServicesManager servicesManager) {
+    public AbstractAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                         final Integer order) {
         this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName();
         this.servicesManager = servicesManager;
+        if (principalFactory == null) {
+            this.principalFactory = new DefaultPrincipalFactory();
+        } else {
+            this.principalFactory = principalFactory;
+        }
+        if (order == null) {
+            this.order = RandomUtils.nextInt(1, Integer.MAX_VALUE);
+        } else {
+            this.order = order;
+        }
     }
 
     @Override
@@ -50,36 +68,8 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
         return this.name;
     }
 
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
-        this.principalFactory = principalFactory;
-    }
-
-    /**
-     * Sets order. If order is undefined, generates a random order value.
-     * Since handlers are generally sorted by this order, it's important that
-     * order numbers be unique on a best-effort basis.
-     *
-     * @param order the order
-     */
-    public void setOrder(final Integer order) {
-        this.order = order;
-        ensureOrderIsProvidedIfNecessary();
-    }
-
     @Override
     public int getOrder() {
-        ensureOrderIsProvidedIfNecessary();
         return this.order;
-    }
-
-    private void ensureOrderIsProvidedIfNecessary() {
-        if (this.order == null) {
-            this.order = RandomUtils.nextInt(1, Integer.MAX_VALUE);
-        }
     }
 }
