@@ -41,6 +41,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isNotBlank(encTicketId)) {
+            LOGGER.debug("Retrieving ticket [{}] ", ticketId);
             final Ticket ticket = this.dbTableService.get(ticketId);
             return decodeTicket(ticket);
         }
