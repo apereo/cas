@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import org.apache.commons.codec.binary.StringUtils;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -29,10 +30,10 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     
     private PasswordEncoder mongoPasswordEncoder = new NoOpPasswordEncoder();
 
-    public MongoAuthenticationHandler(final String name, final ServicesManager servicesManager, final String collectionName, final String mongoHostUri,
-                                      final String attributes, final String usernameAttribute, final String passwordAttribute,
-                                      final PasswordEncoder mongoPasswordEncoder) {
-        super(name, servicesManager);
+    public MongoAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                      final String collectionName, final String mongoHostUri, final String attributes, final String usernameAttribute,
+                                      final String passwordAttribute, final PasswordEncoder mongoPasswordEncoder) {
+        super(name, servicesManager, principalFactory, null);
         this.collectionName = collectionName;
         this.mongoHostUri = mongoHostUri;
         this.attributes = attributes;

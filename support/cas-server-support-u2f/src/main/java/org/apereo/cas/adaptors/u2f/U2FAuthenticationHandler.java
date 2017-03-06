@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
@@ -26,11 +27,13 @@ import java.security.GeneralSecurityException;
  * @since 5.1.0
  */
 public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+
     private final U2F u2f = new U2F();
     private final U2FDeviceRepository u2FDeviceRepository;
 
-    public U2FAuthenticationHandler(final String name, final ServicesManager servicesManager, final U2FDeviceRepository u2FDeviceRepository) {
-        super(name, servicesManager);
+    public U2FAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                    final U2FDeviceRepository u2FDeviceRepository) {
+        super(name, servicesManager, principalFactory, null);
         this.u2FDeviceRepository = u2FDeviceRepository;
     }
 

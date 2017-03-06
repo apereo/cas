@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.ldaptive.LdapAttribute;
@@ -85,12 +86,14 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
-     *
-     * @param name the name
+     *  @param name the name
+     * @param principalFactory the principal factory
+     * @param order the order
      * @param authenticator Ldaptive authenticator component.
      */
-    public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager, final Authenticator authenticator) {
-        super(name, servicesManager);
+    public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order,
+                                     final Authenticator authenticator) {
+        super(name, servicesManager, principalFactory, order);
         this.authenticator = authenticator;
     }
 

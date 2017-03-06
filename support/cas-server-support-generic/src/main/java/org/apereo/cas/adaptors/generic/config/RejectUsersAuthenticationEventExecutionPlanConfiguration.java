@@ -63,8 +63,8 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration implements
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
         final RejectAuthenticationProperties rejectProperties = casProperties.getAuthn().getReject();
         final Set<String> users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
-        final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager, users);
-        h.setPrincipalFactory(rejectUsersPrincipalFactory());
+        final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager,
+                rejectUsersPrincipalFactory(), users);
         h.setPasswordEncoder(Beans.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
         if (rejectPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);

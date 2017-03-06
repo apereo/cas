@@ -33,9 +33,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         users.put("bill", "thisisAwesoME");
         users.put("brian", "t�st");
 
-        this.authenticationHandler = new AcceptUsersAuthenticationHandler("");
-        this.authenticationHandler.setPrincipalFactory(new DefaultPrincipalFactory());
-        this.authenticationHandler.setUsers(users);
+        this.authenticationHandler = new AcceptUsersAuthenticationHandler("", null, new DefaultPrincipalFactory(), null, users);
     }
 
     @Test
