@@ -23,7 +23,4 @@ import org.springframework.core.Ordered;
 @AutoConfigureBefore(EmbeddedServletContainerAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasEmbeddedContainerJettyConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
 }
