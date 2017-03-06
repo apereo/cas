@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpBasedServiceCredentialsAuthenticationHandler.class);
     
     /** Instance of Apache Commons HttpClient. */
-    private HttpClient httpClient;
+    private final HttpClient httpClient;
 
     /**
      * Instantiates a new Abstract authentication handler.
@@ -40,8 +41,10 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
      * @param name Handler name.
      * @param servicesManager the services manager.
      */
-    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager) {
-        super(name, servicesManager);
+    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                            final Integer order, final HttpClient httpClient) {
+        super(name, servicesManager, principalFactory, order);
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -70,13 +73,4 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     public boolean supports(final Credential credential) {
         return credential instanceof HttpBasedServiceCredential;
     }
-
-    /**
-     * Sets the HttpClient which will do all of the connection stuff.
-     * @param httpClient http client instance to use
-     **/
-    public void setHttpClient(final HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
-
 }

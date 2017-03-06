@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 
@@ -21,8 +22,8 @@ import java.util.Map;
  */
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    public WsFederationAuthenticationHandler(final String name, final ServicesManager servicesManager) {
-        super(name, servicesManager);
+    public WsFederationAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
+        super(name, servicesManager, principalFactory, null);
     }
 
     /**

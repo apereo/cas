@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -97,12 +98,13 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      */
     protected String staticSalt;
 
-    public QueryAndEncodeDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final DataSource dataSource,
+    public QueryAndEncodeDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                       final Integer order, final DataSource dataSource,
                                                        final String algorithmName, final String sql, final String passwordFieldName,
                                                        final String saltFieldName, final String expiredFieldName, final String disabledFieldName,
                                                        final String numberOfIterationsFieldName, final long numberOfIterations,
                                                        final String staticSalt) {
-        super(name, servicesManager, dataSource);
+        super(name, servicesManager, principalFactory, order, dataSource);
         this.algorithmName = algorithmName;
         this.sql = sql;
         this.passwordFieldName = passwordFieldName;

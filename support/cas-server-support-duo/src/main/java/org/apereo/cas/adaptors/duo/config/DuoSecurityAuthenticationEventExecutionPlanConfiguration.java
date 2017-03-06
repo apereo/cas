@@ -131,12 +131,11 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
             if (duos.size() > 1) {
                 LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after [{}]", name);
             }
-            h = new DuoAuthenticationHandler(name, servicesManager, duoMultifactorAuthenticationProvider());
+            h = new DuoAuthenticationHandler(name, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
         } else {
-            h = new DuoAuthenticationHandler("", servicesManager, duoMultifactorAuthenticationProvider());
+            h = new DuoAuthenticationHandler("", servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
-        h.setPrincipalFactory(duoPrincipalFactory());
         return h;
     }
 

@@ -86,18 +86,14 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Bean
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
-        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getGauth().getName(),
-                servicesManager, googleAuthenticatorInstance(), oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
-        h.setPrincipalFactory(googlePrincipalFactory());
-        return h;
+        return new GoogleAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getGauth().getName(), servicesManager, googlePrincipalFactory(),
+                googleAuthenticatorInstance(), oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
     }
 
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass googleBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getGauth().getBypass()
-        );
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getGauth().getBypass());
     }
 
     @Bean

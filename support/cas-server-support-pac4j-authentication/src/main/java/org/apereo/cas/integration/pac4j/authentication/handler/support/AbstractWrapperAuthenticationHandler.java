@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.WebContext;
@@ -40,8 +41,9 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      */
     protected ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
-    public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager) {
-        super(name, servicesManager);
+    public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                final Integer order) {
+        super(name, servicesManager, principalFactory, order);
     }
 
     @Override
