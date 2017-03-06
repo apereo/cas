@@ -11,6 +11,7 @@ import org.apache.coyote.http2.Http2Protocol;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
+import org.apereo.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.Resource;
 import org.springframework.util.SocketUtils;
 
 import java.io.BufferedReader;
@@ -68,12 +70,13 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureRewriteValve(final TomcatEmbeddedServletContainerFactory tomcat) {
-        if (StringUtils.isBlank(serverProperties.getContextPath())) {
+        final Resource res = casProperties.getServer().getRewriteValveConfigLocation();
+        if (ResourceUtils.doesResourceExist(res)) {
             final RewriteValve valve = new RewriteValve() {
                 @Override
                 protected synchronized void startInternal() throws LifecycleException {
                     super.startInternal();
-                    try (InputStream is = casProperties.getServer().getRewriteValveConfigLocation().getInputStream();
+                    try (InputStream is = res.getInputStream();
                          InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
                          BufferedReader buffer = new BufferedReader(isr)) {
                         parse(buffer);
@@ -91,11 +94,9 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureExtendedAccessLog(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasServerProperties.ExtendedAccessLog ext =
-                casProperties.getServer().getExtAccessLog();
+        final CasServerProperties.ExtendedAccessLog ext = casProperties.getServer().getExtAccessLog();
 
         if (ext.isEnabled() && StringUtils.isNotBlank(ext.getPattern())) {
-
             LOGGER.debug("Creating extended access log valve configuration for the embedded tomcat container...");
             final ExtendedAccessLogValve valve = new ExtendedAccessLogValve();
             valve.setPattern(ext.getPattern());
@@ -118,6 +119,33 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
 
     private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
+
+        if (tomcat.getSsl() == null) {
+            LOGGER.warn("Tomcat is running on port [{}] without any SSL configuration", tomcat.getPort());
+
+            final CasServerProperties.HttpProxy proxy = casProperties.getServer().getHttpProxy();
+            if (proxy.isEnabled()) {
+                LOGGER.info("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
+
+                tomcat.getTomcatConnectorCustomizers().add(connector -> {
+                    connector.setSecure(proxy.isSecure());
+                    connector.setScheme(proxy.getScheme());
+
+                    if (proxy.getRedirectPort() > 0) {
+                        LOGGER.debug("Setting HTTP proxying redirect port to [{}]", proxy.getRedirectPort());
+                        connector.setRedirectPort(proxy.getRedirectPort());
+                    }
+                    if (proxy.getProxyPort() > 0) {
+                        LOGGER.debug("Setting HTTP proxying proxy port to [{}]", proxy.getProxyPort());
+                        connector.setProxyPort(proxy.getProxyPort());
+                    }
+                });
+            } else {
+                LOGGER.info("HTTP secure proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
+            }
+            return;
+        }
+
         if (casProperties.getServer().getHttp().isEnabled()) {
             LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
             final Connector connector = new Connector(casProperties.getServer().getHttp().getProtocol());
