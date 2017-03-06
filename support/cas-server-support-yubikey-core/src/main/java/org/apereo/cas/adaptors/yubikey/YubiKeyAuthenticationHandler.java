@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -48,9 +49,9 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
      * @param secretKey the secret key
      * @param registry  the account registry which holds registrations.
      */
-    public YubiKeyAuthenticationHandler(final String name, final ServicesManager servicesManager, final Integer clientId, final String secretKey,
-                                        final YubiKeyAccountRegistry registry) {
-        super(name, servicesManager);
+    public YubiKeyAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                        final Integer clientId, final String secretKey, final YubiKeyAccountRegistry registry) {
+        super(name, servicesManager, principalFactory, null);
         this.registry = registry;
         this.client = YubicoClient.getClient(clientId, secretKey);
 
@@ -62,7 +63,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     }
 
     public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey) {
-        this("", null, clientId, secretKey, null);
+        this("", null, null, clientId, secretKey, null);
     }   
     
     @Override

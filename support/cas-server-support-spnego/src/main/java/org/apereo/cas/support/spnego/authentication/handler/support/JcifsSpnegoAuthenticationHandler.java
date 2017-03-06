@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.slf4j.Logger;
@@ -34,9 +35,9 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     private boolean principalWithDomainName;
     private boolean isNTLMallowed;
 
-    public JcifsSpnegoAuthenticationHandler(final String name, final ServicesManager servicesManager, final Authentication authentication,
-                                            final boolean principalWithDomainName, final boolean isNTLMallowed) {
-        super(name, servicesManager);
+    public JcifsSpnegoAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                            final Authentication authentication, final boolean principalWithDomainName, final boolean isNTLMallowed) {
+        super(name, servicesManager, principalFactory, null);
         this.authentication = authentication;
         this.principalWithDomainName = principalWithDomainName;
         this.isNTLMallowed = isNTLMallowed;

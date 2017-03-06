@@ -59,10 +59,9 @@ public class ShiroAuthenticationEventExecutionPlanConfiguration implements Authe
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
         final ShiroAuthenticationProperties shiro = casProperties.getAuthn().getShiro();
-        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiro.getRequiredRoles(),
-                shiro.getRequiredPermissions());
+        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiroPrincipalFactory(),
+                shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
-        h.setPrincipalFactory(shiroPrincipalFactory());
         h.loadShiroConfiguration(shiro.getConfig().getLocation());
         h.setPasswordEncoder(Beans.newPasswordEncoder(shiro.getPasswordEncoder()));
         if (shiroPasswordPolicyConfiguration != null) {
