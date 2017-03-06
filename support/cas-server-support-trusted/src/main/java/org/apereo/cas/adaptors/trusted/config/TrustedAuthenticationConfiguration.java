@@ -63,9 +63,7 @@ public class TrustedAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
         final TrustedAuthenticationProperties trusted = casProperties.getAuthn().getTrusted();
-        final PrincipalBearingCredentialsAuthenticationHandler h = new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(), servicesManager);
-        h.setPrincipalFactory(trustedPrincipalFactory());
-        return h;
+        return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(), servicesManager, trustedPrincipalFactory());
     }
 
     @Bean

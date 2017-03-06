@@ -29,7 +29,7 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
      * @param credentialMap Non-null map of one-time password identifiers to password values.
      */
     public TestOneTimePasswordAuthenticationHandler(final Map<String, String> credentialMap) {
-        super("", null);
+        super("", null, null, null);
         this.credentialMap = credentialMap;
     }
 

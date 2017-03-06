@@ -78,10 +78,8 @@ public class TokenAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
         final TokenAuthenticationProperties token = casProperties.getAuthn().getToken();
-        final TokenAuthenticationHandler h = new TokenAuthenticationHandler(token.getName(), servicesManager);
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(token.getPrincipalTransformation()));
-        h.setPrincipalFactory(tokenPrincipalFactory());
-        return h;
+        return new TokenAuthenticationHandler(token.getName(), servicesManager, tokenPrincipalFactory(),
+                Beans.newPrincipalNameTransformer(token.getPrincipalTransformation()));
     }
 
     @Bean

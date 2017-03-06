@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.services.ServicesManager;
@@ -37,10 +38,10 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     private final OneTimeTokenRepository tokenRepository;
     private final OneTimeTokenCredentialRepository credentialRepository;
 
-    public GoogleAuthenticatorAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public GoogleAuthenticatorAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                                     final IGoogleAuthenticator googleAuthenticatorInstance, final OneTimeTokenRepository tokenRepository,
                                                     final OneTimeTokenCredentialRepository credentialRepository) {
-        super(name, servicesManager);
+        super(name, servicesManager, principalFactory, null);
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
         this.tokenRepository = tokenRepository;
         this.credentialRepository = credentialRepository;

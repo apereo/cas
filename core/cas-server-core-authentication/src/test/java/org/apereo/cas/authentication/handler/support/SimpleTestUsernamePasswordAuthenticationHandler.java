@@ -59,7 +59,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
     }
 
     public SimpleTestUsernamePasswordAuthenticationHandler() {
-        super("", null);
+        super("", null, null, null);
     }
 
     @PostConstruct
