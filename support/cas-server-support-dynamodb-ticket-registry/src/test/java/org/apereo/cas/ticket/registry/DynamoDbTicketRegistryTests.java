@@ -15,7 +15,6 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
