@@ -20,6 +20,7 @@ layout: null
 
 * [Configuration](#casconfigmgmt)
     *   [Overview](/$version/installation/Configuration-Management.html)
+    *   [Configuration Server](/$version/installation/Configuration-Server-Management.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
     *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
@@ -90,6 +91,7 @@ layout: null
         *   [Infinispan](/$version/installation/Infinispan-Ticket-Registry.html)
         *   [Redis](/$version/installation/Redis-Ticket-Registry.html)
         *   [MongoDb](/$version/installation/MongoDb-Ticket-Registry.html)
+        *   [DynamoDb](/$version/installation/DynamoDb-Ticket-Registry.html)
 
 * [Services](#service_management)
     *   [Overview](/$version/installation/Service-Management.html)
