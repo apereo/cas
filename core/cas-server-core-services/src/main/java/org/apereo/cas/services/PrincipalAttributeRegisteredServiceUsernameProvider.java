@@ -161,4 +161,8 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         LOGGER.warn("No application context could be detected. Returning default principal attributes");
         return p.getAttributes();
     }
+
+    public void setUsernameAttribute(final String usernameAttribute) {
+        this.usernameAttribute = usernameAttribute;
+    }
 }

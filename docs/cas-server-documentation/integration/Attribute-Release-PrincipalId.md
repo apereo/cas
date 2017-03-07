@@ -56,6 +56,53 @@ is not available, the default principal id will be used.
 }
 ```
 
+## Groovy
+
+Returns a username attribute value as the final result of a groovy script's execution.
+Groovy scripts whether inlined or external will receive and have access to the following variable bindings:
+
+- `id`: The existing identifier for the authenticated principal.
+- `attributes`: A map of attributes currently resolved for the principal.
+
+### Inline
+
+Embed the groovy script directly inside the service configuration.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 600,
+  "description" : "sample",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
+    "groovyScript" : "groovy { return attributes['uid'] + '123456789' }",
+    "canonicalizationMode" : "UPPER"
+  }
+}
+```
+
+### External
+
+Reference the groovy script as an external resource outside the service configuration.
+The script must return a single `String` value.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 600,
+  "description" : "sample",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
+    "groovyScript" : "file:/etc/cas/sampleService.groovy",
+    "canonicalizationMode" : "UPPER"
+  }
+}
+```
+
 ## Anonymous
 
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements

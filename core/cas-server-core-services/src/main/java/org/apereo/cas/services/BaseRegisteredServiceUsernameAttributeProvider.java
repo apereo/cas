@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
@@ -46,5 +48,30 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
 
     public void setCanonicalizationMode(final String canonicalizationMode) {
         this.canonicalizationMode = canonicalizationMode;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final BaseRegisteredServiceUsernameAttributeProvider rhs = (BaseRegisteredServiceUsernameAttributeProvider) obj;
+        return new EqualsBuilder()
+                .append(this.canonicalizationMode, rhs.canonicalizationMode)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(canonicalizationMode)
+                .toHashCode();
     }
 }
