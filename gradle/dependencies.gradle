@@ -946,6 +946,7 @@ ext.libraries = [
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
+                    exclude(group: "joda-time", module: "joda-time")
                 },
                 dependencies.create("com.ryantenney.metrics:metrics-spring:$dropwizardMetricsSpringVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
