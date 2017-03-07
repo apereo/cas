@@ -60,6 +60,7 @@ buildscript {
     }
 }
 
+
 allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
@@ -88,7 +89,7 @@ allprojects {
             downloadJavadoc = false
         }
     }
-
+    
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
@@ -242,6 +243,7 @@ subprojects {
     versioneye {
         includePlugins = false
         includeSubProjects = true
+        exclude project.configurations.findAll { !it.canBeResolved }*.name as String[]
     }
 
     findbugs {
