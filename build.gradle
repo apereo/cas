@@ -249,7 +249,7 @@ subprojects {
         compile libraries.jodatime
         compile libraries.inspektr
 
-        compileOnly libraries.javax
+        provided libraries.javax
 
         if (Boolean.getBoolean("genConfigMetadata")) {
             optional libraries.springbootconfigmetadata
