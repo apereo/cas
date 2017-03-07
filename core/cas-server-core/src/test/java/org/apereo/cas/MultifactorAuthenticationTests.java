@@ -87,6 +87,8 @@ public class MultifactorAuthenticationTests {
 
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
     private static final Service HIGH_SERVICE = newService("https://example.com/high/");
+    private static final String ALICE = "alice";
+    private static final String PASSWORD_31415 = "31415";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -103,7 +105,7 @@ public class MultifactorAuthenticationTests {
     
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
-        final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials("alice", "alice"));
+        final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
@@ -112,7 +114,7 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
-        final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
@@ -121,7 +123,7 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
-        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"));
+        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE));
 
         this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
 
@@ -133,7 +135,7 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
-        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -147,8 +149,8 @@ public class MultifactorAuthenticationTests {
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE,
-                newUserPassCredentials("alice", "alice"),
-                new OneTimePasswordCredential("alice", "31415"));
+                newUserPassCredentials(ALICE, ALICE),
+                new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -159,8 +161,8 @@ public class MultifactorAuthenticationTests {
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
         // Note the original credential used to start SSO session does not satisfy security policy
-        final AuthenticationResult ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"),
-                new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationResult ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE),
+                new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx2);
         assertNotNull(tgt);
