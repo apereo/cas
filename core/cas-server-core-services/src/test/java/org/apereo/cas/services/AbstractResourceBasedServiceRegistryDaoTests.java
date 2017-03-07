@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -117,7 +118,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
         r.setDescription(DESCRIPTION);
-        r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn"));
+        r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn", "UPPER"));
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
     }

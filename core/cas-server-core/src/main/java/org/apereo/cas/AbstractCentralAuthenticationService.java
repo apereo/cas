@@ -129,7 +129,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
         if (authenticationRequestServiceSelectionStrategies != null) {
-            this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies.stream().sorted().collect(Collectors.toList());
+            this.authenticationRequestServiceSelectionStrategies = 
+                    authenticationRequestServiceSelectionStrategies.stream().sorted().collect(Collectors.toList());
         } else {
             this.authenticationRequestServiceSelectionStrategies = new ArrayList<>();
         }
