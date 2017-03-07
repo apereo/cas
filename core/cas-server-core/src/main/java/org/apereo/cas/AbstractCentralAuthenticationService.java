@@ -34,6 +34,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
@@ -127,7 +128,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
-        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies.stream().sorted().collect(Collectors.toList());
+        if (authenticationRequestServiceSelectionStrategies != null) {
+            this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies.stream().sorted().collect(Collectors.toList());
+        } else {
+            this.authenticationRequestServiceSelectionStrategies = new ArrayList<>();
+        }
         this.principalFactory = principalFactory;
         this.serviceContextAuthenticationPolicyFactory = authenticationPolicyFactory;
         this.cipherExecutor = cipherExecutor;
