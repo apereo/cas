@@ -285,7 +285,7 @@ linked to the `server.port` setting.
 
 #### AJP
 
-Enable AJP connections for the embedded Tomcat container, 
+Enable AJP connections for the embedded Tomcat container,
 
 ```properties
 # cas.server.ajp.secure=false
@@ -615,18 +615,18 @@ and their results are cached and merged.
 # cas.authn.attributeRepository.expireInMinutes=30
 # cas.authn.attributeRepository.maximumCacheSize=10000
 # cas.authn.attributeRepository.merger=REPLACE|ADD|MERGE
-
-# Attributes that you wish to resolve for the principal
-# cas.authn.attributeRepository.attributes.uid=uid
-# cas.authn.attributeRepository.attributes.displayName=displayName
-# cas.authn.attributeRepository.attributes.cn=commonName
-# cas.authn.attributeRepository.attributes.affiliation=groupMembership
 ```
 
-Since all attributes for all sources are defined in the same common block,
-that means all sources will attempt to resolve the same block of defined attributes equally.
+<div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
+CAS authentication is able to retrieve and resolve attributes from the authentication source in the same authentication request, which would
+eliminate the need for configuring a separate attribute repository specially if both the authentication and the attribute source are the same.
+Using separate repositories should be required when sources are different, or when there is a need to tackle more advanced attribute
+resolution use cases such as cascading, merging, etc.
+<a href="Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
+
+Attributes for all sources are defined in their own individual block.
 CAS does not care about the source owner of attributes. It finds them where they can be found and otherwise, it moves on.
-This means that certain number of attributes can be resolved via one source, and the remaining attributes
+This means that certain number of attributes can be resolved via one source and the remaining attributes
 may be resolved via another. If there are commonalities across sources, the merger shall decide the final result and behavior.
 
 The story in plain english is:
@@ -645,15 +645,22 @@ By default, the execution order is the following but can be adjusted per source:
 4. Groovy
 5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
 6. Shibboleth
-7. Static Stub
-
-Note that if no other attribute source is defined and if attributes are not directly retrieved
-as part of primary authentication, then a stub/static source will be created
-based on the defined attributes, if any.
+7. Stub
 
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
 if explicit attribute mappings are defined, then *only mapped attributes* are retrieved.
+
+### Stub
+
+Static attributes that need to be mapped to a hardcoded value belong here.
+
+```properties
+# cas.authn.attributeRepository.stub[0].attributes.uid=uid
+# cas.authn.attributeRepository.stub[0].attributes.displayName=displayName
+# cas.authn.attributeRepository.stub[0].attributes.cn=commonName
+# cas.authn.attributeRepository.stub[0].attributes.affiliation=groupMembership
+```
 
 ### LDAP
 
@@ -661,6 +668,11 @@ If you wish to directly and separately retrieve attributes from an LDAP source,
 the following settings are then relevant:
 
 ```properties
+# cas.authn.attributeRepository.ldap[0].attributes.uid=uid
+# cas.authn.attributeRepository.ldap[0].attributes.displayName=displayName
+# cas.authn.attributeRepository.ldap[0].attributes.cn=commonName
+# cas.authn.attributeRepository.ldap[0].attributes.affiliation=groupMembership
+
 # cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.attributeRepository.ldap[0].connectionStrategy=
 # cas.authn.attributeRepository.ldap[0].order=0
@@ -758,6 +770,12 @@ If you wish to directly and separately retrieve attributes from a JDBC source,
 the following settings are then relevant:
 
 ```properties
+
+# cas.authn.attributeRepository.jdbc[0].attributes.uid=uid
+# cas.authn.attributeRepository.jdbc[0].attributes.displayName=displayName
+# cas.authn.attributeRepository.jdbc[0].attributes.cn=commonName
+# cas.authn.attributeRepository.jdbc[0].attributes.affiliation=groupMembership
+
 # cas.authn.attributeRepository.jdbc[0].singleRow=true
 # cas.authn.attributeRepository.jdbc[0].order=0
 # cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true
