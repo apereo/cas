@@ -230,7 +230,7 @@ public final class Beans {
         try {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
             final Map<String, List<Object>> pdirMap = new HashMap<>();
-            p.getAttributes().entrySet().forEach(entry -> {
+            p.getStub().getAttributes().entrySet().forEach(entry -> {
                 final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
                 pdirMap.put(entry.getKey(), Arrays.asList((Object[]) vals));
             });
