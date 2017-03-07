@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.Test;
 
 import java.io.File;
@@ -21,9 +22,18 @@ public class DefaultRegisteredServiceUsernameProviderTests {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
+    public void verifyRegServiceUsernameUpper() {
+        final DefaultRegisteredServiceUsernameProvider provider = new DefaultRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        final Principal principal = mock(Principal.class);
+        when(principal.getId()).thenReturn("id");
+        final String id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService());
+        assertEquals(id, principal.getId().toUpperCase());
+    }
+    
+    @Test
     public void verifyRegServiceUsername() {
-        final DefaultRegisteredServiceUsernameProvider provider =
-                new DefaultRegisteredServiceUsernameProvider();
+        final DefaultRegisteredServiceUsernameProvider provider = new DefaultRegisteredServiceUsernameProvider();
 
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -20,12 +21,11 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class PrincipalAttributeRegisteredServiceUsernameProvider implements RegisteredServiceUsernameAttributeProvider {
+public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -3546719400741715137L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalAttributeRegisteredServiceUsernameProvider.class);
-    
     
     private String usernameAttribute;
 
@@ -44,13 +44,18 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute) {
         this.usernameAttribute = usernameAttribute;
     }
-    
+
+    public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute, final String canonicalizationMode) {
+        super(canonicalizationMode);
+        this.usernameAttribute = usernameAttribute;
+    }
+
     public String getUsernameAttribute() {
         return this.usernameAttribute;
     }
 
     @Override
-    public String resolveUsername(final Principal principal, final Service service) {
+    public String resolveUsernameInternal(final Principal principal, final Service service) {
         String principalId = principal.getId();
 
         final Map<String, Object> originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
