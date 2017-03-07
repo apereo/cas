@@ -33,6 +33,7 @@ import static org.mockito.Mockito.*;
 public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String COOKIE_TGC_ID = "CASTGC";
+    private static final String TEST_SERVICE_ID = "TestService";
 
     private LogoutAction logoutAction;
     
@@ -73,20 +74,20 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
     @Test
     public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
-        this.request.addParameter("service", "TestService");
+        this.request.addParameter("service", TEST_SERVICE_ID);
         final RegexRegisteredService impl = new RegexRegisteredService();
-        impl.setServiceId("TestService");
-        impl.setName("TestService");
+        impl.setServiceId(TEST_SERVICE_ID);
+        impl.setName(TEST_SERVICE_ID);
         this.serviceManager.save(impl);
         this.logoutAction.setFollowServiceRedirects(true);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
-        assertEquals("TestService", this.requestContext.getFlowScope().get("logoutRedirectUrl"));
+        assertEquals(TEST_SERVICE_ID, this.requestContext.getFlowScope().get("logoutRedirectUrl"));
     }
 
     @Test
     public void logoutForServiceWithNoFollowRedirects() throws Exception {
-        this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "TestService");
+        this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
         this.logoutAction.setFollowServiceRedirects(false);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
@@ -95,7 +96,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
     @Test
     public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
-        this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "TestService");
+        this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
         final RegexRegisteredService impl = new RegexRegisteredService();
         impl.setServiceId("http://FooBar");
         impl.setName("FooBar");

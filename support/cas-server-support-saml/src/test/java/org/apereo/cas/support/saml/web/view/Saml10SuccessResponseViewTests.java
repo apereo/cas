@@ -45,11 +45,11 @@ import static org.junit.Assert.*;
 public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private static final String TEST_VALUE = "testValue";
+    private static final String TEST_ATTRIBUTE = "testAttribute";
     private Saml10SuccessResponseView response;
 
     @Before
     public void setUp() throws Exception {
-
         final List<RegisteredService> list = new ArrayList<>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
@@ -69,7 +69,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Map<String, Object> model = new HashMap<>();
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("testAttribute", TEST_VALUE);
+        attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
         attributes.put("testEmptyCollection", Collections.emptyList());
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
@@ -93,7 +93,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final String written = servletResponse.getContentAsString();
 
         assertTrue(written.contains("testPrincipal"));
-        assertTrue(written.contains("testAttribute"));
+        assertTrue(written.contains(TEST_ATTRIBUTE));
         assertTrue(written.contains(TEST_VALUE));
         assertFalse(written.contains("testEmptyCollection"));
         assertTrue(written.contains("testAttributeCollection"));
@@ -138,7 +138,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Map<String, Object> model = new HashMap<>();
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("testAttribute", TEST_VALUE);
+        attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authnAttributes = new HashMap<>();
@@ -160,7 +160,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final String written = servletResponse.getContentAsString();
 
         assertTrue(written.contains("testPrincipal"));
-        assertTrue(written.contains("testAttribute"));
+        assertTrue(written.contains(TEST_ATTRIBUTE));
         assertTrue(written.contains(TEST_VALUE));
         assertTrue(written.contains("authnAttribute1"));
         assertTrue(written.contains("authnAttribute2"));

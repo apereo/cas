@@ -49,10 +49,11 @@ import java.util.Set;
  * @since 4.2
  */
 public class LoggingConfigController extends BaseCasMvcEndpoint {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingConfigController.class);
 
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
+    private static final String FILE_PARAM = "file";
+    private static final String FILE_PATTERN_PARAM = "filePattern";
 
     private LoggerContext loggerContext;
 
@@ -66,8 +67,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
 
     private Resource logConfigurationFile;
 
-    public LoggingConfigController(final DelegatingAuditTrailManager auditTrailManager,
-                                   final CasConfigurationProperties casProperties) {
+    public LoggingConfigController(final DelegatingAuditTrailManager auditTrailManager, final CasConfigurationProperties casProperties) {
         super("casloggingconfig", "/logging", casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
         this.auditTrailManager = auditTrailManager;
     }
@@ -160,24 +160,24 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
                 builder.append("layoutFormat", appender.getLayout().getContentFormat());
                 builder.append("layoutContentType", appender.getLayout().getContentType());
                 if (appender instanceof FileAppender) {
-                    builder.append("file", ((FileAppender) appender).getFileName());
-                    builder.append("filePattern", "(none)");
+                    builder.append(FILE_PARAM, ((FileAppender) appender).getFileName());
+                    builder.append(FILE_PATTERN_PARAM, "(none)");
                 }
                 if (appender instanceof RandomAccessFileAppender) {
-                    builder.append("file", ((RandomAccessFileAppender) appender).getFileName());
-                    builder.append("filePattern", "(none)");
+                    builder.append(FILE_PARAM, ((RandomAccessFileAppender) appender).getFileName());
+                    builder.append(FILE_PATTERN_PARAM, "(none)");
                 }
                 if (appender instanceof RollingFileAppender) {
-                    builder.append("file", ((RollingFileAppender) appender).getFileName());
-                    builder.append("filePattern", ((RollingFileAppender) appender).getFilePattern());
+                    builder.append(FILE_PARAM, ((RollingFileAppender) appender).getFileName());
+                    builder.append(FILE_PATTERN_PARAM, ((RollingFileAppender) appender).getFilePattern());
                 }
                 if (appender instanceof MemoryMappedFileAppender) {
-                    builder.append("file", ((MemoryMappedFileAppender) appender).getFileName());
-                    builder.append("filePattern", "(none)");
+                    builder.append(FILE_PARAM, ((MemoryMappedFileAppender) appender).getFileName());
+                    builder.append(FILE_PATTERN_PARAM, "(none)");
                 }
                 if (appender instanceof RollingRandomAccessFileAppender) {
-                    builder.append("file", ((RollingRandomAccessFileAppender) appender).getFileName());
-                    builder.append("filePattern", ((RollingRandomAccessFileAppender) appender).getFilePattern());
+                    builder.append(FILE_PARAM, ((RollingRandomAccessFileAppender) appender).getFileName());
+                    builder.append(FILE_PATTERN_PARAM, ((RollingRandomAccessFileAppender) appender).getFilePattern());
                 }
                 appenders.add(builder.build());
             });

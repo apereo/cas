@@ -23,6 +23,9 @@ import static org.junit.Assert.*;
  */
 public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdTests {
 
+    private static final String TGT_ID = "test";
+    private static final String USERNAME = "test";
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -34,22 +37,22 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     @Test
     public void verifySupports() {
-        assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential("test", "test")));
+        assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential(TGT_ID, USERNAME)));
         assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
     public void verifyTGTWithSameId() throws Exception {
-        final OpenIdCredential c = new OpenIdCredential("test", "test");
+        final OpenIdCredential c = new OpenIdCredential(TGT_ID, USERNAME);
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
-        assertEquals("test", this.openIdCredentialsAuthenticationHandler.authenticate(c).getPrincipal().getId());
+        assertEquals(TGT_ID, this.openIdCredentialsAuthenticationHandler.authenticate(c).getPrincipal().getId());
     }
 
     @Test
     public void verifyTGTThatIsExpired() throws Exception {
-        final OpenIdCredential c = new OpenIdCredential("test", "test");
+        final OpenIdCredential c = new OpenIdCredential(TGT_ID, USERNAME);
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
@@ -63,7 +66,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     @Test
     public void verifyTGTWithDifferentId() throws Exception {
-        final OpenIdCredential c = new OpenIdCredential("test", "test1");
+        final OpenIdCredential c = new OpenIdCredential(TGT_ID, "test1");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
@@ -74,6 +77,6 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     }
 
     private TicketGrantingTicket getTicketGrantingTicket() {
-        return new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        return new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     }
 }

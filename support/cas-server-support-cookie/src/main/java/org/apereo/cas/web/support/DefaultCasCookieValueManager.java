@@ -50,8 +50,8 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
         if (StringUtils.isBlank(userAgent)) {
             throw new IllegalStateException("Request does not specify a user-agent");
         }
-        builder.append(COOKIE_FIELD_SEPARATOR);
-        builder.append(userAgent);
+        builder.append(COOKIE_FIELD_SEPARATOR)
+                .append(userAgent);
 
         final String res = builder.toString();
         LOGGER.debug("Encoding cookie value [{}]", res);

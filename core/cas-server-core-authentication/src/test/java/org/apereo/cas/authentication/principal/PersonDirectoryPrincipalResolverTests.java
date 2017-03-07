@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
  */
 public class PersonDirectoryPrincipalResolverTests {
 
+    private static final String ATTR_1 = "attr1";
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -77,12 +78,12 @@ public class PersonDirectoryPrincipalResolverTests {
         chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("cn", "changedCN");
-        attributes.put("attr1", "value1");
+        attributes.put(ATTR_1, "value1");
         final Principal p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                 CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, attributes),
                 new SimpleTestUsernamePasswordAuthenticationHandler());
         assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
-        assertTrue(p.getAttributes().containsKey("attr1"));
+        assertTrue(p.getAttributes().containsKey(ATTR_1));
         assertTrue(p.getAttributes().containsKey("cn"));
         assertTrue(CollectionUtils.toCollection(p.getAttributes().get("cn")).contains("changedCN"));
     }
@@ -96,10 +97,10 @@ public class PersonDirectoryPrincipalResolverTests {
         chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
         final Principal p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                 CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME,
-                        Collections.singletonMap("attr1", "value")),
+                        Collections.singletonMap(ATTR_1, "value")),
                 new SimpleTestUsernamePasswordAuthenticationHandler());
         assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
-        assertTrue(p.getAttributes().containsKey("attr1"));
+        assertTrue(p.getAttributes().containsKey(ATTR_1));
     }
 
     @Test
@@ -112,7 +113,7 @@ public class PersonDirectoryPrincipalResolverTests {
 
         this.thrown.expect(PrincipalException.class);
         chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap("attr1", "value")),
+                CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap(ATTR_1, "value")),
                 new SimpleTestUsernamePasswordAuthenticationHandler());
     }
 }
