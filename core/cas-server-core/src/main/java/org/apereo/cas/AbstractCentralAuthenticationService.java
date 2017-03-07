@@ -127,7 +127,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
-        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies.stream().sorted().collect(Collectors.toList());
         this.principalFactory = principalFactory;
         this.serviceContextAuthenticationPolicyFactory = authenticationPolicyFactory;
         this.cipherExecutor = cipherExecutor;
@@ -277,7 +277,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected Service resolveServiceFromAuthenticationRequest(final Service service) {
         return this.authenticationRequestServiceSelectionStrategies.stream()
-                .sorted()
                 .filter(s -> s.supports(service))
                 .findFirst()
                 .get()
