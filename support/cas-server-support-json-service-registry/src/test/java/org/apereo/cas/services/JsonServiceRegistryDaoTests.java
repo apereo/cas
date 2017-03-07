@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceRegistryDaoTests {
 
     @Before
-    public void setup() {
+    public void setUp() {
         try {
             this.dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
         } catch (final Exception e) {
