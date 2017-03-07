@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

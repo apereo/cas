@@ -4,7 +4,6 @@ import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
