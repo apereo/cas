@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,13 +12,20 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class DefaultRegisteredServiceUsernameProvider implements RegisteredServiceUsernameAttributeProvider {
+public class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = 5823989148794052951L;
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceUsernameProvider.class);
 
+    public DefaultRegisteredServiceUsernameProvider() {
+    }
+
+    public DefaultRegisteredServiceUsernameProvider(final String canonicalizationMode) {
+        super(canonicalizationMode);
+    }
+
     @Override
-    public String resolveUsername(final Principal principal, final Service service) {
+    public String resolveUsernameInternal(final Principal principal, final Service service) {
         LOGGER.debug("Returning the default principal id [{}] for username.", principal.getId());
         return principal.getId();
     }
