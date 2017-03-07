@@ -127,7 +127,6 @@ public class CasJdbcAuthenticationConfiguration {
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
         final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(b.getPrincipalAttributeList());
-        attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
         LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
         
         final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager, jdbcPrincipalFactory(), b.getOrder(),

@@ -86,7 +86,6 @@ public class LdapAuthenticationConfiguration {
                 .filter(ldapInstanceConfigurationPredicate())
                 .forEach(l -> {
                     final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(l.getPrincipalAttributeList());
-                    attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
                     LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, l.getLdapUrl());
                     
                     LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
