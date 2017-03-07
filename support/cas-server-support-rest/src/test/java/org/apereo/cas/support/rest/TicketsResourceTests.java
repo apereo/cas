@@ -42,6 +42,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class TicketsResourceTests {
 
+    private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
+    private static final String USERNAME = "username";
+    private static final String OTHER_EXCEPTION = "Other exception";
     @Mock
     private CentralAuthenticationService casMock;
 
@@ -79,8 +82,8 @@ public class TicketsResourceTests {
 
         configureCasMockToCreateValidTGT();
 
-        this.mockMvc.perform(post("/cas/v1/tickets")
-                .param("username", "test")
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+                .param(USERNAME, "test")
                 .param("password", "test"))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
@@ -92,8 +95,8 @@ public class TicketsResourceTests {
     public void creationOfTGTWithAuthenticationException() throws Throwable {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
-        this.mockMvc.perform(post("/cas/v1/tickets")
-                .param("username", "test")
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+                .param(USERNAME, "test")
                 .param("password", "test"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json("{\"authentication_exceptions\" : [ \"LoginException\" ]}"));
@@ -101,20 +104,20 @@ public class TicketsResourceTests {
 
     @Test
     public void creationOfTGTWithUnexpectedRuntimeException() throws Throwable {
-        configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
+        configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
-        this.mockMvc.perform(post("/cas/v1/tickets")
-                .param("username", "test")
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+                .param(USERNAME, "test")
                 .param("password", "test"))
                 .andExpect(status().is5xxServerError())
-                .andExpect(content().string("Other exception"));
+                .andExpect(content().string(OTHER_EXCEPTION));
     }
 
     @Test
     public void creationOfTGTWithBadPayload() throws Throwable {
-        configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
+        configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
-        this.mockMvc.perform(post("/cas/v1/tickets")
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
                 .param("no_username_param", "test")
                 .param("no_password_param", "test"))
                 .andExpect(status().is4xxClientError())
@@ -144,12 +147,12 @@ public class TicketsResourceTests {
 
     @Test
     public void creationOfSTWithGeneralException() throws Throwable {
-        configureCasMockSTCreationToThrow(new RuntimeException("Other exception"));
+        configureCasMockSTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
                 .param("service", CoreAuthenticationTestUtils.getService().getId()))
                 .andExpect(status().is5xxServerError())
-                .andExpect(content().string("Other exception"));
+                .andExpect(content().string(OTHER_EXCEPTION));
     }
 
     @Test

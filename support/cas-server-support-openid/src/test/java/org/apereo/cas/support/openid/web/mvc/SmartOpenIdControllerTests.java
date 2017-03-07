@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
+
+    private static final String OPENID_MODE_PARAM = "openid.mode";
     private final MockHttpServletRequest request = new MockHttpServletRequest();
     private final HttpServletResponse response = new MockHttpServletResponse();
 
@@ -29,23 +31,23 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyCanHandle() {
-        request.addParameter("openid.mode", "associate");
+        request.addParameter(OPENID_MODE_PARAM, "associate");
         final boolean canHandle = smartOpenIdController.canHandle(request, response);
-        request.removeParameter("openid.mode");
+        request.removeParameter(OPENID_MODE_PARAM);
         assertTrue(canHandle);
     }
 
     @Test
     public void verifyCannotHandle() {
-        request.addParameter("openid.mode", "anythingElse");
+        request.addParameter(OPENID_MODE_PARAM, "anythingElse");
         final boolean canHandle = smartOpenIdController.canHandle(request, response);
-        request.removeParameter("openid.mode");
+        request.removeParameter(OPENID_MODE_PARAM);
         assertFalse(canHandle);
     }
 
     @Test
     public void verifyGetAssociationResponse() {
-        request.addParameter("openid.mode", "associate");
+        request.addParameter(OPENID_MODE_PARAM, "associate");
         request.addParameter("openid.session_type", "DH-SHA1");
         request.addParameter("openid.assoc_type", "HMAC-SHA1");
         request.addParameter("openid.dh_consumer_public",
@@ -56,6 +58,6 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
         assertTrue(assocResponse.containsKey("expires_in"));
         assertTrue(assocResponse.containsKey("dh_server_public"));
         assertTrue(assocResponse.containsKey("enc_mac_key"));
-        request.removeParameter("openid.mode");
+        request.removeParameter(OPENID_MODE_PARAM);
     }
 }

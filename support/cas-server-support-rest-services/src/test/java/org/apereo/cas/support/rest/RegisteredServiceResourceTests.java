@@ -31,6 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class RegisteredServiceResourceTests {
 
+    private static final String SERVICE_ID = "serviceId";
+    private static final String NAME = "name";
+    private static final String DESCRIPTION = "description";
     @Mock
     private CentralAuthenticationService casMock;
 
@@ -45,9 +48,9 @@ public class RegisteredServiceResourceTests {
 
         configureMockMvcFor(registeredServiceResource)
                 .perform(post("/cas/v1/services/add/TGT-1")
-                .param("serviceId", "serviceId")
-                .param("name", "name")
-                .param("description", "description")
+                .param(SERVICE_ID, SERVICE_ID)
+                .param(NAME, NAME)
+                .param(DESCRIPTION, DESCRIPTION)
                 .param("evaluationOrder", "1000")
                 .param("enabled", "false")
                 .param("ssoEnabled", "true"))
@@ -62,9 +65,9 @@ public class RegisteredServiceResourceTests {
 
         configureMockMvcFor(registeredServiceResource)
                 .perform(post("/cas/v1/services/add/TGT-1")
-                .param("serviceId", "serviceId")
-                .param("name", "name")
-                .param("description", "description")
+                .param(SERVICE_ID, SERVICE_ID)
+                .param(NAME, NAME)
+                .param(DESCRIPTION, DESCRIPTION)
                 .param("evaluationOrder", "1000")
                 .param("enabled", "false")
                 .param("ssoEnabled", "true"))
@@ -77,9 +80,9 @@ public class RegisteredServiceResourceTests {
 
         configureMockMvcFor(registeredServiceResource)
                 .perform(post("/cas/v1/services/add/TGT-1")
-                .param("serviceId", "serviceId")
-                .param("name", "name")
-                .param("description", "description")
+                .param(SERVICE_ID, SERVICE_ID)
+                .param(NAME, NAME)
+                .param(DESCRIPTION, DESCRIPTION)
                 .param("evaluationOrder", "1000")
                 .param("enabled", "false")
                 .param("ssoEnabled", "true"))
