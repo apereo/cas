@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 public abstract class AbstractTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
+    private static final String EXCEPTION_CAUGHT_NONE_EXPECTED = "Exception caught.  None expected.";
 
     private TicketRegistry ticketRegistry;
 
@@ -54,7 +55,7 @@ public abstract class AbstractTicketRegistryTests {
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -63,7 +64,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
         } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -72,7 +73,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class);
         } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -84,7 +85,7 @@ public abstract class AbstractTicketRegistryTests {
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, TicketGrantingTicket.class);
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -106,7 +107,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket(null);
         } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -115,7 +116,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL");
         } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -165,7 +166,7 @@ public abstract class AbstractTicketRegistryTests {
                     new NeverExpiresExpirationPolicy()));
             assertSame(0, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX + "1"));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -177,7 +178,7 @@ public abstract class AbstractTicketRegistryTests {
                     new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null) == 1);
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -186,7 +187,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             assertEquals("The size of the empty registry is not zero.", 0, this.ticketRegistry.getTickets().size());
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -215,7 +216,7 @@ public abstract class AbstractTicketRegistryTests {
             tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
                     .forEach(ticket -> fail("Ticket was added to registry but was not found in retrieval of collection of all tickets."));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 

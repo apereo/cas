@@ -42,34 +42,24 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     private static final String FIRST_NAME = "jerome";
     private static final String LAST_NAME_ATTRIBUTE = "lastName";
     private static final String LAST_NAME = "LELEU";
-
     private static final String CONTEXT = "/oauth2.0/";
-
     private static final String CLIENT_ID = "1";
-
     private static final String REDIRECT_URI = "http://someurl";
-
     private static final String OTHER_REDIRECT_URI = "http://someotherurl";
-
     private static final String CAS_SERVER = "casserver";
-
     private static final String CAS_SCHEME = "https";
-
     private static final int CAS_PORT = 443;
-
     private static final String AUTHORIZE_URL = CAS_SCHEME + "://" + CAS_SERVER + CONTEXT + "authorize";
-
     private static final String SERVICE_NAME = "serviceName";
-
     private static final String STATE = "state";
+    private static final String GET = "GET";
 
     @Autowired
     private OAuth20AuthorizeEndpointController oAuth20AuthorizeEndpointController;
 
     @Test
     public void verifyNoClientId() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
@@ -79,8 +69,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoRedirectUri() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
@@ -90,8 +79,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoResponseType() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -102,8 +90,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyBadResponseType() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, "badvalue");
@@ -116,8 +103,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     @Test
     public void verifyNoCasService() throws Exception {
         clearAllServices();
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -129,8 +115,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     @Test
     public void verifyRedirectUriDoesNotStartWithServiceId() throws Exception {
         clearAllServices();
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -145,8 +130,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     public void verifyCodeNoProfile() throws Exception {
         clearAllServices();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -170,8 +154,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     public void verifyCodeRedirectToClient() throws Exception {
         clearAllServices();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -216,8 +199,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     public void verifyTokenRedirectToClient() throws Exception {
         clearAllServices();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
@@ -262,8 +244,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     public void verifyCodeRedirectToClientWithState() throws Exception {
         clearAllServices();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -309,8 +290,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     public void verifyTokenRedirectToClientWithState() throws Exception {
         clearAllServices();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
@@ -357,8 +337,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     public void verifyCodeRedirectToClientApproved() throws Exception {
         clearAllServices();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -404,8 +383,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     public void verifyTokenRedirectToClientApproved() throws Exception {
         clearAllServices();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.AUTHORIZE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
@@ -451,7 +429,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     public void verifyRedirectToApproval() throws Exception {
         clearAllServices();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
@@ -497,6 +475,5 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         final Collection<RegisteredService> col = oAuth20AuthorizeEndpointController.getServicesManager().getAllServices();
 
         col.forEach(r -> oAuth20AuthorizeEndpointController.getServicesManager().delete(r.getId()));
-
     }
 }

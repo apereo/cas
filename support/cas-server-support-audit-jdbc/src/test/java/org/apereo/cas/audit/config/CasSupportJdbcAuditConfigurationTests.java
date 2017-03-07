@@ -58,7 +58,7 @@ public class CasSupportJdbcAuditConfigurationTests {
     private ServicesManager servicesManager;
     
     @BeforeClass
-    public static void setup() {
+    public static void setUp() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("7.8.9.0");

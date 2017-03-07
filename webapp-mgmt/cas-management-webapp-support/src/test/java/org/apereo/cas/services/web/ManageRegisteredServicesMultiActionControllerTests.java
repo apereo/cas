@@ -39,6 +39,9 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class ManageRegisteredServicesMultiActionControllerTests {
 
+    private static final String NAME = "name";
+    private static final String UNIQUE_DESCRIPTION = "uniqueDescription";
+    private static final String SERVICES = "services";
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -63,7 +66,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     public void verifyDeleteService() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
-        r.setName("name");
+        r.setName(NAME);
         r.setServiceId("serviceId");
         r.setEvaluationOrder(1);
 
@@ -93,7 +96,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     public void updateEvaluationOrderInvalidServiceId() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
-        r.setName("name");
+        r.setName(NAME);
         r.setServiceId("test");
         r.setEvaluationOrder(2);
 
@@ -108,8 +111,8 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     public void verifyManage() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
-        r.setName("name");
-        r.setDescription("uniqueDescription");
+        r.setName(NAME);
+        r.setDescription(UNIQUE_DESCRIPTION);
         r.setServiceId("test");
         r.setEvaluationOrder(2);
 
@@ -123,8 +126,8 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         this.controller.getServices(response);
         final String content = response.getContentAsString();
-        assertTrue(content.contains("services"));
-        assertTrue(content.contains("uniqueDescription"));
+        assertTrue(content.contains(SERVICES));
+        assertTrue(content.contains(UNIQUE_DESCRIPTION));
     }
 
     @Test
@@ -138,8 +141,8 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
-        r.setName("name");
-        r.setDescription("uniqueDescription");
+        r.setName(NAME);
+        r.setDescription(UNIQUE_DESCRIPTION);
         r.setServiceId("test");
         r.setEvaluationOrder(2);
 
@@ -153,8 +156,8 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         this.controller.getServices(response);
         final String content = response.getContentAsString();
-        assertTrue(content.contains("services"));
-        assertTrue(content.contains("uniqueDescription"));
+        assertTrue(content.contains(SERVICES));
+        assertTrue(content.contains(UNIQUE_DESCRIPTION));
         assertTrue(content.contains("customComponent1"));
         assertTrue(content.contains("key2"));
     }
