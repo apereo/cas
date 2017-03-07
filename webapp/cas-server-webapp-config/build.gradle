@@ -17,4 +17,5 @@ dependencies {
     testCompile project(":core:cas-server-core")
     testCompile project(":support:cas-server-support-cookie")
     compileOnly libraries.bouncycastle
+    compileOnly libraries.springboottomcat
 }
