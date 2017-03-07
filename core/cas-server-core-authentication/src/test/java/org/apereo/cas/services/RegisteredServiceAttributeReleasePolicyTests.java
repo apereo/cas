@@ -45,12 +45,13 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     private static final String ATTR_3 = "attr3";
     private static final String VALUE_1 = "value1";
     private static final String VALUE_2 = "value2";
+    private static final String NEW_ATTR_1_VALUE = "newAttr1";
 
     @Test
     public void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
         final Map<String, String> mappedAttr = new HashMap<>();
-        mappedAttr.put(ATTR_1, "newAttr1");
+        mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
         policy.setAllowedAttributes(mappedAttr);
 
         final Principal p = mock(Principal.class);
@@ -61,7 +62,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 1);
-        assertTrue(attr.containsKey("newAttr1"));
+        assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
     }
 
     @Test
@@ -90,7 +91,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     public void verifyAttributeFilterMappedAttributes() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
         final Map<String, String> mappedAttr = new HashMap<>();
-        mappedAttr.put(ATTR_1, "newAttr1");
+        mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
 
         policy.setAllowedAttributes(mappedAttr);
 
@@ -106,7 +107,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 1);
-        assertTrue(attr.containsKey("newAttr1"));
+        assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
 
         final byte[] data = SerializationUtils.serialize(policy);
         final ReturnMappedAttributeReleasePolicy p2 =

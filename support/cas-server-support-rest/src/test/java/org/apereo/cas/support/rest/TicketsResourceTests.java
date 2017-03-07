@@ -45,6 +45,9 @@ public class TicketsResourceTests {
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
     private static final String USERNAME = "username";
     private static final String OTHER_EXCEPTION = "Other exception";
+    private static final String SERVICE = "service";
+    private static final String TEST_VALUE = "test";
+    private static final String PASSWORD = "password";
     @Mock
     private CentralAuthenticationService casMock;
 
@@ -83,8 +86,8 @@ public class TicketsResourceTests {
         configureCasMockToCreateValidTGT();
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-                .param(USERNAME, "test")
-                .param("password", "test"))
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
                 .andExpect(content().contentType(MediaType.TEXT_HTML))
@@ -96,8 +99,8 @@ public class TicketsResourceTests {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-                .param(USERNAME, "test")
-                .param("password", "test"))
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json("{\"authentication_exceptions\" : [ \"LoginException\" ]}"));
     }
@@ -107,8 +110,8 @@ public class TicketsResourceTests {
         configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-                .param(USERNAME, "test")
-                .param("password", "test"))
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE))
                 .andExpect(status().is5xxServerError())
                 .andExpect(content().string(OTHER_EXCEPTION));
     }
@@ -118,8 +121,8 @@ public class TicketsResourceTests {
         configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-                .param("no_username_param", "test")
-                .param("no_password_param", "test"))
+                .param("no_username_param", TEST_VALUE)
+                .param("no_password_param", TEST_VALUE))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string("Invalid payload. 'username' and 'password' form fields are required."));
     }
@@ -129,7 +132,7 @@ public class TicketsResourceTests {
         configureCasMockToCreateValidST();
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", CoreAuthenticationTestUtils.getService().getId()))
+                .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=ISO-8859-1"))
                 .andExpect(content().string("ST-1"));
@@ -140,7 +143,7 @@ public class TicketsResourceTests {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", CoreAuthenticationTestUtils.getService().getId()))
+                .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("TicketGrantingTicket could not be found"));
     }
@@ -150,7 +153,7 @@ public class TicketsResourceTests {
         configureCasMockSTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", CoreAuthenticationTestUtils.getService().getId()))
+                .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
                 .andExpect(status().is5xxServerError())
                 .andExpect(content().string(OTHER_EXCEPTION));
     }
