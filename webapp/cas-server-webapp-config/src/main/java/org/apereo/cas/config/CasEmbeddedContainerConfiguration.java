@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import com.google.common.base.Throwables;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +35,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Configuration("casEmbeddedContainerConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnClass(name = "org.apache.catalina.startup.Tomcat")
 public class CasEmbeddedContainerConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasEmbeddedContainerConfiguration.class);
 
@@ -48,11 +48,9 @@ public class CasEmbeddedContainerConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnClass(Tomcat.class)
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
-        final TomcatEmbeddedServletContainerFactory tomcat =
-                new TomcatEmbeddedServletContainerFactory();
+        final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
 
         final org.apereo.cas.configuration.model.core.ServerProperties.Ajp ajp = casProperties.getServer().getAjp();
         if (ajp.isEnabled()) {
