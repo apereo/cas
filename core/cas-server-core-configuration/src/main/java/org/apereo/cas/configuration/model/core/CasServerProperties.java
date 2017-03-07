@@ -236,7 +236,7 @@ public class CasServerProperties {
     }
 
     public static class HttpProxy {
-        private boolean enabled = true;
+        private boolean enabled;
         private String scheme = "https";
         private boolean secure = true;
         private int redirectPort;

@@ -116,36 +116,29 @@ public class CasEmbeddedContainerTomcatConfiguration {
             tomcat.addEngineValves(valve);
         }
     }
-
-
+    
     private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
+        final CasServerProperties.HttpProxy proxy = casProperties.getServer().getHttpProxy();
+        if (proxy.isEnabled()) {
+            LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
+            tomcat.getTomcatConnectorCustomizers().add(connector -> {
+                connector.setSecure(proxy.isSecure());
+                connector.setScheme(proxy.getScheme());
 
-        if (tomcat.getSsl() == null) {
-            LOGGER.warn("Tomcat is running on port [{}] without any SSL configuration", tomcat.getPort());
-
-            final CasServerProperties.HttpProxy proxy = casProperties.getServer().getHttpProxy();
-            if (proxy.isEnabled()) {
-                LOGGER.info("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
-
-                tomcat.getTomcatConnectorCustomizers().add(connector -> {
-                    connector.setSecure(proxy.isSecure());
-                    connector.setScheme(proxy.getScheme());
-
-                    if (proxy.getRedirectPort() > 0) {
-                        LOGGER.debug("Setting HTTP proxying redirect port to [{}]", proxy.getRedirectPort());
-                        connector.setRedirectPort(proxy.getRedirectPort());
-                    }
-                    if (proxy.getProxyPort() > 0) {
-                        LOGGER.debug("Setting HTTP proxying proxy port to [{}]", proxy.getProxyPort());
-                        connector.setProxyPort(proxy.getProxyPort());
-                    }
-                });
-            } else {
-                LOGGER.info("HTTP secure proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
-            }
-            return;
+                if (proxy.getRedirectPort() > 0) {
+                    LOGGER.debug("Setting HTTP proxying redirect port to [{}]", proxy.getRedirectPort());
+                    connector.setRedirectPort(proxy.getRedirectPort());
+                }
+                if (proxy.getProxyPort() > 0) {
+                    LOGGER.debug("Setting HTTP proxying proxy port to [{}]", proxy.getProxyPort());
+                    connector.setProxyPort(proxy.getProxyPort());
+                }
+                LOGGER.info("Configured connector listening on port [{}]", tomcat.getPort());
+            });
+        } else {
+            LOGGER.debug("HTTP proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
         }
-
+        
         if (casProperties.getServer().getHttp().isEnabled()) {
             LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
             final Connector connector = new Connector(casProperties.getServer().getHttp().getProtocol());
