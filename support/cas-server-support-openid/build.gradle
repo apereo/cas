@@ -8,6 +8,7 @@ dependencies {
     compile libraries.httpclient
     compileOnly libraries.springcloud
     compile project(":core:cas-server-core-authentication")
+    
     testCompile project(":core:cas-server-core-logout")
     testCompile project(":core:cas-server-core")
     testCompile project(":core:cas-server-core-util")
