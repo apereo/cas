@@ -13,7 +13,7 @@ The community is very understanding of non-native English speakers and generally
 in those circumstances. _Please post in English._
 
 
-## CAS Community List (cas-user)
+## CAS Community List (cas-user@apereo.org)
 
 _Focus_: support, troubleshooting, general questions.
 
@@ -68,7 +68,7 @@ If you find something that you deem worth someone else's time to fix for you, be
 <div class="alert alert-info"><strong>List Etiquette</strong><p>Unless explicitly asked, please <b>avoid</b> contacting individual project members directly.</p></div>
 
 
-## CAS Developer List (cas-dev)
+## CAS Developer List (cas-dev@apereo.org)
 
 _Focus_: CAS developer discussion and collaboration.
 
@@ -81,7 +81,7 @@ requests, software design, and offering contributions.
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev)
 [Old archives](https://groups.google.com/forum/#!forum/jasig-cas-dev)
 
-## CAS Announcements List (cas-announce)
+## CAS Announcements List (cas-announce@apereo.org)
 
 _Focus_: Release accouncements.
 
@@ -93,7 +93,7 @@ This is a low-traffic list to receive notifications about CAS releases including
 
 The following mailing lists handle security announcements and vulnerabilities.
 
-### CAS Public Security List (cas-appsec-public)
+### CAS Public Security List (cas-appsec-public@apereo.org)
 
 _Focus_: Security issues, mitigation strategies and announcements
 
@@ -101,7 +101,7 @@ This is a low-traffic list to receive notifications about CAS security issues. N
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-appsec-public)
 
-### CAS Private Security List (cas-appsec-private)
+### CAS Private Security List (cas-appsec-private@apereo.org)
 
 _Focus_: Security issues, mitigation strategies and private internal discussions
 
@@ -114,7 +114,7 @@ This is a private closed low-traffic list to  discuss CAS security issues amongs
 
 Once reported via the appropriate channels, please [review this guide](/cas/developer/Sec-Vuln-Response.html) to learn how CAS responds to security vulnerabilities.
 
-## CAS PMC (cas-pmc)
+## CAS PMC (cas-pmc@apereo.org)
 
 _Focus_: Project management committee matters, policy decisions
 
