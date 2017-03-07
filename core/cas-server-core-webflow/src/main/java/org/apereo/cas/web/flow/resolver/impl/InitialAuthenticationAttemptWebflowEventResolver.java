@@ -112,10 +112,8 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      * @param registeredService the registered service
      * @return the set
      */
-    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context,
-                                                              final Service service, final RegisteredService registeredService) {
+    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service, final RegisteredService registeredService) {
         return this.orderedResolvers.stream()
-                .filter(Objects::nonNull)
                 .map(resolver -> resolver.resolveSingle(context))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
@@ -123,12 +121,16 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     @Override
     public void addDelegate(final CasWebflowEventResolver r) {
-        orderedResolvers.add(r);
+        if (r != null) {
+            orderedResolvers.add(r);
+        }
     }
 
     @Override
     public void addDelegate(final CasWebflowEventResolver r, final int index) {
-        orderedResolvers.add(index, r);
+        if (r != null) {
+            orderedResolvers.add(index, r);
+        }
     }
 
     public void setSelectiveResolver(final CasWebflowEventResolver r) {
