@@ -36,6 +36,8 @@ public class SamlRegisteredServiceTests {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
+    private static final String SAML_SERVICE = "SAMLService";
+    private static final String METADATA_LOCATION = "classpath:/metadata/idp-metadata.xml";
 
     @BeforeClass
     public static void prepTests() throws Exception {
@@ -45,9 +47,9 @@ public class SamlRegisteredServiceTests {
     @Test
     public void verifySavingSamlService() throws Exception {
         final SamlRegisteredService service = new SamlRegisteredService();
-        service.setName("SAMLService");
+        service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
-        service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
+        service.setMetadataLocation(METADATA_LOCATION);
 
         final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
         dao.save(service);
@@ -57,9 +59,9 @@ public class SamlRegisteredServiceTests {
     @Test
     public void verifySavingInCommonSamlService() throws Exception {
         final SamlRegisteredService service = new SamlRegisteredService();
-        service.setName("SAMLService");
+        service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
-        service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
+        service.setMetadataLocation(METADATA_LOCATION);
         final InCommonRSAttributeReleasePolicy policy = new InCommonRSAttributeReleasePolicy();
         final ChainingAttributeReleasePolicy chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
@@ -73,9 +75,9 @@ public class SamlRegisteredServiceTests {
     @Test
     public void checkPattern() {
         final SamlRegisteredService service = new SamlRegisteredService();
-        service.setName("SAMLService");
+        service.setName(SAML_SERVICE);
         service.setServiceId("^http://.+");
-        service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
+        service.setMetadataLocation(METADATA_LOCATION);
 
         final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(Collections.singletonList(service));
@@ -90,9 +92,9 @@ public class SamlRegisteredServiceTests {
     @Test
     public void verifySerializeAReturnMappedAttributeReleasePolicyToJson() throws IOException {
         final SamlRegisteredService serviceWritten = new SamlRegisteredService();
-        serviceWritten.setName("SAMLService");
+        serviceWritten.setName(SAML_SERVICE);
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
-        serviceWritten.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
+        serviceWritten.setMetadataLocation(METADATA_LOCATION);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, SamlRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
