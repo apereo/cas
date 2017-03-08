@@ -75,6 +75,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     private static final String GOOD_PASSWORD = "test";
     private static final int DELTA = 2;
     private static final String GET = "GET";
+    private static final String ERROR_EQUALS = "error=";
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
@@ -116,7 +117,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -134,7 +135,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -152,7 +153,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -171,7 +172,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -189,7 +190,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -208,7 +209,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -227,7 +228,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -246,7 +247,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -265,7 +266,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -298,7 +299,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
     }
 
     @Test
@@ -447,7 +448,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -461,7 +462,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -477,7 +478,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -493,7 +494,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -585,7 +586,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
     }
 
     @Test
@@ -603,7 +604,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -618,7 +619,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
