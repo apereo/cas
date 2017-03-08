@@ -32,11 +32,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuthWrapperController {
 
-    private Config config;
-
-    private CallbackController callbackController;
-
-    private OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver;
+    private final CallbackController callbackController;
+    private final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver;
 
     public OAuth20CallbackAuthorizeEndpointController(final ServicesManager servicesManager,
                                                       final TicketRegistry ticketRegistry,
@@ -49,13 +46,11 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuthWrapper
                                                       final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver,
                                                       final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                       final CasConfigurationProperties casProperties) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
-        this.config = config;
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory, scopeToAttributesFilter,
+                casProperties);
         this.callbackController = callbackController;
         this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;
-
-        this.callbackController.setConfig(this.config);
+        this.callbackController.setConfig(config);
     }
 
     /**

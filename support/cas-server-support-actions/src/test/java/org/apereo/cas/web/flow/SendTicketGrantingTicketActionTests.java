@@ -49,10 +49,6 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
-    @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
     private SendTicketGrantingTicketAction action;
     
@@ -131,7 +127,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
-                ticketGrantingTicketCookieGenerator, authenticationSystemSupport, false);
+                ticketGrantingTicketCookieGenerator, false);
         assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
@@ -152,7 +148,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.context.getFlowScope().put("service", svc);
 
         final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
-                ticketGrantingTicketCookieGenerator, authenticationSystemSupport, false);
+                ticketGrantingTicketCookieGenerator, false);
         assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
