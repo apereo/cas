@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 public class SamlMetadataUIParserAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataUIParserAction.class);
-    
+
     private final String entityIdParameterName;
     private final MetadataResolverAdapter metadataAdapter;
 
@@ -42,10 +42,11 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
     /**
      * Instantiates a new SAML MDUI parser action.
-     *  @param entityIdParameterName the entity id parameter name
+     *
+     * @param entityIdParameterName the entity id parameter name
      * @param metadataAdapter       the metadata adapter
-     * @param serviceFactory the service factory
-     * @param servicesManager the service manager
+     * @param serviceFactory        the service factory
+     * @param servicesManager       the service manager
      */
     public SamlMetadataUIParserAction(final String entityIdParameterName, final MetadataResolverAdapter metadataAdapter,
                                       final ServiceFactory<WebApplicationService> serviceFactory, final ServicesManager servicesManager) {
@@ -72,8 +73,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
                 WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext,
                         registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
             }
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                    "Entity " + entityId + " not recognized");
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Entity [" + entityId + "] not recognized");
         }
 
         final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(this.metadataAdapter, entityId, registeredService);
