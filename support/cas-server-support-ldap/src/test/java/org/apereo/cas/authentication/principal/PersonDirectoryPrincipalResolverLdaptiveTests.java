@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -33,7 +34,7 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CasPersonDirectoryConfiguration.class})
+@SpringBootTest(classes = {CasPersonDirectoryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations={"classpath:/ldap.properties"})
 public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonDirectoryPrincipalResolverLdaptiveTests.class);
