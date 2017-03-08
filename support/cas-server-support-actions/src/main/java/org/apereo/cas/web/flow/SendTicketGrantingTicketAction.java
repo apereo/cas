@@ -1,13 +1,12 @@
 package org.apereo.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,18 +31,15 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private CentralAuthenticationService centralAuthenticationService;
     private ServicesManager servicesManager;
-    private AuthenticationSystemSupport authenticationSystemSupport;
 
     public SendTicketGrantingTicketAction(final CentralAuthenticationService centralAuthenticationService, 
                                           final ServicesManager servicesManager,
                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                          final AuthenticationSystemSupport authenticationSystemSupport, 
                                           final boolean renewedAuthn) {
         super();
         this.centralAuthenticationService = centralAuthenticationService;
         this.servicesManager = servicesManager;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-        this.authenticationSystemSupport = authenticationSystemSupport;
         this.createSsoSessionCookieOnRenewAuthentications = renewedAuthn;
     }
 

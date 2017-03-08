@@ -126,7 +126,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action sendTicketGrantingTicketAction() {
         return new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager, ticketGrantingTicketCookieGenerator,
-                authenticationSystemSupport, casProperties.getSso().isRenewedAuthn());
+                casProperties.getSso().isRenewedAuthn());
     }
 
     @RefreshScope
@@ -193,10 +193,9 @@ public class CasSupportActionsConfiguration {
     }
 
     @Lazy
-    @Autowired
     @Bean
-    public Action terminateSessionAction(@Qualifier("config") final Config pac4jSecurityConfig) {
-        return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator, warnCookieGenerator, pac4jSecurityConfig);
+    public Action terminateSessionAction() {
+        return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator, warnCookieGenerator);
     }
 
     @Bean

@@ -258,6 +258,6 @@ public class CasCoreWebflowConfiguration {
 
     @Bean
     public Action redirectToServiceAction() {
-        return new RedirectToServiceAction(servicesManager, authenticationSystemSupport, ticketRegistrySupport, responseBuilderLocator);
+        return new RedirectToServiceAction(responseBuilderLocator);
     }
 }
