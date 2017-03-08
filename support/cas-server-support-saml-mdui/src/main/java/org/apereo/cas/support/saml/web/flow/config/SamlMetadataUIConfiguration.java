@@ -93,6 +93,7 @@ public class SamlMetadataUIConfiguration {
         return w;
     }
 
+    @ConditionalOnMissingBean(name = "samlMetadataUIParserAction")
     @Bean
     public Action samlMetadataUIParserAction() {
         final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(),
@@ -104,6 +105,7 @@ public class SamlMetadataUIConfiguration {
         return a;
     }
 
+    @ConditionalOnMissingBean(name = "metadataAdapter")
     @Bean
     public MetadataResolverAdapter metadataAdapter() {
         final ChainingMetadataResolverAdapter adapter = new ChainingMetadataResolverAdapter();
@@ -128,7 +130,6 @@ public class SamlMetadataUIConfiguration {
         final String[] splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
 
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
-
             final String[] arr = entry.split(DEFAULT_SEPARATOR);
 
             final String metadataFile = arr[0];
@@ -172,7 +173,6 @@ public class SamlMetadataUIConfiguration {
         final DynamicMetadataResolverAdapter adapter = new DynamicMetadataResolverAdapter();
         configureAdapter(adapter);
         return adapter;
-
     }
 
     private MetadataResolverAdapter getStaticMetadataResolverAdapter() {
