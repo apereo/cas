@@ -40,8 +40,8 @@ import java.util.HashSet;
 @Controller("loggingConfigController")
 @RequestMapping("/status/loggingsocket")
 public class LoggingOutputSocketMessagingController {
-    private static StringBuilder LOG_OUTPUT = new StringBuilder();
 
+    private static StringBuilder LOG_OUTPUT = new StringBuilder();
     private static final Object LOCK = new Object();
 
     private LoggerContext loggerContext;
@@ -56,8 +56,6 @@ public class LoggingOutputSocketMessagingController {
     @Qualifier("brokerMessagingTemplate")
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    private Resource logConfigurationFile;
-
     /**
      * Init. Attempts to locate the logging configuration to insert listeners.
      * The log configuration location is pulled directly from the environment
@@ -68,7 +66,6 @@ public class LoggingOutputSocketMessagingController {
         try {
             final Pair<Resource, LoggerContext> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
             if (pair != null) {
-                this.logConfigurationFile = pair.getKey();
                 this.loggerContext = pair.getValue();
                 registerLogFileTailThreads();
             }

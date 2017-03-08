@@ -32,8 +32,6 @@ import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.runner.RunWith;
 import org.openid4java.server.ServerManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,8 +77,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreUtilConfiguration.class})
 @ContextConfiguration(locations = "classpath:/openid-config.xml")
 public class AbstractOpenIdTests {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOpenIdTests.class);
-    
+
     @Autowired
     @Qualifier("serverManager")
     protected ServerManager serverManager;
@@ -108,7 +105,4 @@ public class AbstractOpenIdTests {
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
         return authenticationSystemSupport;
     }
-
 }
-
-

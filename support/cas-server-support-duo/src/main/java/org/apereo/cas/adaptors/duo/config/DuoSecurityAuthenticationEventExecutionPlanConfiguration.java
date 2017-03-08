@@ -19,7 +19,6 @@ import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.slf4j.Logger;
@@ -62,10 +61,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -138,7 +133,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         }
         return h;
     }
-
 
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
     @Bean
