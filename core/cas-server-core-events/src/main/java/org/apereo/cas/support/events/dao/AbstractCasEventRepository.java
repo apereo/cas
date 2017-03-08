@@ -15,7 +15,11 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public abstract class AbstractCasEventRepository implements CasEventRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasEventRepository.class);
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasEventRepository.class);
+    protected static final String TYPE_PARAM = "type";
+    protected static final String CREATION_TIME_PARAM = "creationTime";
+    protected static final String PRINCIPAL_ID_PARAM = "principalId";
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type) {

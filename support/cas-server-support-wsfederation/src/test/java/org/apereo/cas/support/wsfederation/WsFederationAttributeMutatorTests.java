@@ -16,21 +16,23 @@ import static org.junit.Assert.*;
  */
 public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
 
+    private static final String UPN_PARAM = "upn";
+
     @Test
     public void verifyModifyAttributes() {
         final Map<String, List<Object>> attributes = new HashMap<>();
 
-        final List values = new ArrayList();
+        final List<Object> values = new ArrayList<>();
         values.add("test@example.com");
-        attributes.put("upn", values);
+        attributes.put(UPN_PARAM, values);
         
         final WsFederationAttributeMutator instance = new WsFederationAttributeMutatorImpl();
         instance.modifyAttributes(attributes);
 
         assertTrue(attributes.containsKey("test"));
         assertTrue("newtest".equalsIgnoreCase(attributes.get("test").get(0).toString()));
-        assertTrue(attributes.containsKey("upn"));
-        assertTrue("testing".equalsIgnoreCase(attributes.get("upn").get(0).toString()));
+        assertTrue(attributes.containsKey(UPN_PARAM));
+        assertTrue("testing".equalsIgnoreCase(attributes.get(UPN_PARAM).get(0).toString()));
     }
 
     private static class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
@@ -38,13 +40,13 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
 
         @Override
         public void modifyAttributes(final Map<String, List<Object>> attributes) {
-            List values = new ArrayList();
+            List<Object> values = new ArrayList<>();
             values.add("newtest");
             attributes.put("test", values);
 
-            values = new ArrayList();
+            values = new ArrayList<>();
             values.add("testing");
-            attributes.put("upn", values);
+            attributes.put(UPN_PARAM, values);
         }
     }
 }

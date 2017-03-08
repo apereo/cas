@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 public class X509Properties {
 
+    private static final String DENY = "DENY";
+
     /**
      * The  Principal types.
      */
@@ -80,11 +82,10 @@ public class X509Properties {
     private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
     private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
 
-    private String crlResourceUnavailablePolicy = "DENY";
-    private String crlResourceExpiredPolicy = "DENY";
-
-    private String crlUnavailablePolicy = "DENY";
-    private String crlExpiredPolicy = "DENY";
+    private String crlResourceUnavailablePolicy = DENY;
+    private String crlResourceExpiredPolicy = DENY;
+    private String crlUnavailablePolicy = DENY;
+    private String crlExpiredPolicy = DENY;
     
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();

@@ -32,6 +32,8 @@ import static org.mockito.Mockito.*;
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 public class PolicyBasedAuthenticationManagerTests {
 
+    private static final String HANDLER_A = "HandlerA";
+    private static final String HANDLER_B = "HandlerB";
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -123,12 +125,11 @@ public class PolicyBasedAuthenticationManagerTests {
     @Test
     public void verifyAuthenticateRequiredHandlerSuccess() throws Exception {
         final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
-        map.put(newMockHandler("HandlerA", true), null);
-        map.put(newMockHandler("HandlerB", false), null);
+        map.put(newMockHandler(HANDLER_A, true), null);
+        map.put(newMockHandler(HANDLER_B, false), null);
 
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map), 
-                null,
-                new RequiredHandlerAuthenticationPolicy("HandlerA"));
+                null, new RequiredHandlerAuthenticationPolicy(HANDLER_A));
 
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
@@ -138,12 +139,11 @@ public class PolicyBasedAuthenticationManagerTests {
     @Test
     public void verifyAuthenticateRequiredHandlerFailure() throws Exception {
         final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
-        map.put(newMockHandler("HandlerA", true), null);
-        map.put(newMockHandler("HandlerB", false), null);
+        map.put(newMockHandler(HANDLER_A, true), null);
+        map.put(newMockHandler(HANDLER_B, false), null);
 
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map),
-                mockServicesManager(),
-                new RequiredHandlerAuthenticationPolicy("HandlerB"));
+                mockServicesManager(), new RequiredHandlerAuthenticationPolicy(HANDLER_B));
 
         this.thrown.expect(AuthenticationException.class);
         this.thrown.expectMessage("1 errors, 1 successes");
@@ -156,12 +156,11 @@ public class PolicyBasedAuthenticationManagerTests {
     @Test
     public void verifyAuthenticateRequiredHandlerTryAllSuccess() throws Exception {
         final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
-        map.put(newMockHandler("HandlerA", true), null);
-        map.put(newMockHandler("HandlerB", false), null);
+        map.put(newMockHandler(HANDLER_A, true), null);
+        map.put(newMockHandler(HANDLER_B, false), null);
 
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map),
-                mockServicesManager(),
-                new RequiredHandlerAuthenticationPolicy("HandlerA", true));
+                mockServicesManager(), new RequiredHandlerAuthenticationPolicy(HANDLER_A, true));
 
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
