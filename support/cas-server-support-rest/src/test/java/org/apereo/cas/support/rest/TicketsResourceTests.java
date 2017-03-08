@@ -131,7 +131,7 @@ public class TicketsResourceTests {
     public void normalCreationOfST() throws Throwable {
         configureCasMockToCreateValidST();
 
-        this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
                 .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=ISO-8859-1"))
@@ -142,7 +142,7 @@ public class TicketsResourceTests {
     public void creationOfSTWithInvalidTicketException() throws Throwable {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
-        this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
                 .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("TicketGrantingTicket could not be found"));
@@ -152,7 +152,7 @@ public class TicketsResourceTests {
     public void creationOfSTWithGeneralException() throws Throwable {
         configureCasMockSTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
-        this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
                 .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
                 .andExpect(status().is5xxServerError())
                 .andExpect(content().string(OTHER_EXCEPTION));
@@ -160,7 +160,7 @@ public class TicketsResourceTests {
 
     @Test
     public void deletionOfTGT() throws Throwable {
-        this.mockMvc.perform(delete("/cas/v1/tickets/TGT-1"))
+        this.mockMvc.perform(delete(TICKETS_RESOURCE_URL + "/TGT-1"))
                 .andExpect(status().isOk());
     }
 
