@@ -38,8 +38,14 @@ import static org.junit.Assert.*;
  */
 @Import({CasProtocolViewsConfiguration.class, CasValidationConfiguration.class, ThymeleafAutoConfiguration.class})
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
+
     private static final Service SERVICE = CoreAuthenticationTestUtils.getService();
     private static final String SUCCESS = "Success";
+    private static final String SERVICE_PARAM = "service";
+    private static final String TICKET_PARAM = "ticket";
+    private static final String GITHUB_URL = "https://www.github.com";
+    private static final String PGT_URL_PARAM = "pgtUrl";
+    private static final String PGT_IOU_PARAM = "pgtIou";
 
     protected AbstractServiceValidateController serviceValidateController;
 
@@ -67,8 +73,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId2 = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, null);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", SERVICE.getId());
-        request.addParameter("ticket", sId2.getId());
+        request.addParameter(SERVICE_PARAM, SERVICE.getId());
+        request.addParameter(TICKET_PARAM, sId2.getId());
         request.addParameter("renew", "true");
 
         return request;
@@ -94,8 +100,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", SERVICE.getId());
-        request.addParameter("ticket", sId.getId());
+        request.addParameter(SERVICE_PARAM, SERVICE.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
 
         final ModelAndView mv = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(mv.getView().toString().contains(SUCCESS));
@@ -132,8 +138,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId.getId());
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", SERVICE.getId());
-        request.addParameter("ticket", sId.getId());
+        request.addParameter(SERVICE_PARAM, SERVICE.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
 
         assertFalse(this.serviceValidateController.handleRequestInternal(request,
                 new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
@@ -148,9 +154,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", SERVICE.getId());
-        request.addParameter("ticket", sId.getId());
-        request.addParameter("pgtUrl", "https://www.github.com");
+        request.addParameter(SERVICE_PARAM, SERVICE.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
+        request.addParameter(PGT_URL_PARAM, GITHUB_URL);
 
         assertTrue(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse())
                 .getView().toString().contains(SUCCESS));
@@ -172,13 +178,13 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", SERVICE.getId());
-        request.addParameter("ticket", sId.getId());
-        request.addParameter("pgtUrl", "duh");
+        request.addParameter(SERVICE_PARAM, SERVICE.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
+        request.addParameter(PGT_URL_PARAM, "duh");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(modelAndView.getView().toString().contains(SUCCESS));
-        assertNull(modelAndView.getModel().get("pgtIou"));
+        assertNull(modelAndView.getModel().get(PGT_IOU_PARAM));
     }
 
     @Test
@@ -189,13 +195,13 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", SERVICE.getId());
-        request.addParameter("ticket", sId.getId());
-        request.addParameter("pgtUrl", "https://www.github.com");
+        request.addParameter(SERVICE_PARAM, SERVICE.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
+        request.addParameter(PGT_URL_PARAM, GITHUB_URL);
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertTrue(modelAndView.getView().toString().contains(SUCCESS));
-        assertNotNull(modelAndView.getModel().get("pgtIou"));
+        assertNotNull(modelAndView.getModel().get(PGT_IOU_PARAM));
     }
 
     @Test
@@ -206,9 +212,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", SERVICE.getId());
-        request.addParameter("ticket", sId.getId());
-        request.addParameter("pgtUrl", "https://www.github.com");
+        request.addParameter(SERVICE_PARAM, SERVICE.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
+        request.addParameter(PGT_URL_PARAM, GITHUB_URL);
 
         this.serviceValidateController.setProxyHandler(new ProxyHandler() {
             @Override
@@ -224,7 +230,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertFalse(modelAndView.getView().toString().contains(SUCCESS));
-        assertNull(modelAndView.getModel().get("pgtIou"));
+        assertNull(modelAndView.getModel().get(PGT_IOU_PARAM));
     }
 
     @Test
@@ -241,8 +247,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final String reqSvc = "http://WWW.JASIG.ORG?PARAM=hello%20world";
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", CoreAuthenticationTestUtils.getService(reqSvc).getId());
-        request.addParameter("ticket", sId.getId());
+        request.addParameter(SERVICE_PARAM, CoreAuthenticationTestUtils.getService(reqSvc).getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
 
         assertTrue(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
@@ -259,8 +265,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
         final String reqSvc = "http://www.jasig.org?param=hello%20world";
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", CoreAuthenticationTestUtils.getService(reqSvc).getId());
-        request.addParameter("ticket", sId.getId());
+        request.addParameter(SERVICE_PARAM, CoreAuthenticationTestUtils.getService(reqSvc).getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
 
         assertTrue(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
@@ -275,13 +281,13 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", svc.getId());
-        request.addParameter("ticket", sId.getId());
-        request.addParameter("pgtUrl", "http://www.github.com");
+        request.addParameter(SERVICE_PARAM, svc.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
+        request.addParameter(PGT_URL_PARAM, "http://www.github.com");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertFalse(modelAndView.getView().toString().contains(SUCCESS));
-        assertNull(modelAndView.getModel().get("pgtIou"));
+        assertNull(modelAndView.getModel().get(PGT_IOU_PARAM));
     }
 
     @Test
@@ -293,8 +299,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", svc.getId());
-        request.addParameter("ticket", sId.getId());
+        request.addParameter(SERVICE_PARAM, svc.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
         request.addParameter("format", ValidationResponseType.JSON.name());
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
@@ -311,8 +317,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", svc.getId());
-        request.addParameter("ticket", sId.getId());
+        request.addParameter(SERVICE_PARAM, svc.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
         request.addParameter("format", "NOTHING");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
@@ -325,9 +331,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", SERVICE.getId());
-        request.addParameter("ticket", sId.getId());
-        request.addParameter("pgtUrl", "https://www.github.com");
+        request.addParameter(SERVICE_PARAM, SERVICE.getId());
+        request.addParameter(TICKET_PARAM, sId.getId());
+        request.addParameter(PGT_URL_PARAM, GITHUB_URL);
 
         return this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
     }

@@ -24,6 +24,7 @@ public abstract class AbstractTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
     private static final String EXCEPTION_CAUGHT_NONE_EXPECTED = "Exception caught.  None expected.";
+    private static final String CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED = "Caught an exception. But no exception should have been thrown: ";
 
     private TicketRegistry ticketRegistry;
 
@@ -128,7 +129,7 @@ public abstract class AbstractTicketRegistryTests {
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX);
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
+            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
         }
     }
 
@@ -142,7 +143,7 @@ public abstract class AbstractTicketRegistryTests {
             }
             assertEquals(TICKETS_IN_REGISTRY, this.ticketRegistry.deleteAll());
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
+            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
         }
     }
 
@@ -154,7 +155,7 @@ public abstract class AbstractTicketRegistryTests {
                     new NeverExpiresExpirationPolicy()));
             assertSame(1, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
+            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
         }
     }
 
@@ -253,7 +254,7 @@ public abstract class AbstractTicketRegistryTests {
             assertNull(this.ticketRegistry.getTicket("ST21", ServiceTicket.class));
             assertNull(this.ticketRegistry.getTicket("ST31", ServiceTicket.class));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
+            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
         }
     }
 
