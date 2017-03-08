@@ -2,7 +2,6 @@ package org.apereo.cas.support.openid.web.mvc;
 
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.junit.Test;
-import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -22,9 +21,6 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
     private static final String OPENID_MODE_PARAM = "openid.mode";
     private final MockHttpServletRequest request = new MockHttpServletRequest();
     private final HttpServletResponse response = new MockHttpServletResponse();
-
-    @Autowired
-    private ServerManager manager;
 
     @Autowired
     private SmartOpenIdController smartOpenIdController;

@@ -234,7 +234,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         assertEquals(assertion.getService(), svc);
         assertEquals(assertion.getPrimaryAuthentication().getPrincipal().getId(), PRINCIPAL);
-        assertTrue(assertion.getChainedAuthentications().size() == 2);
+        assertSame(2, assertion.getChainedAuthentications().size());
         IntStream.range(0, assertion.getChainedAuthentications().size())
                 .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
     }

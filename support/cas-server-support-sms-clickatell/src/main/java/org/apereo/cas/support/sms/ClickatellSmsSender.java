@@ -64,7 +64,7 @@ public class ClickatellSmsSender implements SmsSender {
             final HttpEntity<String> request = new HttpEntity<>(stringify.toString(), headers);
             final ResponseEntity<Map> response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
             if (response.hasBody()) {
-                final List<Map> messages = (java.util.List<Map>) response.getBody().get("messages");
+                final List<Map> messages = (List<Map>) response.getBody().get("messages");
 
                 final String error = (String) response.getBody().get("error");
                 if (StringUtils.isNotBlank(error)) {

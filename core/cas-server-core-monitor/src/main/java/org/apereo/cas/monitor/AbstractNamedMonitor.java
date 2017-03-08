@@ -1,8 +1,6 @@
 package org.apereo.cas.monitor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all monitors that support configurable naming.
@@ -12,8 +10,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<S> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractNamedMonitor.class);
-    
     /** Monitor name. */
     protected final String name;
 
