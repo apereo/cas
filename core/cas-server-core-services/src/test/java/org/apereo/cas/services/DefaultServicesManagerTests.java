@@ -151,7 +151,7 @@ public class DefaultServicesManagerTests {
 
         defaultServicesManager.getAllServices().forEach(svc -> defaultServicesManager.delete(svc.getId()));
 
-        assertTrue(this.defaultServicesManager.getAllServices().size() == 0);
+        assertSame(0, this.defaultServicesManager.getAllServices().size());
         assertNull(this.defaultServicesManager.findServiceBy(s));
         assertNull(this.defaultServicesManager.findServiceBy(1000));
     }
