@@ -43,9 +43,8 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
 
     @Override
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
-        final String encodedId = EncodingUtils.urlEncode(entityId);
-
-        if (resource instanceof UrlResource) {
+        if (resource instanceof UrlResource && resource.getURL().toExternalForm().endsWith("/entities/")) {
+            final String encodedId = EncodingUtils.urlEncode(entityId);
             final URL url = new URL(resource.getURL().toExternalForm().concat(encodedId));
             final HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
             httpcon.setDoOutput(true);
