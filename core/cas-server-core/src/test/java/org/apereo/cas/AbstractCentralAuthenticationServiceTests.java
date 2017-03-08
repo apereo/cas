@@ -30,8 +30,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -79,8 +77,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(locations = {"classpath:/core.properties"})
 public abstract class AbstractCentralAuthenticationServiceTests {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCentralAuthenticationServiceTests.class);
-    
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -141,6 +137,4 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     public WebApplicationServiceFactory getWebApplicationServiceFactory() {
         return webApplicationServiceFactory;
     }
-    
-
 }

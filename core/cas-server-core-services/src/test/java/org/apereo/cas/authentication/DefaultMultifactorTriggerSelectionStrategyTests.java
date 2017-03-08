@@ -40,7 +40,6 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private static final String RS_ATTRS_12 = RS_ATTR_1 + ',' + RS_ATTR_2;
     private static final String P_ATTR_1 = "principal_attr_1";
     private static final String P_ATTR_2 = "principal_attr_2";
-    private static final String P_ATTR_3 = "principal_attr_3";
     private static final String P_ATTRS_12 = P_ATTR_1 + ',' + P_ATTR_2;
 
     private static final String VALUE_1 = "enforce_1";
