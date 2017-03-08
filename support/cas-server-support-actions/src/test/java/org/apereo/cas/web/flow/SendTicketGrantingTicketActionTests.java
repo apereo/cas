@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -47,10 +46,6 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
@@ -131,7 +126,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
-                ticketGrantingTicketCookieGenerator, authenticationSystemSupport, false);
+                ticketGrantingTicketCookieGenerator, false);
         assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
@@ -152,7 +147,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.context.getFlowScope().put("service", svc);
 
         final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
-                ticketGrantingTicketCookieGenerator, authenticationSystemSupport, false);
+                ticketGrantingTicketCookieGenerator, false);
         assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }

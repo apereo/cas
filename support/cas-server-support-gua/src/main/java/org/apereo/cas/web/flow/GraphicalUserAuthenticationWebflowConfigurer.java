@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -24,13 +23,9 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
     private static final String STATE_ID_GUA_GET_USERID = "guaGetUserIdView";
     private static final String STATE_ID_GUA_DISPLAY_USER_GFX = "guaDisplayUserGraphics";
 
-    private final GraphicalUserAuthenticationProperties guaProperties;
-
     public GraphicalUserAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                        final GraphicalUserAuthenticationProperties gua) {
+                                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
         super(flowBuilderServices, loginFlowDefinitionRegistry);
-        this.guaProperties = gua;
     }
 
     @Override
