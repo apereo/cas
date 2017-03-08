@@ -5,7 +5,6 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
-import org.pac4j.core.config.Config;
 import org.pac4j.core.profile.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +32,12 @@ public class TerminateSessionAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final CookieRetrievingCookieGenerator warnCookieGenerator;
-    private final Config pac4jSecurityConfig;
 
     public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService, final CookieRetrievingCookieGenerator tgtCookieGenerator,
-                                  final CookieRetrievingCookieGenerator warnCookieGenerator, final Config pac4jSecurityConfig) {
+                                  final CookieRetrievingCookieGenerator warnCookieGenerator) {
         this.centralAuthenticationService = centralAuthenticationService;
         this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;
         this.warnCookieGenerator = warnCookieGenerator;
-        this.pac4jSecurityConfig = pac4jSecurityConfig;
     }
 
     @Override

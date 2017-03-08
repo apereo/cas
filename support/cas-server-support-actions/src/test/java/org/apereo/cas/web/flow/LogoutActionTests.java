@@ -36,31 +36,24 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     private static final String TEST_SERVICE_ID = "TestService";
 
     private LogoutAction logoutAction;
-    
-    private InMemoryServiceRegistry serviceRegistryDao;
 
     private DefaultServicesManager serviceManager;
 
     private MockHttpServletRequest request;
-
-    private MockHttpServletResponse response;
 
     private RequestContext requestContext;
 
     @Before
     public void onSetUp() throws Exception {
         this.request = new MockHttpServletRequest();
-        this.response = new MockHttpServletResponse();
         this.requestContext = mock(RequestContext.class);
         final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
         when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
         when(servletExternalContext.getNativeRequest()).thenReturn(request);
-        when(servletExternalContext.getNativeResponse()).thenReturn(response);
-        final LocalAttributeMap flowScope = new LocalAttributeMap();
-        when(this.requestContext.getFlowScope()).thenReturn(flowScope);
+        when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
+        when(this.requestContext.getFlowScope()).thenReturn(new LocalAttributeMap());
 
-        this.serviceRegistryDao = new InMemoryServiceRegistry();
-        this.serviceManager = new DefaultServicesManager(serviceRegistryDao);
+        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry());
         this.serviceManager.load();
 
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, false);
