@@ -1,4 +1,0 @@
-org.jasig.cas.monitor
-org.jasig.cas.ticket.registry
-org.jasig.cas.ticket.registry.support.kryo
-org.jasig.cas.ticket.registry.support.kryo.serial
