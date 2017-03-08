@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,8 +14,6 @@ import java.util.List;
  */
 public class InMemoryServiceRegistry implements ServiceRegistryDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistry.class);
-    
     private List<RegisteredService> registeredServices = new ArrayList<>();
 
     /**
