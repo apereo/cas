@@ -42,6 +42,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     private static final String SERVICE_ID = "testId";
     private static final String THEME = "theme";
     private static final String DESCRIPTION = "description";
+    private static final String HTTPS_SERVICE_ID = "^https://.+";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -249,7 +250,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void verifyServiceType() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("testServiceType");
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
@@ -261,7 +262,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void verifyServiceWithInvalidFileName() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("hell/o@world:*");
         r.setEvaluationOrder(1000);
 
@@ -275,7 +276,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         final List<RegisteredService> list = new ArrayList<>(5);
         IntStream.range(1, 5).forEach(i -> {
             final RegexRegisteredService r = new RegexRegisteredService();
-            r.setServiceId("^https://.+");
+            r.setServiceId(HTTPS_SERVICE_ID);
             r.setName("testServiceType");
             r.setTheme("testtheme");
             r.setEvaluationOrder(1000);
@@ -298,7 +299,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void checkForAuthorizationStrategy() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("checkForAuthorizationStrategy");
         r.setId(42);
 
@@ -319,7 +320,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void verifyAccessStrategyWithStarEndDate() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("verifyAAccessStrategyWithStarEndDate");
         r.setId(62);
 
@@ -340,7 +341,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void verifyAccessStrategyWithEndpoint() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("verifyAccessStrategyWithEndpoint");
         r.setId(62);
 
@@ -362,7 +363,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 "classpath:RSA1024Public.key", "RSA");
 
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("serializePublicKeyForServiceAndVerify");
         r.setId(4245);
         r.setPublicKey(publicKey);
@@ -375,7 +376,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void checkNullabilityOfAccessStrategy() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("checkNullabilityOfAccessStrategy");
         r.setId(43210);
         r.setAccessStrategy(null);
@@ -389,7 +390,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void persistCustomServiceProperties() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("persistCustomServiceProperties");
         r.setId(4245);
 

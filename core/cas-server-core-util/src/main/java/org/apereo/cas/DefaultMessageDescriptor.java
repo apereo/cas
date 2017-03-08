@@ -83,7 +83,7 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
 
     @Override
     public boolean equals(final Object other) {
-        if (other == null || !(other instanceof DefaultMessageDescriptor)) {
+        if (!(other instanceof DefaultMessageDescriptor)) {
             return false;
         }
         if (other == this) {

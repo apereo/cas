@@ -16,7 +16,9 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 public class WsFederationCredentialTests extends AbstractWsFederationTests {
-    
+
+    private static final String ISSUER = "http://adfs.example.com/adfs/services/trust";
+    private static final String AUDIENCE = "urn:federation:cas";
     private WsFederationCredential standardCred;
 
     @Before
@@ -25,29 +27,29 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC));
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1));
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC));
-        standardCred.setIssuer("http://adfs.example.com/adfs/services/trust");
-        standardCred.setAudience("urn:federation:cas");
+        standardCred.setIssuer(ISSUER);
+        standardCred.setAudience(AUDIENCE);
         standardCred.setId("_6257b2bf-7361-4081-ae1f-ec58d4310f61");
         standardCred.setRetrievedOn(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(1));
     }
 
     @Test
     public void verifyIsValidAllGood() throws Exception {
-        final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
+        final boolean result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
         assertTrue("testIsValidAllGood() - True", result);
     }
 
     @Test
     public void verifyIsValidBadAudience() throws Exception {
         standardCred.setAudience("urn:NotUs");
-        final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
+        final boolean result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
         assertFalse("testIsValidBadAudeience() - False", result);
     }
 
     @Test
     public void verifyIsValidBadIssuer() throws Exception {
         standardCred.setIssuer("urn:NotThem");
-        final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
+        final boolean result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
         assertFalse("testIsValidBadIssuer() - False", result);
     }
 
@@ -57,7 +59,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1).plusDays(1));
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1));
         
-        final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
+        final boolean result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
         assertFalse("testIsValidEarlyToken() - False", result);
     }
 
@@ -67,7 +69,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1).minusDays(1));
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
         
-        final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
+        final boolean result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
         assertFalse("testIsValidOldToken() - False", result);
     }
 
@@ -75,7 +77,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     public void verifyIsValidExpiredIssuedOn() throws Exception {
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(3));
         
-        final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
+        final boolean result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
         assertFalse("testIsValidOldToken() - False", result);
     }
 }

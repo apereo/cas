@@ -19,7 +19,8 @@ import java.util.Collection;
  */
 public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemCacheTicketRegistry.class);
-    
+    private static final String NO_MEMCACHED_CLIENT_IS_DEFINED = "No memcached client is defined.";
+
     /**
      * Memcached client.
      */
@@ -37,7 +38,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticketToUpdate) {
-        Assert.notNull(this.client, "No memcached client is defined.");
+        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
 
         final Ticket ticket = encodeTicket(ticketToUpdate);
         LOGGER.debug("Updating ticket [{}]", ticket);
@@ -57,7 +58,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        Assert.notNull(this.client, "No memcached client is defined.");
+        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             LOGGER.debug("Adding ticket [{}]", ticket);
@@ -86,7 +87,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        Assert.notNull(this.client, "No memcached client is defined.");
+        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
         try {
             if (this.client.delete(ticketId).get()) {
                 LOGGER.debug("Removed ticket [{}] from the cache", ticketId);
@@ -101,7 +102,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
-        Assert.notNull(this.client, "No memcached client is defined.");
+        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
 
         final String ticketId = encodeTicketId(ticketIdToGet);
         try {
