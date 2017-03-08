@@ -36,6 +36,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     private static final String PHONE = "phone";
     private static final String FAMILY_NAME = "familyName";
     private static final String GIVEN_NAME = "givenName";
+    private static final String UID = "uid";
 
     private final RegisteredServiceAttributeFilter filter;
     private final Map<String, Object> givenAttributesMap;
@@ -48,7 +49,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
         this.givenAttributesMap = new HashMap<>();
-        this.givenAttributesMap.put("uid", "loggedInTestUid");
+        this.givenAttributesMap.put(UID, "loggedInTestUid");
         this.givenAttributesMap.put(PHONE, "1290");
         this.givenAttributesMap.put(FAMILY_NAME, "Smith");
         this.givenAttributesMap.put(GIVEN_NAME, "John");
@@ -58,7 +59,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toSet()));
 
         final Map<String, String> mapAttributes = new HashMap<>();
-        mapAttributes.put("uid", "loggedInTestUid");
+        mapAttributes.put(UID, "loggedInTestUid");
         mapAttributes.put(PHONE, "890");
         mapAttributes.put(FAMILY_NAME, "Smith");
         this.givenAttributesMap.put("mapAttribute", mapAttributes);
@@ -81,13 +82,13 @@ public class RegisteredServiceRegexAttributeFilterTests {
         assertFalse(attrs.containsKey(PHONE));
         assertFalse(attrs.containsKey(GIVEN_NAME));
 
-        assertTrue(attrs.containsKey("uid"));
+        assertTrue(attrs.containsKey(UID));
         assertTrue(attrs.containsKey("memberOf"));
         assertTrue(attrs.containsKey("mapAttribute"));
 
         @SuppressWarnings("unchecked")
         final Map<String, String> mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
-        assertTrue(mapAttributes.containsKey("uid"));
+        assertTrue(mapAttributes.containsKey(UID));
         assertTrue(mapAttributes.containsKey(FAMILY_NAME));
         assertFalse(mapAttributes.containsKey(PHONE));
 

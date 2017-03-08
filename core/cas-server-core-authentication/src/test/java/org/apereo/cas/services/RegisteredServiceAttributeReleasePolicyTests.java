@@ -46,6 +46,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     private static final String VALUE_1 = "value1";
     private static final String VALUE_2 = "value2";
     private static final String NEW_ATTR_1_VALUE = "newAttr1";
+    private static final String PRINCIPAL_ID = "principalId";
 
     @Test
     public void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() {
@@ -58,7 +59,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         final Map<String, Object> map = new HashMap<>();
         map.put("ATTR1", VALUE_1);
         when(p.getAttributes()).thenReturn(map);
-        when(p.getId()).thenReturn("principalId");
+        when(p.getId()).thenReturn(PRINCIPAL_ID);
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 1);
@@ -79,7 +80,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         map.put("ATTR1", VALUE_1);
         map.put("ATTR2", VALUE_2);
         when(p.getAttributes()).thenReturn(map);
-        when(p.getId()).thenReturn("principalId");
+        when(p.getId()).thenReturn(PRINCIPAL_ID);
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 2);
@@ -103,7 +104,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
-        when(p.getId()).thenReturn("principalId");
+        when(p.getId()).thenReturn(PRINCIPAL_ID);
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 1);
@@ -128,7 +129,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
-        when(p.getId()).thenReturn("principalId");
+        when(p.getId()).thenReturn(PRINCIPAL_ID);
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 2);
@@ -150,7 +151,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         map.put("ATTR1", VALUE_1);
         map.put("ATTR2", VALUE_2);
         when(p.getAttributes()).thenReturn(map);
-        when(p.getId()).thenReturn("principalId");
+        when(p.getId()).thenReturn(PRINCIPAL_ID);
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 0);
@@ -167,7 +168,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
-        when(p.getId()).thenReturn("principalId");
+        when(p.getId()).thenReturn(PRINCIPAL_ID);
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), map.size());
