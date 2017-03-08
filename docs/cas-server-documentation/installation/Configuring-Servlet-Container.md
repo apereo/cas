@@ -10,8 +10,8 @@ describes how to build and deploy CAS.
 
 ## Embedded
 
-Note that CAS itself ships with aa number of embedded containers that allows the platform to be self contained as much as possible. You **DO
-NOT** need to configure and deploy to an externally configured container. 
+Note that CAS itself ships with a number of embedded containers that allows the platform to be self-contained as much as possible. You **DO
+NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
 <div class="alert alert-info"><strong>Do Less</strong><p>
 Remember that most if not all aspects of the embedded container can be controlled via the CAS properties.
@@ -31,16 +31,6 @@ Note that by default, the embedded container attempts to enable the HTTP2 protoc
      <version>${cas.version}</version>
 </dependency>
 ```
-
-#### Root Deployments
-
-By default, a CAS server is generally mounted onto the URL `/cas` as the default context path such that the final public-facing URL
-would become `https://sso.example.org/cas`.
-
-If and when you choose to deploy CAS at root and remove the default context path, CAS by default attempts to deploy a special
-`RewriteValve` for the embedded container that knows how to reroute urls and such for backward compatibility reasons.
-The [configuration of this valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html),
-should it need to be extended, can be controlled via the configuration settings.
 
 ### Jetty
 

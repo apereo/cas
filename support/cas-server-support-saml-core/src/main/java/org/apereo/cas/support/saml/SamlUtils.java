@@ -40,7 +40,8 @@ import java.util.List;
  * @since 5.0.0
  */
 public final class SamlUtils {
-    private static Logger LOGGER = LoggerFactory.getLogger(SamlUtils.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlUtils.class);
 
     private SamlUtils() {
     }
