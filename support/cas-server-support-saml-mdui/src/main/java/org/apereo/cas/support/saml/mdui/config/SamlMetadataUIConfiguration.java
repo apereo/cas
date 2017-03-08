@@ -87,6 +87,7 @@ public class SamlMetadataUIConfiguration {
         return new SamlMetadataUIWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, samlMetadataUIParserAction());
     }
 
+    @ConditionalOnMissingBean(name = "samlMetadataUIParserAction")
     @Bean
     public Action samlMetadataUIParserAction() {
         final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(),
