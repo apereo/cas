@@ -2,9 +2,7 @@ package org.apereo.cas.web.flow;
 
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.EncodingUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -20,15 +18,10 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 public class DisplayUserGraphicsBeforeAuthenticationAction extends AbstractAction {
-    private final GraphicalUserAuthenticationProperties guaProperties;
-    private final ServicesManager servicesManager;
+
     private final UserGraphicalAuthenticationRepository repository;
 
-    public DisplayUserGraphicsBeforeAuthenticationAction(final ServicesManager servicesManager,
-                                                         final GraphicalUserAuthenticationProperties guaProperties, 
-                                                         final UserGraphicalAuthenticationRepository repository) {
-        this.guaProperties = guaProperties;
-        this.servicesManager = servicesManager;
+    public DisplayUserGraphicsBeforeAuthenticationAction(final UserGraphicalAuthenticationRepository repository) {
         this.repository = repository;
     }
 
