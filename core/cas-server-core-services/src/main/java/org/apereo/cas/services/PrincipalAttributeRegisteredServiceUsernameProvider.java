@@ -17,6 +17,7 @@ import java.util.TreeMap;
 /**
  * Determines the username for this registered service based on a principal attribute.
  * If the attribute is not found, default principal id is returned.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
@@ -25,7 +26,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
     private static final long serialVersionUID = -3546719400741715137L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalAttributeRegisteredServiceUsernameProvider.class);
-    
+
     private String usernameAttribute;
 
     /**
@@ -59,27 +60,26 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
 
         final Map<String, Object> originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         originalPrincipalAttributes.putAll(principal.getAttributes());
-        
+
         final Map<String, Object> attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         attributes.putAll(getPrincipalAttributes(principal, service));
 
-        LOGGER.debug("Principal attributes available for selection of username attribute [{}] are [{}].",
-                this.usernameAttribute, attributes);
+        LOGGER.debug("Principal attributes available for selection of username attribute [{}] are [{}].", this.usernameAttribute, attributes);
 
         if (attributes.containsKey(this.usernameAttribute)) {
             principalId = attributes.get(this.usernameAttribute).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.warn("The selected username attribute [{}] was retrieved as a direct "
-                       + "principal attributes and not through the attribute release policy for service [{}]. "
-                       + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
-                       + "is explicitly authorized for release via the service attribute release policy.", 
+                            + "principal attributes and not through the attribute release policy for service [{}]. "
+                            + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
+                            + "is explicitly authorized for release via the service attribute release policy.",
                     this.usernameAttribute, service, this.usernameAttribute);
             principalId = originalPrincipalAttributes.get(this.usernameAttribute).toString();
         } else {
             LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
-                    + "provide the user attribute the service expects. "
-                    + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
-                    + "is allowed to be released by the service attribute release policy.",
+                            + "provide the user attribute the service expects. "
+                            + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
+                            + "is allowed to be released by the service attribute release policy.",
                     principalId,
                     this.usernameAttribute,
                     attributes,
@@ -90,7 +90,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
                 service.getId(), principalId, principal.getId());
         return principalId.trim();
     }
-    
+
     @Override
     public String toString() {
         final ToStringBuilder toStringBuilder = new ToStringBuilder(null, ToStringStyle.SHORT_PREFIX_STYLE);
