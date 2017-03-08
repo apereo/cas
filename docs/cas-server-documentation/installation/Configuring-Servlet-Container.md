@@ -10,8 +10,8 @@ describes how to build and deploy CAS.
 
 ## Embedded
 
-Note that CAS itself ships with aa number of embedded containers that allows the platform to be self contained as much as possible. You **DO
-NOT** need to configure and deploy to an externally configured container. 
+Note that CAS itself ships with a number of embedded containers that allows the platform to be self-contained as much as possible. You **DO
+NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
 <div class="alert alert-info"><strong>Do Less</strong><p>
 Remember that most if not all aspects of the embedded container can be controlled via the CAS properties.
