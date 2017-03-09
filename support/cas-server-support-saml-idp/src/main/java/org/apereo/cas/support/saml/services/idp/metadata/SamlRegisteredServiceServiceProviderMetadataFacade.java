@@ -2,7 +2,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -31,6 +30,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -67,9 +67,9 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @param entityID          the entity id
      * @return the saml metadata adaptor
      */
-    public static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                         final SamlRegisteredService registeredService,
-                                                                         final String entityID) {
+    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                                   final SamlRegisteredService registeredService,
+                                                                                   final String entityID) {
         return get(resolver, registeredService, entityID, new CriteriaSet());
     }
 
@@ -81,16 +81,16 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @param request           the request
      * @return the saml metadata adaptor
      */
-    public static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                         final SamlRegisteredService registeredService,
-                                                                         final RequestAbstractType request) {
+    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                                   final SamlRegisteredService registeredService,
+                                                                                   final RequestAbstractType request) {
         return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlRequest(request));
     }
 
-    private static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                          final SamlRegisteredService registeredService,
-                                                                          final String entityID,
-                                                                          final CriteriaSet criterions) {
+    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                                    final SamlRegisteredService registeredService,
+                                                                                    final String entityID,
+                                                                                    final CriteriaSet criterions) {
         LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
                 registeredService.getName(), entityID);
         try {
@@ -105,19 +105,18 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
 
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
-                throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                        "Cannot find entity " + entityID + " in metadata provider.");
+                LOGGER.debug("Cannot find entity [{}] in metadata provider.", entityID);
+                return Optional.empty();
             }
             LOGGER.debug("Located EntityDescriptor in metadata for [{}]", entityID);
             final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
             if (ssoDescriptor != null) {
                 LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]",
                         entityID, ssoDescriptor.getValidUntil());
-                return new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor,
-                        entityDescriptor, chainingMetadataResolver);
+                return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor, chainingMetadataResolver));
             }
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                    "Could not locate SPSSODescriptor in the metadata for " + entityID);
+            LOGGER.warn("Could not locate SPSSODescriptor in the metadata for [{}]", entityID);
+            return Optional.empty();
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link BaseSamlRegisteredServiceAttributeReleasePolicy}.
@@ -66,20 +67,20 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                     ctx.getBean("defaultSamlRegisteredServiceCachingMetadataResolver",
                             SamlRegisteredServiceCachingMetadataResolver.class);
 
-            final SamlRegisteredServiceServiceProviderMetadataFacade facade =
+            final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> facade =
                     SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, saml, entityId);
 
-            if (facade == null) {
+            if (facade == null || !facade.isPresent()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);
                 return super.getAttributesInternal(attrs, service);
             }
 
-            final EntityDescriptor input = facade.getEntityDescriptor();
+            final EntityDescriptor input = facade.get().getEntityDescriptor();
             if (input == null) {
                 LOGGER.warn("Could not locate entity descriptor for [{}] to process attributes", entityId);
                 return super.getAttributesInternal(attrs, service);
             }
-            return getAttributesForSamlRegisteredService(attrs, saml, ctx, resolver, facade, input);
+            return getAttributesForSamlRegisteredService(attrs, saml, ctx, resolver, facade.get(), input);
         }
         return super.getAttributesInternal(attrs, service);
     }

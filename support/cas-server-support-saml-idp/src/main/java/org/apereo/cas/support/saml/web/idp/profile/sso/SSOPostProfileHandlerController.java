@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile;
+package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;

@@ -47,9 +47,9 @@ public class CasCoreLogoutConfiguration {
     @Qualifier("authenticationRequestServiceSelectionStrategies")
     private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
-    @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceLogoutUrlBuilder")
+    @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
     @Bean
-    public SingleLogoutServiceLogoutUrlBuilder defaultSingleLogoutServiceLogoutUrlBuilder() {
+    public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
         return new DefaultSingleLogoutServiceLogoutUrlBuilder();
     }
 
@@ -59,7 +59,7 @@ public class CasCoreLogoutConfiguration {
         return new DefaultSingleLogoutServiceMessageHandler(httpClient,
                 logoutBuilder(),
                 servicesManager,
-                defaultSingleLogoutServiceLogoutUrlBuilder(),
+                singleLogoutServiceLogoutUrlBuilder(),
                 casProperties.getSlo().isAsynchronous(),
                 authenticationRequestServiceSelectionStrategies);
     }
