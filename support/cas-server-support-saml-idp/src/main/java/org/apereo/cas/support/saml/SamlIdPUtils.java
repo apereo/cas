@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -109,17 +110,23 @@ public final class SamlIdPUtils {
      * @return the chaining metadata resolver for all saml services
      */
     public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
-                                                                         final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver) {
+                                                                         final String entityID, 
+                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
             final List<MetadataResolver> resolvers;
             final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
             resolvers = registeredServices.stream()
+                    .filter(SamlRegisteredService.class::isInstance)
                     .map(SamlRegisteredService.class::cast)
-                    .map(samlRegisteredService -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityID))
+                    .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
                     .collect(Collectors.toList());
+            
+            LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", entityID);
             chainingMetadataResolver.setResolvers(resolvers);
             chainingMetadataResolver.setId(entityID);
             chainingMetadataResolver.initialize();

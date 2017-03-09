@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPSingleLogoutServiceLogoutUrlBuilder}.
@@ -21,7 +22,7 @@ import java.net.URL;
  */
 public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLogoutServiceLogoutUrlBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPSingleLogoutServiceLogoutUrlBuilder.class);
-    
+
     /**
      * The Services manager.
      */
@@ -44,24 +45,39 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
         try {
             if (registeredService instanceof SamlRegisteredService) {
-                final URIBuilder builder = new URIBuilder(singleLogoutService.getOriginalUrl());
-                for (final URIBuilder.BasicNameValuePair basicNameValuePair : builder.getQueryParams()) {
-                    if (basicNameValuePair.getName().equalsIgnoreCase(SamlProtocolConstants.PARAMETER_ENTITY_ID)) {
-                        final String entityID = basicNameValuePair.getValue();
-
-                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
-                                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                                        SamlRegisteredService.class.cast(registeredService), entityID);
-
-                        final String location = adaptor.getSingleLogoutService().getLocation();
-                        return new URL(location);
-                    }
+                final URL location = buildLogoutUrl(registeredService, singleLogoutService);
+                if (location != null) {
+                    LOGGER.info("Final logout URL built for [{}] is [{}]", registeredService, location);
+                    return location;
                 }
             }
-
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        LOGGER.debug("Service [{}] is not a SAML service, or its logout url could not be determined", registeredService);
         return super.determineLogoutUrl(registeredService, singleLogoutService);
+    }
+
+    private URL buildLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) throws Exception {
+        LOGGER.debug("Building logout url for SAML service [{}]", registeredService);
+        final URIBuilder builder = new URIBuilder(singleLogoutService.getOriginalUrl());
+        for (final URIBuilder.BasicNameValuePair basicNameValuePair : builder.getQueryParams()) {
+            if (basicNameValuePair.getName().equalsIgnoreCase(SamlProtocolConstants.PARAMETER_ENTITY_ID)) {
+                final String entityID = basicNameValuePair.getValue();
+                LOGGER.debug("Located entity id [{}] in the original URL [{}]", entityID, singleLogoutService.getOriginalUrl());
+
+                final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
+                        SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+                                SamlRegisteredService.class.cast(registeredService), entityID);
+
+                if (!adaptor.isPresent()) {
+                    LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
+                    return null;
+                }
+                final String location = adaptor.get().getSingleLogoutService().getLocation();
+                return new URL(location);
+            }
+        }
+        return null;
     }
 }

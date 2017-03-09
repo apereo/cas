@@ -21,6 +21,7 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/cas/idp/profile/SAML2/Redirect/SSO`
 - `/cas/idp/profile/SAML2/POST/SSO`
 - `/cas/idp/profile/SAML2/POST/SLO`
+- `/cas/idp/profile/SAML2/Redirect/SLO`
 - `/cas/idp/profile/SAML2/Unsolicited/SSO`
 - `/cas/idp/profile/SAML2/SOAP/ECP`
 
