@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
@@ -13,7 +14,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -26,7 +26,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -49,7 +48,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                                                                 final CentralAuthenticationService centralAuthenticationService,
                                                                 final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
                                                                 final CookieGenerator warnCookieGenerator,
-                                                                final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                                final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                                 final MultifactorAuthenticationProviderSelector selector,
                                                                 final CasConfigurationProperties casProperties, final GeoLocationService geoLocationService) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,

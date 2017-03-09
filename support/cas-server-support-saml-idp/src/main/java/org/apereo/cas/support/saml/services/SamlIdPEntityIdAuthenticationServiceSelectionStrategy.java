@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.jasig.cas.client.util.URIBuilder;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.slf4j.Logger;
@@ -11,19 +11,19 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 /**
- * This is {@link SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy}.
+ * This is {@link SamlIdPEntityIdAuthenticationServiceSelectionStrategy}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy implements AuthenticationRequestServiceSelectionStrategy {
+public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPEntityIdAuthenticationServiceSelectionStrategy.class);
     
     private ServiceFactory webApplicationServiceFactory;
 
-    public SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory) {
+    public SamlIdPEntityIdAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory) {
         this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
@@ -40,7 +40,7 @@ public class SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy implem
     }
 
     @Override
-    public int compareTo(final AuthenticationRequestServiceSelectionStrategy o) {
+    public int compareTo(final AuthenticationServiceSelectionStrategy o) {
         return 0;
     }
 

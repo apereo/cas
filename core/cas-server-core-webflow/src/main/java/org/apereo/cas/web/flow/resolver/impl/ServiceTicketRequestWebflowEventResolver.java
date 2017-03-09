@@ -5,6 +5,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
@@ -13,7 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -23,7 +23,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,7 +38,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
     public ServiceTicketRequestWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                     final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
                                                     final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
-                                                    final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                    final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                     final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
                 authenticationSelectionStrategies, selector);

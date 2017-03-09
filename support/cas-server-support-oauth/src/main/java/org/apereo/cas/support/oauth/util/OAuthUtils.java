@@ -28,6 +28,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
+
 /**
  * This class has some usefull methods to output data in plain text,
  * handle redirects, add parameter in url or find the right provider.
@@ -164,6 +166,16 @@ public final class OAuthUtils {
         return new ModelAndView(OAuthConstants.ERROR_VIEW, model);
     }
 
+    /**
+     * Cas oauth callback url.
+     *
+     * @param serverPrefixUrl the server prefix url
+     * @return the string
+     */
+    public static String casOAuthCallbackUrl(final String serverPrefixUrl) {
+        return serverPrefixUrl.concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+    }
+    
     /**
      * Jsonify string.
      *

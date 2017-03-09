@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -12,7 +13,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -24,7 +24,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,16 +35,16 @@ import java.util.Set;
  */
 public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceMultifactorAuthenticationPolicyEventResolver.class);
-    
+
     public RegisteredServiceMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                          final CentralAuthenticationService centralAuthenticationService,
                                                                          final ServicesManager servicesManager,
                                                                          final TicketRegistrySupport ticketRegistrySupport,
                                                                          final CookieGenerator warnCookieGenerator,
-                                                                         final List<AuthenticationRequestServiceSelectionStrategy> authSelectionStrategies,
+                                                                         final AuthenticationServiceSelectionPlan authSelectionStrategies,
                                                                          final MultifactorAuthenticationProviderSelector selector) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator, authSelectionStrategies,
-                selector);
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
+                ticketRegistrySupport, warnCookieGenerator, authSelectionStrategies, selector);
     }
 
     @Override

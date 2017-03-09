@@ -22,7 +22,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,13 +78,13 @@ public abstract class AbstractOAuth20Tests {
 
         @Lazy
         @Autowired
-        @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
-        private AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy;
+        @Qualifier("oauth20AuthenticationServiceSelectionStrategy")
+        private AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy;
 
         @Bean
-        public List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies() {
+        public List<AuthenticationServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies() {
             final List l = new ArrayList();
-            l.add(oauth20AuthenticationRequestServiceSelectionStrategy);
+            l.add(oauth20AuthenticationServiceSelectionStrategy);
             return l;
         }
 
