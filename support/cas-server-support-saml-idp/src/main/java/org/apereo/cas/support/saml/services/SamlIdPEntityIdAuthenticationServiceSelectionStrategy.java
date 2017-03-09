@@ -1,12 +1,13 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.client.util.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 
 import java.util.Optional;
 
@@ -20,7 +21,8 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
     private static final long serialVersionUID = -2059445756475980894L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPEntityIdAuthenticationServiceSelectionStrategy.class);
-    
+
+    private int order = Ordered.HIGHEST_PRECEDENCE;
     private ServiceFactory webApplicationServiceFactory;
 
     public SamlIdPEntityIdAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory) {
@@ -39,11 +41,6 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
         return getEntityIdAsParameter(service).isPresent();
     }
 
-    @Override
-    public int compareTo(final AuthenticationServiceSelectionStrategy o) {
-        return 0;
-    }
-
     /**
      * Gets entity id as parameter.
      *
@@ -55,5 +52,10 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
         final Optional<URIBuilder.BasicNameValuePair> param = builder.getQueryParams().stream()
                 .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
         return param;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
     }
 }

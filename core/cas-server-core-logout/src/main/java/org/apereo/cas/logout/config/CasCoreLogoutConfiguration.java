@@ -1,5 +1,6 @@
 package org.apereo.cas.logout.config;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
@@ -44,8 +45,8 @@ public class CasCoreLogoutConfiguration {
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("authenticationRequestServiceSelectionStrategies")
-    private List<AuthenticationServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
     @Bean

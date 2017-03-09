@@ -1,6 +1,6 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RegisteredService;
@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
 
 /**
  * This is {@link DefaultSingleLogoutServiceMessageHandler} which handles the processing of logout messages
@@ -28,7 +27,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     private boolean asynchronous = true;
     private final LogoutMessageCreator logoutMessageBuilder;
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
-    private final List<AuthenticationServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     /**
      * Instantiates a new Single logout service message handler.
@@ -43,7 +42,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
                                                     final ServicesManager servicesManager,
                                                     final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
                                                     final boolean asyncCallbacks,
-                                                    final List authenticationRequestServiceSelectionStrategies) {
+                                                    final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
         this.httpClient = httpClient;
         this.logoutMessageBuilder = logoutMessageCreator;
         this.servicesManager = servicesManager;
@@ -63,13 +62,8 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     public LogoutRequest handle(final WebApplicationService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
 
-            final WebApplicationService selectedService = (WebApplicationService) this.authenticationRequestServiceSelectionStrategies.stream()
-                    .sorted()
-                    .filter(s -> s.supports(singleLogoutService))
-                    .findFirst()
-                    .get()
-                    .resolveServiceFrom(singleLogoutService);
-
+            final WebApplicationService selectedService = WebApplicationService.class.cast(
+                    this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService));
 
             LOGGER.debug("Processing logout request for service [{}]", selectedService);
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
@@ -85,7 +79,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
 
                 final LogoutType type = registeredService.getLogoutType() == null ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
                 LOGGER.debug("Logout type registered for [{}] is [{}]", selectedService, type);
-                
+
                 switch (type) {
                     case BACK_CHANNEL:
                         if (performBackChannelLogout(logoutRequest)) {

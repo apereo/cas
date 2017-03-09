@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -13,6 +14,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuthConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -62,6 +64,8 @@ import java.util.List;
                 CasOAuthConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreConfiguration.class,
+                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+                CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
                 CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
@@ -75,19 +79,7 @@ public abstract class AbstractOAuth20Tests {
 
     @Configuration
     public static class OAuthTestConfiguration {
-
-        @Lazy
-        @Autowired
-        @Qualifier("oauth20AuthenticationServiceSelectionStrategy")
-        private AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy;
-
-        @Bean
-        public List<AuthenticationServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies() {
-            final List l = new ArrayList();
-            l.add(oauth20AuthenticationServiceSelectionStrategy);
-            return l;
-        }
-
+        
         @Bean
         public List inMemoryRegisteredServices() {
             final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*");
