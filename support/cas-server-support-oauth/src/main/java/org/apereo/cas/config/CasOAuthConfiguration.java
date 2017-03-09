@@ -132,8 +132,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
         final DirectFormClient directFormClient = new DirectFormClient(authenticator);
         directFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM);
-        directFormClient.setUsernameParameter(OAuthConstants.CLIENT_ID);
-        directFormClient.setPasswordParameter(OAuthConstants.CLIENT_SECRET);
+        directFormClient.setUsernameParameter(CLIENT_ID);
+        directFormClient.setPasswordParameter(CLIENT_SECRET);
 
         final DirectFormClient userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
@@ -348,8 +348,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @PostConstruct
     public void initializeServletApplicationContext() {
-        final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + BASE_OAUTH20_URL + '/'
-                + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+        final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + BASE_OAUTH20_URL + '/' + CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         final Service callbackService = this.webApplicationServiceFactory.createService(oAuthCallbackUrl);
         final RegisteredService svc = servicesManager.findServiceBy(callbackService);
