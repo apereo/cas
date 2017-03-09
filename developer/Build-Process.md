@@ -18,7 +18,7 @@ git clone git@github.com:apereo/cas.git cas-server
 Or a quicker clone:
 
 ```bash
-git clone --depth=1 git@github.com:apereo/cas.git cas-server
+git clone --depth=1 --single-branch --branch=master git@github.com:apereo/cas.git cas-server
 # git fetch --unshallow
 ```
 
