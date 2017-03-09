@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.web.flow;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -25,10 +25,10 @@ public class OidcRegisteredServiceUIAction extends AbstractAction implements Ser
     private static final long serialVersionUID = -8016284160122109307L;
     private final transient ServicesManager servicesManager;
 
-    private final transient AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy;
+    private final transient AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
     public OidcRegisteredServiceUIAction(final ServicesManager servicesManager,
-                                         final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy) {
+                                         final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
         this.servicesManager = servicesManager;
         this.serviceSelectionStrategy = serviceSelectionStrategy;
     }
