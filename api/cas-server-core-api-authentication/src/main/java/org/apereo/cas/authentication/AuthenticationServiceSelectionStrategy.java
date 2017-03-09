@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 
@@ -19,13 +20,8 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface AuthenticationServiceSelectionStrategy extends Serializable, Comparable<AuthenticationServiceSelectionStrategy> {
-
-    /**
-     * Defined order of the strategy in the list of available processors. 
-     */
-    int MAX_ORDER = Integer.MAX_VALUE;
-    
+public interface AuthenticationServiceSelectionStrategy extends Serializable, Ordered {
+        
     /**
      * Resolves the real service from the provided service, if appropriate.
      *

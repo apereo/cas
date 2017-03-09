@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 
 import java.util.Optional;
 
@@ -28,10 +29,9 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthenticationServiceSelectionStrategy.class);
 
     private final ServicesManager servicesManager;
-
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
     private final String callbackUrl;
+    private int order = Ordered.HIGHEST_PRECEDENCE;
 
     public OAuth20AuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -83,7 +83,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     }
 
     @Override
-    public int compareTo(final AuthenticationServiceSelectionStrategy o) {
-        return 0;
+    public int getOrder() {
+        return order;
     }
 }
