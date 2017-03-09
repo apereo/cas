@@ -12,7 +12,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuth20DefaultCasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
