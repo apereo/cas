@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -36,7 +37,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.SecureRandom;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -116,13 +117,16 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         }
 
         final SamlRegisteredService registeredService = verifySamlRegisteredService(providerId);
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, providerId);
+        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor = getSamlMetadataFacadeFor(registeredService, providerId);
+        if (!adaptor.isPresent()) {
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + providerId);
+        }
 
         // The URL of the response location at the SP (called the "Assertion Consumer Service")
         // but can be omitted in favor of the IdP picking the default endpoint location from metadata.
         String shire = CommonUtils.safeGetParameter(request, SamlIdPConstants.SHIRE);
         if (StringUtils.isBlank(shire)) {
-            shire = adaptor.getAssertionConsumerService().getLocation();
+            shire = adaptor.get().getAssertionConsumerService().getLocation();
         }
         if (StringUtils.isBlank(shire)) {
             LOGGER.warn("Unable to resolve SP ACS URL for AuthnRequest construction for entityID: [{}]", providerId);
@@ -150,7 +154,6 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         nameIDPolicy.setAllowCreate(Boolean.TRUE);
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
-        final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
         if (NumberUtils.isCreatable(time)) {
             authnRequest.setIssueInstant(new DateTime(TimeUnit.SECONDS.convert(Long.parseLong(time), TimeUnit.MILLISECONDS),
                     ISOChronology.getInstanceUTC()));
@@ -165,8 +168,8 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         final MessageContext ctx = new MessageContext();
         ctx.setAutoCreateSubcontexts(true);
 
-        if (adaptor.isAuthnRequestsSigned()) {
-            samlObjectSigner.encode(authnRequest, registeredService, adaptor, response, request);
+        if (adaptor.get().isAuthnRequestsSigned()) {
+            samlObjectSigner.encode(authnRequest, registeredService, adaptor.get(), response, request);
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);

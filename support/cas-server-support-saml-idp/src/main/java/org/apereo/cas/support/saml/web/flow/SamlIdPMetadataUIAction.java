@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -14,6 +15,8 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataUIAction}.
@@ -43,15 +46,18 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
             service = serviceSelectionStrategy.resolveServiceFrom(service);
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-
-
+            
             if (registeredService instanceof SamlRegisteredService) {
-
                 final SamlRegisteredService samlService = SamlRegisteredService.class.cast(registeredService);
-                final SamlRegisteredServiceServiceProviderMetadataFacade facade =
+                final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
                         SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
 
-                final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(facade.getEntityDescriptor(),
+                if (!adaptor.isPresent()) {
+                    throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, 
+                            "Cannot find metadata linked to " + service.getId());
+                }
+                
+                final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(adaptor.get().getEntityDescriptor(),
                         service.getId(), registeredService);
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
             }
