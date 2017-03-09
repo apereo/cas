@@ -65,6 +65,7 @@ import java.util.List;
                 CasCoreTicketsConfiguration.class,
                 CasCoreConfiguration.class,
                 CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
                 CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
