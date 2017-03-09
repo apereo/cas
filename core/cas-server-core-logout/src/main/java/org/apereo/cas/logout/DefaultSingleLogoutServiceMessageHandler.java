@@ -1,11 +1,11 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     private boolean asynchronous = true;
     private final LogoutMessageCreator logoutMessageBuilder;
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
-    private final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+    private final List<AuthenticationServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     /**
      * Instantiates a new Single logout service message handler.
