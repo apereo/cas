@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 
@@ -21,10 +19,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
         implements VariegatedMultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
-
-    @Autowired
-    protected CasConfigurationProperties casProperties;
-
+    
     private Collection<MultifactorAuthenticationProvider> providers = new HashSet<>();
 
     public DefaultVariegatedMultifactorAuthenticationProvider() {

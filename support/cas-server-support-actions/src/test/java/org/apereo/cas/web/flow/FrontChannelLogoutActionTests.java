@@ -22,7 +22,6 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowExecutionKey;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.*;

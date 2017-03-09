@@ -16,9 +16,21 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractCasEventRepository implements CasEventRepository {
 
+    /**
+     * The constant LOGGER.
+     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasEventRepository.class);
+    /**
+     * The constant TYPE_PARAM.
+     */
     protected static final String TYPE_PARAM = "type";
+    /**
+     * The constant CREATION_TIME_PARAM.
+     */
     protected static final String CREATION_TIME_PARAM = "creationTime";
+    /**
+     * The constant PRINCIPAL_ID_PARAM.
+     */
     protected static final String PRINCIPAL_ID_PARAM = "principalId";
 
     @Override
