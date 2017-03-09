@@ -6,6 +6,7 @@ import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
@@ -16,7 +17,6 @@ import org.apereo.cas.support.events.authentication.adaptive.CasRiskBasedAuthent
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationMitigatedEvent;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -27,7 +27,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,7 +45,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
     public RiskAwareAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                        final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
                                                        final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
-                                                       final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                       final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                        final MultifactorAuthenticationProviderSelector selector,
                                                        final AuthenticationRiskEvaluator authenticationRiskEvaluator,
                                                        final AuthenticationRiskMitigator authenticationRiskMitigator,

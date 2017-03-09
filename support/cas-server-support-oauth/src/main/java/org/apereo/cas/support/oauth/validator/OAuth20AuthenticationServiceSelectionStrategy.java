@@ -4,28 +4,28 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 /**
- * This is {@link OAuth20AuthenticationRequestServiceSelectionStrategy}.
+ * This is {@link OAuth20AuthenticationServiceSelectionStrategy}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OAuth20AuthenticationRequestServiceSelectionStrategy implements AuthenticationRequestServiceSelectionStrategy {
+public class OAuth20AuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthenticationRequestServiceSelectionStrategy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthenticationServiceSelectionStrategy.class);
 
     private final ServicesManager servicesManager;
 
@@ -33,9 +33,9 @@ public class OAuth20AuthenticationRequestServiceSelectionStrategy implements Aut
 
     private final String callbackUrl;
 
-    public OAuth20AuthenticationRequestServiceSelectionStrategy(final ServicesManager servicesManager,
-                                                                final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                                final String callbackUrl) {
+    public OAuth20AuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
+                                                         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                                         final String callbackUrl) {
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.callbackUrl = callbackUrl;
@@ -83,7 +83,7 @@ public class OAuth20AuthenticationRequestServiceSelectionStrategy implements Aut
     }
 
     @Override
-    public int compareTo(final AuthenticationRequestServiceSelectionStrategy o) {
+    public int compareTo(final AuthenticationServiceSelectionStrategy o) {
         return 0;
     }
 }

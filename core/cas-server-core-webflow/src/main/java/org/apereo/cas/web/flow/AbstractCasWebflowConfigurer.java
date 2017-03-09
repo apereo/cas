@@ -218,16 +218,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         setStartState(flow, state.getId());
     }
 
-    /**
-     * From string to class type, based on the flow conversion service.
-     *
-     * @param targetType the target type
-     * @return the conversion executor
-     */
-    protected ConversionExecutor convertClassToTargetType(final Class targetType) {
-        return this.flowBuilderServices.getConversionService().getConversionExecutor(String.class, targetType);
-    }
-
     @Override
     public EvaluateAction createEvaluateAction(final String expression) {
         if (this.flowBuilderServices == null) {

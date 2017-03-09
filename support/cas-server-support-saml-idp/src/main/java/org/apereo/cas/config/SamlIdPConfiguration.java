@@ -9,22 +9,15 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.ChainingMetadataResolverCacheLoader;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.DefaultSamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIAction;
-import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIWebflowConfigurer;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlMetadataController;
 import org.apereo.cas.support.saml.web.idp.metadata.TemplatedMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.profile.ECPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileCallbackHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.DefaultAuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -42,9 +35,11 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignat
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11FaultResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11ResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SLOPostProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileCallbackHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -63,12 +58,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.ui.velocity.VelocityEngineFactory;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
 
 /**
  * The {@link SamlIdPConfiguration}.
@@ -94,11 +83,7 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
-
-    @Autowired
-    @Qualifier("authenticationRequestServiceSelectionStrategies")
-    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
-
+    
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
     private VelocityEngineFactory velocityEngineFactory;
@@ -110,44 +95,12 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
-
-    @Autowired(required = false)
-    @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
-    @Autowired(required = false)
-    private FlowBuilderServices flowBuilderServices;
-
-    @ConditionalOnMissingBean(name = "samlIdPMetadataUIWebConfigurer")
-    @Bean
-    public CasWebflowConfigurer samlIdPMetadataUIWebConfigurer() {
-        return new SamlIdPMetadataUIWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, samlIdPMetadataUIParserAction());
-    }
-
-    @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
-    @Bean
-    public Action samlIdPMetadataUIParserAction() {
-        return new SamlIdPMetadataUIAction(servicesManager,
-                defaultSamlRegisteredServiceCachingMetadataResolver(),
-                samlIdPEntityIdValidationServiceSelectionStrategy());
-    }
-
-    @PostConstruct
-    public void init() {
-        this.authenticationRequestServiceSelectionStrategies.add(0, samlIdPEntityIdValidationServiceSelectionStrategy());
-    }
-    
+        
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
         return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver());
     }
-
-    @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
-    @Bean
-    public AuthenticationRequestServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        return new SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy(webApplicationServiceFactory);
-    }
-
+    
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
     @Bean
     @RefreshScope

@@ -4,6 +4,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -57,7 +59,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -85,7 +86,6 @@ import org.springframework.webflow.execution.Action;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -142,8 +142,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
-    private AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy;
+    @Qualifier("oauth20AuthenticationServiceSelectionStrategy")
+    private AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -185,8 +185,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private OAuthCodeFactory defaultOAuthCodeFactory;
 
     @Autowired
-    @Qualifier("authenticationRequestServiceSelectionStrategies")
-    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
@@ -346,7 +346,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "oidcRegisteredServiceUIAction")
     @Bean
     public Action oidcRegisteredServiceUIAction() {
-        return new OidcRegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationRequestServiceSelectionStrategy);
+        return new OidcRegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationServiceSelectionStrategy);
     }
 
     @Bean
