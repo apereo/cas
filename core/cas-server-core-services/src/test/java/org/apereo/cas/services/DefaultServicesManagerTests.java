@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -143,7 +142,7 @@ public class DefaultServicesManagerTests {
         this.defaultServicesManager.save(r);
 
         final SimpleService service = new SimpleService("HTTP://www.TEST.edu/param=hello");
-        Assert.assertEquals(r, this.defaultServicesManager.findServiceBy(service));
+        assertEquals(r, this.defaultServicesManager.findServiceBy(service));
     }
 
     @Test
@@ -152,7 +151,7 @@ public class DefaultServicesManagerTests {
 
         defaultServicesManager.getAllServices().forEach(svc -> defaultServicesManager.delete(svc.getId()));
 
-        assertTrue(this.defaultServicesManager.getAllServices().size() == 0);
+        assertSame(0, this.defaultServicesManager.getAllServices().size());
         assertNull(this.defaultServicesManager.findServiceBy(s));
         assertNull(this.defaultServicesManager.findServiceBy(1000));
     }
