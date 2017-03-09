@@ -5,8 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.UniqueTicketIdGeneratorConfigurer;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,12 +22,10 @@ import java.util.Collections;
 @Configuration("casDefaultServiceTicketIdGeneratorsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueTicketIdGeneratorConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasDefaultServiceTicketIdGeneratorsConfiguration.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    
+
     @Bean
     public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.ServiceTicketIdGenerator(
@@ -37,7 +33,6 @@ public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueT
                 casProperties.getHost().getName());
     }
 
-    
     @Override
     public Collection<Pair<String, UniqueTicketIdGenerator>> buildUniqueTicketIdGenerators() {
         return Collections.singleton(Pair.of("org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl",

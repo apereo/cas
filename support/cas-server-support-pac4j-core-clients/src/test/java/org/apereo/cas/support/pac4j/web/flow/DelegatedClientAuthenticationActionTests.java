@@ -97,9 +97,9 @@ public class DelegatedClientAuthenticationActionTests {
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls =
                 (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>) flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
-        assertFalse(urls.isEmpty());
 
-        assertTrue(urls.size() == 2);
+        assertFalse(urls.isEmpty());
+        assertSame(2, urls.size());
     }
 
     @Test

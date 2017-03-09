@@ -7,8 +7,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,7 +26,6 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class RestPasswordManagementService extends BasePasswordManagementService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestPasswordManagementService.class);
 
     private final RestTemplate restTemplate;
 

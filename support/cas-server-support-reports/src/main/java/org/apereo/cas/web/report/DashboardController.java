@@ -37,9 +37,6 @@ public class DashboardController extends BaseCasMvcEndpoint {
     private EnvironmentEndpoint environmentEndpoint;
 
     @Autowired
-    private Environment environment;
-
-    @Autowired
     private ApplicationContext applicationContext;
 
     private CasConfigurationProperties casProperties;

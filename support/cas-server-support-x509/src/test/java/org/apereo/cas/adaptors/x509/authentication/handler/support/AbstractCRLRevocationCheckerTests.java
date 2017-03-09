@@ -1,16 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import java.security.cert.X509Certificate;
-
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.AbstractCRLRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+
+import java.security.GeneralSecurityException;
+import java.security.cert.X509Certificate;
 
 /**
  * Base class for {@link RevocationChecker} unit tests.
@@ -21,8 +19,6 @@ import org.springframework.core.io.ClassPathResource;
  */
 public abstract class AbstractCRLRevocationCheckerTests {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCRLRevocationCheckerTests.class);
-    
     /** Certificate to be tested. */
     private X509Certificate[] certificates;
 
@@ -35,10 +31,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
      * @param certFiles File names of certificates to check.
      * @param expected Expected result of check; null to indicate expected success.
      */
-    public AbstractCRLRevocationCheckerTests(
-            final String[] certFiles,
-            final GeneralSecurityException expected) {
-
+    public AbstractCRLRevocationCheckerTests(final String[] certFiles, final GeneralSecurityException expected) {
         this.expected = expected;
         this.certificates = new X509Certificate[certFiles.length];
         int i = 0;
