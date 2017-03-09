@@ -86,8 +86,8 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             request.setEntity(entity);
 
             final ResponseHandler<Boolean> handler = response -> response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-            final HttpRequestFutureTask<Boolean> task = this.requestExecutorService.execute(request,
-                    HttpClientContext.create(), handler);
+            LOGGER.debug("Created HTTP post message payload [{}]", request);
+            final HttpRequestFutureTask<Boolean> task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
             if (message.isAsynchronous()) {
                 return true;
             }

@@ -4,10 +4,8 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.jasig.cas.client.util.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,24 +58,18 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
     private URL buildLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) throws Exception {
         LOGGER.debug("Building logout url for SAML service [{}]", registeredService);
-        final URIBuilder builder = new URIBuilder(singleLogoutService.getOriginalUrl());
-        for (final URIBuilder.BasicNameValuePair basicNameValuePair : builder.getQueryParams()) {
-            if (basicNameValuePair.getName().equalsIgnoreCase(SamlProtocolConstants.PARAMETER_ENTITY_ID)) {
-                final String entityID = basicNameValuePair.getValue();
-                LOGGER.debug("Located entity id [{}] in the original URL [{}]", entityID, singleLogoutService.getOriginalUrl());
+        final String entityID = singleLogoutService.getId();
+        LOGGER.debug("Located entity id [{}]", entityID);
 
-                final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
-                        SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                                SamlRegisteredService.class.cast(registeredService), entityID);
+        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
+                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+                        SamlRegisteredService.class.cast(registeredService), entityID);
 
-                if (!adaptor.isPresent()) {
-                    LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
-                    return null;
-                }
-                final String location = adaptor.get().getSingleLogoutService().getLocation();
-                return new URL(location);
-            }
+        if (!adaptor.isPresent()) {
+            LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
+            return null;
         }
-        return null;
+        final String location = adaptor.get().getSingleLogoutService().getLocation();
+        return new URL(location);
     }
 }
