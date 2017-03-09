@@ -83,6 +83,7 @@ import static org.junit.Assert.*;
                 CasCoreWebConfiguration.class,
                 CasCoreValidationConfiguration.class,
                 CasCoreConfiguration.class,
+                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreAuditConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
                 ThymeleafAutoConfiguration.class,
