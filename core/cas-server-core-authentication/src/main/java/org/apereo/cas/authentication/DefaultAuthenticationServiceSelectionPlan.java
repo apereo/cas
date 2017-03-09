@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationServiceSelectionPlan}.
@@ -13,14 +15,14 @@ import java.util.List;
  * @since 5.1.0
  */
 public class DefaultAuthenticationServiceSelectionPlan implements AuthenticationServiceSelectionPlan {
-    private final List<AuthenticationServiceSelectionStrategy> strategies; 
+    private final List<AuthenticationServiceSelectionStrategy> strategies;
 
     public DefaultAuthenticationServiceSelectionPlan() {
         this.strategies = new ArrayList<>();
     }
 
     public DefaultAuthenticationServiceSelectionPlan(final AuthenticationServiceSelectionStrategy... strategies) {
-        this.strategies = Arrays.asList(strategies);
+        this.strategies = Arrays.stream(strategies).collect(Collectors.toList());
     }
 
     @Override
@@ -30,6 +32,7 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
 
     @Override
     public Service resolveService(final Service service) {
+        OrderComparator.sort(this.strategies);
         return this.strategies.stream()
                 .filter(s -> s.supports(service))
                 .findFirst()
