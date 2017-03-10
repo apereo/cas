@@ -560,6 +560,7 @@ public final class Beans {
         pc.setValidateOnCheckOut(l.isValidateOnCheckout());
         pc.setValidatePeriodically(l.isValidatePeriodically());
         pc.setValidatePeriod(newDuration(l.getValidatePeriod()));
+        pc.setValidateTimeout(newDuration(l.getValidateTimeout()));
         return pc;
     }
 
