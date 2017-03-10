@@ -9,8 +9,6 @@ import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -39,13 +37,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Lazy
-    @Bean
-    public LocalValidatorFactoryBean credentialsValidator() {
-        return new LocalValidatorFactoryBean();
-    }
-
+    
     @RefreshScope
     @Bean
     public ThemeChangeInterceptor themeChangeInterceptor() {

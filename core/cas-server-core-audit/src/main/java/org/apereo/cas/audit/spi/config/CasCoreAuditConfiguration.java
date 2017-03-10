@@ -66,8 +66,8 @@ public class CasCoreAuditConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "auditTrailManager")
-    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
-    public DelegatingAuditTrailManager slf4jAuditTrailManager() {
+    @Bean
+    public DelegatingAuditTrailManager auditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(casProperties.getAudit().isUseSingleLine());
         mgmr.setEntrySeparator(casProperties.getAudit().getSinglelineSeparator());
@@ -78,7 +78,7 @@ public class CasCoreAuditConfiguration {
     @Bean
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         final AuditProperties audit = casProperties.getAudit();
-        
+
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ClientInfoThreadLocalFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
@@ -93,7 +93,7 @@ public class CasCoreAuditConfiguration {
         if (StringUtils.isNotBlank(audit.getAlternateServerAddrHeaderName())) {
             initParams.put(ClientInfoThreadLocalFilter.CONST_SERVER_IP_ADDRESS_HEADER, audit.getAlternateServerAddrHeaderName());
         }
-        
+
         initParams.put(ClientInfoThreadLocalFilter.CONST_USE_SERVER_HOST_ADDRESS, String.valueOf(audit.isUseServerHostAddress()));
         bean.setInitParameters(initParams);
         return bean;
@@ -156,11 +156,12 @@ public class CasCoreAuditConfiguration {
         final AuditActionResolver resolver = authenticationActionResolver();
         map.put("AUTHENTICATION_RESOLVER", resolver);
         map.put("SAVE_SERVICE_ACTION_RESOLVER", resolver);
-        
+        map.put("CHANGE_PASSWORD_ACTION_RESOLVER", resolver);
+
         final AuditActionResolver defResolver = new DefaultAuditActionResolver();
         map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", defResolver);
         map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", defResolver);
-        
+
         final AuditActionResolver cResolver = ticketCreationActionResolver();
         map.put("CREATE_PROXY_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("GRANT_SERVICE_TICKET_RESOLVER", cResolver);
@@ -189,6 +190,7 @@ public class CasCoreAuditConfiguration {
         map.put("GRANT_PROXY_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
         map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());

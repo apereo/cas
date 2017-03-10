@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,6 +18,7 @@ import static org.junit.Assert.*;
  */
 public class DefaultServicesManagerTests {
 
+    private static final String TEST = "test";
     private ServicesManager defaultServicesManager;
     private ServiceRegistryDao dao;
 
@@ -42,8 +42,8 @@ public class DefaultServicesManagerTests {
     public void verifySaveAndGet() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
-        r.setName("test");
-        r.setServiceId("test");
+        r.setName(TEST);
+        r.setServiceId(TEST);
 
         this.defaultServicesManager.save(r);
         assertNotNull(this.defaultServicesManager.findServiceBy(1000));
@@ -73,8 +73,8 @@ public class DefaultServicesManagerTests {
     public void verifySaveWithReturnedPersistedInstance() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000L);
-        r.setName("test");
-        r.setServiceId("test");
+        r.setName(TEST);
+        r.setServiceId(TEST);
 
         final RegisteredService persistedRs = this.defaultServicesManager.save(r);
         assertNotNull(persistedRs);
@@ -85,8 +85,8 @@ public class DefaultServicesManagerTests {
     public void verifyDeleteAndGet() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
-        r.setName("test");
-        r.setServiceId("test");
+        r.setName(TEST);
+        r.setServiceId(TEST);
 
         this.defaultServicesManager.save(r);
         assertEquals(r, this.defaultServicesManager.findServiceBy(r.getId()));
@@ -104,10 +104,10 @@ public class DefaultServicesManagerTests {
     public void verifyMatchesExistingService() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
-        r.setName("test");
-        r.setServiceId("test");
+        r.setName(TEST);
+        r.setServiceId(TEST);
 
-        final Service service = new SimpleService("test");
+        final Service service = new SimpleService(TEST);
         final Service service2 = new SimpleService("fdfa");
 
         this.defaultServicesManager.save(r);
@@ -121,8 +121,8 @@ public class DefaultServicesManagerTests {
     public void verifyAllService() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
-        r.setName("test");
-        r.setServiceId("test");
+        r.setName(TEST);
+        r.setServiceId(TEST);
         r.setEvaluationOrder(2);
 
         this.defaultServicesManager.save(r);
@@ -142,7 +142,7 @@ public class DefaultServicesManagerTests {
         this.defaultServicesManager.save(r);
 
         final SimpleService service = new SimpleService("HTTP://www.TEST.edu/param=hello");
-        Assert.assertEquals(r, this.defaultServicesManager.findServiceBy(service));
+        assertEquals(r, this.defaultServicesManager.findServiceBy(service));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class DefaultServicesManagerTests {
 
         defaultServicesManager.getAllServices().forEach(svc -> defaultServicesManager.delete(svc.getId()));
 
-        assertTrue(this.defaultServicesManager.getAllServices().size() == 0);
+        assertSame(0, this.defaultServicesManager.getAllServices().size());
         assertNull(this.defaultServicesManager.findServiceBy(s));
         assertNull(this.defaultServicesManager.findServiceBy(1000));
     }
@@ -160,20 +160,20 @@ public class DefaultServicesManagerTests {
     public void verifyEvaluationOrderOfServices() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(100);
-        r.setName("test");
-        r.setServiceId("test");
+        r.setName(TEST);
+        r.setServiceId(TEST);
         r.setEvaluationOrder(200);
 
         final RegexRegisteredService r2 = new RegexRegisteredService();
         r2.setId(101);
-        r2.setName("test");
-        r2.setServiceId("test");
+        r2.setName(TEST);
+        r2.setServiceId(TEST);
         r2.setEvaluationOrder(80);
 
         final RegexRegisteredService r3 = new RegexRegisteredService();
         r3.setId(102);
         r3.setName("Sample test service");
-        r3.setServiceId("test");
+        r3.setServiceId(TEST);
         r3.setEvaluationOrder(80);
 
         this.defaultServicesManager.save(r);

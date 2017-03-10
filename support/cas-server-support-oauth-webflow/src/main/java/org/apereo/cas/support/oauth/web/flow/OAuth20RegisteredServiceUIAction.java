@@ -1,12 +1,12 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
-import org.apereo.cas.web.flow.services.BaseRegisteredServiceUserInterfaceInfo;
+import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -24,10 +24,10 @@ public class OAuth20RegisteredServiceUIAction extends AbstractAction implements 
     private static final long serialVersionUID = 5588216693657081923L;
     private final ServicesManager servicesManager;
 
-    private final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy;
+    private final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
     public OAuth20RegisteredServiceUIAction(final ServicesManager servicesManager,
-                                            final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy) {
+                                            final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
         this.servicesManager = servicesManager;
         this.serviceSelectionStrategy = serviceSelectionStrategy;
     }
@@ -42,10 +42,7 @@ public class OAuth20RegisteredServiceUIAction extends AbstractAction implements 
 
             if (registeredService instanceof OAuthRegisteredService) {
                 final OAuthRegisteredService oauthService = OAuthRegisteredService.class.cast(registeredService);
-                WebUtils.putServiceUserInterfaceMetadata(requestContext,
-                        new BaseRegisteredServiceUserInterfaceInfo(oauthService) {
-                            private static final long serialVersionUID = 5929362835967717414L;
-                        });
+                WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
             }
         }
         return success();

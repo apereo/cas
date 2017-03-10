@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -15,7 +15,6 @@ import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,10 +45,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
     
     @Bean
     @RefreshScope
@@ -63,7 +58,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass yubikeyBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getYubikey().getBypass(), ticketRegistrySupport);
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getYubikey().getBypass());
     }
 
     @ConditionalOnMissingBean(name = "yubikeyPrincipalFactory")
@@ -83,17 +78,13 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
         if (yubi.getClientId() <= 0) {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getClientId(),
-                yubi.getSecretKey(), this.registry);
-
-        handler.setPrincipalFactory(yubikeyPrincipalFactory());
-        handler.setServicesManager(servicesManager);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getName(), servicesManager, yubikeyPrincipalFactory(),
+                yubi.getClientId(), yubi.getSecretKey(), this.registry);
 
         if (!casProperties.getAuthn().getMfa().getYubikey().getApiUrls().isEmpty()) {
             final String[] urls = casProperties.getAuthn().getMfa().getYubikey().getApiUrls().toArray(new String[]{});
             handler.getClient().setWsapiUrls(urls);
         }
-        handler.setName(yubi.getName());
         return handler;
     }
     

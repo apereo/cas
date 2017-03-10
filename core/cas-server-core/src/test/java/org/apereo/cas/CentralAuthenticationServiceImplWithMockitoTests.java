@@ -1,12 +1,14 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CredentialMetaData;
-import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -36,7 +38,6 @@ import org.apereo.cas.ticket.factory.DefaultTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -143,10 +144,11 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
                 new DefaultTicketGrantingTicketFactory(null, null, null),
                 new DefaultServiceTicketFactory(null, Collections.emptyMap(), false, null),
                 new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, true));
-        final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies =
-                Collections.singletonList(new DefaultAuthenticationRequestServiceSelectionStrategy());
+        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies =
+                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         this.cas = new DefaultCentralAuthenticationService(ticketRegMock, factory, smMock, mock(LogoutManager.class),
-                authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(), new DefaultPrincipalFactory(), null);
+                authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(), 
+                new DefaultPrincipalFactory(), null);
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
@@ -234,7 +236,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         assertEquals(assertion.getService(), svc);
         assertEquals(assertion.getPrimaryAuthentication().getPrincipal().getId(), PRINCIPAL);
-        assertTrue(assertion.getChainedAuthentications().size() == 2);
+        assertSame(2, assertion.getChainedAuthentications().size());
         IntStream.range(0, assertion.getChainedAuthentications().size())
                 .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
     }

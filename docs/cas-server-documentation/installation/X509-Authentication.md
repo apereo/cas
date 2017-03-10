@@ -56,7 +56,7 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#x509-authentication).
 
 ## Web Server Configuration
 
@@ -82,7 +82,7 @@ The Tomcat server is configured in `$CATALINA_HOME/conf/server.xml` with one or 
 
 One strategy if you are planning to support both X.509 and userid/password validation through the same port is to put a public (VeriSign, Thawte) certificate for this server in the `keystoreFile`, but then put only the institutional internal CA certificate in the `truststoreFile`. Logically and in all the documentation, the Certificate Authority that issues the certificate to the server which the browser trusts is completely and logically independent of the Certificate Authority that issues the certificate to the user which the server then trusts. Java keeps them separate, Tomcat keeps them separate, and browsers should not be confused if, during SSL negotiation, the server requests a user certificate from a CA other than the one that issued the server's own identifying certificate. In this configuration, the Server issues a public certificate every browser will accept and the browser is strongly urged to send only a private institutional certificate that can be mapped to a Principal name.
 
-<div class="alert alert-info"><strong>Almost There</strong><p>If you previously configured CAS without X.509 authentication, then you probably have the `keystoreFile` already configured and 
+<div class="alert alert-info"><strong>Almost There</strong><p>If you previously configured CAS without X.509 authentication, then you probably have the `keystoreFile` already configured and
 loaded with a certificate identifying this server. All you need to add is the `truststoreFile` part.</p></div>
 
 The configured connector will look something like:
@@ -108,8 +108,8 @@ The configured connector will look something like:
     truststorePass="secret" />
 ```
 
-The `clientAuth="want"` tells Tomcat to request that the browser provide a user certificate if one is available. If you want to force the use of user certificates, replace `"want"` with `"true"`. 
-If you specify `"want"` and the browser does not have a certificate, then the CAS may forward the request to the userid/password form.
+The `clientAuth="want"` tells Tomcat to request that the browser provide a user certificate if one is available. If you want to force the use of user certificates, replace `"want"` with `"true"`.
+If you specify `"want"` and the browser does not have a certificate, then CAS may forward the request to the login form.
 
 
 The keystore can be in `JKS` or `PKCS12` format when using Tomcat. When using both `PKCS12` and JKS keystore types then you should specify the type of each keystore by using the `keystoreType` and `truststoreType` attributes.

@@ -40,7 +40,7 @@ public class LdapMonitorConfiguration {
     @Bean
     public Monitor pooledLdapConnectionFactoryMonitor(@Qualifier("pooledConnectionFactoryMonitorExecutorService") final ExecutorService executor) {
         final MonitorProperties.Ldap ldap = casProperties.getMonitor().getLdap();
-        final PooledConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(ldap);
+        final PooledConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(ldap);
         return new PooledLdapConnectionFactoryMonitor(executor, Long.valueOf(ldap.getMaxWait()).intValue(), connectionFactory, new SearchValidator());
     }
 }

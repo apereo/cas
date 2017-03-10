@@ -1,12 +1,14 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.LogoutType;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.junit.Before;
@@ -60,8 +62,10 @@ public class LogoutManagerImplTests {
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
 
-        singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client, new SamlCompliantLogoutMessageCreator(), servicesManager,
-                new DefaultSingleLogoutServiceLogoutUrlBuilder(), true);
+        singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client, 
+                new SamlCompliantLogoutMessageCreator(), servicesManager,
+                new DefaultSingleLogoutServiceLogoutUrlBuilder(), true,
+                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
         final Map<String, Service> services = new HashMap<>();
         this.simpleWebApplicationServiceImpl = RegisteredServiceTestUtils.getService(URL);

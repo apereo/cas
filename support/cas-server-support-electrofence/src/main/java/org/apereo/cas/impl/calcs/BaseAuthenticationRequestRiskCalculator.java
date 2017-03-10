@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.events.CasTicketGrantingTicketCreatedEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ import java.util.Collection;
  * @since 5.1.0
  */
 public abstract class BaseAuthenticationRequestRiskCalculator implements AuthenticationRequestRiskCalculator {
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseAuthenticationRequestRiskCalculator.class);
+    
     /**
      * CAS event repository instance.
      */
@@ -49,7 +49,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
             return new AuthenticationRiskScore(HIGHEST_RISK_SCORE);
         }
         final AuthenticationRiskScore score = new AuthenticationRiskScore(calculateScore(request, authentication, service, events));
-        logger.debug("Calculated authentication risk score by {} is {}", getClass().getSimpleName(), score);
+        LOGGER.debug("Calculated authentication risk score by [{}] is [{}]", getClass().getSimpleName(), score);
         return score;
     }
     
@@ -77,7 +77,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      */
     protected Collection<CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
         final String type = CasTicketGrantingTicketCreatedEvent.class.getName();
-        logger.debug("Retrieving events of type {} for {}", type, principal);
+        LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
         
         final ZonedDateTime date = ZonedDateTime.now()
                 .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());

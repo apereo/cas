@@ -1,5 +1,10 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This is {@link Pac4jProperties}.
  *
@@ -14,9 +19,10 @@ public class Pac4jProperties {
 
     private Facebook facebook = new Facebook();
     private Twitter twitter = new Twitter();
-    private Saml saml = new Saml();
-    private Oidc oidc = new Oidc();
-    private Cas cas = new Cas();
+    private List<Saml> saml = new ArrayList<>();
+    private List<Oidc> oidc = new ArrayList<>();
+    private List<OAuth20> oauth2 = new ArrayList<>();
+    private List<Cas> cas = new ArrayList<>();
 
     private LinkedIn linkedIn = new LinkedIn();
     private Dropbox dropbox = new Dropbox();
@@ -25,8 +31,19 @@ public class Pac4jProperties {
     private Yahoo yahoo = new Yahoo();
     private Foursquare foursquare = new Foursquare();
     private WindowsLive windowsLive = new WindowsLive();
+    private Paypal paypal = new Paypal();
+    private Wordpress wordpress = new Wordpress();
+    private Bitbucket bitbucket = new Bitbucket();
 
     private String name;
+
+    public List<OAuth20> getOauth2() {
+        return oauth2;
+    }
+
+    public void setOauth2(final List<OAuth20> oauth2) {
+        this.oauth2 = oauth2;
+    }
 
     public String getName() {
         return name;
@@ -42,6 +59,30 @@ public class Pac4jProperties {
 
     public void setAutoRedirect(final boolean autoRedirect) {
         this.autoRedirect = autoRedirect;
+    }
+
+    public Bitbucket getBitbucket() {
+        return bitbucket;
+    }
+
+    public void setBitbucket(final Bitbucket bitbucket) {
+        this.bitbucket = bitbucket;
+    }
+
+    public Wordpress getWordpress() {
+        return wordpress;
+    }
+
+    public void setWordpress(final Wordpress wordpress) {
+        this.wordpress = wordpress;
+    }
+
+    public Paypal getPaypal() {
+        return paypal;
+    }
+
+    public void setPaypal(final Paypal paypal) {
+        this.paypal = paypal;
     }
 
     public LinkedIn getLinkedIn() {
@@ -116,27 +157,27 @@ public class Pac4jProperties {
         this.twitter = twitter;
     }
 
-    public void setSaml(final Saml saml) {
+    public void setSaml(final List<Saml> saml) {
         this.saml = saml;
     }
 
-    public void setOidc(final Oidc oidc) {
+    public void setOidc(final List<Oidc> oidc) {
         this.oidc = oidc;
     }
 
-    public void setCas(final Cas cas) {
+    public void setCas(final List<Cas> cas) {
         this.cas = cas;
     }
 
-    public Cas getCas() {
+    public List<Cas> getCas() {
         return this.cas;
     }
 
-    public Saml getSaml() {
+    public List<Saml> getSaml() {
         return this.saml;
     }
 
-    public Oidc getOidc() {
+    public List<Oidc> getOidc() {
         return this.oidc;
     }
 
@@ -226,6 +267,155 @@ public class Pac4jProperties {
         }
     }
 
+    public static class Bitbucket {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class Wordpress {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class Paypal {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class OAuth20 {
+        private String id;
+        private String secret;
+
+        private String authUrl;
+        private String tokenUrl;
+        private String profileUrl;
+        private String profilePath;
+        private String profileVerb = "POST";
+        private Map<String, String> profileAttrs;
+        private Map<String, String> customParams;
+
+        public String getAuthUrl() {
+            return authUrl;
+        }
+
+        public void setAuthUrl(final String authUrl) {
+            this.authUrl = authUrl;
+        }
+
+        public String getTokenUrl() {
+            return tokenUrl;
+        }
+
+        public void setTokenUrl(final String tokenUrl) {
+            this.tokenUrl = tokenUrl;
+        }
+
+        public String getProfileUrl() {
+            return profileUrl;
+        }
+
+        public void setProfileUrl(final String profileUrl) {
+            this.profileUrl = profileUrl;
+        }
+
+        public String getProfilePath() {
+            return profilePath;
+        }
+
+        public void setProfilePath(final String profilePath) {
+            this.profilePath = profilePath;
+        }
+
+        public String getProfileVerb() {
+            return profileVerb;
+        }
+
+        public void setProfileVerb(final String profileVerb) {
+            this.profileVerb = profileVerb;
+        }
+
+        public Map<String, String> getProfileAttrs() {
+            return profileAttrs;
+        }
+
+        public void setProfileAttrs(final Map<String, String> profileAttrs) {
+            this.profileAttrs = profileAttrs;
+        }
+
+        public Map<String, String> getCustomParams() {
+            return customParams;
+        }
+
+        public void setCustomParams(final Map<String, String> customParams) {
+            this.customParams = customParams;
+        }
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+
     public static class Twitter {
         private String id;
         private String secret;
@@ -252,7 +442,7 @@ public class Pac4jProperties {
         private String privateKeyPassword;
         private String keystorePath;
         private String identityProviderMetadataPath;
-        private String maximumAuthenticationLifetime;
+        private int maximumAuthenticationLifetime = 600;
         private String serviceProviderEntityId;
         private String serviceProviderMetadataPath;
 
@@ -288,11 +478,11 @@ public class Pac4jProperties {
             this.identityProviderMetadataPath = identityProviderMetadataPath;
         }
 
-        public String getMaximumAuthenticationLifetime() {
+        public int getMaximumAuthenticationLifetime() {
             return this.maximumAuthenticationLifetime;
         }
 
-        public void setMaximumAuthenticationLifetime(final String maximumAuthenticationLifetime) {
+        public void setMaximumAuthenticationLifetime(final int maximumAuthenticationLifetime) {
             this.maximumAuthenticationLifetime = maximumAuthenticationLifetime;
         }
 
@@ -335,17 +525,31 @@ public class Pac4jProperties {
     }
 
     public static class Oidc {
+        private String type = "generic";
         private String id;
         private String secret;
         private String discoveryUri;
-        private String useNonce;
+        private boolean useNonce;
         private String scope;
         private String preferredJwsAlgorithm;
-        private String maxClockSkew;
-        private String customParamKey1;
-        private String customParamValue1;
-        private String customParamKey2;
-        private String customParamValue2;
+        private int maxClockSkew;
+        private Map<String, String> customParams = new HashMap<>();
+
+        public Map<String, String> getCustomParams() {
+            return customParams;
+        }
+
+        public void setCustomParams(final Map<String, String> customParams) {
+            this.customParams = customParams;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(final String type) {
+            this.type = type;
+        }
 
         public String getScope() {
             return scope;
@@ -379,11 +583,11 @@ public class Pac4jProperties {
             this.discoveryUri = discoveryUri;
         }
 
-        public String getUseNonce() {
-            return this.useNonce;
+        public boolean isUseNonce() {
+            return useNonce;
         }
 
-        public void setUseNonce(final String useNonce) {
+        public void setUseNonce(final boolean useNonce) {
             this.useNonce = useNonce;
         }
 
@@ -395,44 +599,12 @@ public class Pac4jProperties {
             this.preferredJwsAlgorithm = preferredJwsAlgorithm;
         }
 
-        public String getMaxClockSkew() {
+        public int getMaxClockSkew() {
             return this.maxClockSkew;
         }
 
-        public void setMaxClockSkew(final String maxClockSkew) {
+        public void setMaxClockSkew(final int maxClockSkew) {
             this.maxClockSkew = maxClockSkew;
-        }
-
-        public String getCustomParamKey1() {
-            return this.customParamKey1;
-        }
-
-        public void setCustomParamKey1(final String customParamKey1) {
-            this.customParamKey1 = customParamKey1;
-        }
-
-        public String getCustomParamValue1() {
-            return this.customParamValue1;
-        }
-
-        public void setCustomParamValue1(final String customParamValue1) {
-            this.customParamValue1 = customParamValue1;
-        }
-
-        public String getCustomParamKey2() {
-            return this.customParamKey2;
-        }
-
-        public void setCustomParamKey2(final String customParamKey2) {
-            this.customParamKey2 = customParamKey2;
-        }
-
-        public String getCustomParamValue2() {
-            return this.customParamValue2;
-        }
-
-        public void setCustomParamValue2(final String customParamValue2) {
-            this.customParamValue2 = customParamValue2;
         }
     }
 

@@ -26,7 +26,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     public void cleanInternal() {
         LOGGER.debug("Beginning to clean up the cache storage to remove expiring tokens");
         this.storage.cleanUp();
-        LOGGER.debug("Total of {} token(s) remain in the cache and may be removed in future iterations", this.storage.size());
+        LOGGER.debug("Total of [{}] token(s) remain in the cache and may be removed in future iterations", this.storage.size());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
                 final Collection<OneTimeToken> tokens = this.storage.get(token.getUserId());
                 tokens.add(token);
 
-                LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
+                LOGGER.debug("Storing previously used tokens [[{}]] for user [{}]", tokens, token.getUserId());
                 this.storage.put(token.getUserId(), tokens);
             } catch (final Exception e) {
                 LOGGER.warn(e.getMessage(), e);
@@ -54,7 +54,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     public boolean exists(final String uid, final Integer otp) {
         try {
             final Collection<OneTimeToken> tokens = this.storage.getIfPresent(uid);
-            LOGGER.debug("Found used tokens {}", tokens);
+            LOGGER.debug("Found used tokens [{}]", tokens);
             return tokens != null && tokens.stream().anyMatch(t -> t.getToken().equals(otp));
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);

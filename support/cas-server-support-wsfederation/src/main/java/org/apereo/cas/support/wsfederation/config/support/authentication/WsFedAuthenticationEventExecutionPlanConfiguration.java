@@ -56,11 +56,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration implements Authe
     @RefreshScope
     public AuthenticationHandler adfsAuthNHandler() {
         final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
-        final WsFederationAuthenticationHandler h = new WsFederationAuthenticationHandler();
-        h.setPrincipalFactory(adfsPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(wsfed.getName());
-        return h;
+        return new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, adfsPrincipalFactory());
     }
 
     @Bean

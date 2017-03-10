@@ -16,8 +16,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, 
-please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties,
+please [review this guide](Configuration-Properties.html#mongodb-authentication).
 
 Accounts are expected to be found as such in collections:
 
@@ -27,5 +27,5 @@ Accounts are expected to be found as such in collections:
 	"password": "34598dfkjdjk3487jfdkh874395",
 	"first_name": "john",
 	"last_name": "smith"
-} 
+}
 ```

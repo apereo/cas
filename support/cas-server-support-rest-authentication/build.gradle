@@ -2,13 +2,12 @@ description = "Apereo CAS Rest Authentication Support"
 dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-util")
-    compile libraries.spring
-    compile libraries.springboot
-    compile libraries.springcloud
-    compile libraries.pac4j
-    compile libraries.hibernate
-    testCompile project(":core:cas-server-core-services")
-    testCompile project(":core:cas-server-core-authentication")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
+    implementation libraries.httpclient   
+    
+    implementation libraries.pac4j
+
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
 }

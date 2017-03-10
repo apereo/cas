@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,9 +12,6 @@ import javax.servlet.http.HttpServletRequest;
  * @since 4.2
  */
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
-
-    /** Logger instance. */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public <T1 extends Service> T1 createService(final String id, final Class<? extends Service> clazz) {
@@ -68,5 +64,10 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
                 + url.substring(questionMarkPosition);
     }
 
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).toString();
+    }
 }
 

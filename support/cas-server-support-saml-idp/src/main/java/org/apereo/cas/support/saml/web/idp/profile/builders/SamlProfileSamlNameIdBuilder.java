@@ -16,6 +16,8 @@ import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +32,8 @@ import java.util.List;
  */
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
     private static final long serialVersionUID = -6231886395225437320L;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSamlNameIdBuilder.class);
+    
     public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
     }
@@ -61,57 +64,57 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
         final List<String> supportedNameFormats = adaptor.getSupportedNameIdFormats();
-        logger.debug("Metadata for [{}] declares support for the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
+        LOGGER.debug("Metadata for [{}] declares support for the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
 
         if (supportedNameFormats.isEmpty()) {
             supportedNameFormats.add(NameIDType.TRANSIENT);
-            logger.debug("No supported nameId formats could be determined from metadata. Added default {}", NameIDType.TRANSIENT);
+            LOGGER.debug("No supported nameId formats could be determined from metadata. Added default [{}]", NameIDType.TRANSIENT);
         }
         if (StringUtils.isNotBlank(service.getRequiredNameIdFormat())) {
             final String fmt = parseAndBuildRequiredNameIdFormat(service);
             supportedNameFormats.add(0, fmt);
-            logger.debug("Added required nameId format {} based on saml service configuration for {}", fmt, service.getServiceId());
+            LOGGER.debug("Added required nameId format [{}] based on saml service configuration for [{}]", fmt, service.getServiceId());
         }
 
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {
             requiredNameFormat = authnRequest.getNameIDPolicy().getFormat();
-            logger.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
+            LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
             if (NameID.ENCRYPTED.equals(requiredNameFormat)) {
-                logger.warn("Encrypted NameID formats are not supported");
+                LOGGER.warn("Encrypted NameID formats are not supported");
                 requiredNameFormat = null;
             }
         }
 
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
-            logger.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
+            LOGGER.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
                     requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest), adaptor.getEntityId());
             throw new SamlException("Required NameID format cannot be provided because it is not supported");
         }
 
         for (final String nameFormat : supportedNameFormats) {
             try {
-                logger.debug("Evaluating NameID format {}", nameFormat);
+                LOGGER.debug("Evaluating NameID format [{}]", nameFormat);
 
                 final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
                 encoder.setNameFormat(nameFormat);
                 if (authnRequest.getNameIDPolicy() != null) {
                     final String qualifier = authnRequest.getNameIDPolicy().getSPNameQualifier();
-                    logger.debug("NameID qualifier is set to {}", qualifier);
+                    LOGGER.debug("NameID qualifier is set to [{}]", qualifier);
                     encoder.setNameQualifier(qualifier);
                 }
                 final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
                 final IdPAttributeValue<String> value = new StringAttributeValue(assertion.getPrincipal().getName());
-                logger.debug("NameID attribute value is set to {}", assertion.getPrincipal().getName());
+                LOGGER.debug("NameID attribute value is set to [{}]", assertion.getPrincipal().getName());
                 attribute.setValues(Collections.singletonList(value));
-                logger.debug("Encoding NameID based on {}", nameFormat);
+                LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
 
                 final NameID nameid = encoder.encode(attribute);
-                logger.debug("Final NameID encoded is {} with value {}", nameid.getFormat(), nameid.getValue());
+                LOGGER.debug("Final NameID encoded is [{}] with value [{}]", nameid.getFormat(), nameid.getValue());
                 return nameid;
 
             } catch (final Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return null;

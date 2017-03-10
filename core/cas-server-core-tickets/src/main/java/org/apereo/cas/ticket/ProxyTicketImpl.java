@@ -49,4 +49,9 @@ public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
                            final ExpirationPolicy policy) {
         super(id, ticket, service, credentialProvided, policy);
     }
+
+    @Override
+    public String getPrefix() {
+        return ProxyTicket.PREFIX;
+    }
 }

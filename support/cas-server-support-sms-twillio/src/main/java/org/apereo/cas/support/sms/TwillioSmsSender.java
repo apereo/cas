@@ -21,15 +21,17 @@ public class TwillioSmsSender implements SmsSender {
     }
 
     @Override
-    public void send(final String from, final String to, final String message) {
+    public boolean send(final String from, final String to, final String message) {
         try {
             Message.creator(
                     new PhoneNumber(to),
                     new PhoneNumber(from),
                     message).create();
+            return true;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);        
         }
+        return false;
     }
 }
 

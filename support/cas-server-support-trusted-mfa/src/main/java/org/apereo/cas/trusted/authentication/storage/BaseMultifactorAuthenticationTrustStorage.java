@@ -24,7 +24,7 @@ import java.util.Set;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseMultifactorAuthenticationTrustStorage.class);
     
     private CipherExecutor<Serializable, String> cipherExecutor;
 
@@ -32,7 +32,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
             resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
-        logger.debug("Stored authentication trust record for {}", record);
+        LOGGER.debug("Stored authentication trust record for [{}]", record);
         record.setKey(generateKey(record));
         return setInternal(record);
     }

@@ -21,6 +21,9 @@ import static org.junit.Assert.*;
  */
 public class AcceptUsersAuthenticationHandlerTests {
 
+    private static final String SCOTT = "scott";
+    private static final String RUTGERS = "rutgers";
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -28,14 +31,12 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     public AcceptUsersAuthenticationHandlerTests() throws Exception {
         final Map<String, String> users = new HashMap<>();
-        users.put("scott", "rutgers");
+        users.put(SCOTT, RUTGERS);
         users.put("dima", "javarules");
         users.put("bill", "thisisAwesoME");
         users.put("brian", "t�st");
 
-        this.authenticationHandler = new AcceptUsersAuthenticationHandler();
-        this.authenticationHandler.setPrincipalFactory(new DefaultPrincipalFactory());
-        this.authenticationHandler.setUsers(users);
+        this.authenticationHandler = new AcceptUsersAuthenticationHandler("", null, new DefaultPrincipalFactory(), null, users);
     }
 
     @Test
@@ -50,8 +51,8 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifySupportsProperUserCredentials() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
-        c.setUsername("scott");
-        c.setPassword("rutgers");
+        c.setUsername(SCOTT);
+        c.setPassword(RUTGERS);
         assertTrue(this.authenticationHandler.supports(c));
     }
 
@@ -70,11 +71,11 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyAuthenticatesUserInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
-        c.setUsername("scott");
-        c.setPassword("rutgers");
+        c.setUsername(SCOTT);
+        c.setPassword(RUTGERS);
 
         try {
-            assertEquals("scott", this.authenticationHandler.authenticate(c).getPrincipal().getId());
+            assertEquals(SCOTT, this.authenticationHandler.authenticate(c).getPrincipal().getId());
         } catch (final GeneralSecurityException e) {
             fail("Authentication exception caught but it should not have been thrown.");
         }
@@ -85,7 +86,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
-        c.setPassword("rutgers");
+        c.setPassword(RUTGERS);
 
         this.thrown.expect(AccountNotFoundException.class);
         this.thrown.expectMessage("fds not found in backing map.");
@@ -123,7 +124,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyFailsNullPassword() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
-        c.setUsername("scott");
+        c.setUsername(SCOTT);
         c.setPassword(null);
 
         this.thrown.expect(FailedLoginException.class);

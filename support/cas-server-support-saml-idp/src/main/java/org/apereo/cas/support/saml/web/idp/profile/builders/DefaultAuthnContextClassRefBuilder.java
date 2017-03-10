@@ -20,33 +20,30 @@ import java.util.List;
  * @since 5.0.0
  */
 public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefBuilder {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthnContextClassRefBuilder.class);
     @Override
     public String build(final Assertion assertion, final AuthnRequest authnRequest,
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                         final SamlRegisteredService service) {
         final RequestedAuthnContext requestedAuthnContext = authnRequest.getRequestedAuthnContext();
         if (requestedAuthnContext == null) {
-            logger.debug("No specific authN context is requested. Returning [{}]", AuthnContext.UNSPECIFIED_AUTHN_CTX);
+            LOGGER.debug("No specific authN context is requested. Returning [{}]", AuthnContext.UNSPECIFIED_AUTHN_CTX);
             return AuthnContext.UNSPECIFIED_AUTHN_CTX;
         }
         final List<AuthnContextClassRef> authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs();
         if (authnContextClassRefs == null || authnContextClassRefs.isEmpty()) {
-            logger.debug("Requested authN context class ref is unspecified. Returning [{}]", AuthnContext.UNSPECIFIED_AUTHN_CTX);
+            LOGGER.debug("Requested authN context class ref is unspecified. Returning [{}]", AuthnContext.UNSPECIFIED_AUTHN_CTX);
             return AuthnContext.UNSPECIFIED_AUTHN_CTX;
         }
-        logger.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());
-        for (final AuthnContextClassRef authnContextClassRef : authnContextClassRefs) {
-            logger.debug("Requested AuthN Context [{}]", authnContextClassRef.getAuthnContextClassRef());
-        }
+        LOGGER.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());
+        authnContextClassRefs.forEach(authnContextClassRef -> LOGGER.debug("Requested AuthN Context [{}]", authnContextClassRef.getAuthnContextClassRef()));
         if (StringUtils.isNotBlank(service.getRequiredAuthenticationContextClass())) {
-            logger.debug("Using [{}] as indicated by SAML registered service [{}]",
+            LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                     service.getRequiredAuthenticationContextClass(),
                     service.getName());
             return service.getRequiredAuthenticationContextClass();
         }
-        logger.debug("Returning default AuthN Context [{}]", AuthnContext.PPT_AUTHN_CTX);
+        LOGGER.debug("Returning default AuthN Context [{}]", AuthnContext.PPT_AUTHN_CTX);
         return AuthnContext.PPT_AUTHN_CTX;
     }
 }

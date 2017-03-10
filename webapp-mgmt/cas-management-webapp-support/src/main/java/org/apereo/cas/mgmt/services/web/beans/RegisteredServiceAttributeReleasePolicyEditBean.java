@@ -19,7 +19,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         DEFAULT,
 
         /** Mapped type. */
-        CACHED;
+        CACHED
     }
 
     /**
@@ -36,7 +36,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         MULTIVALUED,
 
         /** add type. */
-        ADD;
+        ADD
     }
 
     private String attrFilter;

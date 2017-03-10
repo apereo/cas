@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -11,10 +12,11 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -24,7 +26,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,14 +36,15 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestEndpointMultifactorAuthenticationPolicyEventResolver.class);
+    
     private final String restEndpoint;
 
     public RestEndpointMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                     final CentralAuthenticationService centralAuthenticationService,
                                                                     final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
                                                                     final CookieGenerator warnCookieGenerator,
-                                                                    final List<AuthenticationRequestServiceSelectionStrategy> authSelectionStrategies,
+                                                                    final AuthenticationServiceSelectionPlan authSelectionStrategies,
                                                                     final MultifactorAuthenticationProviderSelector selector,
                                                                     final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator, authSelectionStrategies,
@@ -57,46 +59,46 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
         final String restEndpoint = this.restEndpoint;
 
         if (service == null || authentication == null) {
-            logger.debug("No service or authentication is available to determine event for principal");
+            LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
 
         final Principal principal = authentication.getPrincipal();
         if (StringUtils.isBlank(restEndpoint)) {
-            logger.debug("Rest endpoint to determine event is not configured for {}", principal.getId());
+            LOGGER.debug("Rest endpoint to determine event is not configured for [{}]", principal.getId());
             return null;
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            logger.error("No multifactor authentication providers are available in the application context");
+            LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
         }
 
         final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
 
-        logger.debug("Contacting {} to inquire about {}", restEndpoint, principal.getId());
+        LOGGER.debug("Contacting [{}] to inquire about [{}]", restEndpoint, principal.getId());
         final RestTemplate restTemplate = new RestTemplate();
         final ResponseEntity<String> responseEntity = restTemplate.postForEntity(restEndpoint, principal.getId(), String.class);
         if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
             final String results = responseEntity.getBody();
             if (StringUtils.isNotBlank(results)) {
-                logger.debug("Result returned from the rest endpoint is {}", results);
+                LOGGER.debug("Result returned from the rest endpoint is [{}]", results);
                 final MultifactorAuthenticationProvider restProvider = flattenedProviders.stream()
                         .filter(p -> p.matches(results))
                         .findFirst()
                         .orElse(null);
 
                 if (restProvider != null) {
-                    logger.debug("Found multifactor authentication provider {}", restProvider.getId());
+                    LOGGER.debug("Found multifactor authentication provider [{}]", restProvider.getId());
                     return Collections.singleton(new Event(this, restProvider.getId()));
                 }
-                logger.debug("No multifactor authentication provider could be matched against {}", results);
+                LOGGER.debug("No multifactor authentication provider could be matched against [{}]", results);
                 return Collections.emptySet();
             }
         }
-        logger.debug("No providers are available to match rest endpoint results");
+        LOGGER.debug("No providers are available to match rest endpoint results");
         return Collections.emptySet();
     }
 

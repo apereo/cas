@@ -64,7 +64,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChainingMetadataResolverCacheLoader.class);
 
     /**
      * The Config bean.
@@ -124,7 +124,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      */
     protected void resolveMetadataDynamically(final SamlRegisteredService service, final List<MetadataResolver> metadataResolvers)
             throws Exception {
-        logger.info("Loading metadata dynamically for [{}]", service.getName());
+        LOGGER.info("Loading metadata dynamically for [{}]", service.getName());
 
         final SamlIdPProperties.Metadata md = casProperties.getAuthn().getSamlIdp().getMetadata();
         final FunctionDrivenDynamicHTTPMetadataResolver resolver =
@@ -146,7 +146,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
                 try {
                     if (StringUtils.isNotBlank(input)) {
                         final String metadataLocation = service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(input));
-                        logger.info("Constructed dynamic metadata query [{}] for [{}]", metadataLocation, service.getName());
+                        LOGGER.info("Constructed dynamic metadata query [{}] for [{}]", metadataLocation, service.getName());
                         return metadataLocation;
                     }
                     return null;
@@ -170,7 +170,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
                                                final List<MetadataResolver> metadataResolvers) throws Exception {
 
         final String metadataLocation = service.getMetadataLocation();
-        logger.info("Loading SAML metadata from [{}]", metadataLocation);
+        LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
         final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
 
         if (metadataResource instanceof FileSystemResource) {
@@ -191,7 +191,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
                                                        final String metadataLocation,
                                                        final AbstractResource metadataResource) {
         try (InputStream in = metadataResource.getInputStream()) {
-            logger.debug("Parsing metadata from [{}]", metadataLocation);
+            LOGGER.debug("Parsing metadata from [{}]", metadataLocation);
             final Document document = this.configBean.getParserPool().parse(in);
 
             final Element metadataRoot = document.getDocumentElement();
@@ -211,10 +211,10 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         final File backupDirectory = new File(md.getLocation().getFile(), "metadata-backups");
         final File backupFile = new File(backupDirectory, metadataResource.getFilename());
 
-        logger.debug("Metadata backup directory is designated to be {}", backupDirectory.getCanonicalPath());
+        LOGGER.debug("Metadata backup directory is designated to be [{}]", backupDirectory.getCanonicalPath());
         FileUtils.forceMkdir(backupDirectory);
 
-        logger.debug("Metadata backup file will be at {}", backupFile.getCanonicalPath());
+        LOGGER.debug("Metadata backup file will be at [{}]", backupFile.getCanonicalPath());
         FileUtils.forceMkdirParent(backupFile);
 
         final HttpClientMultithreadedDownloader downloader =
@@ -268,9 +268,9 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
 
         buildMetadataFilters(service, metadataProvider);
 
-        logger.info("Initializing metadata resolver from [{}]", service.getMetadataLocation());
+        LOGGER.info("Initializing metadata resolver from [{}]", service.getMetadataLocation());
         metadataProvider.initialize();
-        logger.info("Initialized metadata resolver from [{}]", service.getMetadataLocation());
+        LOGGER.info("Initialized metadata resolver from [{}]", service.getMetadataLocation());
     }
 
     /**
@@ -294,7 +294,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             final MetadataFilterChain metadataFilterChain = new MetadataFilterChain();
             metadataFilterChain.setFilters(metadataFilterList);
 
-            logger.debug("Metadata filter chain initialized with [{}] filters", metadataFilterList.size());
+            LOGGER.debug("Metadata filter chain initialized with [{}] filters", metadataFilterList.size());
             metadataProvider.setMetadataFilter(metadataFilterChain);
         }
     }
@@ -305,11 +305,11 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             final Set<String> rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
             rolesSet.stream().forEach(s -> {
                 if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    logger.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                    LOGGER.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
                     roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
                 }
                 if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    logger.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                    LOGGER.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
                     roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
                 }
             });
@@ -318,7 +318,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
 
             metadataFilterList.add(filter);
-            logger.debug("Added entity role filter with roles [{}]", roles);
+            LOGGER.debug("Added entity role filter with roles [{}]", roles);
         }
     }
 
@@ -329,7 +329,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
                 && RegexUtils.isValidRegex(service.getMetadataCriteriaPattern())) {
 
             final PredicateFilter.Direction dir = PredicateFilter.Direction.valueOf(service.getMetadataCriteriaDirection());
-            logger.debug("Metadata predicate filter configuring with direction [{}] and pattern [{}]",
+            LOGGER.debug("Metadata predicate filter configuring with direction [{}] and pattern [{}]",
                     service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
 
             final PredicateFilter filter = new PredicateFilter(dir, entityDescriptor ->
@@ -337,7 +337,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
                             && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
 
             metadataFilterList.add(filter);
-            logger.debug("Added metadata predicate filter with direction [{}] and pattern [{}]",
+            LOGGER.debug("Added metadata predicate filter with direction [{}] and pattern [{}]",
                     service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
         }
     }
@@ -352,16 +352,21 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter>
             metadataFilterList) throws Exception {
         if (StringUtils.isBlank(service.getMetadataSignatureLocation())) {
-            logger.warn("No metadata signature location is defined for [{}], so SignatureValidationFilter will not be invoked",
+            LOGGER.warn("No metadata signature location is defined for [{}], so SignatureValidationFilter will not be invoked",
                     service.getMetadataLocation());
             return;
         }
 
         final SignatureValidationFilter signatureValidationFilter =
                 SamlUtils.buildSignatureValidationFilter(service.getMetadataSignatureLocation());
-        signatureValidationFilter.setRequireSignedRoot(false);
-        metadataFilterList.add(signatureValidationFilter);
-        logger.debug("Added metadata SignatureValidationFilter with signature from [{}]", service.getMetadataSignatureLocation());
+        if (signatureValidationFilter != null) {
+            signatureValidationFilter.setRequireSignedRoot(false);
+            metadataFilterList.add(signatureValidationFilter);
+            LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", service.getMetadataSignatureLocation());
+        } else {
+            LOGGER.warn("Skipped metadata SignatureValidationFilter since signature from [{}] cannot be located",
+                    service.getMetadataLocation());
+        }
     }
 
 
@@ -376,9 +381,9 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         if (service.getMetadataMaxValidity() > 0) {
             final RequiredValidUntilFilter requiredValidUntilFilter = new RequiredValidUntilFilter(service.getMetadataMaxValidity());
             metadataFilterList.add(requiredValidUntilFilter);
-            logger.debug("Added metadata RequiredValidUntilFilter with max validity of [{}]", service.getMetadataMaxValidity());
+            LOGGER.debug("Added metadata RequiredValidUntilFilter with max validity of [{}]", service.getMetadataMaxValidity());
         } else {
-            logger.debug("No metadata maximum validity criteria is defined for [{}], so RequiredValidUntilFilter will not be invoked",
+            LOGGER.debug("No metadata maximum validity criteria is defined for [{}], so RequiredValidUntilFilter will not be invoked",
                     service.getMetadataLocation());
         }
     }

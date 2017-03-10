@@ -31,12 +31,13 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String globalAuthenticationAttributeNameTriggers;
     private String globalAuthenticationAttributeValueRegex;
-    
+
     private String contentType = "application/cas";
     private String globalProviderId;
 
     private String grouperGroupField;
 
+    private U2F u2f = new U2F();
     private Azure azure = new Azure();
     private Trusted trusted = new Trusted();
     private YubiKey yubikey = new YubiKey();
@@ -44,6 +45,14 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private GAuth gauth = new GAuth();
     private List<Duo> duo = new ArrayList<>();
     private Authy authy = new Authy();
+
+    public U2F getU2f() {
+        return u2f;
+    }
+
+    public void setU2f(final U2F u2f) {
+        this.u2f = u2f;
+    }
 
     public Azure getAzure() {
         return azure;
@@ -292,6 +301,64 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
             public void setAuthenticationMethodName(final String authenticationMethodName) {
                 this.authenticationMethodName = authenticationMethodName;
+            }
+        }
+    }
+
+    public static class U2F extends BaseProvider {
+        private static final long serialVersionUID = 6151350313777066398L;
+
+        private Memory memory = new Memory();
+        
+        public U2F() {
+            setId("mfa-u2f");
+        }
+
+        public Memory getMemory() {
+            return memory;
+        }
+
+        public void setMemory(final Memory memory) {
+            this.memory = memory;
+        }
+
+        public static class Memory {
+            private long expireRegistrations = 30;
+            private TimeUnit expireRegistrationsTimeUnit = TimeUnit.SECONDS;
+
+            private long expireDevices = 30;
+            private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
+            
+            public long getExpireRegistrations() {
+                return expireRegistrations;
+            }
+
+            public void setExpireRegistrations(final long expireRegistrations) {
+                this.expireRegistrations = expireRegistrations;
+            }
+
+            public TimeUnit getExpireRegistrationsTimeUnit() {
+                return expireRegistrationsTimeUnit;
+            }
+
+            public void setExpireRegistrationsTimeUnit(final TimeUnit expireRegistrationsTimeUnit) {
+                this.expireRegistrationsTimeUnit = expireRegistrationsTimeUnit;
+            }
+
+            public long getExpireDevices() {
+                return expireDevices;
+            }
+
+            public void setExpireDevices(final long expireDevices) {
+                this.expireDevices = expireDevices;
+            }
+
+            public TimeUnit getExpireDevicesTimeUnit() {
+                return expireDevicesTimeUnit;
+            }
+
+            public void setExpireDevicesTimeUnit(final TimeUnit expireDevicesTimeUnit) {
+                this.expireDevicesTimeUnit = expireDevicesTimeUnit;
             }
         }
     }
@@ -830,7 +897,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
              */
             PIN
         }
-        
+
         private String phoneAttributeName = "phone";
         private String configDir;
         private String privateKeyPassword;
@@ -856,7 +923,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         public void setMode(final AuthenticationModes mode) {
             this.mode = mode;
         }
-        
+
         public boolean isAllowInternationalCalls() {
             return allowInternationalCalls;
         }
@@ -881,7 +948,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.privateKeyPassword = privateKeyPassword;
         }
     }
-    
+
     public static class GAuth extends BaseProvider {
         private static final long serialVersionUID = -7401748853833491119L;
         private String issuer = "CASIssuer";
@@ -894,10 +961,20 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private Mongodb mongodb = new Mongodb();
         private Jpa jpa = new Jpa();
         private Json json = new Json();
+        private Rest rest = new Rest();
+
         private Cleaner cleaner = new Cleaner();
-        
+
         public GAuth() {
             setId("mfa-gauth");
+        }
+
+        public Rest getRest() {
+            return rest;
+        }
+
+        public void setRest(final Rest rest) {
+            this.rest = rest;
         }
 
         public Cleaner getCleaner() {
@@ -974,10 +1051,22 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         public static class Json extends AbstractConfigProperties {
         }
-        
+
+        public static class Rest {
+            private String endpointUrl;
+
+            public String getEndpointUrl() {
+                return endpointUrl;
+            }
+
+            public void setEndpointUrl(final String endpointUrl) {
+                this.endpointUrl = endpointUrl;
+            }
+        }
+
         public static class Mongodb extends AbstractMongoClientProperties {
             private String tokenCollection;
-            
+
             public Mongodb() {
                 setCollection("MongoDbGoogleAuthenticatorRepository");
                 setTokenCollection("MongoDbGoogleAuthenticatorTokenRepository");
