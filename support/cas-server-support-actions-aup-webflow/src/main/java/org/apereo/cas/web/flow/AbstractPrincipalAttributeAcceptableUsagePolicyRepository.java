@@ -33,6 +33,10 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
      */
     protected TicketRegistrySupport ticketRegistrySupport;
 
+    public AbstractPrincipalAttributeAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
+    }
+
     @Override
     public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
         final Principal principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
