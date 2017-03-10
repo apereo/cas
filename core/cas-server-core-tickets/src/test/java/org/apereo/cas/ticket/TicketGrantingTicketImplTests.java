@@ -113,7 +113,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyproperRootIsReturned() {
+    public void verifyProperRootIsReturned() {
         final TicketGrantingTicketImpl t1 = new TicketGrantingTicketImpl(TGT_ID, null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final TicketGrantingTicket t2 = new TicketGrantingTicketImpl(TGT_ID,
