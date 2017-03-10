@@ -41,10 +41,7 @@ public class CasEmbeddedContainerConfiguration {
 
     @Autowired
     private ServerProperties serverProperties;
-
-    @Value("${server.tomcat.valve.rewrite.config:classpath:/container/tomcat/rewrite.config}")
-    private Resource rewriteValveConfig;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -120,27 +117,7 @@ public class CasEmbeddedContainerConfiguration {
             tomcat.addContextValves(valve);
             tomcat.addEngineValves(valve);
         }
-
-        if (StringUtils.isBlank(serverProperties.getContextPath())) {
-            final RewriteValve valve = new RewriteValve() {
-                @Override
-                protected synchronized void startInternal() throws LifecycleException {
-                    super.startInternal();
-                    try (InputStream is = rewriteValveConfig.getInputStream();
-                         InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                         BufferedReader buffer = new BufferedReader(isr)) {
-                        parse(buffer);
-                    } catch (final Exception e) {
-                        throw Throwables.propagate(e);
-                    }
-                }
-            };
-            valve.setAsyncSupported(true);
-            valve.setEnabled(true);
-
-            LOGGER.debug("Creating Rewrite valve configuration for the embedded tomcat container...");
-            tomcat.addContextValves(valve);
-        }
+        
         return tomcat;
     }
 }
