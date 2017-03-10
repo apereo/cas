@@ -1,12 +1,9 @@
 description = "Apereo CAS WS-Security IdP"
 dependencies {
-    compile libraries.opensaml
-    compile libraries.bouncycastle
-    compileOnly libraries.springcloud
-    compile libraries.apachecxf
-    compile libraries.apachefediz
-    compile libraries.guava
-    compile libraries.spring
+    implementation libraries.opensaml
+    implementation libraries.bouncycastle
+    implementation libraries.apachecxf
+    implementation libraries.apachefediz
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-services")
@@ -14,10 +11,9 @@ dependencies {
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-saml-core")
     compile project(":support:cas-server-support-ws-sts")
-    runtime libraries.hibernate
-    testCompile project(path: ":core:cas-server-core")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(":support:cas-server-support-cookie")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }
