@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.junit.Test;
 import org.pac4j.core.credentials.password.PasswordEncoder;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import static org.junit.Assert.*;
 
