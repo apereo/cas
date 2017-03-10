@@ -405,6 +405,7 @@ public class Beans {
                     cp.setPassivator(new ClosePassivator());
                     break;
                 case BIND:
+                    LOGGER.debug("Creating a bind passivator instance for the connection pool");
                     final BindRequest bindRequest = new BindRequest();
                     bindRequest.setDn(l.getBindDn());
                     bindRequest.setCredential(new Credential(l.getBindCredential()));

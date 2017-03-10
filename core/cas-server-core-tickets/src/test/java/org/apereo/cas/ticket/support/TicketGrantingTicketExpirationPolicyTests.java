@@ -3,16 +3,13 @@ package org.apereo.cas.ticket.support;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
-import static com.vividsolutions.jts.geom.Dimension.L;
 import static org.junit.Assert.*;
 
 /**
