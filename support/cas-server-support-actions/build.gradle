@@ -9,12 +9,12 @@ dependencies {
     compile project(":core:cas-server-core-configuration")
     compile project(":support:cas-server-support-geolocation")
     compile project(":core:cas-server-core-logout")
-    compile libraries.spring
-    runtime libraries.hibernate
-    testCompile project(":core:cas-server-core")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core", configuration: "tests")
-    testCompile project(":core:cas-server-core-monitor")
-    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+    implementation libraries.pac4j
+
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

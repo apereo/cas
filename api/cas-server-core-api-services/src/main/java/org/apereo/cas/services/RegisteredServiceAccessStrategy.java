@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceAccessStrategy extends Serializable {
 
     /**
@@ -35,7 +35,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable {
      * Verify authorization policy by checking the pre-configured rules
      * that may depend on what the principal might be carrying.
      *
-     * @param principal The authenticated principal
+     * @param principal           The authenticated principal
      * @param principalAttributes the principal attributes. Rather than passing the principal
      *                            directly, we are only allowing principal attributes
      *                            given they may be coming from a source external to the principal
@@ -49,6 +49,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable {
      * in case authorization fails for this service. If no URL is
      * specified, CAS shall redirect the request by default to a generic
      * page that describes the authorization failed attempt.
+     *
      * @return the redirect url
      * @since 4.2
      */

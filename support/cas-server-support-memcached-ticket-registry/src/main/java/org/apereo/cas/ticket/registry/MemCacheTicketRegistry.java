@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.registry;
 
 import net.spy.memcached.MemcachedClientIF;
 import org.apereo.cas.ticket.Ticket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
@@ -16,12 +18,14 @@ import java.util.Collection;
  * @since 3.3
  */
 public class MemCacheTicketRegistry extends AbstractTicketRegistry {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemCacheTicketRegistry.class);
+    private static final String NO_MEMCACHED_CLIENT_IS_DEFINED = "No memcached client is defined.";
 
     /**
      * Memcached client.
      */
     private final MemcachedClientIF client;
-    
+
     /**
      * Creates a new instance using the given memcached client instance, which is presumably configured via
      * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
@@ -34,66 +38,71 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticketToUpdate) {
-        Assert.notNull(this.client, "No memcached client is defined.");
+        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
 
         final Ticket ticket = encodeTicket(ticketToUpdate);
-        logger.debug("Updating ticket {}", ticket);
+        LOGGER.debug("Updating ticket [{}]", ticket);
         try {
             if (!this.client.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket).get()) {
-                logger.error("Failed to update {}", ticket);
+                LOGGER.error("Failed to update [{}]", ticket);
                 return null;
             }
         } catch (final InterruptedException e) {
-            logger.warn("Interrupted while waiting for response to async replace operation for ticket {}. "
+            LOGGER.warn("Interrupted while waiting for response to async replace operation for ticket [{}]. "
                     + "Cannot determine whether update was successful.", ticket);
         } catch (final Exception e) {
-            logger.error("Failed updating {}", ticket, e);
+            LOGGER.error("Failed updating [{}]", ticket, e);
         }
         return ticket;
     }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        Assert.notNull(this.client, "No memcached client is defined.");
-
-        final Ticket ticket = encodeTicket(ticketToAdd);
-        logger.debug("Adding ticket {}", ticket);
+        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
         try {
+            final Ticket ticket = encodeTicket(ticketToAdd);
+            LOGGER.debug("Adding ticket [{}]", ticket);
+            final int timeout = getTimeout(ticketToAdd);
             if (!this.client.add(ticket.getId(), getTimeout(ticketToAdd), ticket).get()) {
-                logger.error("Failed to add {}", ticket);
+                LOGGER.error("Failed to add [{}] without timeout [{}]", ticketToAdd, timeout);
+            }
+            // Sanity check to ensure ticket can retrieved
+            if (this.client.get(ticket.getId()) == null) {
+                LOGGER.warn("Ticket [{}] was added to memcached with timeout [{}], yet it cannot be retrieved. "
+                        + "Ticket expiration policy may be too aggressive ?", ticketToAdd, timeout);
             }
         } catch (final InterruptedException e) {
-            logger.warn("Interrupted while waiting for response to async add operation for ticket {}."
-                    + "Cannot determine whether add was successful.", ticket);
+            LOGGER.warn("Interrupted while waiting for response to async add operation for ticket [{}]."
+                    + "Cannot determine whether add was successful.", ticketToAdd);
         } catch (final Exception e) {
-            logger.error("Failed adding {}", ticket, e);
+            LOGGER.error("Failed adding [{}]", ticketToAdd, e);
         }
     }
 
     @Override
     public long deleteAll() {
-        logger.debug("deleteAll() isn't supported. Returning empty list");
+        LOGGER.debug("deleteAll() isn't supported. Returning empty list");
         return 0;
     }
-    
+
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        Assert.notNull(this.client, "No memcached client is defined.");
+        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
         try {
             if (this.client.delete(ticketId).get()) {
-                logger.debug("Removed ticket {} from the cache", ticketId);
+                LOGGER.debug("Removed ticket [{}] from the cache", ticketId);
             } else {
-                logger.info("Ticket {} not found or is already removed.", ticketId);
+                LOGGER.info("Ticket [{}] not found or is already removed.", ticketId);
             }
         } catch (final Exception e) {
-            logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);
+            LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId, e);
         }
         return true;
     }
 
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
-        Assert.notNull(this.client, "No memcached client is defined.");
+        Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
 
         final String ticketId = encodeTicketId(ticketIdToGet);
         try {
@@ -102,14 +111,14 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
                 return decodeTicket(t);
             }
         } catch (final Exception e) {
-            logger.error("Failed fetching {} ", ticketId, e);
+            LOGGER.error("Failed fetching [{}] ", ticketId, e);
         }
         return null;
     }
-    
+
     @Override
     public Collection<Ticket> getTickets() {
-        logger.debug("getTickets() isn't supported. Returning empty list");
+        LOGGER.debug("getTickets() isn't supported. Returning empty list");
         return new ArrayList<>();
     }
 

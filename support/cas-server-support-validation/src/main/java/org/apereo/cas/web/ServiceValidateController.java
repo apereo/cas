@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,16 +14,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("serviceValidateController")
 public class ServiceValidateController extends AbstractServiceValidateController {
-    
+
     /**
      * Handle model and view.
      *
-     * @param request the request
+     * @param request  the request
      * @param response the response
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping(path="/serviceValidate")
+    @GetMapping(path = CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);

@@ -22,16 +22,17 @@ import java.util.List;
 public class LogoutManagerImpl implements LogoutManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
-    
+
     private final boolean singleLogoutCallbacksDisabled;
     private final LogoutMessageCreator logoutMessageBuilder;
     private final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
 
     /**
      * Build the logout manager.
-     * @param logoutMessageBuilder the builder to construct logout messages.
+     *
+     * @param logoutMessageBuilder              the builder to construct logout messages.
      * @param singleLogoutServiceMessageHandler who actually perform the logout request
-     * @param singleLogoutCallbacksDisabled Set if the logout is disabled.
+     * @param singleLogoutCallbacksDisabled     Set if the logout is disabled.
      */
     public LogoutManagerImpl(final LogoutMessageCreator logoutMessageBuilder, final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler,
                              final boolean singleLogoutCallbacksDisabled) {
@@ -55,20 +56,23 @@ public class LogoutManagerImpl implements LogoutManager {
         }
         final List<LogoutRequest> logoutRequests = new ArrayList<>();
         performLogoutForTicket(ticket, logoutRequests);
-        LOGGER.info("{} logout requests were processed", logoutRequests.size());
+        LOGGER.info("[{}] logout requests were processed", logoutRequests.size());
         return logoutRequests;
     }
 
     private void performLogoutForTicket(final TicketGrantingTicket ticket, final List<LogoutRequest> logoutRequests) {
-        ticket.getServices().entrySet().stream().filter(entry -> entry.getValue() instanceof WebApplicationService).forEach(entry -> {
-            final Service service = entry.getValue();
-            LOGGER.debug("Handling single logout callback for {}", service);
-            final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((WebApplicationService) service, entry.getKey());
-            if (logoutRequest != null) {
-                LOGGER.debug("Captured logout request [{}]", logoutRequest);
-                logoutRequests.add(logoutRequest);
-            }
-        });
+        ticket.getServices().entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() instanceof WebApplicationService)
+                .forEach(entry -> {
+                    final Service service = entry.getValue();
+                    LOGGER.debug("Handling single logout callback for [{}]", service);
+                    final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((WebApplicationService) service, entry.getKey());
+                    if (logoutRequest != null) {
+                        LOGGER.debug("Captured logout request [{}]", logoutRequest);
+                        logoutRequests.add(logoutRequest);
+                    }
+                });
 
         final Collection<ProxyGrantingTicket> proxyGrantingTickets = ticket.getProxyGrantingTickets();
         if (proxyGrantingTickets.isEmpty()) {

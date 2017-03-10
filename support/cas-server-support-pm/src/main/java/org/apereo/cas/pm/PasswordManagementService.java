@@ -2,7 +2,6 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.Credential;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -20,9 +19,7 @@ public interface PasswordManagementService {
      * @param bean the bean
      * @return true /false
      */
-    default boolean change(final Credential c, final PasswordChangeBean bean) {
-        return false;
-    }
+    boolean change(Credential c, PasswordChangeBean bean);
 
     /**
      * Find email associated with username.
@@ -30,9 +27,7 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the string
      */
-    default String findEmail(final String username) {
-        return null;
-    }
+    String findEmail(String username);
 
     /**
      * Create token string.
@@ -40,9 +35,7 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the string
      */
-    default String createToken(final String username) {
-        return null;
-    }
+    String createToken(String username);
 
     /**
      * Parse token string.
@@ -50,9 +43,7 @@ public interface PasswordManagementService {
      * @param token the token
      * @return the username
      */
-    default String parseToken(final String token) {
-        return null;
-    }
+    String parseToken(String token);
 
     /**
      * Gets security questions.
@@ -60,7 +51,5 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the security questions
      */
-    default Map<String, String> getSecurityQuestions(final String username) {
-        return new LinkedHashMap<>();
-    }
+    Map<String, String> getSecurityQuestions(String username);
 }

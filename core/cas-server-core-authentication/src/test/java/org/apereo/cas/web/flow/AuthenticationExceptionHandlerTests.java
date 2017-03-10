@@ -2,10 +2,10 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
-import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -13,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.binding.message.DefaultMessageResolver;
 import org.springframework.binding.message.MessageContext;
 
+import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -62,6 +63,19 @@ public class AuthenticationExceptionHandlerTests {
         assertEquals(id, "UNKNOWN");
         verifyZeroInteractions(ctx);
     }
+
+    @Test
+    public void correctHandlersOrder() {
+        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final MessageContext ctx = mock(MessageContext.class);
+
+        final Map<String, Class<? extends Exception>> map = new HashMap<>();
+        map.put("accountLocked", AccountLockedException.class);
+        map.put("accountNotFound", AccountNotFoundException.class);
+        final String id = handler.handle(new AuthenticationException(map), ctx);
+        assertEquals(id, AccountLockedException.class.getSimpleName());
+    }
+
 
     @Test
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {

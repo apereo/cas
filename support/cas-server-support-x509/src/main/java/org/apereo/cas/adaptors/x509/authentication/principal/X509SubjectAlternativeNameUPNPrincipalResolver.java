@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -7,6 +8,8 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,11 +27,12 @@ import java.util.List;
  * @since 4.1.0
  */
 public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509PrincipalResolver {
-
     /**
      * ObjectID for upn altName for windows smart card logon.
      */
     public static final String UPN_OBJECTID = "1.3.6.1.4.1.311.20.2.3";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(X509SubjectAlternativeNameUPNPrincipalResolver.class);
 
     /**
      * Retrieves Subject Alternative Name UPN extension as a principal id String.
@@ -40,7 +44,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        logger.debug("Resolving principal from Subject Alternative Name UPN for {}", certificate);
+        LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
         try {
             final Collection<List<?>> subjectAltNames = certificate.getSubjectAlternativeNames();
             if (subjectAltNames != null) {
@@ -53,11 +57,11 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
                 }
             }
         } catch (final CertificateParsingException e) {
-            logger.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
-            logger.debug("Returning null principal...");
+            LOGGER.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
+            LOGGER.debug("Returning null principal...");
             return null;
         }
-        logger.debug("Returning null principal id...");
+        LOGGER.debug("Returning null principal id...");
         return null;
     }
 
@@ -107,7 +111,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     private ASN1Sequence getAltnameSequence(final List sanItem) {
         //Should not be the case, but still, a extra "safety" check
         if (sanItem.size() < 2) {
-            logger.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
+            LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
         }
         final Integer itemType = (Integer) sanItem.get(0);
         if (itemType == 0) {
@@ -131,12 +135,20 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             try (ASN1InputStream input = new ASN1InputStream(bInput)) {
                 oct = input.readObject();
             } catch (final IOException e) {
-                logger.error("Error on getting Alt Name as a DERSEquence: {}", e.getMessage(), e);
+                LOGGER.error("Error on getting Alt Name as a DERSEquence: [{}]", e.getMessage(), e);
             }
             return ASN1Sequence.getInstance(oct);
         } catch (final IOException e) {
-            logger.error("An error has occurred while reading the subject alternative name value", e);
+            LOGGER.error("An error has occurred while reading the subject alternative name value", e);
         }
         return null;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .toString();
     }
 }

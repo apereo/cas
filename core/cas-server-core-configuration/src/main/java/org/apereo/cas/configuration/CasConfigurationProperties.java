@@ -33,6 +33,8 @@ import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProp
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethAttributeResolverProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
+import org.apereo.cas.configuration.model.support.scim.ScimProperties;
+import org.apereo.cas.configuration.model.support.sms.ClickatellProperties;
 import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
 import org.apereo.cas.configuration.model.support.sms.TwillioProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
@@ -50,6 +52,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @ConfigurationProperties(value = "cas")
 public class CasConfigurationProperties {
+
+    @NestedConfigurationProperty
+    private ScimProperties scim = new ScimProperties();
 
     @NestedConfigurationProperty
     private AuthenticationProperties authn = new AuthenticationProperties();
@@ -119,6 +124,9 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private TextMagicProperties textMagic = new TextMagicProperties();
+
+    @NestedConfigurationProperty
+    private ClickatellProperties clickatell = new ClickatellProperties();
 
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
@@ -478,5 +486,21 @@ public class CasConfigurationProperties {
 
     public void setTextMagic(final TextMagicProperties textMagic) {
         this.textMagic = textMagic;
+    }
+
+    public ScimProperties getScim() {
+        return scim;
+    }
+
+    public void setScim(final ScimProperties scim) {
+        this.scim = scim;
+    }
+
+    public ClickatellProperties getClickatell() {
+        return clickatell;
+    }
+
+    public void setClickatell(final ClickatellProperties clickatell) {
+        this.clickatell = clickatell;
     }
 }

@@ -7,7 +7,7 @@ package org.apereo.cas.util.cipher;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class WebflowConversationStateCipherExecutor extends BinaryCipherExecutor {
+public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExecutor {
 
     /**
      * Instantiates a new webflow cipher executor.
@@ -25,5 +25,10 @@ public class WebflowConversationStateCipherExecutor extends BinaryCipherExecutor
                                                   final int encryptionKeySize){
         super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
         setSecretKeyAlgorithm(secretKeyAlg);
+    }
+
+    @Override
+    public String getName() {
+        return "Spring Webflow";
     }
 }

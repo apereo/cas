@@ -7,7 +7,8 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
-* A deny rule to refuse all service from receiving attributes, whether default or not.
+ * A deny rule to refuse all service from receiving attributes, whether default or not.
+ *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
@@ -16,20 +17,23 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     private static final long serialVersionUID = -6215588543966639050L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DenyAllAttributeReleasePolicy.class);
-    
+
     public DenyAllAttributeReleasePolicy() {
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes) {
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes,
+                                                        final RegisteredService service) {
         LOGGER.debug("Ignoring all attributes given the service is designed to never receive any.");
         return Collections.emptyMap();
     }
 
     @Override
-    protected Map<String, Object> returnFinalAttributesCollection(final Map<String, Object> attributesToRelease) {
-        LOGGER.info("CAS will not authorize anything for release, given the service is denied access to all attributes. " 
-                  + "If there are any default attributes set to be released to all services, those are also skipped for this service");
+    protected Map<String, Object> returnFinalAttributesCollection(final Map<String, Object> attributesToRelease,
+                                                                  final RegisteredService service) {
+        LOGGER.info("CAS will not authorize anything for release, given the service is denied access to all attributes. "
+                + "If there are any default attributes set to be released to all services, "
+                + "those are also skipped for [{}]", service);
         return Collections.emptyMap();
     }
 }

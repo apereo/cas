@@ -1,0 +1,27 @@
+apply plugin: "org.springframework.boot"
+
+bootRun {
+    dependsOn pathingJar
+    doFirst {
+        classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+    }
+
+    addResources = true
+    if (Boolean.getBoolean("enableRemoteDebugging")) {
+        jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+    }
+    systemProperties = System.properties
+}
+
+springBoot  {
+    mainClass = "org.apereo.cas.web.CasWebApplication"
+}
+
+bootRepackage {
+    mainClass = "org.apereo.cas.web.CasWebApplication"
+    enabled = !rootProject.publishReleases
+}
+
+dependencies {
+    compile project(":webapp:cas-server-webapp-init")
+}

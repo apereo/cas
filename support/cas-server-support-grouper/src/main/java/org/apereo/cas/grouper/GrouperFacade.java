@@ -61,11 +61,11 @@ public class GrouperFacade {
                 LOGGER.warn("Subject id [{}] could not be located.", subjectId);
                 return Collections.emptyList();
             }
-            LOGGER.debug("Found {} groups for {}", results.length, subjectId);
+            LOGGER.debug("Found [{}] groups for [{}]", results.length, subjectId);
             return Arrays.asList(results);
         } catch (final Exception e) {
             LOGGER.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
-                    + ", the url endpoint for Grouper WS is correctly configured and the subject {}"
+                    + ", the url endpoint for Grouper WS is correctly configured and the subject [{}]"
                     + "  exists in Grouper.", subjectId, e);
         }
         return Collections.emptyList();

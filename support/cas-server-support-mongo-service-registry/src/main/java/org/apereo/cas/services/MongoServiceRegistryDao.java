@@ -57,12 +57,12 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
         Assert.notNull(this.mongoTemplate);
 
         if (this.dropCollection) {
-            LOGGER.debug("Dropping database collection: {}", this.collectionName);
+            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: {}", this.collectionName);
+            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
     }
@@ -71,7 +71,7 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
     public boolean delete(final RegisteredService svc) {
         if (this.findServiceById(svc.getId()) != null) {
             this.mongoTemplate.remove(svc, this.collectionName);
-            LOGGER.debug("Removed registered service: {}", svc);
+            LOGGER.debug("Removed registered service: [{}]", svc);
             return true;
         }
         return false;
@@ -101,7 +101,7 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
             ((AbstractRegisteredService) svc).setId(svc.hashCode());
         }
         this.mongoTemplate.save(svc, this.collectionName);
-        LOGGER.debug("Saved registered service: {}", svc);
+        LOGGER.debug("Saved registered service: [{}]", svc);
         return this.findServiceById(svc.getId());
     }
 

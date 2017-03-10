@@ -1,0 +1,217 @@
+body {
+  font-size: 14px;
+  font-family: Verdana, sans-serif;
+  //line-height: 1.4em;
+  background-color: #153e50;
+}
+
+nav ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+
+  &::before, &::after {
+    content: '';
+    content: none;
+  }
+}
+
+
+a {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+
+  &:link, &:visited {
+    color: $link-color;
+  }
+
+  &:hover {
+    color: $link-hover-color;
+  }
+
+  &.btn-success:link, &.btn-success:visited, &.btn-success:hover {
+    color: white;
+  }
+}
+
+
+p {
+  margin-bottom: 1.4em;
+}
+
+header {
+  overflow: hidden;
+  padding: 20px 0;
+
+
+  h1 {
+    float: right;
+    width: 119px;
+    height: 60px;
+    background: url(../images/cas-logo.png) no-repeat;
+    text-indent: -999em;
+    color: white;
+  }
+
+}
+
+
+ins {
+  background-color: #ff9;
+  color: #000;
+  text-decoration: none;
+}
+
+mark {
+  background-color: #ff9;
+  color: #000;
+  font-style: italic;
+  font-weight: bold;
+}
+
+del {
+  text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+  border-bottom: 1px dotted;
+  cursor: help;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #cccccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+input, select {
+  vertical-align: middle;
+}
+
+
+#container {
+  width: 960px;
+  margin: 0 auto;
+}
+
+
+#logo {
+  display: block;
+  background: url(../images/apereo-logo.png) no-repeat;
+  text-indent: -999em;
+  float: left;
+  height: 100px;
+  width: 80%;
+  margin-right: 40px;
+  border: 0px;
+  color: white;
+}
+
+#content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+#loadingMessage {
+  font-size: 1.4rem;
+}
+
+#serviceui.serviceinfo {
+  border: 1px dotted #0066FF;
+  color: black;
+  padding-left: 10px;
+  padding-top: 5px;
+}
+
+#servicedesc {
+  vertical-align: middle;
+  padding-left: 30px;
+  width: 90%;
+}
+
+.modal {
+  display: none;
+}
+
+
+@media screen and (min-width: 960px) {
+  #container {
+    width: 960px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  #ssosessions-page #container {
+    width: 1280px;
+  }
+}
+
+@media only screen and (max-width: 960px) {
+  header {
+    padding: 20px;
+  }
+
+  #container {
+    width: 100%;
+  }
+
+  #content {
+    border-radius: 0px;
+    padding: 0;
+  }
+}
+
+@media only screen and (max-width: 855px) {
+  #logo {
+    display: none;
+  }
+  header h1 {
+    font-size: 1em;
+    width: 70px;
+    height: 40px;
+    background-size: 70px 40px;
+  }
+  #login {
+    float: none;
+    width: 100%;
+  }
+  #fm1 .row input[type=text],
+  #fm1 .row input[type=password] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  #fm1 .row .btn-submit {
+    outline: none;
+    border: 0;
+    background: #70ba61;
+    color: white;
+    font-weight: bold;
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 3px;
+  }
+  #fm1 .row .btn-reset {
+    display: none;
+  }
+  #sidebar {
+    margin-top: 20px;
+  }
+  #sidebar .sidebar-content {
+    padding: 0;
+  }
+}

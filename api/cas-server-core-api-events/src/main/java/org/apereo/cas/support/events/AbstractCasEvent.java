@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.springframework.context.ApplicationEvent;
 
@@ -22,10 +23,14 @@ public abstract class AbstractCasEvent extends ApplicationEvent implements Seria
     /**
      * Instantiates a new Abstract cas sso event.
      *
-     * @param source                 the source
+     * @param source the source
      */
     public AbstractCasEvent(final Object source) {
         super(source);
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).toString();
+    }
 }

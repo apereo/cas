@@ -1,0 +1,17 @@
+description = "Apereo CAS SCIM 2 Provisioning Support"
+
+dependencies {
+    implementation libraries.unboundidscim
+    
+    
+
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-authentication")
+
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+}
+
+
+

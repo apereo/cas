@@ -25,10 +25,9 @@ public class HazelcastProperties {
      */
     public static final String MAX_HEARTBEAT_SECONDS_PROP = "hazelcast.max.no.heartbeat.seconds";
 
-    private String mapName = "tickets";
     private int pageSize = 500;
     private Resource configLocation;
-    
+
     private Cluster cluster = new Cluster();
 
     @NestedConfigurationProperty
@@ -80,17 +79,17 @@ public class HazelcastProperties {
         private String evictionPolicy = "LRU";
         private int backupCount = 1;
         private int asyncBackupCount;
-    
+
         private int timeout = 5;
-        
+
         private boolean ipv4Enabled = true;
-        
+
         private String multicastTrustedInterfaces;
         private String multicastGroup;
         private int multicastPort;
         private int multicastTimeout = 2;
         private int multicastTimeToLive = 32;
-        
+
         public int getBackupCount() {
             return backupCount;
         }
@@ -250,13 +249,5 @@ public class HazelcastProperties {
         public void setIpv4Enabled(final boolean ipv4Enabled) {
             this.ipv4Enabled = ipv4Enabled;
         }
-    }
-
-    public String getMapName() {
-        return mapName;
-    }
-
-    public void setMapName(final String mapName) {
-        this.mapName = mapName;
     }
 }

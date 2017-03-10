@@ -18,8 +18,7 @@ import java.util.Map;
 /**
  * The FlowExecutionExceptionResolver catches the FlowExecutionRepositoryException
  * thrown by Spring Webflow when the given flow id no longer exists. This can
- * occur if a particular flow has reached an end state (the id is no longer
- * valid)
+ * occur if a particular flow has reached an end state (the id is no longer valid)
  * <p>
  * It will redirect back to the requested URI which should start a new workflow.
  * </p>
@@ -29,11 +28,8 @@ import java.util.Map;
  * @since 3.0.0
  */
 public class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
-
-    /** Instance of a logger. */
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlowExecutionExceptionResolver.class);
+        
     private String modelKey = "exception.message";
 
     @Override
@@ -52,7 +48,7 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
          */
         if (!(exception instanceof FlowExecutionRepositoryException)
               || exception instanceof BadlyFormattedFlowExecutionKeyException) {
-            logger.debug("Ignoring the received exception due to a type mismatch", exception);
+            LOGGER.debug("Ignoring the received exception due to a type mismatch", exception);
             return null;
         }
 
@@ -60,14 +56,10 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
                 + (request.getQueryString() != null ? '?'
                 + request.getQueryString() : StringUtils.EMPTY);
 
-        logger.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
+        LOGGER.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
         final Map<String, Object> model = new HashMap<>();
         model.put(this.modelKey, StringEscapeUtils.escapeHtml4(exception.getMessage()));
 
         return new ModelAndView(new RedirectView(urlToRedirectTo), model);
-    }
-
-    public void setModelKey(final String modelKey) {
-        this.modelKey = modelKey;
     }
 }

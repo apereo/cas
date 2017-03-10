@@ -38,12 +38,12 @@ public class MongoDbGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenR
         Assert.notNull(this.collectionName);
 
         if (dropCollection) {
-            LOGGER.debug("Dropping database collection: {}", this.collectionName);
+            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: {}", this.collectionName);
+            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
     }
@@ -61,7 +61,7 @@ public class MongoDbGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenR
             final GoogleAuthenticatorToken r = this.mongoTemplate.findOne(query, GoogleAuthenticatorToken.class, this.collectionName);
             return r != null;
         } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id {}", uid);
+            LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
         }
         return false;
     }

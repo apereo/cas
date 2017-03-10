@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
-    /** The logger. */
+    /** The LOGGER. */
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlCompliantLogoutMessageCreator.class);
     
     /** A ticket Id generator. */

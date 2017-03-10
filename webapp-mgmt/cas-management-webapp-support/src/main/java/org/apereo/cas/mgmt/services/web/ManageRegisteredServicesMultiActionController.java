@@ -9,6 +9,8 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +36,8 @@ import java.util.stream.Collectors;
  */
 @Controller("manageRegisteredServicesMultiActionController")
 public class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManageRegisteredServicesMultiActionController.class);
+    
     private static final String STATUS = "status";
 
     private RegisteredServiceFactory registeredServiceFactory;
@@ -98,7 +101,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      */
     @GetMapping(value = "/logout")
     public String logoutView(final HttpServletRequest request, final HttpSession session) {
-        logger.debug("Invalidating application session...");
+        LOGGER.debug("Invalidating application session...");
         session.invalidate();
         return "logout";
     }

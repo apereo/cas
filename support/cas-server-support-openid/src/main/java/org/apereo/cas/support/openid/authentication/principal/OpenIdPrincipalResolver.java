@@ -1,6 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
-import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.Credential;
 
 /**
@@ -20,5 +21,13 @@ public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof OpenIdCredential;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .toString();
     }
 }

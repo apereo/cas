@@ -19,4 +19,10 @@ public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor
                                               final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
     }
+
+
+    @Override
+    public String getName() {
+        return "Ticket-granting Cookie";
+    }
 }

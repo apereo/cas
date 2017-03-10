@@ -32,6 +32,8 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
@@ -58,6 +60,7 @@ import java.util.Optional;
  * @since 3.0.0
  */
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceValidateController.class);
     
     private ValidationSpecification validationSpecification;
     
@@ -109,7 +112,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 verifyRegisteredServiceProperties(registeredService, service);
                 return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
-                logger.error("Error constructing {}", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
+                LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
             }
         }
         return null;
@@ -125,7 +128,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(final Assertion assertion,
                                                                                                        final HttpServletRequest request) {
         // find the RegisteredService for this Assertion
-        logger.debug("Locating the primary authentication associated with this service request {}", assertion.getService());
+        LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         final RegisteredService service = this.servicesManager.findServiceBy(assertion.getService());
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
 
@@ -138,7 +141,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
         // no MFA auth context found
         if (!requestedContext.isPresent()) {
-            logger.debug("No particular authentication context is required for this request");
+            LOGGER.debug("No particular authentication context is required for this request");
             return Pair.of(Boolean.TRUE, Optional.empty());
         }
 
@@ -169,7 +172,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         final AuthenticationResult authenticationResult =
                 this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
         final TicketGrantingTicket proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId, authenticationResult);
-        logger.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
+        LOGGER.debug("Generated proxy-granting ticket [[{}]] off of service ticket [{}] and credential [{}]",
                 proxyGrantingTicketId.getId(), serviceTicketId, credential);
 
         return proxyGrantingTicketId;
@@ -181,7 +184,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
         if (service == null || serviceTicketId == null) {
-            logger.debug("Could not identify service and/or service ticket for service: [{}]", service);
+            LOGGER.debug("Could not identify service and/or service ticket for service: [{}]", service);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null, request, service);
         }
 
@@ -215,13 +218,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             try {
                 proxyGrantingTicketId = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
             } catch (final AuthenticationException e) {
-                logger.warn("Failed to authenticate service credential {}", serviceCredential);
+                LOGGER.warn("Failed to authenticate service credential [{}]", serviceCredential);
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, new Object[]{serviceCredential.getId()}, request, service);
             } catch (final InvalidTicketException e) {
-                logger.error("Failed to create proxy granting ticket due to an invalid ticket for {}", serviceCredential, e);
+                LOGGER.error("Failed to create proxy granting ticket due to an invalid ticket for [{}]", serviceCredential, e);
                 return generateErrorView(e.getCode(), new Object[]{serviceTicketId}, request, service);
             } catch (final AbstractTicketException e) {
-                logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                LOGGER.error("Failed to create proxy granting ticket for [{}]", serviceCredential, e);
                 return generateErrorView(e.getCode(), new Object[]{serviceCredential.getId()}, request, service);
             }
         }
@@ -243,12 +246,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, new Object[]{serviceCredential.getId()}, request, service);
             }
         } else {
-            logger.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", 
+            LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", 
                     this.proxyHandler.getClass().getSimpleName());
         }
 
         onSuccessfulValidation(serviceTicketId, assertion);
-        logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
+        LOGGER.debug("Successfully validated service ticket [{}] for service [{}]", serviceTicketId, service.getId());
         return generateSuccessView(assertion, proxyIou, service, request, ctxResult.getValue(), proxyGrantingTicketId);
     }
 
@@ -271,7 +274,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         binder.bind(request);
         
         if (!this.validationSpecification.isSatisfiedBy(assertion, request)) {
-            logger.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
+            LOGGER.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
             return false;
         }
         return true;
@@ -317,7 +320,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             try {
                 type = ValidationResponseType.valueOf(format.toUpperCase());
             } catch (final Exception e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
         
@@ -463,14 +466,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
         if (registeredService == null) {
             final String msg = String.format("Service [%s] is not found in service registry.", service.getId());
-            logger.warn(msg);
+            LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
                     + "Service [%s] is not enabled in service registry.", service.getId());
 
-            logger.warn(msg);
+            LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
     }

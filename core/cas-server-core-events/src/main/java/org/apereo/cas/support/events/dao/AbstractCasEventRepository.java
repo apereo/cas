@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import org.apereo.cas.support.events.CasEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,23 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public abstract class AbstractCasEventRepository implements CasEventRepository {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * The constant LOGGER.
+     */
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasEventRepository.class);
+    /**
+     * The constant TYPE_PARAM.
+     */
+    protected static final String TYPE_PARAM = "type";
+    /**
+     * The constant CREATION_TIME_PARAM.
+     */
+    protected static final String CREATION_TIME_PARAM = "creationTime";
+    /**
+     * The constant PRINCIPAL_ID_PARAM.
+     */
+    protected static final String PRINCIPAL_ID_PARAM = "principalId";
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type) {

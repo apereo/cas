@@ -44,7 +44,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
                 ((AbstractRegisteredService) svc).setId(System.nanoTime());
             }
             final String newDn = getDnForRegisteredService(dn, svc);
-            LOGGER.debug("Creating entry {}", newDn);
+            LOGGER.debug("Creating entry [{}]", newDn);
 
             
             final Collection<LdapAttribute> attrs = new ArrayList<>();

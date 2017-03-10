@@ -4,7 +4,8 @@ title: CAS - CAS Protocol
 ---
 
 
-# CAS protocol
+# CAS Protocol
+
 The CAS protocol is a simple and powerful ticket-based protocol developed exclusively for CAS. A complete protocol specification may be found [here](CAS-Protocol-Specification.html).
 
 It involves one or many clients and one server. Clients are embedded in *CASified* applications (called "CAS services") whereas the CAS server is a standalone component:
@@ -32,7 +33,8 @@ The version `2.0` protocol specification is available at [CAS-Protocol-Specifica
 
 ## Web flow diagram
 
-<a href="../images/cas_flow_diagram.png" target="_blank"><img src="../images/cas_flow_diagram.png" alt="CAS Web flow diagram" title="CAS Web flow diagram" /></a>
+<a href="../images/cas_floprotocol
+ram.png" target="_blank"><img src="../images/cas_flow_diagram.png" alt="CAS Web flow diagram" title="CAS Web flow diagram" /></a>
 
 
 ## Proxy web flow diagram
@@ -48,6 +50,8 @@ Even if the primary goal of the CAS server is to implement the CAS protocol, oth
 - [OpenID](../protocol/OpenID-Protocol.html)
 - [OAuth](../protocol/OAuth-Protocol.html)
 - [SAML](../protocol/SAML-Protocol.html)
+- [OpenID Connect](../protocol/OIDC-Protocol.html)
+- [REST Protocol](../protocol/REST-Protocol.html)
 
 ***
 

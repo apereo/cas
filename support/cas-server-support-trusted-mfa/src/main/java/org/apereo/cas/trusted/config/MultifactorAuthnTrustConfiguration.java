@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
@@ -26,7 +27,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
 
@@ -94,7 +94,7 @@ public class MultifactorAuthnTrustConfiguration {
     @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")
     @Bean
     public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
-        return new PseudoTransactionManager();
+        return new PseudoPlatformTransactionManager();
     }
 
     @Bean
