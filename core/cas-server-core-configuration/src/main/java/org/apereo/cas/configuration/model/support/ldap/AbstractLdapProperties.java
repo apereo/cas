@@ -11,6 +11,24 @@ import org.ldaptive.sasl.SecurityStrength;
  * @since 5.0.0
  */
 public abstract class AbstractLdapProperties {
+    /**
+     * The ldap connection pool passivator.
+     */
+    public enum LdapConnectionPoolPassivator {
+        /**
+         * No passivator.
+         */
+        NONE,
+        /**
+         * Close passivator.
+         */
+        CLOSE,
+        /**
+         * Bind passivator.
+         */
+        BIND
+    }
+    
     private String trustCertificates;
 
     private String keystore;
@@ -19,6 +37,8 @@ public abstract class AbstractLdapProperties {
 
     private int minPoolSize = 3;
     private int maxPoolSize = 10;
+    private String poolPassivator;
+    
     private boolean validateOnCheckout = true;
     private boolean validatePeriodically = true;
     private long validatePeriod = 300;
@@ -46,6 +66,14 @@ public abstract class AbstractLdapProperties {
     private SecurityStrength saslSecurityStrength;
     private Boolean saslMutualAuth;
     private QualityOfProtection saslQualityOfProtection;
+
+    public String getPoolPassivator() {
+        return poolPassivator;
+    }
+
+    public void setPoolPassivator(final String poolPassivator) {
+        this.poolPassivator = poolPassivator;
+    }
 
     public String getBindDn() {
         return bindDn;
