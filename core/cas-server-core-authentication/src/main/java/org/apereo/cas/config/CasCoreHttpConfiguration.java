@@ -9,7 +9,9 @@ import org.apereo.cas.authentication.FileTrustStoreSslSocketFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,7 +40,6 @@ public class CasCoreHttpConfiguration {
     private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "trustStoreSslSocketFactory")
-    @RefreshScope
     @Bean
     public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
         final HttpClientProperties.Truststore client = casProperties.getHttpClient().getTruststore();
@@ -50,8 +51,7 @@ public class CasCoreHttpConfiguration {
 
     @ConditionalOnMissingBean(name = "httpClient")
     @Bean
-    @RefreshScope
-    public SimpleHttpClientFactoryBean.DefaultHttpClient httpClient() {
+    public FactoryBean<SimpleHttpClient> httpClient() {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
         c.setReadTimeout(Long.valueOf(casProperties.getHttpClient().getReadTimeout()).intValue());
