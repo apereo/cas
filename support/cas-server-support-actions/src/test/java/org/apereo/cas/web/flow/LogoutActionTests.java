@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.DefaultLogoutRequest;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
@@ -55,12 +56,12 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
         this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry());
         this.serviceManager.load();
-
-        this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, false);
     }
 
     @Test
     public void verifyLogoutNoCookie() throws Exception {
+        final LogoutProperties properties = new LogoutProperties();
+        this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
     }
@@ -72,7 +73,9 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         impl.setServiceId(TEST_SERVICE_ID);
         impl.setName(TEST_SERVICE_ID);
         this.serviceManager.save(impl);
-        this.logoutAction.setFollowServiceRedirects(true);
+        final LogoutProperties properties = new LogoutProperties();
+        properties.setFollowServiceRedirects(true);
+        this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
         assertEquals(TEST_SERVICE_ID, this.requestContext.getFlowScope().get("logoutRedirectUrl"));
@@ -81,7 +84,8 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     @Test
     public void logoutForServiceWithNoFollowRedirects() throws Exception {
         this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
-        this.logoutAction.setFollowServiceRedirects(false);
+        final LogoutProperties properties = new LogoutProperties();
+        this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
         assertNull(this.requestContext.getFlowScope().get("logoutRedirectUrl"));
@@ -94,7 +98,8 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         impl.setServiceId("http://FooBar");
         impl.setName("FooBar");
         this.serviceManager.save(impl);
-        this.logoutAction.setFollowServiceRedirects(true);
+        final LogoutProperties properties = new LogoutProperties();
+        this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
         assertNull(this.requestContext.getFlowScope().get("logoutRedirectUrl"));
@@ -104,6 +109,8 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutCookie() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
+        final LogoutProperties properties = new LogoutProperties();
+        this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
     }
@@ -115,6 +122,8 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
+        final LogoutProperties properties = new LogoutProperties();
+        this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
     }
@@ -126,6 +135,8 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         this.request.setCookies(cookie);
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
+        final LogoutProperties properties = new LogoutProperties();
+        this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FRONT_EVENT, event.getId());
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(this.requestContext);

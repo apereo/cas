@@ -132,7 +132,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "logoutAction")
     public Action logoutAction() {
-        return new LogoutAction(webApplicationServiceFactory, servicesManager, casProperties.getLogout().isFollowServiceRedirects());
+        return new LogoutAction(webApplicationServiceFactory, servicesManager, casProperties.getLogout());
     }
 
     @ConditionalOnMissingBean(name = "initializeLoginAction")
