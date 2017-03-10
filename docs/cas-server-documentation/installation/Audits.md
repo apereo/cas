@@ -16,14 +16,17 @@ All the available configuration
 options that are injected to Inspektr classes are available to
 deployers via relevant CAS properties.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#audits).
 
+
+## Sentry-based Audits
+
+Audit log data can be automatically routed to and integrated with [Sentry](../integration/Sentry-Integration.html) to track and monitor CAS events and errors.
 
 ## File-based Audits
 
-File-based audit logs appear in a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](Logging.html) configuration.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#audits).
 
 ### Sample Log Output
 
@@ -47,8 +50,7 @@ SERVER IP ADDRESS: 192.168.200.22
 
 ## Database Audits
 
-If you intend to use a database
-for auditing functionality, enable the following module in your configuration:
+If you intend to use a database for auditing functionality, enable the following module in your configuration:
 
 ```xml
 <dependency>
@@ -58,7 +60,8 @@ for auditing functionality, enable the following module in your configuration:
 </dependency>
 ```
 
-To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html). To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To learn how to configure database drivers, please [review this guide](JDBC-Drivers.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-audits).
 
 ## Audit Events
 
@@ -75,4 +78,5 @@ The following events are tracked and recorded in the audit log:
 | `EVALUATE_RISKY_AUTHENTICATION`       | N/A
 | `MITIGATE_RISKY_AUTHENTICATION`       | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
+| `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`

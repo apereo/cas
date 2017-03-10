@@ -7,6 +7,7 @@ import org.apereo.cas.monitor.JdbcDataSourceMonitor;
 import org.apereo.cas.monitor.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -44,8 +45,9 @@ public class CasJdbcMonitorConfiguration {
         return Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getJdbc().getPool());
     }
 
-    @RefreshScope
+    @ConditionalOnMissingBean(name = "monitorDataSource")
     @Bean
+    @RefreshScope
     public DataSource monitorDataSource() {
         return Beans.newHickariDataSource(casProperties.getMonitor().getJdbc());
     }

@@ -8,7 +8,11 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -24,11 +28,14 @@ import java.security.GeneralSecurityException;
  */
 public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AzureAuthenticatorAuthenticationHandler.class);
+    
     private final PFAuth azureAuthenticatorInstance;
     private final AzureAuthenticatorAuthenticationRequestBuilder authenticationRequestBuilder;
 
-    public AzureAuthenticatorAuthenticationHandler(final PFAuth azureAuthenticatorInstance,
-                                                   final AzureAuthenticatorAuthenticationRequestBuilder builder) {
+    public AzureAuthenticatorAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                   final PFAuth azureAuthenticatorInstance, final AzureAuthenticatorAuthenticationRequestBuilder builder) {
+        super(name, servicesManager, principalFactory, null);
         this.azureAuthenticatorInstance = azureAuthenticatorInstance;
         this.authenticationRequestBuilder = builder;
     }
@@ -40,18 +47,18 @@ public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostP
             final RequestContext context = RequestContextHolder.getRequestContext();
             final Principal principal = WebUtils.getAuthentication(context).getPrincipal();
 
-            logger.debug("Received principal id {}", principal.getId());
+            LOGGER.debug("Received principal id [{}]", principal.getId());
             final PFAuthParams params = authenticationRequestBuilder.build(principal, c);
             final PFAuthResult r = azureAuthenticatorInstance.authenticate(params);
 
             if (r.getAuthenticated()) {
                 return createHandlerResult(c, principalFactory.createPrincipal(principal.getId()), null);
             }
-            logger.error("Authentication failed. Call status: {}-{}. Error: {}", r.getCallStatus(),
+            LOGGER.error("Authentication failed. Call status: [{}]-[{}]. Error: [{}]", r.getCallStatus(),
                     r.getCallStatusString(), r.getMessageError());
 
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         throw new FailedLoginException("Failed to authenticate user");
     }

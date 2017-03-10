@@ -64,10 +64,12 @@ required. This simplifies the deployment configuration and is the recommended ap
 is sufficient to meet HA and scalability needs.
 
 #### Robustness
+
 Hardware component failure/recovery is a feature of the virtualized environment such that the loss of a CPU, 
 memory or power does not cause a failure of the CAS server.
 
 #### Zero downtime maintenance approach
+
 True zero downtime maintenance (i.e. no observable impact to end users) is not achievable with this configuration. 
 However, staging of maintenance and upgrades can be done without downtime by leveraging the cloning ability of most 
 VM infrastructures. Once the new CAS Server node is ready, a brief cutover can be implemented which will effectively 

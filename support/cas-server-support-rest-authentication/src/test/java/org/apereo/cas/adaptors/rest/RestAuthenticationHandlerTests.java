@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apereo.cas.authentication.AccountDisabledException;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HandlerResult;

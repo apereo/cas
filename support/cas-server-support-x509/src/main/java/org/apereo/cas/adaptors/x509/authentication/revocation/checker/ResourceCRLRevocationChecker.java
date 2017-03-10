@@ -35,7 +35,8 @@ import java.util.concurrent.TimeUnit;
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     private static final int DEFAULT_REFRESH_INTERVAL = 3600;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCRLRevocationChecker.class);
+    
     /**
      * Executor responsible for refreshing CRL data.
      */
@@ -135,18 +136,13 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         }
 
         // Set up the scheduler to fetch periodically to implement refresh
-        final Runnable scheduledFetcher = new Runnable() {
-            private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-            @Override
-            public void run() {
-                try {
-                    final Collection<Resource> resources = getResources();
-                    final Collection<X509CRL> results = getFetcher().fetch(resources);
-                    ResourceCRLRevocationChecker.this.addCrls(results);
-                } catch (final Exception e) {
-                    logger.debug(e.getMessage(), e);
-                }
+        final Runnable scheduledFetcher = () -> {
+            try {
+                final Collection<Resource> resources = getResources();
+                final Collection<X509CRL> results = getFetcher().fetch(resources);
+                ResourceCRLRevocationChecker.this.addCrls(results);
+            } catch (final Exception e) {
+                LOGGER.debug(e.getMessage(), e);
             }
         };
         try {
@@ -162,20 +158,20 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     private boolean validateConfiguration() {
         if (this.resources == null || this.resources.isEmpty()) {
-            logger.debug("{} is not configured with resources. Skipping configuration...",
+            LOGGER.debug("[{}] is not configured with resources. Skipping configuration...",
                     this.getClass().getSimpleName());
             return false;
         }
         if (this.fetcher == null) {
-            logger.debug("{} is not configured with a CRL fetcher. Skipping configuration...", getClass().getSimpleName());
+            LOGGER.debug("[{}] is not configured with a CRL fetcher. Skipping configuration...", getClass().getSimpleName());
             return false;
         }
         if (getExpiredCRLPolicy() == null) {
-            logger.debug("{} is not configured with a CRL expiration policy. Skipping configuration...", getClass().getSimpleName());
+            LOGGER.debug("[{}] is not configured with a CRL expiration policy. Skipping configuration...", getClass().getSimpleName());
             return false;
         }
         if (getUnavailableCRLPolicy() == null) {
-            logger.debug("{} is not configured with a CRL unavailable policy. Skipping configuration...", getClass().getSimpleName());
+            LOGGER.debug("[{}] is not configured with a CRL unavailable policy. Skipping configuration...", getClass().getSimpleName());
             return false;
         }
         return true;
@@ -187,9 +183,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      * @param results the results
      */
     private void addCrls(final Collection<X509CRL> results) {
-        for (final X509CRL entry : results) {
-            addCRL(entry.getIssuerX500Principal(), entry);
-        }
+        results.forEach(entry -> addCRL(entry.getIssuerX500Principal(), entry));
     }
 
     /**
@@ -205,7 +199,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     @Override
     protected boolean addCRL(final Object issuer, final X509CRL crl) {
-        logger.debug("Adding CRL for issuer {}", issuer);
+        LOGGER.debug("Adding CRL for issuer [{}]", issuer);
         this.crlIssuerMap.put((X500Principal) issuer, crl);
         return this.crlIssuerMap.containsKey(issuer);
     }
@@ -217,7 +211,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         if (this.crlIssuerMap.containsKey(principal)) {
             return Collections.singleton(this.crlIssuerMap.get(principal));
         }
-        logger.warn("Could not locate CRL for issuer principal {}", principal);
+        LOGGER.warn("Could not locate CRL for issuer principal [{}]", principal);
         return Collections.emptyList();
     }
 

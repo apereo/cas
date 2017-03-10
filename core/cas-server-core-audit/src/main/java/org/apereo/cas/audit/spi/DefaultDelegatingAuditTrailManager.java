@@ -3,7 +3,7 @@ package org.apereo.cas.audit.spi;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import org.apereo.cas.support.events.CasAuditActionContextRecordedEvent;
+import org.apereo.cas.support.events.audit.CasAuditActionContextRecordedEvent;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;

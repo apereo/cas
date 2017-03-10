@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.security.cert.X509Certificate;
 
 /**
@@ -52,6 +54,16 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
                 .append(certificate.getSerialNumber())
                 .append(this.valueDelimiter)
                 .append(certificate.getIssuerDN().getName())
+                .toString();
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("serialNumberPrefix", serialNumberPrefix)
+                .append("valueDelimiter", valueDelimiter)
                 .toString();
     }
 }

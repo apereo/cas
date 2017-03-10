@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.pac4j.cas.authorization.DefaultCasAuthorizationGenerator;
 import org.pac4j.cas.client.direct.DirectCasClient;
@@ -55,7 +56,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public WebContentInterceptor webContentInterceptor() {
         final WebContentInterceptor interceptor = new WebContentInterceptor();
@@ -76,26 +77,28 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public Config config() {
         try {
-            if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLoginUrl())
-                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getService())) {
+            final AdminPagesSecurityProperties adminProps = casProperties.getAdminPagesSecurity();
+            if (StringUtils.isNotBlank(adminProps.getLoginUrl())
+                    && StringUtils.isNotBlank(adminProps.getService())) {
 
-                final CasConfiguration casConfig = new CasConfiguration(casProperties.getAdminPagesSecurity().getLoginUrl());
+                final CasConfiguration casConfig = new CasConfiguration(adminProps.getLoginUrl());
                 final DirectCasClient client = new DirectCasClient(casConfig);
                 client.setName(CAS_CLIENT_NAME);
 
-                final Config cfg = new Config(casProperties.getAdminPagesSecurity().getService(), client);
-                if (this.casProperties.getAdminPagesSecurity().getUsers() == null) {
+                final Config cfg = new Config(adminProps.getService(), client);
+                if (adminProps.getUsers() == null) {
                     LOGGER.warn("List of authorized users for admin pages security is not defined. "
                             + "Allowing access for all authenticated users");
                     client.setAuthorizationGenerator(new DefaultCasAuthorizationGenerator<>());
                     cfg.setAuthorizer(new IsAuthenticatedAuthorizer());
                 } else {
-                    final Resource file = ResourceUtils.prepareClasspathResourceIfNeeded(this.casProperties.getAdminPagesSecurity().getUsers());
+                    final Resource file = ResourceUtils.prepareClasspathResourceIfNeeded(adminProps.getUsers());
                     if (file != null && file.exists()) {
+                        LOGGER.debug("Loading list of authorized users from [{}]", file);
                         final Properties properties = new Properties();
                         properties.load(file.getInputStream());
                         client.setAuthorizationGenerator(new SpringSecurityPropertiesAuthorizationGenerator(properties));
-                        cfg.setAuthorizer(new RequireAnyRoleAuthorizer(casProperties.getAdminPagesSecurity().getAdminRoles()));
+                        cfg.setAuthorizer(new RequireAnyRoleAuthorizer(adminProps.getAdminRoles()));
                     }
                 }
                 return cfg;

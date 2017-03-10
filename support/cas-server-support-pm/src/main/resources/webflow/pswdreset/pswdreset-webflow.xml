@@ -11,6 +11,7 @@
         <evaluate expression="verifyPasswordResetRequestAction"/>
         <transition on="success" to="getSecurityQuestionsView" />
         <transition on="error" to="passwordResetErrorView" />
+        <transition on="questionsDisabled" to="initPasswordReset" />
     </action-state>
            
     <view-state id="getSecurityQuestionsView" view="casResetPasswordVerifyQuestionsView">

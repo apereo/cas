@@ -1,18 +1,19 @@
 package org.apereo.cas.support.openid.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
+import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.authentication.AbstractAuthenticationHandler;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 
 import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
 
 /**
  * Ensures that the OpenId provided matches with the existing
@@ -25,7 +26,9 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
     
     private final TicketRegistry ticketRegistry;
 
-    public OpenIdCredentialsAuthenticationHandler(final TicketRegistry ticketRegistry) {
+    public OpenIdCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                  final TicketRegistry ticketRegistry) {
+        super(name, servicesManager, principalFactory, null);
         this.ticketRegistry = ticketRegistry;
     }
 

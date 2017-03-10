@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.services.BaseRegisteredServiceUserInterfaceInfo;
+import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class SamlMetadataUIInfo extends BaseRegisteredServiceUserInterfaceInfo {
+public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInfo {
 
     private static final long serialVersionUID = -1434801982864628179L;
 
@@ -101,13 +101,13 @@ public class SamlMetadataUIInfo extends BaseRegisteredServiceUserInterfaceInfo {
      */
     private static Collection<String> getStringValues(final List<?> items) {
         final List<String> list = new ArrayList<>();
-        for (final Object d : items) {
+        items.forEach(d -> {
             if (d instanceof XSURI) {
                 list.add(((XSURI) d).getValue());
             } else if (d instanceof XSString) {
                 list.add(((XSString) d).getValue());
             }
-        }
+        });
         return list;
     }
 

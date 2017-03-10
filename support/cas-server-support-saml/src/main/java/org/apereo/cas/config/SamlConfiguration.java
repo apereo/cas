@@ -82,7 +82,8 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-    
+
+    @ConditionalOnMissingBean(name = "casSamlServiceSuccessView")
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
@@ -93,6 +94,7 @@ public class SamlConfiguration {
                 casProperties.getSamlCore().getIssuer(), casProperties.getSamlCore().getAttributeNamespace());
     }
 
+    @ConditionalOnMissingBean(name = "casSamlServiceFailureView")
     @RefreshScope
     @Bean
     public View casSamlServiceFailureView() {
@@ -109,13 +111,12 @@ public class SamlConfiguration {
         return new SamlServiceResponseBuilder();
     }
 
+    @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
     @Bean
     public Saml10ObjectBuilder saml10ObjectBuilder() {
         return new Saml10ObjectBuilder(this.configBean);
     }
-
-
-
+    
     @Autowired
     @Bean
     public SamlValidateController samlValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
@@ -134,5 +135,5 @@ public class SamlConfiguration {
         c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         return c;
     }
-    
+
 }

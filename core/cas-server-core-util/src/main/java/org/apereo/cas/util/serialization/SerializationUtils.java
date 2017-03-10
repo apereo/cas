@@ -46,7 +46,7 @@ public final class SerializationUtils {
      * @since 5.0.0
      */
     public static void serialize(final Serializable object, final OutputStream outputStream) {
-        try(ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
+        try (ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
             out.writeObject(object);
         } catch (final IOException e) {
             throw Throwables.propagate(e);
@@ -117,11 +117,15 @@ public final class SerializationUtils {
      * @return the t
      * @since 4.2
      */
-    public static <T> T decodeAndSerializeObject(final byte[] object,
-                                                 final CipherExecutor cipher,
-                                                 final Class<? extends Serializable> type) {
-        final byte[] decoded = (byte[]) cipher.decode(object);
-        return deserializeAndCheckObject(decoded, type);
+    public static <T> T decodeAndDeserializeObject(final byte[] object,
+                                                   final CipherExecutor cipher,
+                                                   final Class<? extends Serializable> type) {
+        try {
+            final byte[] decoded = (byte[]) cipher.decode(object);
+            return deserializeAndCheckObject(decoded, type);
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     /**

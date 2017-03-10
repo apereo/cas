@@ -59,16 +59,14 @@ public class FileAuthenticationEventExecutionPlanConfiguration implements Authen
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
         final FileAuthenticationProperties fileProperties = casProperties.getAuthn().getFile();
-        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getFilename(), fileProperties.getSeparator());
-        h.setPrincipalFactory(filePrincipalFactory());
-        h.setServicesManager(servicesManager);
+        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory(),
+                fileProperties.getFilename(), fileProperties.getSeparator());
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(fileProperties.getPasswordEncoder()));
         if (filePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
-        h.setName(fileProperties.getName());
 
         return h;
     }

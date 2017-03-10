@@ -35,7 +35,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     @Override
     public void registerAuthenticationHandlerWithPrincipalResolver(final AuthenticationHandler handler, final PrincipalResolver principalResolver) {
         if (principalResolver == null) {
-            LOGGER.debug("Registering handler [{}] with no principal resolver into the execution plan", handler.getName(), principalResolver);
+            LOGGER.debug("Registering handler [{}] with no principal resolver into the execution plan", handler.getName());
         } else {
             LOGGER.debug("Registering handler [{}] principal resolver [{}] into the execution plan", handler.getName(), principalResolver);
         }
@@ -44,7 +44,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public void registerAuthenticationHandlerWithPrincipalResolver(final Map<AuthenticationHandler, PrincipalResolver> plan) {
-        plan.forEach((k, v) -> registerAuthenticationHandlerWithPrincipalResolver(k, v));
+        plan.forEach(this::registerAuthenticationHandlerWithPrincipalResolver);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public void registerMetadataPopulators(final Collection<AuthenticationMetaDataPopulator> populators) {
-        populators.forEach(p -> registerMetadataPopulator(p));
+        populators.forEach(this::registerMetadataPopulator);
     }
 
     @Override

@@ -633,10 +633,9 @@ if (array.length == 3) {
             this.selectOptions = {
                 serviceTypeList: [
                     {name: 'CAS Client', value: 'cas'},
-                    {name: 'OAuth Client', value: 'oauth'},
-                    {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
-                    {name: 'SAML Client', value: 'saml'},
-                    {name: 'OIDC Client', value: 'oidc'}
+                    {name: 'OAuth2 Client', value: 'oauth'},
+                    {name: 'OpenID Connect Client', value: 'oidc'},
+                    {name: 'SAML Client', value: 'saml'}
                 ],
                 logoutTypeList: [
                     {name: 'NONE', value: 'none'},

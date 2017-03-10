@@ -14,6 +14,7 @@ public interface SmsSender {
      * @param from    the from
      * @param to      the to
      * @param message the message
+     * @return the boolean
      */
-    void send(String from, String to, String message);
+    boolean send(String from, String to, String message);
 }

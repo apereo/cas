@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProp
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
@@ -40,6 +41,9 @@ import java.util.List;
  */
 public class AuthenticationProperties {
 
+    @NestedConfigurationProperty
+    private GraphicalUserAuthenticationProperties gua = new GraphicalUserAuthenticationProperties();
+    
     @NestedConfigurationProperty
     private PasswordManagementProperties pm = new PasswordManagementProperties();
 
@@ -132,6 +136,16 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
+
+    private boolean releaseProtocolAttributes = true;
+
+    public boolean isReleaseProtocolAttributes() {
+        return releaseProtocolAttributes;
+    }
+
+    public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
+        this.releaseProtocolAttributes = releaseProtocolAttributes;
+    }
 
     public TokenAuthenticationProperties getToken() {
         return token;
@@ -380,5 +394,13 @@ public class AuthenticationProperties {
 
     public void setPm(final PasswordManagementProperties pm) {
         this.pm = pm;
+    }
+
+    public GraphicalUserAuthenticationProperties getGua() {
+        return gua;
+    }
+
+    public void setGua(final GraphicalUserAuthenticationProperties gua) {
+        this.gua = gua;
     }
 }

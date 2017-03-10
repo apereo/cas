@@ -27,9 +27,6 @@ import org.springframework.webflow.execution.Action;
 public class CasSupportActionsAcceptableUsagePolicyConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
@@ -38,7 +35,8 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
 
     @Autowired
     @Bean
-    public Action acceptableUsagePolicyFormAction(@Qualifier("acceptableUsagePolicyRepository") final AcceptableUsagePolicyRepository repository) {
+    public Action acceptableUsagePolicyFormAction(@Qualifier("acceptableUsagePolicyRepository")
+                                                  final AcceptableUsagePolicyRepository repository) {
         return new AcceptableUsagePolicyFormAction(repository);
     }
 

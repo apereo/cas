@@ -2,9 +2,7 @@ description = "Apereo CAS Google Authenticator Mongo"
 dependencies {
     compile project(":support:cas-server-support-gauth")
     compile project(":core:cas-server-core-util")
-    compile libraries.mongo
-    compile libraries.spring
-    runtime libraries.hibernate
-    compileOnly libraries.springcloud
-    testCompile project(":core:cas-server-core-logout")
+    implementation libraries.mongo
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
 }

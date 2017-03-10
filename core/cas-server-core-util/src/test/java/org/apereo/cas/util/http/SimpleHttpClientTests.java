@@ -36,7 +36,7 @@ public class SimpleHttpClientTests {
     @Test
     public void verifyInvalidHttpsUrl() throws Exception {
         final HttpClient client = this.getHttpClient();
-        assertFalse(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
+        assertFalse(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class SimpleHttpClientTests {
         clientFactory.setHostnameVerifier(new NoopHostnameVerifier());
         clientFactory.setAcceptableCodes(new int[] {200, 403});
         final SimpleHttpClient client = clientFactory.getObject();
-        assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
+        assertTrue(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
 
     private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {

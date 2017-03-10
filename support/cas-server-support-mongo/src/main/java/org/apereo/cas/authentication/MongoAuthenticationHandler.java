@@ -3,7 +3,9 @@ package org.apereo.cas.authentication;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import org.apache.commons.codec.binary.StringUtils;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.password.PasswordEncoder;
@@ -28,8 +30,10 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     
     private PasswordEncoder mongoPasswordEncoder = new NoOpPasswordEncoder();
 
-    public MongoAuthenticationHandler(final String collectionName, final String mongoHostUri, final String attributes, final String usernameAttribute,
+    public MongoAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                      final String collectionName, final String mongoHostUri, final String attributes, final String usernameAttribute,
                                       final String passwordAttribute, final PasswordEncoder mongoPasswordEncoder) {
+        super(name, servicesManager, principalFactory, null);
         this.collectionName = collectionName;
         this.mongoHostUri = mongoHostUri;
         this.attributes = attributes;
@@ -42,7 +46,7 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
         final MongoClientURI uri = new MongoClientURI(this.mongoHostUri);
         final MongoClient client = new MongoClient(uri);
-        LOGGER.info("Connected to MongoDb instance @ {} using database [{}]",
+        LOGGER.info("Connected to MongoDb instance @ [{}] using database [{}]",
                 uri.getHosts(), uri.getDatabase());
 
         final MongoAuthenticator mongoAuthenticator = new MongoAuthenticator(client, this.attributes);

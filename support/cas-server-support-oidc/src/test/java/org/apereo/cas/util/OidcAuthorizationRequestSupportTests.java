@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.junit.Test;
 
 import java.util.Set;

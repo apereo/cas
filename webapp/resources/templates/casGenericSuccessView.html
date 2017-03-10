@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{screen.success.header}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-success">
+        <h2 th:utext="#{screen.success.header}"/>
+        <p th:utext="#{screen.success.success(${principal.id})}"/>
+        <br>
+        <p th:utext="#{screen.success.security}"/>
+    </div>
+</div>
+</body>
+</html>

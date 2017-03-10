@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -37,6 +36,9 @@ import static org.mockito.Mockito.*;
 @Import(CasSupportActionsConfiguration.class)
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
+    private static final String LOCALHOST_IP = "127.0.0.1";
+    private static final String TEST_STRING = "test";
+    private static final String SUCCESS = "success";
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -44,10 +46,6 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
@@ -69,44 +67,48 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));
 
-        assertEquals("success", this.action.execute(this.context).getId());
+        assertEquals(SUCCESS, this.action.execute(this.context).getId());
     }
 
     @Test
     public void verifyTgtToSet() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "127.0.0.1"));
-        
-        final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr(LOCALHOST_IP);
+        request.setLocalAddr(LOCALHOST_IP);
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+
+        final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addHeader("User-Agent", "Test");
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
-        when(tgt.getId()).thenReturn("test");
+        when(tgt.getId()).thenReturn(TEST_STRING);
 
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 request, response));
 
-        assertEquals("success", this.action.execute(this.context).getId());
+        assertEquals(SUCCESS, this.action.execute(this.context).getId());
         request.setCookies(response.getCookies());
         assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
     }
 
     @Test
     public void verifyTgtToSetRemovingOldTgt() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "127.0.0.1"));
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr(LOCALHOST_IP);
+        request.setLocalAddr(LOCALHOST_IP);
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("User-Agent", "Test");
 
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
-        when(tgt.getId()).thenReturn("test");
+        when(tgt.getId()).thenReturn(TEST_STRING);
 
         request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        assertEquals("success", this.action.execute(this.context).getId());
+        assertEquals(SUCCESS, this.action.execute(this.context).getId());
         request.setCookies(response.getCookies());
         assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
     }
@@ -118,14 +120,14 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
 
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
-        when(tgt.getId()).thenReturn("test");
+        when(tgt.getId()).thenReturn(TEST_STRING);
         request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
-                ticketGrantingTicketCookieGenerator, authenticationSystemSupport, false);
-        assertEquals("success", action.execute(this.context).getId());
+                ticketGrantingTicketCookieGenerator, false);
+        assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
 
@@ -138,15 +140,15 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         when(svc.getId()).thenReturn("TestSsoFalse");
 
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
-        when(tgt.getId()).thenReturn("test");
+        when(tgt.getId()).thenReturn(TEST_STRING);
         request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         this.context.getFlowScope().put("service", svc);
 
         final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
-                ticketGrantingTicketCookieGenerator, authenticationSystemSupport, false);
-        assertEquals("success", action.execute(this.context).getId());
+                ticketGrantingTicketCookieGenerator, false);
+        assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
 }

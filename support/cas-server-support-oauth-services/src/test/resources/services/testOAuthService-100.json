@@ -1,0 +1,35 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "secret",
+  "serviceId" : "^(https|imaps)://hello.*",
+  "name" : "HTTPS and IMAPS",
+  "id" : 10000001,
+  "description" : "Description is here",
+  "theme": "oauth",
+  "logoutUrl" : "https://example.org/logout",
+  "logo": "https://example.org",
+  "evaluationOrder": 100,
+  "proxyPolicy" : {
+    "@class" : "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy"
+  },
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider"
+  },
+  "logoutType" : "FRONT_CHANNEL",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "groupMembership" ] ],
+    "principalAttributesRepository" : {
+      "@class" : "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository"
+    },
+    "authorizedToReleaseCredentialPassword" : true,
+    "authorizedToReleaseProxyGrantingTicket" : true
+  },
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : false,
+    "ssoEnabled" : false,
+    "requireAllAttributes" : true
+  }
+}

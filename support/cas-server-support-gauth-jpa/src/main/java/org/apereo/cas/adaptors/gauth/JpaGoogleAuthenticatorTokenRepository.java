@@ -39,7 +39,7 @@ public class JpaGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepos
                 + " r where r.issuedDateTime>= :expired")
                 .setParameter("expired", LocalDateTime.now().minusSeconds(this.expireTokensInSeconds))
                 .executeUpdate();
-        LOGGER.debug("Deleted {} expired previously used token record(s)", count);
+        LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class JpaGoogleAuthenticatorTokenRepository extends BaseOneTimeTokenRepos
                             .getSingleResult();
             return r != null;
         } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id {}", uid);
+            LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
         }
         return false;
     }

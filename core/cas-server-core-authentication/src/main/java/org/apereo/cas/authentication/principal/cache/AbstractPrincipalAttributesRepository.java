@@ -207,19 +207,19 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     public Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
-            LOGGER.debug("Found [{}] cached attributes for principal [{}] that are {}", cachedAttributes.size(), p.getId(),
+            LOGGER.debug("Found [{}] cached attributes for principal [{}] that are [{}]", cachedAttributes.size(), p.getId(),
                     cachedAttributes);
             return cachedAttributes;
         }
 
         if (getAttributeRepository() == null) {
-            LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for {}",
+            LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for [{}]",
                     getClass().getName(), p.getId());
             return cachedAttributes;
         }
 
         final Map<String, List<Object>> sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
-        LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.",
+        LOGGER.debug("Found [{}] attributes for principal [[{}]] from the attribute repository.",
                 sourceAttributes.size(), p.getId());
 
         if (this.mergingStrategy == null || this.mergingStrategy.getAttributeMerger() == null) {
@@ -243,7 +243,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
                 builder.append(e.getMessage());
             }
 
-            LOGGER.error("The merging strategy {} for {} has failed to produce principal attributes because: {}. "
+            LOGGER.error("The merging strategy [{}] for [{}] has failed to produce principal attributes because: [{}]. "
                             + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
                             + "and will return the original collection of principal attributes [{}]",
                     this.mergingStrategy,

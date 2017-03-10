@@ -3,10 +3,8 @@ dependencies {
     compile project(":api:cas-server-core-api-monitor")
     compile project(":api:cas-server-core-api-ticket")
     compile project(":core:cas-server-core-configuration")
-    compile libraries.spring
-    compile libraries.springcloud
-    testCompile project(":core:cas-server-core-tickets")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
 }
 

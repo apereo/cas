@@ -86,8 +86,8 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             request.setEntity(entity);
 
             final ResponseHandler<Boolean> handler = response -> response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-            final HttpRequestFutureTask<Boolean> task = this.requestExecutorService.execute(request,
-                    HttpClientContext.create(), handler);
+            LOGGER.debug("Created HTTP post message payload [{}]", request);
+            final HttpRequestFutureTask<Boolean> task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
             if (message.isAsynchronous()) {
                 return true;
             }
@@ -112,7 +112,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
             for (final int acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
-                    LOGGER.debug("Response code received from server matched {}.", responseCode);
+                    LOGGER.debug("Response code received from server matched [{}].", responseCode);
                     entity = response.getEntity();
                     final HttpMessage msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
                     msg.setContentType(entity.getContentType().getValue());
@@ -120,11 +120,11 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                     return msg;
                 }
             }
-            LOGGER.warn("Response code {} from {} did not match any of the acceptable response codes.",
+            LOGGER.warn("Response code [{}] from [{}] did not match any of the acceptable response codes.",
                     responseCode, url);
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 final String value = response.getStatusLine().getReasonPhrase();
-                LOGGER.error("There was an error contacting the endpoint: {}; The error:\n{}", url.toExternalForm(),
+                LOGGER.error("There was an error contacting the endpoint: [{}]; The error:\n[{}]", url.toExternalForm(),
                         value);
             }
         } catch (final Exception e) {
@@ -157,15 +157,15 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
             final int idx = Collections.binarySearch(this.acceptableCodes, responseCode);
             if (idx >= 0) {
-                LOGGER.debug("Response code from server matched {}.", responseCode);
+                LOGGER.debug("Response code from server matched [{}].", responseCode);
                 return true;
             }
 
-            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was {}", responseCode);
+            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was [{}]", responseCode);
 
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 final String value = response.getStatusLine().getReasonPhrase();
-                LOGGER.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(), value);
+                LOGGER.error("There was an error contacting the endpoint: [{}]; The error was:\n[{}]", url.toExternalForm(), value);
             }
 
             entity = response.getEntity();

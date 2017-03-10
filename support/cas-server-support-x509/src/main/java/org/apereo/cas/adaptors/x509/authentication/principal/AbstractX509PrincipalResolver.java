@@ -2,8 +2,9 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 
 /**
  * Abstract class in support of multiple resolvers for X509 Certificates.
@@ -30,4 +31,12 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
      * @return the string
      */
     protected abstract String resolvePrincipalInternal(X509Certificate certificate);
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .toString();
+    }
 }

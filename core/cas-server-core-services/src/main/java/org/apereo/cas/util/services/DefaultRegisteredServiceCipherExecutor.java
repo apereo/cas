@@ -20,8 +20,7 @@ import java.security.PublicKey;
  */
 public class DefaultRegisteredServiceCipherExecutor implements RegisteredServiceCipherExecutor {
 
-    /** Logger instance. **/
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceCipherExecutor.class);
 
     /**
      * Encrypt using the given cipher associated with the service,
@@ -40,7 +39,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
                 return EncodingUtils.encodeBase64(result);
             }
         } catch (final Exception e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
 
         return null;
@@ -78,13 +77,13 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      */
     private PublicKey createRegisteredServicePublicKey(final RegisteredService registeredService) throws Exception {
         if (registeredService.getPublicKey() == null) {
-            logger.debug("No public key is defined for service [{}]. No encoding will take place.",
+            LOGGER.debug("No public key is defined for service [{}]. No encoding will take place.",
                     registeredService);
             return null;
         }
         final PublicKey publicKey = registeredService.getPublicKey().createInstance();
         if (publicKey == null) {
-            logger.debug("No public key instance created for service [{}]. No encoding will take place.",
+            LOGGER.debug("No public key instance created for service [{}]. No encoding will take place.",
                     registeredService);
             return null;
         }
@@ -102,16 +101,16 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
     private Cipher initializeCipherBasedOnServicePublicKey(final PublicKey publicKey,
                                                            final RegisteredService registeredService) {
         try {
-            logger.debug("Using public key [{}] to initialize the cipher",
+            LOGGER.debug("Using public key [{}] to initialize the cipher",
                     registeredService.getPublicKey());
 
             final Cipher cipher = Cipher.getInstance(publicKey.getAlgorithm());
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            logger.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]",
+            LOGGER.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]",
                     publicKey.getAlgorithm());
             return cipher;
         } catch (final Exception e) {
-            logger.warn("Cipher could not be initialized for service [{}]. Error [{}]",
+            LOGGER.warn("Cipher could not be initialized for service [{}]. Error [{}]",
                     registeredService, e.getMessage());
         }
         return null;
