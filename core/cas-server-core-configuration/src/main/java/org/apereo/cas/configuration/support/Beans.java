@@ -21,6 +21,7 @@ import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.BindRequest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
@@ -404,7 +405,10 @@ public class Beans {
                     cp.setPassivator(new ClosePassivator());
                     break;
                 case BIND:
-                    cp.setPassivator(new BindPassivator());
+                    final BindRequest bindRequest = new BindRequest();
+                    bindRequest.setDn(l.getBindDn());
+                    bindRequest.setCredential(new Credential(l.getBindCredential()));
+                    cp.setPassivator(new BindPassivator(bindRequest));
                     break;
                 default:
                     break;
