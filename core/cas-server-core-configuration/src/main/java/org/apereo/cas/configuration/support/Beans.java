@@ -32,7 +32,9 @@ import org.ldaptive.SearchScope;
 import org.ldaptive.ad.extended.FastBindOperation;
 import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.PooledSearchEntryResolver;
+import org.ldaptive.pool.BindPassivator;
 import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.ClosePassivator;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -260,17 +262,15 @@ public class Beans {
     /**
      * New dn resolver entry resolver.
      *
-     * @param l       the ldap settings
-     * @param factory the factory
+     * @param l the ldap settings
      * @return the entry resolver
      */
-    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l,
-                                                       final PooledConnectionFactory factory) {
+    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l) {
         final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getUserFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
-        entryResolver.setConnectionFactory(factory);
+        entryResolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         return entryResolver;
     }
 
@@ -396,6 +396,21 @@ public class Beans {
         cp.setValidator(new SearchValidator());
         cp.setFailFastInitialize(l.isFailFast());
 
+        if (StringUtils.isNotBlank(l.getPoolPassivator())) {
+            final AbstractLdapProperties.LdapConnectionPoolPassivator pass =
+                    AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
+            switch (pass) {
+                case CLOSE:
+                    cp.setPassivator(new ClosePassivator());
+                    break;
+                case BIND:
+                    cp.setPassivator(new BindPassivator());
+                    break;
+                default:
+                    break;
+            }
+        }
+        
         LOGGER.debug("Initializing ldap connection pool for {} and bindDn {}", l.getLdapUrl(), l.getBindDn());
         cp.initialize();
         return cp;
