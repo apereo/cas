@@ -13,6 +13,8 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
@@ -30,7 +32,7 @@ import java.security.cert.X509CRL;
  * @since 4.1
  */
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdaptiveResourceCRLFetcher.class);
     /**
      * Search exec that looks for the attribute.
      */
@@ -102,7 +104,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     protected X509CRL fetchCRLFromLdap(final Object r) throws CertificateException, IOException, CRLException {
         try {
             final String ldapURL = r.toString();
-            logger.debug("Fetching CRL from ldap {}", ldapURL);
+            LOGGER.debug("Fetching CRL from ldap [{}]", ldapURL);
 
             final Response<SearchResult> result = performLdapSearch(ldapURL);
             if (result.getResultCode() == ResultCode.SUCCESS) {
@@ -110,18 +112,18 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
                 final LdapAttribute attribute = entry.getAttribute(this.certificateAttribute);
 
                 if (attribute.isBinary()) {
-                    logger.debug("Located entry [{}]. Retrieving first attribute [{}]", entry, attribute);
+                    LOGGER.debug("Located entry [{}]. Retrieving first attribute [{}]", entry, attribute);
                     return fetchX509CRLFromAttribute(attribute);
                 } else {
-                    logger.warn("Found certificate attribute [{}] but it is not marked as a binary attribute", this.certificateAttribute);
+                    LOGGER.warn("Found certificate attribute [{}] but it is not marked as a binary attribute", this.certificateAttribute);
                 }
             }
 
-            logger.debug("Failed to execute the search [{}]", result);
+            LOGGER.debug("Failed to execute the search [{}]", result);
             throw new CertificateException("Failed to establish a connection ldap and search.");
 
         } catch (final LdapException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new CertificateException(e.getMessage());
         }
     }
@@ -147,7 +149,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             if (decoded64 == null) {
                 throw new CertificateException("Could not decode the attribute value to base64");
             }
-            logger.debug("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
+            LOGGER.debug("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
             return super.fetch(new ByteArrayResource(decoded64));
         }
         throw new CertificateException("Attribute not found. Can not retrieve CRL");

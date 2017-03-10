@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,7 +23,7 @@ public class LegacyValidateController extends AbstractServiceValidateController 
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping(path = "/validate")
+    @GetMapping(path = CasProtocolConstants.ENDPOINT_VALIDATE)
     protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }

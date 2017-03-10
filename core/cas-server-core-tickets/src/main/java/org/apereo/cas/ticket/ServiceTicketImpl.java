@@ -120,9 +120,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         return serviceToValidate.matches(this.service);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object object) {
         if (object == null) {
@@ -174,5 +171,10 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     public void setService(final Service service) {
         this.service = service;
+    }
+
+    @Override
+    public String getPrefix() {
+        return ServiceTicket.PREFIX;
     }
 }

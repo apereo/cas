@@ -4,9 +4,9 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-saml-idp")
     compile project(":support:cas-server-support-saml-idp-core")
-    compile libraries.casclient
-    compile libraries.shibidp
-    runtime libraries.hibernate
-    runtime libraries.groovy
-    compileOnly libraries.springcloud
+    implementation libraries.casclient
+    implementation libraries.shibidp
+
+    runtimeOnly libraries.groovy
+    
 }

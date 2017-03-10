@@ -1,8 +1,8 @@
 description = "Apereo CAS Server OpenID Connect Support Core"
 dependencies {
-    compile libraries.hibernate
-    compile libraries.spring
+    api libraries.httpclient
     compile project(":support:cas-server-support-oauth-core")
-    testCompile project(":core:cas-server-core-util")
-    testCompile project(path: ":support:cas-server-support-json-service-registry")
+    compile project(":support:cas-server-support-oidc-services")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(path: ":support:cas-server-support-json-service-registry")
 }

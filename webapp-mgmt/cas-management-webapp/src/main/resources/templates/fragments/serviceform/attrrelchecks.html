@@ -1,0 +1,40 @@
+<div class="checkbox-group">
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" value="0"
+                   ng-model="serviceFormCtrl.serviceData.attrRelease.excludeDefault"
+                   ng-checked="serviceFormCtrl.serviceData.attrRelease.excludeDefault"/>
+            <span th:remove="tag" th:text="#{services.form.label.attrRelease.excludeDefault}"/>
+            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+               data-toggle="tooltip"
+               data-placement="top"
+               th:title="#{services.form.tooltip.attrRelease.excludeDefault}"></i>
+        </label>
+    </div>
+    
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" value="1"
+                   ng-model="serviceFormCtrl.serviceData.attrRelease.releasePassword"
+                   ng-checked="serviceFormCtrl.serviceData.attrRelease.releasePassword"/>
+            <span th:remove="tag" th:text="#{services.form.label.attrRelease.releaseCredPassword}"/>
+            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+               data-toggle="tooltip"
+               data-placement="top"
+               th:title="#{services.form.tooltip.attrRelease.releaseCredPassword}"></i>
+        </label>
+    </div>
+
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" value="1"
+                   ng-model="serviceFormCtrl.serviceData.attrRelease.releaseTicket"
+                   ng-checked="serviceFormCtrl.serviceData.attrRelease.releaseTicket"/>
+            <span th:remove="tag" th:text="#{services.form.label.attrRelease.releaseProxyTicket}"/>
+            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+               data-toggle="tooltip"
+               data-placement="top"
+               th:title="#{services.form.tooltip.attrRelease.releaseProxyTicket}"></i>
+        </label>
+    </div>
+</div>

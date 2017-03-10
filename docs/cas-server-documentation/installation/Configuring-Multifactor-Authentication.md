@@ -27,7 +27,9 @@ The following multifactor providers are supported by CAS.
 | YubiKey               | `mfa-yubikey`   | [See this guide](YubiKey-Authentication.html).
 | RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
 | Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
-| Microsoft Azure       | `mfa-azure`     | [See this guide](MicrosoftAzure-Authentication.html). 
+| Microsoft Azure       | `mfa-azure`     | [See this guide](MicrosoftAzure-Authentication.html).
+| FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
+
 
 ## Triggers
 
@@ -81,11 +83,11 @@ This option is more relevant if you have more than one provider configured or if
 provider ids to attributes as values.
 
 Needless to say, the attributes need to have been resolved for the authentication event prior to this step. This trigger
-is generally useful when the underlying authentication engine signals CAS to perform additional validation of credentials. 
+is generally useful when the underlying authentication engine signals CAS to perform additional validation of credentials.
 This signal may be captured by CAS as an attribute that is part of the authentication event metadata which can then trigger
 additional multifactor authentication events.
 
-An example of this scenario would be the "Access Challenge response" produced by RADIUS servers. 
+An example of this scenario would be the "Access Challenge response" produced by RADIUS servers.
 
 ### Adaptive
 
@@ -183,7 +185,7 @@ Note that in addition to the above options, some multifactor authentication prov
 may also skip and bypass the authentication request in the event that the authenticated principal does not quite "qualify"
 for multifactor authentication. See the documentation for each specific provider to learn more.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
 Note that ticket validation requests shall successfully go through if multifactor authentication is
 bypassed for the given provider. In such cases, no authentication context is passed back to the application and
@@ -238,7 +240,7 @@ The following failure modes are supported:
 | `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
 
 A default failure mode can also be specified globally via CAS properties and may be overriden individually by CAS registered services.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
 ## Ranking Providers
 
@@ -271,4 +273,4 @@ both for admins and end-users.
 
 ## Settings
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).

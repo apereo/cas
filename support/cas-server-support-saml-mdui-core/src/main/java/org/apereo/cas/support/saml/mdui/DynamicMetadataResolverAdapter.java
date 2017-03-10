@@ -4,6 +4,8 @@ import org.apache.commons.io.input.ClosedInputStream;
 import org.apereo.cas.util.EncodingUtils;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
@@ -22,6 +24,7 @@ import java.util.Map;
  * @since 4.1.0
  */
 public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdapter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataResolverAdapter.class);
 
     /**
      * Instantiates a new static metadata resolver adapter.
@@ -43,10 +46,11 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
 
     @Override
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
-        final String encodedId = EncodingUtils.urlEncode(entityId);
-
-        if (resource instanceof UrlResource) {
+        if (resource instanceof UrlResource && resource.getURL().toExternalForm().toLowerCase().endsWith("/entities/")) {
+            final String encodedId = EncodingUtils.urlEncode(entityId);
             final URL url = new URL(resource.getURL().toExternalForm().concat(encodedId));
+
+            LOGGER.debug("Locating metadata input stream for [{}] via [{}]", encodedId, url);
             final HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
             httpcon.setDoOutput(true);
             httpcon.addRequestProperty("Accept", "*/*");

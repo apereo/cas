@@ -2,16 +2,14 @@ description = "Apereo CAS MongoDB Ticket Registry"
 dependencies {
     compile project(":core:cas-server-core-tickets")
     compile project(":core:cas-server-core-util")
-    compile libraries.mongo
-    compile libraries.spring
-    compile libraries.hibernate
-    compileOnly libraries.springcloud
-    testCompile project(":core:cas-server-core-tickets")
-    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(path: ":core:cas-server-core-services")
-    testCompile libraries.tests
+    implementation libraries.mongo
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(path: ":core:cas-server-core-services")
+    
 }

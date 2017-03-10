@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
  */
 public class DistributedTicketRegistryTests {
     private static final String TGT_NAME = "TGT";
+    private static final String TGT_ID = "test";
 
     private TestDistributedTicketRegistry ticketRegistry;
 
@@ -43,12 +44,11 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyProxiedInstancesEqual() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                CoreAuthenticationTestUtils.getAuthentication(),
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
 
-        final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
+        final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
         assertEquals(t, returned);
         assertEquals(returned, t);
 
@@ -80,11 +80,10 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyUpdateOfRegistry() throws AbstractTicketException {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                CoreAuthenticationTestUtils.getAuthentication(),
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
-        final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
+        final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
 
         final ServiceTicket s = returned.grantServiceTicket("test2", RegisteredServiceTestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), false, true);

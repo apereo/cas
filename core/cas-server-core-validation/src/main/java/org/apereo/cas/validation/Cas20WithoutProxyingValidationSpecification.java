@@ -1,5 +1,8 @@
 package org.apereo.cas.validation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Validation specification for the CAS 2.0 protocol. This specification extends
  * the Cas20ProtocolValidationSpecification, checking for the presence of
@@ -11,7 +14,8 @@ package org.apereo.cas.validation;
  * @since 3.0.0
  */
 public class Cas20WithoutProxyingValidationSpecification extends AbstractCasProtocolValidationSpecification {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cas20WithoutProxyingValidationSpecification.class);
+    
     /**
      * Instantiates a new cas20 without proxying validation specification.
      */
@@ -30,7 +34,7 @@ public class Cas20WithoutProxyingValidationSpecification extends AbstractCasProt
 
     @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
-        logger.debug("Number of chained authentications in the assertion {}", assertion.getChainedAuthentications().size());
+        LOGGER.debug("Number of chained authentications in the assertion [{}]", assertion.getChainedAuthentications().size());
         return assertion.getChainedAuthentications().size() == 1;
     }
 }

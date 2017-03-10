@@ -13,4 +13,10 @@ public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
                                      final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
     }
+
+
+    @Override
+    public String getName() {
+        return "Tokened Tickets";
+    }
 }

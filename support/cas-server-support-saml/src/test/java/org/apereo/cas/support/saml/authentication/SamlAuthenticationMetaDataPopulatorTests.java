@@ -79,6 +79,8 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
     private static class CustomCredential implements Credential {
 
+        private static final long serialVersionUID = 8040541789035593268L;
+
         @Override
         public String getId() {
             return "nobody";

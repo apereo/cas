@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -18,15 +19,16 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -42,6 +44,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -71,14 +74,18 @@ import static org.junit.Assert.*;
         CasCoreWebConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasEventsInMemoryRepositoryConfiguration.class,
         CasCoreEventsConfiguration.class})
 @TestPropertySource(properties = "cas.authn.adaptive.risk.geoLocation.enabled=true")
 @DirtiesContext
 @EnableScheduling
+@IfProfileValue(name = "geoLocationEnabled", value = "true")
 public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     @Autowired
     @Qualifier("casEventRepository")
@@ -87,10 +94,7 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     @Autowired
     @Qualifier("authenticationRiskEvaluator")
     private AuthenticationRiskEvaluator authenticationRiskEvaluator;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     @Before
     public void prepTest() {
         MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);
@@ -109,8 +113,10 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     public void verifyTestWhenAuthnEventsFoundForUser() {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "107.181.69.221"));
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("107.181.69.221");
+        request.setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }

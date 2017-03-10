@@ -10,16 +10,17 @@ the ability to apply an optional filter.
 
 The following settings are shared by all attribute release policies:
 
-| Name                    | Value
-|---------------------------------------|----------------------------------------------------------------
+| Name                                    | Value
+|-----------------------------------------|----------------------------------------------------------------
 | `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
 | `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
+| `excludeDefaultAttributes` | Boolean to define whether this policy should exclude the default global bundle of attributes for release.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
 may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
 
 CAS makes a distinction between attributes that convey metadata about the authentication event versus
-those that contain personally identifiable data for the authenticated principal. 
+those that contain personally identifiable data for the authenticated principal.
 
 ## Authentication Attributes
 
@@ -30,15 +31,15 @@ or attributes that are specific to CAS which may describe the type of credential
 authentication handlers, date/time of the authentication, etc.
 
 Releasing authentication attributes to service providers and applications can be
-controlled to some extent. To learn more and see the relevant list of CAS properties, 
-please [review this guide](Configuration-Properties.html).
- 
+controlled to some extent. To learn more and see the relevant list of CAS properties,
+please [review this guide](../installation/Configuration-Properties.html#authentication-attributes).
+
 
 ## Principal Attributes
 
 Principal attributes typically convey personally identifiable data about the authenticated user,
-such as address, last name, etc. Release policies are available in CAS and documented below 
-to explicitly control the collection 
+such as address, last name, etc. Release policies are available in CAS and documented below
+to explicitly control the collection
 of attributes that may be authorized for release to a given application.
 
 ### Default
@@ -48,7 +49,7 @@ basis and is always combined with attributes produced by the specific release po
 rules to always release `givenName` and `cn` to every application, and additionally allow other specific principal attributes for only some
 applications per their attribute release policy.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#default-bundle).
 
 ### Return All
 
@@ -133,7 +134,7 @@ release `affiliation` and `group` to the web application configured.
 
 ### Inline Groovy Attributes
 
-Principal attributes that are mapped may produce their values from an inline groovy script. As an example, if you currently 
+Principal attributes that are mapped may produce their values from an inline groovy script. As an example, if you currently
 have resolved a `uid` attribute with a value of `piper`, you could then consider the following:
 
 ```json
@@ -209,16 +210,65 @@ class SampleGroovyPersonAttributeDao {
         def currentAttributes = args[0]
         def logger = args[1]
 
-        logger.debug("Current attributes received are {}", currentAttributes)
+        LOGGER.debug("Current attributes received are {}", currentAttributes)
         return[username:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
     }
+}
+```
+
+### Javascript or Python Script
+
+Let an external javascript or python script decide how principal attributes should be released.
+This approach takes advantage of scripting functionality built into the Java platform.
+While Javascript and Groovy should be natively supported by CAS, python scripts may need
+to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy",
+    "scriptFile" : "classpath:/script.[py|js|groovy]"
+  }
+}
+```
+
+Similar to the above option, the scripts need to design a `run` function
+that receives a list of parameters. The collection of current attributes in process
+as well as a logger object are passed to this function. The result must produce a
+map whose `key`s are attributes names and whose `value`s are a list of attribute values.
+
+## Chaining Policies
+
+Attribute release policies can be chained together to process multiple rules.
+The order of policy invocation is the same as the definition order defined for the service itself.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+          {"@class": "..."},
+          {"@class": "..."}
+      ]
+    ]
+  }
 }
 ```
 
 ## Attribute Filters
 
 While each policy defines what principal attributes may be allowed for a given service,
-there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**.
+there are optional attribute filters that can be set per policy to further weed out attributes based on their *values**.
 
 ### Regex
 
@@ -227,11 +277,11 @@ matches a certain regex pattern are released.
 
 Suppose that the following attributes are resolved:
 
-| Name       							| Value
-|---------------------------------------|----------------------------------------------------------------
-| `uid`        							| jsmith
-| `groupMembership`        	| std  
-| `cn`        							| JohnSmith   
+| Name                                    | Value
+|-----------------------------------------|----------------------------------------------------------------
+| `uid`                                   | jsmith
+| `groupMembership`                       | std
+| `cn`                                    | JohnSmith
 
 The following configuration for instance considers the initial list of `uid`,
 `groupMembership` and then only allows and releases attributes whose value's length

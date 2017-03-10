@@ -49,6 +49,14 @@ Typical questions in this category that are best answered elsewhere are:
 - How do I tune up a hazelcast cluster?
 - What is the recommended strategy for making MongoDb highly available? 
 
+## Configuring SSL Behind Load Balancer/Proxy
+
+You might be running CAS inside a [servlet container](Configuring-Servlet-Container.html) such as Apache Tomcat beind some sort of proxy such as haproxy, Apache httpd, etc where the proxy is handling the SSL termination. The connections to the user are secured via `https`, yet those between the proxy and CAS service are just `http`. 
+
+With this setup, the CAS login screen may still warn you about a non-secure connection. There is no setting in CAS that would allow you to control/adjust this, as this is entirely controlled by the container itself. All CAS cares about is whether the incoming connection request identifies itself as a secure connection. So to remove the warning, you will need to look into your container's configuration and docs to see how the connection may be secured between the proxy and CAS. 
+
+For [Apache Tomcat](https://tomcat.apache.org/tomcat-8.0-doc/config/http.html), you may be able to adjust the connector that talks to the proxy with a `secure=true` attribute.
+
 ## Application X "redirected you too many times" 
 
 "Too many redirect" errors are usually cause by service ticket validation failure events, generally 
@@ -63,7 +71,7 @@ If your client application is not receiving attributes, you will need to make su
 1. The client is using a version of [CAS protocol](../protocol/CAS-Protocol.html) that is able to release attributes.
 2. The client, predicated on #1, is hitting the appropriate endpoint for service ticket validation.
 3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
-4. The CAS server is authorize to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
+4. The CAS server is authorized to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
 
 Please [review this guide](Service-Management.html) to better understand the CAS service registry.
 
@@ -86,7 +94,6 @@ you may want to adjust the [ticket expiration policy configuration](Configuring-
 
 Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need 
 to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  
-
 
 ## Out of Heap Memory Error
 
@@ -164,6 +171,7 @@ This is a hostname/SSL certificate CN mismatch. This commonly happens when a sel
 is accessed by IP address. It should be noted that generating a certificate with an IP address for a common name, e.g. `CN=192.168.1.1,OU=Middleware,dc=vt,dc=edu`, will not work in most cases where the client making the connection is Java.
 
 ## HTTPS hostname wrong
+
 ```bash
 java.lang.RuntimeException: java.io.IOException: HTTPS hostname wrong:  should be <eiger.iad.vt.edu>
     org.apereo.cas.client.validation.Saml11TicketValidator.retrieveResponseFromServer(Saml11TicketValidator.java:203)
@@ -180,12 +188,21 @@ CN does not match the fully-qualified host name of the CAS server. There are a f
 
 It is also worth checking that the certificate your CAS server is using for SSL encryption matches the one the client is checking against. 
 
+## No name matching X found
+
+```bash
+Caused by: java.security.cert.CertificateException: No name matching cas.server found
+    at sun.security.util.HostnameChecker.matchDNS(Unknown Source) ~[?:1.8.0_77]
+    at sun.security.util.HostnameChecker
+```
+
+Same as above.
 
 ## Wildcard Certificates
 
 Java support for wildcard certificates is limited to hosts strictly in the same domain as the wildcard. For example, a certificate with `CN=.vt.edu` matches hosts **`a.vt.edu`** and **`b.vt.edu`**, but *not* **`a.b.vt.edu`**.
 
-## `unrecognized_name` Error
+## Unrecognized Name Error
 
 ```bash
 javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name

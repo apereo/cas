@@ -26,11 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class GenericSuccessViewAction extends AbstractAction {
 
-    /**
-     * Log instance for logging events, info, warnings, errors, etc.
-     */
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenericSuccessViewAction.class);
     private final CentralAuthenticationService centralAuthenticationService;
     private final ServicesManager servicesManager;
     private final ServiceFactory serviceFactory;
@@ -79,10 +75,10 @@ public class GenericSuccessViewAction extends AbstractAction {
             final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return ticketGrantingTicket.getAuthentication().getPrincipal();
         } catch (final InvalidTicketException e) {
-            logger.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());
-            logger.debug(e.getMessage(), e);
+            LOGGER.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());
+            LOGGER.debug(e.getMessage(), e);
         }
-        logger.warn("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}", NullPrincipal.class.getSimpleName());
+        LOGGER.warn("In the absence of valid TGT, the authentication principal cannot be determined. Returning [{}]", NullPrincipal.class.getSimpleName());
         return NullPrincipal.getInstance();
     }
 }

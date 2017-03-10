@@ -30,8 +30,8 @@ public class InfinispanTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Bean(name = {"infinispanTicketRegistry", "ticketRegistry"})
-    public TicketRegistry infinispanTicketRegistry() {
+    @Bean
+    public TicketRegistry ticketRegistry() {
         final InfinispanProperties span = casProperties.getTicket().getRegistry().getInfinispan();
         final InfinispanTicketRegistry r = new InfinispanTicketRegistry(getCache(span));
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(span));

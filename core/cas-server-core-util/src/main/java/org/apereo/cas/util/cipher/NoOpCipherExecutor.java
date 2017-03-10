@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 /**
  * No-Op cipher executor that does nothing for encryption/decryption.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -13,7 +14,8 @@ public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Str
 
     private static CipherExecutor<Serializable, String> INSTANCE;
 
-    protected NoOpCipherExecutor() {}
+    protected NoOpCipherExecutor() {
+    }
 
     /**
      * Gets instance.
@@ -35,5 +37,10 @@ public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Str
     @Override
     public String decode(final Serializable value) {
         return value.toString();
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 }

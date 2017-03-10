@@ -1,11 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -19,18 +16,10 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 public class RedirectToServiceAction extends AbstractAction {
-    private final ServicesManager servicesManager;
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final TicketRegistrySupport ticketRegistrySupport;
+
     private final ResponseBuilderLocator responseBuilderLocator;
 
-    public RedirectToServiceAction(final ServicesManager servicesManager,
-                                   final AuthenticationSystemSupport authenticationSystemSupport,
-                                   final TicketRegistrySupport ticketRegistrySupport,
-                                   final ResponseBuilderLocator responseBuilderLocator) {
-        this.servicesManager = servicesManager;
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.ticketRegistrySupport = ticketRegistrySupport;
+    public RedirectToServiceAction(final ResponseBuilderLocator responseBuilderLocator) {
         this.responseBuilderLocator = responseBuilderLocator;
     }
 

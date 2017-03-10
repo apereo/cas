@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -17,6 +18,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.OpenIdConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.OpenIdAuthenticationEventExecutionPlanConfiguration;
@@ -31,8 +33,6 @@ import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.runner.RunWith;
 import org.openid4java.server.ServerManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,6 +58,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreLogoutConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
                 CasCoreConfiguration.class,
+                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -73,12 +74,11 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreValidationConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasCoreTicketsConfiguration.class,
+                CasCoreTicketCatalogConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreUtilConfiguration.class})
 @ContextConfiguration(locations = "classpath:/openid-config.xml")
 public class AbstractOpenIdTests {
-
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     @Qualifier("serverManager")
@@ -107,7 +107,4 @@ public class AbstractOpenIdTests {
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
         return authenticationSystemSupport;
     }
-
 }
-
-

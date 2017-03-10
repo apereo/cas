@@ -35,7 +35,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
          * Need to see if including the idp as a war dependency allow us to use
          * sources buried in the war. war is published to central.
          */
-        bean.setServlet(new MetadataServlet());
+        //bean.setServlet(new MetadataServlet());
         bean.setUrlMappings(Collections.singleton("/ws/idp/*"));
         bean.setAsyncSupported(true);
         return bean;

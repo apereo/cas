@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -28,7 +30,9 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     private Boolean forceVerification = Boolean.FALSE;
     private final AuthyClientInstance instance;
 
-    public AuthyAuthenticationHandler(final AuthyClientInstance instance, final boolean forceVerification) {
+    public AuthyAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                      final AuthyClientInstance instance, final boolean forceVerification) {
+        super(name, servicesManager, principalFactory, null);
         this.instance = instance;
         this.forceVerification = forceVerification;
     }

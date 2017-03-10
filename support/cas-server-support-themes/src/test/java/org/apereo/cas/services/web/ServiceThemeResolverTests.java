@@ -16,8 +16,8 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
         
 /**
  * @author Scott Battaglia
@@ -25,6 +25,8 @@ import static org.junit.Assert.*;
  */
 public class ServiceThemeResolverTests {
 
+    private static final String MOZILLA = "Mozilla";
+    private static final String DEFAULT_THEME_NAME = "test";
     private ServiceThemeResolver serviceThemeResolver;
     private DefaultServicesManager servicesManager;
     private Map<String, String> mobileBrowsers;
@@ -34,8 +36,8 @@ public class ServiceThemeResolverTests {
         this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry());
 
         mobileBrowsers = new HashMap<>();
-        mobileBrowsers.put("Mozilla", "theme");
-        this.serviceThemeResolver = new ServiceThemeResolver("test", servicesManager, mobileBrowsers);
+        mobileBrowsers.put(MOZILLA, "theme");
+        this.serviceThemeResolver = new ServiceThemeResolver(DEFAULT_THEME_NAME, servicesManager, mobileBrowsers);
     }
 
     @Test
@@ -54,25 +56,24 @@ public class ServiceThemeResolverTests {
         scope.put("service", RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);
-        request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");
-        assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
+        request.addHeader(WebUtils.USER_AGENT_HEADER, MOZILLA);
+        assertEquals(DEFAULT_THEME_NAME, this.serviceThemeResolver.resolveThemeName(request));
     }
 
     @Test
     public void verifyGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
-        request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");
-        assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
+        request.addHeader(WebUtils.USER_AGENT_HEADER, MOZILLA);
+        assertEquals(DEFAULT_THEME_NAME, this.serviceThemeResolver.resolveThemeName(request));
     }
 
     @Test
     public void verifyGetDefaultServiceWithNoServicesManager() {
-        this.serviceThemeResolver = new ServiceThemeResolver("test", null, mobileBrowsers);
-
+        this.serviceThemeResolver = new ServiceThemeResolver(DEFAULT_THEME_NAME, null, mobileBrowsers);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
-        request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");
-        assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
+        request.addHeader(WebUtils.USER_AGENT_HEADER, MOZILLA);
+        assertEquals(DEFAULT_THEME_NAME, this.serviceThemeResolver.resolveThemeName(request));
     }
 }

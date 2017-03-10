@@ -38,14 +38,10 @@ war {
 }
 
 dependencies {
-    compile libraries.springboot
-    runtime project(":webapp-mgmt:cas-management-webapp-support")
-
+    runtimeOnly project(":webapp-mgmt:cas-management-webapp-support")
     providedRuntime libraries.springboottomcat
-    runtime libraries.hibernate
-    runtime libraries.groovy
-    compile libraries.spring
-    compile libraries.thymeleaf
-    compile libraries.thymeleafdialect
-    compile libraries.thymeleafboot
+    runtimeOnly libraries.groovy
+    implementation libraries.thymeleaf
+    implementation libraries.thymeleafdialect
+    implementation libraries.thymeleafboot
 }

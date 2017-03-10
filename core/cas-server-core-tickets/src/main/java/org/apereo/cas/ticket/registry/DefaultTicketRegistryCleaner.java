@@ -46,13 +46,13 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     public void clean() {
         try {
             if (!isCleanerEnabled) {
-                LOGGER.trace("Ticket registry cleaner is disabled for {}. No cleaner processes will run.",
+                LOGGER.trace("Ticket registry cleaner is disabled for [{}]. No cleaner processes will run.",
                         this.ticketRegistry.getClass().getSimpleName());
                 return;
             }
 
             if (!isCleanerSupported()) {
-                LOGGER.trace("Ticket registry cleaner is not supported by {}. No cleaner processes will run.",
+                LOGGER.trace("Ticket registry cleaner is not supported by [{}]. No cleaner processes will run.",
                         getClass().getSimpleName());
                 return;
             }
@@ -81,7 +81,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                 .stream()
                 .filter(Ticket::isExpired)
                 .collect(Collectors.toSet());
-        LOGGER.debug("{} expired tickets found.", ticketsToRemove.size());
+        LOGGER.debug("[{}] expired tickets found.", ticketsToRemove.size());
 
         int count = 0;
 
@@ -97,13 +97,13 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                 LOGGER.warn("Unknown ticket type [{}] found to clean", ticket.getClass().getSimpleName());
             }
         }
-        LOGGER.info("{} expired tickets removed.", count);
+        LOGGER.info("[{}] expired tickets removed.", count);
     }
 
     /**
      * Indicates whether the registry supports automatic ticket cleanup.
      * Generally, a registry that is able to return a collection of available
-     * tickets should be able to support the cleanup process. Default is <code>true</code>.
+     * tickets should be able to support the cleanup process. Default is {@code true}.
      *
      * @return true/false.
      */

@@ -19,8 +19,7 @@ import java.time.ZonedDateTime;
  */
 public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
 
-    /** Logger instance. */
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThresholdExpiredCRLRevocationPolicy.class);
     
     /** Expired threshold period in seconds after which expired CRL data is rejected. */
     private final int threshold;
@@ -52,7 +51,7 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
             if (CertUtils.isExpired(crl, cutoff.minusSeconds(this.threshold))) {
                 throw new ExpiredCRLException(crl.toString(), cutoff, this.threshold);
             }
-            logger.info(String.format("CRL expired on %s but is within threshold period, %s seconds.",
+            LOGGER.info(String.format("CRL expired on %s but is within threshold period, %s seconds.",
                         crl.getNextUpdate(), this.threshold));
         }
     }

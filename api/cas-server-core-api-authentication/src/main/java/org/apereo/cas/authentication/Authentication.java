@@ -33,19 +33,6 @@ import java.util.Map;
 public interface Authentication extends Serializable {
 
     /**
-     * Internal authentication attribute that captures whether credentials were directly provided
-     * and renewed at the time of authentication creation.
-     */
-    String AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED = "renewedCredentialsProvided";
-
-    /**
-     * Determines whether credentials where directly provided as part of this authentication transaction
-     * at the time it was established.
-     * @return true/false
-     */
-    boolean isCredentialProvided();
-    
-    /**
      * Method to obtain the Principal.
      *
      * @return a Principal implementation
@@ -94,6 +81,7 @@ public interface Authentication extends Serializable {
     /**
      * Updates the authentication object with what's passed.
      * Does not override current keys if there are clashes
+     *
      * @param authn the authn object
      */
     void update(Authentication authn);
@@ -102,6 +90,7 @@ public interface Authentication extends Serializable {
      * Updates the authentication object with what's passed.
      * Does override current keys if there are clashes.
      * Clears the existing attributes and starts over.
+     *
      * @param authn the authn object
      */
     void updateAll(Authentication authn);

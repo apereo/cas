@@ -74,7 +74,7 @@ compact data, which benefits both storage requirements and throughput.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#memcached-ticket-registry).
 
 ## High Availability Considerations
 Memcached does not provide for replication by design, but the client is tolerant to node failures with

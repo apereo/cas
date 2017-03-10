@@ -38,6 +38,7 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class X509CredentialsAuthenticationHandlerTests {
 
+    private static final String USER_VALID_CRT = "user-valid.crt";
     /**
      * Subject of test.
      */
@@ -67,11 +68,8 @@ public class X509CredentialsAuthenticationHandlerTests {
      * @param supports   Expected result of supports test.
      * @param result     Expected result of authentication test.
      */
-    public X509CredentialsAuthenticationHandlerTests(
-            final X509CredentialsAuthenticationHandler handler,
-            final Credential credential,
-            final boolean supports,
-            final Object result) {
+    public X509CredentialsAuthenticationHandlerTests(final X509CredentialsAuthenticationHandler handler, final Credential credential, final boolean supports,
+                                                     final Object result) {
 
         this.handler = handler;
         this.credential = credential;
@@ -98,7 +96,7 @@ public class X509CredentialsAuthenticationHandlerTests {
 
         // Test case #2:Valid certificate
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"));
-        credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
+        credential = new X509CertificateCredential(createCertificates(USER_VALID_CRT));
         params.add(new Object[]{handler, credential, true, new DefaultHandlerResult(handler, credential,
                 new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
@@ -134,7 +132,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         // Test case #6: Check key usage on a cert without keyUsage extension
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), 
                 false, true, false);
-        credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
+        credential = new X509CertificateCredential(createCertificates(USER_VALID_CRT));
         params.add(new Object[]{
                 handler,
                 credential,
@@ -147,7 +145,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 false, true, true);
         params.add(new Object[]{
                 handler,
-                new X509CertificateCredential(createCertificates("user-valid.crt")),
+                new X509CertificateCredential(createCertificates(USER_VALID_CRT)),
                 true, new FailedLoginException(),
         });
 
@@ -182,10 +180,10 @@ public class X509CredentialsAuthenticationHandlerTests {
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
         checker.init();
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), checker);
-        credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
+        credential = new X509CertificateCredential(createCertificates(USER_VALID_CRT));
         params.add(new Object[]{
                 handler,
-                new X509CertificateCredential(createCertificates("user-valid.crt")),
+                new X509CertificateCredential(createCertificates(USER_VALID_CRT)),
                 true,
                 new DefaultHandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
@@ -208,7 +206,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), checker);
         params.add(new Object[]{
                 handler,
-                new X509CertificateCredential(createCertificates("user-valid.crt")),
+                new X509CertificateCredential(createCertificates(USER_VALID_CRT)),
                 true,
                 new ExpiredCRLException(null, ZonedDateTime.now(ZoneOffset.UTC)),
         });

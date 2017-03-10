@@ -15,8 +15,6 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryDao;
-import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.Before;
@@ -55,7 +53,7 @@ import static org.junit.Assert.*;
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
-    @Qualifier("ldapServiceRegistryDao")
+    @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao dao;
 
     @BeforeClass
@@ -65,9 +63,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Before
     public void setUp() throws Exception {
-        for (final RegisteredService service : this.dao.load()) {
-            this.dao.delete(service);
-        }
+        this.dao.load().forEach(service -> this.dao.delete(service));
     }
 
     @Test
@@ -131,7 +127,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
         assertEquals(r, r2);
     }
-    
+
     @Test
     public void verifyOAuthServices() {
         final OAuthRegisteredService r = new OAuthRegisteredService();
@@ -143,30 +139,6 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         r.setClientId("testoauthservice");
         r.setClientSecret("anothertest");
         r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.dao.save(r);
-        assertEquals(r, r2);
-    }
-
-    @Test
-    public void verifyOAuthServicesCallback() {
-        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
-        r.setName("test1345");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final RegisteredService r2 = this.dao.save(r);
-        assertEquals(r, r2);
-    }
-
-    @Test
-    public void verifyOAuthRegisteredServicesCallback() {
-        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
-        r.setName("testoauth1");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r, r2);
     }
@@ -204,9 +176,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         this.dao.save(getRegexRegisteredService());
         this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();
-        for (final RegisteredService registeredService : services) {
-            this.dao.delete(registeredService);
-        }
+        services.forEach(registeredService -> this.dao.delete(registeredService));
         assertEquals(0, this.dao.load().size());
     }
 

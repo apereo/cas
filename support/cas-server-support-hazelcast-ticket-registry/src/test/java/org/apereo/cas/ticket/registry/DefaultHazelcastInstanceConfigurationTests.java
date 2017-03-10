@@ -1,21 +1,23 @@
 package org.apereo.cas.ticket.registry;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.config.EvictionPolicy;
-import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
+import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
 import org.junit.Test;
@@ -42,8 +44,12 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
         HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        HazelcastTicketRegistryTicketCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasCoreLogoutConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
@@ -51,6 +57,8 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreLogoutConfiguration.class})
 @ContextConfiguration(locations="classpath:HazelcastInstanceConfigurationTests-config.xml")
@@ -75,16 +83,12 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertEquals(Arrays.asList("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());
         assertEquals(5701, config.getNetworkConfig().getPort());
-
-        final MapConfig mapConfig = config.getMapConfig("tickets");
-        assertNotNull(mapConfig);
-        assertEquals(28800, mapConfig.getMaxIdleSeconds());
-        assertEquals(EvictionPolicy.LRU, mapConfig.getEvictionPolicy());
+        assertEquals(2, config.getMapConfigs().size());
     }
 
     @After
     public void shutdownHz() {
-        LOGGER.info("Shutting down hazelcast instance {}", this.hzInstance.getConfig().getInstanceName());
+        LOGGER.info("Shutting down hazelcast instance [{}]", this.hzInstance.getConfig().getInstanceName());
         this.hzInstance.shutdown();
         while (this.hzInstance.getLifecycleService().isRunning()) {
             LOGGER.info("Waiting for instances to shut down");

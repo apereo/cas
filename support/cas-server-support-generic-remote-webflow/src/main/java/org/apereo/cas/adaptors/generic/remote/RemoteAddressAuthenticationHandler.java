@@ -1,10 +1,12 @@
 package org.apereo.cas.adaptors.generic.remote;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +25,7 @@ import java.security.GeneralSecurityException;
 public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 0xff;
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemoteAddressAuthenticationHandler.class);
 
     /**
      * The network netmask.
@@ -35,6 +37,10 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      */
     private InetAddress inetNetwork;
 
+    public RemoteAddressAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
+        super(name, servicesManager, principalFactory, null);
+    }
+
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final RemoteAddressCredential c = (RemoteAddressCredential) credential;
@@ -45,7 +51,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
                     return new DefaultHandlerResult(this, c, this.principalFactory.createPrincipal(c.getId()));
                 }
             } catch (final UnknownHostException e) {
-                logger.debug("Unknown host {}", c.getRemoteAddress());
+                LOGGER.debug("Unknown host [{}]", c.getRemoteAddress());
             }
         }
         throw new FailedLoginException(c.getRemoteAddress() + " not in allowed range.");
@@ -65,7 +71,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      * @return A boolean value.
      */
     private boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
-        logger.debug("Checking IP address: {} in {} by {}", ip, network, netmask);
+        LOGGER.debug("Checking IP address: [{}] in [{}] by [{}]", ip, network, netmask);
 
         final byte[] networkBytes = network.getAddress();
         final byte[] netmaskBytes = netmask.getAddress();
@@ -74,7 +80,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         /* check IPv4/v6-compatibility or parameters: */
         if (networkBytes.length != netmaskBytes.length
                 || netmaskBytes.length != ipBytes.length) {
-            logger.debug("Network address {}, subnet mask {} and/or host address {}"
+            LOGGER.debug("Network address [{}], subnet mask [{}] and/or host address [{}]"
                     + " have different sizes! (return false ...)", network, netmask, ip);
             return false;
         }
@@ -83,11 +89,11 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         for (int i = 0; i < netmaskBytes.length; i++) {
             final int mask = netmaskBytes[i] & HEX_RIGHT_SHIFT_COEFFICIENT;
             if ((networkBytes[i] & mask) != (ipBytes[i] & mask)) {
-                logger.debug("{} is not in {}/{}", ip, network, netmask);
+                LOGGER.debug("[{}] is not in [{}]/[{}]", ip, network, netmask);
                 return false;
             }
         }
-        logger.debug("{} is in {}/{}", ip, network, netmask);
+        LOGGER.debug("[{}] is in [{}]/[{}]", ip, network, netmask);
         return true;
     }
 
@@ -109,16 +115,16 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
 
                 try {
                     this.inetNetwork = InetAddress.getByName(network);
-                    logger.debug("InetAddress network: {}", this.inetNetwork.toString());
+                    LOGGER.debug("InetAddress network: [{}]", this.inetNetwork.toString());
                 } catch (final UnknownHostException e) {
-                    logger.error("The network address was not valid: {}", e.getMessage());
+                    LOGGER.error("The network address was not valid: [{}]", e.getMessage());
                 }
 
                 try {
                     this.inetNetmask = InetAddress.getByName(netmask);
-                    logger.debug("InetAddress netmask: {}", this.inetNetmask.toString());
+                    LOGGER.debug("InetAddress netmask: [{}]", this.inetNetmask.toString());
                 } catch (final UnknownHostException e) {
-                    logger.error("The network netmask was not valid: {}", e.getMessage());
+                    LOGGER.error("The network netmask was not valid: [{}]", e.getMessage());
                 }
             }
         }

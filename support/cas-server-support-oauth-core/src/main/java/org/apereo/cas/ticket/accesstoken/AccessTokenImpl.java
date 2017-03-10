@@ -40,4 +40,9 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
                            final ExpirationPolicy expirationPolicy) {
         super(id, service, authentication, expirationPolicy);
     }
+    
+    @Override
+    public String getPrefix() {
+        return AccessToken.PREFIX;
+    }
 }

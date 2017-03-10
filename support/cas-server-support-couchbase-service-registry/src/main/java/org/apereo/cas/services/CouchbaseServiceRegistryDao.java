@@ -65,7 +65,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public RegisteredService save(final RegisteredService service) {
-        LOGGER.debug("Saving service {}", service);
+        LOGGER.debug("Saving service [{}]", service);
 
         if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) service).setId(service.hashCode());
@@ -83,7 +83,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public boolean delete(final RegisteredService service) {
-        LOGGER.debug("Deleting service {}", service);
+        LOGGER.debug("Deleting service [{}]", service);
         this.couchbase.bucket().remove(String.valueOf(service.getId()));
         return true;
     }
@@ -99,7 +99,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
                 final RawJsonDocument document = row.document(RawJsonDocument.class);
                 if (document != null) {
                     final String json = document.content();
-                    LOGGER.debug("Found service: {}", json);
+                    LOGGER.debug("Found service: [{}]", json);
 
                     final StringReader stringReader = new StringReader(json);
                     services.add(this.registeredServiceJsonSerializer.from(stringReader));
@@ -119,7 +119,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public RegisteredService findServiceById(final long id) {
         try {
-            LOGGER.debug("Lookup for service {}", id);
+            LOGGER.debug("Lookup for service [{}]", id);
             final RawJsonDocument document = this.couchbase.bucket().get(String.valueOf(id), RawJsonDocument.class);
             if (document != null) {
                 final String json = document.content();

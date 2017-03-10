@@ -11,10 +11,12 @@ import static org.junit.Assert.*;
  */
 public class InMemoryServiceRegistryTests {
 
+    private static final String SERVICE_ID = "service";
+
     @Test
     public void verifySave() {
         final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
-        final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("service");
+        final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID);
         assertEquals(reg.save(svc), svc);
     }
 
@@ -27,7 +29,7 @@ public class InMemoryServiceRegistryTests {
     @Test
      public void verifySaveAndLoad() {
         final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
-        final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("service");
+        final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID);
         assertEquals(reg.save(svc), svc);
         assertEquals(reg.load().size(), 1);
     }
@@ -35,7 +37,7 @@ public class InMemoryServiceRegistryTests {
     @Test
     public void verifySaveAndFind() {
         final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
-        final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("service");
+        final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID);
         assertEquals(reg.save(svc), svc);
         assertEquals(reg.findServiceById(svc.getId()), svc);
     }
@@ -43,7 +45,7 @@ public class InMemoryServiceRegistryTests {
     @Test
     public void verifySaveAndDelete() {
         final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
-        final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("service");
+        final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID);
         assertEquals(reg.save(svc), svc);
         assertTrue(reg.delete(svc));
         assertEquals(reg.load().size(), 0);

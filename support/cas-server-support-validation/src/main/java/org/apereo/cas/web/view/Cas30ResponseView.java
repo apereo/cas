@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +30,8 @@ import java.util.Set;
  * @since 4.1.0
  */
 public class Cas30ResponseView extends Cas20ResponseView {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cas30ResponseView.class);
+    
     private final boolean releaseProtocolAttributes;
 
     public Cas30ResponseView(final boolean successResponse,
@@ -54,18 +57,18 @@ public class Cas30ResponseView extends Cas20ResponseView {
         final Map<String, Object> principalAttributes = getCasPrincipalAttributes(model, registeredService);
         attributes.putAll(principalAttributes);
 
-        logger.debug("Processed response principal attributes from the output model to be {}", principalAttributes.keySet());
+        LOGGER.debug("Processed response principal attributes from the output model to be [{}]", principalAttributes.keySet());
         if (this.releaseProtocolAttributes) {
-            logger.debug("CAS is configured to release protocol-level attributes. Processing...");
+            LOGGER.debug("CAS is configured to release protocol-level attributes. Processing...");
             final Map<String, Object> protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
             attributes.putAll(protocolAttributes);
-            logger.debug("Processed response protocol/authentication attributes from the output model to be {}", protocolAttributes.keySet());
+            LOGGER.debug("Processed response protocol/authentication attributes from the output model to be [{}]", protocolAttributes.keySet());
         }
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
 
-        logger.debug("Final collection of attributes for the response are [{}].", attributes.keySet());
+        LOGGER.debug("Final collection of attributes for the response are [{}].", attributes.keySet());
         putCasResponseAttributesIntoModel(model, attributes, registeredService);
     }
 
@@ -91,8 +94,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
         final String contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute, Collections.singleton(contextProvider));
-        }
-
+        }        
         return filteredAuthenticationAttributes;
     }
 
@@ -118,15 +120,15 @@ public class Cas30ResponseView extends Cas20ResponseView {
                                                      final Map<String, Object> attributes,
                                                      final RegisteredService registeredService) {
 
-        logger.debug("Beginning to encode attributes for the response");
+        LOGGER.debug("Beginning to encode attributes for the response");
         final Map<String, Object> encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
 
-        logger.debug("Encoded attributes for the response are {}", encodedAttributes);
+        LOGGER.debug("Encoded attributes for the response are [{}]", encodedAttributes);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
         final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());
 
-        logger.debug("Beginning to format/render attributes for the response");
+        LOGGER.debug("Beginning to format/render attributes for the response");
         encodedAttributes.forEach((k, v) -> {
             final Set<Object> values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
@@ -135,7 +137,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
                         .append(StringEscapeUtils.escapeXml10(value.toString().trim()))
                         .append("</cas:".concat(k).concat(">"))
                         .toString();
-                logger.debug("Formatted attribute for the response: {}", fmt);
+                LOGGER.debug("Formatted attribute for the response: [{}]", fmt);
                 formattedAttributes.add(fmt);
             });
         });

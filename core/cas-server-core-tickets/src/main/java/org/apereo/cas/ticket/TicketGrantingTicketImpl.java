@@ -246,7 +246,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         return this.getGrantingTicket() == null;
     }
 
-
     @Override
     public void markTicketExpired() {
         this.expired = Boolean.TRUE;
@@ -294,7 +293,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         return this.proxiedBy;
     }
 
-
     @Override
     public boolean equals(final Object object) {
         if (object == null) {
@@ -312,5 +310,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         return new EqualsBuilder()
                 .append(ticket.getId(), this.getId())
                 .isEquals();
+    }
+
+    @Override
+    public String getPrefix() {
+        return TicketGrantingTicket.PREFIX;
     }
 }

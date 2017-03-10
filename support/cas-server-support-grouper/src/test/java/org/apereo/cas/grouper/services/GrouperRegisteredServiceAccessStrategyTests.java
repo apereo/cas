@@ -19,8 +19,8 @@ import java.util.Set;
  * @since 4.2
  */
 public class GrouperRegisteredServiceAccessStrategyTests {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(GrouperRegisteredServiceAccessStrategyTests.class);
+    
     @Test
     public void checkGrouperAttributes() {
         final ClassPathResource resource = new ClassPathResource("grouper.client.properties");
@@ -31,7 +31,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
             strategy.setRequiredAttributes(requiredAttributes);
             strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) RegisteredServiceTestUtils.getTestAttributes());
         } else {
-            logger.info("{} is not configured. Skipping tests", resource.getFilename());
+            LOGGER.info("[{}] is not configured. Skipping tests", resource.getFilename());
         }
     }
 }

@@ -36,7 +36,7 @@ public final class RegexUtils {
                 return true;
             }
         } catch (final PatternSyntaxException exception) {
-            LOGGER.debug("Pattern {} is not a valid regex.", pattern);
+            LOGGER.debug("Pattern [{}] is not a valid regex.", pattern);
         }
         return false;
     }
@@ -74,13 +74,13 @@ public final class RegexUtils {
      */
     private static Pattern createPattern(final String pattern, final int flags) {
         if (pattern == null) {
-            LOGGER.debug("Pattern {} can't be null", pattern);
+            LOGGER.debug("Pattern [{}] can't be null", pattern);
             return MATCH_NOTHING_PATTERN;
         }
         try {
             return Pattern.compile(pattern, flags);
         } catch (final PatternSyntaxException exception) {
-            LOGGER.debug("Pattern {} is not a valid regex.", pattern);
+            LOGGER.debug("Pattern [{}] is not a valid regex.", pattern);
             return MATCH_NOTHING_PATTERN;
         }
     }

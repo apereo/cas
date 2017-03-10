@@ -107,10 +107,10 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             int retryCount = 5;
             while (retryCount > 0) {
                 try {
-                    LOGGER.debug("Trying to restart LDAP server: attempt {}", retryCount);
+                    LOGGER.debug("Trying to restart LDAP server: attempt [{}]", retryCount);
                     this.directoryServer.restartServer();
                     try (LDAPConnection c = getConnection()) {
-                        LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
+                        LOGGER.debug("Connected to [{}]:[{}]", c.getConnectedAddress(), c.getConnectedPort());
                         populateDefaultEntries(c);
                     }
                     retryCount = 0;

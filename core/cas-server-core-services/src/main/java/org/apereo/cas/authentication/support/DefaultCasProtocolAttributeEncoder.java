@@ -3,9 +3,13 @@ package org.apereo.cas.authentication.support;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,24 +26,33 @@ import java.util.stream.Collectors;
  * @since 4.1
  */
 public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttributeEncoder {
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasProtocolAttributeEncoder.class);
+
+    private final CipherExecutor<String, String> cacheCredentialCipherExecutor;
+
     /**
      * Instantiates a new Default cas attribute encoder.
      *
-     * @param servicesManager the services manager
+     * @param servicesManager               the services manager
+     * @param cacheCredentialCipherExecutor the cache credential cipher executor
      */
-    public DefaultCasProtocolAttributeEncoder(final ServicesManager servicesManager) {
-        super(servicesManager);
+    public DefaultCasProtocolAttributeEncoder(final ServicesManager servicesManager,
+                                              final CipherExecutor cacheCredentialCipherExecutor) {
+        this(servicesManager, new DefaultRegisteredServiceCipherExecutor(), cacheCredentialCipherExecutor);
     }
 
     /**
      * Instantiates a new Default cas attribute encoder.
      *
-     * @param servicesManager the services manager
-     * @param cipherExecutor  the cipher executor
+     * @param servicesManager               the services manager
+     * @param cipherExecutor                the cipher executor
+     * @param cacheCredentialCipherExecutor the cache credential cipher executor
      */
-    public DefaultCasProtocolAttributeEncoder(final ServicesManager servicesManager, final RegisteredServiceCipherExecutor cipherExecutor) {
+    public DefaultCasProtocolAttributeEncoder(final ServicesManager servicesManager,
+                                              final RegisteredServiceCipherExecutor cipherExecutor,
+                                              final CipherExecutor cacheCredentialCipherExecutor) {
         super(servicesManager, cipherExecutor);
+        this.cacheCredentialCipherExecutor = cacheCredentialCipherExecutor;
     }
 
     /**
@@ -57,6 +70,16 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                       final Map<String, String> cachedAttributesToEncode,
                                                       final RegisteredServiceCipherExecutor cipher,
                                                       final RegisteredService registeredService) {
+
+        if (cachedAttributesToEncode.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL)) {
+            final String value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+            final String decodedValue = this.cacheCredentialCipherExecutor.decode(value);
+            cachedAttributesToEncode.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+            if (StringUtils.isNotBlank(decodedValue)) {
+                cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, decodedValue);
+            }
+        }
+
         encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
                 CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
                 cipher, registeredService);
@@ -94,14 +117,16 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                            final RegisteredService registeredService) {
         final String cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
-            logger.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
+            LOGGER.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
             final String encodedValue = cipher.encode(cachedAttribute, registeredService);
             if (StringUtils.isNotBlank(encodedValue)) {
                 attributes.put(cachedAttributeName, encodedValue);
-                logger.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
+                LOGGER.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
+            } else {
+                LOGGER.warn("Attribute [{}] cannot be encoded and is removed from the collection of attributes", cachedAttributeName);
             }
         } else {
-            logger.debug("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
+            LOGGER.debug("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
         }
     }
 
@@ -117,17 +142,17 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
     private void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
                                                     final RegisteredService registeredService) {
-        logger.debug("Sanitizing attribute names in preparation of the final validation response");
+        LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
 
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
                 .filter(s -> s.contains(":"))
                 .map(s -> Pair.of(s.replace(':', '_'), attributes.get(s)))
                 .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
-            logger.debug("Found {} attribute(s) that need to be sanitized/encoded.", attrs);
+            LOGGER.debug("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
             attrs.forEach(p -> {
-                logger.debug("Sanitized attribute name to be {}", p.getKey());
+                LOGGER.debug("Sanitized attribute name to be [{}]", p.getKey());
                 attributes.put(p.getKey(), p.getValue());
             });
         }

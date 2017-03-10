@@ -17,6 +17,8 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -39,7 +41,8 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CRLDistributionPointRevocationCheckerTests.class);
+    
     /**
      * Instance under test.
      */
@@ -77,7 +80,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         this.checker = checker;
 
         this.webServer = new MockWebServer(8085, new FileSystemResource(file), "text/plain");
-        logger.debug("Web server listening on port 8085 serving file {}", crlFile);
+        LOGGER.debug("Web server listening on port 8085 serving file [{}]", crlFile);
     }
 
     /**
@@ -201,10 +204,10 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
      */
     @After
     public void tearDown() throws Exception {
-        logger.debug("Stopping web server...");
+        LOGGER.debug("Stopping web server...");
         this.webServer.stop();
         Thread.sleep(500);
-        logger.debug("Web server stopped [{}]", !this.webServer.isRunning());
+        LOGGER.debug("Web server stopped [{}]", !this.webServer.isRunning());
     }
 
     @AfterClass

@@ -5,11 +5,12 @@ title: CAS - User Interface Customization
 
 # CSS
 
-The default styles are all contained in a single file located in `src/main/resources/static/css/cas.css`. This location is set in `cas-theme-default.properties`.
+The default styles are all contained in two single files located in `src/main/resources/static/css/cas.css` and `src/main/resources/static/css/admin.css`. This location is set in `cas-theme-default.properties`.
 If you would like to create your own `css/custom.css file`, for example, you will need to update `standard.custom.css.file` key in that file.
 
 ```bash
 standard.custom.css.file=/css/cas.css
+admin.custom.css.file=/css/admin.css
 cas.javascript.file=/js/cas.js
 ```
 

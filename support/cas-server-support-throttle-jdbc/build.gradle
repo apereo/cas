@@ -1,15 +1,15 @@
 description = "Apereo CAS JDBC Authentication Throttling"
 dependencies {
-    compile libraries.spring
-    compile libraries.quartz
-    compile libraries.hibernate
+    
+    implementation libraries.quartz
+
 
     compile project(":support:cas-server-support-audit-jdbc")
     compile project(":core:cas-server-core-audit")
     compile project(":support:cas-server-support-throttle")
-    runtime project(":support:cas-server-support-jdbc-drivers")
-    testCompile project(path: ":support:cas-server-support-throttle", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core")
-    testCompile project(path: ":core:cas-server-core-logout")
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    testImplementation project(path: ":support:cas-server-support-throttle", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core")
+    testImplementation project(path: ":core:cas-server-core-logout")
 }

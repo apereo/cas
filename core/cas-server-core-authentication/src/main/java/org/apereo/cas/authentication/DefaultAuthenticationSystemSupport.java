@@ -36,19 +36,18 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
         if (credential != null && credential.length > 0) {
             builder.collect(credential[0]);
         }
-        
+
         return this.handleAuthenticationTransaction(builder, credential);
     }
 
     @Override
-    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication) {
-        return new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication);
+    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication, final Credential credentials) {
+        return new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication).collect(credentials);
     }
 
     @Override
     public AuthenticationResultBuilder handleAuthenticationTransaction(final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                       final Credential... credential)
-            throws AuthenticationException {
+                                                                       final Credential... credential) throws AuthenticationException {
 
         this.authenticationTransactionManager.handle(AuthenticationTransaction.wrap(credential), authenticationResultBuilder);
         return authenticationResultBuilder;

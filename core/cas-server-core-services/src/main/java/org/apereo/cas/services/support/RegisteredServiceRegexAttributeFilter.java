@@ -1,5 +1,6 @@
 package org.apereo.cas.services.support;
 
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -85,26 +86,26 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             final Object attributeValue = entry.getValue();
 
             if (attributeValue instanceof Collection) {
-                LOGGER.trace("Attribute value {} is a collection", attributeValue);
+                LOGGER.trace("Attribute value [{}] is a collection", attributeValue);
                 final List filteredAttributes = filterAttributes(
                         (Collection<String>) attributeValue, attributeName);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else if (attributeValue.getClass().isArray()) {
-                LOGGER.trace("Attribute value {} is an array", attributeValue);
+                LOGGER.trace("Attribute value [{}] is an array", attributeValue);
                 final List filteredAttributes = filterAttributes(Arrays.asList((String[]) attributeValue), attributeName);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else if (attributeValue instanceof Map) {
-                LOGGER.trace("Attribute value {} is a map", attributeValue);
+                LOGGER.trace("Attribute value [{}] is a map", attributeValue);
                 final Map<String, String> filteredAttributes = filterAttributes((Map<String, String>) attributeValue);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else {
-                LOGGER.trace("Attribute value {} is a string", attributeValue);
+                LOGGER.trace("Attribute value [{}] is a string", attributeValue);
                 final String attrValue = attributeValue.toString();
                 if (patternMatchesAttributeValue(attrValue)) {
                     logReleasedAttributeEntry(attributeName, attrValue);
@@ -113,7 +114,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             }
         });
 
-        LOGGER.debug("Received {} attributes. Filtered and released {}", givenAttributes.size(),
+        LOGGER.debug("Received [{}] attributes. Filtered and released [{}]", givenAttributes.size(),
                 attributesToRelease.size());
         return attributesToRelease;
     }
@@ -162,7 +163,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param attributeValue the attribute value
      */
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
-        LOGGER.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
+        LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...",
                 attributeValue, attributeName, this.pattern.pattern());
     }
 
@@ -188,7 +189,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("pattern", this.pattern.pattern())
                 .toString();
     }

@@ -2,12 +2,13 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import com.mongodb.WriteResult;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
-import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +21,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbMultifactorAuthenticationTrustStorage.class);
+    
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
@@ -38,12 +40,12 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
         Assert.notNull(this.mongoTemplate);
 
         if (dropCollection) {
-            logger.debug("Dropping database collection: {}", this.collectionName);
+            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            logger.debug("Creating database collection: {}", this.collectionName);
+            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
     }
@@ -54,9 +56,9 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
             final Query query = new Query();
             query.addCriteria(Criteria.where("key").is(key));
             final WriteResult res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
-            logger.info("Found and removed {} records", res.getN());
-        } catch (final NoResultException e) {
-            logger.info("No trusted authentication records could be found");
+            LOGGER.info("Found and removed [{}]", res.getN());
+        } catch (final Exception e) {
+            LOGGER.info("No trusted authentication records could be found");
         }
     }
 
@@ -66,9 +68,9 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
             final Query query = new Query();
             query.addCriteria(Criteria.where("date").lte(onOrBefore));
             final WriteResult res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
-            logger.info("Found and removed {} records", res.getN());
-        } catch (final NoResultException e) {
-            logger.info("No trusted authentication records could be found");
+            LOGGER.info("Found and removed [{}]", res.getN());
+        } catch (final Exception e) {
+            LOGGER.info("No trusted authentication records could be found");
         }
     }
 

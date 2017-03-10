@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
-import org.apereo.cas.support.events.CasRegisteredServiceSavedEvent;
-import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,14 +118,14 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     @Override
     @PostConstruct
     public void load() {
-        LOGGER.debug("Loading services from {}", this.serviceRegistryDao);
+        LOGGER.debug("Loading services from [{}]", this.serviceRegistryDao);
         this.services = this.serviceRegistryDao.load().stream()
                 .collect(Collectors.toConcurrentMap(r -> {
-                    LOGGER.debug("Adding registered service {}", r.getServiceId());
+                    LOGGER.debug("Adding registered service [{}]", r.getServiceId());
                     return r.getId();
                 }, r -> r, (r, s) -> s == null ? r : s));
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
-        LOGGER.info("Loaded {} services from {}.", this.services.size(), this.serviceRegistryDao);
+        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
     }
 
     @Override

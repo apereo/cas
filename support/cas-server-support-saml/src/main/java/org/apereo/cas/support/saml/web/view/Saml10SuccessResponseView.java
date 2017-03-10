@@ -19,6 +19,8 @@ import org.opensaml.saml.saml1.core.Conditions;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -41,11 +43,10 @@ import java.util.Map;
  * @since 3.1
  */
 public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Saml10SuccessResponseView.class);
+    
     private final String issuer;
-
     private final String rememberMeAttributeName;
-
     private final String defaultAttributeNamespace;
 
     public Saml10SuccessResponseView(final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -69,31 +70,31 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
         final ZonedDateTime issuedAt = DateTimeUtils.zonedDateTimeOf(response.getIssueInstant());
         final Service service = getAssertionFrom(model).getService();
-        logger.debug("Preparing SAML response for service [{}]", service);
+        LOGGER.debug("Preparing SAML response for service [{}]", service);
         
         final Authentication authentication = getPrimaryAuthenticationFrom(model);
         final Collection<Object> authnMethods = CollectionUtils.toCollection(authentication.getAttributes()
                 .get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
-        logger.debug("Authentication methods found are [{}]", authnMethods);
+        LOGGER.debug("Authentication methods found are [{}]", authnMethods);
 
         final Principal principal = getPrincipal(model);
         final AuthenticationStatement authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
                 authentication.getAuthenticationDate(), authnMethods, principal.getId());
-        logger.debug("Built authentication statement for [{}] dated at [{}]", principal, authentication.getAuthenticationDate());
+        LOGGER.debug("Built authentication statement for [{}] dated at [{}]", principal, authentication.getAuthenticationDate());
         
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt,
                 this.samlObjectBuilder.generateSecureRandomId());
-        logger.debug("Built assertion for issuer [{}] dated at [{}]", this.issuer, issuedAt);
+        LOGGER.debug("Built assertion for issuer [{}] dated at [{}]", this.issuer, issuedAt);
         
         final Conditions conditions = this.samlObjectBuilder.newConditions(issuedAt, service.getId(), this.skewAllowance);
         assertion.setConditions(conditions);
-        logger.debug("Built assertion conditions for issuer [{}] and service {{}} ", this.issuer, service.getId());
+        LOGGER.debug("Built assertion conditions for issuer [{}] and service [{}] ", this.issuer, service.getId());
         
         final Subject subject = this.samlObjectBuilder.newSubject(principal.getId());
-        logger.debug("Built subject for principal [{}]", principal);
+        LOGGER.debug("Built subject for principal [{}]", principal);
 
         final Map<String, Object> attributesToSend = prepareSamlAttributes(model, service);
-        logger.debug("Authentication statement shall include these attributes [{}]", attributesToSend);
+        LOGGER.debug("Authentication statement shall include these attributes [{}]", attributesToSend);
         
         if (!attributesToSend.isEmpty()) {
             assertion.getAttributeStatements().add(this.samlObjectBuilder.newAttributeStatement(
@@ -101,7 +102,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         }
 
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
-        logger.debug("Set response status code to {}", response.getStatus());
+        LOGGER.debug("Set response status code to [{}]", response.getStatus());
         
         response.getAssertions().add(assertion);
     }
@@ -122,7 +123,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
             authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
             authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
         }
-        logger.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);
+        LOGGER.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);
         
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         final Map<String, Object> attributesToReturn = new HashMap<>();
@@ -132,9 +133,9 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributesToReturn, model, registeredService);
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributesToReturn, model, registeredService);
 
-        logger.debug("Beginning to encode attributes [{}] for service [{}]", attributesToReturn, registeredService.getServiceId());
+        LOGGER.debug("Beginning to encode attributes [{}] for service [{}]", attributesToReturn, registeredService.getServiceId());
         final Map<String, Object> finalAttributes = this.protocolAttributeEncoder.encodeAttributes(attributesToReturn, registeredService);
-        logger.debug("Final collection of attributes are [{}]", finalAttributes);
+        LOGGER.debug("Final collection of attributes are [{}]", finalAttributes);
         
         return finalAttributes;
     }

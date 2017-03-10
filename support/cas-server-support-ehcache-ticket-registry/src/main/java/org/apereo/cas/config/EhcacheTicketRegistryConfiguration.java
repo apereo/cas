@@ -35,36 +35,39 @@ public class EhcacheTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @RefreshScope
     @Bean
     public RMISynchronousCacheReplicator ticketRMISynchronousCacheReplicator() {
+        final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMISynchronousCacheReplicator(
-                casProperties.getTicket().getRegistry().getEhcache().isReplicatePuts(),
-                casProperties.getTicket().getRegistry().getEhcache().isReplicatePutsViaCopy(),
-                casProperties.getTicket().getRegistry().getEhcache().isReplicateUpdates(),
-                casProperties.getTicket().getRegistry().getEhcache().isReplicateUpdatesViaCopy(),
-                casProperties.getTicket().getRegistry().getEhcache().isReplicateRemovals());
+                cache.isReplicatePuts(),
+                cache.isReplicatePutsViaCopy(),
+                cache.isReplicateUpdates(),
+                cache.isReplicateUpdatesViaCopy(),
+                cache.isReplicateRemovals());
     }
-    
+
     @RefreshScope
     @Bean
     public RMIBootstrapCacheLoader ticketCacheBootstrapCacheLoader() {
-        return new RMIBootstrapCacheLoader(casProperties.getTicket().getRegistry().getEhcache().isLoaderAsync(),
-                casProperties.getTicket().getRegistry().getEhcache().getMaxChunkSize());
+        final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
+        return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
-    
+
     @Lazy
     @Bean
     public EhCacheManagerFactoryBean cacheManager() {
+        final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
-        bean.setConfigLocation(casProperties.getTicket().getRegistry().getEhcache().getConfigLocation());
-        bean.setShared(casProperties.getTicket().getRegistry().getEhcache().isShared());
-        bean.setCacheManagerName(casProperties.getTicket().getRegistry().getEhcache().getCacheManagerName());
+        bean.setConfigLocation(cache.getConfigLocation());
+        bean.setShared(cache.isShared());
+        bean.setCacheManagerName(cache.getCacheManagerName());
         return bean;
     }
 
     @Lazy
+    @Autowired
     @Bean
     public EhCacheFactoryBean ehcacheTicketsCache(@Qualifier("cacheManager") final CacheManager manager) {
         final EhcacheProperties ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();
@@ -77,24 +80,25 @@ public class EhcacheTicketRegistryConfiguration {
         bean.setCacheManager(manager);
         bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
         bean.setDiskExpiryThreadIntervalSeconds(ehcacheProperties.getDiskExpiryThreadIntervalSeconds());
-        
+
         bean.setEternal(ehcacheProperties.isEternal());
         bean.setMaxEntriesLocalHeap(ehcacheProperties.getMaxElementsInMemory());
         bean.setMaxEntriesInCache(ehcacheProperties.getMaxElementsInCache());
         bean.setMaxEntriesLocalDisk(ehcacheProperties.getMaxElementsOnDisk());
         bean.setMemoryStoreEvictionPolicy(ehcacheProperties.getMemoryStoreEvictionPolicy());
-        
+
         final PersistenceConfiguration c = new PersistenceConfiguration();
         c.strategy(ehcacheProperties.getPersistence());
         c.setSynchronousWrites(ehcacheProperties.isSynchronousWrites());
         bean.persistence(c);
-        
+
         return bean;
     }
 
+    @Autowired
     @RefreshScope
-    @Bean(name = {"ehcacheTicketRegistry", "ticketRegistry"})
-    public TicketRegistry ehcacheTicketRegistry(@Qualifier("ehcacheTicketsCache") final Cache ehcacheTicketsCache) {
+    @Bean
+    public TicketRegistry ticketRegistry(@Qualifier("ehcacheTicketsCache") final Cache ehcacheTicketsCache) {
         final CryptographyProperties crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
         return new EhCacheTicketRegistry(ehcacheTicketsCache, Beans.newTicketRegistryCipherExecutor(crypto));
     }

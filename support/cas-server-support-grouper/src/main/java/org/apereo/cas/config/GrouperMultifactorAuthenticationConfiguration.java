@@ -2,12 +2,12 @@ package org.apereo.cas.config;
 
 import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 /**
  * This is {@link GrouperMultifactorAuthenticationConfiguration}.
@@ -72,8 +71,8 @@ public class GrouperMultifactorAuthenticationConfiguration {
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     @Autowired
-    @Qualifier("authenticationRequestServiceSelectionStrategies")
-    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Bean
     @RefreshScope

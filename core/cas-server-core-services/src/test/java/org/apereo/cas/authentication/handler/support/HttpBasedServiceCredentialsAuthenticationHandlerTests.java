@@ -25,8 +25,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
-        this.authenticationHandler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
+        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, new SimpleHttpClientFactoryBean().getObject());
     }
 
     @Test
@@ -55,9 +54,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Test
     public void verifyAcceptsNonHttpsCredentials() throws Exception {
-        this.authenticationHandler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
-        assertNotNull(this.authenticationHandler.authenticate(
-                RegisteredServiceTestUtils.getHttpBasedServiceCredentials("http://www.google.com")));
+        assertNotNull(this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("http://www.google.com")));
     }
 
     @Test
@@ -73,7 +70,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(new int[] {900});
         final HttpClient httpClient = clientFactory.getObject();
-        this.authenticationHandler.setHttpClient(httpClient);
+        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, httpClient);
 
         this.thrown.expect(FailedLoginException.class);
         this.thrown.expectMessage("https://www.ja-sig.org sent an unacceptable response status code");

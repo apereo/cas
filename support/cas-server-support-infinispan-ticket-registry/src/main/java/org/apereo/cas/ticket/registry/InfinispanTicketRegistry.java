@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
 import org.infinispan.Cache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +18,8 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2.0
  */
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanTicketRegistry.class);
+    
     private Cache<String, Ticket> cache;
 
     /**
@@ -26,7 +29,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
      */
     public InfinispanTicketRegistry(final Cache<String, Ticket> cache) {
         this.cache = cache;
-        logger.info("Setting up Infinispan Ticket Registry...");
+        LOGGER.info("Setting up Infinispan Ticket Registry...");
     }
 
     @Override
@@ -43,7 +46,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
                 ? ticket.getExpirationPolicy().getTimeToLive()
                 : ticket.getExpirationPolicy().getTimeToIdle();
 
-        logger.debug("Adding ticket {} to cache store to live {} seconds and stay idle for {} seconds",
+        LOGGER.debug("Adding ticket [{}] to cache store to live [{}] seconds and stay idle for [{}]",
                 ticket.getId(), ticket.getExpirationPolicy().getTimeToLive(), idleTime);
 
         this.cache.put(ticket.getId(), ticket,

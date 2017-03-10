@@ -32,6 +32,11 @@ benefits in the long run.
 You <b>DO NOT</b> need to have Maven or Gradle installed prior to the installation. They are provided to you automatically.
 </p></div>
 
+## Git (Optional)
+
+While not strictly a requirement, it's HIGHLY recommended that you have [Git](https://git-scm.com/downloads) installed for your CAS deployment,
+and manage all CAS artifacts, configuration files, build scripts and setting inside a source control repository.
+
 ## Internet Connectivity
 
 Internet connectivity is generally required for the build phase of any Maven-based project, including the recommended

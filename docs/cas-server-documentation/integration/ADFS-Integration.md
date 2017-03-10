@@ -40,7 +40,7 @@ CAS Overlay to be able to resolve dependencies:
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS signing certificate
 and made it available to CAS at a location that can be resolved at runtime.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#ws-fed-authentication).
 
 ## Encrypted Assertions
 
@@ -111,4 +111,5 @@ registry to match the following:
 
 ## Troubleshooting
 
-Be aware of clock drift issues between CAS and the ADFS server. Validation failures of the response do show up in the logs, and the request is routed back to ADFA again, causing redirect loops.
+Be aware of clock drift issues between CAS and the ADFS server. Validation failures of the response do show up in the logs, and the request is routed back to
+ ADFS again, causing redirect loops.

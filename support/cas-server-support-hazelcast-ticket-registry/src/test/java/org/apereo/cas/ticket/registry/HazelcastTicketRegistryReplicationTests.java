@@ -3,6 +3,21 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -33,8 +48,26 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(locations = {"classpath:HazelcastTicketRegistryTests-context.xml"})
-@SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, 
+        CasCoreTicketsConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        HazelcastTicketRegistryTicketCatalogConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class})
 public class HazelcastTicketRegistryReplicationTests {
+    private static final String TGT_ID = "TGT";
+    private static final String ST_ID_1 = "ST1";
+    private static final String PGT_ID_1 = "PGT-1";
     @Autowired
     @Qualifier("hzTicketRegistry1")
     private TicketRegistry hzTicketRegistry1;
@@ -42,7 +75,7 @@ public class HazelcastTicketRegistryReplicationTests {
     @Autowired
     @Qualifier("hzTicketRegistry2")
     private TicketRegistry hzTicketRegistry2;
-    
+
     public void setHzTicketRegistry1(final HazelcastTicketRegistry hzTicketRegistry1) {
         this.hzTicketRegistry1 = hzTicketRegistry1;
     }
@@ -54,9 +87,7 @@ public class HazelcastTicketRegistryReplicationTests {
     @Test
     public void retrieveCollectionOfTickets() {
         Collection<Ticket> col = this.hzTicketRegistry1.getTickets();
-        for (final Ticket ticket : col) {
-            this.hzTicketRegistry1.deleteTicket(ticket.getId());
-        }
+        col.forEach(ticket -> this.hzTicketRegistry1.deleteTicket(ticket.getId()));
 
         col = hzTicketRegistry2.getTickets();
         assertEquals(0, col.size());
@@ -96,19 +127,15 @@ public class HazelcastTicketRegistryReplicationTests {
 
     @Test
     public void verifyDeleteTicketWithChildren() throws Exception {
-        this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
-                "TGT", CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
-        final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
-                "TGT", TicketGrantingTicket.class);
+        this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(TGT_ID, TicketGrantingTicket.class);
 
         final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
-        final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), false, false);
-        final ServiceTicket st2 = tgt.grantServiceTicket(
-                "ST2", service, new NeverExpiresExpirationPolicy(), false, false);
-        final ServiceTicket st3 = tgt.grantServiceTicket(
-                "ST3", service, new NeverExpiresExpirationPolicy(), false, false);
+        final ServiceTicket st1 = tgt.grantServiceTicket(ST_ID_1, service, new NeverExpiresExpirationPolicy(), false, false);
+        final ServiceTicket st2 = tgt.grantServiceTicket("ST2", service, new NeverExpiresExpirationPolicy(), false, false);
+        final ServiceTicket st3 = tgt.grantServiceTicket("ST3", service, new NeverExpiresExpirationPolicy(), false, false);
 
         this.hzTicketRegistry1.addTicket(st1);
         this.hzTicketRegistry1.addTicket(st2);
@@ -116,14 +143,14 @@ public class HazelcastTicketRegistryReplicationTests {
         this.hzTicketRegistry1.updateTicket(tgt);
 
         assertNotNull(this.hzTicketRegistry1.getTicket(tgt.getId(), TicketGrantingTicket.class));
-        assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket(ST_ID_1, ServiceTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
 
         assertTrue("TGT and children were deleted", this.hzTicketRegistry1.deleteTicket(tgt.getId()) > 0);
 
         assertNull(this.hzTicketRegistry1.getTicket(tgt.getId(), TicketGrantingTicket.class));
-        assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket(ST_ID_1, ServiceTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
     }
@@ -131,31 +158,28 @@ public class HazelcastTicketRegistryReplicationTests {
     @Test
     public void verifyDeleteTicketWithPGT() {
         final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
-        this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
-                "TGT", a, new NeverExpiresExpirationPolicy()));
-        final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
-                "TGT", TicketGrantingTicket.class);
+        this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(TGT_ID, TicketGrantingTicket.class);
 
         final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
-        final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), false, true);
+        final ServiceTicket st1 = tgt.grantServiceTicket(ST_ID_1, service, new NeverExpiresExpirationPolicy(), false, true);
 
         this.hzTicketRegistry1.addTicket(st1);
 
-        assertNotNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
-        assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket(TGT_ID, TicketGrantingTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket(ST_ID_1, ServiceTicket.class));
 
-        final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket(PGT_ID_1, a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
         this.hzTicketRegistry1.addTicket(pgt);
         this.hzTicketRegistry1.updateTicket(tgt);
         assertSame(3, this.hzTicketRegistry1.deleteTicket(tgt.getId()));
 
-        assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
-        assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
-        assertNull(this.hzTicketRegistry1.getTicket("PGT-1", ProxyGrantingTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket(TGT_ID, TicketGrantingTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket(ST_ID_1, ServiceTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket(PGT_ID_1, ProxyGrantingTicket.class));
     }
 
     private static TicketGrantingTicket newTestTgt() {

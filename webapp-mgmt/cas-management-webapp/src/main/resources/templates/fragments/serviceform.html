@@ -1,59 +1,78 @@
 <form class="service-editor form-horizontal" autocomplete="off" id="serviceForm"
       name="serviceForm"
       ng-controller="ServiceFormController as serviceFormCtrl"
-      ng-submit="serviceFormCtrl.validateAndSave()" xmlns:th="http://www.w3.org/1999/xhtml"
+      ng-submit="serviceFormCtrl.validateAndSave()"
       novalidate="novalidate">
 
-    <div th:replace="fragments/serviceform/saveformtop" />
-    
-    <div th:replace="fragments/serviceform/alert" />
+    <div th:replace="fragments/serviceform/saveformtop"/>
+    <div th:replace="fragments/serviceform/alert"/>
 
-    <div class="row col-sm-12">
-        <div class="col-sm-6">
-            <div th:replace="fragments/serviceform/enabled" />
+    <div id="exTab1">
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a href="#1a" data-toggle="tab">Basics</a></li>
+            <li><a href="#2a" data-toggle="tab">Service Type</a></li>
+            <li><a href="#3a" data-toggle="tab">Logout</a></li>
+            <li><a href="#4a" data-toggle="tab">Access Strategy</a></li>
+            <li><a href="#5a" data-toggle="tab">Multifactor Authentication</a></li>
+            <li><a href="#6a" data-toggle="tab">Proxy Authentication</a></li>
+            <li><a href="#7a" data-toggle="tab">Username Attribute</a></li>
+            <li><a href="#8a" data-toggle="tab">Attribute Release</a></li>
+            <li><a href="#9a" data-toggle="tab">Properties</a></li>
+            <li><a href="#100a" data-toggle="tab">Advanced</a></li>
+        </ul>
 
-           
-            <div th:replace="fragments/serviceform/serviceid"/>
-
-         
-           <div th:replace="fragments/serviceform/servicename" />
-
-           <div th:replace="fragments/serviceform/servicedesc" />
-
-            
-        <div th:replace="fragments/serviceform/servicetype" />
-
-        <div th:replace="fragments/serviceform/oauthClient" />
-
-            
-        <div th:replace="fragments/serviceform/samlClient" />
-
-        <div th:replace="fragments/serviceform/themeid" />
-
-            
-        <div th:replace="fragments/serviceform/logo" />
-
-        <div th:replace="fragments/serviceform/logout" />
-            
-        <div th:replace="fragments/serviceform/logouttypeeval" />
-
-        <div th:replace="fragments/serviceform/reqhandlers" />
-
-        <div th:replace="fragments/serviceform/accessstrategy" />
-        
-            
+        <div class="tab-content clearfix">
+            <div class="tab-pane fade in active" id="1a">
+                <p/>
+                <div th:replace="fragments/serviceform/enabled"/>
+                <div th:replace="fragments/serviceform/serviceid"/>
+                <div th:replace="fragments/serviceform/servicename"/>
+                <div th:replace="fragments/serviceform/servicedesc"/>
+                <div th:replace="fragments/serviceform/themeid"/>
+                <div th:replace="fragments/serviceform/logo"/>
+                <div th:replace="fragments/serviceform/linkrefs"/>
+            </div>
+            <div class="tab-pane fade" id="2a">
+                <p/>
+                <div th:replace="fragments/serviceform/servicetype"/>
+                <div th:replace="fragments/serviceform/oauthClient"/>
+                <div th:replace="fragments/serviceform/samlClient"/>
+            </div>
+            <div class="tab-pane fade" id="3a">
+                <p/>
+                <div th:replace="fragments/serviceform/logout"/>
+                <div th:replace="fragments/serviceform/logouttypeeval"/>
+            </div>
+            <div class="tab-pane fade" id="4a">
+                <p/>
+                <div th:replace="fragments/serviceform/accessstrategy"/>
+            </div>
+            <div class="tab-pane fade" id="5a">
+                <p/>
+                <div th:replace="fragments/serviceform/multiAuthPane"/>
+            </div>
+            <div class="tab-pane fade" id="6a">
+                <p/>
+                <div th:replace="fragments/serviceform/proxy"/>
+            </div>
+            <div class="tab-pane fade" id="7a">
+                <p/>
+                <div th:replace="fragments/serviceform/uidattrs"/>
+            </div>
+            <div class="tab-pane fade" id="8a">
+                <p/>
+                <div th:replace="fragments/serviceform/attrrel"/>
+            </div>
+            <div class="tab-pane fade" id="9a">
+                <p/>
+                <div th:replace="fragments/serviceform/propertiesPane"/>
+            </div>
+            <div class="tab-pane fade" id="100a">
+                <p/>
+                <div th:replace="fragments/serviceform/evalorder"/>
+                <div th:replace="fragments/serviceform/reqhandlers"/>
+                <div th:replace="fragments/serviceform/pubkey"/>
+            </div>
         </div>
-        <div class="col-sm-6">
-            <div th:replace="fragments/serviceform/multiAuthPane" />
-
-            <div th:replace="fragments/serviceform/propertiesPane" />
-
-            <div th:replace="fragments/serviceform/uidattrs" />
-
-            <div th:replace="fragments/serviceform/attrrel" />
-            <div th:replace="fragments/serviceform/pubkey" />
-            <div th:replace="fragments/serviceform/proxy" />
-        </div>
-        <div th:replace="fragments/serviceform/saveform" />
     </div>
 </form>

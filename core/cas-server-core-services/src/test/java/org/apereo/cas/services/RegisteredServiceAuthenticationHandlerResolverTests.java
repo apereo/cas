@@ -45,14 +45,11 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         this.defaultServicesManager = new DefaultServicesManager(dao);
         this.defaultServicesManager.load();
 
-        final AcceptUsersAuthenticationHandler handler1 = new AcceptUsersAuthenticationHandler();
-        handler1.setName("handler1");
+        final AcceptUsersAuthenticationHandler handler1 = new AcceptUsersAuthenticationHandler("handler1");
 
-        final AcceptUsersAuthenticationHandler handler2 = new AcceptUsersAuthenticationHandler();
-        handler2.setName("handler2");
+        final AcceptUsersAuthenticationHandler handler2 = new AcceptUsersAuthenticationHandler("handler2");
 
-        final AcceptUsersAuthenticationHandler handler3 = new AcceptUsersAuthenticationHandler();
-        handler3.setName("handler3");
+        final AcceptUsersAuthenticationHandler handler3 = new AcceptUsersAuthenticationHandler("handler3");
 
         this.handlers = Stream.of(handler1, handler2, handler3).collect(Collectors.toSet());
     }

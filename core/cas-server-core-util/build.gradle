@@ -3,15 +3,10 @@ dependencies {
     compile project(":api:cas-server-core-api-authentication")
     compile project(":api:cas-server-core-api-ticket")
     compile project(":api:cas-server-core-api-util")
-    compile libraries.spring
-    compileOnly libraries.springcloud
-    compile libraries.springboot
-    compile libraries.shiro
-    compile libraries.quartz
-    compile libraries.jackson
-    compile libraries.jose4j
-    compile libraries.httpclient
-    compile libraries.bouncycastle
-    runtime libraries.hibernate
+    implementation libraries.shiro
+    api libraries.quartz
+    api libraries.jose4j
+    api libraries.httpclient
+    implementation libraries.bouncycastle
 }
 

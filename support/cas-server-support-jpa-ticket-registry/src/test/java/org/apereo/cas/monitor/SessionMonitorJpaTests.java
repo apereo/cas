@@ -1,7 +1,21 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -31,14 +45,29 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @Transactional
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, JpaTicketRegistryConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        JpaTicketRegistryConfiguration.class})
 public class SessionMonitorJpaTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     @Autowired
-    @Qualifier("jpaTicketRegistry")
+    @Qualifier("ticketRegistry")
     private TicketRegistry jpaRegistry;
 
     @Test

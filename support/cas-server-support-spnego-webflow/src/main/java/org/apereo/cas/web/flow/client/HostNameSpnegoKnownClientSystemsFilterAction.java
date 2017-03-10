@@ -1,5 +1,8 @@
 package org.apereo.cas.web.flow.client;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Pattern;
 
 /**
@@ -13,7 +16,8 @@ import java.util.regex.Pattern;
  */
 
 public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HostNameSpnegoKnownClientSystemsFilterAction.class);
+    
     private final Pattern hostNamePatternString;
 
     /**
@@ -45,7 +49,7 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
             return false;
         }
         final String hostName = getRemoteHostName(remoteIp);
-        logger.debug("Retrieved host name for the remote ip is {}", hostName);
+        LOGGER.debug("Retrieved host name for the remote ip is [{}]", hostName);
         return this.hostNamePatternString.matcher(hostName).find();
     }
 }

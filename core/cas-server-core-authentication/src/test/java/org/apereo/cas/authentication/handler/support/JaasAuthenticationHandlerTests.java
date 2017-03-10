@@ -21,6 +21,8 @@ import static org.junit.Assert.*;
  */
 public class JaasAuthenticationHandlerTests {
 
+    private static final String USERNAME = "test";
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -36,7 +38,7 @@ public class JaasAuthenticationHandlerTests {
         }
         if (fileName.exists()) {
             System.setProperty("java.security.auth.login.config", '=' + fileName.getCanonicalPath());
-            this.handler = new JaasAuthenticationHandler();
+            this.handler = new JaasAuthenticationHandler("", null, null, null);
         }
     }
 
@@ -45,13 +47,13 @@ public class JaasAuthenticationHandlerTests {
         this.thrown.expect(LoginException.class);
 
         this.handler.setRealm("TEST");
-        this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+        this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"));
     }
 
     @Test
     public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
         this.handler.setRealm("TEST");
-        assertNotNull(this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
+        assertNotNull(this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, USERNAME)));
     }
 
     @Test
@@ -63,6 +65,6 @@ public class JaasAuthenticationHandlerTests {
     public void verifyWithInvalidCredentials() throws Exception {
         this.thrown.expect(LoginException.class);
 
-        this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+        this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"));
     }
 }

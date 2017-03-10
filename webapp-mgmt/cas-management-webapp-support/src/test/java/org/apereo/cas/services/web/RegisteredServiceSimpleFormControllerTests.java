@@ -47,6 +47,10 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnit4.class)
 public class RegisteredServiceSimpleFormControllerTests {
 
+    private static final String NAME = "name";
+    private static final String SERVICE_ID = "serviceId";
+    private static final String DESCRIPTION = "description";
+    private static final String TEST_ID = "test";
     private RegisteredServiceSimpleFormController controller;
     private DefaultServicesManager manager;
     private StubPersonAttributeDao repository;
@@ -57,7 +61,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     @Before
     public void setUp() throws Exception {
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("test", Arrays.asList(new Object[]{"test"}));
+        attributes.put(TEST_ID, Arrays.asList(new Object[]{TEST_ID}));
 
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);
@@ -81,9 +85,9 @@ public class RegisteredServiceSimpleFormControllerTests {
     @Test
     public void verifyAddRegisteredServiceWithValues() throws Exception {
         final RegexRegisteredService svc = new RegexRegisteredService();
-        svc.setDescription("description");
-        svc.setServiceId("serviceId");
-        svc.setName("name");
+        svc.setDescription(DESCRIPTION);
+        svc.setServiceId(SERVICE_ID);
+        svc.setName(NAME);
         svc.setEvaluationOrder(123);
 
         assertTrue(this.manager.getAllServices().isEmpty());
@@ -92,9 +96,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for (final RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof RegexRegisteredService);
-        }
+        this.manager.getAllServices().forEach(rs -> assertTrue(rs instanceof RegexRegisteredService));
     }
 
     @Test
@@ -102,15 +104,15 @@ public class RegisteredServiceSimpleFormControllerTests {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
         r.setName("Test Service");
-        r.setServiceId("test");
-        r.setDescription("description");
+        r.setServiceId(TEST_ID);
+        r.setDescription(DESCRIPTION);
 
         this.manager.save(r);
 
         final RegexRegisteredService svc = new RegexRegisteredService();
-        svc.setDescription("description");
+        svc.setDescription(DESCRIPTION);
         svc.setServiceId("serviceId1");
-        svc.setName("name");
+        svc.setName(NAME);
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
 
@@ -126,9 +128,9 @@ public class RegisteredServiceSimpleFormControllerTests {
     @Test
     public void verifyAddRegexRegisteredService() throws Exception {
         final RegexRegisteredService svc = new RegexRegisteredService();
-        svc.setDescription("description");
+        svc.setDescription(DESCRIPTION);
         svc.setServiceId("^serviceId");
-        svc.setName("name");
+        svc.setName(NAME);
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
 
@@ -137,17 +139,15 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for (final RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof RegexRegisteredService);
-        }
+        this.manager.getAllServices().forEach(rs -> assertTrue(rs instanceof RegexRegisteredService));
     }
 
     @Test
     public void verifyAddMultipleRegisteredServiceTypes() throws Exception {
         AbstractRegisteredService svc = new RegexRegisteredService();
-        svc.setDescription("description");
+        svc.setDescription(DESCRIPTION);
         svc.setServiceId("^serviceId");
-        svc.setName("name");
+        svc.setName(NAME);
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
 
@@ -155,9 +155,9 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
 
         svc = new RegexRegisteredService();
-        svc.setDescription("description");
+        svc.setDescription(DESCRIPTION);
         svc.setServiceId("^serviceId");
-        svc.setName("name");
+        svc.setName(NAME);
         svc.setId(100);
         svc.setEvaluationOrder(100);
 
@@ -177,9 +177,9 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
 
         final MockRegisteredService svc = new MockRegisteredService();
-        svc.setDescription("description");
+        svc.setDescription(DESCRIPTION);
         svc.setServiceId("^serviceId");
-        svc.setName("name");
+        svc.setName(NAME);
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
 
@@ -202,8 +202,8 @@ public class RegisteredServiceSimpleFormControllerTests {
         final MockRegisteredService r = new MockRegisteredService();
         r.setId(1000);
         r.setName("Test Service");
-        r.setServiceId("test");
-        r.setDescription("description");
+        r.setServiceId(TEST_ID);
+        r.setDescription(DESCRIPTION);
 
         this.manager.save(r);
 

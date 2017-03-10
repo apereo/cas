@@ -41,4 +41,9 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
                             final ExpirationPolicy expirationPolicy) {
         super(id, service, authentication, expirationPolicy);
     }
+
+    @Override
+    public String getPrefix() {
+        return RefreshToken.PREFIX;
+    }
 }

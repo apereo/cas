@@ -4,6 +4,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.Ticket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -21,7 +23,8 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbTicketRegistry.class);
+    
     private final String collectionName;
 
     private final boolean dropCollection;
@@ -45,54 +48,54 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public void initialize() {
         Assert.notNull(this.mongoTemplate);
 
-        logger.debug("Setting up MongoDb Ticket Registry instance {}", this.collectionName);
+        LOGGER.debug("Setting up MongoDb Ticket Registry instance [{}]", this.collectionName);
         if (this.dropCollection) {
-            logger.debug("Dropping database collection: {}", this.collectionName);
+            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            logger.debug("Creating database collection: {}", this.collectionName);
+            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
-        logger.debug("Creating indices on collection {} to auto-expire documents...", this.collectionName);
+        LOGGER.debug("Creating indices on collection [{}] to auto-expire documents...", this.collectionName);
         final DBCollection collection = mongoTemplate.getCollection(this.collectionName);
         collection.createIndex(new BasicDBObject(TicketHolder.FIELD_NAME_EXPIRE_AT, 1),
                 new BasicDBObject("expireAfterSeconds", 0));
 
-        logger.info("Configured MongoDb Ticket Registry instance {}", this.collectionName);
+        LOGGER.info("Configured MongoDb Ticket Registry instance [{}]", this.collectionName);
     }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        logger.debug("Updating ticket {}", ticket);
+        LOGGER.debug("Updating ticket [{}]", ticket);
         try {
             final TicketHolder holder = buildTicketAsDocument(ticket);
             this.mongoTemplate.updateFirst(new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(holder.getTicketId())),
                     Update.update(TicketHolder.FIELD_NAME_JSON, holder.getJson()), this.collectionName);
         } catch (final Exception e) {
-            logger.error("Failed updating {}: {}", ticket, e);
+            LOGGER.error("Failed updating [{}]: [{}]", ticket, e);
         }
         return ticket;
     }
 
     @Override
     public void addTicket(final Ticket ticket) {
-        logger.debug("Adding ticket {}", ticket);
         try {
+            LOGGER.debug("Adding ticket [{}]", ticket);
             this.mongoTemplate.insert(buildTicketAsDocument(ticket), this.collectionName);
         } catch (final Exception e) {
-            logger.error("Failed adding {}: {}", ticket, e);
+            LOGGER.error("Failed adding [{}]: [{}]", ticket, e);
         }
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
         try {
-            logger.debug("Locating ticket ticketId {}", ticketId);
+            LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
             final String encTicketId = encodeTicketId(ticketId);
             if (encTicketId == null) {
-                logger.debug("Ticket ticketId {} could not be found", ticketId);
+                LOGGER.debug("Ticket ticketId [{}] could not be found", ticketId);
                 return null;
             }
             final TicketHolder d = this.mongoTemplate.findOne(new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(encTicketId)),
@@ -101,7 +104,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 return deserializeTicketFromMongoDocument(d);
             }
         } catch (final Exception e) {
-            logger.error("Failed fetching {}: {}", ticketId, e);
+            LOGGER.error("Failed fetching [{}]: [{}]", ticketId, e);
         }
         return null;
     }
@@ -124,12 +127,12 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        logger.debug("Deleting ticket {}", ticketId);
+        LOGGER.debug("Deleting ticket [{}]", ticketId);
         try {
             this.mongoTemplate.remove(new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId)), this.collectionName);
             return true;
         } catch (final Exception e) {
-            logger.error("Failed deleting {}: {}", ticketId, e);
+            LOGGER.error("Failed deleting [{}]: [{}]", ticketId, e);
         }
         return false;
     }

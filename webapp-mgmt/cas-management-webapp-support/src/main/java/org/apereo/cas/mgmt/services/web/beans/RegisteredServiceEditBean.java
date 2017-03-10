@@ -112,6 +112,8 @@ public class RegisteredServiceEditBean implements Serializable {
         private String description;
         private String logoUrl;
         private String theme;
+        private String informationUrl;
+        private String privacyUrl;
         private int evalOrder = Integer.MIN_VALUE;
         private Set<String> requiredHandlers = new HashSet<>();
         private String logoutUrl;
@@ -130,6 +132,22 @@ public class RegisteredServiceEditBean implements Serializable {
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
         private Set<PropertyBean> properties = new LinkedHashSet<>();
+
+        public String getInformationUrl() {
+            return informationUrl;
+        }
+
+        public void setInformationUrl(final String informationUrl) {
+            this.informationUrl = informationUrl;
+        }
+
+        public String getPrivacyUrl() {
+            return privacyUrl;
+        }
+
+        public void setPrivacyUrl(final String privacyUrl) {
+            this.privacyUrl = privacyUrl;
+        }
 
         public void setProperties(final Set<PropertyBean> properties) {
             this.properties = properties;

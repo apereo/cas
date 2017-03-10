@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
  */
 public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
+    private static final String LOGIN_URL_PATH = "/login";
     @Autowired
     private OpenIdPostUrlHandlerMapping handlerMapping;
     
@@ -30,35 +31,35 @@ public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
 
-        assertNull(this.handlerMapping.lookupHandler("/login", request));
+        assertNull(this.handlerMapping.lookupHandler(LOGIN_URL_PATH, request));
     }
 
     @Test
     public void verifyProperMatchWrongMethod() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setContextPath("/login");
+        request.setContextPath(LOGIN_URL_PATH);
         request.setMethod("GET");
 
-        assertNull(this.handlerMapping.lookupHandler("/login", request));
+        assertNull(this.handlerMapping.lookupHandler(LOGIN_URL_PATH, request));
     }
 
     @Test
     public void verifyProperMatchCorrectMethodNoParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setContextPath("/login");
+        request.setContextPath(LOGIN_URL_PATH);
         request.setMethod("POST");
 
-        assertNull(this.handlerMapping.lookupHandler("/login", request));
+        assertNull(this.handlerMapping.lookupHandler(LOGIN_URL_PATH, request));
     }
 
     @Test
     public void verifyProperMatchCorrectMethodWithParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setContextPath("/login");
+        request.setContextPath(LOGIN_URL_PATH);
         request.setMethod("POST");
         request.setParameter("openid.mode", "check_authentication");
 
 
-        assertNotNull(this.handlerMapping.lookupHandler("/login", request));
+        assertNotNull(this.handlerMapping.lookupHandler(LOGIN_URL_PATH, request));
     }
 }

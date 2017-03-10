@@ -2,13 +2,13 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -30,14 +31,11 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -63,7 +61,9 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreAuthenticationHandlersConfiguration.class,
                 CasCoreHttpConfiguration.class,
                 CasCoreConfiguration.class,
+                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreTicketsConfiguration.class,
+                CasCoreTicketCatalogConfiguration.class,
                 CasCookieConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasCoreLogoutConfiguration.class,
@@ -78,11 +78,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @EnableAspectJAutoProxy
 @TestPropertySource(locations = {"classpath:/core.properties"})
 public abstract class AbstractCentralAuthenticationServiceTests {
-
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
@@ -104,11 +99,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     @Autowired
     private WebApplicationServiceFactory webApplicationServiceFactory;
-
-    @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
-
+    
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
@@ -148,6 +139,4 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     public WebApplicationServiceFactory getWebApplicationServiceFactory() {
         return webApplicationServiceFactory;
     }
-    
-
 }

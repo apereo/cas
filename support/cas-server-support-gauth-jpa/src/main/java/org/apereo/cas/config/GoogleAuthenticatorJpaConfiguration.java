@@ -12,6 +12,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +43,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Autowired
     @Qualifier("googleAuthenticatorInstance")
     private IGoogleAuthenticator googleAuthenticatorInstance;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -68,7 +69,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                Beans.newEntityManagerFactoryBean(
+                Beans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaGoogleAuthenticatorVendorAdapter(),
                                 "jpaGoogleAuthenticatorContext",
@@ -90,10 +91,12 @@ public class GoogleAuthenticatorJpaConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
         return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance);
     }
 
+    @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         return new JpaGoogleAuthenticatorTokenRepository(

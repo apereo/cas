@@ -3,14 +3,16 @@ package org.apereo.cas.support.oauth.web;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.http.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * This is {@link OAuth20AccessTokenResponseGenerator}.
@@ -29,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseGenerator {
 
     private static final JsonFactory JSON_FACTORY = new JsonFactory(new ObjectMapper().findAndRegisterModules());
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenResponseGenerator.class);
 
     /**
      * The Resource loader.
@@ -42,7 +45,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
      */
     @Autowired
     protected CasConfigurationProperties casProperties;
-    
+
     @Override
     public void generate(final HttpServletRequest request,
                          final HttpServletResponse response,
@@ -50,21 +53,34 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                          final Service service,
                          final AccessToken accessTokenId,
                          final RefreshToken refreshTokenId,
-                         final long timeout) {
+                         final long timeout,
+                         final OAuth20ResponseTypes responseType) {
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            try(JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(response.getWriter())) {
+            try (JsonGenerator jsonGenerator = getResponseJsonGenerator(response)) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
-                        refreshTokenId, timeout, service, registeredService);
+                        refreshTokenId, timeout, service, registeredService, responseType);
                 jsonGenerator.writeEndObject();
             } catch (final Exception e) {
-                throw new IllegalArgumentException(e);
+                LOGGER.error(e.getMessage(), e);
+                throw Throwables.propagate(e);
             }
         } else {
             generateTextInternal(request, response, accessTokenId, refreshTokenId, timeout);
         }
+    }
+
+    /**
+     * Gets response json generator.
+     *
+     * @param response the response
+     * @return the response json generator
+     * @throws IOException the io exception
+     */
+    protected JsonGenerator getResponseJsonGenerator(final HttpServletResponse response) throws IOException {
+        return JSON_FACTORY.createGenerator(response.getWriter());
     }
 
     /**
@@ -105,6 +121,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
      * @param timeout           the timeout
      * @param service           the service
      * @param registeredService the registered service
+     * @param responseType      the response type
      * @throws Exception the exception
      */
     protected void generateJsonInternal(final HttpServletRequest request,
@@ -114,7 +131,8 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final RefreshToken refreshTokenId,
                                         final long timeout,
                                         final Service service,
-                                        final OAuthRegisteredService registeredService) throws Exception {
+                                        final OAuthRegisteredService registeredService,
+                                        final OAuth20ResponseTypes responseType) throws Exception {
         jsonGenerator.writeStringField(OAuthConstants.ACCESS_TOKEN, accessTokenId.getId());
         jsonGenerator.writeStringField(OAuthConstants.TOKEN_TYPE, OAuthConstants.TOKEN_TYPE_BEARER);
         jsonGenerator.writeNumberField(OAuthConstants.EXPIRES_IN, timeout);

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 
 /**
@@ -45,28 +46,38 @@ public class ServiceRegistryInitializer {
     @PostConstruct
     public void initServiceRegistryIfNecessary() {
         final long size = this.serviceRegistryDao.size();
-        LOGGER.debug("Service registry contains {} service definitions", size);
+        LOGGER.debug("Service registry contains [{}] service definitions", size);
 
-
-        if (this.initFromJson) {
-            LOGGER.debug("Service registry will be auto-initialized from default JSON services");
-            this.jsonServiceRegistryDao.load().forEach(r -> {
-                if (this.serviceRegistryDao.findServiceById(r.getServiceId()) != null) {
-                    LOGGER.debug("Skipping {} JSON service definition as a matching service is found in the registry", r.getName());
-                } else if (this.serviceRegistryDao.findServiceById(r.getId()) != null) {
-                    LOGGER.debug("Skipping {} JSON service definition as a matching numeric id is found in the registry", r.getName());
-                } else {
-                    LOGGER.debug("Initializing service registry with the {} JSON service definition...", r);
-                    this.serviceRegistryDao.save(r);
-                }
-            });
-            this.servicesManager.load();
-            LOGGER.debug("Service registry contains {} service definitions", this.servicesManager.count());
-        } else {
+        if (!this.initFromJson) {
             LOGGER.info("The service registry database will not be initialized from default JSON services. "
                     + "If the service registry database ends up empty, CAS will refuse to authenticate services "
                     + "until service definitions are added to the registry. To auto-initialize the service registry, "
                     + "set 'cas.serviceRegistry.initFromJson=true' in your CAS settings.");
+            return;
         }
+
+        LOGGER.debug("Service registry will be auto-initialized from default JSON services");
+        final List<RegisteredService> servicesLoaded = this.jsonServiceRegistryDao.load();
+        LOGGER.debug("Loading JSON services are [{}]", servicesLoaded);
+
+        for (final RegisteredService r : servicesLoaded) {
+            RegisteredService match = this.serviceRegistryDao.findServiceById(r.getServiceId());
+            if (match != null) {
+                LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry",
+                        r.getName(), match.getName());
+                continue;
+            }
+            match = this.serviceRegistryDao.findServiceById(r.getId());
+            if (match != null) {
+                LOGGER.warn("Skipping [{}] JSON service definition as a matching numeric id [{}] is found in the registry",
+                        r.getName(), match.getId());
+                continue;
+            }
+            LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r);
+            this.serviceRegistryDao.save(r);
+        }
+        this.servicesManager.load();
+        LOGGER.info("Service registry contains [{}] service definitions", this.servicesManager.count());
+
     }
 }

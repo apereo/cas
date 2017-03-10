@@ -8,6 +8,8 @@ import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.opensaml.saml.saml1.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +27,8 @@ import java.util.Map;
  */
 
 public abstract class AbstractSaml10ResponseView extends AbstractCasView {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSaml10ResponseView.class);
+    
     /**
      * The Saml object builder.
      */
@@ -79,7 +83,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         this.samlArgumentExtractor = samlArgumentExtractor;
         this.encoding = encoding;
 
-        logger.debug("Using {} seconds as skew allowance.", skewAllowance);
+        LOGGER.debug("Using [{}] seconds as skew allowance.", skewAllowance);
         this.skewAllowance = skewAllowance;
     }
 
@@ -98,22 +102,22 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
                 try {
                     serviceId = new URL(service.getId()).getHost();
                 } catch (final MalformedURLException e) {
-                    logger.debug(e.getMessage(), e);
+                    LOGGER.debug(e.getMessage(), e);
                 }
             }
 
-            logger.debug("Using {} as the recipient of the SAML response for {}", serviceId, service);
+            LOGGER.debug("Using [{}] as the recipient of the SAML response for [{}]", serviceId, service);
             final Response samlResponse = this.samlObjectBuilder.newResponse(
                     this.samlObjectBuilder.generateSecureRandomId(),
                     ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
-            logger.debug("Created SAML response for service {}", serviceId);
+            LOGGER.debug("Created SAML response for service [{}]", serviceId);
             
             prepareResponse(samlResponse, model);
 
-            logger.debug("Starting to encode SAML response for service {}", serviceId);
+            LOGGER.debug("Starting to encode SAML response for service [{}]", serviceId);
             this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
-            logger.error("Error generating SAML response for service {}.", serviceId, e);
+            LOGGER.error("Error generating SAML response for service [{}].", serviceId, e);
             throw e;
         }
     }

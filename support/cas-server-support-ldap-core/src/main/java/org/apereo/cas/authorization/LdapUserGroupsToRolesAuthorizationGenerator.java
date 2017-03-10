@@ -30,7 +30,7 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class LdapUserGroupsToRolesAuthorizationGenerator extends LdapUserAttributesToRolesAuthorizationGenerator {
+public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttributesAuthorizationGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapUserGroupsToRolesAuthorizationGenerator.class);
 
@@ -44,8 +44,6 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends LdapUserAttribu
      * @param factory              the factory
      * @param userSearchExecutor   the user search executor
      * @param allowMultipleResults the allow multiple results
-     * @param roleAttribute        the role attribute
-     * @param rolePrefix           the role prefix
      * @param groupAttributeName   the group attribute name
      * @param groupPrefix          the group prefix
      * @param groupSearchExecutor  the group search executor
@@ -53,34 +51,30 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends LdapUserAttribu
     public LdapUserGroupsToRolesAuthorizationGenerator(final ConnectionFactory factory,
                                                        final SearchExecutor userSearchExecutor,
                                                        final boolean allowMultipleResults,
-                                                       final String roleAttribute,
-                                                       final String rolePrefix, 
-                                                       final String groupAttributeName, 
-                                                       final String groupPrefix, 
+                                                       final String groupAttributeName,
+                                                       final String groupPrefix,
                                                        final SearchExecutor groupSearchExecutor) {
-        super(factory, userSearchExecutor, allowMultipleResults, roleAttribute, rolePrefix);
+        super(factory, userSearchExecutor, allowMultipleResults);
         this.groupAttributeName = groupAttributeName;
         this.groupPrefix = groupPrefix;
         this.groupSearchExecutor = groupSearchExecutor;
     }
 
     @Override
-    protected void addProfileRoles(final LdapEntry userEntry,
-                                   final CommonProfile profile,
-                                   final LdapAttribute attribute) {
+    protected CommonProfile generateAuthorizationForLdapEntry(final CommonProfile profile, final LdapEntry userEntry) {
         try {
-            LOGGER.debug("Attempting to get roles for user {}.", userEntry.getDn());
+            LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
             final Response<SearchResult> response = this.groupSearchExecutor.search(
                     this.connectionFactory,
-                    Beans.newSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
+                    Beans.newLdaptiveSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
                             Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Arrays.asList(userEntry.getDn())));
-            LOGGER.debug("LDAP role search response: {}", response);
+            LOGGER.debug("LDAP role search response: [{}]", response);
             final SearchResult groupResult = response.getResult();
-            
+
             for (final LdapEntry entry : groupResult.getEntries()) {
                 final LdapAttribute groupAttribute = entry.getAttribute(this.groupAttributeName);
                 if (groupAttribute == null) {
-                    LOGGER.warn("Role attribute not found on entry {}", entry);
+                    LOGGER.warn("Role attribute not found on entry [{}]", entry);
                     continue;
                 }
                 addProfileRolesFromAttributes(profile, groupAttribute, this.groupPrefix);
@@ -88,5 +82,6 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends LdapUserAttribu
         } catch (final LdapException e) {
             throw new RuntimeException("LDAP error fetching roles for user.", e);
         }
+        return profile;
     }
 }

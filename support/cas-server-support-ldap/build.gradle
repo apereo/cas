@@ -5,14 +5,12 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-ldap-core")
     compile project(":core:cas-server-core-configuration")
+    api libraries.persondirectory
 
-    compile libraries.spring
-    compile libraries.springcloud
-    compile libraries.jackson
-    compile libraries.ldaptive
-    compile libraries.pac4j
-    runtime libraries.hibernate
-    testCompile libraries.tests
-    testCompile project(":core:cas-server-core-services")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    implementation libraries.ldaptive
+    implementation libraries.pac4j
+
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }

@@ -34,4 +34,11 @@ public interface CipherExecutor<T, R> {
      * @return true/false
      */
     boolean isEnabled();
+
+    /**
+     * The (component) name of this cipher.
+     *
+     * @return the name.
+     */
+    String getName();
 }

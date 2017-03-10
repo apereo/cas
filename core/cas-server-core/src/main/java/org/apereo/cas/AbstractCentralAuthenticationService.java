@@ -3,10 +3,11 @@ package org.apereo.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -22,7 +23,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -53,10 +52,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     private static final long serialVersionUID = -7572316677901391166L;
 
-    /**
-     * Log instance for logging events, info, warnings, errors, etc.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCentralAuthenticationService.class);
 
     /**
      * Application event publisher.
@@ -87,13 +83,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * The service selection strategy during validation events.
      **/
-    protected List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+    protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
-    protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory = new AcceptAnyAuthenticationPolicyFactory();
+    protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory
+            = new AcceptAnyAuthenticationPolicyFactory();
 
     /**
      * Factory to create the principal type.
@@ -108,31 +105,30 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * Build the central authentication service implementation.
      *
-     * @param ticketRegistry                                  the tickets registry.
-     * @param ticketFactory                                   the ticket factory
-     * @param servicesManager                                 the services manager.
-     * @param logoutManager                                   the logout manager.
-     * @param authenticationRequestServiceSelectionStrategies The service selection strategy during validation events.
-     * @param authenticationPolicyFactory                     Authentication policy that uses a service context to produce stateful
-     *                                                        security policies to apply when
-     *                                                        authenticating credentials.
-     * @param principalFactory                                principal factory to create principal objects
-     * @param cipherExecutor                                  Cipher executor to handle ticket validation.
+     * @param ticketRegistry      the tickets registry.
+     * @param ticketFactory       the ticket factory
+     * @param servicesManager     the services manager.
+     * @param logoutManager       the logout manager.
+     * @param selectionStrategies the selection strategies
+     * @param policy              Authentication policy uses a service context to create security policies to apply when
+     *                            authenticating credentials.
+     * @param principalFactory    principal factory to create principal objects
+     * @param cipherExecutor      Cipher executor to handle ticket validation.
      */
     public AbstractCentralAuthenticationService(final TicketRegistry ticketRegistry,
                                                 final TicketFactory ticketFactory, final ServicesManager servicesManager,
                                                 final LogoutManager logoutManager,
-                                                final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
-                                                final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
+                                                final AuthenticationServiceSelectionPlan selectionStrategies,
+                                                final ContextualAuthenticationPolicyFactory<ServiceContext> policy,
                                                 final PrincipalFactory principalFactory,
                                                 final CipherExecutor<String, String> cipherExecutor) {
         this.ticketRegistry = ticketRegistry;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
-        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
+        this.authenticationRequestServiceSelectionStrategies = selectionStrategies;
         this.principalFactory = principalFactory;
-        this.serviceContextAuthenticationPolicyFactory = authenticationPolicyFactory;
+        this.serviceContextAuthenticationPolicyFactory = policy;
         this.cipherExecutor = cipherExecutor;
     }
 
@@ -143,7 +139,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected void doPublishEvent(final ApplicationEvent e) {
         if (applicationEventPublisher != null) {
-            logger.debug("Publishing {}", e);
+            LOGGER.debug("Publishing [{}]", e);
             this.applicationEventPublisher.publishEvent(e);
         }
     }
@@ -221,25 +217,25 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                                                   final RegisteredService registeredService) {
         final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
-            logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
+            LOGGER.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
             final RegisteredService proxyingService = this.servicesManager.findServiceBy(proxiedBy);
 
             if (proxyingService != null) {
-                logger.debug("Located proxying service [{}] in the service registry", proxyingService);
+                LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
-                    logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
+                    LOGGER.warn("Found proxying service [{}], but it is not authorized to fulfill the proxy attempt made by [{}]",
                             proxyingService.getId(), service.getId());
                     throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
                             + registeredService.getId());
                 }
             } else {
-                logger.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
+                LOGGER.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
                         service.getId(), registeredService.getId());
                 throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
                         + registeredService.getId());
             }
         } else {
-            logger.trace("TGT is not proxied by another service");
+            LOGGER.trace("TGT is not proxied by another service");
         }
     }
 
@@ -253,14 +249,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected void verifyTicketState(final Ticket ticket, final String id, final Class clazz) {
         if (ticket == null) {
-            logger.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", id,
+            LOGGER.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", id,
                     clazz != null ? clazz.getSimpleName() : "unspecified");
             throw new InvalidTicketException(id);
         }
         synchronized (ticket) {
             if (ticket.isExpired()) {
                 this.ticketRegistry.deleteTicket(id);
-                logger.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
+                LOGGER.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
                 throw new InvalidTicketException(id);
             }
         }
@@ -279,12 +275,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @return the service
      */
     protected Service resolveServiceFromAuthenticationRequest(final Service service) {
-        return this.authenticationRequestServiceSelectionStrategies.stream()
-                .sorted()
-                .filter(s -> s.supports(service))
-                .findFirst()
-                .get()
-                .resolveServiceFrom(service);
+        return authenticationRequestServiceSelectionStrategies.resolveService(service);
     }
 
     /**
@@ -296,7 +287,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected boolean isTicketAuthenticityVerified(final String ticketId) {
         if (this.cipherExecutor != null) {
-            logger.debug("Attempting to decode service ticket {} to verify authenticity", ticketId);
+            LOGGER.debug("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
             return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
         }
         return !StringUtils.isEmpty(ticketId);

@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
@@ -31,27 +32,27 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, CasCoreUtilConfiguration.class,
-        AopAutoConfiguration.class, CasThrottlingConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, 
+        CasCoreUtilConfiguration.class,
+        AopAutoConfiguration.class, 
+        CasThrottlingConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @EnableScheduling
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
-    
-
     protected static final String IP_ADDRESS = "1.2.3.4";
-
-    protected static final ClientInfo CLIENT_INFO = new ClientInfo(IP_ADDRESS, IP_ADDRESS);
-
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThrottledSubmissionHandlerInterceptorAdapterTests.class);
+    
     @Autowired
     @Qualifier("authenticationThrottle")
     protected ThrottledSubmissionHandlerInterceptor throttle;
     
     @Before
     public void setUp() throws Exception {
-        ClientInfoHolder.setClientInfo(CLIENT_INFO);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr(IP_ADDRESS);
+        request.setLocalAddr(IP_ADDRESS);
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
     }
 
     @After
@@ -79,7 +80,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         loginUnsuccessfully("mog", "1.2.3.4");
 
         for (int i = 0; i < trials; i++) {
-            logger.debug("Waiting for {} ms", period);
+            LOGGER.debug("Waiting for [{}] ms", period);
             Thread.sleep(period);
             
             final MockHttpServletResponse status = loginUnsuccessfully("mog", "1.2.3.4");

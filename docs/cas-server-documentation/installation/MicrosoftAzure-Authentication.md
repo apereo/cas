@@ -23,9 +23,8 @@ The functionality of this feature depends on the availability of a phone number 
 attribute for the CAS principal. Also note that only a limited number of authentication modes are available to assist with verification
 of credentials via Microsoft Azure. Such modes are activated via the CAS settings.
 
-
-<div class="alert alert-warn"><strong>Secure Certificates</strong><p>Your Microsoft Azure subscription will provide you with a license and a client certificate. The client certificate is a unique private certificate that was generated especially for you. <strong>Do not share or lose this file</strong>. It’s your key to ensuring the security of your communications with the Azure multifactor authentication service.</p></div>
+<div class="alert alert-warning"><strong>Secure Certificates</strong><p>Your Microsoft Azure subscription will provide you with a license and a client certificate. The client certificate is a unique private certificate that was generated especially for you. <strong>Do not share or lose this file</strong>. It’s your key to ensuring the security of your communications with the Azure multifactor authentication service.</p></div>
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#microsoft-azure).

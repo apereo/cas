@@ -23,9 +23,8 @@ public abstract class AbstractManagementController {
     /** Ajax request header value to examine for exceptions. */
     private static final String AJAX_REQUEST_HEADER_VALUE = "XMLHttpRequest";
 
-    /** Logger instance. */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractManagementController.class);
+    
     /** Instance of ServicesManager. */
     protected final ServicesManager servicesManager;
 
@@ -50,15 +49,15 @@ public abstract class AbstractManagementController {
     @ExceptionHandler
     public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response,
                                          final Exception ex) throws IOException {
-        logger.error(ex.getMessage(), ex);
+        LOGGER.error(ex.getMessage(), ex);
         final String contentType = request.getHeader(AJAX_REQUEST_HEADER_NAME);
         if (contentType != null && contentType.equals(AJAX_REQUEST_HEADER_VALUE)) {
-            logger.debug("Handling exception {} for ajax request indicated by header {}",
+            LOGGER.debug("Handling exception [{}] for ajax request indicated by header [{}]",
                     ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
             JsonUtils.renderException(ex, response);
             return null;
         }
-        logger.trace("Unable to resolve exception {} for request. AJAX request header {} not found.",
+        LOGGER.trace("Unable to resolve exception [{}] for request. AJAX request header [{}] not found.",
                 ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
         final ModelAndView mv = new ModelAndView("error");
         mv.addObject(ex);

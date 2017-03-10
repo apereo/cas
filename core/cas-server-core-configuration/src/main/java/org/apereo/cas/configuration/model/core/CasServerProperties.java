@@ -1,10 +1,9 @@
 package org.apereo.cas.configuration.model.core;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
-import java.time.Duration;
 
 /**
  * This is {@link CasServerProperties}.
@@ -13,14 +12,22 @@ import java.time.Duration;
  * @since 5.0.0
  */
 public class CasServerProperties {
-    
-    private String connectionTimeout = "PT20S";
+
     private Resource rewriteValveConfigLocation = new ClassPathResource("container/tomcat/rewrite.config");
     private String name = "https://cas.example.org:8443";
     private String prefix = name.concat("/cas");
     private Ajp ajp = new Ajp();
     private Http http = new Http();
+    private HttpProxy httpProxy = new HttpProxy();
     private ExtendedAccessLog extAccessLog = new ExtendedAccessLog();
+
+    public HttpProxy getHttpProxy() {
+        return httpProxy;
+    }
+
+    public void setHttpProxy(final HttpProxy httpProxy) {
+        this.httpProxy = httpProxy;
+    }
 
     public Resource getRewriteValveConfigLocation() {
         return rewriteValveConfigLocation;
@@ -69,21 +76,13 @@ public class CasServerProperties {
     public void setPrefix(final String prefix) {
         this.prefix = prefix;
     }
-    
+
     public String getLoginUrl() {
-        return getPrefix().concat("/login");
+        return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGIN);
     }
 
     public String getLogoutUrl() {
-        return getPrefix().concat("/logout");
-    }
-
-    public void setConnectionTimeout(final String connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    public int getConnectionTimeout() {
-        return (int) Duration.parse(connectionTimeout).toMillis();
+        return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGOUT);
     }
 
     public static class Ajp {
@@ -98,7 +97,7 @@ public class CasServerProperties {
         private int maxPostSize = 20971520;
         private int proxyPort = -1;
         private int redirectPort = -1;
-        
+
         public String getProtocol() {
             return protocol;
         }
@@ -187,7 +186,7 @@ public class CasServerProperties {
             this.redirectPort = redirectPort;
         }
     }
-    
+
     public static class ExtendedAccessLog {
         private boolean enabled;
         private String pattern = "c-ip s-ip cs-uri sc-status time X-threadname x-H(secure) x-H(remoteUser)";
@@ -235,7 +234,55 @@ public class CasServerProperties {
             this.prefix = prefix;
         }
     }
-    
+
+    public static class HttpProxy {
+        private boolean enabled;
+        private String scheme = "https";
+        private boolean secure = true;
+        private int redirectPort;
+        private int proxyPort;
+
+        public int getRedirectPort() {
+            return redirectPort;
+        }
+
+        public void setRedirectPort(final int redirectPort) {
+            this.redirectPort = redirectPort;
+        }
+
+        public int getProxyPort() {
+            return proxyPort;
+        }
+
+        public void setProxyPort(final int proxyPort) {
+            this.proxyPort = proxyPort;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getScheme() {
+            return scheme;
+        }
+
+        public void setScheme(final String scheme) {
+            this.scheme = scheme;
+        }
+
+        public boolean isSecure() {
+            return secure;
+        }
+
+        public void setSecure(final boolean secure) {
+            this.secure = secure;
+        }
+    }
+
     public static class Http {
         private boolean enabled = true;
         private int port = 8080;

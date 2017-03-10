@@ -91,13 +91,13 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
             final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
 
             final String viewLocationUrl = prefix.concat(viewUrl).concat(suffix);
-            LOGGER.debug("Attempting to locate view at {}", viewLocationUrl);
+            LOGGER.debug("Attempting to locate view at [{}]", viewLocationUrl);
             final TemplateLocation location = new TemplateLocation(viewLocationUrl);
             if (location.exists(getApplicationContext())) {
-                LOGGER.debug("Found view {}", viewUrl);
+                LOGGER.debug("Found view [{}]", viewUrl);
                 thymeleafView.setTemplateName(viewUrl);
             } else {
-                LOGGER.debug("View {} does not exist. Falling back to default view at {}", viewLocationUrl, thymeleafView.getTemplateName());
+                LOGGER.debug("View [{}] does not exist. Falling back to default view at [{}]", viewLocationUrl, thymeleafView.getTemplateName());
             }
         }
         return view;

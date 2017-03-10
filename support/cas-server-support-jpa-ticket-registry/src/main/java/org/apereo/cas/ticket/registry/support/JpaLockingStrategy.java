@@ -73,7 +73,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         try {
             lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
         } catch (final Exception e) {
-            LOGGER.debug("{} failed querying for {} lock.", this.uniqueId, this.applicationId, e);
+            LOGGER.debug("[{}] failed querying for [{}] lock.", this.uniqueId, this.applicationId, e);
             return false;
         }
 
@@ -82,16 +82,16 @@ public class JpaLockingStrategy implements LockingStrategy {
             final ZonedDateTime expDate = lock.getExpirationDate();
             if (lock.getUniqueId() == null) {
                 // No one currently possesses lock
-                LOGGER.debug("{} trying to acquire {} lock.", this.uniqueId, this.applicationId);
+                LOGGER.debug("[{}] trying to acquire [{}] lock.", this.uniqueId, this.applicationId);
                 result = acquire(lock);
             } else if (expDate == null || ZonedDateTime.now(ZoneOffset.UTC).isAfter(expDate)) {
                 // Acquire expired lock regardless of who formerly owned it
-                LOGGER.debug("{} trying to acquire expired {} lock.", this.uniqueId, this.applicationId);
+                LOGGER.debug("[{}] trying to acquire expired [{}] lock.", this.uniqueId, this.applicationId);
                 result = acquire(lock);
             }
         } else {
             // First acquisition attempt for this applicationId
-            LOGGER.debug("Creating {} lock initially held by {}.", applicationId, uniqueId);
+            LOGGER.debug("Creating [{}] lock initially held by [{}].", applicationId, uniqueId);
             result = acquire(new Lock());
         }
         return result;
@@ -111,7 +111,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         }
         lock.setUniqueId(null);
         lock.setExpirationDate(null);
-        LOGGER.debug("Releasing {} lock held by {}.", this.applicationId, this.uniqueId);
+        LOGGER.debug("Releasing [{}] lock held by [{}].", this.applicationId, this.uniqueId);
         this.entityManager.persist(lock);
     }
     
@@ -145,9 +145,9 @@ public class JpaLockingStrategy implements LockingStrategy {
         } catch (final Exception e) {
             success = false;
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("{} could not obtain {} lock.", this.uniqueId, this.applicationId, e);
+                LOGGER.debug("[{}] could not obtain [{}] lock.", this.uniqueId, this.applicationId, e);
             } else {
-                LOGGER.info("{} could not obtain {} lock.", this.uniqueId, this.applicationId);
+                LOGGER.info("[{}] could not obtain [{}] lock.", this.uniqueId, this.applicationId);
             }
         }
         return success;

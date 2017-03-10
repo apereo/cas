@@ -74,9 +74,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
             return null;
         }
-        LOGGER.debug("Building an authentication result for authentication {} and service {}", authentication, service);
+        LOGGER.debug("Building an authentication result for authentication [{}] and service [{}]", authentication, service);
         final DefaultAuthenticationResult res = new DefaultAuthenticationResult(authentication, service);
-        res.setCredentialProvided(authentication.isCredentialProvided());
+        res.setCredentialProvided(this.providedCredential != null);
         return res;
     }
 
@@ -102,9 +102,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         LOGGER.debug("Collected authentication attributes for this result are [{}]", authenticationAttributes);
 
         authenticationBuilder.setAuthenticationDate(ZonedDateTime.now());
-        authenticationBuilder.addAttribute(Authentication.AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED,
-                this.providedCredential != null
-                        || authenticationBuilder.hasAttribute(Authentication.AUTHENTICATION_ATTRIBUTE_CREDENTIAL_PROVIDED, o -> (Boolean) o));
         final Authentication auth = authenticationBuilder.build();
         LOGGER.debug("Authentication result commenced at [{}]", auth.getAuthenticationDate());
         return auth;

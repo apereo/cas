@@ -6,17 +6,17 @@ dependencies {
     compile project(":core:cas-server-core-validation")
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-configuration")
-    compile libraries.metrics
-    compile libraries.persondirectory
-    compile libraries.spring
-    compile libraries.hibernate
-    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-logout", configuration: "tests")
-    testCompile project(":core:cas-server-core-util")
-    testCompile project(":core:cas-server-core-logout")
-    testCompile project(":core:cas-server-core-monitor")
-    testCompile project(":support:cas-server-support-cookie")
-    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    implementation libraries.metrics
+    implementation libraries.persondirectory
+    
+
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-logout", configuration: "tests")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }
 

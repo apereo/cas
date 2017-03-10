@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -62,10 +63,10 @@ public class GenerateServiceTicketAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         final Service service = WebUtils.getService(context);
-        LOGGER.debug("Service asking for service ticket is {}", service);
+        LOGGER.debug("Service asking for service ticket is [{}]", service);
 
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
-        LOGGER.debug("Ticket-granting ticket found in the context is {}", ticketGrantingTicket);
+        LOGGER.debug("Ticket-granting ticket found in the context is [{}]", ticketGrantingTicket);
 
         try {
             final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
@@ -75,25 +76,27 @@ public class GenerateServiceTicketAction extends AbstractAction {
             }
 
             final RegisteredService registeredService = servicesManager.findServiceBy(service);
-            LOGGER.debug("Registered service asking for service ticket is {}", registeredService);
+            LOGGER.debug("Registered service asking for service ticket is [{}]", registeredService);
             WebUtils.putRegisteredService(context, registeredService);
             WebUtils.putService(context, service);
 
-            if (!StringUtils.isEmpty(registeredService.getAccessStrategy().getUnauthorizedRedirectUrl())) {
-                LOGGER.debug("Registered service may redirect to {} for unauthorized access requests",
-                        registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+            if (registeredService != null) {
+                if (!StringUtils.isEmpty(registeredService.getAccessStrategy().getUnauthorizedRedirectUrl())) {
+                    LOGGER.debug("Registered service may redirect to [{}] for unauthorized access requests",
+                            registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+                }
+                WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
             }
-            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
-
             if (WebUtils.getWarningCookie(context)) {
-                LOGGER.debug("Warning cookie is present in the request context. Routing result to {} state", CasWebflowConstants.STATE_ID_WARN);
+                LOGGER.debug("Warning cookie is present in the request context. Routing result to [{}] state", CasWebflowConstants.STATE_ID_WARN);
                 return result(CasWebflowConstants.STATE_ID_WARN);
             }
 
-            final AuthenticationResultBuilder builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
+            final Credential credential = WebUtils.getCredential(context);
+            final AuthenticationResultBuilder builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
             final AuthenticationResult authenticationResult = builder.build(service);
 
-            LOGGER.debug("Built the final authentication result {} to grant service ticket to {}", authenticationResult, service);
+            LOGGER.debug("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);
@@ -101,14 +104,14 @@ public class GenerateServiceTicketAction extends AbstractAction {
 
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
-                LOGGER.debug("CAS has determined ticket-granting ticket {} is invalid and must be destroyed", ticketGrantingTicket);
+                LOGGER.debug("CAS has determined ticket-granting ticket [{}] is invalid and must be destroyed", ticketGrantingTicket);
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
-                LOGGER.debug("Request indicates that it is gateway. Routing result to {} state", CasWebflowConstants.STATE_ID_GATEWAY);
+                LOGGER.debug("Request indicates that it is gateway. Routing result to [{}] state", CasWebflowConstants.STATE_ID_GATEWAY);
                 return result(CasWebflowConstants.STATE_ID_GATEWAY);
             }
-            LOGGER.warn("Could not grant service ticket {}. Routing to {}", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+            LOGGER.warn("Could not grant service ticket [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
     }
@@ -119,6 +122,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
      * @param context the context
      * @return true, if gateway present
      */
+
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
                 .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));

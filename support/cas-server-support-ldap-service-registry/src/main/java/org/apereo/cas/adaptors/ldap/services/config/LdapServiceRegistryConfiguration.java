@@ -36,12 +36,12 @@ public class LdapServiceRegistryConfiguration {
         return new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap());
     }
 
-    @Bean(name = {"ldapServiceRegistryDao", "serviceRegistryDao"})
+    @Bean
     @RefreshScope
     @Autowired
-    public ServiceRegistryDao ldapServiceRegistryDao(@Qualifier("ldapServiceRegistryMapper") final LdapRegisteredServiceMapper mapper) {
+    public ServiceRegistryDao serviceRegistryDao(@Qualifier("ldapServiceRegistryMapper") final LdapRegisteredServiceMapper mapper) {
         final LdapServiceRegistryProperties ldap = casProperties.getServiceRegistry().getLdap();
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(ldap);
+        final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(ldap);
 
         return new LdapServiceRegistryDao(connectionFactory, ldap.getBaseDn(), mapper, ldap);
     }

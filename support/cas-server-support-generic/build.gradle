@@ -5,6 +5,6 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-webflow")
-    compile libraries.shiro
-    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    implementation libraries.shiro
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }

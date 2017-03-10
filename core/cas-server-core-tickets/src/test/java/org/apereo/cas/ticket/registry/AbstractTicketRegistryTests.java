@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,14 +23,16 @@ import static org.junit.Assert.*;
 public abstract class AbstractTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
+    private static final String EXCEPTION_CAUGHT_NONE_EXPECTED = "Exception caught.  None expected.";
+    private static final String CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED = "Caught an exception. But no exception should have been thrown: ";
 
     private TicketRegistry ticketRegistry;
 
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
-        for (final Ticket ticket : this.ticketRegistry.getTickets()) {
-            this.ticketRegistry.deleteTicket(ticket.getId());
+        if (ticketRegistry != null) {
+            this.ticketRegistry.deleteAll();
         }
     }
 
@@ -51,11 +52,11 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyAddTicketToCache() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -64,7 +65,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
         } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -73,33 +74,33 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class);
         } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
     @Test
     public void verifyGetExistingTicketWithProperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
+            this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, TicketGrantingTicket.class);
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
     @Test
     public void verifyGetExistingTicketWithImproperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
+            this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class);
         } catch (final ClassCastException e) {
             return;
         }
-        fail("ClassCastfinal Exception expected.");
+        fail("ClassCastException expected.");
     }
 
     @Test
@@ -107,7 +108,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket(null);
         } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -116,19 +117,19 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL");
         } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
     @Test
     public void verifyGetExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket("TEST");
+            this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX);
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
+            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
         }
     }
 
@@ -136,49 +137,49 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyDeleteAllExistingTickets() {
         try {
             for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
-                this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST" + i,
+                this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
                         CoreAuthenticationTestUtils.getAuthentication(),
                         new NeverExpiresExpirationPolicy()));
             }
             assertEquals(TICKETS_IN_REGISTRY, this.ticketRegistry.deleteAll());
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
+            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
         }
     }
-    
+
     @Test
     public void verifyDeleteExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertSame(1, this.ticketRegistry.deleteTicket("TEST"));
+            assertSame(1, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
+            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
         }
     }
 
     @Test
     public void verifyDeleteNonExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertSame(0, this.ticketRegistry.deleteTicket("TEST1"));
+            assertSame(0, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX + "1"));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
     @Test
     public void verifyDeleteNullTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null) == 1);
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -187,7 +188,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             assertEquals("The size of the empty registry is not zero.", 0, this.ticketRegistry.getTickets().size());
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
@@ -196,9 +197,9 @@ public abstract class AbstractTicketRegistryTests {
         final Collection<Ticket> tickets = new ArrayList<>();
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
-            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
+            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
                     CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i,
+            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("ST" + i,
                     RegisteredServiceTestUtils.getService(),
                     new NeverExpiresExpirationPolicy(), false, true);
             tickets.add(ticketGrantingTicket);
@@ -212,49 +213,48 @@ public abstract class AbstractTicketRegistryTests {
             assertEquals("The size of the registry is not the same as the collection.",
                     tickets.size(), ticketRegistryTickets.size());
 
+
             tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
                     .forEach(ticket -> fail("Ticket was added to registry but was not found in retrieval of collection of all tickets."));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
     }
 
     @Test
     public void verifyDeleteTicketWithChildren() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
-                    "TGT", CoreAuthenticationTestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + "1", CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
-                    "TGT", TicketGrantingTicket.class);
+            final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + "1", TicketGrantingTicket.class);
 
             final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
             final ServiceTicket st1 = tgt.grantServiceTicket(
-                    "ST1", service, new NeverExpiresExpirationPolicy(), false, false);
+                    "ST11", service, new NeverExpiresExpirationPolicy(), false, false);
             final ServiceTicket st2 = tgt.grantServiceTicket(
-                    "ST2", service, new NeverExpiresExpirationPolicy(), false, false);
+                    "ST21", service, new NeverExpiresExpirationPolicy(), false, false);
             final ServiceTicket st3 = tgt.grantServiceTicket(
-                    "ST3", service, new NeverExpiresExpirationPolicy(), false, false);
+                    "ST31", service, new NeverExpiresExpirationPolicy(), false, false);
 
             this.ticketRegistry.addTicket(st1);
             this.ticketRegistry.addTicket(st2);
             this.ticketRegistry.addTicket(st3);
 
-            assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
-            assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
-            assertNotNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
-            assertNotNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
+            assertNotNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + "1", TicketGrantingTicket.class));
+            assertNotNull(this.ticketRegistry.getTicket("ST11", ServiceTicket.class));
+            assertNotNull(this.ticketRegistry.getTicket("ST21", ServiceTicket.class));
+            assertNotNull(this.ticketRegistry.getTicket("ST31", ServiceTicket.class));
 
             this.ticketRegistry.updateTicket(tgt);
             assertSame(4, this.ticketRegistry.deleteTicket(tgt.getId()));
 
-            assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
-            assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
-            assertNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
-            assertNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
+            assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + "1", TicketGrantingTicket.class));
+            assertNull(this.ticketRegistry.getTicket("ST11", ServiceTicket.class));
+            assertNull(this.ticketRegistry.getTicket("ST21", ServiceTicket.class));
+            assertNull(this.ticketRegistry.getTicket("ST31", ServiceTicket.class));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
+            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
         }
     }
 

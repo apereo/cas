@@ -21,8 +21,10 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
@@ -34,10 +36,11 @@ import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Envelope;
-import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -54,6 +57,8 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 public class ECPProfileHandlerController extends AbstractSamlProfileHandlerController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ECPProfileHandlerController.class);
+
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlEcpFaultResponseBuilder;
 
     /**
@@ -76,8 +81,9 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @param logoutUrl                                    the logout url
      * @param forceSignedLogoutRequests                    the force signed logout requests
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
+     * @param samlObjectSignatureValidator                 the saml object signature validator
      */
-    public ECPProfileHandlerController(final SamlObjectSigner samlObjectSigner,
+    public ECPProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                        final ParserPool parserPool,
                                        final AuthenticationSystemSupport authenticationSystemSupport,
                                        final ServicesManager servicesManager,
@@ -93,7 +99,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                        final String loginUrl,
                                        final String logoutUrl,
                                        final boolean forceSignedLogoutRequests,
-                                       final boolean singleLogoutCallbacksDisabled) {
+                                       final boolean singleLogoutCallbacksDisabled,
+                                       final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
                 servicesManager, webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
@@ -101,7 +108,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                 authenticationContextClassMappings,
                 serverPrefix, serverName,
                 authenticationContextRequestParameter, loginUrl, logoutUrl,
-                forceSignedLogoutRequests, singleLogoutCallbacksDisabled);
+                forceSignedLogoutRequests, singleLogoutCallbacksDisabled,
+                samlObjectSignatureValidator);
         this.samlEcpFaultResponseBuilder = samlEcpFaultResponseBuilder;
     }
 
@@ -120,11 +128,11 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
         final Credential credential = extractBasicAuthenticationCredential(request, response);
 
         if (credential == null) {
-            logger.error("Credentials could not be extracted from the SAML ECP request");
+            LOGGER.error("Credentials could not be extracted from the SAML ECP request");
             return;
         }
         if (soapContext == null) {
-            logger.error("SAML ECP request could not be determined from the authentication request");
+            LOGGER.error("SAML ECP request could not be determined from the authentication request");
             return;
         }
         handleEcpRequest(response, request, soapContext, credential);
@@ -151,11 +159,11 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             final Authentication authentication = authenticateEcpRequest(credential, authenticationContext);
             buildSamlResponse(response, request, authenticationContext, buildEcpCasAssertion(authentication, serviceRequest.getKey()));
         } catch (final AuthenticationException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             final String error = e.getHandlerErrors().values().stream().map(Class::getSimpleName).collect(Collectors.joining(","));
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, error));
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, e.getMessage()));
         }
     }
@@ -200,7 +208,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      */
     protected Assertion buildEcpCasAssertion(final Authentication authentication,
                                              final RegisteredService registeredService) {
-        final Map attributes = registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal());
+        final Map attributes = registeredService.getAttributeReleasePolicy()
+                .getAttributes(authentication.getPrincipal(), registeredService);
         final AttributePrincipal principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
                 null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
@@ -230,7 +239,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             decoder.decode();
             return decoder.getMessageContext();
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -239,14 +248,14 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                                             final HttpServletResponse response) {
         try {
             final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
-            final WebContext webContext = new J2EContext(request, response);
+            final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {
-                logger.debug("Received basic authentication ECP request from credentials {} ", credentials);
+                LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             }
         } catch (final Exception e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
         return null;
     }

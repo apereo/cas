@@ -9,12 +9,15 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
@@ -42,7 +45,10 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
         HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
@@ -51,6 +57,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreServicesConfiguration.class,
+        CasCoreLogoutConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreLogoutConfiguration.class})
 @ContextConfiguration("classpath:HazelcastInstanceConfigurationTests-config.xml")
@@ -82,7 +89,7 @@ public class ProvidedHazelcastInstanceConfigurationTests {
 
     @After
     public void shutdownHz() {
-        LOGGER.info("Shutting down hazelcast instance {}", this.hzInstance.getConfig().getInstanceName());
+        LOGGER.info("Shutting down hazelcast instance [{}]", this.hzInstance.getConfig().getInstanceName());
         this.hzInstance.shutdown();
         while (this.hzInstance.getLifecycleService().isRunning()) {
             LOGGER.info("Waiting for instances to shut down");

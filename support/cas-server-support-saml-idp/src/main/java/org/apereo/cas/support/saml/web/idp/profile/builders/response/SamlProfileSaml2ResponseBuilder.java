@@ -8,8 +8,8 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -22,6 +22,8 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,10 +40,10 @@ import java.time.ZonedDateTime;
  */
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
     private static final long serialVersionUID = 1488837627964481272L;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSaml2ResponseBuilder.class);
 
     public SamlProfileSaml2ResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
-                                           final SamlObjectSigner samlObjectSigner,
+                                           final BaseSamlObjectSigner samlObjectSigner,
                                            final VelocityEngineFactory velocityEngineFactory,
                                            final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                            final SamlObjectEncrypter samlObjectEncrypter) {
@@ -65,10 +67,10 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         final SAMLObject finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
 
         if (finalAssertion instanceof EncryptedAssertion) {
-            logger.debug("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
+            LOGGER.debug("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
             samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(finalAssertion));
         } else {
-            logger.debug("Built assertion is not encrypted, so the response will add it to the assertions collection");
+            LOGGER.debug("Built assertion is not encrypted, so the response will add it to the assertions collection");
             samlResponse.getAssertions().add(Assertion.class.cast(finalAssertion));
         }
 
@@ -78,7 +80,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         SamlUtils.logSamlObject(this.configBean, samlResponse);
 
         if (service.isSignResponses()) {
-            logger.debug("SAML entity id [{}] indicates that SAML responses should be signed",
+            LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed",
                     adaptor.getEntityId());
             samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request);
         }

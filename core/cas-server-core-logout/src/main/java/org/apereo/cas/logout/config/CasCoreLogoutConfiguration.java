@@ -1,5 +1,6 @@
 package org.apereo.cas.logout.config;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceMessageHandler;
@@ -13,6 +14,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +32,7 @@ public class CasCoreLogoutConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
@@ -39,23 +41,35 @@ public class CasCoreLogoutConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
     @Bean
-    public SingleLogoutServiceLogoutUrlBuilder defaultSingleLogoutServiceLogoutUrlBuilder() {
+    public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
         return new DefaultSingleLogoutServiceLogoutUrlBuilder();
     }
 
+    @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceMessageHandler")
     @Bean
     public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler() {
-        return new DefaultSingleLogoutServiceMessageHandler(httpClient, logoutBuilder(), servicesManager, defaultSingleLogoutServiceLogoutUrlBuilder(),
-                casProperties.getSlo().isAsynchronous());
+        return new DefaultSingleLogoutServiceMessageHandler(httpClient,
+                logoutBuilder(),
+                servicesManager,
+                singleLogoutServiceLogoutUrlBuilder(),
+                casProperties.getSlo().isAsynchronous(),
+                authenticationRequestServiceSelectionStrategies);
     }
 
+    @ConditionalOnMissingBean(name = "logoutManager")
     @RefreshScope
     @Bean
     public LogoutManager logoutManager() {
         return new LogoutManagerImpl(logoutBuilder(), defaultSingleLogoutServiceMessageHandler(), casProperties.getSlo().isDisabled());
     }
 
+    @ConditionalOnMissingBean(name = "logoutBuilder")
     @Bean
     public LogoutMessageCreator logoutBuilder() {
         return new SamlCompliantLogoutMessageCreator();

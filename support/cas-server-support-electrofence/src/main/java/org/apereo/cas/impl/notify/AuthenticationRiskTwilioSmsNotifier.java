@@ -3,9 +3,9 @@ package org.apereo.cas.impl.notify;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
-import org.apereo.cas.util.io.SmsSender;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apereo.cas.util.io.CommunicationsManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link AuthenticationRiskTwilioSmsNotifier}.
@@ -14,10 +14,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @since 5.1.0
  */
 public class AuthenticationRiskTwilioSmsNotifier extends BaseAuthenticationRiskNotifier {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationRiskTwilioSmsNotifier.class);
 
-    @Autowired(required = false)
-    @Qualifier("smsSender")
-    private SmsSender smsSender;
+    private final CommunicationsManager communicationsManager;
+
+    public AuthenticationRiskTwilioSmsNotifier(final CommunicationsManager communicationsManager) {
+        this.communicationsManager = communicationsManager;
+    }
 
     @Override
     public void publish() {
@@ -26,10 +29,10 @@ public class AuthenticationRiskTwilioSmsNotifier extends BaseAuthenticationRiskN
 
         if (StringUtils.isBlank(sms.getText()) || StringUtils.isBlank(sms.getFrom())
                 || !principal.getAttributes().containsKey(sms.getAttributeName())) {
-            logger.debug("Could not send sms {} because either no phones could be found or sms settings are not configured.",
+            LOGGER.debug("Could not send sms [{}] because either no phones could be found or sms settings are not configured.",
                     principal.getId());
             return;
         }
-        smsSender.send(sms.getFrom(), principal.getAttributes().get(sms.getAttributeName()).toString(), sms.getText());
+        communicationsManager.sms(sms.getFrom(), principal.getAttributes().get(sms.getAttributeName()).toString(), sms.getText());
     }
 }

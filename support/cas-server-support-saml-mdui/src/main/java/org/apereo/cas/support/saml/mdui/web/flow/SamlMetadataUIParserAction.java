@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link SamlMetadataUIParserAction} that attempts to parse
- * the mdui extension block for a SAML SP from the provided metadata locations.
+ * the MDUI extension block for a SAML SP from the provided metadata locations.
  * The result is put into the flow request context. The entity id parameter is
  * specified by default at {@link org.apereo.cas.support.saml.SamlProtocolConstants#PARAMETER_ENTITY_ID}.
  * <p>This action is best suited to be invoked when the CAS login page
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SamlMetadataUIParserAction extends AbstractAction {
 
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataUIParserAction.class);
 
     private final String entityIdParameterName;
     private final MetadataResolverAdapter metadataAdapter;
@@ -41,11 +41,12 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     /**
-     * Instantiates a new SAML mdui parser action.
-     *  @param entityIdParameterName the entity id parameter name
+     * Instantiates a new SAML MDUI parser action.
+     *
+     * @param entityIdParameterName the entity id parameter name
      * @param metadataAdapter       the metadata adapter
-     * @param serviceFactory the service factory
-     * @param servicesManager the service manager
+     * @param serviceFactory        the service factory
+     * @param servicesManager       the service manager
      */
     public SamlMetadataUIParserAction(final String entityIdParameterName, final MetadataResolverAdapter metadataAdapter,
                                       final ServiceFactory<WebApplicationService> serviceFactory, final ServicesManager servicesManager) {
@@ -60,20 +61,19 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
         final String entityId = request.getParameter(this.entityIdParameterName);
         if (StringUtils.isBlank(entityId)) {
-            logger.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
+            LOGGER.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
             return success();
         }
         final WebApplicationService service = this.serviceFactory.createService(entityId);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);
+            LOGGER.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);
 
             if (registeredService != null) {
                 WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext,
                         registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
             }
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                    "Entity " + entityId + " not recognized");
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Entity [" + entityId + "] not recognized");
         }
 
         final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(this.metadataAdapter, entityId, registeredService);

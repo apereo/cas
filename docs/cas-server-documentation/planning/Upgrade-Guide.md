@@ -4,6 +4,7 @@ title: CAS - Upgrade Guide
 ---
 
 # Upgrade Guide
+
 In general, it is recommended that adopters try to keep their CAS deployment in alignment with the latest CAS version available.
 In particular, releases that are of `PATCH` or `SECURITY` nature should be immediately applied as they are drop-in replacements
 for their corresponding parent version. See CAS [Release Policy](../../developer/Release-Policy.html) for more info. 
@@ -21,23 +22,27 @@ This document attempts to describe, at a very high level, the scope and effort r
 to review and adjust (which would be impossible), we describe a strategy by which the upgrade could be executed. 
 
 ## Change Log
+
 Before attempting to upgrade, please review the [CAS change log](https://github.com/apereo/cas/releases) to determine
 what changes/fixes are contained in the version you intend to upgrade to, and whether those are applicable to your environment
 and your CAS deployment. If you are working with an older CAS version and are experiencing what appears to be a bug, chances are
 by reviewing the change log, you will find a drop-in replacement for your overlay that takes care of the issue. 
 
 ## Discuss Issue
+
 Having reviewed the change log, if you do not see an improvement that fixes/adjusts the behavior you have in mind, 
 please discuss the issue on the appropriate CAS mailing lists. The result of the discussing would be a scope/effort
 evaluation to determine feasibility of the solution and the target version in which the fix will be done. 
 
 ## Scope Review
+
 Once you decide your ideal CAS version for the upgrade, before attempting to upgrade, 
 please review the CAS [Release Policy](../../developer/Release-Policy.html). This will provide you
 with an understanding of what changes you may expect from new version and what the required effort
 may be for the upgrade.
 
 ## Evaluate Local Overlay
+
 As a best practice, it is recommended that you deploy CAS via the [overlay method](../installation/Maven-Overlay-Installation.html).
 If you have, the task here would be to identify the number of files your overlay has touched and modified. Catalog the 
 what and why of the changes applied, and cross-check those changes with the CAS change log. Chances are, many of the
@@ -71,6 +76,7 @@ will be functional without any local changes. Build and deploy the clean CAS ove
 your build/deployment process is functional.
 
 ## Apply Changes
+
 Go through your catalog of changes found in your local overlay. Compare and diff those files with their
 original version. You can find out the delta between two versions via the following ways:
 
@@ -88,5 +94,6 @@ Needless to say, you are going to need:
 [Atom](https://atom.io/) or a full blown IDE such as [IntelliJ IDEA](https://www.jetbrains.com/idea/).
 
 ## Document Changes
+
 Remember to document the remaining changes that exist within your local overlay, so that the next time you do the
 same process, you have a clue as for why the overlay looks the way it does. 

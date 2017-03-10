@@ -20,16 +20,13 @@ import java.util.Map;
  * @since 4.1.0
  */
 public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttributeEncoder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProtocolAttributeEncoder.class);
 
     /**
      * The Services manager.
      */
     protected ServicesManager servicesManager;
 
-    /**
-     * The Logger.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private RegisteredServiceCipherExecutor cipherExecutor;
     
@@ -58,15 +55,15 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
                                                 final RegisteredService registeredService) {
-        logger.debug("Starting to encode attributes for release to service [{}]", registeredService);
+        LOGGER.debug("Starting to encode attributes for release to service [{}]", registeredService);
         final Map<String, Object> newEncodedAttributes = new HashMap<>(attributes);
         final Map<String, String> cachedAttributesToEncode = initialize(newEncodedAttributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, this.cipherExecutor, registeredService);
-            logger.debug("[{}] encoded attributes are available for release to [{}]: {}", 
+            LOGGER.debug("[{}] encoded attributes are available for release to [{}]: [{}]", 
                     newEncodedAttributes.size(), registeredService, newEncodedAttributes.keySet());
         } else {
-            logger.debug("Service [{}] is not found/enabled in the service registry so no encoding has taken place.", registeredService);
+            LOGGER.debug("Service [{}] is not found/enabled in the service registry so no encoding has taken place.", registeredService);
         }
 
         return newEncodedAttributes;
@@ -107,7 +104,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
         if (collection != null && collection.size() == 1) {
             cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
                     collection.iterator().next().toString());
-            logger.debug(messageFormat,
+            LOGGER.debug(messageFormat,
                     CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         }
 
@@ -115,7 +112,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
         if (collection != null && collection.size() == 1) {
             cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
                     collection.iterator().next().toString());
-            logger.debug(messageFormat,
+            LOGGER.debug(messageFormat,
                     CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
         }
         return cachedAttributesToEncode;

@@ -29,7 +29,7 @@ Uses a memory map to prevent successive failed login attempts from the same IP a
 
 ## IP Address and Username
 
-Uses a memory map to prevent successive failed login attempts for 
+Uses a memory map to prevent successive failed login attempts for
 a particular username from the same IP address.
 
 ## Inspektr + JDBC
@@ -54,7 +54,7 @@ please [review the following guide](Logging.html).
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-throttling).
 
 ## High Availability Considerations for Throttling
 
@@ -69,7 +69,7 @@ would be split across N systems. However, since the source varies, accurate acco
 throttling components themselves assume a constant source IP for tracking purposes. The login throttling components
 are simply not sufficient for detecting or preventing a distributed password brute force attack.
 
-For stateless CAS clusters where there is no session affinity, the in-memory 
+For stateless CAS clusters where there is no session affinity, the in-memory
 components may afford some protection but
 they cannot apply the rate strictly since requests to CAS hosts would be split across N systems.
 The _inspektr_ components, on the other hand, fully support stateless clusters.

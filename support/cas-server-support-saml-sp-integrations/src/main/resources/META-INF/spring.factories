@@ -4,6 +4,7 @@ org.apereo.cas.config.CasSamlSPWebexConfiguration,\
 org.apereo.cas.config.CasSamlSPTableauConfiguration,\
 org.apereo.cas.config.CasSamlSPSalesforceConfiguration,\
 org.apereo.cas.config.CasSamlSPSaManageConfiguration,\
+org.apereo.cas.config.CasSamlSPWebAdvisorConfiguration,\
 org.apereo.cas.config.CasSamlSPDropboxConfiguration,\
 org.apereo.cas.config.CasSamlSPNetPartnerConfiguration,\
 org.apereo.cas.config.CasSamlSPOffice365Configuration,\

@@ -169,7 +169,7 @@ public class RadiusProperties {
     }
 
     public static class Client {
-        private String inetAddress = "localhost";
+        private String inetAddress;
         private String sharedSecret = "N0Sh@ar3d$ecReT";
         private int socketTimeout;
         private int authenticationPort = 1812;

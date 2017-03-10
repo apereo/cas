@@ -9,6 +9,8 @@ import java.util.Arrays;
  * @since 5.0.0
  */
 public class SamlServiceProviderProperties {
+    private static final String EMAIL = "email";
+    private static final String PRINCIPAL_NAME = "eduPersonPrincipalName";
     private Dropbox dropbox = new Dropbox();
     private Workday workday = new Workday();
     private SAManage saManage = new SAManage();
@@ -24,6 +26,15 @@ public class SamlServiceProviderProperties {
     private Evernote evernote = new Evernote();
     private Asana asana = new Asana();
     private Tableau tableau = new Tableau();
+    private WebAdvisor webAdvisor = new WebAdvisor();
+
+    public WebAdvisor getWebAdvisor() {
+        return webAdvisor;
+    }
+
+    public void setWebAdvisor(final WebAdvisor webAdvisor) {
+        this.webAdvisor = webAdvisor;
+    }
 
     public Tableau getTableau() {
         return tableau;
@@ -153,7 +164,7 @@ public class SamlServiceProviderProperties {
 
     public static class Box extends AbstractSamlSPProperties {
         public Box() {
-            setAttributes(Arrays.asList("email", "firstName", "lastName"));
+            setAttributes(Arrays.asList(EMAIL, "firstName", "lastName"));
         }
     }
 
@@ -168,13 +179,13 @@ public class SamlServiceProviderProperties {
 
     public static class Salesforce extends AbstractSamlSPProperties {
         public Salesforce() {
-            setAttributes(Arrays.asList("mail", "eduPersonPrincipalName"));
+            setAttributes(Arrays.asList("mail", PRINCIPAL_NAME));
         }
     }
 
     public static class ServiceNow extends AbstractSamlSPProperties {
         public ServiceNow() {
-            setAttributes(Arrays.asList("eduPersonPrincipalName"));
+            setAttributes(Arrays.asList(PRINCIPAL_NAME));
         }
     }
 
@@ -190,9 +201,16 @@ public class SamlServiceProviderProperties {
             setAttributes(Arrays.asList("IDPEmail,ImmutableID"));
         }
     }
+    
+    public static class WebAdvisor extends AbstractSamlSPProperties {
+        public WebAdvisor() {
+            setAttributes(Arrays.asList("uid"));
+        }
+    }
+    
     public static class Webex extends AbstractSamlSPProperties {
         public Webex() {
-            setNameIdAttribute("email");
+            setNameIdAttribute(EMAIL);
             setAttributes(Arrays.asList("firstName,lastName"));
         }
     }
@@ -206,7 +224,7 @@ public class SamlServiceProviderProperties {
     public static class TestShib extends AbstractSamlSPProperties {
         public TestShib() {
             //setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-            setAttributes(Arrays.asList("eduPersonPrincipalName"));
+            setAttributes(Arrays.asList(PRINCIPAL_NAME));
         }
     }
 
@@ -221,20 +239,20 @@ public class SamlServiceProviderProperties {
         public InCommon() {
             //setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
             //setSignatureLocation("/etc/cas/config/certs/inc-md-cert.pem");
-            setAttributes(Arrays.asList("eduPersonPrincipalName"));
+            setAttributes(Arrays.asList(PRINCIPAL_NAME));
         }
     }
     
     public static class Evernote extends AbstractSamlSPProperties {
         public Evernote() {
-            setNameIdAttribute("email");
+            setNameIdAttribute(EMAIL);
             setNameIdFormat("emailAddress");
         }
     }
     
     public static class Asana extends AbstractSamlSPProperties {
         public Asana() {
-            setNameIdAttribute("email");
+            setNameIdAttribute(EMAIL);
             setNameIdFormat("emailAddress");
         }
     }

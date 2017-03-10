@@ -4,6 +4,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -22,12 +23,6 @@ public class ChainingMetadataResolverAdapter implements MetadataResolverAdapter 
 
     @Override
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
-        for (final MetadataResolverAdapter adapter : adapters) {
-            final EntityDescriptor e = adapter.getEntityDescriptorForEntityId(entityId);
-            if (e != null) {
-                return e;
-            }
-        }
-        return null;
+        return adapters.stream().map(adapter -> adapter.getEntityDescriptorForEntityId(entityId)).filter(Objects::nonNull).findFirst().orElse(null);
     }
 }

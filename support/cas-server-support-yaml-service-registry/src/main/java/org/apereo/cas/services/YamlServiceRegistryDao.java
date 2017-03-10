@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 
@@ -31,8 +29,6 @@ accessStrategy: !&lt;org.apereo.cas.services.DefaultRegisteredServiceAccessStrat
  * @since 5.0.0
  */
 public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(YamlServiceRegistryDao.class);
 
     /**
      * File extension of registered service YAML files.

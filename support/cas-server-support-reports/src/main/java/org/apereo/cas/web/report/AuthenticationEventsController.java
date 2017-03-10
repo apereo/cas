@@ -1,11 +1,10 @@
 package org.apereo.cas.web.report;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,14 +18,13 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller("authenticationEventsController")
-@RequestMapping("/status/authnEvents")
 @ConditionalOnClass(value = CasEventRepository.class)
-public class AuthenticationEventsController {
+public class AuthenticationEventsController extends BaseCasMvcEndpoint {
 
     private CasEventRepository eventRepository;
 
-    public AuthenticationEventsController(final CasEventRepository eventRepository) {
+    public AuthenticationEventsController(final CasEventRepository eventRepository, final CasConfigurationProperties casProperties) {
+        super("casauthnevents", "/authnEvents", casProperties.getMonitor().getEndpoints().getAuthenticationEvents(), casProperties);
         this.eventRepository = eventRepository;
     }
 
@@ -39,7 +37,9 @@ public class AuthenticationEventsController {
      * @throws Exception the exception
      */
     @GetMapping
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
         return new ModelAndView("monitoring/viewAuthenticationEvents");
     }
 
@@ -54,6 +54,7 @@ public class AuthenticationEventsController {
     @GetMapping(value = "/getEvents")
     @ResponseBody
     public Collection<CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
         return this.eventRepository.load();
     }
 }

@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.MixedPrincipalException;
+import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
@@ -47,7 +47,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() throws Exception {
         this.thrown.expect(AuthenticationException.class);
-        this.thrown.expectMessage("1 errors, 0 successes");
 
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
@@ -78,7 +77,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     }
 
     @Test
-    public void disallowNullCredentionalsWhenCreatingTicketGrantingTicket() throws Exception {
+    public void disallowNullCredentialsWhenCreatingTicketGrantingTicket() throws Exception {
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), new Credential[] {null});
 
         this.thrown.expect(RuntimeException.class);

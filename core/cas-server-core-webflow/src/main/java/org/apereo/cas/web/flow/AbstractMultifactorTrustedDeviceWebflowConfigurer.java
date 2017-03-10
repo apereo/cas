@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -23,6 +25,8 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
      **/
     public static final String MFA_TRUSTED_AUTHN_SCOPE_ATTR = "mfaTrustedAuthentication";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMultifactorTrustedDeviceWebflowConfigurer.class);
+
     private boolean enableDeviceRegistration = true;
 
     public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
@@ -41,9 +45,9 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         if (flowDefinitionRegistry.getFlowDefinitionCount() <= 0) {
             throw new IllegalArgumentException("Flow definition registry has no flow definitions");
         }
-        logger.debug("Flow definitions found in the registry are {}", (Object[]) flowDefinitionRegistry.getFlowDefinitionIds());
+        LOGGER.debug("Flow definitions found in the registry are [{}]", (Object[]) flowDefinitionRegistry.getFlowDefinitionIds());
         final String flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().get();
-        logger.debug("Processing flow definition {}", flowId);
+        LOGGER.debug("Processing flow definition [{}]", flowId);
 
         final Flow flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);
 

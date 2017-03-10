@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+        <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Central Authentication Service</title>
+    
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+        <link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+        <link rel="stylesheet" th:href="@{${#themes.code('admin.custom.css.file')}}" />
+        
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css" />
+        <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
+        <script src="//cdn.rawgit.com/mindmup/editable-table/master/mindmup-editabletable.js"></script>
+        
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+
+            var trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
+
+            /*]]>*/
+        </script>
+    </head>
+    
+    <body>
+        <!--/* Standard layout can be mixed with Layout Dialect */-->
+        <div id="container" class="container">
+            <div th:replace="fragments/logo"/>
+            <div layout:fragment="content" id="content" class="clearfix">
+                <h1/>
+                <p/>
+            </div>
+
+            <div th:replace="fragments/footer"/>
+        </div>
+        <div th:insert="fragments/bottom"/>
+    
+    </body>
+</html>

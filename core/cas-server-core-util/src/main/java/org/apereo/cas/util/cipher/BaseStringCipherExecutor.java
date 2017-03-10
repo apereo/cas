@@ -8,6 +8,8 @@ import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +26,7 @@ import java.util.Map;
  * @since 4.1
  */
 public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseStringCipherExecutor.class);
 
     private static final int ENCRYPTION_KEY_SIZE = 256;
 
@@ -65,24 +68,24 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         super();
 
         if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
-            logger.debug("contentEncryptionAlgorithmIdentifier is not defined");
+            LOGGER.debug("contentEncryptionAlgorithmIdentifier is not defined");
             return;
         }
 
         String secretKeyToUse = secretKeyEncryption;
         if (StringUtils.isBlank(secretKeyToUse)) {
-            logger.warn("Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key");
+            LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
             secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
-            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS settings.",
-                    secretKeyToUse, ENCRYPTION_KEY_SIZE);
+            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
+                    secretKeyToUse, ENCRYPTION_KEY_SIZE, getName());
         }
 
         String signingKeyToUse = secretKeySigning;
         if (StringUtils.isBlank(signingKeyToUse)) {
-            logger.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
+            LOGGER.warn("Secret key for signing is not defined for [{}]. CAS will attempt to auto-generate the signing key", getName());
             signingKeyToUse = EncodingUtils.generateJsonWebKey(SIGNING_KEY_SIZE);
-            logger.warn("Generated signing key {} of size {}. The generated key MUST be added to CAS settings.",
-                    signingKeyToUse, SIGNING_KEY_SIZE);
+            LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
+                    signingKeyToUse, SIGNING_KEY_SIZE, getName());
         }
 
 
@@ -90,7 +93,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         this.secretKeyEncryptionKey = prepareJsonWebTokenKey(secretKeyToUse);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
 
-        logger.debug("Initialized cipher encryption sequence via [{}]",
+        LOGGER.debug("Initialized cipher encryption sequence via [{}]",
                 contentEncryptionAlgorithmIdentifier);
 
     }
@@ -104,11 +107,15 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String decode(final Serializable value) {
-        final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
-        if (encoded != null && encoded.length > 0) {
-            return decryptValue(new String(encoded, StandardCharsets.UTF_8));
+        try {
+            final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
+            if (encoded != null && encoded.length > 0) {
+                return decryptValue(new String(encoded, StandardCharsets.UTF_8));
+            }
+            return null;
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
-        return null;
     }
 
     /**
@@ -118,7 +125,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @return the key
      */
     private static Key prepareJsonWebTokenKey(final String secret) {
-
         try {
             final Map<String, Object> keys = new HashMap<>(2);
             keys.put("kty", "oct");
@@ -145,7 +151,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
             jwe.setEncryptionMethodHeaderParameter(this.contentEncryptionAlgorithmIdentifier);
             jwe.setKey(this.secretKeyEncryptionKey);
-            logger.debug("Encrypting via [{}]", this.contentEncryptionAlgorithmIdentifier);
+            LOGGER.debug("Encrypting via [{}]", this.contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
             throw new RuntimeException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
@@ -174,7 +180,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setKey(this.secretKeyEncryptionKey);
             jwe.setCompactSerialization(value);
-            logger.debug("Decrypting value...");
+            LOGGER.debug("Decrypting value...");
             return jwe.getPayload();
         } catch (final Exception e) {
             throw Throwables.propagate(e);

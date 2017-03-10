@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RegisteredService;
@@ -20,48 +21,64 @@ import java.net.URL;
 public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSingleLogoutServiceMessageHandler.class);
-    
+
     private final ServicesManager servicesManager;
     private final HttpClient httpClient;
     private boolean asynchronous = true;
     private final LogoutMessageCreator logoutMessageBuilder;
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     /**
      * Instantiates a new Single logout service message handler.
-     * @param httpClient to send the requests
-     * @param logoutMessageCreator creates the message
-     * @param servicesManager finds services to logout from
+     *
+     * @param httpClient                          to send the requests
+     * @param logoutMessageCreator                creates the message
+     * @param servicesManager                     finds services to logout from
      * @param singleLogoutServiceLogoutUrlBuilder creates the URL
-     * @param asyncCallbacks if messages are sent in an asynchronous fashion.
+     * @param asyncCallbacks                      if messages are sent in an asynchronous fashion.
      */
     public DefaultSingleLogoutServiceMessageHandler(final HttpClient httpClient, final LogoutMessageCreator logoutMessageCreator,
                                                     final ServicesManager servicesManager,
                                                     final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-                                                    final boolean asyncCallbacks) {
+                                                    final boolean asyncCallbacks,
+                                                    final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
         this.httpClient = httpClient;
         this.logoutMessageBuilder = logoutMessageCreator;
         this.servicesManager = servicesManager;
         this.singleLogoutServiceLogoutUrlBuilder = singleLogoutServiceLogoutUrlBuilder;
         this.asynchronous = asyncCallbacks;
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
     }
 
     /**
      * Handle logout for slo service.
      *
      * @param singleLogoutService the service
-     * @param ticketId the ticket id
+     * @param ticketId            the ticket id
      * @return the logout request
      */
     @Override
     public LogoutRequest handle(final WebApplicationService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
 
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(singleLogoutService);
+            final WebApplicationService selectedService = WebApplicationService.class.cast(
+                    this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService));
+
+            LOGGER.debug("Processing logout request for service [{}]", selectedService);
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
+
             if (serviceSupportsSingleLogout(registeredService)) {
-                final URL logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, singleLogoutService);
-                final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(ticketId, singleLogoutService, logoutUrl);
+                LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...", selectedService, registeredService);
+
+                final URL logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
+                LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrl, selectedService);
+
+                final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl);
+                LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
+
                 final LogoutType type = registeredService.getLogoutType() == null ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
+                LOGGER.debug("Logout type registered for [{}] is [{}]", selectedService, type);
 
                 switch (type) {
                     case BACK_CHANNEL:
@@ -107,6 +124,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     /**
      * Service supports back channel single logout?
      * Service must be found in the registry. enabled and logout type must not be {@link LogoutType#NONE}.
+     *
      * @param registeredService the registered service
      * @return true, if support is available.
      */

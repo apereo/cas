@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +23,8 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class MultifactorAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationContingencyPlan.class);
+    
     @Override
     protected AuthenticationRiskContingencyResponse executeInternal(final Authentication authentication,
                                                                     final RegisteredService service,
@@ -31,7 +34,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            logger.warn("No multifactor authentication providers are available in the application context");
+            LOGGER.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
@@ -40,7 +43,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
             if (providerMap.size() == 1) {
                 id = providerMap.values().iterator().next().getId();
             } else {
-                logger.warn("No multifactor authentication providers are specified to handle risk-based authentication");
+                LOGGER.warn("No multifactor authentication providers are specified to handle risk-based authentication");
                 throw new AuthenticationException();
             }
         }
@@ -49,7 +52,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
         final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
                 .addAttribute(attributeName, Boolean.TRUE)
                 .build();
-        logger.debug("Updated authentication to remember risk-based authn via {}", attributeName);
+        LOGGER.debug("Updated authentication to remember risk-based authn via [{}]", attributeName);
         authentication.update(newAuthn);
         return new AuthenticationRiskContingencyResponse(new Event(this, id));
     }

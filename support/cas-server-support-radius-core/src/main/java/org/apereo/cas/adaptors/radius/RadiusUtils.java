@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.radius;
 
-import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +39,12 @@ public final class RadiusUtils {
                                                                             final boolean failoverOnAuthenticationFailure,
                                                                             final boolean failoverOnException) throws Exception {
         for (final RadiusServer radiusServer : servers) {
-            LOGGER.debug("Attempting to authenticate {} at {}", username, radiusServer);
+            LOGGER.debug("Attempting to authenticate [{}] at [{}]", username, radiusServer);
             try {
                 final RadiusResponse response = radiusServer.authenticate(username, password);
                 if (response != null) {
                     final Map<String, Object> attributes = new HashMap<>();
-                    for (final RadiusAttribute attribute : response.getAttributes()) {
-                        attributes.put(attribute.getAttributeName(), attribute.getValue().toString());
-                    }
+                    response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue().toString()));
                     return Pair.of(Boolean.TRUE, Optional.of(attributes));
                 }
 

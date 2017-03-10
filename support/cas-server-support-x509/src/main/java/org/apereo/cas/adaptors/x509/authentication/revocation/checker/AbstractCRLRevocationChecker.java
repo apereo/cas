@@ -16,6 +16,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Base class for all CRL-based revocation checkers.
@@ -24,10 +26,7 @@ import java.util.List;
  * @since 3.4.6
  */
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
-    /**
-     * Logger instance.
-     **/
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCRLRevocationChecker.class);
 
     /**
      * Flag to indicate whether all
@@ -70,42 +69,37 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         if (cert == null) {
             throw new IllegalArgumentException("Certificate cannot be null.");
         }
-        logger.debug("Evaluating certificate revocation status for {}", CertUtils.toString(cert));
+        LOGGER.debug("Evaluating certificate revocation status for [{}]", CertUtils.toString(cert));
         final Collection<X509CRL> crls = getCRLs(cert);
 
         if (crls == null || crls.isEmpty()) {
-            logger.warn("CRL data is not available for {}", CertUtils.toString(cert));
+            LOGGER.warn("CRL data is not available for [{}]", CertUtils.toString(cert));
             this.unavailableCRLPolicy.apply(null);
             return;
         }
 
         final List<X509CRL> expiredCrls = new ArrayList<>();
-        final List<X509CRLEntry> revokedCrls = new ArrayList<>();
+        final List<X509CRLEntry> revokedCrls;
 
         crls.stream().filter(CertUtils::isExpired).forEach(crl -> {
-            logger.warn("CRL data expired on {}", crl.getNextUpdate());
+            LOGGER.warn("CRL data expired on [{}]", crl.getNextUpdate());
             expiredCrls.add(crl);
         });
 
         if (crls.size() == expiredCrls.size()) {
-            logger.warn("All CRLs retrieved have expired. Applying CRL expiration policy...");
+            LOGGER.warn("All CRLs retrieved have expired. Applying CRL expiration policy...");
             for (final X509CRL crl : expiredCrls) {
                 this.expiredCRLPolicy.apply(crl);
             }
         } else {
             crls.removeAll(expiredCrls);
-            logger.debug("Valid CRLs [{}] found that are not expired yet", crls);
+            LOGGER.debug("Valid CRLs [{}] found that are not expired yet", crls);
 
-            for (final X509CRL crl : crls) {
-                final X509CRLEntry entry = crl.getRevokedCertificate(cert);
-                if (entry != null) {
-                    revokedCrls.add(entry);
-                }
-            }
+            revokedCrls = crls.stream().map(crl -> crl.getRevokedCertificate(cert)).filter(Objects::nonNull).collect(Collectors.toList());
 
             if (revokedCrls.size() == crls.size()) {
                 final X509CRLEntry entry = revokedCrls.get(0);
-                logger.warn("All CRL entries have been revoked. Rejecting the first entry [{}]", entry);
+                LOGGER.warn("All CRL entries have been revoked. Rejecting the first entry [{}]", entry);
                 throw new RevokedCertificateException(entry);
             }
         }

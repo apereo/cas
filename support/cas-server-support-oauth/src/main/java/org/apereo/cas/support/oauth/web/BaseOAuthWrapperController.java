@@ -14,9 +14,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -29,7 +31,6 @@ import org.springframework.stereotype.Controller;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.
@@ -40,32 +41,45 @@ import java.util.Map;
  */
 @Controller
 public abstract class BaseOAuthWrapperController {
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
 
-    private ServicesManager servicesManager;
+    /**
+     * Collection of CAS settings.
+     **/
+    protected final CasConfigurationProperties casProperties;
 
-    private TicketRegistry ticketRegistry;
+    /**
+     * Convert profile scopes to attributes.
+     */
+    protected final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 
-    private OAuth20Validator validator;
+    /**
+     * Services manager.
+     */
+    protected final ServicesManager servicesManager;
 
-    private AccessTokenFactory accessTokenFactory;
-
-    private PrincipalFactory principalFactory;
-
-    private ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+    private final TicketRegistry ticketRegistry;
+    private final OAuth20Validator validator;
+    private final AccessTokenFactory accessTokenFactory;
+    private final PrincipalFactory principalFactory;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
     public BaseOAuthWrapperController(final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry,
                                       final OAuth20Validator validator,
                                       final AccessTokenFactory accessTokenFactory,
                                       final PrincipalFactory principalFactory,
-                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                      final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
+                                      final CasConfigurationProperties casProperties) {
         this.servicesManager = servicesManager;
         this.ticketRegistry = ticketRegistry;
         this.validator = validator;
         this.accessTokenFactory = accessTokenFactory;
         this.principalFactory = principalFactory;
         this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
+        this.casProperties = casProperties;
+        this.scopeToAttributesFilter = scopeToAttributesFilter;
     }
 
     /**
@@ -80,7 +94,9 @@ public abstract class BaseOAuthWrapperController {
                                               final Authentication authentication,
                                               final J2EContext context) {
         final AccessToken accessToken = this.accessTokenFactory.create(service, authentication);
+        LOGGER.debug("Creating access token [{}]", accessToken);
         this.ticketRegistry.addTicket(accessToken);
+        LOGGER.debug("Added access token [{}] to registry", accessToken);
         return accessToken;
     }
 
@@ -88,27 +104,34 @@ public abstract class BaseOAuthWrapperController {
      * Create an OAuth service from a registered service.
      *
      * @param registeredService the registered service
+     * @param context           the context
      * @return the OAuth service
      */
-    protected WebApplicationService createService(final RegisteredService registeredService) {
+    protected WebApplicationService createService(final RegisteredService registeredService,
+                                                  final J2EContext context) {
         return webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
     }
 
     /**
      * Create an authentication from a user profile.
      *
-     * @param profile the given user profile
-     * @param service the registered service
-     * @param context the context
+     * @param profile           the given user profile
+     * @param registeredService the registered service
+     * @param context           the context
+     * @param service           the service
      * @return the built authentication
      */
     protected Authentication createAuthentication(final UserProfile profile,
-                                                  final RegisteredService service,
-                                                  final J2EContext context) {
-        final Principal principal = this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
+                                                  final RegisteredService registeredService,
+                                                  final J2EContext context,
+                                                  final Service service) {
+        final Principal newPrincipal =
+                this.scopeToAttributesFilter.filter(service,
+                        this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes()),
+                        registeredService,
+                        context);
 
-        final Map<String, Object> newAttributes = service.getAttributeReleasePolicy().getAttributes(principal);
-        final Principal newPrincipal = principalFactory.createPrincipal(profile.getId(), newAttributes);
+        LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
         final String authenticator = profile.getClass().getCanonicalName();
         final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
@@ -116,6 +139,7 @@ public abstract class BaseOAuthWrapperController {
 
         final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.STATE), StringUtils.EMPTY);
         final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.NONCE), StringUtils.EMPTY);
+        LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuthConstants.STATE, state, OAuthConstants.NONCE, nonce);
 
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", profile.getPermissions())
@@ -126,11 +150,18 @@ public abstract class BaseOAuthWrapperController {
                 .setPrincipal(newPrincipal)
                 .setAuthenticationDate(ZonedDateTime.now())
                 .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
-        profile.getAttributes().forEach((k, v) -> {
-            if (!newPrincipal.getAttributes().containsKey(k)) {
-                bldr.addAttribute(k, v);
-            }
-        });
+
+        // Add "other" profile attributes as authentication attributes.
+        if (casProperties.getAuthn().getOauth().getAccessToken().isReleaseProtocolAttributes()) {
+            profile.getAttributes().forEach((k, v) -> {
+                if (!newPrincipal.getAttributes().containsKey(k)) {
+                    LOGGER.debug("Added attribute [{}] with value [{}] to the authentication", k, v);
+                    bldr.addAttribute(k, v);
+                } else {
+                    LOGGER.debug("Skipped over attribute [{}] since it's already contained by the principal", k);
+                }
+            });
+        }
         return bldr.build();
     }
 

@@ -1,13 +1,18 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -52,12 +57,13 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -70,9 +76,9 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 @AutoConfigureAfter(value = {CasCoreUtilConfiguration.class, CasCoreTicketIdGeneratorsConfiguration.class})
-public class CasCoreTicketsConfiguration {
+public class CasCoreTicketsConfiguration implements TransactionManagementConfigurer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreTicketsConfiguration.class);
 
@@ -175,8 +181,10 @@ public class CasCoreTicketsConfiguration {
 
     @ConditionalOnMissingBean(name = "ticketRegistry")
     @RefreshScope
-    @Bean(name = {"defaultTicketRegistry", "ticketRegistry"})
-    public TicketRegistry defaultTicketRegistry() {
+    @Bean
+    public TicketRegistry ticketRegistry() {
+        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
+                + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
         final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
         return new DefaultTicketRegistry(
                 mem.getInitialCapacity(),
@@ -237,7 +245,7 @@ public class CasCoreTicketsConfiguration {
     @ConditionalOnMissingBean(name = "ticketTransactionManager")
     @Bean
     public PlatformTransactionManager ticketTransactionManager() {
-        return new PseudoTransactionManager();
+        return new PseudoPlatformTransactionManager();
     }
 
     @RefreshScope
@@ -261,13 +269,13 @@ public class CasCoreTicketsConfiguration {
         }
 
         if (tgt.getTimeout().getMaxTimeToLiveInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout of {} seconds",
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout of [{}] seconds",
                     tgt.getTimeout().getMaxTimeToLiveInSeconds());
             return new TimeoutExpirationPolicy(tgt.getTimeout().getMaxTimeToLiveInSeconds());
         }
 
         if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of {}/{} seconds",
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of [{}]/[{}] seconds",
                     tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
             return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
         }
@@ -282,11 +290,29 @@ public class CasCoreTicketsConfiguration {
         }
 
         if (tgt.getHardTimeout().getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout of {} seconds",
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout of [{}] seconds",
                     tgt.getHardTimeout().getTimeToKillInSeconds());
             return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
         }
         LOGGER.warn("Ticket-granting ticket expiration policy is set to ALWAYS expire tickets.");
         return new AlwaysExpiresExpirationPolicy();
+    }
+
+    @Override
+    public PlatformTransactionManager annotationDrivenTransactionManager() {
+        return ticketTransactionManager();
+    }
+
+    @ConditionalOnMissingBean(name = "ticketCatalog")
+    @Autowired
+    @Bean
+    public TicketCatalog ticketCatalog(final List<TicketCatalogConfigurer> configurers) {
+        final DefaultTicketCatalog plan = new DefaultTicketCatalog();
+        configurers.forEach(c -> {
+            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.debug("Configuring ticket metadata registration plan [{}]", name);
+            c.configureTicketCatalog(plan);
+        });
+        return plan;
     }
 }

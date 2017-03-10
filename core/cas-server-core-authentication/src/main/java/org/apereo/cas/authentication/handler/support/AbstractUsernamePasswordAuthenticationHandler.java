@@ -6,7 +6,11 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.services.ServicesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -24,7 +28,8 @@ import java.util.function.Predicate;
  * @since 3.0.0
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractUsernamePasswordAuthenticationHandler.class);
+    
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
@@ -32,6 +37,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     private Predicate<Credential> credentialSelectionPredicate = credential -> true;
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
+
+    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                         final Integer order) {
+        super(name, servicesManager, principalFactory, order);
+    }
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
@@ -43,7 +53,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
             throw new AccountNotFoundException("Username is null.");
         }
 
-        logger.debug("Transforming credential username via [{}]", this.principalNameTransformer.getClass().getName());
+        LOGGER.debug("Transforming credential username via [{}]", this.principalNameTransformer.getClass().getName());
         final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
         if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
@@ -53,7 +63,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
             throw new FailedLoginException("Password is null.");
         }
 
-        logger.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(), transformedUsername);
+        LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(), transformedUsername);
         final String transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
         if (StringUtils.isBlank(transformedPsw)) {
             throw new AccountNotFoundException("Encoded password is null.");
@@ -62,7 +72,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         userPass.setUsername(transformedUsername);
         userPass.setPassword(transformedPsw);
         
-        logger.debug("Attempting authentication internally for transformed credential [{}]", userPass);
+        LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
         return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
     }
 

@@ -30,4 +30,9 @@ public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
                                             final String contentEncryptionAlgorithmIdentifier) {
         super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier);
     }
+
+    @Override
+    public String getName() {
+        return "Password Reset Token";
+    }
 }

@@ -35,7 +35,7 @@ public class CasSupportActionsAcceptableUsagePolicyLdapConfiguration {
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         final AcceptableUsagePolicyProperties.Ldap ldap = casProperties.getAcceptableUsagePolicy().getLdap();
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(ldap);
+        final ConnectionFactory connectionFactory = Beans.newLdaptivePooledConnectionFactory(ldap);
         final LdapAcceptableUsagePolicyRepository r = new LdapAcceptableUsagePolicyRepository(connectionFactory, ldap.getUserFilter(), ldap.getBaseDn());
         r.setAupAttributeName(casProperties.getAcceptableUsagePolicy().getAupAttributeName());
         r.setTicketRegistrySupport(ticketRegistrySupport);

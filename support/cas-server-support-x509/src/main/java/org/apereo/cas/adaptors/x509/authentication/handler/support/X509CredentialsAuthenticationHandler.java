@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +44,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private static final String KEY_USAGE_OID = "2.5.29.15";
 
-    /**
-     * Instance of Logging.
-     */
-    private final transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(X509CredentialsAuthenticationHandler.class);
+    
     /**
      * The compiled pattern supplied by the deployer.
      */
@@ -100,10 +99,11 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      *                                      for backward compatibility with previous versions that do not perform revocation
      *                                      checking.
      */
-    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
-                                                final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage,
-                                                final boolean requireKeyUsage, final Pattern regExSubjectDnPattern,
-                                                final RevocationChecker revocationChecker) {
+    public X509CredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                                final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
+                                                final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage, final boolean requireKeyUsage,
+                                                final Pattern regExSubjectDnPattern, final RevocationChecker revocationChecker) {
+        super(name, servicesManager, principalFactory, null);
         this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
         this.maxPathLength = maxPathLength;
         this.maxPathLengthAllowUnspecified = maxPathLengthAllowUnspecified;
@@ -123,7 +123,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
                                                 final boolean maxPathLengthAllowUnspecified,
                                                 final Pattern regExSubjectDnPattern) {
-        this(regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
+        this("", null, null, regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
                 false, regExSubjectDnPattern,
                 new NoOpRevocationChecker());
     }
@@ -132,13 +132,13 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                                                 final boolean maxPathLengthAllowUnspecified,
                                                 final boolean checkKeyUsage,
                                                 final boolean requireKeyUsage) {
-        this(regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
+        this("", null, null, regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
                 checkKeyUsage, requireKeyUsage, null,
                 new NoOpRevocationChecker());
     }
 
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern, final RevocationChecker revocationChecker) {
-        this(regExTrustedIssuerDnPattern, Integer.MAX_VALUE, false,
+        this("", null, null, regExTrustedIssuerDnPattern, Integer.MAX_VALUE, false,
                 false, false, null,
                 revocationChecker);
     }
@@ -158,7 +158,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         boolean hasTrustedIssuer = false;
         for (int i = certificates.length - 1; i >= 0; i--) {
             final X509Certificate certificate = certificates[i];
-            logger.debug("Evaluating {}", CertUtils.toString(certificate));
+            LOGGER.debug("Evaluating [{}]", CertUtils.toString(certificate));
 
             validate(certificate);
 
@@ -170,17 +170,17 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             // >=0 when this is a CA cert and -1 when it's not
             final int pathLength = certificate.getBasicConstraints();
             if (pathLength < 0) {
-                logger.debug("Found valid client certificate");
+                LOGGER.debug("Found valid client certificate");
                 clientCert = certificate;
             } else {
-                logger.debug("Found valid CA certificate");
+                LOGGER.debug("Found valid CA certificate");
             }
         }
         if (hasTrustedIssuer && clientCert != null) {
             x509Credential.setCertificate(clientCert);
             return new DefaultHandlerResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
         }
-        logger.warn("Either client certificate could not be determined, or a trusted issuer could not be located");
+        LOGGER.warn("Either client certificate could not be determined, or a trusted issuer could not be located");
         throw new FailedLoginException();
     }
 
@@ -225,19 +225,19 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * @return true, if  valid key usage
      */
     private boolean isValidKeyUsage(final X509Certificate certificate) {
-        logger.debug("Checking certificate keyUsage extension");
+        LOGGER.debug("Checking certificate keyUsage extension");
         final boolean[] keyUsage = certificate.getKeyUsage();
         if (keyUsage == null) {
-            logger.warn("Configuration specifies checkKeyUsage but keyUsage extension not found in certificate.");
+            LOGGER.warn("Configuration specifies checkKeyUsage but keyUsage extension not found in certificate.");
             return !this.requireKeyUsage;
         }
 
         final boolean valid;
         if (isCritical(certificate, KEY_USAGE_OID) || this.requireKeyUsage) {
-            logger.debug("KeyUsage extension is marked critical or required by configuration.");
+            LOGGER.debug("KeyUsage extension is marked critical or required by configuration.");
             valid = keyUsage[0];
         } else {
-            logger.debug(
+            LOGGER.debug(
                     "KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
             valid = true;
         }
@@ -292,7 +292,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         if (pattern != null) {
             final String name = principal.getName();
             final boolean result = pattern.matcher(name).matches();
-            logger.debug("{} matches {} == {}", pattern.pattern(), name, result);
+            LOGGER.debug("[{}] matches [{}] == [{}]", pattern.pattern(), name, result);
             return result;
         }
         return true;

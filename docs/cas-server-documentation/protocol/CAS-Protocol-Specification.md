@@ -28,7 +28,7 @@ Release Date: 2015-01-13
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2016, Apereo, Inc.
+Copyright &copy; 2017, Apereo, Inc.
 
 <a name="head1"/>
 

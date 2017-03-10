@@ -1,0 +1,82 @@
+apply plugin: "war"
+apply plugin: "com.moowork.gulp"
+
+description = "Apereo CAS Web Application"
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "${project.buildDir}/generated-src/main/resources", "${project.projectDir}/../resources"
+        }
+    }
+}
+
+javadoc {
+    enabled false
+}
+
+
+task gulpSetup(dependsOn: ["npmInstall", "installGulp"], description: "Install npm and Gulp") {}
+task gulpRun(dependsOn: gulp_default, description: "Runs Gulp default task") {}
+processResources.dependsOn gulpRun
+
+node {
+    nodeModulesDir = project(":webapp").projectDir
+}
+
+gulp {
+    workDir =  project(":webapp").projectDir
+    colors = true
+    bufferOutput = true
+}
+
+war {
+    def currentTime = java.time.ZonedDateTime.now()
+
+    manifest {
+        attributes("Implementation-Title": project.name,
+                "Implementation-Vendor": project.group,
+                "Created-By": project.group,
+                "Implementation-Date": currentTime,
+                "Specification-Version": rootProject.currentRevision,
+                "Implementation-Version": project.version)
+    }
+    from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
+    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+}
+
+dependencies {
+    compile project(":core:cas-server-core")
+    compile project(":core:cas-server-core-monitor")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-logout")
+    compile project(":core:cas-server-core-audit")
+    compile project(":core:cas-server-core-logging")
+    compile project(":core:cas-server-core-tickets")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-validation")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-events")
+    compile project(":core:cas-server-core-configuration")
+
+    compile project(":support:cas-server-support-throttle")
+    compile project(":support:cas-server-support-configuration")
+    compile project(":support:cas-server-support-geolocation")
+    compile project(":support:cas-server-support-actions")
+    compile project(":support:cas-server-support-cookie")
+    compile project(":support:cas-server-support-reports")
+    compile project(":support:cas-server-support-themes")
+    compile project(":support:cas-server-support-validation")
+    compile project(":support:cas-server-support-pm")
+    
+    compile project(":webapp:cas-server-webapp-config")
+    
+    implementation libraries.pac4j
+    implementation libraries.thymeleaf
+    implementation libraries.groovy
+    implementation libraries.cassecurityfilter
+    implementation libraries.metrics
+    implementation libraries.bouncycastle
+    compile libraries.springcloudconfigclient
+}
