@@ -33,26 +33,31 @@ ext.libraries = [
                     force = true
                 }
         ],
-        apachefediz : [
+        apachefediz             : [
                 dependencies.create("org.apache.cxf.fediz:fediz-core:$apacheFedizVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.apache.santuario", module: "xmlsec")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
                     exclude(group: "net.shibboleth.utilities", module: "java-support")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
-                },  
+                },
         ],
-        apachecxf            : [
+        apachecxf               : [
                 dependencies.create("org.apache.cxf:cxf-rt-transports-http:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-frontend-jaxws:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-ws-security:$apacheCxfVersion") {
@@ -63,10 +68,13 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "net.sf.ehcache", module: "ehcache")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-rs-security-sso-saml:$apacheCxfVersion") {
@@ -80,6 +88,9 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-ws-policy:$apacheCxfVersion") {
@@ -88,27 +99,37 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-ws-addr:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.woodstox", module: "woodstox-core-asl")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-rs-client:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-frontend-jaxrs:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.ow2.asm", module: "asm")
+                    force = true
+                },
+                dependencies.create("org.ow2.asm:asm:5.1") {
+                    transitive = false
                     force = true
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-rs-service-description:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-rs-extension-providers:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.apache.cxf.services.sts:cxf-services-sts-core:$apacheCxfVersion") {
@@ -122,10 +143,15 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
                     exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     exclude(group: "net.sf.ehcache", module: "ehcache")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
                     force = true
                 }
         ],
@@ -156,7 +182,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     force = true
-                },                
+                },
                 dependencies.create("commons-validator:commons-validator:$commonsValidatorVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "commons-lang", module: "commons-lang")
@@ -366,7 +392,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        awsjavadynamodb : [
+        awsjavadynamodb         : [
                 dependencies.create("com.amazonaws:aws-java-sdk-s3:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
@@ -1894,7 +1920,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        
+
         springsession           : [
                 dependencies.create("org.springframework.session:spring-session:$springSessionVersion") {
                     exclude(group: "org.springframework", module: "spring-web")

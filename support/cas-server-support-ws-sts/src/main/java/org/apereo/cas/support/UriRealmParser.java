@@ -43,10 +43,6 @@ public class UriRealmParser implements RealmParser {
         return realm;
     }
 
-    public Map<String, Object> getRealmMap() {
-        return realmMap;
-    }
-
     public void setRealmMap(final Map<String, Object> realms) {
         this.realmMap = realms;
     }
