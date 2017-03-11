@@ -4,6 +4,7 @@ dependencies {
     implementation libraries.bouncycastle
     implementation libraries.apachecxf
     implementation libraries.apachefediz
+    implementation libraries.casclient
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-services")
