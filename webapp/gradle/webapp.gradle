@@ -69,6 +69,9 @@ dependencies {
     compile project(":support:cas-server-support-themes")
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
+
+    compile project(":support:cas-server-support-ws-idp")
+    compile project(":support:cas-server-support-ws-sts")
     
     compile project(":webapp:cas-server-webapp-config")
     
