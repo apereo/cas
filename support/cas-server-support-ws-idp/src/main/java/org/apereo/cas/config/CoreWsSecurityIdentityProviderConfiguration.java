@@ -1,17 +1,21 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ws.idp.DefaultFederationClaim;
+import org.apereo.cas.ws.idp.FederationValidateRequestController;
+import org.apereo.cas.ws.idp.api.FederationRelyingParty;
+import org.apereo.cas.ws.idp.api.IdentityProviderConfigurationService;
+import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.impl.DefaultFederationRelyingParty;
 import org.apereo.cas.ws.idp.impl.DefaultIdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.impl.DefaultRealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.metadata.FederationMetadataServlet;
-import org.apereo.cas.ws.idp.api.FederationRelyingParty;
-import org.apereo.cas.ws.idp.api.IdentityProviderConfigurationService;
-import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -37,10 +41,23 @@ import java.util.List;
 public class CoreWsSecurityIdentityProviderConfiguration {
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     private ResourceLoader resourceLoader;
+
+    @Bean
+    public FederationValidateRequestController federationValidateRequestController() {
+        return new FederationValidateRequestController(idpConfigService(), servicesManager, webApplicationServiceFactory, casProperties);
+    }
 
     @Lazy
     @Bean
@@ -74,10 +91,10 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             idp.setCertificate(wsfed.getIdp().getCertificate());
             idp.setCertificatePassword(wsfed.getIdp().getCertificatePassword());
             idp.setSupportedProtocols(Arrays.asList("http://docs.oasis-open.org/wsfed/federation/200706", "http://docs.oasis-open.org/ws-sx/ws-trust/200512"));
-            
+
             // TODO consider using service registry here as well
             idp.setRelyingParties(Collections.singletonMap("urn:org:apache:cxf:fediz:fedizhelloworld", relyingParty()));
-            
+
             idp.setAuthenticationURIs(Collections.singletonMap("default", "federation/up"));
             idp.setDescription("WsFederation Identity Provider");
             idp.setDisplayName("WsFederation");
