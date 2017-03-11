@@ -1,10 +1,10 @@
-package org.apereo.cas.ws.idp;
+package org.apereo.cas.ws.idp.impl;
 
 import org.apache.cxf.fediz.core.Claim;
 import org.apereo.cas.ws.idp.api.FederationRelyingParty;
 import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
-import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class DefaultRealmAwareIdentityProvider implements RealmAwareIdentityProv
     private URL stsUrl;
     private URL idpUrl;
 
-    private Resource certificate;
+    private File certificate;
     private String certificatePassword;
 
     private Collection<Claim> claimTypesOffered = new ArrayList<>();
@@ -34,11 +34,11 @@ public class DefaultRealmAwareIdentityProvider implements RealmAwareIdentityProv
     private String description;
 
     @Override
-    public Resource getCertificate() {
+    public File getCertificate() {
         return certificate;
     }
 
-    public void setCertificate(final Resource certificate) {
+    public void setCertificate(final File certificate) {
         this.certificate = certificate;
     }
 

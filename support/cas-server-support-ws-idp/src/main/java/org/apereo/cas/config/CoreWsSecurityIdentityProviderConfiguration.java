@@ -1,11 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.ws.idp.DefaultFederationClaim;
-import org.apereo.cas.ws.idp.DefaultFederationRelyingParty;
-import org.apereo.cas.ws.idp.DefaultIdentityProviderConfigurationService;
-import org.apereo.cas.ws.idp.DefaultRealmAwareIdentityProvider;
-import org.apereo.cas.ws.idp.FederationMetadataServlet;
+import org.apereo.cas.ws.idp.impl.DefaultFederationRelyingParty;
+import org.apereo.cas.ws.idp.impl.DefaultIdentityProviderConfigurationService;
+import org.apereo.cas.ws.idp.impl.DefaultRealmAwareIdentityProvider;
+import org.apereo.cas.ws.idp.metadata.FederationMetadataServlet;
 import org.apereo.cas.ws.idp.api.FederationRelyingParty;
 import org.apereo.cas.ws.idp.api.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
@@ -44,10 +45,11 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @Lazy
     @Bean
     public ServletRegistrationBean wsIdpMetadataServlet() {
+        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfedIdP();
         final ServletRegistrationBean bean = new ServletRegistrationBean();
         bean.setEnabled(true);
         bean.setName("federationServletIdentityProvider");
-        bean.setServlet(new FederationMetadataServlet("urn:org:apache:cxf:fediz:idp:realm-A"));
+        bean.setServlet(new FederationMetadataServlet(wsfed.getIdp().getRealm()));
         bean.setUrlMappings(Collections.singleton("/ws/idp/metadata"));
         bean.setAsyncSupported(true);
         return bean;
@@ -61,20 +63,24 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @Bean
     public List<RealmAwareIdentityProvider> identityProviders() {
         try {
+            final WsFederationProperties wsfed = casProperties.getAuthn().getWsfedIdP();
             final DefaultRealmAwareIdentityProvider idp = new DefaultRealmAwareIdentityProvider();
 
-            idp.setRealm("urn:org:apache:cxf:fediz:idp:realm-A");
-            idp.setUri("realma");
-            idp.setStsUrl(new URL("https://mmoayyed.unicon.net:8443/ws/sts/REALMA"));
-            idp.setIdpUrl(new URL("https://mmoayyed.unicon.net:8443/ws/idp/federation"));
-            idp.setCertificate(resourceLoader.getResource("classpath:stsKeystoreA.properties"));
-            idp.setCertificatePassword("realma");
-            idp.setSupportedProtocols(Arrays.asList("http://docs.oasis-open.org/wsfed/federation/200706",
-                    "http://docs.oasis-open.org/ws-sx/ws-trust/200512"));
+            idp.setRealm(wsfed.getIdp().getRealm());
+            idp.setUri(wsfed.getIdp().getUri());
+            idp.setStsUrl(new URL(casProperties.getServer().getPrefix().concat("/ws/sts/").concat(wsfed.getIdp().getUri())));
+            idp.setIdpUrl(new URL(casProperties.getServer().getPrefix().concat("/ws/idp/federation")));
+
+            idp.setCertificate(wsfed.getIdp().getCertificate());
+            idp.setCertificatePassword(wsfed.getIdp().getCertificatePassword());
+            idp.setSupportedProtocols(Arrays.asList("http://docs.oasis-open.org/wsfed/federation/200706", "http://docs.oasis-open.org/ws-sx/ws-trust/200512"));
+            
+            // TODO consider using service registry here as well
             idp.setRelyingParties(Collections.singletonMap("urn:org:apache:cxf:fediz:fedizhelloworld", relyingParty()));
+            
             idp.setAuthenticationURIs(Collections.singletonMap("default", "federation/up"));
-            idp.setDescription("Identity Provider for Realm A");
-            idp.setDisplayName("Realm A");
+            idp.setDescription("WsFederation Identity Provider");
+            idp.setDisplayName("WsFederation");
             return Arrays.asList(idp);
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
@@ -90,9 +96,14 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         }
     }
 
+    /**
+     * TODO: These into go into service registry
+     * perhaps with a specific service type.
+     *
+     * @return
+     */
     private FederationRelyingParty relyingParty() {
         final DefaultFederationRelyingParty rp = new DefaultFederationRelyingParty();
-
         rp.setRealm("urn:org:apache:cxf:fediz:fedizhelloworld");
         rp.setProtocol("http://docs.oasis-open.org/wsfed/federation/200706");
         rp.setDescription("Fediz Hello World");

@@ -1,4 +1,4 @@
-package org.apereo.cas.ws.idp;
+package org.apereo.cas.ws.idp.impl;
 
 import org.apereo.cas.ws.idp.api.FederationRelyingParty;
 import org.apereo.cas.ws.idp.api.IdentityProviderConfigurationService;

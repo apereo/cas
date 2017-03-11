@@ -3,6 +3,7 @@ package org.apereo.cas.ws.idp.api;
 import org.apache.cxf.fediz.core.Claim;
 import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public interface RealmAwareIdentityProvider {
 
-    Resource getCertificate();
+    File getCertificate();
     
     String getCertificatePassword();
     

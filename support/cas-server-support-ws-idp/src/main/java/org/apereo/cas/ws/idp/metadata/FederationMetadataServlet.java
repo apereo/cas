@@ -1,4 +1,4 @@
-package org.apereo.cas.ws.idp;
+package org.apereo.cas.ws.idp.metadata;
 
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apereo.cas.util.spring.ApplicationContextProvider;

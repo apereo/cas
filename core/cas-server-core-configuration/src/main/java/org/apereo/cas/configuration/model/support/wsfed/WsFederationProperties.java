@@ -1,146 +1,73 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
-import org.apereo.cas.configuration.support.Beans;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import java.io.File;
 
 /**
  * This is {@link WsFederationProperties}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.0
  */
-
 public class WsFederationProperties {
+    private IdentityProvider idp = new IdentityProvider();
+    private SecurityTokenService sts = new SecurityTokenService();
 
-    private String identityAttribute = "upn";
-    private String identityProviderIdentifier = "https://adfs.example.org/adfs/services/trust";
-    private String identityProviderUrl = "https://adfs.example.org/adfs/ls/";
-    private String signingCertificateResources = "classpath:adfs-signing.crt";
-    private String relyingPartyIdentifier = "urn:cas:localhost";
-    private String tolerance = "PT10S";
-    private String attributesType = "WSFED";
-    private boolean attributeResolverEnabled = true;
-    private boolean autoRedirect = true;
-
-    private String encryptionPrivateKey = "classpath:private.key";
-    private String encryptionCertificate = "classpath:certificate.crt";
-    private String encryptionPrivateKeyPassword = "NONE";
-
-    @NestedConfigurationProperty
-    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
-
-    private String name;
-
-    public String getName() {
-        return name;
+    public IdentityProvider getIdp() {
+        return idp;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public void setIdp(final IdentityProvider idp) {
+        this.idp = idp;
     }
 
-    public PersonDirPrincipalResolverProperties getPrincipal() {
-        return principal;
+    public SecurityTokenService getSts() {
+        return sts;
     }
 
-    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
-        this.principal = principal;
+    public void setSts(final SecurityTokenService sts) {
+        this.sts = sts;
     }
 
-    public boolean isAttributeResolverEnabled() {
-        return attributeResolverEnabled;
-    }
+    public static class IdentityProvider {
+        private String realm;
+        private String uri;
+        private File certificate;
+        private String certificatePassword;
 
-    public void setAttributeResolverEnabled(final boolean attributeResolverEnabled) {
-        this.attributeResolverEnabled = attributeResolverEnabled;
-    }
+        public File getCertificate() {
+            return certificate;
+        }
 
-    public String getIdentityAttribute() {
-        return identityAttribute;
-    }
+        public void setCertificate(final File certificate) {
+            this.certificate = certificate;
+        }
 
-    public void setIdentityAttribute(final String identityAttribute) {
-        this.identityAttribute = identityAttribute;
-    }
+        public String getCertificatePassword() {
+            return certificatePassword;
+        }
 
-    public String getIdentityProviderIdentifier() {
-        return identityProviderIdentifier;
-    }
+        public void setCertificatePassword(final String certificatePassword) {
+            this.certificatePassword = certificatePassword;
+        }
 
-    public void setIdentityProviderIdentifier(final String identityProviderIdentifier) {
-        this.identityProviderIdentifier = identityProviderIdentifier;
-    }
+        public String getRealm() {
+            return realm;
+        }
 
-    public String getIdentityProviderUrl() {
-        return identityProviderUrl;
-    }
+        public void setRealm(final String realm) {
+            this.realm = realm;
+        }
 
-    public void setIdentityProviderUrl(final String identityProviderUrl) {
-        this.identityProviderUrl = identityProviderUrl;
-    }
+        public String getUri() {
+            return uri;
+        }
 
-    public String getSigningCertificateResources() {
-        return signingCertificateResources;
+        public void setUri(final String uri) {
+            this.uri = uri;
+        }
     }
-
-    public void setSigningCertificateResources(final String signingCertificateResources) {
-        this.signingCertificateResources = signingCertificateResources;
-    }
-
-    public String getRelyingPartyIdentifier() {
-        return relyingPartyIdentifier;
-    }
-
-    public void setRelyingPartyIdentifier(final String relyingPartyIdentifier) {
-        this.relyingPartyIdentifier = relyingPartyIdentifier;
-    }
-
-    public long getTolerance() {
-        return Beans.newDuration(tolerance).toMillis();
-    }
-
-    public void setTolerance(final String tolerance) {
-        this.tolerance = tolerance;
-    }
-
-    public String getAttributesType() {
-        return attributesType;
-    }
-
-    public void setAttributesType(final String attributesType) {
-        this.attributesType = attributesType;
-    }
-
-    public boolean isAutoRedirect() {
-        return autoRedirect;
-    }
-
-    public void setAutoRedirect(final boolean autoRedirect) {
-        this.autoRedirect = autoRedirect;
-    }
-
-    public String getEncryptionPrivateKey() {
-        return encryptionPrivateKey;
-    }
-
-    public void setEncryptionPrivateKey(final String encryptionPrivateKey) {
-        this.encryptionPrivateKey = encryptionPrivateKey;
-    }
-
-    public String getEncryptionCertificate() {
-        return encryptionCertificate;
-    }
-
-    public void setEncryptionCertificate(final String encryptionCertificate) {
-        this.encryptionCertificate = encryptionCertificate;
-    }
-
-    public String getEncryptionPrivateKeyPassword() {
-        return encryptionPrivateKeyPassword;
-    }
-
-    public void setEncryptionPrivateKeyPassword(final String encryptionPrivateKeyPassword) {
-        this.encryptionPrivateKeyPassword = encryptionPrivateKeyPassword;
+    
+    public static class SecurityTokenService {
+        
     }
 }

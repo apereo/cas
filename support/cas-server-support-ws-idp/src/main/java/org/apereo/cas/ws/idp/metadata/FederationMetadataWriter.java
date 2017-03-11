@@ -1,4 +1,4 @@
-package org.apereo.cas.ws.idp;
+package org.apereo.cas.ws.idp.metadata;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.fediz.core.util.CertsUtils;
@@ -8,12 +8,10 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apache.xml.security.stax.impl.util.IDGenerator;
 import org.apache.xml.security.utils.Base64;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -39,9 +37,7 @@ public class FederationMetadataWriter {
      */
     public Document produceMetadataDocument(final RealmAwareIdentityProvider config) {
         try {
-
-            final Crypto crypto = CertsUtils.getCryptoFromFile("/Users/Misagh/Workspace/GitWorkspace/cas-server/support/cas-server-support-ws-idp/src/main/resources/stsKeystoreA.properties");
-
+            final Crypto crypto = CertsUtils.getCryptoFromFile(config.getCertificate().getCanonicalPath());
             final W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
             writer.writeStartDocument(StandardCharsets.UTF_8.name(), "1.0");
 
