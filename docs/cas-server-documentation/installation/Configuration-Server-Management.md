@@ -37,7 +37,7 @@ The naming of the configuration files inside the CAS configuration directory fol
 - An `application.(properties|yml)` file is always loaded.
 - Settings located inside `properties|yml` files whose name matches the value of `spring.application.name` are loaded (i.e `cas.properties`)
 - Settings located inside `properties|yml` files whose name matches the value of `spring.profiles.active` are loaded (i.e `ldap.properties`).
-This allows you to, if needed, split your settings into multiple property files and simply then locate and locate them by assigning their name
+This allows you to, if needed, split your settings into multiple property files and then locate them by assigning their name
 to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`)
 
 <div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
