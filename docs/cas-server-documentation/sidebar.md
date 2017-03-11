@@ -130,6 +130,7 @@ layout: null
     *   [OpenID](/$version/protocol/OpenID-Protocol.html)
     *   [OAuth](/$version/protocol/OAuth-Protocol.html)
     *   [OpenID Connect](/$version/protocol/OIDC-Protocol.html)
+    *   [WS-Federation](/$version/protocol/WS-Federation-Protocol.html)
     *   [SAML](#samlprotocol)
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
