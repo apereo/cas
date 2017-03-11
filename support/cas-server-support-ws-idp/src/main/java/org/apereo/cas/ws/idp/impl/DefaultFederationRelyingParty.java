@@ -1,5 +1,6 @@
-package org.apereo.cas.ws.idp;
+package org.apereo.cas.ws.idp.impl;
 
+import org.apereo.cas.ws.idp.DefaultFederationClaim;
 import org.apereo.cas.ws.idp.api.FederationRelyingParty;
 
 import java.util.Collection;
