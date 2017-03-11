@@ -25,20 +25,5 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Bean
-    public ServletRegistrationBean wsIdpMetadataServlet() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("cxfServlet");
-        /**
-         * Fediz dependencies are only available inside the fediz-idp war file
-         * Need to see if including the idp as a war dependency allow us to use
-         * sources buried in the war. war is published to central.
-         */
-        //bean.setServlet(new MetadataServlet());
-        bean.setUrlMappings(Collections.singleton("/ws/idp/*"));
-        bean.setAsyncSupported(true);
-        return bean;
-    }
-
+    
 }
