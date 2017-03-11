@@ -66,9 +66,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public ServletRegistrationBean cxfServlet() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
         bean.setEnabled(true);
-        bean.setName("cxfServlet");
+        bean.setName("cxfServletSecurityTokenService");
         bean.setServlet(new CXFServlet());
-        bean.setUrlMappings(Collections.singleton("/ws/sts/*"));
+        bean.setUrlMappings(Collections.singleton("/ws/sts"));
         bean.setAsyncSupported(true);
         return bean;
     }
@@ -164,21 +164,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         realm.setCallbackHandler(new PasswordCallbackHandler());
         return realm;
     }
-
-    @Bean
-    public RealmProperties realmB() {
-        final RealmProperties realm = new RealmProperties();
-        realm.setIssuer("STS Realm B");
-        realm.setSignaturePropertiesFile("stsKeystoreB.properties");
-        realm.setCallbackHandler(new PasswordCallbackHandler());
-        return realm;
-    }
-
+    
     @Bean
     public Map realms() {
         final Map realms = new HashMap<>();
         realms.put("REALMA", realmA());
-        realms.put("REALMB", realmB());
         return realms;
     }
 

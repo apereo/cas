@@ -49,7 +49,12 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-### Federation Metadata
+### Endpoints
+
+| Endpoint                        | Description
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------
+| `/cas/ws/idp/metadata`          | Display the current federation metadata based on the configuration realm for the identity provider.
+
 
 ## Configuration
 
