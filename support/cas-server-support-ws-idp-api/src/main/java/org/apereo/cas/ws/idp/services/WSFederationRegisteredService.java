@@ -4,12 +4,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.ws.idp.DefaultFederationClaim;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * This is {@link WSFederationRegisteredService}.
@@ -25,11 +22,9 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
     private String realm;
     private String protocol;
     private String displayName;
-    private String description;
     private String tokenType;
     private long lifetime;
     private String role;
-    private Collection<DefaultFederationClaim> claims = new HashSet<>();
     private String wsdlLocation;
     private String namespace;
     private String wsdlService;
@@ -89,15 +84,7 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
     public void setRole(final String role) {
         this.role = role;
     }
-
-    public Collection<DefaultFederationClaim> getClaims() {
-        return claims;
-    }
-
-    public void setClaims(final Collection<DefaultFederationClaim> claims) {
-        this.claims = claims;
-    }
-
+    
     public String getWsdlLocation() {
         return wsdlLocation;
     }
@@ -164,11 +151,9 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
                 .append(this.realm, rhs.realm)
                 .append(this.protocol, rhs.protocol)
                 .append(this.displayName, rhs.displayName)
-                .append(this.description, rhs.description)
                 .append(this.tokenType, rhs.tokenType)
                 .append(this.lifetime, rhs.lifetime)
                 .append(this.role, rhs.role)
-                .append(this.claims, rhs.claims)
                 .append(this.wsdlLocation, rhs.wsdlLocation)
                 .append(this.namespace, rhs.namespace)
                 .append(this.wsdlService, rhs.wsdlService)
@@ -185,11 +170,9 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
                 .append(realm)
                 .append(protocol)
                 .append(displayName)
-                .append(description)
                 .append(tokenType)
                 .append(lifetime)
                 .append(role)
-                .append(claims)
                 .append(wsdlLocation)
                 .append(namespace)
                 .append(wsdlService)
