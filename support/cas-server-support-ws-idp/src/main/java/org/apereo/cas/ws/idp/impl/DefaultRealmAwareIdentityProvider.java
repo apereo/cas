@@ -1,8 +1,7 @@
 package org.apereo.cas.ws.idp.impl;
 
 import org.apache.cxf.fediz.core.Claim;
-import org.apereo.cas.ws.idp.api.FederationRelyingParty;
-import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
+import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 
 import java.io.File;
 import java.net.URL;
@@ -28,7 +27,6 @@ public class DefaultRealmAwareIdentityProvider implements RealmAwareIdentityProv
 
     private Collection<Claim> claimTypesOffered = new ArrayList<>();
     private Collection<String> supportedProtocols = new ArrayList<>();
-    private Map<String, FederationRelyingParty> relyingParties = new HashMap<>();
     private Map<String, String> authenticationURIs = new HashMap<>();
     private String displayName;
     private String description;
@@ -76,11 +74,6 @@ public class DefaultRealmAwareIdentityProvider implements RealmAwareIdentityProv
     }
 
     @Override
-    public Map<String, FederationRelyingParty> getRelyingParties() {
-        return relyingParties;
-    }
-
-    @Override
     public Map<String, String> getAuthenticationURIs() {
         return authenticationURIs;
     }
@@ -122,10 +115,6 @@ public class DefaultRealmAwareIdentityProvider implements RealmAwareIdentityProv
 
     public void setSupportedProtocols(final Collection<String> supportedProtocols) {
         this.supportedProtocols = supportedProtocols;
-    }
-
-    public void setRelyingParties(final Map<String, FederationRelyingParty> relyingParties) {
-        this.relyingParties = relyingParties;
     }
 
     public void setAuthenticationURIs(final Map<String, String> authenticationURIs) {
