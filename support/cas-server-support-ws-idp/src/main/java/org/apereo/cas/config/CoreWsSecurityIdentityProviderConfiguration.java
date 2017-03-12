@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ws.idp.DefaultFederationClaim;
-import org.apereo.cas.ws.idp.FederationValidateRequestController;
+import org.apereo.cas.ws.idp.web.FederationValidateRequestController;
 import org.apereo.cas.ws.idp.api.FederationRelyingParty;
 import org.apereo.cas.ws.idp.api.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
