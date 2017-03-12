@@ -1,4 +1,4 @@
-package org.apereo.cas.ws.idp;
+package org.apereo.cas.ws.idp.web;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
@@ -11,9 +11,9 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.ws.idp.FederationConstants;
 import org.apereo.cas.ws.idp.api.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
-import org.apereo.cas.ws.idp.web.FederationRequest;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
@@ -51,18 +51,18 @@ public class FederationValidateRequestController extends BaseFederationRequestCo
      * @param request  the request
      * @throws Exception the exception
      */
-    @GetMapping(path = "/ws/idp/federation")
+    @GetMapping(path = FederationConstants.ENDPOINT_FEDERATION_REQUEST)
     protected void handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         final FederationRequest fedRequest = FederationRequest.of(request);
         final RealmAwareIdentityProvider idp = this.identityProviderConfigurationService.getIdentityProvider(
                 casProperties.getAuthn().getWsfedIdP().getIdp().getRealm());
 
         switch (fedRequest.getWa().toLowerCase()) {
-            case "wsignout1.0":
-            case "wsignoutcleanup1.0":
+            case FederationConstants.WSIGNOUT10:
+            case FederationConstants.WSIGNOUT_CLEANUP10:
                 selectSignOutProcess(fedRequest, idp, response, request);
                 break;
-            case "wsignin1.0":
+            case FederationConstants.WSIGNIN10:
             default:
                 selectWsFedProcess(fedRequest, idp, response, request);
                 break;
