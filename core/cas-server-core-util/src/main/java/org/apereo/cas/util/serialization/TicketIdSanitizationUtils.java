@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public final class TicketIdSanitizationUtils {
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile('(' + TicketGrantingTicket.PREFIX + '|'
             + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
-            + ")(-)*(\\w)*(-)*(\\w)*");
+            + ")(-)+(\\w)+(-)+(\\w)+");
 
     /**
      * Specifies the ending tail length of the ticket id that would still be visible in the output

@@ -21,17 +21,7 @@
                     endpointName="ns1:Transport_Port">
         <jaxws:properties/>
     </jaxws:endpoint>
-
-    <jaxws:endpoint id="transportSTSRealmB" 
-                    implementor="#transportSTSProviderBean"
-                    address="/REALMB/STSServiceTransport" 
-                    wsdlLocation="classpath:/wsdl/ws-trust-1.4-service.wsdl"
-                    xmlns:ns1="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
-                    serviceName="ns1:SecurityTokenService" 
-                    endpointName="ns1:Transport_Port">
-        <jaxws:properties/>
-    </jaxws:endpoint>
-
+    
     <jaxws:endpoint id="transportSTSRealmAUT"
                     implementor="#transportSTSProviderBean"
                     address="/REALMA/STSServiceTransportUT"
@@ -44,19 +34,6 @@
         </jaxws:properties>
     </jaxws:endpoint>
 
-    <jaxws:endpoint id="transportSTSRealmBUT"
-                    implementor="#transportSTSProviderBean"
-                    address="/REALMB/STSServiceTransportUT"
-                    wsdlLocation="classpath:/wsdl/ws-trust-1.4-service.wsdl"
-                    xmlns:ns1="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
-                    serviceName="ns1:SecurityTokenService" endpointName="ns1:TransportUT_Port">
-        <jaxws:properties>
-            <entry key="ws-security.callback-handler" value-ref="upCallBackHandlerRealmB"/>
-        </jaxws:properties>
-    </jaxws:endpoint>
-
-
-    <!-- ///////////// -->
     <util:map id="REALMA">
         <entry key="alice" value="ecila" />
         <entry key="bob" value="bob" />

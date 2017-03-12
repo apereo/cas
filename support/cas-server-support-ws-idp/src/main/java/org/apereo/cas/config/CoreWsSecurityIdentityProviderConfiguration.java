@@ -1,18 +1,22 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.config.support.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ws.idp.DefaultFederationClaim;
-import org.apereo.cas.ws.idp.web.FederationValidateRequestController;
-import org.apereo.cas.ws.idp.api.FederationRelyingParty;
-import org.apereo.cas.ws.idp.api.IdentityProviderConfigurationService;
-import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
-import org.apereo.cas.ws.idp.impl.DefaultFederationRelyingParty;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
+import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
+import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.ws.idp.impl.DefaultIdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.impl.DefaultRealmAwareIdentityProvider;
-import org.apereo.cas.ws.idp.metadata.FederationMetadataServlet;
+import org.apereo.cas.ws.idp.metadata.WSFederationMetadataServlet;
+import org.apereo.cas.ws.idp.web.WSWSFederationValidateRequestController;
+import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
+import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +26,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -38,7 +44,14 @@ import java.util.List;
 @Configuration("coreWsSecurityIdentityProviderConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = {"classpath:META-INF/cxf/cxf.xml"})
-public class CoreWsSecurityIdentityProviderConfiguration {
+public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
+
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -51,12 +64,9 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     @Bean
-    public FederationValidateRequestController federationValidateRequestController() {
-        return new FederationValidateRequestController(idpConfigService(), servicesManager, webApplicationServiceFactory, casProperties);
+    public WSWSFederationValidateRequestController federationValidateRequestController() {
+        return new WSWSFederationValidateRequestController(idpConfigService(), servicesManager, webApplicationServiceFactory, casProperties);
     }
 
     @Lazy
@@ -66,7 +76,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
         bean.setEnabled(true);
         bean.setName("federationServletIdentityProvider");
-        bean.setServlet(new FederationMetadataServlet(wsfed.getIdp().getRealm()));
+        bean.setServlet(new WSFederationMetadataServlet(wsfed.getIdp().getRealm()));
         bean.setUrlMappings(Collections.singleton("/ws/idp/metadata"));
         bean.setAsyncSupported(true);
         return bean;
@@ -74,7 +84,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
 
     @Bean
     public IdentityProviderConfigurationService idpConfigService() {
-        return new DefaultIdentityProviderConfigurationService(identityProviders(), relyingParties());
+        return new DefaultIdentityProviderConfigurationService(identityProviders());
     }
 
     @Bean
@@ -82,20 +92,14 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         try {
             final WsFederationProperties wsfed = casProperties.getAuthn().getWsfedIdP();
             final DefaultRealmAwareIdentityProvider idp = new DefaultRealmAwareIdentityProvider();
-
             idp.setRealm(wsfed.getIdp().getRealm());
             idp.setUri(wsfed.getIdp().getUri());
             idp.setStsUrl(new URL(casProperties.getServer().getPrefix().concat("/ws/sts/").concat(wsfed.getIdp().getUri())));
             idp.setIdpUrl(new URL(casProperties.getServer().getPrefix().concat("/ws/idp/federation")));
-
             idp.setCertificate(wsfed.getIdp().getCertificate());
             idp.setCertificatePassword(wsfed.getIdp().getCertificatePassword());
             idp.setSupportedProtocols(Arrays.asList("http://docs.oasis-open.org/wsfed/federation/200706", "http://docs.oasis-open.org/ws-sx/ws-trust/200512"));
-
-            // TODO consider using service registry here as well
-            idp.setRelyingParties(Collections.singletonMap("urn:org:apache:cxf:fediz:fedizhelloworld", relyingParty()));
-
-            idp.setAuthenticationURIs(Collections.singletonMap("default", "federation/up"));
+            idp.setAuthenticationURIs(Collections.singletonMap("default", "federation"));
             idp.setDescription("WsFederation Identity Provider");
             idp.setDisplayName("WsFederation");
             return Arrays.asList(idp);
@@ -105,36 +109,22 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     }
 
     @Bean
-    public List<FederationRelyingParty> relyingParties() {
-        try {
-            return Arrays.asList(relyingParty());
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
+    public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy() {
+        return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory);
     }
 
-    /**
-     * TODO: These into go into service registry
-     * perhaps with a specific service type.
-     *
-     * @return
-     */
-    private FederationRelyingParty relyingParty() {
-        final DefaultFederationRelyingParty rp = new DefaultFederationRelyingParty();
-        rp.setRealm("urn:org:apache:cxf:fediz:fedizhelloworld");
-        rp.setProtocol("http://docs.oasis-open.org/wsfed/federation/200706");
-        rp.setDescription("Fediz Hello World");
-        rp.setDescription("This is the hello-world application");
-        rp.setTokenType("http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0");
-        rp.setRole("ApplicationServiceType");
+    @Bean
+    public Action wsFederationMetadataUIAction() {
+        return new WSFederationMetadataUIAction(servicesManager, wsFederationAuthenticationServiceSelectionStrategy());
+    }
 
-        final List claims = Arrays.asList(
-                new DefaultFederationClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"),
-                new DefaultFederationClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"),
-                new DefaultFederationClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"),
-                new DefaultFederationClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role")
-        );
-        rp.setClaims(claims);
-        return rp;
+    @Bean
+    public CasWebflowConfigurer wsFederationWebflowConfigurer() {
+        return new WSFederationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, wsFederationMetadataUIAction());
+    }
+
+    @Override
+    public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
+        plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy());
     }
 }

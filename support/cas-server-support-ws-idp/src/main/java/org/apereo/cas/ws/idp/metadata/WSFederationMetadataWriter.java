@@ -8,7 +8,7 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apache.xml.security.stax.impl.util.IDGenerator;
 import org.apache.xml.security.utils.Base64;
-import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
+import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +21,13 @@ import java.security.cert.X509Certificate;
 import static org.apache.cxf.fediz.core.FedizConstants.*;
 
 /**
- * This is {@link FederationMetadataWriter}.
+ * This is {@link WSFederationMetadataWriter}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class FederationMetadataWriter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FederationMetadataWriter.class);
+public class WSFederationMetadataWriter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationMetadataWriter.class);
 
     /**
      * Produce metadata document document.

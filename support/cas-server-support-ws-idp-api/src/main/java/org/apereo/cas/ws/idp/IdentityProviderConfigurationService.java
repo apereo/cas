@@ -1,4 +1,4 @@
-package org.apereo.cas.ws.idp.api;
+package org.apereo.cas.ws.idp;
 
 /**
  * This is {@link IdentityProviderConfigurationService}.
@@ -14,12 +14,4 @@ public interface IdentityProviderConfigurationService {
      * @return the identity provider
      */
     RealmAwareIdentityProvider getIdentityProvider(String realm);
-
-    /**
-     * Gets relying party.
-     *
-     * @param realm the realm
-     * @return the relying party
-     */
-    FederationRelyingParty getRelyingParty(String realm);
 }

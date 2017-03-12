@@ -1,12 +1,10 @@
-package org.apereo.cas.ws.idp.api;
+package org.apereo.cas.ws.idp;
 
 import org.apache.cxf.fediz.core.Claim;
-import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,8 +31,6 @@ public interface RealmAwareIdentityProvider {
 
     Collection<Claim> getClaimTypesOffered();
     
-    Map<String, FederationRelyingParty> getRelyingParties();
-
     Map<String, String> getAuthenticationURIs();
 
     String getDisplayName();

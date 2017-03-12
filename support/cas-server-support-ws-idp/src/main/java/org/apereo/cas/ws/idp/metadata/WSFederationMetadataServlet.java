@@ -2,8 +2,8 @@ package org.apereo.cas.ws.idp.metadata;
 
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.ws.idp.api.IdentityProviderConfigurationService;
-import org.apereo.cas.ws.idp.api.RealmAwareIdentityProvider;
+import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
+import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -18,18 +18,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * This is {@link FederationMetadataServlet}.
+ * This is {@link WSFederationMetadataServlet}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class FederationMetadataServlet extends HttpServlet {
+public class WSFederationMetadataServlet extends HttpServlet {
     private static final long serialVersionUID = -6927484130511112872L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(FederationMetadataServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationMetadataServlet.class);
 
     private final String realm;
 
-    public FederationMetadataServlet(final String realm) {
+    public WSFederationMetadataServlet(final String realm) {
         this.realm = realm;
     }
 
@@ -43,7 +43,7 @@ public class FederationMetadataServlet extends HttpServlet {
             final IdentityProviderConfigurationService configService = ctx.getBean(IdentityProviderConfigurationService.class, "idpConfigService");
             final RealmAwareIdentityProvider idpConfig = configService.getIdentityProvider(this.realm);
 
-            final FederationMetadataWriter mw = new FederationMetadataWriter();
+            final WSFederationMetadataWriter mw = new WSFederationMetadataWriter();
             final Document metadata = mw.produceMetadataDocument(idpConfig);
             out.write(DOM2Writer.nodeToString(metadata));
 
