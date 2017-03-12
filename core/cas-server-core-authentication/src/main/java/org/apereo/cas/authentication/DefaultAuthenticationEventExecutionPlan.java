@@ -25,6 +25,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationEventExecutionPlan.class);
 
     private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
+    private List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>();
     private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
     @Override
@@ -54,6 +55,12 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
+    public void registerAuthenticationPostProcessor(final AuthenticationPostProcessor processor) {
+        LOGGER.debug("Registering authentication post processor [{}] into the execution plan", processor);
+        authenticationPostProcessors.add(processor);
+    }
+
+    @Override
     public void registerMetadataPopulators(final Collection<AuthenticationMetaDataPopulator> populators) {
         populators.forEach(this::registerMetadataPopulator);
     }
@@ -61,6 +68,11 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     @Override
     public Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulators(final Collection<Credential> credentials) {
         return authenticationMetaDataPopulatorList;
+    }
+
+    @Override
+    public Collection<AuthenticationPostProcessor> getAuthenticationPostProcessors() {
+        return authenticationPostProcessors;
     }
 
     @Override

@@ -138,6 +138,12 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         AuthenticationCredentialsLocalBinder.bindCurrent(transaction.getCredentials());
         final AuthenticationBuilder builder = authenticateInternal(transaction);
+
+        authenticationEventExecutionPlan.getAuthenticationPostProcessors().forEach(p -> {
+            LOGGER.info("Invoking authentication post processor [{}]");
+            p.process(transaction, builder);
+        });
+
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
         if (principal instanceof NullPrincipal) {

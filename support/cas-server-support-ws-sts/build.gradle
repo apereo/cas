@@ -9,6 +9,7 @@ dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-validation")
+    compile project(":support:cas-server-support-ws-idp-api")
     compile project(":support:cas-server-support-saml-core")
     testImplementation project(path: ":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")

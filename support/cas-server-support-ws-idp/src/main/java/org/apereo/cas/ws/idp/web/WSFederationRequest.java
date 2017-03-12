@@ -1,17 +1,17 @@
 package org.apereo.cas.ws.idp.web;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ws.idp.FederationConstants;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link FederationRequest}.
+ * This is {@link WSFederationRequest}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class FederationRequest {
+public class WSFederationRequest {
     private final String wtrealm;
     private final String wreply;
     private final String wctx;
@@ -26,12 +26,12 @@ public class FederationRequest {
     private final String wauth;
     private final String wreq;
 
-    protected FederationRequest(final String wtrealm, final String wreply, final String wctx,
-                                final String wfresh, final String whr,
-                                final String wresult, final String relayState,
-                                final String samlResponse, final String state,
-                                final String code, final String wa,
-                                final String wauth, final String wreq) {
+    protected WSFederationRequest(final String wtrealm, final String wreply, final String wctx,
+                                  final String wfresh, final String whr,
+                                  final String wresult, final String relayState,
+                                  final String samlResponse, final String state,
+                                  final String code, final String wa,
+                                  final String wauth, final String wreq) {
         this.wtrealm = wtrealm;
         this.wreply = wreply;
         this.wctx = wctx;
@@ -53,22 +53,22 @@ public class FederationRequest {
      * @param request the request
      * @return the federation request
      */
-    public static FederationRequest of(final HttpServletRequest request) {
-        final String wtrealm = request.getParameter(FederationConstants.WTREALM);
-        final String wreply = request.getParameter(FederationConstants.WREPLY);
-        final String wreq = request.getParameter(FederationConstants.WREQ);
-        final String wctx = request.getParameter(FederationConstants.WCTX);
-        final String wfresh = request.getParameter(FederationConstants.WREFRESH);
-        final String whr = request.getParameter(FederationConstants.WHR);
-        final String wresult = request.getParameter(FederationConstants.WRESULT);
-        final String relayState = request.getParameter(FederationConstants.RELAY_STATE);
-        final String samlResponse = request.getParameter(FederationConstants.SAML_RESPONSE);
-        final String state = request.getParameter(FederationConstants.STATE);
-        final String code = request.getParameter(FederationConstants.CODE);
-        final String wa = request.getParameter(FederationConstants.WA);
-        final String wauth = StringUtils.defaultIfBlank(request.getParameter(FederationConstants.WAUTH), "default");
+    public static WSFederationRequest of(final HttpServletRequest request) {
+        final String wtrealm = request.getParameter(WSFederationConstants.WTREALM);
+        final String wreply = request.getParameter(WSFederationConstants.WREPLY);
+        final String wreq = request.getParameter(WSFederationConstants.WREQ);
+        final String wctx = request.getParameter(WSFederationConstants.WCTX);
+        final String wfresh = request.getParameter(WSFederationConstants.WREFRESH);
+        final String whr = request.getParameter(WSFederationConstants.WHR);
+        final String wresult = request.getParameter(WSFederationConstants.WRESULT);
+        final String relayState = request.getParameter(WSFederationConstants.RELAY_STATE);
+        final String samlResponse = request.getParameter(WSFederationConstants.SAML_RESPONSE);
+        final String state = request.getParameter(WSFederationConstants.STATE);
+        final String code = request.getParameter(WSFederationConstants.CODE);
+        final String wa = request.getParameter(WSFederationConstants.WA);
+        final String wauth = StringUtils.defaultIfBlank(request.getParameter(WSFederationConstants.WAUTH), "default");
         
-        return new FederationRequest(wtrealm, wreply, wctx, wfresh, whr, wresult,
+        return new WSFederationRequest(wtrealm, wreply, wctx, wfresh, whr, wresult,
                 relayState, samlResponse, state, code, wa, wauth, wreq);
     }
 
