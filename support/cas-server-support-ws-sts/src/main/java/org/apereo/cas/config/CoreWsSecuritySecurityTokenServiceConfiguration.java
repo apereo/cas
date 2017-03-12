@@ -22,7 +22,12 @@ import org.apache.cxf.sts.token.validator.UsernameTokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.SecurityTokenServiceAuthenticationPostProcessor;
+import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.ClaimTypeConstants;
 import org.apereo.cas.support.FileClaimsHandler;
 import org.apereo.cas.support.IdentityMapperImpl;
@@ -30,9 +35,11 @@ import org.apereo.cas.support.PasswordCallbackHandler;
 import org.apereo.cas.support.SamlRealmCodec;
 import org.apereo.cas.support.UriRealmParser;
 import org.apereo.cas.support.X509TokenDelegationHandler;
+import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -57,8 +64,16 @@ import java.util.Properties;
 @Configuration("coreWsSecuritySecurityTokenServiceConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = {"classpath:jaxws-realms.xml", "classpath:META-INF/cxf/cxf.xml"})
-public class CoreWsSecuritySecurityTokenServiceConfiguration {
+public class CoreWsSecuritySecurityTokenServiceConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("idpConfigService")
+    private IdentityProviderConfigurationService idpConfigService;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -124,18 +139,10 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
         final Relationship rel1 = new Relationship();
         rel1.setSourceRealm("REALMA");
-        rel1.setSourceRealm("REALMB");
+        rel1.setTargetRealm("REALMB");
         rel1.setIdentityMapper(identityMapper());
         rel1.setType("FederatedIdentity");
         list.add(rel1);
-
-        final Relationship rel2 = new Relationship();
-        rel2.setSourceRealm("REALMB");
-        rel2.setSourceRealm("REALMA");
-        rel2.setIdentityMapper(identityMapper());
-        rel2.setType("FederatedIdentity");
-        list.add(rel2);
-
         return list;
     }
 
@@ -345,11 +352,20 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         f.setRealm("REALMB");
         return f;
     }
-
-
+    
     @Bean
     public List supportedClaims() {
         return ClaimTypeConstants.ALL_CLAIMS;
     }
 
+    @Bean
+    public AuthenticationPostProcessor securityTokenServiceAuthenticationPostProcessor() {
+        return new SecurityTokenServiceAuthenticationPostProcessor(servicesManager, idpConfigService);
+    }
+
+
+    @Override
+    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+        plan.registerAuthenticationPostProcessor(securityTokenServiceAuthenticationPostProcessor());
+    }
 }
