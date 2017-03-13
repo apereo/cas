@@ -1,12 +1,14 @@
 package org.apereo.cas.support.x509.rest;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.support.rest.BadRequestException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -21,40 +23,45 @@ import java.util.Scanner;
  * Unit tests for {@link X509CredentialFactory}.
  *
  * @author Dmytro Fedonin
+ * @since 5.1.0
  */
 @RunWith(MockitoJUnitRunner.class)
 public class X509CredentialFactoryTests {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @InjectMocks
     private X509CredentialFactory factory;
 
     @Test
     public void createX509Credential() throws IOException {
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        Scanner scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile());
-        String certStr = scan.useDelimiter("\\Z").next();
+        final MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        final Scanner scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile());
+        final String certStr = scan.useDelimiter("\\Z").next();
         scan.close();
         requestBody.add("cert", certStr);
 
-        Credential cred = factory.fromRequestBody(requestBody);
+        final Credential cred = factory.fromRequestBody(requestBody);
         assertTrue(cred instanceof X509CertificateCredential);
     }
 
     @Test
     public void createDefaultCredential() {
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        final MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("username", "name");
         requestBody.add("password", "passwd");
 
-        Credential cred = factory.fromRequestBody(requestBody);
+        final Credential cred = factory.fromRequestBody(requestBody);
         assertTrue(cred instanceof UsernamePasswordCredential);
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void createInvalidCredential() {
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        final MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("username", "name");
 
-        Credential cred = factory.fromRequestBody(requestBody);
+        thrown.expect(BadRequestException.class);
+        factory.fromRequestBody(requestBody);
     }
 }

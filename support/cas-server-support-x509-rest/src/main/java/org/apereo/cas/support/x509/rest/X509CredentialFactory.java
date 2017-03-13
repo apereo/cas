@@ -18,6 +18,7 @@ import java.security.cert.X509Certificate;
  * This is {@link X509CredentialFactory}.
  *
  * @author Dmytro Fedonin
+ * @since 5.1.0
  */
 public class X509CredentialFactory extends DefaultCredentialFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(X509CredentialFactory.class);
@@ -29,12 +30,12 @@ public class X509CredentialFactory extends DefaultCredentialFactory {
         LOGGER.trace("cert: {}", cert);
         if (cert == null) {
             LOGGER.debug("cert is null fallback to username/passwd");
-           return super.fromRequestBody(requestBody);
+            return super.fromRequestBody(requestBody);
         }
-        InputStream is = new ByteArrayInputStream(cert.getBytes());
-        InputStreamSource iso = new InputStreamResource(is);
-        X509Certificate certificate = CertUtils.readCertificate(iso);
-        X509CertificateCredential credential = new X509CertificateCredential(new X509Certificate[] { certificate });
+        final InputStream is = new ByteArrayInputStream(cert.getBytes());
+        final InputStreamSource iso = new InputStreamResource(is);
+        final X509Certificate certificate = CertUtils.readCertificate(iso);
+        final X509CertificateCredential credential = new X509CertificateCredential(new X509Certificate[] {certificate});
         credential.setCertificate(certificate);
 
         return credential;

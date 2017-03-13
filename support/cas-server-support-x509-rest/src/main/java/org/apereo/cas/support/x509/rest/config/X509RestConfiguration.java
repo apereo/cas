@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Dmytro Fedonin
- *
+ * @since 5.1.0
  */
 @Configuration("x509RestConfiguration")
 public class X509RestConfiguration {
