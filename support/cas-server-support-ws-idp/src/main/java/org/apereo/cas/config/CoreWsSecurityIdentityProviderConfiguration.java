@@ -7,6 +7,7 @@ import org.apereo.cas.config.support.authentication.AuthenticationServiceSelecti
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
@@ -50,6 +51,10 @@ import java.util.List;
 public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
 
     @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private HttpClient httpClient;
+
+    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
@@ -70,14 +75,14 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Bean
     public WSWSFederationValidateRequestController federationValidateRequestController() {
         return new WSWSFederationValidateRequestController(idpConfigService(), servicesManager,
-                webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy());
+                webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(), httpClient);
     }
 
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController() {
         return new WSFederationValidateRequestCallbackController(idpConfigService(), servicesManager,
                 webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer(),
-                wsFederationAuthenticationServiceSelectionStrategy());
+                wsFederationAuthenticationServiceSelectionStrategy(), httpClient);
     }
 
     @Lazy

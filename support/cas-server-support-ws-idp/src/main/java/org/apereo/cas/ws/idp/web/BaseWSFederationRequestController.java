@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.slf4j.Logger;
@@ -46,17 +47,21 @@ public abstract class BaseWSFederationRequestController {
     protected final CasConfigurationProperties casProperties;
 
     protected final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
+    
+    protected final HttpClient httpClient;
 
     public BaseWSFederationRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
                                              final ServicesManager servicesManager,
                                              final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                              final CasConfigurationProperties casProperties,
-                                             final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
+                                             final AuthenticationServiceSelectionStrategy serviceSelectionStrategy, 
+                                             final HttpClient httpClient) {
         this.identityProviderConfigurationService = identityProviderConfigurationService;
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.casProperties = casProperties;
         this.serviceSelectionStrategy = serviceSelectionStrategy;
+        this.httpClient = httpClient;
         this.callbackService = registerCallback(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 

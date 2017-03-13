@@ -37,9 +37,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.FileClaimsHandler;
-import org.apereo.cas.support.PasswordCallbackHandler;
 import org.apereo.cas.support.claims.Claims;
 import org.apereo.cas.support.realm.RealmAwareIdentityMapper;
+import org.apereo.cas.support.realm.RealmVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
 import org.apereo.cas.support.saml.SamlRealmCodec;
 import org.apereo.cas.support.validation.CipheredCredentialsValidator;
@@ -180,14 +180,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     @Bean
     public RealmProperties realmA() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
 
         final RealmProperties realm = new RealmProperties();
         realm.setIssuer(wsfed.getRealm().getIssuer());
-
         final Properties p = getSecurityProperties(wsfed.getRealm().getKeystoreFile(), wsfed.getRealm().getKeystorePassword(),
                 wsfed.getRealm().getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
-        realm.setCallbackHandler(new PasswordCallbackHandler());
+        realm.setCallbackHandler(new RealmVerificationCallbackHandler(idp.getUri()));
         return realm;
     }
 
@@ -279,8 +279,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
 
         final StaticSTSProperties s = new StaticSTSProperties();
-        s.setCallbackHandler(new PasswordCallbackHandler());
-        s.setIssuer("CAS Security Token Service");
+        s.setIssuer(getClass().getSimpleName());
         s.setRealmParser(new UriRealmParser(realms()));
         s.setSignatureCryptoProperties(getSecurityProperties(wsfed.getSigningKeystoreFile(), wsfed.getSigningKeystorePassword()));
         s.setEncryptionCryptoProperties(getSecurityProperties(wsfed.getEncryptionKeystoreFile(), wsfed.getEncryptionKeystorePassword()));

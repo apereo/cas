@@ -10,9 +10,12 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -24,10 +27,14 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link WSFederationValidateRequestCallbackController}.
@@ -44,8 +51,10 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                          final CasConfigurationProperties casProperties,
                                                          final WSFederationRelyingPartyTokenProducer relyingPartyTokenProducer,
-                                                         final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
-        super(identityProviderConfigurationService, servicesManager, webApplicationServiceFactory, casProperties, serviceSelectionStrategy);
+                                                         final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
+                                                         final HttpClient httpClient) {
+        super(identityProviderConfigurationService, servicesManager, webApplicationServiceFactory, casProperties,
+                serviceSelectionStrategy, httpClient);
         this.relyingPartyTokenProducer = relyingPartyTokenProducer;
     }
 
@@ -57,7 +66,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
      * @throws Exception the exception
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK)
-    protected void handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
+    protected ModelAndView handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         final WSFederationRequest fedRequest = WSFederationRequest.of(request);
         final WsFederationProperties wsfed = casProperties.getAuthn().getWsfedIdP();
         final RealmAwareIdentityProvider idp = this.identityProviderConfigurationService.getIdentityProvider(wsfed.getIdp().getRealm());
@@ -67,34 +76,55 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         if (StringUtils.isBlank(ticket)) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return;
+            return new ModelAndView(CasWebflowConstants.VIEW_ID_ERROR, new HashMap<>(), HttpStatus.FORBIDDEN);
         }
 
         final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
         final SecurityToken securityToken = validateSecurityTokenInAssertion(assertion, request, response);
+        final String rpToken = produceRelyingPartyToken(response, request, fedRequest, securityToken);
+        return postResponseBackToRelyingParty(rpToken, securityToken, assertion, fedRequest, request, response, idp);
+    }
 
+    private ModelAndView postResponseBackToRelyingParty(final String rpToken,
+                                                        final SecurityToken securityToken,
+                                                        final Assertion assertion,
+                                                        final WSFederationRequest fedRequest,
+                                                        final HttpServletRequest request,
+                                                        final HttpServletResponse response,
+                                                        final RealmAwareIdentityProvider idp) throws Exception {
+        final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
+        final String postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
+
+        final Map model = new HashMap<>();
+        model.put("originalUrl", postUrl);
+
+        final Map parameters = new HashMap<>();
+        parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        parameters.put(WSFederationConstants.WRESULT, rpToken);
+        parameters.put(WSFederationConstants.WTREALM, fedRequest.getWtrealm());
+        
+        if (StringUtils.isNotBlank(fedRequest.getWctx())) {
+            parameters.put(WSFederationConstants.WCTX, fedRequest.getWctx());
+        }
+        model.put("parameters", parameters);
+
+        return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
+
+    }
+
+    private String produceRelyingPartyToken(final HttpServletResponse response, final HttpServletRequest request,
+                                            final WSFederationRequest fedRequest, final SecurityToken securityToken) {
+        final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
+        return relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request);
+    }
+
+    private WSFederationRegisteredService getWsFederationRegisteredService(final HttpServletResponse response, final HttpServletRequest request,
+                                                                           final WSFederationRequest fedRequest) {
         final String serviceUrl = constructServiceUrl(request, response, fedRequest);
         final Service targetService = this.serviceSelectionStrategy.resolveServiceFrom(this.webApplicationServiceFactory.createService(serviceUrl));
-        final WSFederationRegisteredService service = this.servicesManager.findServiceBy(targetService, WSFederationRegisteredService.class);
-        final String rpToken = relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request);
-        
-        /*
-        
-        <bean id="stsClientForRpAction" class="org.apache.cxf.fediz.service.idp.beans.STSClientAction">
-        <property name="wsdlLocation" value="https://localhost:0/fediz-idp-sts/${realm.STS_URI}/STSServiceTransport?wsdl" />
-        <property name="wsdlEndpoint" value="Transport_Port" />
-        <property name="tokenType" value="http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0" />
-    </bean>
-    
-        <on-entry>
-            <evaluate expression="stsClientForRpAction.submit(flowRequestContext, flowScope.wtrealm, flowScope.whr)"
-                      result="flowScope.rpTokenElement"/>
-            <evaluate expression="tokenSerializer.serialize(flowRequestContext, flowScope.rpTokenElement)"
-                      result="flowScope.rpToken"/>
-        </on-entry>
-        <evaluate expression="signinParametersCacheAction.storeRPConfigInSession(flowRequestContext)" />
-         */
-
+        final WSFederationRegisteredService svc = this.servicesManager.findServiceBy(targetService, WSFederationRegisteredService.class);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(targetService, svc);
+        return svc;
     }
 
     private SecurityToken validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request,

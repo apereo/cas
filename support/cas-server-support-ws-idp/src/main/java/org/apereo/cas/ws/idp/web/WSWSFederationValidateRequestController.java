@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -37,9 +38,10 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
                                                    final ServicesManager servicesManager,
                                                    final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                    final CasConfigurationProperties casProperties,
-                                                   final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
+                                                   final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
+                                                   final HttpClient httpClient) {
         super(identityProviderConfigurationService, servicesManager,
-                webApplicationServiceFactory, casProperties, serviceSelectionStrategy);
+                webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient);
     }
 
     /**
