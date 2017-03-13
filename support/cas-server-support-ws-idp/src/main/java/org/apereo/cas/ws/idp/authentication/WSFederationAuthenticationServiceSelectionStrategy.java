@@ -31,9 +31,12 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-        final String serviceReply = getReplyAsParameter(service).get().getValue();
-        LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
-        return this.webApplicationServiceFactory.createService(serviceReply);
+        if (service != null) {
+            final String serviceReply = getReplyAsParameter(service).get().getValue();
+            LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
+            return this.webApplicationServiceFactory.createService(serviceReply);
+        }
+        return service;
     }
 
     @Override

@@ -17,7 +17,11 @@ import java.util.StringTokenizer;
 public class UriRealmParser implements RealmParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UriRealmParser.class);
-    private Map<String, Object> realmMap;
+    private final Map<String, Object> realmMap;
+
+    public UriRealmParser(final Map<String, Object> realmMap) {
+        this.realmMap = realmMap;
+    }
 
     @Override
     public String parseRealm(final Map<String, Object> messageContext) throws STSException {
@@ -42,10 +46,5 @@ public class UriRealmParser implements RealmParser {
         LOGGER.debug("URI realm parsed: {}", realm);
         return realm;
     }
-
-    public void setRealmMap(final Map<String, Object> realms) {
-        this.realmMap = realms;
-    }
-
 }
 
