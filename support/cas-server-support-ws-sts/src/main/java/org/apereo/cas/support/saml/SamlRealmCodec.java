@@ -1,4 +1,4 @@
-package org.apereo.cas.support;
+package org.apereo.cas.support.saml;
 
 import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
 import org.apache.wss4j.common.saml.SAMLKeyInfo;
@@ -25,7 +25,7 @@ public class SamlRealmCodec implements SAMLRealmCodec {
         final SAMLKeyInfo ki = assertion.getSignatureKeyInfo();
         final X509Certificate[] certs = ki.getCerts();
         final String realm = parseCNValue(certs[0].getSubjectX500Principal().getName());
-        LOGGER.info("Realm parsed in certificate: " + realm);
+        LOGGER.info("Realm parsed in certificate: [{}]", realm);
         return realm;
     }
 
@@ -38,13 +38,4 @@ public class SamlRealmCodec implements SAMLRealmCodec {
         }
         return realm;
     }
-
-    public boolean isUppercase() {
-        return uppercase;
-    }
-
-    public void setUppercase(final boolean uppercase) {
-        this.uppercase = uppercase;
-    }
-
 }

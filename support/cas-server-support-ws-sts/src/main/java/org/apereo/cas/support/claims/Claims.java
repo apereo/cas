@@ -1,15 +1,15 @@
-package org.apereo.cas.support;
+package org.apereo.cas.support.claims;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * This is {@link ClaimTypeConstants}.
+ * This is {@link Claims}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public enum ClaimTypeConstants {
+public enum Claims {
 
     /**
      * Claims email address 2005 claim type constants.
@@ -103,7 +103,7 @@ public enum ClaimTypeConstants {
     /**
      * All claims.
      */
-    public static final List<ClaimTypeConstants> ALL_CLAIMS =
+    public static final List<Claims> ALL_CLAIMS =
             Arrays.asList(CLAIMS_EMAIL_ADDRESS_2005,
                     CLAIMS_EMAIL_ADDRESS,
                     CLAIMS_GIVEN_NAME,
@@ -137,7 +137,7 @@ public enum ClaimTypeConstants {
      *
      * @param str the str
      */
-    ClaimTypeConstants(final String str) {
+    Claims(final String str) {
         this.uri = str;
     }
 

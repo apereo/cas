@@ -6,8 +6,8 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.wss4j.dom.WSConstants;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
@@ -32,22 +32,25 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
     private final ServicesManager servicesManager;
     private final IdentityProviderConfigurationService identityProviderConfigurationService;
     private final AuthenticationServiceSelectionStrategy selectionStrategy;
-    
+    private final CipherExecutor<String, String> credentialCipherExecutor;
+
     public SecurityTokenServiceAuthenticationPostProcessor(final ServicesManager servicesManager,
                                                            final IdentityProviderConfigurationService identityProviderConfigurationService,
-                                                           final AuthenticationServiceSelectionStrategy selectionStrategy) {
+                                                           final AuthenticationServiceSelectionStrategy selectionStrategy,
+                                                           final CipherExecutor<String, String> credentialCipherExecutor) {
         this.servicesManager = servicesManager;
         this.identityProviderConfigurationService = identityProviderConfigurationService;
         this.selectionStrategy = selectionStrategy;
+        this.credentialCipherExecutor = credentialCipherExecutor;
     }
 
     @Override
     public void process(final AuthenticationTransaction transaction, final AuthenticationBuilder builder) {
-        
+
         if (!this.selectionStrategy.supports(transaction.getService())) {
             return;
         }
-        
+
         final Service service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
         if (service != null) {
             final WSFederationRegisteredService rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
@@ -88,12 +91,13 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
                     .orElse(null);
 
             if (up != null) {
-                sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());
-                sts.getProperties().put(SecurityConstants.PASSWORD, up.getPassword());
                 try {
+                    sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());
+                    final String uid = credentialCipherExecutor.encode(up.getUsername());
+                    sts.getProperties().put(SecurityConstants.PASSWORD, uid);
                     final SecurityToken token = sts.requestSecurityToken(rp.getAppliesTo());
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
                 }
             }
         }

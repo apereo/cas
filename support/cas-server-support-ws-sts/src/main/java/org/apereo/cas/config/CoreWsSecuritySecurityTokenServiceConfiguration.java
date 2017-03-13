@@ -19,14 +19,15 @@ import org.apache.cxf.sts.token.provider.DefaultSubjectProvider;
 import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.sts.token.realm.Relationship;
-import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
 import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
-import org.apache.cxf.sts.token.validator.UsernameTokenValidator;
+import org.apache.cxf.sts.token.validator.TokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
 import org.apache.cxf.ws.security.sts.provider.operation.IssueOperation;
 import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
+import org.apache.wss4j.dom.validate.Validator;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -35,13 +36,15 @@ import org.apereo.cas.config.support.authentication.AuthenticationEventExecution
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.ClaimTypeConstants;
 import org.apereo.cas.support.FileClaimsHandler;
-import org.apereo.cas.support.IdentityMapperImpl;
 import org.apereo.cas.support.PasswordCallbackHandler;
-import org.apereo.cas.support.SamlRealmCodec;
-import org.apereo.cas.support.UriRealmParser;
-import org.apereo.cas.support.X509TokenDelegationHandler;
+import org.apereo.cas.support.claims.Claims;
+import org.apereo.cas.support.realm.RealmAwareIdentityMapper;
+import org.apereo.cas.support.realm.UriRealmParser;
+import org.apereo.cas.support.saml.SamlRealmCodec;
+import org.apereo.cas.support.validation.CipheredCredentialsValidator;
+import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
+import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
@@ -177,7 +180,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     @Bean
     public RealmProperties realmA() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
-        
+
         final RealmProperties realm = new RealmProperties();
         realm.setIssuer(wsfed.getRealm().getIssuer());
 
@@ -222,8 +225,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
         final SAMLTokenProvider provider = new SAMLTokenProvider();
         provider.setAttributeStatementProviders(Arrays.asList(new ClaimsAttributeStatementProvider()));
-        
-        
         provider.setRealmMap(realms());
         provider.setConditionsProvider(c);
         provider.setSubjectProvider(s);
@@ -232,24 +233,19 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @Bean
     public IdentityMapper identityMapper() {
-        return new IdentityMapperImpl();
+        return new RealmAwareIdentityMapper();
     }
 
     @Bean
-    public SAMLRealmCodec samlRealmCodec() {
-        return new SamlRealmCodec();
-    }
-
-    @Bean
-    public SAMLTokenValidator transportSamlTokenValidator() {
+    public TokenValidator transportSamlTokenValidator() {
         final SAMLTokenValidator v = new SAMLTokenValidator();
-        v.setSamlRealmCodec(samlRealmCodec());
+        v.setSamlRealmCodec(new SamlRealmCodec());
         return v;
     }
 
     @Bean
-    public UsernameTokenValidator transportUsernameTokenValidator() {
-        return new UsernameTokenValidator();
+    public Validator transportUsernameTokenValidator() {
+        return new CipheredCredentialsValidator(securityTokenServiceCredentialCipherExecutor());
     }
 
     @Bean
@@ -295,14 +291,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     private Properties getSecurityProperties(final String psw, final String file) {
         return getSecurityProperties(psw, file, null);
     }
-    
+
     private Properties getSecurityProperties(final String psw, final String file, final String alias) {
         Properties p = new Properties();
         p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
         p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
         p.put("org.apache.ws.security.crypto.merlin.keystore.password", psw);
         p.put("org.apache.ws.security.crypto.merlin.keystore.file", file);
-        
+
         if (StringUtils.isNotBlank(alias)) {
             p.put("org.apache.ws.security.crypto.merlin.keystore.alias", alias);
         }
@@ -314,31 +310,37 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         final Map claimsMap = new HashMap();
 
         Map values = new HashMap();
-        values.put(ClaimTypeConstants.CLAIMS_GIVEN_NAME, "alice");
-        values.put(ClaimTypeConstants.CLAIMS_SURNAME, "smith");
-        values.put(ClaimTypeConstants.CLAIMS_EMAIL_ADDRESS_2005, "aliac@somewhere.org");
-        values.put(ClaimTypeConstants.CLAIMS_ROLE, "User");
+        values.put(Claims.CLAIMS_GIVEN_NAME, "alice");
+        values.put(Claims.CLAIMS_SURNAME, "smith");
+        values.put(Claims.CLAIMS_EMAIL_ADDRESS_2005, "aliac@somewhere.org");
+        values.put(Claims.CLAIMS_ROLE, "User");
         claimsMap.put("alice", values);
 
         values = new HashMap();
-        values.put(ClaimTypeConstants.CLAIMS_GIVEN_NAME, "bob");
-        values.put(ClaimTypeConstants.CLAIMS_SURNAME, "something");
-        values.put(ClaimTypeConstants.CLAIMS_EMAIL_ADDRESS_2005, "bobs@somewhere.org");
-        values.put(ClaimTypeConstants.CLAIMS_ROLE, "User,Manager,Admin");
+        values.put(Claims.CLAIMS_GIVEN_NAME, "bob");
+        values.put(Claims.CLAIMS_SURNAME, "something");
+        values.put(Claims.CLAIMS_EMAIL_ADDRESS_2005, "bobs@somewhere.org");
+        values.put(Claims.CLAIMS_ROLE, "User,Manager,Admin");
 
         final FileClaimsHandler f = new FileClaimsHandler();
         f.setUserClaims(claimsMap);
-        f.setSupportedClaims(new ArrayList(ClaimTypeConstants.ALL_CLAIMS));
+        f.setSupportedClaims(new ArrayList(Claims.ALL_CLAIMS));
         f.setRealm("REALMA");
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationPostProcessor")
     @Bean
     public AuthenticationPostProcessor securityTokenServiceAuthenticationPostProcessor() {
-        return new SecurityTokenServiceAuthenticationPostProcessor(servicesManager,
-                idpConfigService, wsFederationAuthenticationServiceSelectionStrategy);
+        return new SecurityTokenServiceAuthenticationPostProcessor(servicesManager, idpConfigService,
+                wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor());
     }
 
+    @Bean
+    public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
+        return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getEncryptionKey(), wsfed.getSigningKey());
+    }
 
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
