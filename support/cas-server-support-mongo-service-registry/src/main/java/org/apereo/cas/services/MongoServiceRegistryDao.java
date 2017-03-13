@@ -42,18 +42,7 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
         this.dropCollection = dropCollection;
-    }
 
-    public MongoServiceRegistryDao() {
-    }
-
-    /**
-     * Initialized registry post construction.
-     * Will decide if the configured collection should
-     * be dropped and recreated.
-     */
-    @PostConstruct
-    public void init() {
         Assert.notNull(this.mongoTemplate);
 
         if (this.dropCollection) {
@@ -67,6 +56,9 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
         }
     }
 
+    public MongoServiceRegistryDao() {
+    }
+    
     @Override
     public boolean delete(final RegisteredService svc) {
         if (this.findServiceById(svc.getId()) != null) {

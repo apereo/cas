@@ -1,0 +1,56 @@
+package org.apereo.cas.services;
+
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.annotation.IfProfileValue;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
+
+/**
+ * This is {@link DynamoDbServiceRegistryTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.1.0
+ */
+@IfProfileValue(name = "dynamoDbEnabled", value = "true")
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {DynamoDbServiceRegistryConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        RefreshAutoConfiguration.class})
+@TestPropertySource(properties = {"cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000",
+        "cas.ticket.registry.dynamoDb.credentialAccessKey=AKIAIPPIGGUNIO74C63Q",
+        "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
+        "cas.ticket.registry.dynamoDb.credentialSecretKey=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"})
+public class DynamoDbServiceRegistryTests {
+
+    
+}
