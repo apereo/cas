@@ -184,8 +184,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         final RealmProperties realm = new RealmProperties();
         realm.setIssuer(wsfed.getRealm().getIssuer());
 
-        final Properties p = getSecurityProperties(wsfed.getRealm().getKeystorePassword(),
-                wsfed.getRealm().getKeystoreFile(), wsfed.getRealm().getKeystoreAlias());
+        final Properties p = getSecurityProperties(wsfed.getRealm().getKeystoreFile(), wsfed.getRealm().getKeystorePassword(),
+                wsfed.getRealm().getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
         realm.setCallbackHandler(new PasswordCallbackHandler());
         return realm;
@@ -288,11 +288,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return s;
     }
 
-    private Properties getSecurityProperties(final String psw, final String file) {
-        return getSecurityProperties(psw, file, null);
+    private Properties getSecurityProperties(final String file, final String psw) {
+        return getSecurityProperties(file, psw, null);
     }
 
-    private Properties getSecurityProperties(final String psw, final String file, final String alias) {
+    private Properties getSecurityProperties(final String file, final String psw, final String alias) {
         Properties p = new Properties();
         p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
         p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
