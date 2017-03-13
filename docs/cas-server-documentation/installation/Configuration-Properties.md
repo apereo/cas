@@ -3121,6 +3121,48 @@ to locate service definitions, decide how those resources should be found.
 To learn more about this topic, [please review this guide](JSON-Service-Management.html)
 or [this guide](YAML-Service-Management.html).
 
+### DynamoDb Service Registry
+
+To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
+
+```properties
+# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
+# cas.serviceRegistry.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
+
+# Alternatively, you may directly provide credentials to CAS
+# cas.serviceRegistry.dynamoDb.credentialAccessKey=
+# cas.serviceRegistry.dynamoDb.credentialSecretKey=
+
+# cas.serviceRegistry.dynamoDb.endpoint=http://localhost:8000
+# cas.serviceRegistry.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
+# cas.serviceRegistry.dynamoDb.regionOverride=
+# cas.serviceRegistry.dynamoDb.serviceNameIntern=
+
+# cas.serviceRegistry.dynamoDb.dropTablesOnStartup=false
+# cas.serviceRegistry.dynamoDb.timeOffset=0
+
+# cas.serviceRegistry.dynamoDb.readCapacity=10
+# cas.serviceRegistry.dynamoDb.writeCapacity=10
+# cas.serviceRegistry.dynamoDb.connectionTimeout=5000
+# cas.serviceRegistry.dynamoDb.requestTimeout=5000
+# cas.serviceRegistry.dynamoDb.socketTimeout=5000
+# cas.serviceRegistry.dynamoDb.useGzip=false
+# cas.serviceRegistry.dynamoDb.useReaper=false
+# cas.serviceRegistry.dynamoDb.useThrottleRetries=false
+# cas.serviceRegistry.dynamoDb.useTcpKeepAlive=false
+# cas.serviceRegistry.dynamoDb.protocol=HTTPS
+# cas.serviceRegistry.dynamoDb.clientExecutionTimeout=10000
+# cas.serviceRegistry.dynamoDb.cacheResponseMetadata=false
+# cas.serviceRegistry.dynamoDb.localAddress=
+# cas.serviceRegistry.dynamoDb.maxConnections=10
+
+# cas.serviceRegistry.dynamoDb.crypto.signing.key=
+# cas.serviceRegistry.dynamoDb.crypto.signing.keySize=512
+# cas.serviceRegistry.dynamoDb.crypto.encryption.key=
+# cas.serviceRegistry.dynamoDb.crypto.encryption.keySize=16
+# cas.serviceRegistry.dynamoDb.crypto.alg=AES
+```
+
 ### MongoDb Service Registry
 
 Store CAS service definitions inside a MongoDb instance.
