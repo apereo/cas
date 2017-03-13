@@ -1,6 +1,7 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyFormAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyRepository;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyWebflowConfigurer;
@@ -34,6 +35,10 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
     @Bean
     public Action acceptableUsagePolicyFormAction(@Qualifier("acceptableUsagePolicyRepository")
                                                   final AcceptableUsagePolicyRepository repository) {
@@ -49,6 +54,6 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyRepository")
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        return new DefaultAcceptableUsagePolicyRepository();
+        return new DefaultAcceptableUsagePolicyRepository(ticketRegistrySupport);
     }
 }
