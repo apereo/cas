@@ -39,7 +39,7 @@ public class CasOAuthWebflowConfiguration {
     private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
     @Autowired
-    @Qualifier("oauth20AuthenticationServiceSelectionStrategy")
+    @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
     private AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy;
 
     @Autowired
