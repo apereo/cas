@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -10,6 +11,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
@@ -96,6 +98,8 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
                     final String uid = credentialCipherExecutor.encode(up.getUsername());
                     sts.getProperties().put(SecurityConstants.PASSWORD, uid);
                     final SecurityToken token = sts.requestSecurityToken(rp.getAppliesTo());
+                    final String tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
+                    builder.addAttribute(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE, tokenStr);
                 } catch (final Exception e) {
                     throw new RuntimeException(e);
                 }

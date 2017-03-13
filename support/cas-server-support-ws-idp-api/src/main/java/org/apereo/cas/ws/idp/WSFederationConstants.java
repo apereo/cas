@@ -7,6 +7,8 @@ package org.apereo.cas.ws.idp;
  * @since 5.1.0
  */
 public interface WSFederationConstants {
+    String SECURITY_TOKEN_ATTRIBUTE = "securityToken";
+    
     String HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/Bearer";
     String HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512 = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/";
     String HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_02_TRUST = "http://schemas.xmlsoap.org/ws/2005/02/trust";

@@ -1,15 +1,20 @@
 package org.apereo.cas.ws.idp.web;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.common.security.SecurityToken;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
+import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
@@ -33,8 +38,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final ServicesManager servicesManager,
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                          final CasConfigurationProperties casProperties) {
-        super(identityProviderConfigurationService, servicesManager,
-                webApplicationServiceFactory, casProperties);
+        super(identityProviderConfigurationService, servicesManager, webApplicationServiceFactory, casProperties);
     }
 
     /**
@@ -59,8 +63,21 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         }
 
         final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
+        validateSecurityTokenInAssertion(assertion, request, response);
+        
     }
-    
+
+    private void validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request, final HttpServletResponse response) {
+        final AttributePrincipal principal = assertion.getPrincipal();
+        if (!principal.getAttributes().containsKey(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE)) {
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        }
+        final String token = (String) principal.getAttributes().get(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE);
+        final byte[] securityTokenBin = EncodingUtils.decodeBase64(token);
+        final SecurityToken securityToken = SerializationUtils.deserialize(securityTokenBin);
+        
+    }
+
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
                                                           final HttpServletRequest request,
                                                           final WSFederationRequest fedRequest) throws Exception {
