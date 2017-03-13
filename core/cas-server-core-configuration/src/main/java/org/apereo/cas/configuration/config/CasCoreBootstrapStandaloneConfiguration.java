@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -62,7 +63,11 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
             final String regex = String.format("(%s|application)\\.(yml|properties)", propertyNames);
             LOGGER.debug("Looking for configuration files at [{}] that match the pattern [{}]", config, regex);
             
-            final Collection<File> configFiles = FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
+            final Collection<File> configFiles = FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
+                    .stream()
+                    .sorted(Comparator.comparing(File::getName))
+                    .collect(Collectors.toList());
+            
             LOGGER.info("Configuration files found at [{}] are [{}]", config, configFiles);
             
             final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
