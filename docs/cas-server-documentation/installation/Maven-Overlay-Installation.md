@@ -46,7 +46,7 @@ The process of working with an overlay, whether Maven or Gradle, can be summariz
 
 <div class="alert alert-warning"><strong>Be Exact</strong><p>Do NOT copy everything produced by the build. Attempt to keep changes and customizations to a minimum and only grab what you actually need. Make sure the deployment environment is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</p></div>
 
-## CAS WAR Overlay Projects
+## CAS WAR Overlays
 
 CAS WAR overlay projects are provided for reference and study.
 
@@ -55,34 +55,20 @@ You should always make sure the branch you are on matches the version of CAS you
 branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate,
 use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
 
-### Gradle
+| Project                                                               | Build Directory                               | Source Directory
+|-----------------------------------------------------------------------|-----------------------------------------------|-----------------------
+| [CAS Maven WAR Overlay](https://github.com/apereo/cas-overlay-template)   | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
+| [CAS Gradle WAR Overlay](https://github.com/apereo/cas-gradle-overlay-template) | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
 
-- [CAS Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
+To construct the overlay project, you neeed to copy directories and files *that you need to customize* in the build directory over to the source directory.
 
-### Overlay Mapping
+The Gradle overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
+You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
 
-| Build Directory                               | Source Directory
-|-----------------------------------------------|-----------------------
-| `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
 
-The Gradle overlay process does not quite explode the binary artifact first before re-assembling it again.
-So you may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
+## CAS Configuration Server Overlay
 
-### Maven
-
-- [CAS Maven Overlay](https://github.com/apereo/cas-overlay-template)
-
-### Overlay Mapping
-
-| Build Directory                  | Source Directory
-|----------------------------------|-----------------------------
-| `target/cas/WEB-INF/classes/`    | `src/main/resources`
-
-Copy directories and files in the build directory over to the source directory.
-
-## CAS Configuration Server Overlay Projects
-
-- [WAR overlay](https://github.com/apereo/cas-configserver-overlay)
+- [Maven WAR overlay](https://github.com/apereo/cas-configserver-overlay)
 
 To learn more about the configuration server, please [review this guide](Configuration-Server-Management.html).
 

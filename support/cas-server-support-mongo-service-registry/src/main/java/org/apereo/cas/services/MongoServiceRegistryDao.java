@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -42,18 +41,7 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
         this.dropCollection = dropCollection;
-    }
 
-    public MongoServiceRegistryDao() {
-    }
-
-    /**
-     * Initialized registry post construction.
-     * Will decide if the configured collection should
-     * be dropped and recreated.
-     */
-    @PostConstruct
-    public void init() {
         Assert.notNull(this.mongoTemplate);
 
         if (this.dropCollection) {
@@ -67,6 +55,9 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
         }
     }
 
+    public MongoServiceRegistryDao() {
+    }
+    
     @Override
     public boolean delete(final RegisteredService svc) {
         if (this.findServiceById(svc.getId()) != null) {

@@ -1,4 +1,5 @@
 apply plugin: "war"
+apply plugin: "org.springframework.boot"
 apply plugin: "com.moowork.gulp"
 
 description = "Apereo CAS Web Application"
@@ -15,7 +16,6 @@ javadoc {
     enabled false
 }
 
-
 task gulpSetup(dependsOn: ["npmInstall", "installGulp"], description: "Install npm and Gulp") {}
 task gulpRun(dependsOn: gulp_default, description: "Runs Gulp default task") {}
 processResources.dependsOn gulpRun
@@ -28,6 +28,28 @@ gulp {
     workDir =  project(":webapp").projectDir
     colors = true
     bufferOutput = true
+}
+
+springBoot  {
+    mainClass = "org.apereo.cas.web.CasWebApplication"
+}
+
+bootRepackage {
+    mainClass = "org.apereo.cas.web.CasWebApplication"
+    enabled = !rootProject.publishReleases
+}
+
+bootRun {
+    dependsOn pathingJar
+    doFirst {
+        classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+    }
+
+    addResources = true
+    if (Boolean.getBoolean("enableRemoteDebugging")) {
+        jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+    }
+    systemProperties = System.properties
 }
 
 war {
@@ -73,6 +95,7 @@ dependencies {
     compile project(":support:cas-server-support-ws-idp")
     
     compile project(":webapp:cas-server-webapp-config")
+    compile project(":webapp:cas-server-webapp-init")
     
     implementation libraries.pac4j
     implementation libraries.thymeleaf
