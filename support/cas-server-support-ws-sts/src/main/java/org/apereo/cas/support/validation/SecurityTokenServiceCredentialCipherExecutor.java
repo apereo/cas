@@ -15,6 +15,6 @@ public class SecurityTokenServiceCredentialCipherExecutor extends BaseStringCiph
 
     @Override
     public String getName() {
-        return "Security Token Service";
+        return "WSFederation Security Token Service";
     }
 }

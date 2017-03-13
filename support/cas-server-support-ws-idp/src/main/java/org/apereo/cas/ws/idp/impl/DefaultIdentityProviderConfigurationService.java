@@ -18,11 +18,7 @@ public class DefaultIdentityProviderConfigurationService implements IdentityProv
     public DefaultIdentityProviderConfigurationService(final List<RealmAwareIdentityProvider> identityProviders) {
         this.identityProviders = identityProviders;
     }
-
-    public List<RealmAwareIdentityProvider> getIdentityProviders() {
-        return identityProviders;
-    }
-
+    
     @Override
     public RealmAwareIdentityProvider getIdentityProvider(final String realm) {
         return this.identityProviders.stream().filter(i -> i.getRealm().equalsIgnoreCase(realm)).findFirst().orElse(null);
