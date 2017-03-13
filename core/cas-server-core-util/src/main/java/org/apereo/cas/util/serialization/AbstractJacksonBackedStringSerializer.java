@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
  *
- * @author Misagh Moayyed
  * @param <T> the type parameter
+ * @author Misagh Moayyed
  * @since 4.1
  */
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
@@ -236,9 +236,9 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse JSON [{}] to deserialize into type [{}]. This may be caused "
                             + "in the absence of a configuration/support module that knows how to interpret the JSON fragment, "
-                            + "specially if the fragment describes a CAS registered service definition.",
-                    StringUtils.abbreviate(jsonString, ABBREVIATE_MAX_WIDTH),
-                    getTypeToSerialize());
+                            + "specially if the fragment describes a CAS registered service definition. "
+                            + "Internal parsing error is [{}]",
+                    StringUtils.abbreviate(jsonString, ABBREVIATE_MAX_WIDTH), getTypeToSerialize(), e.getMessage());
         }
         return null;
     }
