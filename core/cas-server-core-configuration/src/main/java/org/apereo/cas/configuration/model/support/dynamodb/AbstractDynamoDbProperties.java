@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 /**
