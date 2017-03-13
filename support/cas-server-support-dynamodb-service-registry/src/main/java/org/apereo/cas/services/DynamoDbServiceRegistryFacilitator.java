@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +122,8 @@ public class DynamoDbServiceRegistryFacilitator {
 
         services.addAll(result.getItems()
                 .stream()
-                .map(this::deserializeService)
+                .map(this::deserializeServiceFromBinaryBlob)
+                .sorted((o1, o2) -> Integer.valueOf(o1.getEvaluationOrder()).compareTo(o2.getEvaluationOrder()))
                 .collect(Collectors.toList()));
         return services;
     }
@@ -135,7 +137,7 @@ public class DynamoDbServiceRegistryFacilitator {
     public RegisteredService get(final String id) {
         final Map<String, AttributeValue> keys = new HashMap<>();
         keys.put(ColumnNames.SERVICE_ID.getName(), new AttributeValue(id));
-        return deserializeService(keys);
+        return getRegisteredServiceByKeys(keys);
     }
 
     /**
@@ -147,10 +149,17 @@ public class DynamoDbServiceRegistryFacilitator {
     public RegisteredService get(final long id) {
         final Map<String, AttributeValue> keys = new HashMap<>();
         keys.put(ColumnNames.ID.getName(), new AttributeValue(String.valueOf(id)));
-        return deserializeService(keys);
+        return getRegisteredServiceByKeys(keys);
     }
 
-    private RegisteredService deserializeService(final Map<String, AttributeValue> keys) {
+    private RegisteredService deserializeServiceFromBinaryBlob(final Map<String, AttributeValue> returnItem) {
+        final ByteBuffer bb = returnItem.get(ColumnNames.ENCODED.getName()).getB();
+        LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);
+        final ByteArrayInputStream is = new ByteArrayInputStream(bb.array());
+        return this.jsonSerializer.from(is);
+    }
+
+    private RegisteredService getRegisteredServiceByKeys(final Map<String, AttributeValue> keys) {
         final GetItemRequest request = new GetItemRequest()
                 .withKey(keys)
                 .withTableName(TABLE_NAME);
@@ -158,10 +167,7 @@ public class DynamoDbServiceRegistryFacilitator {
         LOGGER.debug("Submitting request [{}] to get service with keys [{}]", request, keys);
         final Map<String, AttributeValue> returnItem = amazonDynamoDBClient.getItem(request).getItem();
         if (returnItem != null) {
-            final ByteBuffer bb = returnItem.get(ColumnNames.ENCODED.getName()).getB();
-            LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);
-            final ByteArrayInputStream is = new ByteArrayInputStream(bb.array());
-            final RegisteredService service = this.jsonSerializer.from(is);
+            final RegisteredService service = deserializeServiceFromBinaryBlob(returnItem);
             LOGGER.debug("Located service [{}]", service);
             return service;
         }
