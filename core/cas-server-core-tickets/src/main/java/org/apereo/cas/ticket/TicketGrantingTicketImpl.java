@@ -254,13 +254,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonIgnore
     @Override
     public TicketGrantingTicket getRoot() {
-        TicketGrantingTicket current = this;
-        TicketGrantingTicket parent = current.getGrantingTicket();
-        while (parent != null) {
-            current = parent;
-            parent = current.getGrantingTicket();
+        final TicketGrantingTicket parent = getGrantingTicket();
+        if (parent == null) {
+            return this;
         }
-        return current;
+        return parent.getRoot();
     }
 
     /**

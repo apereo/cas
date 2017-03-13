@@ -20,7 +20,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import org.apache.commons.lang3.SerializationUtils;
-import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbProperties;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -67,11 +67,11 @@ public class DynamoDbTicketRegistryFacilitator {
     }
 
     private final TicketCatalog ticketCatalog;
-    private final DynamoDbProperties dynamoDbProperties;
+    private final DynamoDbTicketRegistryProperties dynamoDbProperties;
     private final AmazonDynamoDBClient amazonDynamoDBClient;
 
     public DynamoDbTicketRegistryFacilitator(final TicketCatalog ticketCatalog,
-                                             final DynamoDbProperties dynamoDbProperties,
+                                             final DynamoDbTicketRegistryProperties dynamoDbProperties,
                                              final AmazonDynamoDBClient amazonDynamoDBClient) {
         this.ticketCatalog = ticketCatalog;
         this.dynamoDbProperties = dynamoDbProperties;

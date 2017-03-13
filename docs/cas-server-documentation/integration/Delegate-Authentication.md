@@ -27,6 +27,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
+<div class="alert alert-info"><strong>Remember</strong><p>Delegated authentication always assumes the originator of the authentication request is a CAS client; an
+application that understands CAS protocol and can validate a service ticket. Clients that use other protocols (SAML2, OAuth, etc) with CAS cannot today take advantage of delegated authentication scenarios though support for this behavior may be worked out in future releases.</p></div>
+
 ## Register Providers
 
 An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server.

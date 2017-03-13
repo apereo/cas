@@ -33,6 +33,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
@@ -560,6 +561,7 @@ public final class Beans {
         pc.setValidateOnCheckOut(l.isValidateOnCheckout());
         pc.setValidatePeriodically(l.isValidatePeriodically());
         pc.setValidatePeriod(newDuration(l.getValidatePeriod()));
+        pc.setValidateTimeout(newDuration(l.getValidateTimeout()));
         return pc;
     }
 
@@ -639,7 +641,10 @@ public final class Beans {
                     cp.setPassivator(new ClosePassivator());
                     break;
                 case BIND:
-                    cp.setPassivator(new BindPassivator());
+                    final BindRequest bindRequest = new BindRequest();
+                    bindRequest.setDn(l.getBindDn());
+                    bindRequest.setCredential(new Credential(l.getBindCredential()));
+                    cp.setPassivator(new BindPassivator(bindRequest));
                     break;
                 default:
                     break;

@@ -106,6 +106,7 @@ layout: null
         *   [Mongo](/$version/installation/Mongo-Service-Management.html)
         *   [LDAP](/$version/installation/LDAP-Service-Management.html)
         *   [JPA](/$version/installation/JPA-Service-Management.html)
+        *   [DynamoDb](/$version/installation/DynamoDb-Service-Management.html)
         *   [Couchbase](/$version/installation/Couchbase-Service-Management.html)
 
 * [Logs & Audits](#logs_audits)
