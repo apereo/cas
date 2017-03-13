@@ -68,7 +68,7 @@ public class WsFederationProperties {
     }
     
     public static class SecurityTokenService {
-        private String subjectNameIdFormat;
+        private String subjectNameIdFormat = "unspecified";
         private long tokenLifetime = 1_000;
         private boolean encryptTokens = true;
         
@@ -78,7 +78,26 @@ public class WsFederationProperties {
         private String encryptionKeystoreFile;
         private String encryptionKeystorePassword;
 
+        private String encryptionKey;
+        private String signingKey;
+        
         private RealmDefinition realm = new RealmDefinition();
+
+        public String getEncryptionKey() {
+            return encryptionKey;
+        }
+
+        public void setEncryptionKey(final String encryptionKey) {
+            this.encryptionKey = encryptionKey;
+        }
+
+        public String getSigningKey() {
+            return signingKey;
+        }
+
+        public void setSigningKey(final String signingKey) {
+            this.signingKey = signingKey;
+        }
 
         public RealmDefinition getRealm() {
             return realm;

@@ -27,6 +27,7 @@ public class PasswordCallbackHandler implements CallbackHandler {
                     pc.setPassword("realmb");
                     break;
                 }
+                
                 if ("mystskey".equals(pc.getIdentifier())) {
                     pc.setPassword("stskpass");
                     break;

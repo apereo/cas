@@ -30,31 +30,9 @@
                     serviceName="ns1:SecurityTokenService" 
                     endpointName="ns1:TransportUT_Port">
         <jaxws:properties>
-            <entry key="ws-security.callback-handler" value-ref="upCallBackHandlerRealmA"/>
+            <entry key="ws-security.ut.validator" value-ref="transportUsernameTokenValidator" />
         </jaxws:properties>
     </jaxws:endpoint>
-
-    <util:map id="REALMA">
-        <entry key="alice" value="ecila" />
-        <entry key="bob" value="bob" />
-        <entry key="ted" value="det" />
-        <entry key="idp-user" value="idp-pass" />
-    </util:map>
-
-    <util:map id="REALMB">
-        <entry key="ALICE" value="ECILA" />
-        <entry key="BOB" value="BOB" />
-        <entry key="TED" value="DET" />
-    </util:map>
-    
-    <bean id="upCallBackHandlerRealmA" class="org.apereo.cas.support.UsernamePasswordCallbackHandler">
-        <property name="passwords" ref="REALMA"/>
-    </bean>
-
-    <bean id="upCallBackHandlerRealmB" class="org.apereo.cas.support.UsernamePasswordCallbackHandler">
-        <property name="passwords" ref="REALMB"/>
-    </bean>
-
 
 </beans>
 

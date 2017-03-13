@@ -1,4 +1,4 @@
-package org.apereo.cas.support;
+package org.apereo.cas.support.realm;
 
 import org.apache.cxf.sts.IdentityMapper;
 import org.apache.wss4j.common.principal.CustomTokenPrincipal;
@@ -9,13 +9,13 @@ import java.security.Principal;
 
 
 /**
- * This is {@link IdentityMapperImpl}.
+ * This is {@link RealmAwareIdentityMapper}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class IdentityMapperImpl implements IdentityMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IdentityMapperImpl.class);
+public class RealmAwareIdentityMapper implements IdentityMapper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RealmAwareIdentityMapper.class);
     
     @Override
     public Principal mapPrincipal(final String sourceRealm, final Principal sourcePrincipal, final String targetRealm) {
