@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.core.ticket.registry;
 
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
-import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbProperties;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
-    private DynamoDbProperties dynamoDb = new DynamoDbProperties();
+    private DynamoDbTicketRegistryProperties dynamoDb = new DynamoDbTicketRegistryProperties();
     
     @NestedConfigurationProperty
     private InfinispanProperties infinispan = new InfinispanProperties();
@@ -143,11 +143,11 @@ public class TicketRegistryProperties {
         this.redis = redis;
     }
 
-    public DynamoDbProperties getDynamoDb() {
+    public DynamoDbTicketRegistryProperties getDynamoDb() {
         return dynamoDb;
     }
 
-    public void setDynamoDb(final DynamoDbProperties dynamoDb) {
+    public void setDynamoDb(final DynamoDbTicketRegistryProperties dynamoDb) {
         this.dynamoDb = dynamoDb;
     }
 

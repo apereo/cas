@@ -11,15 +11,11 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
-import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.registry.DynamoDbTicketRegistry;
-import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryFacilitator;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
+import org.apereo.cas.services.DynamoDbServiceRegistryDao;
+import org.apereo.cas.services.DynamoDbServiceRegistryFacilitator;
+import org.apereo.cas.services.ServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -28,40 +24,34 @@ import org.springframework.context.annotation.Configuration;
 import java.net.InetAddress;
 
 /**
- * This is {@link DynamoDbTicketRegistryConfiguration}.
+ * This is {@link DynamoDbServiceRegistryConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("dynamoDbTicketRegistryConfiguration")
+@Configuration("dynamoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DynamoDbTicketRegistryConfiguration {
+public class DynamoDbServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
     @RefreshScope
     @Bean
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final DynamoDbTicketRegistryProperties db = casProperties.getTicket().getRegistry().getDynamoDb();
-        final CryptographyProperties crypto = db.getCrypto();
-        return new DynamoDbTicketRegistry(Beans.newTicketRegistryCipherExecutor(crypto),
-                dynamoDbTicketRegistryFacilitator(ticketCatalog));
+    public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator() {
+        final DynamoDbServiceRegistryProperties db = casProperties.getServiceRegistry().getDynamoDb();
+        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbClient());
     }
 
-    @Autowired
-    @RefreshScope
     @Bean
-    public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final DynamoDbTicketRegistryProperties db = casProperties.getTicket().getRegistry().getDynamoDb();
-        return new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbClient());
+    public ServiceRegistryDao serviceRegistryDao() throws Exception {
+        return new DynamoDbServiceRegistryDao(dynamoDbServiceRegistryFacilitator());
     }
 
     @RefreshScope
     @Bean
     public AmazonDynamoDBClient amazonDynamoDbClient() {
         try {
-            final DynamoDbTicketRegistryProperties dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();
+            final DynamoDbServiceRegistryProperties dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
             final ClientConfiguration cfg = new ClientConfiguration();
             cfg.setConnectionTimeout(dynamoDbProperties.getConnectionTimeout());
             cfg.setMaxConnections(dynamoDbProperties.getMaxConnections());
