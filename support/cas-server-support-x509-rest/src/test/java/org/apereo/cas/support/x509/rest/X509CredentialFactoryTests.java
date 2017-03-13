@@ -63,5 +63,6 @@ public class X509CredentialFactoryTests {
 
         thrown.expect(BadRequestException.class);
         factory.fromRequestBody(requestBody);
+        fail();
     }
 }
