@@ -14,6 +14,7 @@ import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSel
 import org.apereo.cas.ws.idp.impl.DefaultIdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.impl.DefaultRealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataServlet;
+import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSWSFederationValidateRequestController;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
 import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
@@ -67,6 +68,11 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Bean
     public WSWSFederationValidateRequestController federationValidateRequestController() {
         return new WSWSFederationValidateRequestController(idpConfigService(), servicesManager, webApplicationServiceFactory, casProperties);
+    }
+
+    @Bean
+    public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController() {
+        return new WSFederationValidateRequestCallbackController(idpConfigService(), servicesManager, webApplicationServiceFactory, casProperties);
     }
 
     @Lazy

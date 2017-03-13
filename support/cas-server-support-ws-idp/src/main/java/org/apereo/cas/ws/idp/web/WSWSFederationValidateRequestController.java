@@ -9,9 +9,9 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
@@ -105,20 +105,20 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
         }
     }
 
-    private boolean shouldRedirect(final WSFederationRequest WSFederationRequest,
+    private boolean shouldRedirect(final WSFederationRequest fedRequest,
                                    final HttpServletResponse response,
                                    final HttpServletRequest request) {
-        return isTokenExpired(WSFederationRequest, response, request) || isAuthenticationRequired(WSFederationRequest, response, request);
+        return isTokenExpired(fedRequest, response, request) || isAuthenticationRequired(fedRequest, response, request);
     }
 
-    private boolean isAuthenticationRequired(final WSFederationRequest WSFederationRequest,
+    private boolean isAuthenticationRequired(final WSFederationRequest fedRequest,
                                              final HttpServletResponse response,
                                              final HttpServletRequest request) {
-        if (StringUtils.isBlank(WSFederationRequest.getWfresh()) || NumberUtils.isCreatable(WSFederationRequest.getWfresh())) {
+        if (StringUtils.isBlank(fedRequest.getWfresh()) || NumberUtils.isCreatable(fedRequest.getWfresh())) {
             return false;
         }
 
-        final long ttl = Long.parseLong(WSFederationRequest.getWfresh().trim());
+        final long ttl = Long.parseLong(fedRequest.getWfresh().trim());
         if (ttl == 0) {
             return true;
         }
@@ -142,7 +142,7 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
         return false;
     }
 
-    private boolean isTokenExpired(final WSFederationRequest WSFederationRequest,
+    private boolean isTokenExpired(final WSFederationRequest fedRequest,
                                    final HttpServletResponse response,
                                    final HttpServletRequest request) {
         final SecurityToken idpToken = getSecurityTokenFromRequest(request);

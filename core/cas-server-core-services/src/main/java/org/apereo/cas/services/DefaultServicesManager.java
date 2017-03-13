@@ -79,6 +79,20 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     }
 
     @Override
+    public <T extends RegisteredService> T findServiceBy(final Service serviceId, final Class<T> clazz) {
+        return findServiceBy(serviceId.getId(), clazz);
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceBy(final String serviceId, final Class<T> clazz) {
+        return orderedServices.stream()
+                .filter(s -> s.getClass().isAssignableFrom(clazz) && s.matches(serviceId))
+                .map(clazz::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
     public RegisteredService findServiceBy(final long id) {
         final RegisteredService r = this.services.get(id);
 
@@ -99,7 +113,8 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         return findServiceBy(service) != null;
     }
 
-    @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+    @Audit(action = "SAVE_SERVICE", 
+            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
