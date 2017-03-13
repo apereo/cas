@@ -2,8 +2,10 @@ package org.apereo.cas.ws.idp.services;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.wss4j.dom.WSConstants;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -20,17 +22,17 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = -3700571300568534062L;
 
     private String realm;
-    private String protocol;
-    private String tokenType;
-    private long lifetime;
+    private String protocol = WSConstants.WST_NS_05_12;
+    private String tokenType = WSConstants.WSS_SAML2_TOKEN_TYPE;
+    private long lifetime = 1_000;
     private String role = WSFederationRegisteredService.class.getSimpleName();
     private String wsdlLocation;
-    private String namespace;
-    private String addressingNamespace;
-    private String wsdlService;
+    private String namespace = WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512;
+    private String addressingNamespace = WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING;
+    private String policyNamespace;
+    private String wsdlService = WSFederationConstants.SECURITY_TOKEN_SERVICE;
     private String wsdlEndpoint;
     private String appliesTo;
-    private boolean use200502Namespace;
 
     @Override
     protected AbstractRegisteredService newInstance() {
@@ -60,7 +62,7 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
     public void setProtocol(final String protocol) {
         this.protocol = protocol;
     }
-    
+
     public String getTokenType() {
         return tokenType;
     }
@@ -125,14 +127,13 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
         this.appliesTo = appliesTo;
     }
 
-    public boolean isUse200502Namespace() {
-        return use200502Namespace;
+    public String getPolicyNamespace() {
+        return policyNamespace;
     }
 
-    public void setUse200502Namespace(final boolean use200502Namespace) {
-        this.use200502Namespace = use200502Namespace;
+    public void setPolicyNamespace(final String policyNamespace) {
+        this.policyNamespace = policyNamespace;
     }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -156,10 +157,10 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
                 .append(this.role, rhs.role)
                 .append(this.wsdlLocation, rhs.wsdlLocation)
                 .append(this.namespace, rhs.namespace)
+                .append(this.policyNamespace, rhs.policyNamespace)
                 .append(this.wsdlService, rhs.wsdlService)
                 .append(this.wsdlEndpoint, rhs.wsdlEndpoint)
                 .append(this.appliesTo, rhs.appliesTo)
-                .append(this.use200502Namespace, rhs.use200502Namespace)
                 .isEquals();
     }
 
@@ -178,7 +179,7 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
                 .append(wsdlService)
                 .append(wsdlEndpoint)
                 .append(appliesTo)
-                .append(use200502Namespace)
+                .append(policyNamespace)
                 .toHashCode();
     }
 }

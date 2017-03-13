@@ -51,8 +51,7 @@ public class FileClaimsHandler implements ClaimsHandler {
     public List<URI> getSupportedClaimTypes() {
         return Collections.unmodifiableList(this.supportedClaims);
     }
-
-
+    
     @Override
     public ProcessedClaimCollection retrieveClaimValues(final ClaimCollection claims,
                                                         final ClaimsParameters parameters) {
