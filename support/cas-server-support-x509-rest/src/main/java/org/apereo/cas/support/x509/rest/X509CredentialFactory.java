@@ -26,9 +26,9 @@ public class X509CredentialFactory extends DefaultCredentialFactory {
     @Override
     public Credential fromRequestBody(final MultiValueMap<String, String> requestBody) {
         final String cert = requestBody.getFirst(CERTIFICATE);
-        LOGGER.info("cert: " + cert);
+        LOGGER.trace("cert: {}", cert);
         if (cert == null) {
-            LOGGER.error("cert is null fallback to username/passwd");
+            LOGGER.debug("cert is null fallback to username/passwd");
            return super.fromRequestBody(requestBody);
         }
         InputStream is = new ByteArrayInputStream(cert.getBytes());
