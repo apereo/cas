@@ -815,7 +815,7 @@ the following settings are then relevant:
 
 ### Grouper
 
-This option reads all the groups from Grouper repository for the given CAS principal and adopts them
+This option reads all the groups from [a Grouper instance](www.internet2.edu/grouper/software.html) for the given CAS principal and adopts them
 as CAS attributes under a `grouperGroups` multi-valued attribute. To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
 ```properties
