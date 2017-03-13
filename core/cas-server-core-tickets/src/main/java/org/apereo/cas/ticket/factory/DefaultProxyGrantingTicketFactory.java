@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link DefaultTicketGrantingTicketFactory} is responsible
+ * The {@link DefaultProxyGrantingTicketFactory} is responsible
  * for creating {@link ProxyGrantingTicket} objects.
  *
  * @author Misagh Moayyed
