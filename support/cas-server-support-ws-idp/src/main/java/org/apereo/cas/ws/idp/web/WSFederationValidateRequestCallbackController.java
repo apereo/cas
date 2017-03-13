@@ -2,8 +2,10 @@ package org.apereo.cas.ws.idp.web;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.common.security.SecurityToken;
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -11,9 +13,11 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
+import org.apereo.cas.ws.idp.WSFederationConstants;
+import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
+import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
@@ -33,12 +37,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class WSFederationValidateRequestCallbackController extends BaseWSFederationRequestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationValidateRequestCallbackController.class);
+    private final WSFederationRelyingPartyTokenProducer relyingPartyTokenProducer;
 
     public WSFederationValidateRequestCallbackController(final IdentityProviderConfigurationService identityProviderConfigurationService,
                                                          final ServicesManager servicesManager,
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                         final CasConfigurationProperties casProperties) {
-        super(identityProviderConfigurationService, servicesManager, webApplicationServiceFactory, casProperties);
+                                                         final CasConfigurationProperties casProperties,
+                                                         final WSFederationRelyingPartyTokenProducer relyingPartyTokenProducer,
+                                                         final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
+        super(identityProviderConfigurationService, servicesManager, webApplicationServiceFactory, casProperties, serviceSelectionStrategy);
+        this.relyingPartyTokenProducer = relyingPartyTokenProducer;
     }
 
     /**
@@ -63,19 +71,41 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         }
 
         final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
-        validateSecurityTokenInAssertion(assertion, request, response);
+        final SecurityToken securityToken = validateSecurityTokenInAssertion(assertion, request, response);
+
+        final String serviceUrl = constructServiceUrl(request, response, fedRequest);
+        final Service targetService = this.serviceSelectionStrategy.resolveServiceFrom(this.webApplicationServiceFactory.createService(serviceUrl));
+        final WSFederationRegisteredService service = this.servicesManager.findServiceBy(targetService, WSFederationRegisteredService.class);
+        final String rpToken = relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request);
         
+        /*
+        
+        <bean id="stsClientForRpAction" class="org.apache.cxf.fediz.service.idp.beans.STSClientAction">
+        <property name="wsdlLocation" value="https://localhost:0/fediz-idp-sts/${realm.STS_URI}/STSServiceTransport?wsdl" />
+        <property name="wsdlEndpoint" value="Transport_Port" />
+        <property name="tokenType" value="http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0" />
+    </bean>
+    
+        <on-entry>
+            <evaluate expression="stsClientForRpAction.submit(flowRequestContext, flowScope.wtrealm, flowScope.whr)"
+                      result="flowScope.rpTokenElement"/>
+            <evaluate expression="tokenSerializer.serialize(flowRequestContext, flowScope.rpTokenElement)"
+                      result="flowScope.rpToken"/>
+        </on-entry>
+        <evaluate expression="signinParametersCacheAction.storeRPConfigInSession(flowRequestContext)" />
+         */
+
     }
 
-    private void validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request, final HttpServletResponse response) {
+    private SecurityToken validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request,
+                                                           final HttpServletResponse response) {
         final AttributePrincipal principal = assertion.getPrincipal();
         if (!principal.getAttributes().containsKey(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
         final String token = (String) principal.getAttributes().get(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE);
         final byte[] securityTokenBin = EncodingUtils.decodeBase64(token);
-        final SecurityToken securityToken = SerializationUtils.deserialize(securityTokenBin);
-        
+        return SerializationUtils.deserialize(securityTokenBin);
     }
 
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,

@@ -62,47 +62,44 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
             }
             final Bus cxfBus = BusFactory.getDefaultBus();
             final IdentityProviderSTSClient sts = new IdentityProviderSTSClient(cxfBus);
-            sts.setAddressingNamespace(rp.getAddressingNamespace());
-            if (StringUtils.isNotBlank(rp.getTokenType())) {
-                sts.setTokenType(rp.getTokenType());
-            } else {
-                sts.setTokenType(WSConstants.WSS_SAML2_TOKEN_TYPE);
-            }
+            sts.setAddressingNamespace(StringUtils.defaultIfBlank(rp.getAddressingNamespace(), WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING));
+            sts.setTokenType(StringUtils.defaultIfBlank(rp.getTokenType(), WSConstants.WSS_SAML2_TOKEN_TYPE));
             sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
             sts.setWsdlLocation(rp.getWsdlLocation());
-
             final String namespace = StringUtils.defaultIfBlank(rp.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
-            sts.setServiceQName(new QName(namespace, rp.getWsdlService()));
+            sts.setServiceQName(new QName(namespace, StringUtils.defaultIfBlank(rp.getWsdlService(), WSFederationConstants.SECURITY_TOKEN_SERVICE)));
             sts.setEndpointQName(new QName(namespace, rp.getWsdlEndpoint()));
 
             sts.getProperties().putAll(new HashMap<>());
-            if (rp.isUse200502Namespace()) {
-                sts.setNamespace(WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_02_TRUST);
-            }
-
+            
             if (rp.getLifetime() > 0) {
                 sts.setEnableLifetime(true);
                 sts.setTtl(Long.valueOf(rp.getLifetime()).intValue());
             }
 
-            final UsernamePasswordCredential up = transaction.getCredentials()
-                    .stream()
-                    .filter(UsernamePasswordCredential.class::isInstance)
-                    .map(UsernamePasswordCredential.class::cast)
-                    .findFirst()
-                    .orElse(null);
+            invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
+        }
+    }
 
-            if (up != null) {
-                try {
-                    sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());
-                    final String uid = credentialCipherExecutor.encode(up.getUsername());
-                    sts.getProperties().put(SecurityConstants.PASSWORD, uid);
-                    final SecurityToken token = sts.requestSecurityToken(rp.getAppliesTo());
-                    final String tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
-                    builder.addAttribute(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE, tokenStr);
-                } catch (final Exception e) {
-                    throw new RuntimeException(e);
-                }
+    private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction, final AuthenticationBuilder builder,
+                                                    final WSFederationRegisteredService rp, final IdentityProviderSTSClient sts) {
+        final UsernamePasswordCredential up = transaction.getCredentials()
+                .stream()
+                .filter(UsernamePasswordCredential.class::isInstance)
+                .map(UsernamePasswordCredential.class::cast)
+                .findFirst()
+                .orElse(null);
+
+        if (up != null) {
+            try {
+                sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());
+                final String uid = credentialCipherExecutor.encode(up.getUsername());
+                sts.getProperties().put(SecurityConstants.PASSWORD, uid);
+                final SecurityToken token = sts.requestSecurityToken(rp.getAppliesTo());
+                final String tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
+                builder.addAttribute(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE, tokenStr);
+            } catch (final Exception e) {
+                throw new AuthenticationException(e.getMessage());
             }
         }
     }
