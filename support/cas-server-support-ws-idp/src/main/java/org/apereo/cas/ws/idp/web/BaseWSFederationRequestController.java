@@ -3,6 +3,7 @@ package org.apereo.cas.ws.idp.web;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -10,8 +11,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -44,14 +45,18 @@ public abstract class BaseWSFederationRequestController {
 
     protected final CasConfigurationProperties casProperties;
 
+    protected final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
+
     public BaseWSFederationRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
                                              final ServicesManager servicesManager,
                                              final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                             final CasConfigurationProperties casProperties) {
+                                             final CasConfigurationProperties casProperties,
+                                             final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
         this.identityProviderConfigurationService = identityProviderConfigurationService;
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.casProperties = casProperties;
+        this.serviceSelectionStrategy = serviceSelectionStrategy;
         this.callbackService = registerCallback(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
@@ -78,7 +83,7 @@ public abstract class BaseWSFederationRequestController {
                                          final WSFederationRequest WSFederationRequest) {
         try {
             final URIBuilder builder = new URIBuilder(this.callbackService.getId());
-            
+
             builder.addParameter(WSFederationConstants.WA, WSFederationRequest.getWa());
             builder.addParameter(WSFederationConstants.WREPLY, WSFederationRequest.getWreply());
             builder.addParameter(WSFederationConstants.WTREALM, WSFederationRequest.getWtrealm());

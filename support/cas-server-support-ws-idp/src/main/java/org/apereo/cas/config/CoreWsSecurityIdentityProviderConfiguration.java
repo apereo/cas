@@ -14,6 +14,8 @@ import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSel
 import org.apereo.cas.ws.idp.impl.DefaultIdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.impl.DefaultRealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataServlet;
+import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducer;
+import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSWSFederationValidateRequestController;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
@@ -67,12 +69,15 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Bean
     public WSWSFederationValidateRequestController federationValidateRequestController() {
-        return new WSWSFederationValidateRequestController(idpConfigService(), servicesManager, webApplicationServiceFactory, casProperties);
+        return new WSWSFederationValidateRequestController(idpConfigService(), servicesManager,
+                webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy());
     }
 
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController() {
-        return new WSFederationValidateRequestCallbackController(idpConfigService(), servicesManager, webApplicationServiceFactory, casProperties);
+        return new WSFederationValidateRequestCallbackController(idpConfigService(), servicesManager,
+                webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer(),
+                wsFederationAuthenticationServiceSelectionStrategy());
     }
 
     @Lazy
@@ -86,6 +91,11 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         bean.setUrlMappings(Collections.singleton("/ws/idp/metadata"));
         bean.setAsyncSupported(true);
         return bean;
+    }
+
+    @Bean
+    public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() {
+        return new DefaultRelyingPartyTokenProducer(idpConfigService());
     }
 
     @Bean

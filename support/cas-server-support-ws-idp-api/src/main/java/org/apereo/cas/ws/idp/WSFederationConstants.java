@@ -8,11 +8,15 @@ package org.apereo.cas.ws.idp;
  */
 public interface WSFederationConstants {
     String SECURITY_TOKEN_ATTRIBUTE = "securityToken";
-    
+    String SECURITY_TOKEN_SERVICE = "SecurityTokenService";
+
+    String HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_PUBLICKEY = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/PublicKey";
+    String HTTP_WWW_W3_ORG_2005_08_ADDRESSING = "http://www.w3.org/2005/08/addressing";
     String HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/Bearer";
     String HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512 = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/";
     String HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_02_TRUST = "http://schemas.xmlsoap.org/ws/2005/02/trust";
-
+    String HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY = "http://schemas.xmlsoap.org/ws/2005/05/identity";
+    
     String WTREALM = "wtrealm";
     String WREPLY = "wreply";
     String WREQ = "wreq";

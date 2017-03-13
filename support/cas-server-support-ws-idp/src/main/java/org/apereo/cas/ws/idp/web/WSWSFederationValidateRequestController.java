@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -35,9 +36,10 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
     public WSWSFederationValidateRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
                                                    final ServicesManager servicesManager,
                                                    final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                   final CasConfigurationProperties casProperties) {
+                                                   final CasConfigurationProperties casProperties,
+                                                   final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
         super(identityProviderConfigurationService, servicesManager,
-                webApplicationServiceFactory, casProperties);
+                webApplicationServiceFactory, casProperties, serviceSelectionStrategy);
     }
 
     /**
@@ -56,7 +58,7 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
         switch (fedRequest.getWa().toLowerCase()) {
             case WSFederationConstants.WSIGNOUT10:
             case WSFederationConstants.WSIGNOUT_CLEANUP10:
-                selectSignOutProcess(fedRequest, idp, response, request);
+                LOGGER.warn("Federation request [{}] is not yet supported", fedRequest.getWa());
                 break;
             case WSFederationConstants.WSIGNIN10:
             default:
@@ -77,18 +79,11 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
         if (idp.getAuthenticationURIs().containsKey(fedRequest.getWauth())) {
             if (shouldRedirect(fedRequest, response, request)) {
                 redirectToIdentityProvider(fedRequest, response, request);
-            } else {
-                validateWReply(fedRequest, response, request);
             }
         }
     }
 
-    private void validateWReply(final WSFederationRequest fedRequest, final HttpServletResponse response,
-                                final HttpServletRequest request) {
 
-    }
-
-    
     private void redirectToIdentityProvider(final WSFederationRequest fedRequest, final HttpServletResponse response,
                                             final HttpServletRequest request) {
         try {
@@ -155,17 +150,5 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
 
     private SecurityToken getSecurityTokenFromRequest(final HttpServletRequest request) {
         return (SecurityToken) request.getAttribute("idpSecurityToken");
-    }
-
-    private void signinResponse(final WSFederationRequest fedRequest, final RealmAwareIdentityProvider idp,
-                                final HttpServletResponse response,
-                                final HttpServletRequest request) {
-
-    }
-
-    private void selectSignOutProcess(final WSFederationRequest fedRequest, final RealmAwareIdentityProvider idp,
-                                      final HttpServletResponse response,
-                                      final HttpServletRequest request) {
-
     }
 }

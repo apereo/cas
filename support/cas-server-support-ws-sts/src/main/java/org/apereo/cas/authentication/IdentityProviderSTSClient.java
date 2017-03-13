@@ -16,6 +16,13 @@ public class IdentityProviderSTSClient extends STSClient {
         super(b);
     }
 
+    /**
+     * Request security token response element.
+     *
+     * @param appliesTo the applies to
+     * @return the element
+     * @throws Exception the exception
+     */
     public Element requestSecurityTokenResponse(final String appliesTo) throws Exception {
         String action = null;
         if (isSecureConv) {
@@ -24,6 +31,16 @@ public class IdentityProviderSTSClient extends STSClient {
         return requestSecurityTokenResponse(appliesTo, action, "/Issue", null);
     }
 
+    /**
+     * Request security token response element.
+     *
+     * @param appliesTo   the applies to
+     * @param action      the action
+     * @param requestType the request type
+     * @param target      the target
+     * @return the element
+     * @throws Exception the exception
+     */
     public Element requestSecurityTokenResponse(final String appliesTo, final String action,
                                                 final String requestType, final SecurityToken target) throws Exception {
         final STSResponse response = issue(appliesTo, null, "/Issue", null);
