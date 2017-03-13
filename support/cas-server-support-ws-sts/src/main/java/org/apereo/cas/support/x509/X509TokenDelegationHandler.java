@@ -1,4 +1,4 @@
-package org.apereo.cas.support;
+package org.apereo.cas.support.x509;
 
 import org.apache.cxf.sts.request.ReceivedToken;
 import org.apache.cxf.sts.token.delegation.TokenDelegationHandler;
@@ -45,7 +45,7 @@ public class X509TokenDelegationHandler implements TokenDelegationHandler {
 
         if (delegateTarget.getState() == ReceivedToken.STATE.VALID && delegateTarget.getPrincipal() != null) {
             response.setDelegationAllowed(true);
-            LOGGER.debug("Delegation is allowed for: " + delegateTarget.getPrincipal());
+            LOGGER.debug("Delegation is allowed for: [{}]", delegateTarget.getPrincipal());
         } else {
             LOGGER.debug("Delegation is not allowed, as the token is invalid or the principal is null");
         }

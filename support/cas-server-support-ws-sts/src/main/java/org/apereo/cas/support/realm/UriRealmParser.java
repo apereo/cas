@@ -1,4 +1,4 @@
-package org.apereo.cas.support;
+package org.apereo.cas.support.realm;
 
 import org.apache.cxf.sts.RealmParser;
 import org.apache.cxf.ws.security.sts.provider.STSException;
