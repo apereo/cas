@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.IdentityMapper;
+import org.apache.cxf.sts.STSPropertiesMBean;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
 import org.apache.cxf.sts.claims.ClaimsManager;
@@ -17,16 +19,21 @@ import org.apache.cxf.sts.token.provider.DefaultSubjectProvider;
 import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.sts.token.realm.Relationship;
+import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
 import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
 import org.apache.cxf.sts.token.validator.UsernameTokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
+import org.apache.cxf.ws.security.sts.provider.operation.IssueOperation;
+import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.SecurityTokenServiceAuthenticationPostProcessor;
 import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.ClaimTypeConstants;
 import org.apereo.cas.support.FileClaimsHandler;
@@ -40,6 +47,7 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -67,13 +75,17 @@ import java.util.Properties;
 public class CoreWsSecuritySecurityTokenServiceConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
     @Autowired
+    @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
+    private AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("idpConfigService")
     private IdentityProviderConfigurationService idpConfigService;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -83,7 +95,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         bean.setEnabled(true);
         bean.setName("cxfServletSecurityTokenService");
         bean.setServlet(new CXFServlet());
-        bean.setUrlMappings(Collections.singleton("/ws/sts"));
+        bean.setUrlMappings(Collections.singleton("/ws/sts/*"));
         bean.setAsyncSupported(true);
         return bean;
     }
@@ -111,21 +123,27 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     }
 
     @Bean
-    public TokenIssueOperation transportIssueDelegate() {
+    public IssueOperation transportIssueDelegate() {
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
+
+        final ClaimsManager claimsManager = new ClaimsManager();
+        claimsManager.setClaimHandlers(Arrays.asList(claimsHandlerA()));
+
         final TokenIssueOperation op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());
         op.setServices(transportServices());
         op.setStsProperties(transportSTSProperties());
-        op.setClaimsManager(claimsManager());
+        op.setClaimsManager(claimsManager);
         op.setTokenValidators(transportTokenValidators());
         op.setEventListener(loggerListener());
         op.setDelegationHandlers(delegationHandlers());
-        op.setEncryptIssuedToken(true);
+        op.setEncryptIssuedToken(wsfed.isEncryptTokens());
+
         return op;
     }
 
     @Bean
-    public TokenValidateOperation transportValidateDelegate() {
+    public ValidateOperation transportValidateDelegate() {
         final TokenValidateOperation op = new TokenValidateOperation();
         op.setTokenValidators(transportTokenValidators());
         op.setStsProperties(transportSTSProperties());
@@ -158,20 +176,18 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @Bean
     public RealmProperties realmA() {
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
+        
         final RealmProperties realm = new RealmProperties();
-        realm.setIssuer("STS Realm A");
+        realm.setIssuer(wsfed.getRealm().getIssuer());
 
-        final Properties p = new Properties();
-        p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.password", "storepass");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.alias", "realma");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.file", "stsrealm_a.jks");
+        final Properties p = getSecurityProperties(wsfed.getRealm().getKeystorePassword(),
+                wsfed.getRealm().getKeystoreFile(), wsfed.getRealm().getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
         realm.setCallbackHandler(new PasswordCallbackHandler());
         return realm;
     }
-    
+
     @Bean
     public Map realms() {
         final Map realms = new HashMap<>();
@@ -181,44 +197,37 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @Bean
     public SAMLTokenProvider transportSamlTokenProvider() {
-        final SAMLTokenProvider provider = new SAMLTokenProvider();
-        provider.setAttributeStatementProviders(attributeStatementProvidersList());
-        provider.setRealmMap(realms());
-        provider.setConditionsProvider(conditionsProvider());
-        provider.setSubjectProvider(subjectProvider());
-        return provider;
-    }
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
 
-    @Bean
-    public DefaultConditionsProvider conditionsProvider() {
-        final DefaultConditionsProvider c = new DefaultConditionsProvider();
-        c.setLifetime(1000);
-        c.setAcceptClientLifetime(true);
-        return c;
-    }
-
-    @Bean
-    public DefaultSubjectProvider subjectProvider() {
         final DefaultSubjectProvider s = new DefaultSubjectProvider();
-        s.setSubjectNameIDFormat(NameID.UNSPECIFIED);
-        return s;
-    }
+        switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
+            case "email":
+                s.setSubjectNameIDFormat(NameID.EMAIL);
+                break;
+            case "entity":
+                s.setSubjectNameIDFormat(NameID.ENTITY);
+                break;
+            case "transient":
+                s.setSubjectNameIDFormat(NameID.TRANSIENT);
+                break;
+            case "unspecified":
+            default:
+                s.setSubjectNameIDFormat(NameID.UNSPECIFIED);
+                break;
+        }
 
-    @Bean
-    public List attributeStatementProvidersList() {
-        return Arrays.asList(claimAttributeProvider());
-    }
+        final DefaultConditionsProvider c = new DefaultConditionsProvider();
+        c.setLifetime(wsfed.getTokenLifetime());
+        c.setAcceptClientLifetime(true);
 
-    @Bean
-    public ClaimsAttributeStatementProvider claimAttributeProvider() {
-        return new ClaimsAttributeStatementProvider();
-    }
-
-    @Bean
-    public ClaimsManager claimsManager() {
-        final ClaimsManager m = new ClaimsManager();
-        m.setClaimHandlers(claimHandlerList());
-        return m;
+        final SAMLTokenProvider provider = new SAMLTokenProvider();
+        provider.setAttributeStatementProviders(Arrays.asList(new ClaimsAttributeStatementProvider()));
+        
+        
+        provider.setRealmMap(realms());
+        provider.setConditionsProvider(c);
+        provider.setSubjectProvider(s);
+        return provider;
     }
 
     @Bean
@@ -227,15 +236,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     }
 
     @Bean
-    public SamlRealmCodec samlRealmCodec() {
+    public SAMLRealmCodec samlRealmCodec() {
         return new SamlRealmCodec();
-    }
-
-    @Bean
-    public UriRealmParser customRealmParser() {
-        final UriRealmParser p = new UriRealmParser();
-        p.setRealmMap(realms());
-        return p;
     }
 
     @Bean
@@ -275,34 +277,36 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return s;
     }
 
+    @ConditionalOnMissingBean(name = "transportSTSProperties")
     @Bean
-    public StaticSTSProperties transportSTSProperties() {
+    public STSPropertiesMBean transportSTSProperties() {
+        final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
+
         final StaticSTSProperties s = new StaticSTSProperties();
         s.setCallbackHandler(new PasswordCallbackHandler());
-        s.setIssuer("CAS STS");
-        s.setRealmParser(customRealmParser());
-
-        Properties p = new Properties();
-        p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.password", "storepass");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.file", "ststrust.jks");
-        s.setSignatureCryptoProperties(p);
-
-        p = new Properties();
-        p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.password", "storepass");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.file", "stsencrypt.jks");
-        s.setEncryptionCryptoProperties(p);
-        
+        s.setIssuer("CAS Security Token Service");
+        s.setRealmParser(new UriRealmParser(realms()));
+        s.setSignatureCryptoProperties(getSecurityProperties(wsfed.getSigningKeystoreFile(), wsfed.getSigningKeystorePassword()));
+        s.setEncryptionCryptoProperties(getSecurityProperties(wsfed.getEncryptionKeystoreFile(), wsfed.getEncryptionKeystorePassword()));
         s.setRelationships(relationships());
         return s;
     }
 
-    @Bean
-    public List claimHandlerList() {
-        return Arrays.asList(claimsHandlerA(), claimsHandlerB());
+    private Properties getSecurityProperties(final String psw, final String file) {
+        return getSecurityProperties(psw, file, null);
+    }
+    
+    private Properties getSecurityProperties(final String psw, final String file, final String alias) {
+        Properties p = new Properties();
+        p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+        p.put("org.apache.ws.security.crypto.merlin.keystore.password", psw);
+        p.put("org.apache.ws.security.crypto.merlin.keystore.file", file);
+        
+        if (StringUtils.isNotBlank(alias)) {
+            p.put("org.apache.ws.security.crypto.merlin.keystore.alias", alias);
+        }
+        return p;
     }
 
     @Bean
@@ -324,43 +328,15 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
         final FileClaimsHandler f = new FileClaimsHandler();
         f.setUserClaims(claimsMap);
-        f.setSupportedClaims(supportedClaims());
+        f.setSupportedClaims(new ArrayList(ClaimTypeConstants.ALL_CLAIMS));
         f.setRealm("REALMA");
         return f;
     }
 
     @Bean
-    public FileClaimsHandler claimsHandlerB() {
-        final Map claimsMap = new HashMap();
-
-        Map values = new HashMap();
-        values.put(ClaimTypeConstants.CLAIMS_GIVEN_NAME, "ALICE");
-        values.put(ClaimTypeConstants.CLAIMS_SURNAME, "SMITH");
-        values.put(ClaimTypeConstants.CLAIMS_EMAIL_ADDRESS_2005, "aliaS@somewhere.org");
-        values.put(ClaimTypeConstants.CLAIMS_ROLE, "User");
-        claimsMap.put("alice", values);
-
-        values = new HashMap();
-        values.put(ClaimTypeConstants.CLAIMS_GIVEN_NAME, "BOB");
-        values.put(ClaimTypeConstants.CLAIMS_SURNAME, "SOMEONE");
-        values.put(ClaimTypeConstants.CLAIMS_EMAIL_ADDRESS_2005, "bobs@somewhere.org");
-        values.put(ClaimTypeConstants.CLAIMS_ROLE, "User,MANAGER,ADMIN");
-
-        final FileClaimsHandler f = new FileClaimsHandler();
-        f.setUserClaims(claimsMap);
-        f.setSupportedClaims(supportedClaims());
-        f.setRealm("REALMB");
-        return f;
-    }
-    
-    @Bean
-    public List supportedClaims() {
-        return ClaimTypeConstants.ALL_CLAIMS;
-    }
-
-    @Bean
     public AuthenticationPostProcessor securityTokenServiceAuthenticationPostProcessor() {
-        return new SecurityTokenServiceAuthenticationPostProcessor(servicesManager, idpConfigService);
+        return new SecurityTokenServiceAuthenticationPostProcessor(servicesManager,
+                idpConfigService, wsFederationAuthenticationServiceSelectionStrategy);
     }
 
 

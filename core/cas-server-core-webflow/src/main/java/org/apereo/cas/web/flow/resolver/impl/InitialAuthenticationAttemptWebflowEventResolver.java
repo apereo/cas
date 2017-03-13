@@ -62,16 +62,16 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
             final Credential credential = getCredentialFromContext(context);
+            final Service service = WebUtils.getService(context);
+            
             if (credential != null) {
-                final AuthenticationResultBuilder builder =
-                        this.authenticationSystemSupport.handleInitialAuthenticationTransaction(credential);
-
+                final AuthenticationResultBuilder builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
                 if (builder.getInitialAuthentication().isPresent()) {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
                     WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
                 }
             }
-            final Service service = WebUtils.getService(context);
+            
             if (service != null) {
 
                 LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);

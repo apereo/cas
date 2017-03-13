@@ -45,25 +45,27 @@ public interface AuthenticationSystemSupport {
     /**
      * Initiate potential multi-transaction authentication event by handling the initial authentication transaction.
      *
+     * @param service    the service
      * @param credential a credential for the initial authentication transaction.
      * @return authentication result builder used to accumulate authentication transactions in this authentication event.
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.0.0
      */
-    AuthenticationResultBuilder handleInitialAuthenticationTransaction(Credential... credential) throws AuthenticationException;
+    AuthenticationResultBuilder handleInitialAuthenticationTransaction(Service service, Credential... credential) throws AuthenticationException;
 
     /**
      * Handle single authentication transaction within potential multi-transaction authentication event.
      *
+     * @param service                     the service
      * @param authenticationResultBuilder builder used to accumulate authentication transactions in this authentication event.
      * @param credential                  a credential used for this authentication transaction.
      * @return authentication result builder used to accumulate authentication transactions in this authentication event.
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.0.0
      */
-    AuthenticationResultBuilder handleAuthenticationTransaction(AuthenticationResultBuilder authenticationResultBuilder,
-                                                                Credential... credential)
-            throws AuthenticationException;
+    AuthenticationResultBuilder handleAuthenticationTransaction(Service service,
+                                                                AuthenticationResultBuilder authenticationResultBuilder,
+                                                                Credential... credential) throws AuthenticationException;
 
     /**
      * Finalize all authentication transactions processed and collected for this authentication event.

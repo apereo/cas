@@ -21,20 +21,28 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
 
     private String realm;
     private String protocol;
-    private String displayName;
     private String tokenType;
     private long lifetime;
-    private String role;
+    private String role = WSFederationRegisteredService.class.getSimpleName();
     private String wsdlLocation;
     private String namespace;
+    private String addressingNamespace;
     private String wsdlService;
     private String wsdlEndpoint;
     private String appliesTo;
     private boolean use200502Namespace;
-    
+
     @Override
     protected AbstractRegisteredService newInstance() {
         return new WSFederationRegisteredService();
+    }
+
+    public String getAddressingNamespace() {
+        return addressingNamespace;
+    }
+
+    public void setAddressingNamespace(final String addressingNamespace) {
+        this.addressingNamespace = addressingNamespace;
     }
 
     public String getRealm() {
@@ -51,14 +59,6 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
 
     public void setProtocol(final String protocol) {
         this.protocol = protocol;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(final String displayName) {
-        this.displayName = displayName;
     }
     
     public String getTokenType() {
@@ -84,7 +84,7 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
     public void setRole(final String role) {
         this.role = role;
     }
-    
+
     public String getWsdlLocation() {
         return wsdlLocation;
     }
@@ -149,8 +149,8 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .append(this.realm, rhs.realm)
+                .append(this.addressingNamespace, rhs.addressingNamespace)
                 .append(this.protocol, rhs.protocol)
-                .append(this.displayName, rhs.displayName)
                 .append(this.tokenType, rhs.tokenType)
                 .append(this.lifetime, rhs.lifetime)
                 .append(this.role, rhs.role)
@@ -168,8 +168,8 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
                 .append(realm)
+                .append(addressingNamespace)
                 .append(protocol)
-                .append(displayName)
                 .append(tokenType)
                 .append(lifetime)
                 .append(role)

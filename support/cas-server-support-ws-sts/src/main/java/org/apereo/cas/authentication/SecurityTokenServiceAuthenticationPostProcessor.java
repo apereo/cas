@@ -3,13 +3,15 @@ package org.apereo.cas.authentication;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.rt.security.SecurityConstants;
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.wss4j.dom.WSConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
-import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,26 +31,33 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
 
     private final ServicesManager servicesManager;
     private final IdentityProviderConfigurationService identityProviderConfigurationService;
-
+    private final AuthenticationServiceSelectionStrategy selectionStrategy;
+    
     public SecurityTokenServiceAuthenticationPostProcessor(final ServicesManager servicesManager,
-                                                           final IdentityProviderConfigurationService identityProviderConfigurationService) {
+                                                           final IdentityProviderConfigurationService identityProviderConfigurationService,
+                                                           final AuthenticationServiceSelectionStrategy selectionStrategy) {
         this.servicesManager = servicesManager;
         this.identityProviderConfigurationService = identityProviderConfigurationService;
+        this.selectionStrategy = selectionStrategy;
     }
 
     @Override
     public void process(final AuthenticationTransaction transaction, final AuthenticationBuilder builder) {
-        final Service service = transaction.getService();
-        if (service != null && this.servicesManager != null) {
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                LOGGER.warn("Service [{}] is not allowed to use SSO.", registeredService);
+        
+        if (!this.selectionStrategy.supports(transaction.getService())) {
+            return;
+        }
+        
+        final Service service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
+        if (service != null) {
+            final WSFederationRegisteredService rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
+            if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
+                LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
-            final WSFederationRegisteredService rp = WSFederationRegisteredService.class.cast(registeredService);
             final Bus cxfBus = BusFactory.getDefaultBus();
             final IdentityProviderSTSClient sts = new IdentityProviderSTSClient(cxfBus);
-            sts.setAddressingNamespace("http://www.w3.org/2005/08/addressing");
+            sts.setAddressingNamespace(rp.getAddressingNamespace());
             if (StringUtils.isNotBlank(rp.getTokenType())) {
                 sts.setTokenType(rp.getTokenType());
             } else {
@@ -71,20 +80,23 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
                 sts.setTtl(Long.valueOf(rp.getLifetime()).intValue());
             }
 
-//            transaction.getCredentials()
-//                    .stream()
-//                    .filter(UsernamePasswordCredential.class::isInstance)
-//                    .map(UsernamePasswordCredential.class::cast)
-//                    .forEach(c -> {
-//                        sts.getProperties().put(SecurityConstants.USERNAME, c.getUsername());
-//                        sts.getProperties().put(SecurityConstants.PASSWORD, c.getPassword());
-//
-//                        // urn:fediz:idp
-//                        final SecurityToken token = sts.requestSecurityToken(rp.getAppliesTo());
-//                    });
+            final UsernamePasswordCredential up = transaction.getCredentials()
+                    .stream()
+                    .filter(UsernamePasswordCredential.class::isInstance)
+                    .map(UsernamePasswordCredential.class::cast)
+                    .findFirst()
+                    .orElse(null);
+
+            if (up != null) {
+                sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());
+                sts.getProperties().put(SecurityConstants.PASSWORD, up.getPassword());
+                try {
+                    final SecurityToken token = sts.requestSecurityToken(rp.getAppliesTo());
+                } catch (final Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
         }
-
-
     }
 
     @Override
