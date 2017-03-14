@@ -8,6 +8,8 @@ import org.apereo.cas.config.support.authentication.AuthenticationServiceSelecti
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
@@ -73,10 +75,20 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("securityTokenTicketFactory")
+    private SecurityTokenTicketFactory securityTokenTicketFactory;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+
+    @Lazy
     @Bean
     public WSWSFederationValidateRequestController federationValidateRequestController() {
         return new WSWSFederationValidateRequestController(idpConfigService(), servicesManager,
-                webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(), httpClient);
+                webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
+                httpClient, securityTokenTicketFactory, ticketRegistry);
     }
 
     @Lazy
@@ -87,7 +99,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
         return new WSFederationValidateRequestCallbackController(idpConfigService(), servicesManager,
                 webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
-                wsFederationAuthenticationServiceSelectionStrategy(), httpClient);
+                wsFederationAuthenticationServiceSelectionStrategy(),
+                httpClient, securityTokenTicketFactory, ticketRegistry);
     }
 
     @Lazy
