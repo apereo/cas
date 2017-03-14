@@ -52,9 +52,10 @@ public interface TicketRegistrySupport {
     void updateAuthentication(String ticketGrantingTicketId, Authentication authentication);
 
     /**
-     * Get the root authentication from the TGT or PGT passed
+     * Get the root authentication from the TGT or PGT passed.
      *
      * @param ticketGrantingTicket the ticket granting ticket
+     * @return the authentication from the root ticket
      */
     Authentication getRootAuthenticationFrom(TicketGrantingTicket ticketGrantingTicket);
 }
