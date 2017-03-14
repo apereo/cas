@@ -69,14 +69,7 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
             final String namespace = StringUtils.defaultIfBlank(rp.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
             sts.setServiceQName(new QName(namespace, StringUtils.defaultIfBlank(rp.getWsdlService(), WSFederationConstants.SECURITY_TOKEN_SERVICE)));
             sts.setEndpointQName(new QName(namespace, rp.getWsdlEndpoint()));
-
             sts.getProperties().putAll(new HashMap<>());
-            
-            if (rp.getLifetime() > 0) {
-                sts.setEnableLifetime(true);
-                sts.setTtl(Long.valueOf(rp.getLifetime()).intValue());
-            }
-
             invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
         }
     }
