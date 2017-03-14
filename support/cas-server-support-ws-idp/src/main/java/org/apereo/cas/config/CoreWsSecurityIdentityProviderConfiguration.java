@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
@@ -54,6 +55,10 @@ import java.util.List;
 public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
 
     @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
+    @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
 
@@ -88,7 +93,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     public WSWSFederationValidateRequestController federationValidateRequestController() {
         return new WSWSFederationValidateRequestController(idpConfigService(), servicesManager,
                 webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
-                httpClient, securityTokenTicketFactory, ticketRegistry);
+                httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator);
     }
 
     @Lazy
@@ -100,7 +105,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return new WSFederationValidateRequestCallbackController(idpConfigService(), servicesManager,
                 webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
                 wsFederationAuthenticationServiceSelectionStrategy(),
-                httpClient, securityTokenTicketFactory, ticketRegistry);
+                httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator);
     }
 
     @Lazy

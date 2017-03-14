@@ -13,9 +13,10 @@ dependencies {
     compile project(":support:cas-server-support-saml-core")
     compile project(":support:cas-server-support-ws-sts")
     compile project(":support:cas-server-support-ws-idp-api")
+    compile project(":support:cas-server-support-cookie")
+    
     testImplementation project(path: ":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":support:cas-server-support-cookie")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }
