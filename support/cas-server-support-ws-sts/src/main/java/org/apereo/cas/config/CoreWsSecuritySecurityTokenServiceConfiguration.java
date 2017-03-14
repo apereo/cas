@@ -36,8 +36,7 @@ import org.apereo.cas.config.support.authentication.AuthenticationEventExecution
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.FileClaimsHandler;
-import org.apereo.cas.support.claims.Claims;
+import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
 import org.apereo.cas.support.realm.RealmAwareIdentityMapper;
 import org.apereo.cas.support.realm.RealmVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
@@ -128,9 +127,12 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     @Bean
     public IssueOperation transportIssueDelegate() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
 
         final ClaimsManager claimsManager = new ClaimsManager();
-        claimsManager.setClaimHandlers(Arrays.asList(claimsHandlerA()));
+        claimsManager.setClaimHandlers(Arrays.asList(new WrappingSecurityTokenServiceClaimsHandler(
+                idp.getRealmUri(),
+                wsfed.getRealm().getIssuer())));
 
         final TokenIssueOperation op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());
@@ -187,13 +189,13 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         final Properties p = getSecurityProperties(wsfed.getRealm().getKeystoreFile(), wsfed.getRealm().getKeystorePassword(),
                 wsfed.getRealm().getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
-        realm.setCallbackHandler(new RealmVerificationCallbackHandler(idp.getUri()));
+        realm.setCallbackHandler(new RealmVerificationCallbackHandler(idp.getRealmUri()));
         return realm;
     }
 
     @Bean
-    public Map realms() {
-        final Map realms = new HashMap<>();
+    public Map<String, RealmProperties> realms() {
+        final Map<String, RealmProperties> realms = new HashMap<>();
         realms.put("REALMA", realmA());
         return realms;
     }
@@ -303,31 +305,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         }
         return p;
     }
-
-    @Bean
-    public FileClaimsHandler claimsHandlerA() {
-        final Map claimsMap = new HashMap();
-
-        Map values = new HashMap();
-        values.put(Claims.CLAIMS_GIVEN_NAME, "alice");
-        values.put(Claims.CLAIMS_SURNAME, "smith");
-        values.put(Claims.CLAIMS_EMAIL_ADDRESS_2005, "aliac@somewhere.org");
-        values.put(Claims.CLAIMS_ROLE, "User");
-        claimsMap.put("alice", values);
-
-        values = new HashMap();
-        values.put(Claims.CLAIMS_GIVEN_NAME, "bob");
-        values.put(Claims.CLAIMS_SURNAME, "something");
-        values.put(Claims.CLAIMS_EMAIL_ADDRESS_2005, "bobs@somewhere.org");
-        values.put(Claims.CLAIMS_ROLE, "User,Manager,Admin");
-
-        final FileClaimsHandler f = new FileClaimsHandler();
-        f.setUserClaims(claimsMap);
-        f.setSupportedClaims(new ArrayList(Claims.ALL_CLAIMS));
-        f.setRealm("REALMA");
-        return f;
-    }
-
+    
     @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationPostProcessor")
     @Bean
     public AuthenticationPostProcessor securityTokenServiceAuthenticationPostProcessor() {

@@ -39,6 +39,7 @@ public class UriRealmParser implements RealmParser {
         for (int i = 0; i < count; i++) {
             realm = st.nextToken();
         }
+        realm = realm.toUpperCase();
         if (StringUtils.isBlank(realm) || !realmMap.containsKey(realm)) {
             LOGGER.warn("Unknown realm: [{}]", realm);
             throw new STSException("Unknown realm: " + realm);
