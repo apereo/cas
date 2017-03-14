@@ -108,6 +108,11 @@ public interface WSFederationConstants {
     String ENDPOINT_FEDERATION_REQUEST_CALLBACK = "/ws/idp/federationcallback";
 
     /**
+     * The location of WSDL service.
+     */
+    String ENDPOINT_STS_REALM_WSDL = "/ws/sts/%s/STSServiceTransportUT?wsdl";
+
+    /**
      * The constant WSIGNOUT10.
      */
     String WSIGNOUT10 = "wsignout1.0";

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.config.support.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -70,7 +71,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
-    
+
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
@@ -81,6 +82,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -128,11 +130,15 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return bean;
     }
 
+    @Lazy
     @Autowired
     @Bean
-    public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(@Qualifier("securityTokenServiceCredentialCipherExecutor")
-                                                                                       final CipherExecutor securityTokenServiceCredentialCipherExecutor) {
-        return new DefaultRelyingPartyTokenProducer(securityTokenServiceCredentialCipherExecutor, idpConfigService());
+    public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
+            @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
+            @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
+        return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder,
+                securityTokenServiceCredentialCipherExecutor,
+                idpConfigService());
     }
 
     @Bean

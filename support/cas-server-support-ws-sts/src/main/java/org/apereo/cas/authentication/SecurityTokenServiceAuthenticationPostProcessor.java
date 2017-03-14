@@ -1,12 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
 import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apache.wss4j.dom.WSConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
@@ -18,9 +14,6 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
-
-import javax.xml.namespace.QName;
-import java.util.HashMap;
 
 /**
  * This is {@link SecurityTokenServiceAuthenticationPostProcessor}.
@@ -35,15 +28,18 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
     private final IdentityProviderConfigurationService identityProviderConfigurationService;
     private final AuthenticationServiceSelectionStrategy selectionStrategy;
     private final CipherExecutor<String, String> credentialCipherExecutor;
+    private final SecurityTokenServiceClientBuilder clientBuilder;
 
     public SecurityTokenServiceAuthenticationPostProcessor(final ServicesManager servicesManager,
                                                            final IdentityProviderConfigurationService identityProviderConfigurationService,
                                                            final AuthenticationServiceSelectionStrategy selectionStrategy,
-                                                           final CipherExecutor<String, String> credentialCipherExecutor) {
+                                                           final CipherExecutor<String, String> credentialCipherExecutor, 
+                                                           final SecurityTokenServiceClientBuilder clientBuilder) {
         this.servicesManager = servicesManager;
         this.identityProviderConfigurationService = identityProviderConfigurationService;
         this.selectionStrategy = selectionStrategy;
         this.credentialCipherExecutor = credentialCipherExecutor;
+        this.clientBuilder = clientBuilder;
     }
 
     @Override
@@ -60,16 +56,8 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
-            final Bus cxfBus = BusFactory.getDefaultBus();
-            final SecurityTokenServiceClient sts = new SecurityTokenServiceClient(cxfBus);
-            sts.setAddressingNamespace(StringUtils.defaultIfBlank(rp.getAddressingNamespace(), WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING));
-            sts.setTokenType(StringUtils.defaultIfBlank(rp.getTokenType(), WSConstants.WSS_SAML2_TOKEN_TYPE));
-            sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
-            sts.setWsdlLocation(rp.getWsdlLocation());
-            final String namespace = StringUtils.defaultIfBlank(rp.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
-            sts.setServiceQName(new QName(namespace, StringUtils.defaultIfBlank(rp.getWsdlService(), WSFederationConstants.SECURITY_TOKEN_SERVICE)));
-            sts.setEndpointQName(new QName(namespace, rp.getWsdlEndpoint()));
-            sts.getProperties().putAll(new HashMap<>());
+            
+            final SecurityTokenServiceClient sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
             invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
         }
     }
