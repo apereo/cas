@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.slf4j.Logger;
@@ -25,18 +24,15 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityTokenServiceAuthenticationPostProcessor.class);
 
     private final ServicesManager servicesManager;
-    private final IdentityProviderConfigurationService identityProviderConfigurationService;
     private final AuthenticationServiceSelectionStrategy selectionStrategy;
     private final CipherExecutor<String, String> credentialCipherExecutor;
     private final SecurityTokenServiceClientBuilder clientBuilder;
 
     public SecurityTokenServiceAuthenticationPostProcessor(final ServicesManager servicesManager,
-                                                           final IdentityProviderConfigurationService identityProviderConfigurationService,
                                                            final AuthenticationServiceSelectionStrategy selectionStrategy,
                                                            final CipherExecutor<String, String> credentialCipherExecutor, 
                                                            final SecurityTokenServiceClientBuilder clientBuilder) {
         this.servicesManager = servicesManager;
-        this.identityProviderConfigurationService = identityProviderConfigurationService;
         this.selectionStrategy = selectionStrategy;
         this.credentialCipherExecutor = credentialCipherExecutor;
         this.clientBuilder = clientBuilder;

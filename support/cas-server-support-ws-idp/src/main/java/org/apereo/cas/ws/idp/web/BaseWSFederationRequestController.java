@@ -20,7 +20,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +43,7 @@ public abstract class BaseWSFederationRequestController {
      * The constant LOGGER.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseWSFederationRequestController.class);
-
-    /**
-     * The Identity provider configuration service.
-     */
-    protected final IdentityProviderConfigurationService identityProviderConfigurationService;
-
+    
     /**
      * The Services manager.
      */
@@ -103,7 +97,6 @@ public abstract class BaseWSFederationRequestController {
     /**
      * Instantiates a new Base ws federation request controller.
      *
-     * @param identityProviderConfigurationService the identity provider configuration service
      * @param servicesManager                      the services manager
      * @param webApplicationServiceFactory         the web application service factory
      * @param casProperties                        the cas properties
@@ -114,7 +107,7 @@ public abstract class BaseWSFederationRequestController {
      * @param ticketGrantingTicketCookieGenerator  the ticket granting ticket cookie generator
      * @param ticketRegistrySupport                the ticket registry support
      */
-    public BaseWSFederationRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
+    public BaseWSFederationRequestController(
                                              final ServicesManager servicesManager,
                                              final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                              final CasConfigurationProperties casProperties,
@@ -124,7 +117,6 @@ public abstract class BaseWSFederationRequestController {
                                              final TicketRegistry ticketRegistry,
                                              final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                              final TicketRegistrySupport ticketRegistrySupport) {
-        this.identityProviderConfigurationService = identityProviderConfigurationService;
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.casProperties = casProperties;

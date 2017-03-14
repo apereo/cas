@@ -22,8 +22,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
-import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
@@ -52,8 +50,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationValidateRequestCallbackController.class);
     private final WSFederationRelyingPartyTokenProducer relyingPartyTokenProducer;
 
-    public WSFederationValidateRequestCallbackController(final IdentityProviderConfigurationService identityProviderConfigurationService,
-                                                         final ServicesManager servicesManager,
+    public WSFederationValidateRequestCallbackController(final ServicesManager servicesManager,
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                          final CasConfigurationProperties casProperties,
                                                          final WSFederationRelyingPartyTokenProducer relyingPartyTokenProducer,
@@ -63,7 +60,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final TicketRegistry ticketRegistry,
                                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                          final TicketRegistrySupport ticketRegistrySupport) {
-        super(identityProviderConfigurationService, servicesManager,
+        super(servicesManager,
                 webApplicationServiceFactory, casProperties,
                 serviceSelectionStrategy, httpClient, securityTokenTicketFactory,
                 ticketRegistry, ticketGrantingTicketCookieGenerator,
@@ -83,7 +80,6 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     protected ModelAndView handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         final WSFederationRequest fedRequest = WSFederationRequest.of(request);
         final WsFederationProperties wsfed = casProperties.getAuthn().getWsfedIdP();
-        final RealmAwareIdentityProvider idp = this.identityProviderConfigurationService.getIdentityProvider(wsfed.getIdp().getRealm());
         LOGGER.info("Received callback profile request [{}]", request.getRequestURI());
 
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
@@ -97,7 +93,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         final SecurityToken securityToken = validateSecurityTokenInAssertion(assertion, request, response);
         addSecurityTokenTicketToRegistry(request, securityToken);
         final String rpToken = produceRelyingPartyToken(response, request, fedRequest, securityToken, assertion);
-        return postResponseBackToRelyingParty(rpToken, securityToken, assertion, fedRequest, request, response, idp);
+        return postResponseBackToRelyingParty(rpToken, securityToken, assertion, fedRequest, request, response);
     }
 
     private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken) {
@@ -111,8 +107,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                         final Assertion assertion,
                                                         final WSFederationRequest fedRequest,
                                                         final HttpServletRequest request,
-                                                        final HttpServletResponse response,
-                                                        final RealmAwareIdentityProvider idp) throws Exception {
+                                                        final HttpServletResponse response) throws Exception {
         final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
         final String postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
 
