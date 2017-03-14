@@ -15,6 +15,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.EncodingUtils;
@@ -38,6 +39,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,8 +64,10 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final TicketRegistry ticketRegistry,
                                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                          final TicketRegistrySupport ticketRegistrySupport) {
-        super(identityProviderConfigurationService, servicesManager, webApplicationServiceFactory, casProperties,
-                serviceSelectionStrategy, httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
+        super(identityProviderConfigurationService, servicesManager,
+                webApplicationServiceFactory, casProperties,
+                serviceSelectionStrategy, httpClient, securityTokenTicketFactory,
+                ticketRegistry, ticketGrantingTicketCookieGenerator,
                 ticketRegistrySupport);
         this.relyingPartyTokenProducer = relyingPartyTokenProducer;
     }
@@ -81,8 +85,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         final WSFederationRequest fedRequest = WSFederationRequest.of(request);
         final WsFederationProperties wsfed = casProperties.getAuthn().getWsfedIdP();
         final RealmAwareIdentityProvider idp = this.identityProviderConfigurationService.getIdentityProvider(wsfed.getIdp().getRealm());
-
         LOGGER.info("Received callback profile request [{}]", request.getRequestURI());
+
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
@@ -92,8 +96,17 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
         final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
         final SecurityToken securityToken = validateSecurityTokenInAssertion(assertion, request, response);
+        addSecurityTokenTicketToRegistry(request, securityToken, assertion);
         final String rpToken = produceRelyingPartyToken(response, request, fedRequest, securityToken, assertion);
         return postResponseBackToRelyingParty(rpToken, securityToken, assertion, fedRequest, request, response, idp);
+    }
+
+    private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken,
+                                                  final Assertion assertion) {
+        LOGGER.debug("Adding security token as a ticket to CAS ticket registry...");
+        final TicketGrantingTicket tgt = getTicketGrantingTicketFromRequest(request);
+        securityToken.setProperties(Collections.singletonMap("Misagh", "Misagh123456"));
+        this.ticketRegistry.addTicket(securityTokenTicketFactory.create(tgt, securityToken));
     }
 
     private ModelAndView postResponseBackToRelyingParty(final String rpToken,
@@ -119,8 +132,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         }
         model.put("parameters", parameters);
 
+        LOGGER.debug("Posting relying party token to [{}]", postUrl);
         return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
-
     }
 
     private String produceRelyingPartyToken(final HttpServletResponse response, final HttpServletRequest request,
@@ -141,6 +154,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
     private SecurityToken validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request,
                                                            final HttpServletResponse response) {
+        LOGGER.debug("Validating security token in CAS assertion...");
+
         final AttributePrincipal principal = assertion.getPrincipal();
         if (!principal.getAttributes().containsKey(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
