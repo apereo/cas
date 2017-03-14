@@ -47,4 +47,9 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
         tgt.getAuthentication().update(authentication);
         this.ticketRegistry.updateTicket(tgt);
     }
+
+    @Override
+    public Authentication getRootAuthenticationFrom(final TicketGrantingTicket ticketGrantingTicket) {
+        return ticketGrantingTicket.getRoot().getAuthentication();
+    }
 }
