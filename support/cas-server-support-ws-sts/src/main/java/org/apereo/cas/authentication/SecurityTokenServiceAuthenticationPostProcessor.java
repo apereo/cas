@@ -61,7 +61,7 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
                 throw new UnauthorizedSsoServiceException();
             }
             final Bus cxfBus = BusFactory.getDefaultBus();
-            final IdentityProviderSTSClient sts = new IdentityProviderSTSClient(cxfBus);
+            final SecurityTokenServiceClient sts = new SecurityTokenServiceClient(cxfBus);
             sts.setAddressingNamespace(StringUtils.defaultIfBlank(rp.getAddressingNamespace(), WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING));
             sts.setTokenType(StringUtils.defaultIfBlank(rp.getTokenType(), WSConstants.WSS_SAML2_TOKEN_TYPE));
             sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
@@ -82,7 +82,7 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
     }
 
     private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction, final AuthenticationBuilder builder,
-                                                    final WSFederationRegisteredService rp, final IdentityProviderSTSClient sts) {
+                                                    final WSFederationRegisteredService rp, final SecurityTokenServiceClient sts) {
         final UsernamePasswordCredential up = transaction.getCredentials()
                 .stream()
                 .filter(UsernamePasswordCredential.class::isInstance)

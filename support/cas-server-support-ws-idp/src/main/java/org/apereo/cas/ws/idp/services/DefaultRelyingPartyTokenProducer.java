@@ -9,11 +9,13 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.fediz.core.exception.ProcessingException;
 import org.apache.cxf.fediz.core.util.DOMUtils;
+import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSUtils;
 import org.apache.wss4j.dom.WSConstants;
-import org.apereo.cas.authentication.IdentityProviderSTSClient;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
@@ -47,10 +49,12 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRelyingPartyTokenProducer.class);
     private static final String CERTIFICATE_REQUEST_ATTRIBUTE = "javax.servlet.request.X509Certificate";
 
+    private final CipherExecutor<String, String> credentialCipherExecutor;
     private final IdentityProviderConfigurationService identityProviderConfigurationService;
-    private int ttl = 1_800;
 
-    public DefaultRelyingPartyTokenProducer(final IdentityProviderConfigurationService identityProviderConfigurationService) {
+    public DefaultRelyingPartyTokenProducer(final CipherExecutor<String, String> credentialCipherExecutor, 
+                                            final IdentityProviderConfigurationService identityProviderConfigurationService) {
+        this.credentialCipherExecutor = credentialCipherExecutor;
         this.identityProviderConfigurationService = identityProviderConfigurationService;
     }
     
@@ -59,17 +63,18 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                           final WSFederationRequest fedRequest, final HttpServletRequest servletRequest,
                           final Assertion assertion) {
         final Bus cxfBus = BusFactory.getDefaultBus();
-        final IdentityProviderSTSClient sts = new IdentityProviderSTSClient(cxfBus);
+        final SecurityTokenServiceClient sts = new SecurityTokenServiceClient(cxfBus);
         sts.setAddressingNamespace(StringUtils.defaultIfBlank(service.getAddressingNamespace(), WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING));
 
         final Pair<String, String> pair = prepareSecurityTokenServiceTokenKeyType(service, fedRequest, sts);
         handlePublicKeyTypeIfNecessary(servletRequest, sts, pair);
 
-        sts.setWsdlLocation("https://mmoayyed.unicon.net:8443/cas/ws/sts/REALMA/STSServiceTransport?wsdl");
+        //sts.setWsdlLocation("https://mmoayyed.unicon.net:8443/cas/ws/sts/REALMA/STSServiceTransport?wsdl");
+        sts.setWsdlLocation(service.getWsdlLocation());
 
         final String namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
         sts.setServiceQName(new QName(namespace, service.getWsdlService()));
-        sts.setEndpointQName(new QName(namespace, "Transport_Port"));
+        sts.setEndpointQName(new QName(namespace, service.getWsdlEndpoint()));
 
         mapAttributesToRequestedClaims(service, sts);
 
@@ -80,11 +85,11 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         sts.setEnableAppliesTo(StringUtils.isNotBlank(service.getAppliesTo()));
         sts.setOnBehalfOf(securityToken.getToken());
 
-        final Element rpToken = requestSecurityTokenResponse(service, sts);
+        final Element rpToken = requestSecurityTokenResponse(service, sts, assertion);
         return serializeRelyingPartyToken(rpToken);
     }
 
-    private void handlePublicKeyTypeIfNecessary(final HttpServletRequest servletRequest, final IdentityProviderSTSClient sts,
+    private void handlePublicKeyTypeIfNecessary(final HttpServletRequest servletRequest, final SecurityTokenServiceClient sts,
                                                 final Pair<String, String> pair) {
         if (WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_PUBLICKEY.equals(pair.getValue())) {
             final X509Certificate[] certs = (X509Certificate[]) servletRequest.getAttribute(CERTIFICATE_REQUEST_ATTRIBUTE);
@@ -110,7 +115,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         return StringEscapeUtils.escapeXml11(sw.toString());
     }
 
-    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final IdentityProviderSTSClient sts) {
+    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts) {
         if (service.getAttributeReleasePolicy() instanceof WSFederationClaimsReleasePolicy) {
             final WSFederationClaimsReleasePolicy policy = (WSFederationClaimsReleasePolicy) service.getAttributeReleasePolicy();
             final Element claims = createClaimsElement(policy.getAllowedAttributes());
@@ -120,8 +125,14 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         }
     }
 
-    private Element requestSecurityTokenResponse(final WSFederationRegisteredService service, final IdentityProviderSTSClient sts) {
+    private Element requestSecurityTokenResponse(final WSFederationRegisteredService service, 
+                                                 final SecurityTokenServiceClient sts,
+                                                 final Assertion assertion) {
         try {
+            sts.getProperties().put(SecurityConstants.USERNAME, assertion.getPrincipal().getName());
+            final String uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
+            sts.getProperties().put(SecurityConstants.PASSWORD, uid);
+            
             return sts.requestSecurityTokenResponse(service.getAppliesTo());
         } catch (final SoapFault ex) {
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
@@ -163,7 +174,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
     private Pair<String, String> prepareSecurityTokenServiceTokenKeyType(final WSFederationRegisteredService service,
                                                                          final WSFederationRequest fedRequest,
-                                                                         final IdentityProviderSTSClient sts) {
+                                                                         final SecurityTokenServiceClient sts) {
         String stsTokenType = null;
         String stsKeyType = null;
 

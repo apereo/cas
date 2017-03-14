@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -78,10 +79,14 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
                 webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(), httpClient);
     }
 
+    @Lazy
+    @Autowired
     @Bean
-    public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController() {
+    public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
+            @Qualifier("wsFederationRelyingPartyTokenProducer")
+            final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
         return new WSFederationValidateRequestCallbackController(idpConfigService(), servicesManager,
-                webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer(),
+                webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
                 wsFederationAuthenticationServiceSelectionStrategy(), httpClient);
     }
 
@@ -98,9 +103,11 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return bean;
     }
 
+    @Autowired
     @Bean
-    public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() {
-        return new DefaultRelyingPartyTokenProducer(idpConfigService());
+    public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(@Qualifier("securityTokenServiceCredentialCipherExecutor")
+                                                                                       final CipherExecutor securityTokenServiceCredentialCipherExecutor) {
+        return new DefaultRelyingPartyTokenProducer(securityTokenServiceCredentialCipherExecutor, idpConfigService());
     }
 
     @Bean

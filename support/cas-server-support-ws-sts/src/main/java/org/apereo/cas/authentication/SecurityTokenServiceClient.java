@@ -6,13 +6,13 @@ import org.apache.cxf.ws.security.trust.STSClient;
 import org.w3c.dom.Element;
 
 /**
- * This is {@link IdentityProviderSTSClient}.
+ * This is {@link SecurityTokenServiceClient}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class IdentityProviderSTSClient extends STSClient {
-    public IdentityProviderSTSClient(final Bus b) {
+public class SecurityTokenServiceClient extends STSClient {
+    public SecurityTokenServiceClient(final Bus b) {
         super(b);
     }
 

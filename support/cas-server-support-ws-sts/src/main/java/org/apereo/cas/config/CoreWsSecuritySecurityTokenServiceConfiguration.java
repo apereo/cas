@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.sts.IdentityMapper;
 import org.apache.cxf.sts.STSPropertiesMBean;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
@@ -37,7 +36,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
-import org.apereo.cas.support.realm.RealmAwareIdentityMapper;
 import org.apereo.cas.support.realm.RealmVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
 import org.apereo.cas.support.saml.SamlRealmCodec;
@@ -57,7 +55,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.xml.ws.Provider;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -158,15 +155,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @Bean
     public List<Relationship> relationships() {
-        final List<Relationship> list = new ArrayList<>();
-
         final Relationship rel1 = new Relationship();
         rel1.setSourceRealm("REALMA");
         rel1.setTargetRealm("REALMB");
-        rel1.setIdentityMapper(identityMapper());
         rel1.setType("FederatedIdentity");
-        list.add(rel1);
-        return list;
+        return Arrays.asList(rel1);
     }
 
     @Bean
@@ -231,11 +224,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         provider.setConditionsProvider(c);
         provider.setSubjectProvider(s);
         return provider;
-    }
-
-    @Bean
-    public IdentityMapper identityMapper() {
-        return new RealmAwareIdentityMapper();
     }
 
     @Bean
@@ -305,7 +293,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         }
         return p;
     }
-    
+
     @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationPostProcessor")
     @Bean
     public AuthenticationPostProcessor securityTokenServiceAuthenticationPostProcessor() {
