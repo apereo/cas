@@ -63,7 +63,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                          final TicketRegistrySupport ticketRegistrySupport) {
         super(identityProviderConfigurationService, servicesManager, webApplicationServiceFactory, casProperties,
-                serviceSelectionStrategy, httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator, 
+                serviceSelectionStrategy, httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
                 ticketRegistrySupport);
         this.relyingPartyTokenProducer = relyingPartyTokenProducer;
     }
@@ -73,6 +73,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK)
@@ -112,7 +113,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
         parameters.put(WSFederationConstants.WRESULT, StringEscapeUtils.unescapeHtml4(rpToken));
         parameters.put(WSFederationConstants.WTREALM, fedRequest.getWtrealm());
-        
+
         if (StringUtils.isNotBlank(fedRequest.getWctx())) {
             parameters.put(WSFederationConstants.WCTX, fedRequest.getWctx());
         }

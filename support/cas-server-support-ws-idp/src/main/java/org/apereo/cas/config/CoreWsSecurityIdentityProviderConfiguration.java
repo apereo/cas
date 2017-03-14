@@ -23,7 +23,7 @@ import org.apereo.cas.ws.idp.metadata.WSFederationMetadataServlet;
 import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
-import org.apereo.cas.ws.idp.web.WSWSFederationValidateRequestController;
+import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
 import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
 import org.springframework.beans.factory.BeanCreationException;
@@ -95,8 +95,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Lazy
     @Bean
-    public WSWSFederationValidateRequestController federationValidateRequestController() {
-        return new WSWSFederationValidateRequestController(idpConfigService(), servicesManager,
+    public WSFederationValidateRequestController federationValidateRequestController() {
+        return new WSFederationValidateRequestController(idpConfigService(), servicesManager,
                 webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
                 httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
                 ticketRegistrySupport);

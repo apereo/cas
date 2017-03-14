@@ -14,7 +14,6 @@ import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSUtils;
 import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.stax.ext.WSSConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
@@ -38,7 +37,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.
@@ -107,7 +105,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     private String serializeRelyingPartyToken(final Element rpToken) {
         try {
             final StringWriter sw = new StringWriter();
-            Transformer t = TransformerFactory.newInstance().newTransformer();
+            final Transformer t = TransformerFactory.newInstance().newTransformer();
             t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, BooleanUtils.toStringYesNo(Boolean.TRUE));
             t.transform(new DOMSource(rpToken), new StreamResult(sw));
             return sw.toString();
