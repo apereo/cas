@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
@@ -39,9 +41,12 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
                                                    final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                    final CasConfigurationProperties casProperties,
                                                    final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
-                                                   final HttpClient httpClient) {
+                                                   final HttpClient httpClient,
+                                                   final SecurityTokenTicketFactory securityTokenTicketFactory,
+                                                   final TicketRegistry ticketRegistry) {
         super(identityProviderConfigurationService, servicesManager,
-                webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient);
+                webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient,
+                securityTokenTicketFactory, ticketRegistry);
     }
 
     /**
@@ -119,13 +124,13 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
         if (ttl == 0) {
             return true;
         }
-
-        final long ttlMs = ttl * 60L * 1000L;
+        
         final SecurityToken idpToken = getSecurityTokenFromRequest(request);
         if (idpToken == null) {
             return true;
         }
 
+        final long ttlMs = ttl * 60L * 1000L;
         if (ttlMs > 0) {
             final Date createdDate = idpToken.getCreated();
             if (createdDate != null) {
@@ -151,6 +156,7 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
     }
 
     private SecurityToken getSecurityTokenFromRequest(final HttpServletRequest request) {
+        
         return (SecurityToken) request.getAttribute("idpSecurityToken");
     }
 }
