@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.IdentityProviderSTSClient;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
+import org.jasig.cas.client.validation.Assertion;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +53,11 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     public DefaultRelyingPartyTokenProducer(final IdentityProviderConfigurationService identityProviderConfigurationService) {
         this.identityProviderConfigurationService = identityProviderConfigurationService;
     }
-
-
+    
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
-                          final WSFederationRequest fedRequest, final HttpServletRequest servletRequest) {
+                          final WSFederationRequest fedRequest, final HttpServletRequest servletRequest,
+                          final Assertion assertion) {
         final Bus cxfBus = BusFactory.getDefaultBus();
         final IdentityProviderSTSClient sts = new IdentityProviderSTSClient(cxfBus);
         sts.setAddressingNamespace(StringUtils.defaultIfBlank(service.getAddressingNamespace(), WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING));
