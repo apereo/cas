@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -43,10 +44,11 @@ public class WSWSFederationValidateRequestController extends BaseWSFederationReq
                                                    final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
                                                    final HttpClient httpClient,
                                                    final SecurityTokenTicketFactory securityTokenTicketFactory,
-                                                   final TicketRegistry ticketRegistry) {
+                                                   final TicketRegistry ticketRegistry,
+                                                   final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(identityProviderConfigurationService, servicesManager,
                 webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient,
-                securityTokenTicketFactory, ticketRegistry);
+                securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator);
     }
 
     /**

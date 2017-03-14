@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -57,9 +58,10 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
                                                          final HttpClient httpClient,
                                                          final SecurityTokenTicketFactory securityTokenTicketFactory,
-                                                         final TicketRegistry ticketRegistry) {
+                                                         final TicketRegistry ticketRegistry,
+                                                         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(identityProviderConfigurationService, servicesManager, webApplicationServiceFactory, casProperties,
-                serviceSelectionStrategy, httpClient, securityTokenTicketFactory, ticketRegistry);
+                serviceSelectionStrategy, httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator);
         this.relyingPartyTokenProducer = relyingPartyTokenProducer;
     }
 
