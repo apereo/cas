@@ -128,7 +128,7 @@ public class SamlMetadataUIConfiguration {
             }
 
             boolean addResource = true;
-            if (StringUtils.isNotEmpty(signingKey)) {
+            if (StringUtils.isNotBlank(signingKey)) {
                 final SignatureValidationFilter sigFilter = SamlUtils.buildSignatureValidationFilter(this.resourceLoader, signingKey);
                 if (sigFilter != null) {
                     sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());

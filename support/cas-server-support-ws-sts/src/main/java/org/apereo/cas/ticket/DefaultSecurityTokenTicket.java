@@ -1,6 +1,9 @@
 package org.apereo.cas.ticket;
 
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.util.EncodingUtils;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -52,5 +55,11 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
     @Override
     public String getPrefix() {
         return SecurityTokenTicket.PREFIX;
+    }
+
+    @Override
+    public SecurityToken getSecurityToken() {
+        final byte[] securityTokenBin = EncodingUtils.decodeBase64(this.securityToken);
+        return SerializationUtils.deserialize(securityTokenBin);
     }
 }

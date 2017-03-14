@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -67,6 +68,10 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+    
+    @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
@@ -93,7 +98,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     public WSWSFederationValidateRequestController federationValidateRequestController() {
         return new WSWSFederationValidateRequestController(idpConfigService(), servicesManager,
                 webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
-                httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator);
+                httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
+                ticketRegistrySupport);
     }
 
     @Lazy
@@ -105,7 +111,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return new WSFederationValidateRequestCallbackController(idpConfigService(), servicesManager,
                 webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
                 wsFederationAuthenticationServiceSelectionStrategy(),
-                httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator);
+                httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
+                ticketRegistrySupport);
     }
 
     @Lazy

@@ -194,6 +194,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         final String remoteHostName = revDNS.get();
         LOGGER.debug("Found remote host name [{}].", remoteHostName);
 
-        return StringUtils.isNotEmpty(remoteHostName) ? remoteHostName : remoteIp;
+        return StringUtils.isNotBlank(remoteHostName) ? remoteHostName : remoteIp;
     }
 }

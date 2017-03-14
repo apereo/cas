@@ -3,11 +3,6 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 /**
  * This is {@link SecurityTokenTicketFactory}.
  *
@@ -25,4 +20,12 @@ public interface SecurityTokenTicketFactory extends TicketFactory {
      * @return the security token ticket
      */
     SecurityTokenTicket create(TicketGrantingTicket ticket, SecurityToken securityToken);
+
+    /**
+     * Gets security token ticket.
+     *
+     * @param ticketGrantingTicket the ticket
+     * @return the security token ticket
+     */
+    String getId(String ticketGrantingTicket);
 }

@@ -29,7 +29,11 @@ public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFac
     @Override
     public SecurityTokenTicket create(final TicketGrantingTicket ticket, final SecurityToken securityToken) {
         final String token = EncodingUtils.encodeBase64(SerializationUtils.serialize(securityToken));
-        final String id = ticket.getId().replace(TicketGrantingTicket.PREFIX, SecurityTokenTicket.PREFIX);
-        return new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicy, token);
+        return new DefaultSecurityTokenTicket(getId(ticket.getId()), ticket, this.expirationPolicy, token);
+    }
+
+    @Override
+    public String getId(final String ticketGrantingTicket) {
+        return ticketGrantingTicket.replace(TicketGrantingTicket.PREFIX, SecurityTokenTicket.PREFIX);
     }
 }
