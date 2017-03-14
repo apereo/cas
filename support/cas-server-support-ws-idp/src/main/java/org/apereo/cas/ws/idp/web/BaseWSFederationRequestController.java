@@ -11,7 +11,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.slf4j.Logger;
@@ -50,18 +53,28 @@ public abstract class BaseWSFederationRequestController {
     
     protected final HttpClient httpClient;
 
+    protected final SecurityTokenTicketFactory securityTokenTicketFactory;
+    
+    protected final TicketRegistry ticketRegistry;
+
+    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    
     public BaseWSFederationRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
                                              final ServicesManager servicesManager,
                                              final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                              final CasConfigurationProperties casProperties,
-                                             final AuthenticationServiceSelectionStrategy serviceSelectionStrategy, 
-                                             final HttpClient httpClient) {
+                                             final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
+                                             final HttpClient httpClient,
+                                             final SecurityTokenTicketFactory securityTokenTicketFactory, 
+                                             final TicketRegistry ticketRegistry) {
         this.identityProviderConfigurationService = identityProviderConfigurationService;
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.casProperties = casProperties;
         this.serviceSelectionStrategy = serviceSelectionStrategy;
         this.httpClient = httpClient;
+        this.securityTokenTicketFactory = securityTokenTicketFactory;
+        this.ticketRegistry = ticketRegistry;
         this.callbackService = registerCallback(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 

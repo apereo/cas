@@ -7,6 +7,7 @@ import org.apache.cxf.sts.claims.ClaimsParameters;
 import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
+import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
 
     @Override
     public List<URI> getSupportedClaimTypes() {
-        return Claims.ALL_CLAIMS
+        return WSFederationClaims.ALL_CLAIMS
                 .stream()
                 .map(c -> UriBuilder.fromUri(c.getUri()).build())
                 .collect(Collectors.toList());
@@ -54,22 +55,19 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             LOGGER.warn("No claims are available to process");
             return new ProcessedClaimCollection();
         }
-
+        
         final ProcessedClaimCollection claimCollection = new ProcessedClaimCollection();
         for (final Claim requestClaim : claims) {
-            final String claimValue = "This is a test";
-            if (claimValue != null) {
-                final ProcessedClaim claim = new ProcessedClaim();
-                claim.setClaimType(requestClaim.getClaimType());
-                claim.setIssuer(this.issuer);
-                claim.setOriginalIssuer(this.issuer);
-                claim.addValue(claimValue);
-                claimCollection.add(claim);
-            }
+            final ProcessedClaim claim = new ProcessedClaim();
+            claim.setClaimType(requestClaim.getClaimType());
+            claim.setIssuer(this.issuer);
+            claim.setOriginalIssuer(this.issuer);
+            claim.setValues(requestClaim.getValues());
+            claimCollection.add(claim);
+            
         }
         return claimCollection;
     }
-
 
     @Override
     public List<String> getSupportedRealms() {

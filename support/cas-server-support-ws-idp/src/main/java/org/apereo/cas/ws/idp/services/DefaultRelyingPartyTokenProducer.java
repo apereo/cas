@@ -14,13 +14,14 @@ import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSUtils;
 import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.stax.ext.WSSConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
+import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 import org.jasig.cas.client.validation.Assertion;
-import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -37,7 +38,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.cert.X509Certificate;
-import java.util.List;
+import java.util.Collections;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.
@@ -75,7 +76,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         sts.setServiceQName(new QName(namespace, service.getWsdlService()));
         sts.setEndpointQName(new QName(namespace, service.getWsdlEndpoint()));
 
-        mapAttributesToRequestedClaims(service, sts);
+        mapAttributesToRequestedClaims(service, sts, assertion);
 
         if (service.getLifetime() > 0) {
             sts.setEnableLifetime(true);
@@ -83,7 +84,8 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         }
         sts.setEnableAppliesTo(StringUtils.isNotBlank(service.getAppliesTo()));
         sts.setOnBehalfOf(securityToken.getToken());
-
+        
+        
         final Element rpToken = requestSecurityTokenResponse(service, sts, assertion);
         return serializeRelyingPartyToken(rpToken);
     }
@@ -114,15 +116,39 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         }
     }
 
-    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts) {
-        if (service.getAttributeReleasePolicy() instanceof WSFederationClaimsReleasePolicy) {
-            final WSFederationClaimsReleasePolicy policy = (WSFederationClaimsReleasePolicy) service.getAttributeReleasePolicy();
-            final Element claims = createClaimsElement(policy.getAllowedAttributes());
-            if (claims != null) {
-                sts.setClaims(claims);
-            }
+    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
+                                                final Assertion assertion) {
+        try {
+            final W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
+            writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
+            writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
+            writer.writeNamespace("ic", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+            writer.writeAttribute("Dialect", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+
+            assertion.getPrincipal().getAttributes().forEach((k, v) -> {
+                try {
+                    if (WSFederationClaims.contains(k)) {
+                        final String uri = WSFederationClaims.valueOf(k).getUri();
+                        LOGGER.debug("Requesting claim [{}] mapped to [{}]", k, uri);
+                        writer.writeStartElement("ic", "ClaimType", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+                        writer.writeAttribute("Uri", uri);
+                        writer.writeAttribute("Optional", Boolean.TRUE.toString());
+                        writer.writeEndElement();
+                    }
+                } catch (final Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            });
+
+            writer.writeEndElement();
+
+            final Element claims = writer.getDocument().getDocumentElement();
+            sts.setClaims(claims);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
+
 
     private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
                                                  final SecurityTokenServiceClient sts,
@@ -141,34 +167,6 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         } catch (final Exception ex) {
             throw Throwables.propagate(ex);
         }
-    }
-
-    private Element createClaimsElement(final List<String> realmClaims) {
-        try {
-            if (realmClaims == null || realmClaims.isEmpty()) {
-                return null;
-            }
-
-            final W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
-            writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
-            writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
-            writer.writeNamespace("ic", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-            writer.writeAttribute("Dialect", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-
-            realmClaims.forEach(Unchecked.consumer(a -> {
-                LOGGER.debug("Requesting claim [{}]", a);
-                writer.writeStartElement("ic", "ClaimType", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-                writer.writeAttribute("Uri", a);
-                writer.writeAttribute("Optional", Boolean.TRUE.toString());
-                writer.writeEndElement();
-            }));
-
-            writer.writeEndElement();
-            return writer.getDocument().getDocumentElement();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
     }
 
     private Pair<String, String> prepareSecurityTokenServiceTokenKeyType(final WSFederationRegisteredService service,
