@@ -155,6 +155,7 @@ public enum WSFederationClaims {
      * Contains claim.
      *
      * @param claimName the claim name
+     * @return true/false
      */
     public static boolean contains(final String claimName) {
         return EnumUtils.isValidEnum(WSFederationClaims.class, claimName);

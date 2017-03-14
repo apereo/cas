@@ -27,24 +27,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link WSWSFederationValidateRequestController}.
+ * This is {@link WSFederationValidateRequestController}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class WSWSFederationValidateRequestController extends BaseWSFederationRequestController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WSWSFederationValidateRequestController.class);
+public class WSFederationValidateRequestController extends BaseWSFederationRequestController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationValidateRequestController.class);
 
-    public WSWSFederationValidateRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
-                                                   final ServicesManager servicesManager,
-                                                   final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                   final CasConfigurationProperties casProperties,
-                                                   final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
-                                                   final HttpClient httpClient,
-                                                   final SecurityTokenTicketFactory securityTokenTicketFactory,
-                                                   final TicketRegistry ticketRegistry,
-                                                   final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                                   final TicketRegistrySupport ticketRegistrySupport) {
+    public WSFederationValidateRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
+                                                 final ServicesManager servicesManager,
+                                                 final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                                 final CasConfigurationProperties casProperties,
+                                                 final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
+                                                 final HttpClient httpClient,
+                                                 final SecurityTokenTicketFactory securityTokenTicketFactory,
+                                                 final TicketRegistry ticketRegistry,
+                                                 final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                                 final TicketRegistrySupport ticketRegistrySupport) {
         super(identityProviderConfigurationService, servicesManager,
                 webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient,
                 securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator, ticketRegistrySupport);

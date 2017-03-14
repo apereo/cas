@@ -44,7 +44,6 @@ import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
@@ -272,7 +271,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     }
 
     private Properties getSecurityProperties(final String file, final String psw, final String alias) {
-        Properties p = new Properties();
+        final Properties p = new Properties();
         p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
         p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
         p.put("org.apache.ws.security.crypto.merlin.keystore.password", psw);
