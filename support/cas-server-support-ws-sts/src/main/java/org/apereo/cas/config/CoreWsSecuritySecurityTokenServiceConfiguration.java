@@ -9,7 +9,6 @@ import org.apache.cxf.sts.event.map.EventMapper;
 import org.apache.cxf.sts.event.map.MapEventLogger;
 import org.apache.cxf.sts.operation.TokenIssueOperation;
 import org.apache.cxf.sts.operation.TokenValidateOperation;
-import org.apache.cxf.sts.service.EncryptionProperties;
 import org.apache.cxf.sts.service.StaticService;
 import org.apache.cxf.sts.token.delegation.SAMLDelegationHandler;
 import org.apache.cxf.sts.token.delegation.TokenDelegationHandler;
@@ -133,7 +132,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
         final TokenIssueOperation op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());
-        op.setServices(transportServices());
+        op.setServices(Arrays.asList(transportService()));
         op.setStsProperties(transportSTSProperties());
         op.setClaimsManager(claimsManager);
         op.setTokenValidators(transportTokenValidators());
@@ -188,8 +187,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @Bean
     public Map<String, RealmProperties> realms() {
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
         final Map<String, RealmProperties> realms = new HashMap<>();
-        realms.put("REALMA", realmA());
+        realms.put(idp.getRealmUri(), realmA());
         return realms;
     }
 
@@ -239,27 +239,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     }
 
     @Bean
-    public List transportServices() {
-        return Arrays.asList(myEncryptionService(), transportService());
-    }
-
-    @Bean
     public StaticService transportService() {
         final StaticService s = new StaticService();
         s.setEndpoints(Arrays.asList(".*"));
-        return s;
-    }
-
-    @Bean
-    public StaticService myEncryptionService() {
-        final StaticService s = new StaticService();
-        s.setEndpoints(Arrays.asList("myServiceB.*"));
-
-        final EncryptionProperties encryptionProperties = new EncryptionProperties();
-        encryptionProperties.setEncryptionName("serviceB");
-        encryptionProperties.setEncryptionAlgorithm("http://www.w3.org/2001/04/xmlenc#aes128-cbc");
-        s.setEncryptionProperties(encryptionProperties);
-
         return s;
     }
 
