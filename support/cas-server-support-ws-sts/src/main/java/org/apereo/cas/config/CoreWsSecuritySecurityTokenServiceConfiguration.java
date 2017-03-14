@@ -15,7 +15,6 @@ import org.apache.cxf.sts.token.provider.DefaultConditionsProvider;
 import org.apache.cxf.sts.token.provider.DefaultSubjectProvider;
 import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
 import org.apache.cxf.sts.token.realm.RealmProperties;
-import org.apache.cxf.sts.token.realm.Relationship;
 import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
 import org.apache.cxf.sts.token.validator.TokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
@@ -166,19 +165,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @RefreshScope
     @Bean
-    public List<Relationship> relationships() {
-        final Relationship rel1 = new Relationship();
-        rel1.setSourceRealm("REALMA");
-        rel1.setTargetRealm("REALMB");
-        rel1.setType("FederatedIdentity");
-
-        final List<Relationship> list = new ArrayList<>();
-        list.add(rel1);
-        return list;
-    }
-
-    @RefreshScope
-    @Bean
     public List transportTokenValidators() {
         final List list = new ArrayList<>();
         list.add(transportSamlTokenValidator());
@@ -196,7 +182,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @RefreshScope
     @Bean
-    public RealmProperties realmA() {
+    public RealmProperties casRealm() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
         final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
 
@@ -216,7 +202,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     public Map<String, RealmProperties> realms() {
         final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
         final Map<String, RealmProperties> realms = new HashMap<>();
-        realms.put(idp.getRealmName(), realmA());
+        realms.put(idp.getRealmName(), casRealm());
         return realms;
     }
 
@@ -282,13 +268,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     @Bean
     public STSPropertiesMBean transportSTSProperties() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
-
         final StaticSTSProperties s = new StaticSTSProperties();
         s.setIssuer(getClass().getSimpleName());
         s.setRealmParser(new UriRealmParser(realms()));
         s.setSignatureCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getSigningKeystoreFile(), wsfed.getSigningKeystorePassword()));
         s.setEncryptionCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getEncryptionKeystoreFile(), wsfed.getEncryptionKeystorePassword()));
-        s.setRelationships(relationships());
         return s;
     }
 
