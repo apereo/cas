@@ -39,7 +39,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,16 +95,14 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
         final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
         final SecurityToken securityToken = validateSecurityTokenInAssertion(assertion, request, response);
-        addSecurityTokenTicketToRegistry(request, securityToken, assertion);
+        addSecurityTokenTicketToRegistry(request, securityToken);
         final String rpToken = produceRelyingPartyToken(response, request, fedRequest, securityToken, assertion);
         return postResponseBackToRelyingParty(rpToken, securityToken, assertion, fedRequest, request, response, idp);
     }
 
-    private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken,
-                                                  final Assertion assertion) {
+    private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken) {
         LOGGER.debug("Adding security token as a ticket to CAS ticket registry...");
         final TicketGrantingTicket tgt = getTicketGrantingTicketFromRequest(request);
-        securityToken.setProperties(Collections.singletonMap("Misagh", "Misagh123456"));
         this.ticketRegistry.addTicket(securityTokenTicketFactory.create(tgt, securityToken));
     }
 

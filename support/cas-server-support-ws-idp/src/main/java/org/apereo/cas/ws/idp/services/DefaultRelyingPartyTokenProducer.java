@@ -16,6 +16,7 @@ import org.apache.cxf.ws.security.trust.STSUtils;
 import org.apache.wss4j.dom.WSConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -37,6 +38,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.
@@ -75,14 +77,9 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         sts.setEndpointQName(new QName(namespace, service.getWsdlEndpoint()));
 
         mapAttributesToRequestedClaims(service, sts, assertion);
-
-        if (service.getLifetime() > 0) {
-            sts.setEnableLifetime(true);
-            sts.setTtl(Long.valueOf(service.getLifetime()).intValue());
-        }
+        
         sts.setEnableAppliesTo(StringUtils.isNotBlank(service.getAppliesTo()));
         sts.setOnBehalfOf(securityToken.getToken());
-        
         
         final Element rpToken = requestSecurityTokenResponse(service, sts, assertion);
         return serializeRelyingPartyToken(rpToken);
@@ -128,9 +125,19 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                     if (WSFederationClaims.contains(k)) {
                         final String uri = WSFederationClaims.valueOf(k).getUri();
                         LOGGER.debug("Requesting claim [{}] mapped to [{}]", k, uri);
-                        writer.writeStartElement("ic", "ClaimType", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+                        writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
                         writer.writeAttribute("Uri", uri);
                         writer.writeAttribute("Optional", Boolean.TRUE.toString());
+
+                        final Collection vv = CollectionUtils.toCollection(v);
+                        for (final Object value : vv) {
+                            if (value instanceof String) {
+                                writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+                                writer.writeCharacters((String) value);
+                                writer.writeEndElement();
+                            } 
+                        }
+                        
                         writer.writeEndElement();
                     }
                 } catch (final Exception e) {

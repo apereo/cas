@@ -28,8 +28,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 <div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly incude this component
-in your configuration and overlays. The security token service will be pulled in automatically once you declare
-the identity provider. Only include this module in your overlay if you need compile-time access to the components within.</p></div>
+in your configuration and overlays. This is just to teach you that it exists. The security token service will be pulled 
+in automatically once you declare the identity provider. Only include this module in your overlay if you 
+need compile-time access to the components within.</p></div>
 
 ### Endpoints
 
@@ -37,6 +38,11 @@ the identity provider. Only include this module in your overlay if you need comp
 |------------------------|----------------------------------------------------------------------------------------------------------------------
 | `/cas/ws/sts`          | Presents the list of available SOAP services and their WSDL configuration for each REALM defined in the configuration.
 
+
+### Security Tokens
+
+Talk about lifetime and expiration policy
+Talk about how they are just normal tickets. HA concerns.
 
 ## WS Federation Identity Provider
 
@@ -58,6 +64,44 @@ Support is enabled by including the following dependency in the WAR overlay:
 | Endpoint                        | Description
 |---------------------------------|--------------------------------------------------------------------------------------------------------
 | `/cas/ws/idp/metadata`          | Displays the current federation metadata based on the configuration realm for the identity provider.
+| `/cas/ws/idp/federation`        | Endpoint to receive initial `GET` authentication requests from clients, typically identified as the `issuer`.
+
+## Register Clients
+
+Clients and relying parties can be registered with CAS as such:
+
+```json
+{
+  "@class" : "org.apereo.cas.ws.idp.services.WSFederationRegisteredService",
+  "serviceId" : "https://wsfed.example.org/.+",
+  "name" : "Sample WsFed Application",
+  "id" : 100,
+  "realm" : "urn:wsfed:example:org:sampleapplication",
+  "wsdlLocation": "https://mmoayyed.unicon.net:8443/cas/ws/sts/REALMA/STSServiceTransportUT?wsdl",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "GIVEN_NAME" : "cn",
+      "EMAIL_ADDRESS_2005" : "mail",
+      "ROLE" : "affiliation",
+      "SURNAME" : "firstname"
+    }
+  }
+}
+```
+
+| Field                         | Description
+|-------------------------------|--------------------------------------------------------------------------------------------------
+| `serviceId`                   | Callback/Consumer url where tokens may be `POST`ed, typically matching the `wreply` parameter.
+| `realm`                       | The realm identifier of the application, identified via the `wtrealm` parameter.
+| `appliesTo`                   | Controls to whom security tokens apply. Defaults to the `realm`.
+
+Service definitions may be managed by the [service management](Service-Management.html) facility.
+
+### Claims
+
+List of available claims and how they are mapped.
 
 ## Configuration
 
