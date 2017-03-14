@@ -1,7 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
 import com.google.common.base.Throwables;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.Bus;
@@ -52,12 +52,12 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     private final CipherExecutor<String, String> credentialCipherExecutor;
     private final IdentityProviderConfigurationService identityProviderConfigurationService;
 
-    public DefaultRelyingPartyTokenProducer(final CipherExecutor<String, String> credentialCipherExecutor, 
+    public DefaultRelyingPartyTokenProducer(final CipherExecutor<String, String> credentialCipherExecutor,
                                             final IdentityProviderConfigurationService identityProviderConfigurationService) {
         this.credentialCipherExecutor = credentialCipherExecutor;
         this.identityProviderConfigurationService = identityProviderConfigurationService;
     }
-    
+
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
                           final WSFederationRequest fedRequest, final HttpServletRequest servletRequest,
@@ -69,7 +69,6 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         final Pair<String, String> pair = prepareSecurityTokenServiceTokenKeyType(service, fedRequest, sts);
         handlePublicKeyTypeIfNecessary(servletRequest, sts, pair);
 
-        //sts.setWsdlLocation("https://mmoayyed.unicon.net:8443/cas/ws/sts/REALMA/STSServiceTransport?wsdl");
         sts.setWsdlLocation(service.getWsdlLocation());
 
         final String namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
@@ -104,15 +103,15 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     }
 
     private String serializeRelyingPartyToken(final Element rpToken) {
-        final StringWriter sw = new StringWriter();
         try {
+            final StringWriter sw = new StringWriter();
             Transformer t = TransformerFactory.newInstance().newTransformer();
-            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, BooleanUtils.toStringYesNo(Boolean.TRUE));
             t.transform(new DOMSource(rpToken), new StreamResult(sw));
+            return sw.toString();
         } catch (final TransformerException e) {
-            LOGGER.warn(e.getMessage(), e);
+            throw Throwables.propagate(e);
         }
-        return StringEscapeUtils.escapeXml11(sw.toString());
     }
 
     private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts) {
@@ -125,14 +124,14 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         }
     }
 
-    private Element requestSecurityTokenResponse(final WSFederationRegisteredService service, 
+    private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
                                                  final SecurityTokenServiceClient sts,
                                                  final Assertion assertion) {
         try {
             sts.getProperties().put(SecurityConstants.USERNAME, assertion.getPrincipal().getName());
             final String uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
             sts.getProperties().put(SecurityConstants.PASSWORD, uid);
-            
+
             return sts.requestSecurityTokenResponse(service.getAppliesTo());
         } catch (final SoapFault ex) {
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
