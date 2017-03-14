@@ -19,17 +19,12 @@ public class RealmAwareIdentityMapper implements IdentityMapper {
     
     @Override
     public Principal mapPrincipal(final String sourceRealm, final Principal sourcePrincipal, final String targetRealm) {
-        if ("REALMA".equals(sourceRealm)) {
+        if ("realma".equals(sourceRealm)) {
             final String name = sourcePrincipal.getName().toUpperCase();
             LOGGER.info("Principal {} mapped to {}", sourcePrincipal.getName(), name);
             return new CustomTokenPrincipal(name);
         }
 
-        if ("REALMB".equals(sourceRealm)) {
-            final String name = sourcePrincipal.getName().toLowerCase();
-            LOGGER.info("Principal {} mapped to {}", sourcePrincipal.getName(), name);
-            return new CustomTokenPrincipal(name);
-        }
 
         LOGGER.info("The source realm of " + sourceRealm + " is unknown");
         return null;

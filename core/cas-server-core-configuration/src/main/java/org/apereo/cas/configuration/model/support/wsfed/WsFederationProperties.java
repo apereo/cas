@@ -30,7 +30,7 @@ public class WsFederationProperties {
 
     public static class IdentityProvider {
         private String realm;
-        private String uri;
+        private String realmUri;
         private File certificate;
         private String certificatePassword;
 
@@ -58,12 +58,12 @@ public class WsFederationProperties {
             this.realm = realm;
         }
 
-        public String getUri() {
-            return uri;
+        public String getRealmUri() {
+            return realmUri;
         }
 
-        public void setUri(final String uri) {
-            this.uri = uri;
+        public void setRealmUri(final String realmUri) {
+            this.realmUri = realmUri;
         }
     }
     
