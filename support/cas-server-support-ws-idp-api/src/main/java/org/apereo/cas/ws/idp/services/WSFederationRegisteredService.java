@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.wss4j.dom.WSConstants;
@@ -24,14 +25,12 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
     private String realm;
     private String protocol = WSConstants.WST_NS_05_12;
     private String tokenType = WSConstants.WSS_SAML2_TOKEN_TYPE;
-    private long lifetime = 1_000;
-    private String role = WSFederationRegisteredService.class.getSimpleName();
     private String wsdlLocation;
     private String namespace = WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512;
     private String addressingNamespace = WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING;
     private String policyNamespace;
     private String wsdlService = WSFederationConstants.SECURITY_TOKEN_SERVICE;
-    private String wsdlEndpoint;
+    private String wsdlEndpoint = WSFederationConstants.SECURITY_TOKEN_SERVICE_ENDPOINT;
     private String appliesTo;
 
     @Override
@@ -71,22 +70,6 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
         this.tokenType = tokenType;
     }
 
-    public long getLifetime() {
-        return lifetime;
-    }
-
-    public void setLifetime(final long lifetime) {
-        this.lifetime = lifetime;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(final String role) {
-        this.role = role;
-    }
-
     public String getWsdlLocation() {
         return wsdlLocation;
     }
@@ -120,7 +103,7 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
     }
 
     public String getAppliesTo() {
-        return appliesTo;
+        return StringUtils.defaultIfBlank(appliesTo, this.realm);
     }
 
     public void setAppliesTo(final String appliesTo) {
@@ -153,14 +136,12 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
                 .append(this.addressingNamespace, rhs.addressingNamespace)
                 .append(this.protocol, rhs.protocol)
                 .append(this.tokenType, rhs.tokenType)
-                .append(this.lifetime, rhs.lifetime)
-                .append(this.role, rhs.role)
                 .append(this.wsdlLocation, rhs.wsdlLocation)
                 .append(this.namespace, rhs.namespace)
                 .append(this.policyNamespace, rhs.policyNamespace)
                 .append(this.wsdlService, rhs.wsdlService)
                 .append(this.wsdlEndpoint, rhs.wsdlEndpoint)
-                .append(this.appliesTo, rhs.appliesTo)
+                .append(getAppliesTo(), getAppliesTo())
                 .isEquals();
     }
 
@@ -172,13 +153,11 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
                 .append(addressingNamespace)
                 .append(protocol)
                 .append(tokenType)
-                .append(lifetime)
-                .append(role)
                 .append(wsdlLocation)
                 .append(namespace)
                 .append(wsdlService)
                 .append(wsdlEndpoint)
-                .append(appliesTo)
+                .append(getAppliesTo())
                 .append(policyNamespace)
                 .toHashCode();
     }
