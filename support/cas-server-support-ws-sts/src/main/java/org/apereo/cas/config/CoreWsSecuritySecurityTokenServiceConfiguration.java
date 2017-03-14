@@ -30,6 +30,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.SecurityTokenServiceAuthenticationPostProcessor;
+import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
@@ -78,7 +79,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
     private ExpirationPolicy grantingTicketExpirationPolicy;
-    
+
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
     private AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy;
@@ -283,11 +284,18 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return p;
     }
 
+    @Bean
+    public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() {
+        return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdP(),
+                casProperties.getServer().getPrefix());
+    }
+
     @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationPostProcessor")
     @Bean
     public AuthenticationPostProcessor securityTokenServiceAuthenticationPostProcessor() {
         return new SecurityTokenServiceAuthenticationPostProcessor(servicesManager, idpConfigService,
-                wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor());
+                wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor(),
+                securityTokenServiceClientBuilder());
     }
 
     @Bean
@@ -300,7 +308,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     public SecurityTokenTicketFactory securityTokenTicketFactory() {
         return new DefaultSecurityTokenTicketFactory(grantingTicketExpirationPolicy);
     }
-    
+
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         plan.registerAuthenticationPostProcessor(securityTokenServiceAuthenticationPostProcessor());
