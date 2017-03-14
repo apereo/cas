@@ -1,6 +1,8 @@
 package org.apereo.cas.support.realm;
 
 import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -9,16 +11,17 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * This is {@link RealmVerificationCallbackHandler}.
+ * This is {@link RealmPasswordVerificationCallbackHandler}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class RealmVerificationCallbackHandler implements CallbackHandler {
-    private final String realm;
+public class RealmPasswordVerificationCallbackHandler implements CallbackHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RealmPasswordVerificationCallbackHandler.class);
+    private final String psw;
 
-    public RealmVerificationCallbackHandler(final String realm) {
-        this.realm = realm;
+    public RealmPasswordVerificationCallbackHandler(final String psw) {
+        this.psw = psw;
     }
 
     @Override
@@ -27,9 +30,9 @@ public class RealmVerificationCallbackHandler implements CallbackHandler {
                 .filter(WSPasswordCallback.class::isInstance)
                 .map(WSPasswordCallback.class::cast)
                 .forEach(c -> {
-                    if (realm.equalsIgnoreCase(c.getIdentifier())) {
-                        c.setPassword(c.getIdentifier());
-                    }
+                    LOGGER.debug("Evaluating [{}]", c.getIdentifier());
+                    c.setPassword(this.psw);
+                    LOGGER.debug("Authenticated [{}] successfully.", c.getIdentifier());
                 });
     }
 }
