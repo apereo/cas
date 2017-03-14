@@ -114,8 +114,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             final WsFederationProperties wsfed = casProperties.getAuthn().getWsfedIdP();
             final DefaultRealmAwareIdentityProvider idp = new DefaultRealmAwareIdentityProvider();
             idp.setRealm(wsfed.getIdp().getRealm());
-            idp.setUri(wsfed.getIdp().getUri());
-            idp.setStsUrl(new URL(casProperties.getServer().getPrefix().concat("/ws/sts/").concat(wsfed.getIdp().getUri())));
+            idp.setUri(wsfed.getIdp().getRealmUri());
+            idp.setStsUrl(new URL(casProperties.getServer().getPrefix().concat("/ws/sts/").concat(wsfed.getIdp().getRealmUri())));
             idp.setIdpUrl(new URL(casProperties.getServer().getPrefix().concat("/ws/idp/federation")));
             idp.setCertificate(wsfed.getIdp().getCertificate());
             idp.setCertificatePassword(wsfed.getIdp().getCertificatePassword());
