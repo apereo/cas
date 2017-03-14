@@ -39,33 +39,80 @@ import java.util.Date;
  */
 @Controller
 public abstract class BaseWSFederationRequestController {
+    /**
+     * The constant LOGGER.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseWSFederationRequestController.class);
 
     /**
-     * Idp config service.
+     * The Identity provider configuration service.
      */
     protected final IdentityProviderConfigurationService identityProviderConfigurationService;
 
+    /**
+     * The Services manager.
+     */
     protected final ServicesManager servicesManager;
 
+    /**
+     * The Web application service factory.
+     */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    /**
+     * The Callback service.
+     */
     protected final Service callbackService;
 
+    /**
+     * The Cas properties.
+     */
     protected final CasConfigurationProperties casProperties;
 
+    /**
+     * The Service selection strategy.
+     */
     protected final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
+    /**
+     * The Http client.
+     */
     protected final HttpClient httpClient;
 
+    /**
+     * The Security token ticket factory.
+     */
     protected final SecurityTokenTicketFactory securityTokenTicketFactory;
 
+    /**
+     * The Ticket registry.
+     */
     protected final TicketRegistry ticketRegistry;
 
+    /**
+     * The Ticket granting ticket cookie generator.
+     */
     protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
+    /**
+     * The Ticket registry support.
+     */
     protected final TicketRegistrySupport ticketRegistrySupport;
 
+    /**
+     * Instantiates a new Base ws federation request controller.
+     *
+     * @param identityProviderConfigurationService the identity provider configuration service
+     * @param servicesManager                      the services manager
+     * @param webApplicationServiceFactory         the web application service factory
+     * @param casProperties                        the cas properties
+     * @param serviceSelectionStrategy             the service selection strategy
+     * @param httpClient                           the http client
+     * @param securityTokenTicketFactory           the security token ticket factory
+     * @param ticketRegistry                       the ticket registry
+     * @param ticketGrantingTicketCookieGenerator  the ticket granting ticket cookie generator
+     * @param ticketRegistrySupport                the ticket registry support
+     */
     public BaseWSFederationRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
                                              final ServicesManager servicesManager,
                                              final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -89,6 +136,12 @@ public abstract class BaseWSFederationRequestController {
         this.callbackService = registerCallback(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
+    /**
+     * Register callback service.
+     *
+     * @param callbackUrl the callback url
+     * @return the service
+     */
     private Service registerCallback(final String callbackUrl) {
         final Service callbackService = this.webApplicationServiceFactory.createService(callbackUrl);
         if (!this.servicesManager.matchesExistingService(callbackService)) {
@@ -108,26 +161,34 @@ public abstract class BaseWSFederationRequestController {
         return callbackService;
     }
 
+    /**
+     * Construct service url string.
+     *
+     * @param request             the request
+     * @param response            the response
+     * @param wsfedRequest the ws federation request
+     * @return the string
+     */
     protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
-                                         final WSFederationRequest WSFederationRequest) {
+                                         final WSFederationRequest wsfedRequest) {
         try {
             final URIBuilder builder = new URIBuilder(this.callbackService.getId());
 
-            builder.addParameter(WSFederationConstants.WA, WSFederationRequest.getWa());
-            builder.addParameter(WSFederationConstants.WREPLY, WSFederationRequest.getWreply());
-            builder.addParameter(WSFederationConstants.WTREALM, WSFederationRequest.getWtrealm());
+            builder.addParameter(WSFederationConstants.WA, wsfedRequest.getWa());
+            builder.addParameter(WSFederationConstants.WREPLY, wsfedRequest.getWreply());
+            builder.addParameter(WSFederationConstants.WTREALM, wsfedRequest.getWtrealm());
 
-            if (StringUtils.isNotBlank(WSFederationRequest.getWctx())) {
-                builder.addParameter(WSFederationConstants.WCTX, WSFederationRequest.getWctx());
+            if (StringUtils.isNotBlank(wsfedRequest.getWctx())) {
+                builder.addParameter(WSFederationConstants.WCTX, wsfedRequest.getWctx());
             }
-            if (StringUtils.isNotBlank(WSFederationRequest.getWfresh())) {
-                builder.addParameter(WSFederationConstants.WREFRESH, WSFederationRequest.getWfresh());
+            if (StringUtils.isNotBlank(wsfedRequest.getWfresh())) {
+                builder.addParameter(WSFederationConstants.WREFRESH, wsfedRequest.getWfresh());
             }
-            if (StringUtils.isNotBlank(WSFederationRequest.getWhr())) {
-                builder.addParameter(WSFederationConstants.WHR, WSFederationRequest.getWhr());
+            if (StringUtils.isNotBlank(wsfedRequest.getWhr())) {
+                builder.addParameter(WSFederationConstants.WHR, wsfedRequest.getWhr());
             }
-            if (StringUtils.isNotBlank(WSFederationRequest.getWreq())) {
-                builder.addParameter(WSFederationConstants.WREQ, WSFederationRequest.getWreq());
+            if (StringUtils.isNotBlank(wsfedRequest.getWreq())) {
+                builder.addParameter(WSFederationConstants.WREQ, wsfedRequest.getWreq());
             }
 
             final URI url = builder.build();
@@ -142,16 +203,32 @@ public abstract class BaseWSFederationRequestController {
         }
     }
 
+    /**
+     * Should redirect for authentication ?
+     *
+     * @param fedRequest the fed request
+     * @param response   the response
+     * @param request    the request
+     * @return the boolean
+     */
     protected boolean shouldRedirectForAuthentication(final WSFederationRequest fedRequest,
                                                       final HttpServletResponse response,
                                                       final HttpServletRequest request) {
         return isSecurityTokenExpired(fedRequest, response, request)
                 || isAuthenticationRequired(fedRequest, response, request);
     }
-    
+
+    /**
+     * Is security token expired ?
+     *
+     * @param fedRequest the fed request
+     * @param response   the response
+     * @param request    the request
+     * @return the boolean
+     */
     protected boolean isSecurityTokenExpired(final WSFederationRequest fedRequest,
-                                           final HttpServletResponse response,
-                                           final HttpServletRequest request) {
+                                             final HttpServletResponse response,
+                                             final HttpServletRequest request) {
         final SecurityToken idpToken = getSecurityTokenFromRequest(request);
         if (idpToken == null) {
             return true;
@@ -160,6 +237,12 @@ public abstract class BaseWSFederationRequestController {
         return idpToken.isExpired();
     }
 
+    /**
+     * Gets security token from request.
+     *
+     * @param request the request
+     * @return the security token from request
+     */
     protected SecurityToken getSecurityTokenFromRequest(final HttpServletRequest request) {
         final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {
@@ -176,6 +259,14 @@ public abstract class BaseWSFederationRequestController {
         return null;
     }
 
+    /**
+     * Is authentication required?
+     *
+     * @param fedRequest the fed request
+     * @param response   the response
+     * @param request    the request
+     * @return the boolean
+     */
     protected boolean isAuthenticationRequired(final WSFederationRequest fedRequest,
                                                final HttpServletResponse response,
                                                final HttpServletRequest request) {
