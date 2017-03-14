@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import javax.servlet.http.HttpServletRequest;
@@ -122,5 +123,25 @@ public class WSFederationRequest {
 
     public String getCode() {
         return code;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("wtrealm", wtrealm)
+                .append("wreply", wreply)
+                .append("wctx", wctx)
+                .append("wfresh", wfresh)
+                .append("whr", whr)
+                .append("wresult", wresult)
+                .append("relayState", relayState)
+                .append("samlResponse", samlResponse)
+                .append("state", state)
+                .append("code", code)
+                .append("wa", wa)
+                .append("wauth", wauth)
+                .append("wreq", wreq)
+                .toString();
     }
 }

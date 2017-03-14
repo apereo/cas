@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
@@ -246,7 +247,7 @@ public abstract class BaseWSFederationRequestController {
     protected SecurityToken getSecurityTokenFromRequest(final HttpServletRequest request) {
         final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {
-            final String sts = securityTokenTicketFactory.getId(cookieValue);
+            final String sts = securityTokenTicketFactory.createLinkedId(cookieValue);
             final SecurityTokenTicket stt = ticketRegistry.getTicket(sts, SecurityTokenTicket.class);
             if (stt == null) {
                 return null;
@@ -258,6 +259,24 @@ public abstract class BaseWSFederationRequestController {
         }
         return null;
     }
+
+    /**
+     * Gets ticket granting ticket from request.
+     *
+     * @param request the request
+     * @return the ticket granting ticket from request
+     */
+    protected TicketGrantingTicket getTicketGrantingTicketFromRequest(final HttpServletRequest request) {
+        final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        if (StringUtils.isNotBlank(cookieValue)) {
+            final TicketGrantingTicket tgt = ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
+            if (tgt != null && !tgt.isExpired()) {
+                return tgt;
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Is authentication required?
