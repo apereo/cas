@@ -27,8 +27,8 @@ public class WsFederationProperties {
     }
 
     public static class IdentityProvider {
-        private String realm;
-        private String realmName;
+        private String realm = "urn:org:apereo:cas:ws:idp:realm-CAS";
+        private String realmName = "CAS";
         
         public String getRealm() {
             return realm;

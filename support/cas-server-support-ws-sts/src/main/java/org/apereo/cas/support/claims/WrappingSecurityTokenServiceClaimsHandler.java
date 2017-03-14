@@ -1,6 +1,5 @@
 package org.apereo.cas.support.claims;
 
-import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsHandler;
 import org.apache.cxf.sts.claims.ClaimsParameters;
@@ -55,17 +54,19 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             LOGGER.warn("No claims are available to process");
             return new ProcessedClaimCollection();
         }
-        
+
         final ProcessedClaimCollection claimCollection = new ProcessedClaimCollection();
-        for (final Claim requestClaim : claims) {
-            final ProcessedClaim claim = new ProcessedClaim();
-            claim.setClaimType(requestClaim.getClaimType());
-            claim.setIssuer(this.issuer);
-            claim.setOriginalIssuer(this.issuer);
-            claim.setValues(requestClaim.getValues());
-            claimCollection.add(claim);
-            
-        }
+        claims.stream()
+                .map(requestClaim -> {
+                    final ProcessedClaim claim = new ProcessedClaim();
+                    claim.setClaimType(requestClaim.getClaimType());
+                    claim.setIssuer(this.issuer);
+                    claim.setOriginalIssuer(this.issuer);
+                    claim.setValues(requestClaim.getValues());
+                    return claim;
+                })
+                .forEach(claimCollection::add);
+
         return claimCollection;
     }
 
