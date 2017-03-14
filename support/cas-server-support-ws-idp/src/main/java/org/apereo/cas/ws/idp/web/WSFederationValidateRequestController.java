@@ -13,8 +13,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
-import org.apereo.cas.ws.idp.RealmAwareIdentityProvider;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
@@ -35,17 +33,17 @@ import javax.servlet.http.HttpServletResponse;
 public class WSFederationValidateRequestController extends BaseWSFederationRequestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationValidateRequestController.class);
 
-    public WSFederationValidateRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
-                                                 final ServicesManager servicesManager,
-                                                 final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                 final CasConfigurationProperties casProperties,
-                                                 final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
-                                                 final HttpClient httpClient,
-                                                 final SecurityTokenTicketFactory securityTokenTicketFactory,
-                                                 final TicketRegistry ticketRegistry,
-                                                 final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                                 final TicketRegistrySupport ticketRegistrySupport) {
-        super(identityProviderConfigurationService, servicesManager,
+    public WSFederationValidateRequestController(
+            final ServicesManager servicesManager,
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            final CasConfigurationProperties casProperties,
+            final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
+            final HttpClient httpClient,
+            final SecurityTokenTicketFactory securityTokenTicketFactory,
+            final TicketRegistry ticketRegistry,
+            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+            final TicketRegistrySupport ticketRegistrySupport) {
+        super(servicesManager,
                 webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient,
                 securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
     }
@@ -60,8 +58,6 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST)
     protected void handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         final WSFederationRequest fedRequest = WSFederationRequest.of(request);
-        final RealmAwareIdentityProvider idp = this.identityProviderConfigurationService.getIdentityProvider(
-                casProperties.getAuthn().getWsfedIdP().getIdp().getRealm());
 
         switch (fedRequest.getWa().toLowerCase()) {
             case WSFederationConstants.WSIGNOUT10:
@@ -70,14 +66,14 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                 break;
             case WSFederationConstants.WSIGNIN10:
             default:
-                handleInitialAuthenticationRequest(fedRequest, idp, response, request);
+                handleInitialAuthenticationRequest(fedRequest, response, request);
                 break;
         }
     }
 
-    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest, final RealmAwareIdentityProvider idp,
+    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest, 
                                                     final HttpServletResponse response, final HttpServletRequest request) {
-        if (StringUtils.isNotBlank(fedRequest.getWtrealm()) && idp.getAuthenticationURIs().containsKey(fedRequest.getWauth())) {
+        if (StringUtils.isNotBlank(fedRequest.getWtrealm())) {
             if (shouldRedirectForAuthentication(fedRequest, response, request)) {
                 LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
                 redirectToIdentityProvider(fedRequest, response, request);
@@ -85,7 +81,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                 LOGGER.debug("Request [{}] does not require authentication.", fedRequest);
             }
         } else {
-            LOGGER.warn("Unrecognized authentication request [{}]", fedRequest);
+            LOGGER.warn("Unrecognized authentication request [{}]. No realm specified", fedRequest);
         }
     }
 
