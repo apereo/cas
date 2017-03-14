@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.web;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CasProtocolConstants;
@@ -81,7 +82,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
         final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
         final SecurityToken securityToken = validateSecurityTokenInAssertion(assertion, request, response);
-        final String rpToken = produceRelyingPartyToken(response, request, fedRequest, securityToken);
+        final String rpToken = produceRelyingPartyToken(response, request, fedRequest, securityToken, assertion);
         return postResponseBackToRelyingParty(rpToken, securityToken, assertion, fedRequest, request, response, idp);
     }
 
@@ -100,7 +101,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
         final Map parameters = new HashMap<>();
         parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
-        parameters.put(WSFederationConstants.WRESULT, rpToken);
+        parameters.put(WSFederationConstants.WRESULT, StringEscapeUtils.unescapeHtml4(rpToken));
         parameters.put(WSFederationConstants.WTREALM, fedRequest.getWtrealm());
         
         if (StringUtils.isNotBlank(fedRequest.getWctx())) {
@@ -113,9 +114,10 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     }
 
     private String produceRelyingPartyToken(final HttpServletResponse response, final HttpServletRequest request,
-                                            final WSFederationRequest fedRequest, final SecurityToken securityToken) {
+                                            final WSFederationRequest fedRequest, final SecurityToken securityToken,
+                                            final Assertion assertion) {
         final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
-        return relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request);
+        return relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request, assertion);
     }
 
     private WSFederationRegisteredService getWsFederationRegisteredService(final HttpServletResponse response, final HttpServletRequest request,
