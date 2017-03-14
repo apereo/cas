@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.Map;
 
@@ -50,12 +49,4 @@ public interface TicketRegistrySupport {
      * @param authentication         the authentication
      */
     void updateAuthentication(String ticketGrantingTicketId, Authentication authentication);
-
-    /**
-     * Get the root authentication from the TGT or PGT passed.
-     *
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @return the authentication from the root ticket
-     */
-    Authentication getRootAuthenticationFrom(TicketGrantingTicket ticketGrantingTicket);
 }
