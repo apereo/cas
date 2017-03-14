@@ -164,10 +164,10 @@ public abstract class BaseWSFederationRequestController {
     /**
      * Construct service url string.
      *
-     * @param request             the request
-     * @param response            the response
+     * @param request      the request
+     * @param response     the response
      * @param wsfedRequest the ws federation request
-     * @return the string
+     * @return the service url
      */
     protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
                                          final WSFederationRequest wsfedRequest) {
