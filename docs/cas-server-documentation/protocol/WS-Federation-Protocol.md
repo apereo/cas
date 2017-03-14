@@ -27,6 +27,10 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
+<div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly incude this component
+in your configuration and overlays. The security token service will be pulled in automatically once you declare
+the identity provider. Only include this module in your overlay if you need compile-time access to the components within.</p></div>
+
 ### Endpoints
 
 | Endpoint               | Description
@@ -36,7 +40,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## WS Federation Identity Provider
 
-The security model of the STS builds on the foundation established by WS-Security and WS-Trust. The primary issue for Web browsers is that there is no easy way to directly send web service (SOAP) requests. Consequently, the processing must be performed within the confines of the base HTTP 1.1 functionality (GET, POST, redirects, and cookies) and conform as closely as possible to the WS-Trust protocols for token acquisition.
+The security model of the STS builds on the foundation established by WS-Security and WS-Trust. The primary issue for Web browsers is that there is no easy way to directly send web service (SOAP) requests. Consequently, the processing must be performed within the confines of the base HTTP 1.1 functionality (`GET`, `POST`, redirects, and cookies) and conform as closely as possible to the WS-Trust protocols for token acquisition.
 The IDP is in charge of transforming the SignIn request of the browser to a SOAP request for the STS and the response of the STS to the SignInResponse for the browser. Further the browser user must authenticate himself with the IDP. At the time of initial authentication an artifact/cookie may be created for the browser so that every request for a resource doesn't require user interaction.
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -52,9 +56,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 ### Endpoints
 
 | Endpoint                        | Description
-|---------------------------------|----------------------------------------------------------------------------------------------------------------------
-| `/cas/ws/idp/metadata`          | Display the current federation metadata based on the configuration realm for the identity provider.
-
+|---------------------------------|--------------------------------------------------------------------------------------------------------
+| `/cas/ws/idp/metadata`          | Displays the current federation metadata based on the configuration realm for the identity provider.
 
 ## Configuration
 
@@ -72,4 +75,15 @@ your CAS Overlay to be able to resolve dependencies:
     </repository>
     ...
 </repositories>
+```
+
+## Troubleshooting
+
+To enable additional logging, modify the logging configuration file to add the following:
+
+```xml
+<AsyncLogger name="org.apache.cxf" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
 ```

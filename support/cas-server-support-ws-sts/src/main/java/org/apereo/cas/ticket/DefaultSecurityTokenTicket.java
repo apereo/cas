@@ -5,6 +5,7 @@ import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.EncodingUtils;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -28,8 +29,9 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     private TicketGrantingTicket ticketGrantingTicket;
 
+    @Column(name = "SECURITY_TOKEN")
     private String securityToken;
-    
+
     public DefaultSecurityTokenTicket() {
     }
 

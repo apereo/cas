@@ -77,11 +77,15 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
 
     private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest, final RealmAwareIdentityProvider idp,
                                                     final HttpServletResponse response, final HttpServletRequest request) {
-        if (StringUtils.isNotBlank(fedRequest.getWtrealm())
-                && idp.getAuthenticationURIs().containsKey(fedRequest.getWauth())) {
+        if (StringUtils.isNotBlank(fedRequest.getWtrealm()) && idp.getAuthenticationURIs().containsKey(fedRequest.getWauth())) {
             if (shouldRedirectForAuthentication(fedRequest, response, request)) {
+                LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
                 redirectToIdentityProvider(fedRequest, response, request);
+            } else {
+                LOGGER.debug("Request [{}] does not require authentication.", fedRequest);
             }
+        } else {
+            LOGGER.warn("Unrecognized authentication request [{}]", fedRequest);
         }
     }
 
