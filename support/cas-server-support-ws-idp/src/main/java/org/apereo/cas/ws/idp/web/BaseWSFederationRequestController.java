@@ -65,8 +65,9 @@ public abstract class BaseWSFederationRequestController {
                                              final CasConfigurationProperties casProperties,
                                              final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
                                              final HttpClient httpClient,
-                                             final SecurityTokenTicketFactory securityTokenTicketFactory, 
-                                             final TicketRegistry ticketRegistry) {
+                                             final SecurityTokenTicketFactory securityTokenTicketFactory,
+                                             final TicketRegistry ticketRegistry, 
+                                             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.identityProviderConfigurationService = identityProviderConfigurationService;
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
@@ -75,6 +76,7 @@ public abstract class BaseWSFederationRequestController {
         this.httpClient = httpClient;
         this.securityTokenTicketFactory = securityTokenTicketFactory;
         this.ticketRegistry = ticketRegistry;
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.callbackService = registerCallback(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
