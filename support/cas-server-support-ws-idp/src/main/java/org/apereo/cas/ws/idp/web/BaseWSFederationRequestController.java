@@ -1,6 +1,8 @@
 package org.apereo.cas.ws.idp.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -11,8 +13,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
@@ -25,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.security.SecureRandom;
+import java.util.Date;
 
 /**
  * This is {@link BaseWSFederationRequestController}.
@@ -50,15 +55,17 @@ public abstract class BaseWSFederationRequestController {
     protected final CasConfigurationProperties casProperties;
 
     protected final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
-    
+
     protected final HttpClient httpClient;
 
     protected final SecurityTokenTicketFactory securityTokenTicketFactory;
-    
+
     protected final TicketRegistry ticketRegistry;
 
     protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    
+
+    protected final TicketRegistrySupport ticketRegistrySupport;
+
     public BaseWSFederationRequestController(final IdentityProviderConfigurationService identityProviderConfigurationService,
                                              final ServicesManager servicesManager,
                                              final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -66,8 +73,9 @@ public abstract class BaseWSFederationRequestController {
                                              final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
                                              final HttpClient httpClient,
                                              final SecurityTokenTicketFactory securityTokenTicketFactory,
-                                             final TicketRegistry ticketRegistry, 
-                                             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+                                             final TicketRegistry ticketRegistry,
+                                             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                             final TicketRegistrySupport ticketRegistrySupport) {
         this.identityProviderConfigurationService = identityProviderConfigurationService;
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
@@ -77,6 +85,7 @@ public abstract class BaseWSFederationRequestController {
         this.securityTokenTicketFactory = securityTokenTicketFactory;
         this.ticketRegistry = ticketRegistry;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+        this.ticketRegistrySupport = ticketRegistrySupport;
         this.callbackService = registerCallback(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
@@ -133,4 +142,68 @@ public abstract class BaseWSFederationRequestController {
         }
     }
 
+    protected boolean shouldRedirectForAuthentication(final WSFederationRequest fedRequest,
+                                                      final HttpServletResponse response,
+                                                      final HttpServletRequest request) {
+        return isSecurityTokenExpired(fedRequest, response, request)
+                || isAuthenticationRequired(fedRequest, response, request);
+    }
+    
+    protected boolean isSecurityTokenExpired(final WSFederationRequest fedRequest,
+                                           final HttpServletResponse response,
+                                           final HttpServletRequest request) {
+        final SecurityToken idpToken = getSecurityTokenFromRequest(request);
+        if (idpToken == null) {
+            return true;
+        }
+
+        return idpToken.isExpired();
+    }
+
+    protected SecurityToken getSecurityTokenFromRequest(final HttpServletRequest request) {
+        final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        if (StringUtils.isNotBlank(cookieValue)) {
+            final String sts = securityTokenTicketFactory.getId(cookieValue);
+            final SecurityTokenTicket stt = ticketRegistry.getTicket(sts, SecurityTokenTicket.class);
+            if (stt == null) {
+                return null;
+            }
+            if (stt.isExpired()) {
+                return null;
+            }
+            return stt.getSecurityToken();
+        }
+        return null;
+    }
+
+    protected boolean isAuthenticationRequired(final WSFederationRequest fedRequest,
+                                               final HttpServletResponse response,
+                                               final HttpServletRequest request) {
+        if (StringUtils.isBlank(fedRequest.getWfresh()) || NumberUtils.isCreatable(fedRequest.getWfresh())) {
+            return false;
+        }
+
+        final long ttl = Long.parseLong(fedRequest.getWfresh().trim());
+        if (ttl == 0) {
+            return true;
+        }
+
+        final SecurityToken idpToken = getSecurityTokenFromRequest(request);
+        if (idpToken == null) {
+            return true;
+        }
+
+        final long ttlMs = ttl * 60L * 1000L;
+        if (ttlMs > 0) {
+            final Date createdDate = idpToken.getCreated();
+            if (createdDate != null) {
+                final Date expiryDate = new Date();
+                expiryDate.setTime(createdDate.getTime() + ttlMs);
+                if (expiryDate.before(new Date())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
