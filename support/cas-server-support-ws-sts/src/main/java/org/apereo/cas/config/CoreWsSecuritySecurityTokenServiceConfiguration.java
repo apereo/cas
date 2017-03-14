@@ -41,6 +41,10 @@ import org.apereo.cas.support.saml.SamlRealmCodec;
 import org.apereo.cas.support.validation.CipheredCredentialsValidator;
 import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
 import org.apereo.cas.support.x509.X509TokenDelegationHandler;
+import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
@@ -72,6 +76,10 @@ import java.util.Properties;
 @ImportResource(locations = {"classpath:jaxws-realms.xml", "classpath:META-INF/cxf/cxf.xml"})
 public class CoreWsSecuritySecurityTokenServiceConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
+    @Autowired
+    @Qualifier("grantingTicketExpirationPolicy")
+    private ExpirationPolicy grantingTicketExpirationPolicy;
+    
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
     private AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy;
@@ -289,6 +297,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getEncryptionKey(), wsfed.getSigningKey());
     }
 
+    @Bean
+    public SecurityTokenTicketFactory securityTokenTicketFactory() {
+        return new DefaultSecurityTokenTicketFactory(grantingTicketExpirationPolicy);
+    }
+    
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         plan.registerAuthenticationPostProcessor(securityTokenServiceAuthenticationPostProcessor());
