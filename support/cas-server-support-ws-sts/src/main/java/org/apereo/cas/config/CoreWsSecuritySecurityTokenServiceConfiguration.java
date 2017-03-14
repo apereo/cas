@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.STSPropertiesMBean;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
@@ -39,13 +38,13 @@ import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
 import org.apereo.cas.support.realm.RealmVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
 import org.apereo.cas.support.saml.SamlRealmCodec;
+import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.support.validation.CipheredCredentialsValidator;
 import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
 import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
-import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +52,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.xml.ws.Provider;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,10 +90,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("idpConfigService")
-    private IdentityProviderConfigurationService idpConfigService;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
@@ -111,11 +108,16 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return new EventMapper(new MapEventLogger());
     }
 
+    @RefreshScope
     @Bean
     public List<TokenDelegationHandler> delegationHandlers() {
-        return Arrays.asList(new SAMLDelegationHandler(), new X509TokenDelegationHandler());
+        final List<TokenDelegationHandler> handlers = new ArrayList<>();
+        handlers.add(new SAMLDelegationHandler());
+        handlers.add(new X509TokenDelegationHandler());
+        return handlers;
     }
 
+    @RefreshScope
     @Bean
     public Provider transportSTSProviderBean() {
         try {
@@ -128,6 +130,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         }
     }
 
+    @RefreshScope
     @Bean
     public IssueOperation transportIssueDelegate() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
@@ -135,7 +138,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
         final ClaimsManager claimsManager = new ClaimsManager();
         claimsManager.setClaimHandlers(Arrays.asList(new WrappingSecurityTokenServiceClaimsHandler(
-                idp.getRealmUri(),
+                idp.getRealmName(),
                 wsfed.getRealm().getIssuer())));
 
         final TokenIssueOperation op = new TokenIssueOperation();
@@ -151,6 +154,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return op;
     }
 
+    @RefreshScope
     @Bean
     public ValidateOperation transportValidateDelegate() {
         final TokenValidateOperation op = new TokenValidateOperation();
@@ -160,25 +164,37 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return op;
     }
 
+    @RefreshScope
     @Bean
     public List<Relationship> relationships() {
         final Relationship rel1 = new Relationship();
         rel1.setSourceRealm("REALMA");
         rel1.setTargetRealm("REALMB");
         rel1.setType("FederatedIdentity");
-        return Arrays.asList(rel1);
+
+        final List<Relationship> list = new ArrayList<>();
+        list.add(rel1);
+        return list;
     }
 
+    @RefreshScope
     @Bean
     public List transportTokenValidators() {
-        return Arrays.asList(transportSamlTokenValidator(), new X509TokenValidator());
+        final List list = new ArrayList<>();
+        list.add(transportSamlTokenValidator());
+        list.add(new X509TokenValidator());
+        return list;
     }
 
+    @RefreshScope
     @Bean
     public List transportTokenProviders() {
-        return Arrays.asList(transportSamlTokenProvider());
+        final List list = new ArrayList<>();
+        list.add(transportSamlTokenProvider());
+        return list;
     }
 
+    @RefreshScope
     @Bean
     public RealmProperties realmA() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
@@ -186,21 +202,25 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
         final RealmProperties realm = new RealmProperties();
         realm.setIssuer(wsfed.getRealm().getIssuer());
-        final Properties p = getSecurityProperties(wsfed.getRealm().getKeystoreFile(), wsfed.getRealm().getKeystorePassword(),
+        final Properties p = CryptoUtils.getSecurityProperties(wsfed.getRealm().getKeystoreFile(),
+                wsfed.getRealm().getKeystorePassword(),
                 wsfed.getRealm().getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
-        realm.setCallbackHandler(new RealmVerificationCallbackHandler(idp.getRealmUri()));
+        realm.setCallbackHandler(new RealmVerificationCallbackHandler(idp.getRealmName()));
         return realm;
     }
 
+
+    @RefreshScope
     @Bean
     public Map<String, RealmProperties> realms() {
         final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
         final Map<String, RealmProperties> realms = new HashMap<>();
-        realms.put(idp.getRealmUri(), realmA());
+        realms.put(idp.getRealmName(), realmA());
         return realms;
     }
 
+    @RefreshScope
     @Bean
     public SAMLTokenProvider transportSamlTokenProvider() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
@@ -234,6 +254,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return provider;
     }
 
+    @RefreshScope
+
     @Bean
     public TokenValidator transportSamlTokenValidator() {
         final SAMLTokenValidator v = new SAMLTokenValidator();
@@ -241,11 +263,13 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return v;
     }
 
+    @RefreshScope
     @Bean
     public Validator transportUsernameTokenValidator() {
         return new CipheredCredentialsValidator(securityTokenServiceCredentialCipherExecutor());
     }
 
+    @RefreshScope
     @Bean
     public StaticService transportService() {
         final StaticService s = new StaticService();
@@ -253,6 +277,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         return s;
     }
 
+    @RefreshScope
     @ConditionalOnMissingBean(name = "transportSTSProperties")
     @Bean
     public STSPropertiesMBean transportSTSProperties() {
@@ -261,30 +286,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         final StaticSTSProperties s = new StaticSTSProperties();
         s.setIssuer(getClass().getSimpleName());
         s.setRealmParser(new UriRealmParser(realms()));
-        s.setSignatureCryptoProperties(getSecurityProperties(wsfed.getSigningKeystoreFile(), wsfed.getSigningKeystorePassword()));
-        s.setEncryptionCryptoProperties(getSecurityProperties(wsfed.getEncryptionKeystoreFile(), wsfed.getEncryptionKeystorePassword()));
+        s.setSignatureCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getSigningKeystoreFile(), wsfed.getSigningKeystorePassword()));
+        s.setEncryptionCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getEncryptionKeystoreFile(), wsfed.getEncryptionKeystorePassword()));
         s.setRelationships(relationships());
         return s;
     }
 
-    private Properties getSecurityProperties(final String file, final String psw) {
-        return getSecurityProperties(file, psw, null);
-    }
-
-    private Properties getSecurityProperties(final String file, final String psw, final String alias) {
-        final Properties p = new Properties();
-        p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
-        p.put("org.apache.ws.security.crypto.merlin.keystore.password", psw);
-        p.put("org.apache.ws.security.crypto.merlin.keystore.file", file);
-
-        if (StringUtils.isNotBlank(alias)) {
-            p.put("org.apache.ws.security.crypto.merlin.keystore.alias", alias);
-        }
-        return p;
-    }
-
     @Bean
+    @RefreshScope
     public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() {
         return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdP(),
                 casProperties.getServer().getPrefix());
@@ -292,8 +301,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationPostProcessor")
     @Bean
+    @RefreshScope
     public AuthenticationPostProcessor securityTokenServiceAuthenticationPostProcessor() {
-        return new SecurityTokenServiceAuthenticationPostProcessor(servicesManager, idpConfigService,
+        return new SecurityTokenServiceAuthenticationPostProcessor(servicesManager,
                 wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor(),
                 securityTokenServiceClientBuilder());
     }
@@ -305,6 +315,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     }
 
     @Bean
+    @RefreshScope
     public SecurityTokenTicketFactory securityTokenTicketFactory() {
         return new DefaultSecurityTokenTicketFactory(grantingTicketExpirationPolicy);
     }

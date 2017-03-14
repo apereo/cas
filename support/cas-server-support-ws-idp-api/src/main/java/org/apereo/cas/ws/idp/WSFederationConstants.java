@@ -125,4 +125,9 @@ public interface WSFederationConstants {
      * The constant WSIGNIN10.
      */
     String WSIGNIN10 = "wsignin1.0";
+
+    /**
+     * Metadata endpoint.
+     */
+    String ENDPOINT_FEDERATION_METADATA = "/ws/idp/metadata";
 }

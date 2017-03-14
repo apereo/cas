@@ -12,7 +12,6 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.ws.idp.IdentityProviderConfigurationService;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
@@ -40,24 +39,20 @@ import java.util.Collection;
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRelyingPartyTokenProducer.class);
 
-    private final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder;
+    private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
-    private final IdentityProviderConfigurationService identityProviderConfigurationService;
 
-    public DefaultRelyingPartyTokenProducer(final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder, 
-                                            final CipherExecutor<String, String> credentialCipherExecutor,
-                                            final IdentityProviderConfigurationService identityProviderConfigurationService) {
-        this.securityTokenServiceClientBuilder = securityTokenServiceClientBuilder;
+    public DefaultRelyingPartyTokenProducer(final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
+                                            final CipherExecutor<String, String> credentialCipherExecutor) {
+        this.clientBuilder = securityTokenServiceClientBuilder;
         this.credentialCipherExecutor = credentialCipherExecutor;
-        this.identityProviderConfigurationService = identityProviderConfigurationService;
     }
 
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
                           final WSFederationRequest fedRequest, final HttpServletRequest request,
                           final Assertion assertion) {
-        final SecurityTokenServiceClient sts = 
-                securityTokenServiceClientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
+        final SecurityTokenServiceClient sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
         mapAttributesToRequestedClaims(service, sts, assertion);
         final Element rpToken = requestSecurityTokenResponse(service, sts, assertion);
         return serializeRelyingPartyToken(rpToken);

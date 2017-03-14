@@ -54,7 +54,7 @@ public class SecurityTokenServiceClientBuilder {
         if (StringUtils.isNotBlank(service.getWsdlLocation())) {
             return service.getWsdlLocation();
         }
-        final String wsdl = String.format(WSFederationConstants.ENDPOINT_STS_REALM_WSDL, wsFederationProperties.getIdp().getRealmUri());
+        final String wsdl = String.format(WSFederationConstants.ENDPOINT_STS_REALM_WSDL, wsFederationProperties.getIdp().getRealmName());
         final String location = this.prefix.concat(wsdl);
         return location;
     }

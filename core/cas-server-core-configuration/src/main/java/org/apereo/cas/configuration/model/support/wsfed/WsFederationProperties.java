@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
-import java.io.File;
-
 /**
  * This is {@link WsFederationProperties}.
  *
@@ -30,26 +28,8 @@ public class WsFederationProperties {
 
     public static class IdentityProvider {
         private String realm;
-        private String realmUri;
-        private File certificate;
-        private String certificatePassword;
-
-        public File getCertificate() {
-            return certificate;
-        }
-
-        public void setCertificate(final File certificate) {
-            this.certificate = certificate;
-        }
-
-        public String getCertificatePassword() {
-            return certificatePassword;
-        }
-
-        public void setCertificatePassword(final String certificatePassword) {
-            this.certificatePassword = certificatePassword;
-        }
-
+        private String realmName;
+        
         public String getRealm() {
             return realm;
         }
@@ -58,12 +38,12 @@ public class WsFederationProperties {
             this.realm = realm;
         }
 
-        public String getRealmUri() {
-            return realmUri;
+        public String getRealmName() {
+            return realmName;
         }
 
-        public void setRealmUri(final String realmUri) {
-            this.realmUri = realmUri;
+        public void setRealmName(final String realmName) {
+            this.realmName = realmName;
         }
     }
     
@@ -167,7 +147,16 @@ public class WsFederationProperties {
             private String keystoreFile;
             private String keystorePassword;
             private String keystoreAlias;
+            private String keyPassword;
             private String issuer = "CAS";
+
+            public String getKeyPassword() {
+                return keyPassword;
+            }
+
+            public void setKeyPassword(final String keyPassword) {
+                this.keyPassword = keyPassword;
+            }
 
             public String getKeystoreFile() {
                 return keystoreFile;
