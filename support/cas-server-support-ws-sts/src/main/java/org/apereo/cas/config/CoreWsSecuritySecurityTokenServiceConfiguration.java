@@ -15,6 +15,7 @@ import org.apache.cxf.sts.token.provider.DefaultConditionsProvider;
 import org.apache.cxf.sts.token.provider.DefaultSubjectProvider;
 import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
 import org.apache.cxf.sts.token.realm.RealmProperties;
+import org.apache.cxf.sts.token.realm.Relationship;
 import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
 import org.apache.cxf.sts.token.validator.TokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
@@ -34,9 +35,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
-import org.apereo.cas.support.realm.RealmVerificationCallbackHandler;
+import org.apereo.cas.support.realm.RealmPasswordVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
-import org.apereo.cas.support.saml.SamlRealmCodec;
+import org.apereo.cas.support.saml.SamlAssertionRealmCodec;
 import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.support.validation.CipheredCredentialsValidator;
 import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
@@ -192,7 +193,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
                 wsfed.getRealm().getKeystorePassword(),
                 wsfed.getRealm().getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
-        realm.setCallbackHandler(new RealmVerificationCallbackHandler(idp.getRealmName()));
+        realm.setCallbackHandler(new RealmPasswordVerificationCallbackHandler(wsfed.getRealm().getKeyPassword()));
         return realm;
     }
 
@@ -244,8 +245,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @Bean
     public TokenValidator transportSamlTokenValidator() {
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
         final SAMLTokenValidator v = new SAMLTokenValidator();
-        v.setSamlRealmCodec(new SamlRealmCodec());
+        v.setSamlRealmCodec(new SamlAssertionRealmCodec(idp.getRealmName()));
         return v;
     }
 
@@ -268,11 +270,20 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     @Bean
     public STSPropertiesMBean transportSTSProperties() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
+
         final StaticSTSProperties s = new StaticSTSProperties();
         s.setIssuer(getClass().getSimpleName());
         s.setRealmParser(new UriRealmParser(realms()));
         s.setSignatureCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getSigningKeystoreFile(), wsfed.getSigningKeystorePassword()));
         s.setEncryptionCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getEncryptionKeystoreFile(), wsfed.getEncryptionKeystorePassword()));
+
+        final Relationship rel = new Relationship();
+        rel.setType(Relationship.FED_TYPE_IDENTITY);
+        rel.setSourceRealm(idp.getRealmName());
+        rel.setTargetRealm(idp.getRealmName());
+
+        s.setRelationships(Arrays.asList(rel));
         return s;
     }
 
@@ -292,6 +303,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
                 securityTokenServiceClientBuilder());
     }
 
+    @RefreshScope
     @Bean
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdP().getSts();

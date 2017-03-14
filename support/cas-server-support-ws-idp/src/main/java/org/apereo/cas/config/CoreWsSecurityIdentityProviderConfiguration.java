@@ -25,6 +25,7 @@ import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -106,6 +107,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Lazy
     @Bean
+    @RefreshScope
     public WSFederationMetadataController wsFederationMetadataController() {
         return new WSFederationMetadataController(casProperties);
     }
@@ -120,11 +122,13 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     }
 
     @Bean
+    @RefreshScope
     public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy() {
         return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory);
     }
 
     @Bean
+    @RefreshScope
     public Action wsFederationMetadataUIAction() {
         return new WSFederationMetadataUIAction(servicesManager, wsFederationAuthenticationServiceSelectionStrategy());
     }

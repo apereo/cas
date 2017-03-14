@@ -26,9 +26,7 @@ public class X509TokenDelegationHandler implements TokenDelegationHandler {
             final Element tokenElement = (Element) token;
             final String namespace = tokenElement.getNamespaceURI();
             final String localname = tokenElement.getLocalName();
-            if (WSConstants.SIG_NS.equals(namespace) && WSConstants.X509_DATA_LN.equals(localname)) {
-                return true;
-            }
+            return WSConstants.SIG_NS.equals(namespace) && WSConstants.X509_DATA_LN.equals(localname);
         }
         return false;
     }
