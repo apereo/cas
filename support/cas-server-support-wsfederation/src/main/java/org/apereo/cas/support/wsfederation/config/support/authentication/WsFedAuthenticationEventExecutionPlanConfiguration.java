@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.WsFederationAttributeMutator;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
@@ -55,7 +55,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration implements Authe
     @Bean
     @RefreshScope
     public AuthenticationHandler adfsAuthNHandler() {
-        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
+        final WsFederationDelegationProperties wsfed = casProperties.getAuthn().getWsfed();
         return new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, adfsPrincipalFactory());
     }
 
@@ -63,7 +63,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration implements Authe
     @RefreshScope
     public WsFederationConfiguration wsFedConfig() {
         final WsFederationConfiguration config = new WsFederationConfiguration();
-        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
+        final WsFederationDelegationProperties wsfed = casProperties.getAuthn().getWsfed();
         config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
         config.setIdentityAttribute(wsfed.getIdentityAttribute());
         config.setIdentityProviderIdentifier(wsfed.getIdentityProviderIdentifier());
@@ -88,7 +88,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration implements Authe
     @Bean
     @RefreshScope
     public PrincipalResolver adfsPrincipalResolver() {
-        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
+        final WsFederationDelegationProperties wsfed = casProperties.getAuthn().getWsfed();
         final WsFederationCredentialsToPrincipalResolver r = new WsFederationCredentialsToPrincipalResolver();
         r.setConfiguration(wsFedConfig());
         r.setAttributeRepository(attributeRepository);
@@ -106,7 +106,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration implements Authe
 
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
+        final WsFederationDelegationProperties wsfed = casProperties.getAuthn().getWsfed();
         if (StringUtils.isNotBlank(wsfed.getIdentityProviderUrl()) && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier())) {
 
             if (!wsfed.isAttributeResolverEnabled()) {
