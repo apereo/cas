@@ -268,7 +268,7 @@ The order of policy invocation is the same as the definition order defined for t
 ## Attribute Filters
 
 While each policy defines what principal attributes may be allowed for a given service,
-there are optional attribute filters that can be set per policy to further weed out attributes based on their *values**.
+there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**.
 
 ### Regex
 
