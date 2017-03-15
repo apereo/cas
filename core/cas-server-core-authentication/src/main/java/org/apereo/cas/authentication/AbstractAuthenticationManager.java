@@ -140,7 +140,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         final AuthenticationBuilder builder = authenticateInternal(transaction);
 
         authenticationEventExecutionPlan.getAuthenticationPostProcessors().forEach(p -> {
-            LOGGER.info("Invoking authentication post processor [{}]");
+            LOGGER.info("Invoking authentication post processor [{}]", p);
             p.process(transaction, builder);
         });
 
