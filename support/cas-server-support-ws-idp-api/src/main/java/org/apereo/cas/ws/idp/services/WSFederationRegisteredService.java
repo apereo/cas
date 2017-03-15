@@ -22,7 +22,7 @@ import javax.persistence.Entity;
 public class WSFederationRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = -3700571300568534062L;
 
-    private String realm;
+    private String realm = WSFederationConstants.REALM_DEFAULT_URI;
     private String protocol = WSConstants.WST_NS_05_12;
     private String tokenType = WSConstants.WSS_SAML2_TOKEN_TYPE;
     private String wsdlLocation;

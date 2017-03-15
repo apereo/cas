@@ -67,8 +67,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Realms
 
-At this point, by default security token service's endpoint operate using a single realm configuration. Thogh you can change realm properties,
-in general it's recommend that you stick with the defaults provided. Support for multiple realms at this point is not present.
+At this point, by default security token service's endpoint operate using a single realm configuration and identity provider configuration is only able to recognize and request tokens for a single realm.
+While support for multiple realms is not there yet, in general the underlying configuration and components should allow for that feature to exist in later releases. The default realm recognized by CAS is set to be `urn:org:apereo:cas:ws:idp:realm-CAS`. Registration of clients need to ensure this value is matches.
 
 ## Register Clients
 
@@ -79,15 +79,14 @@ Clients and relying parties can be registered with CAS as such:
   "@class" : "org.apereo.cas.ws.idp.services.WSFederationRegisteredService",
   "serviceId" : "https://wsfed.example.org/.+",
   "name" : "Sample WsFed Application",
-  "id" : 100,
-  "realm" : "urn:wsfed:example:org:sampleapplication"
+  "id" : 100
 }
 ```
 
 | Field                         | Description
 |-------------------------------|--------------------------------------------------------------------------------------------------
 | `serviceId`                   | Callback/Consumer url where tokens may be `POST`ed, typically matching the `wreply` parameter.
-| `realm`                       | The realm identifier of the application, identified via the `wtrealm` parameter.
+| `realm`                       | The realm identifier of the application, identified via the `wtrealm` parameter. This needs to match the realm defined for the identity provider. By default it's set to the realm defined for the CAS identity provider.
 | `appliesTo`                   | Controls to whom security tokens apply. Defaults to the `realm`.
 
 Service definitions may be managed by the [service management](Service-Management.html) facility.

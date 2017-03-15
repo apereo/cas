@@ -8,6 +8,11 @@ package org.apereo.cas.ws.idp;
  */
 public interface WSFederationConstants {
     /**
+     * The default realm for the idp/sts.
+     */
+    String REALM_DEFAULT_URI = "urn:org:apereo:cas:ws:idp:realm-CAS";
+    
+    /**
      * Track the security token issued in the CAS assertion.
      */
     String SECURITY_TOKEN_ATTRIBUTE = "securityToken";

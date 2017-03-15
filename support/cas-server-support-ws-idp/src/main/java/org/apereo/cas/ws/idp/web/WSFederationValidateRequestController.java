@@ -77,22 +77,18 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest,
                                                     final HttpServletResponse response, final HttpServletRequest request) {
         final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
-        if (shouldRedirectForAuthentication(fedRequest, response, request)) {
-            LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
-            redirectToIdentityProvider(fedRequest, response, request, service);
-        } else {
-            LOGGER.debug("Request [{}] does not require authentication.", fedRequest);
-        }
+        LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
+        redirectToIdentityProvider(fedRequest, response, request, service);
     }
-
+    
     private void redirectToIdentityProvider(final WSFederationRequest fedRequest, final HttpServletResponse response,
                                             final HttpServletRequest request, final WSFederationRegisteredService service) {
         try {
             final String serviceUrl = constructServiceUrl(request, response, fedRequest);
             LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, service);
-
+            final boolean renew = shouldRenewAuthentication(fedRequest, request);
             final String initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
-                    CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, false, false);
+                    CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, renew, false);
             LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
             final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
             authenticationRedirectStrategy.redirect(request, response, initialUrl);
