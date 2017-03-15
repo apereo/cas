@@ -36,7 +36,8 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
     private final String searchFilter;
     private final String loadFilter;
 
-    public LdapServiceRegistryDao(final ConnectionFactory connectionFactory, final String baseDn, final LdapRegisteredServiceMapper ldapServiceMapper,
+    public LdapServiceRegistryDao(final ConnectionFactory connectionFactory, final String baseDn, 
+                                  final LdapRegisteredServiceMapper ldapServiceMapper,
                                   final LdapServiceRegistryProperties ldapProperties) {
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;

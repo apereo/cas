@@ -19,7 +19,7 @@ public final class InetAddressUtils {
      */
     public static String getCasServerHostName() {
         try {
-            final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
+            final String hostName = InetAddress.getLocalHost().getHostName();
             final int index = hostName.indexOf('.');
             if (index > 0) {
                 return hostName.substring(0, index);

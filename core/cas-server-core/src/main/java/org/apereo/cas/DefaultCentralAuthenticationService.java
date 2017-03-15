@@ -150,8 +150,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         // This throws if no suitable policy is found
         getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(service, registeredService));
 
-        final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
-        final Authentication latestAuthentication = authentications.get(authentications.size() - 1);
+        final Authentication latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
         AuthenticationCredentialsLocalBinder.bindCurrent(latestAuthentication);
         final Principal principal = latestAuthentication.getPrincipal();
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
@@ -197,8 +196,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         getAuthenticationSatisfiedByPolicy(proxyGrantingTicketObject.getRoot().getAuthentication(),
                 new ServiceContext(service, registeredService));
 
-        final List<Authentication> authentications = proxyGrantingTicketObject.getChainedAuthentications();
-        final Authentication authentication = authentications.get(authentications.size() - 1);
+        final Authentication authentication = proxyGrantingTicketObject.getRoot().getAuthentication();
         AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
 
         final Principal principal = authentication.getPrincipal();

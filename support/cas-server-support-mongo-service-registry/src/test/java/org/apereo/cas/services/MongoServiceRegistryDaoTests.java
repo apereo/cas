@@ -42,14 +42,14 @@ public class MongoServiceRegistryDaoTests {
     @Test
     public void verifySaveAndLoad() {
         final List<RegisteredService> list = new ArrayList<>();
-        IntStream.range(0, 5).forEach(i -> {
+        IntStream.range(0, 4).forEach(i -> {
             list.add(buildService(i));
             this.serviceRegistryDao.save(list.get(i));
         });
         final List<RegisteredService> results = this.serviceRegistryDao.load();
         assertEquals(results.size(), list.size());
-        IntStream.range(0, 5).forEach(i -> assertEquals(list.get(i), results.get(i)));
-        IntStream.range(0, 5).forEach(i -> this.serviceRegistryDao.delete(results.get(i)));
+        IntStream.range(0, 4).forEach(i -> assertEquals(list.get(i), results.get(i)));
+        IntStream.range(0, 4).forEach(i -> this.serviceRegistryDao.delete(results.get(i)));
         assertTrue(this.serviceRegistryDao.load().isEmpty());
     }
 
@@ -59,8 +59,8 @@ public class MongoServiceRegistryDaoTests {
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
         final Set<String> values = new HashSet<>();
-        values.add("value1");
-        values.add("value2");
+        values.add("value11");
+        values.add("value21");
         property.setValues(values);
         propertyMap.put("field1", property);
         rs.setProperties(propertyMap);
