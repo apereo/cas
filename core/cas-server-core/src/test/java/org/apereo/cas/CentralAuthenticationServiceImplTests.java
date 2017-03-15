@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -179,6 +180,16 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 RegisteredServiceTestUtils.getHttpBasedServiceCredentials());
         final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(serviceTicketId.getId(), ctx2);
         assertTrue(pgt.getId().startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
+    }
+
+    @Test
+    public void verifyProxyGrantingTicketHasRootAuthenticationAsPrincipal() throws Exception {
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
+        final TicketGrantingTicket ticket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        final ServiceTicket serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticket.getId(), getService(), ctx);
+
+        final Service service = serviceTicketId.getService();
+        assertSame(((AbstractWebApplicationService) service).getPrincipal(), ticket.getAuthentication().getPrincipal());
     }
 
     @Test
