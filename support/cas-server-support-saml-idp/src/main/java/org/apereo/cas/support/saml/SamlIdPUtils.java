@@ -8,6 +8,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
@@ -47,28 +48,7 @@ public final class SamlIdPUtils {
 
     private SamlIdPUtils() {
     }
-
-    /**
-     * Produce unauthorized error view model and view.
-     *
-     * @return the model and view
-     */
-    public static ModelAndView produceUnauthorizedErrorView() {
-        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
-    }
-
-    /**
-     * Produce error view model and view.
-     *
-     * @param e the e
-     * @return the model and view
-     */
-    public static ModelAndView produceErrorView(final Exception e) {
-        final Map model = new HashMap<>();
-        model.put("rootCauseException", e);
-        return new ModelAndView(SamlIdPConstants.ERROR_VIEW, model);
-    }
-
+    
     /**
      * Prepare peer entity saml endpoint.
      *

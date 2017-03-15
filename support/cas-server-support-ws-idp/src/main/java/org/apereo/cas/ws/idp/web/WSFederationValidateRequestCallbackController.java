@@ -80,12 +80,14 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     protected ModelAndView handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         final WSFederationRequest fedRequest = WSFederationRequest.of(request);
         final WsFederationProperties wsfed = casProperties.getAuthn().getWsfedIdP();
+        LOGGER.debug("Received callback profile request [{}]", request.getRequestURI());
+        final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
+        LOGGER.debug("Located matching service [{}]", service);
+        
         LOGGER.info("Received callback profile request [{}]", request.getRequestURI());
-
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return new ModelAndView(CasWebflowConstants.VIEW_ID_ERROR, new HashMap<>(), HttpStatus.FORBIDDEN);
         }
 
@@ -134,15 +136,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
         return relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request, assertion);
     }
-
-    private WSFederationRegisteredService getWsFederationRegisteredService(final HttpServletResponse response, final HttpServletRequest request,
-                                                                           final WSFederationRequest fedRequest) {
-        final String serviceUrl = constructServiceUrl(request, response, fedRequest);
-        final Service targetService = this.serviceSelectionStrategy.resolveServiceFrom(this.webApplicationServiceFactory.createService(serviceUrl));
-        final WSFederationRegisteredService svc = this.servicesManager.findServiceBy(targetService, WSFederationRegisteredService.class);
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(targetService, svc);
-        return svc;
-    }
+    
 
     private SecurityToken validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request,
                                                            final HttpServletResponse response) {
