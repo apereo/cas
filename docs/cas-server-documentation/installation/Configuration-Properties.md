@@ -2722,6 +2722,9 @@ to support the WS-Federation protocol.
 To learn more about this topic, [please review this guide](WS-Federation-Protocol.html)
 
 ```properties
+# cas.authn.wsfedIdP.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
+# cas.authn.wsfedIdP.idp.realmName=CAS
+
 # cas.authn.wsfedIdP.sts.signingKeystoreFile=/etc/cas/config/ststrust.jks
 # cas.authn.wsfedIdP.sts.signingKeystorePassword=storepass
 # cas.authn.wsfedIdP.sts.encryptionKeystoreFile=/etc/cas/config/stsencrypt.jks
