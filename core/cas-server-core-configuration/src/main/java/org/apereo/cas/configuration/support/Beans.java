@@ -201,7 +201,7 @@ public final class Beans {
 
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
 
-        if (StringUtils.isNotEmpty(config.getPersistenceUnitName())) {
+        if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
         bean.setPackagesToScan(config.getPackagesToScan());

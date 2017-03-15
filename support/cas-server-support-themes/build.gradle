@@ -1,7 +1,5 @@
 description = "Apereo CAS Web Application Themes Support"
 dependencies {
-    
-
     compileOnly libraries.thymeleaf
     implementation libraries.groovy
     implementation libraries.thymeleafdialect
