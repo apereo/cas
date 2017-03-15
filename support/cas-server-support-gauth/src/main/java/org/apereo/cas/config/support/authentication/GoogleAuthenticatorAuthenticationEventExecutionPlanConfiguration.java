@@ -70,7 +70,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     private ServicesManager servicesManager;
 
     @Bean
-    @RefreshScope
     public IGoogleAuthenticator googleAuthenticatorInstance() {
         final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
         final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
