@@ -2714,6 +2714,33 @@ Delegate authentication to Google.
 # cas.authn.pac4j.google.scope=EMAIL|PROFILE|EMAIL_AND_PROFILE
 ```
 
+## WS Federation
+
+Allow CAS to act as an identity provider and security token service
+to support the WS-Federation protocol.
+
+To learn more about this topic, [please review this guide](WS-Federation-Protocol.html)
+
+```properties
+# cas.authn.wsfedIdP.sts.signingKeystoreFile=/etc/cas/config/ststrust.jks
+# cas.authn.wsfedIdP.sts.signingKeystorePassword=storepass
+# cas.authn.wsfedIdP.sts.encryptionKeystoreFile=/etc/cas/config/stsencrypt.jks
+# cas.authn.wsfedIdP.sts.encryptionKeystorePassword=storepass
+
+# cas.authn.wsfedIdP.sts.subjectNameIdFormat=unspecified
+# cas.authn.wsfedIdP.sts.encryptTokens=true
+
+# Used to secure authentication requests between the IdP and STS
+# cas.authn.wsfedIdP.sts.encryptionKey=
+# cas.authn.wsfedIdP.sts.signingKey=
+
+# cas.authn.wsfedIdP.sts.realm.keystoreFile=/etc/cas/config/stscasrealm.jks
+# cas.authn.wsfedIdP.sts.realm.keystorePassword=storepass
+# cas.authn.wsfedIdP.sts.realm.keystoreAlias=realmcas
+# cas.authn.wsfedIdP.sts.realm.keyPassword=cas
+# cas.authn.wsfedIdP.sts.realm.issuer=CAS
+```
+
 ## OAuth2
 
 Allows CAS to act as an OAuth2 provider. Here you can control how

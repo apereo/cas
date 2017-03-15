@@ -230,7 +230,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         }
 
         final DefaultConditionsProvider c = new DefaultConditionsProvider();
-        c.setLifetime(wsfed.getTokenLifetime());
         c.setAcceptClientLifetime(true);
 
         final SAMLTokenProvider provider = new SAMLTokenProvider();
