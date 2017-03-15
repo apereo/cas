@@ -6,12 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
@@ -79,12 +76,10 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK)
     protected ModelAndView handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         final WSFederationRequest fedRequest = WSFederationRequest.of(request);
-        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfedIdP();
         LOGGER.debug("Received callback profile request [{}]", request.getRequestURI());
         final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
         LOGGER.debug("Located matching service [{}]", service);
-        
-        LOGGER.info("Received callback profile request [{}]", request.getRequestURI());
+
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
@@ -92,10 +87,14 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         }
 
         final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
-        final SecurityToken securityToken = validateSecurityTokenInAssertion(assertion, request, response);
+        SecurityToken securityToken = getSecurityTokenFromRequest(request);
+        if (securityToken == null) {
+            LOGGER.debug("No security token is yet available. Invoking security token service to issue token");
+            securityToken = validateSecurityTokenInAssertion(assertion, request, response);
+        }
         addSecurityTokenTicketToRegistry(request, securityToken);
         final String rpToken = produceRelyingPartyToken(response, request, fedRequest, securityToken, assertion);
-        return postResponseBackToRelyingParty(rpToken, securityToken, assertion, fedRequest, request, response);
+        return postResponseBackToRelyingParty(rpToken, fedRequest);
     }
 
     private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken) {
@@ -105,12 +104,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     }
 
     private ModelAndView postResponseBackToRelyingParty(final String rpToken,
-                                                        final SecurityToken securityToken,
-                                                        final Assertion assertion,
-                                                        final WSFederationRequest fedRequest,
-                                                        final HttpServletRequest request,
-                                                        final HttpServletResponse response) throws Exception {
-        final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
+                                                        final WSFederationRequest fedRequest) throws Exception {
         final String postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
 
         final Map model = new HashMap<>();
