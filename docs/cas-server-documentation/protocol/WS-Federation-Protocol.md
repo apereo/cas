@@ -68,7 +68,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ## Realms
 
 At this point, by default security token service's endpoint operate using a single realm configuration. Thogh you can change realm properties,
-in general it's recommend that you stick with the defaults provided. Support for multiple realms at this point is not present. Realms are extracted and retrieved from the `CN` of the SAML assertion's certificate that was used to sign the token. If a mismatch is found, the authentication flow will likely fail unless additional configuration is put into place to configure relationships and/or identity mapping across multiple realms.
+in general it's recommend that you stick with the defaults provided. Support for multiple realms at this point is not present.
 
 ## Register Clients
 

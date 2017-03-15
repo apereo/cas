@@ -37,7 +37,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
 import org.apereo.cas.support.realm.RealmPasswordVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
-import org.apereo.cas.support.saml.SamlAssertionRealmCodec;
 import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.support.validation.CipheredCredentialsValidator;
 import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
@@ -45,6 +44,7 @@ import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +98,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         bean.setEnabled(true);
         bean.setName("cxfServletSecurityTokenService");
         bean.setServlet(new CXFServlet());
-        bean.setUrlMappings(Collections.singleton("/ws/sts/*"));
+        bean.setUrlMappings(Collections.singleton(WSFederationConstants.ENDPOINT_STS.concat("*")));
         bean.setAsyncSupported(true);
         return bean;
     }
@@ -247,7 +247,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     public TokenValidator transportSamlTokenValidator() {
         final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
         final SAMLTokenValidator v = new SAMLTokenValidator();
-        v.setSamlRealmCodec(new SamlAssertionRealmCodec(idp.getRealmName()));
         return v;
     }
 
