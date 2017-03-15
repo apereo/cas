@@ -49,7 +49,6 @@ public class WsFederationProperties {
     
     public static class SecurityTokenService {
         private String subjectNameIdFormat = "unspecified";
-        private long tokenLifetime = 1_000;
         private boolean encryptTokens = true;
         
         private String signingKeystoreFile;
@@ -93,14 +92,6 @@ public class WsFederationProperties {
 
         public void setEncryptTokens(final boolean encryptTokens) {
             this.encryptTokens = encryptTokens;
-        }
-
-        public long getTokenLifetime() {
-            return tokenLifetime;
-        }
-
-        public void setTokenLifetime(final long tokenLifetime) {
-            this.tokenLifetime = tokenLifetime;
         }
 
         public String getSubjectNameIdFormat() {
