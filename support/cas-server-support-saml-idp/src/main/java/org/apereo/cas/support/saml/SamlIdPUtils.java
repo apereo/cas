@@ -101,7 +101,7 @@ public final class SamlIdPUtils {
                     .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
                     .collect(Collectors.toList());
             
-            LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", entityID);
+            LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
             chainingMetadataResolver.setResolvers(resolvers);
             chainingMetadataResolver.setId(entityID);
             chainingMetadataResolver.initialize();
