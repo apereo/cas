@@ -32,6 +32,7 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.TransitionDefinition;
@@ -62,7 +63,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasWebflowEventResolver.class);
-    
+
     /**
      * CAS event publisher.
      */
@@ -432,11 +433,11 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the set of resolved events
      */
     protected Set<Event> resolveEventViaAuthenticationAttribute(final Authentication authentication,
-                                                           final Collection<String> attributeNames,
-                                                           final RegisteredService service,
-                                                           final RequestContext context,
-                                                           final Collection<MultifactorAuthenticationProvider> providers,
-                                                           final Predicate<String> predicate) {
+                                                                final Collection<String> attributeNames,
+                                                                final RegisteredService service,
+                                                                final RequestContext context,
+                                                                final Collection<MultifactorAuthenticationProvider> providers,
+                                                                final Predicate<String> predicate) {
         return resolveEventViaAttribute(authentication.getPrincipal(), authentication.getAttributes(),
                 attributeNames, service, context, providers, predicate);
     }
@@ -540,8 +541,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
 
             LOGGER.debug("Handling authentication transaction for credential [{}]", credential);
-            builder = this.authenticationSystemSupport.handleAuthenticationTransaction(builder, credential);
             final Service service = WebUtils.getService(context);
+            builder = this.authenticationSystemSupport.handleAuthenticationTransaction(service, builder, credential);
 
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
             return Collections.singleton(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
@@ -550,7 +551,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             final MessageContext messageContext = context.getMessageContext();
             messageContext.addMessage(new MessageBuilder().error()
                     .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName())).build());
-            return Collections.singleton(new Event(this, "error"));
+            return Collections.singleton(new EventFactorySupport().error(this));
         }
     }
 }

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+OASIS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on OASIS's procedures with respect to rights in OASIS specifications can be found at the OASIS website. Copies of claims of rights made available for publication and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementors or users of this specification, can be obtained from the OASIS Executive Director.
+OASIS invites any interested party to bring to its attention any copyrights, patents or patent applications, or other proprietary rights which may cover technology that may be required to implement this specification. Please address the information to the OASIS Executive Director.
+Copyright Â© OASIS Open 2002-2006. All Rights Reserved.
+This document and translations of it may be copied and furnished to others, and derivative works that comment on or otherwise explain it or assist in its implementation may be prepared, copied, published and distributed, in whole or in part, without restriction of any kind, provided that the above copyright notice and this paragraph are included on all such copies and derivative works. However, this document itself does not be modified in any way, such as by removing the copyright notice or references to OASIS, except as needed for the purpose of developing OASIS specifications, in which case the procedures for copyrights defined in the OASIS Intellectual Property Rights document must be followed, or as required to translate it into languages other than English.
+The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns.
+This document and the information contained herein is provided on an AS IS basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+-->
+<wsdl:definitions
+        targetNamespace="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
+        xmlns:tns="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
+        xmlns:wst="http://docs.oasis-open.org/ws-sx/ws-trust/200512"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace='http://docs.oasis-open.org/ws-sx/ws-trust/200512'>
+      
+      <xs:element name='RequestSecurityToken' type='wst:AbstractRequestSecurityTokenType' />
+      <xs:element name='RequestSecurityTokenResponse' type='wst:AbstractRequestSecurityTokenType' />
+     
+      <xs:complexType name='AbstractRequestSecurityTokenType' >
+        <xs:sequence>
+          <xs:any namespace='##any' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
+        </xs:sequence>
+        <xs:attribute name='Context' type='xs:anyURI' use='optional' />
+        <xs:anyAttribute namespace='##other' processContents='lax' />
+      </xs:complexType>
+      <xs:element name='RequestSecurityTokenCollection' type='wst:RequestSecurityTokenCollectionType' />
+      <xs:complexType name='RequestSecurityTokenCollectionType' >
+        <xs:sequence>
+          <xs:element name='RequestSecurityToken' type='wst:AbstractRequestSecurityTokenType' minOccurs='2' maxOccurs='unbounded'/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:element name='RequestSecurityTokenResponseCollection' type='wst:RequestSecurityTokenResponseCollectionType' />
+      <xs:complexType name='RequestSecurityTokenResponseCollectionType' >
+        <xs:sequence>
+          <xs:element ref='wst:RequestSecurityTokenResponse' minOccurs='1' maxOccurs='unbounded' />
+        </xs:sequence>
+        <xs:anyAttribute namespace='##other' processContents='lax' />
+      </xs:complexType>
+      
+    </xs:schema>
+  </wsdl:types>
+
+  <!-- WS-Trust defines the following GEDs -->
+  <wsdl:message name="RequestSecurityTokenMsg">
+    <wsdl:part name="request" element="wst:RequestSecurityToken" />
+  </wsdl:message>
+  <wsdl:message name="RequestSecurityTokenResponseMsg">
+    <wsdl:part name="response"
+            element="wst:RequestSecurityTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestSecurityTokenCollectionMsg">
+    <wsdl:part name="requestCollection"
+            element="wst:RequestSecurityTokenCollection"/>
+  </wsdl:message>
+  <wsdl:message name="RequestSecurityTokenResponseCollectionMsg">
+    <wsdl:part name="responseCollection"
+            element="wst:RequestSecurityTokenResponseCollection"/>
+  </wsdl:message>
+
+  <!-- This portType an example of a Requestor (or other) endpoint that 
+         Accepts SOAP-based challenges from a Security Token Service -->
+  <wsdl:portType name="WSSecurityRequestor">
+    <wsdl:operation name="Challenge">
+      <wsdl:input message="tns:RequestSecurityTokenResponseMsg"/>
+      <wsdl:output message="tns:RequestSecurityTokenResponseMsg"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- This portType is an example of an STS supporting full protocol -->
+  <wsdl:portType name="STS">
+    <wsdl:operation name="Cancel">
+      <wsdl:input wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Cancel" message="tns:RequestSecurityTokenMsg"/>
+      <wsdl:output wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/CancelFinal" message="tns:RequestSecurityTokenResponseMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="Issue">
+      <wsdl:input wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue" message="tns:RequestSecurityTokenMsg"/>
+      <wsdl:output wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTRC/IssueFinal" message="tns:RequestSecurityTokenResponseCollectionMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="Renew">
+      <wsdl:input wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Renew" message="tns:RequestSecurityTokenMsg"/>
+      <wsdl:output wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/RenewFinal" message="tns:RequestSecurityTokenResponseMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="Validate">
+      <wsdl:input wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Validate" message="tns:RequestSecurityTokenMsg"/>
+      <wsdl:output wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/ValidateFinal" message="tns:RequestSecurityTokenResponseMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="KeyExchangeToken">
+      <wsdl:input wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/KET" message="tns:RequestSecurityTokenMsg"/>
+      <wsdl:output wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/KETFinal" message="tns:RequestSecurityTokenResponseMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCollection">
+      <wsdl:input message="tns:RequestSecurityTokenCollectionMsg"/>
+      <wsdl:output message="tns:RequestSecurityTokenResponseCollectionMsg"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- This portType is an example of an endpoint that accepts 
+         Unsolicited RequestSecurityTokenResponse messages -->
+  <wsdl:portType name="SecurityTokenResponseService">
+    <wsdl:operation name="RequestSecurityTokenResponse">
+      <wsdl:input message="tns:RequestSecurityTokenResponseMsg"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+</wsdl:definitions>
