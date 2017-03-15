@@ -149,7 +149,7 @@ allows only trusted Applications to connect the server.
 provides a tremendously convenient target for claiming others identity. The x509 provides
 a tremendously convenient target for claiming others identity. To leverage this issue network
 configuration may allow connections to the CAS server only from trusted hosts which in turn
-have strict security limitations and logging.
+have strict security limitations and logging.</p></div>
 
 Support is enabled by including the following in your maven overlay:
 
