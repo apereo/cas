@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.services;
 
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
@@ -30,6 +31,9 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
     @NestedConfigurationProperty
     private CouchbaseServiceRegistryProperties couchbase = new CouchbaseServiceRegistryProperties();
 
+    @NestedConfigurationProperty
+    private DynamoDbServiceRegistryProperties dynamoDb = new DynamoDbServiceRegistryProperties();
+    
     private boolean initFromJson;
 
     private String startDelay = "PT15S";
@@ -107,5 +111,13 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
 
     public void setCouchbase(final CouchbaseServiceRegistryProperties couchbase) {
         this.couchbase = couchbase;
+    }
+
+    public DynamoDbServiceRegistryProperties getDynamoDb() {
+        return dynamoDb;
+    }
+
+    public void setDynamoDb(final DynamoDbServiceRegistryProperties dynamoDb) {
+        this.dynamoDb = dynamoDb;
     }
 }

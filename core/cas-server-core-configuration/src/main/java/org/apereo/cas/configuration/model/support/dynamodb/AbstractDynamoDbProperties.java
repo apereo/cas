@@ -1,19 +1,14 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 /**
- * This is {@link DynamoDbProperties}.
+ * This is {@link AbstractDynamoDbProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class DynamoDbProperties {
-    @NestedConfigurationProperty
-    private CryptographyProperties crypto = new CryptographyProperties();
-
+public abstract class AbstractDynamoDbProperties {
     private Resource credentialsPropertiesFile;
             
     private String credentialAccessKey;
@@ -224,13 +219,5 @@ public class DynamoDbProperties {
 
     public void setWriteCapacity(final long writeCapacity) {
         this.writeCapacity = writeCapacity;
-    }
-
-    public CryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final CryptographyProperties crypto) {
-        this.crypto = crypto;
     }
 }

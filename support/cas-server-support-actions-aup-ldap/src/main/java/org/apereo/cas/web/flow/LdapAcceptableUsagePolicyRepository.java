@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -35,7 +36,9 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     private String searchFilter;
     private String baseDn;
 
-    public LdapAcceptableUsagePolicyRepository(final ConnectionFactory connectionFactory, final String searchFilter, final String baseDn) {
+    public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport, 
+            final ConnectionFactory connectionFactory, final String searchFilter, final String baseDn) {
+        super(ticketRegistrySupport);
         this.connectionFactory = connectionFactory;
         this.searchFilter = searchFilter;
         this.baseDn = baseDn;

@@ -538,6 +538,7 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.ldap.validateOnCheckout=true
 # cas.adminPagesSecurity.ldap.validatePeriodically=true
 # cas.adminPagesSecurity.ldap.validatePeriod=600
+# cas.adminPagesSecurity.ldap.validateTimeout=5000
 
 # cas.adminPagesSecurity.ldap.ldapAuthz.groupAttribute=
 # cas.adminPagesSecurity.ldap.ldapAuthz.groupPrefix=
@@ -694,6 +695,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap[0].validateOnCheckout=true
 # cas.authn.attributeRepository.ldap[0].validatePeriodically=true
 # cas.authn.attributeRepository.ldap[0].validatePeriod=600
+# cas.authn.attributeRepository.ldap[0].validateTimeout=5000
 # cas.authn.attributeRepository.ldap[0].failFast=true
 # cas.authn.attributeRepository.ldap[0].idleTime=500
 # cas.authn.attributeRepository.ldap[0].prunePeriod=600
@@ -813,7 +815,7 @@ the following settings are then relevant:
 
 ### Grouper
 
-This option reads all the groups from Grouper repository for the given CAS principal and adopts them
+This option reads all the groups from [a Grouper instance](www.internet2.edu/grouper/software.html) for the given CAS principal and adopts them
 as CAS attributes under a `grouperGroups` multi-valued attribute. To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
 ```properties
@@ -1472,6 +1474,7 @@ LDAP connection configuration injected into the LDAP connection pool can be init
 # cas.authn.ldap[0].validateOnCheckout=true
 # cas.authn.ldap[0].validatePeriodically=true
 # cas.authn.ldap[0].validatePeriod=600
+# cas.authn.ldap[0].validateTimeout=5000
 
 # cas.authn.ldap[0].failFast=true
 # cas.authn.ldap[0].idleTime=5000
@@ -1627,6 +1630,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.validateOnCheckout=true
 # cas.authn.spnego.ldap.validatePeriodically=true
 # cas.authn.spnego.ldap.validatePeriod=600
+# cas.authn.spnego.ldap.validateTimeout=5000
 # cas.authn.spnego.ldap.failFast=true
 # cas.authn.spnego.ldap.idleTime=500
 # cas.authn.spnego.ldap.prunePeriod=600
@@ -1700,6 +1704,7 @@ To learn more about this topic, [please review this guide](GUA-Authentication.ht
 # cas.authn.gua.ldap.validateOnCheckout=true
 # cas.authn.gua.ldap.validatePeriodically=true
 # cas.authn.gua.ldap.validatePeriod=600
+# cas.authn.gua.ldap.validateTimeout=5000
 # cas.authn.gua.ldap.failFast=true
 # cas.authn.gua.ldap.idleTime=500
 # cas.authn.gua.ldap.prunePeriod=600
@@ -1880,6 +1885,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.validateOnCheckout=true
 # cas.authn.x509.ldap.validatePeriodically=true
 # cas.authn.x509.ldap.validatePeriod=600
+# cas.authn.x509.ldap.validateTimeout=5000
 # cas.authn.x509.ldap.failFast=true
 # cas.authn.x509.ldap.idleTime=500
 # cas.authn.x509.ldap.prunePeriod=600
@@ -2777,6 +2783,7 @@ To learn more about this topic, [please review this guide](Logout-Single-Signout
 
 ```properties
 # cas.logout.followServiceRedirects=false
+# cas.logout.redirectParameter=service
 ```
 
 ## Single Logout
@@ -2955,6 +2962,7 @@ used for authentication, etc.
 # cas.monitor.ldap.validateOnCheckout=true
 # cas.monitor.ldap.validatePeriodically=true
 # cas.monitor.ldap.validatePeriod=600
+# cas.monitor.ldap.validateTimeout=5000
 # cas.monitor.ldap.failFast=true
 # cas.monitor.ldap.idleTime=500
 # cas.monitor.ldap.prunePeriod=600
@@ -3086,6 +3094,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.httpClient.connectionTimeout=5000
 # cas.httpClient.asyncTimeout=5000
 # cas.httpClient.readTimeout=5000
+# cas.httpClient.hostnameVerifier=NONE|DEFAULT
 
 # cas.httpClient.truststore.psw=changeit
 # cas.httpClient.truststore.file=classpath:/truststore.jks
@@ -3111,6 +3120,48 @@ to locate service definitions, decide how those resources should be found.
 
 To learn more about this topic, [please review this guide](JSON-Service-Management.html)
 or [this guide](YAML-Service-Management.html).
+
+### DynamoDb Service Registry
+
+To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
+
+```properties
+# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
+# cas.serviceRegistry.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
+
+# Alternatively, you may directly provide credentials to CAS
+# cas.serviceRegistry.dynamoDb.credentialAccessKey=
+# cas.serviceRegistry.dynamoDb.credentialSecretKey=
+
+# cas.serviceRegistry.dynamoDb.endpoint=http://localhost:8000
+# cas.serviceRegistry.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
+# cas.serviceRegistry.dynamoDb.regionOverride=
+# cas.serviceRegistry.dynamoDb.serviceNameIntern=
+
+# cas.serviceRegistry.dynamoDb.dropTablesOnStartup=false
+# cas.serviceRegistry.dynamoDb.timeOffset=0
+
+# cas.serviceRegistry.dynamoDb.readCapacity=10
+# cas.serviceRegistry.dynamoDb.writeCapacity=10
+# cas.serviceRegistry.dynamoDb.connectionTimeout=5000
+# cas.serviceRegistry.dynamoDb.requestTimeout=5000
+# cas.serviceRegistry.dynamoDb.socketTimeout=5000
+# cas.serviceRegistry.dynamoDb.useGzip=false
+# cas.serviceRegistry.dynamoDb.useReaper=false
+# cas.serviceRegistry.dynamoDb.useThrottleRetries=false
+# cas.serviceRegistry.dynamoDb.useTcpKeepAlive=false
+# cas.serviceRegistry.dynamoDb.protocol=HTTPS
+# cas.serviceRegistry.dynamoDb.clientExecutionTimeout=10000
+# cas.serviceRegistry.dynamoDb.cacheResponseMetadata=false
+# cas.serviceRegistry.dynamoDb.localAddress=
+# cas.serviceRegistry.dynamoDb.maxConnections=10
+
+# cas.serviceRegistry.dynamoDb.crypto.signing.key=
+# cas.serviceRegistry.dynamoDb.crypto.signing.keySize=512
+# cas.serviceRegistry.dynamoDb.crypto.encryption.key=
+# cas.serviceRegistry.dynamoDb.crypto.encryption.keySize=16
+# cas.serviceRegistry.dynamoDb.crypto.alg=AES
+```
 
 ### MongoDb Service Registry
 
@@ -3161,6 +3212,7 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.validateOnCheckout=true
 # cas.serviceRegistry.ldap.validatePeriodically=true
 # cas.serviceRegistry.ldap.validatePeriod=600
+# cas.serviceRegistry.ldap.validateTimeout=5000
 # cas.serviceRegistry.ldap.failFast=true
 # cas.serviceRegistry.ldap.idleTime=500
 # cas.serviceRegistry.ldap.prunePeriod=600
@@ -3697,6 +3749,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldap.validateOnCheckout=true
 # cas.mgmt.ldap.validatePeriodically=true
 # cas.mgmt.ldap.validatePeriod=600
+# cas.mgmt.ldap.validateTimeout=5000
 # cas.mgmt.ldap.failFast=true
 # cas.mgmt.ldap.idleTime=500
 # cas.mgmt.ldap.prunePeriod=600
@@ -3808,6 +3861,7 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.validateOnCheckout=true
 # cas.acceptableUsagePolicy.ldap.validatePeriodically=true
 # cas.acceptableUsagePolicy.ldap.validatePeriod=600
+# cas.acceptableUsagePolicy.ldap.validateTimeout=5000
 # cas.acceptableUsagePolicy.ldap.failFast=true
 # cas.acceptableUsagePolicy.ldap.idleTime=500
 # cas.acceptableUsagePolicy.ldap.prunePeriod=600
@@ -3950,6 +4004,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.validateOnCheckout=true
 # cas.authn.pm.ldap.validatePeriodically=true
 # cas.authn.pm.ldap.validatePeriod=600
+# cas.authn.pm.ldap.validateTimeout=5000
 # cas.authn.pm.ldap.failFast=true
 # cas.authn.pm.ldap.idleTime=500
 # cas.authn.pm.ldap.prunePeriod=600

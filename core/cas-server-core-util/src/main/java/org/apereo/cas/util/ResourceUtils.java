@@ -87,7 +87,7 @@ public final class ResourceUtils {
                 IOUtils.read(res.getInputStream(), new byte[1]);
                 return true;
             } catch (final Exception e) {
-                LOGGER.debug(e.getMessage(), e);
+                LOGGER.trace(e.getMessage(), e);
                 return false;
             }
         }
