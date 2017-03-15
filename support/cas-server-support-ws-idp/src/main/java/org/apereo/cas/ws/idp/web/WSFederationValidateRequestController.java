@@ -1,9 +1,9 @@
 package org.apereo.cas.ws.idp.web;
 
 import com.google.common.base.Throwables;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.WSFederationConstants;
+import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 
 /**
  * This is {@link WSFederationValidateRequestController}.
@@ -58,43 +60,40 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST)
     protected void handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         final WSFederationRequest fedRequest = WSFederationRequest.of(request);
-
         switch (fedRequest.getWa().toLowerCase()) {
             case WSFederationConstants.WSIGNOUT10:
             case WSFederationConstants.WSIGNOUT_CLEANUP10:
                 LOGGER.warn("Federation request [{}] is not yet supported", fedRequest.getWa());
                 break;
             case WSFederationConstants.WSIGNIN10:
-            default:
                 handleInitialAuthenticationRequest(fedRequest, response, request);
                 break;
+            default:
+                throw new UnauthorizedAuthenticationException("The authentication request is not recognized",
+                        Collections.emptyMap());
         }
     }
 
-    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest, 
+    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest,
                                                     final HttpServletResponse response, final HttpServletRequest request) {
-        if (StringUtils.isNotBlank(fedRequest.getWtrealm())) {
-            if (shouldRedirectForAuthentication(fedRequest, response, request)) {
-                LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
-                redirectToIdentityProvider(fedRequest, response, request);
-            } else {
-                LOGGER.debug("Request [{}] does not require authentication.", fedRequest);
-            }
+        final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
+        if (shouldRedirectForAuthentication(fedRequest, response, request)) {
+            LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
+            redirectToIdentityProvider(fedRequest, response, request, service);
         } else {
-            LOGGER.warn("Unrecognized authentication request [{}]. No realm specified", fedRequest);
+            LOGGER.debug("Request [{}] does not require authentication.", fedRequest);
         }
     }
-
 
     private void redirectToIdentityProvider(final WSFederationRequest fedRequest, final HttpServletResponse response,
-                                            final HttpServletRequest request) {
+                                            final HttpServletRequest request, final WSFederationRegisteredService service) {
         try {
             final String serviceUrl = constructServiceUrl(request, response, fedRequest);
-            LOGGER.debug("Created service url [{}]", serviceUrl);
+            LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, service);
 
             final String initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
                     CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, false, false);
-            LOGGER.debug("Redirecting authN request to \"[{}]\"", initialUrl);
+            LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
             final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
             authenticationRedirectStrategy.redirect(request, response, initialUrl);
         } catch (final Exception e) {
