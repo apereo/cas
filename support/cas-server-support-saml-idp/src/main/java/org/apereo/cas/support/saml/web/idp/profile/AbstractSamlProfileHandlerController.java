@@ -27,6 +27,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
@@ -588,7 +589,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     @ExceptionHandler(UnauthorizedServiceException.class)
     public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
-        return SamlIdPUtils.produceUnauthorizedErrorView();
+        return WebUtils.produceUnauthorizedErrorView();
     }
 }
 

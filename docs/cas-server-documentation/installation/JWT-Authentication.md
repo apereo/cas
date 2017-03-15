@@ -15,7 +15,7 @@ in form of JWT claims. To learn more about this functionality, [please review th
 
 ## Overview
 
-CAS expects a `token` parameter to be passed along to the `/login` endpoint. The parameter value must be a JWT.
+CAS expects a `token` parameter (or request header) to be passed along to the `/login` endpoint. The parameter value must be a JWT.
 
 <div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to use specific signing/encryption algorithms and methods. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 

@@ -72,7 +72,7 @@ public class LogoutAction extends AbstractLogoutAction {
                 WebUtils.putLogoutRedirectUrl(context, service);
             } else {
                 LOGGER.warn("Cannot redirect to [{}] given the service is unauthorized to use CAS. "
-                        + "Ensure the service [{}] is registered with CAS and is enabled to allowed access", service);
+                        + "Ensure the service is registered with CAS and is enabled to allowed access", service);
             }
         } else {
             LOGGER.debug("No target service is located for redirection after logout, or CAS is not allowed to follow redirects after logout");

@@ -62,30 +62,36 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
             final Credential credential = getCredentialFromContext(context);
-            if (credential != null) {
-                final AuthenticationResultBuilder builder =
-                        this.authenticationSystemSupport.handleInitialAuthenticationTransaction(credential);
+            final Service service = WebUtils.getService(context);
 
+            if (credential != null) {
+                final AuthenticationResultBuilder builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
                 if (builder.getInitialAuthentication().isPresent()) {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
                     WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
                 }
             }
-            final Service service = WebUtils.getService(context);
-            if (service != null) {
 
+            if (service != null) {
                 LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
+                LOGGER.debug("Attempting to resolve candidate authentication events for [{}]", service);
                 final Set<Event> resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
                 if (!resolvedEvents.isEmpty()) {
+                    LOGGER.debug("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...",
+                            service, resolvedEvents);
                     putResolvedEventsAsAttribute(context, resolvedEvents);
                     final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
+                    LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
                     if (finalResolvedEvent != null) {
                         return Collections.singleton(finalResolvedEvent);
                     }
                 }
+            } else {
+                LOGGER.debug("No target service is specified in the request to determine authentication policy. "
+                        + "CAS will proceed to the build the authentication event/transaction as usual.");
             }
 
             final AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);

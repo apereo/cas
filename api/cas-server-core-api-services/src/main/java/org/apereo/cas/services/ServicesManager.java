@@ -37,7 +37,7 @@ public interface ServicesManager {
      * @return the RegisteredService that matches the supplied service.
      */
     RegisteredService findServiceBy(String serviceId);
-    
+
     /**
      * Find a RegisteredService by matching with the supplied service.
      *
@@ -50,9 +50,29 @@ public interface ServicesManager {
      * Find a collection of services by type.
      *
      * @param clazz the clazz
-     * @return the  collection of services that matches the supplied type
+     * @return the collection of services that matches the supplied type
      */
     Collection<RegisteredService> findServiceBy(Predicate<RegisteredService> clazz);
+
+    /**
+     * Find service by type.
+     *
+     * @param <T>       the type parameter
+     * @param serviceId the service id
+     * @param clazz     the clazz
+     * @return the t
+     */
+    <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz);
+    
+    /**
+     * Find service by type.
+     *
+     * @param <T>       the type parameter
+     * @param serviceId the service id
+     * @param clazz     the clazz
+     * @return the t
+     */
+    <T extends RegisteredService> T findServiceBy(String serviceId, Class<T> clazz);
 
     /**
      * Find a RegisteredService by matching with the supplied id.
@@ -84,7 +104,7 @@ public interface ServicesManager {
      * @return true if it exists, false otherwise.
      */
     boolean matchesExistingService(String service);
-    
+
     /**
      * Inform the ServicesManager to reload its list of services if its cached
      * them. Note that this is a suggestion and that ServicesManagers are free
@@ -94,6 +114,7 @@ public interface ServicesManager {
 
     /**
      * Return a count of loaded services by this manager.
+     *
      * @return the count/size of registry.
      */
     default int count() {

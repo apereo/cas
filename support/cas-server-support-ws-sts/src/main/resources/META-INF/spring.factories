@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration,\
+org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration

@@ -178,8 +178,11 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-
-        <AsyncLogger name="org.apache.http" level="off" additivity="false">
+        <AsyncLogger name="org.apache.cxf" level="warn" additivity="false">
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="casFile"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.apache.http" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>

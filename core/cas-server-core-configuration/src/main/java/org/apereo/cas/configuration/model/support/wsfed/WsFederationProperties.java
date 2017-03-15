@@ -1,146 +1,185 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
-import org.apereo.cas.configuration.support.Beans;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 /**
  * This is {@link WsFederationProperties}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.0
  */
-
 public class WsFederationProperties {
+    private IdentityProvider idp = new IdentityProvider();
+    private SecurityTokenService sts = new SecurityTokenService();
 
-    private String identityAttribute = "upn";
-    private String identityProviderIdentifier = "https://adfs.example.org/adfs/services/trust";
-    private String identityProviderUrl = "https://adfs.example.org/adfs/ls/";
-    private String signingCertificateResources = "classpath:adfs-signing.crt";
-    private String relyingPartyIdentifier = "urn:cas:localhost";
-    private String tolerance = "PT10S";
-    private String attributesType = "WSFED";
-    private boolean attributeResolverEnabled = true;
-    private boolean autoRedirect = true;
-
-    private String encryptionPrivateKey = "classpath:private.key";
-    private String encryptionCertificate = "classpath:certificate.crt";
-    private String encryptionPrivateKeyPassword = "NONE";
-
-    @NestedConfigurationProperty
-    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
-
-    private String name;
-
-    public String getName() {
-        return name;
+    public IdentityProvider getIdp() {
+        return idp;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public void setIdp(final IdentityProvider idp) {
+        this.idp = idp;
     }
 
-    public PersonDirPrincipalResolverProperties getPrincipal() {
-        return principal;
+    public SecurityTokenService getSts() {
+        return sts;
     }
 
-    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
-        this.principal = principal;
+    public void setSts(final SecurityTokenService sts) {
+        this.sts = sts;
     }
 
-    public boolean isAttributeResolverEnabled() {
-        return attributeResolverEnabled;
-    }
+    public static class IdentityProvider {
+        private String realm = "urn:org:apereo:cas:ws:idp:realm-CAS";
+        private String realmName = "CAS";
+        
+        public String getRealm() {
+            return realm;
+        }
 
-    public void setAttributeResolverEnabled(final boolean attributeResolverEnabled) {
-        this.attributeResolverEnabled = attributeResolverEnabled;
-    }
+        public void setRealm(final String realm) {
+            this.realm = realm;
+        }
 
-    public String getIdentityAttribute() {
-        return identityAttribute;
-    }
+        public String getRealmName() {
+            return realmName;
+        }
 
-    public void setIdentityAttribute(final String identityAttribute) {
-        this.identityAttribute = identityAttribute;
+        public void setRealmName(final String realmName) {
+            this.realmName = realmName;
+        }
     }
+    
+    public static class SecurityTokenService {
+        private String subjectNameIdFormat = "unspecified";
+        private boolean encryptTokens = true;
+        
+        private String signingKeystoreFile;
+        private String signingKeystorePassword;
 
-    public String getIdentityProviderIdentifier() {
-        return identityProviderIdentifier;
-    }
+        private String encryptionKeystoreFile;
+        private String encryptionKeystorePassword;
 
-    public void setIdentityProviderIdentifier(final String identityProviderIdentifier) {
-        this.identityProviderIdentifier = identityProviderIdentifier;
-    }
+        private String encryptionKey;
+        private String signingKey;
+        
+        private RealmDefinition realm = new RealmDefinition();
 
-    public String getIdentityProviderUrl() {
-        return identityProviderUrl;
-    }
+        public String getEncryptionKey() {
+            return encryptionKey;
+        }
 
-    public void setIdentityProviderUrl(final String identityProviderUrl) {
-        this.identityProviderUrl = identityProviderUrl;
-    }
+        public void setEncryptionKey(final String encryptionKey) {
+            this.encryptionKey = encryptionKey;
+        }
 
-    public String getSigningCertificateResources() {
-        return signingCertificateResources;
-    }
+        public String getSigningKey() {
+            return signingKey;
+        }
 
-    public void setSigningCertificateResources(final String signingCertificateResources) {
-        this.signingCertificateResources = signingCertificateResources;
-    }
+        public void setSigningKey(final String signingKey) {
+            this.signingKey = signingKey;
+        }
 
-    public String getRelyingPartyIdentifier() {
-        return relyingPartyIdentifier;
-    }
+        public RealmDefinition getRealm() {
+            return realm;
+        }
 
-    public void setRelyingPartyIdentifier(final String relyingPartyIdentifier) {
-        this.relyingPartyIdentifier = relyingPartyIdentifier;
-    }
+        public void setRealm(final RealmDefinition realm) {
+            this.realm = realm;
+        }
 
-    public long getTolerance() {
-        return Beans.newDuration(tolerance).toMillis();
-    }
+        public boolean isEncryptTokens() {
+            return encryptTokens;
+        }
 
-    public void setTolerance(final String tolerance) {
-        this.tolerance = tolerance;
-    }
+        public void setEncryptTokens(final boolean encryptTokens) {
+            this.encryptTokens = encryptTokens;
+        }
 
-    public String getAttributesType() {
-        return attributesType;
-    }
+        public String getSubjectNameIdFormat() {
+            return subjectNameIdFormat;
+        }
 
-    public void setAttributesType(final String attributesType) {
-        this.attributesType = attributesType;
-    }
+        public void setSubjectNameIdFormat(final String subjectNameIdFormat) {
+            this.subjectNameIdFormat = subjectNameIdFormat;
+        }
 
-    public boolean isAutoRedirect() {
-        return autoRedirect;
-    }
+        public String getSigningKeystoreFile() {
+            return signingKeystoreFile;
+        }
 
-    public void setAutoRedirect(final boolean autoRedirect) {
-        this.autoRedirect = autoRedirect;
-    }
+        public void setSigningKeystoreFile(final String signingKeystoreFile) {
+            this.signingKeystoreFile = signingKeystoreFile;
+        }
 
-    public String getEncryptionPrivateKey() {
-        return encryptionPrivateKey;
-    }
+        public String getSigningKeystorePassword() {
+            return signingKeystorePassword;
+        }
 
-    public void setEncryptionPrivateKey(final String encryptionPrivateKey) {
-        this.encryptionPrivateKey = encryptionPrivateKey;
-    }
+        public void setSigningKeystorePassword(final String signingKeystorePassword) {
+            this.signingKeystorePassword = signingKeystorePassword;
+        }
 
-    public String getEncryptionCertificate() {
-        return encryptionCertificate;
-    }
+        public String getEncryptionKeystoreFile() {
+            return encryptionKeystoreFile;
+        }
 
-    public void setEncryptionCertificate(final String encryptionCertificate) {
-        this.encryptionCertificate = encryptionCertificate;
-    }
+        public void setEncryptionKeystoreFile(final String encryptionKeystoreFile) {
+            this.encryptionKeystoreFile = encryptionKeystoreFile;
+        }
 
-    public String getEncryptionPrivateKeyPassword() {
-        return encryptionPrivateKeyPassword;
-    }
+        public String getEncryptionKeystorePassword() {
+            return encryptionKeystorePassword;
+        }
 
-    public void setEncryptionPrivateKeyPassword(final String encryptionPrivateKeyPassword) {
-        this.encryptionPrivateKeyPassword = encryptionPrivateKeyPassword;
+        public void setEncryptionKeystorePassword(final String encryptionKeystorePassword) {
+            this.encryptionKeystorePassword = encryptionKeystorePassword;
+        }
+        
+        public static class RealmDefinition {
+            private String keystoreFile;
+            private String keystorePassword;
+            private String keystoreAlias;
+            private String keyPassword;
+            private String issuer = "CAS";
+
+            public String getKeyPassword() {
+                return keyPassword;
+            }
+
+            public void setKeyPassword(final String keyPassword) {
+                this.keyPassword = keyPassword;
+            }
+
+            public String getKeystoreFile() {
+                return keystoreFile;
+            }
+
+            public void setKeystoreFile(final String keystoreFile) {
+                this.keystoreFile = keystoreFile;
+            }
+
+            public String getKeystorePassword() {
+                return keystorePassword;
+            }
+
+            public void setKeystorePassword(final String keystorePassword) {
+                this.keystorePassword = keystorePassword;
+            }
+
+            public String getKeystoreAlias() {
+                return keystoreAlias;
+            }
+
+            public void setKeystoreAlias(final String keystoreAlias) {
+                this.keystoreAlias = keystoreAlias;
+            }
+
+            public String getIssuer() {
+                return issuer;
+            }
+
+            public void setIssuer(final String issuer) {
+                this.issuer = issuer;
+            }
+        }
     }
 }

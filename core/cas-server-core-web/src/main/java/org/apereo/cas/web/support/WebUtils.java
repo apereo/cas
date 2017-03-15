@@ -14,9 +14,11 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
@@ -28,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -41,6 +44,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -802,5 +806,26 @@ public final class WebUtils {
      */
     public static void putServiceOriginalUrlIntoRequestScope(final RequestContext requestContext, final WebApplicationService service) {
         requestContext.getRequestScope().put("originalUrl", service.getOriginalUrl());
+    }
+
+    /**
+     * Produce unauthorized error view model and view.
+     *
+     * @return the model and view
+     */
+    public static ModelAndView produceUnauthorizedErrorView() {
+        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+    }
+
+    /**
+     * Produce error view model and view.
+     *
+     * @param e the e
+     * @return the model and view
+     */
+    public static ModelAndView produceErrorView(final Exception e) {
+        final Map model = new HashMap<>();
+        model.put("rootCauseException", e);
+        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, model);
     }
 }

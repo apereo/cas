@@ -81,7 +81,7 @@ public class ThreadContextMDCServletFilter implements Filter {
             
             final String cookieValue = 
                 this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-            if (StringUtils.isNotEmpty(cookieValue)) {
+            if (StringUtils.isNotBlank(cookieValue)) {
                 final Principal p = this.ticketRegistrySupport.getAuthenticatedPrincipalFrom(cookieValue);
                 if (p != null) {
                     MDC.put("principal", p.getId());
