@@ -10,8 +10,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
@@ -20,10 +23,14 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
+import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,11 +46,8 @@ import java.util.Date;
  */
 @Controller
 public abstract class BaseWSFederationRequestController {
-    /**
-     * The constant LOGGER.
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseWSFederationRequestController.class);
-    
+
     /**
      * The Services manager.
      */
@@ -97,26 +101,26 @@ public abstract class BaseWSFederationRequestController {
     /**
      * Instantiates a new Base ws federation request controller.
      *
-     * @param servicesManager                      the services manager
-     * @param webApplicationServiceFactory         the web application service factory
-     * @param casProperties                        the cas properties
-     * @param serviceSelectionStrategy             the service selection strategy
-     * @param httpClient                           the http client
-     * @param securityTokenTicketFactory           the security token ticket factory
-     * @param ticketRegistry                       the ticket registry
-     * @param ticketGrantingTicketCookieGenerator  the ticket granting ticket cookie generator
-     * @param ticketRegistrySupport                the ticket registry support
+     * @param servicesManager                     the services manager
+     * @param webApplicationServiceFactory        the web application service factory
+     * @param casProperties                       the cas properties
+     * @param serviceSelectionStrategy            the service selection strategy
+     * @param httpClient                          the http client
+     * @param securityTokenTicketFactory          the security token ticket factory
+     * @param ticketRegistry                      the ticket registry
+     * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
+     * @param ticketRegistrySupport               the ticket registry support
      */
     public BaseWSFederationRequestController(
-                                             final ServicesManager servicesManager,
-                                             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                             final CasConfigurationProperties casProperties,
-                                             final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
-                                             final HttpClient httpClient,
-                                             final SecurityTokenTicketFactory securityTokenTicketFactory,
-                                             final TicketRegistry ticketRegistry,
-                                             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                             final TicketRegistrySupport ticketRegistrySupport) {
+            final ServicesManager servicesManager,
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            final CasConfigurationProperties casProperties,
+            final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
+            final HttpClient httpClient,
+            final SecurityTokenTicketFactory securityTokenTicketFactory,
+            final TicketRegistry ticketRegistry,
+            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+            final TicketRegistrySupport ticketRegistrySupport) {
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.casProperties = casProperties;
@@ -307,5 +311,45 @@ public abstract class BaseWSFederationRequestController {
             }
         }
         return false;
+    }
+
+    /**
+     * Gets ws federation registered service.
+     *
+     * @param response   the response
+     * @param request    the request
+     * @param fedRequest the fed request
+     * @return the ws federation registered service
+     */
+    protected WSFederationRegisteredService getWsFederationRegisteredService(final HttpServletResponse response, final HttpServletRequest request,
+                                                                             final WSFederationRequest fedRequest) {
+        final String serviceUrl = constructServiceUrl(request, response, fedRequest);
+        final Service targetService = this.serviceSelectionStrategy.resolveServiceFrom(this.webApplicationServiceFactory.createService(serviceUrl));
+        final WSFederationRegisteredService svc = this.servicesManager.findServiceBy(targetService, WSFederationRegisteredService.class);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(targetService, svc);
+
+        final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
+        if (StringUtils.isBlank(fedRequest.getWtrealm()) || !StringUtils.equals(fedRequest.getWtrealm(), svc.getRealm())) {
+            LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.getWtrealm(), svc);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        }
+        if (!StringUtils.equals(idp.getRealm(), svc.getRealm())) {
+            LOGGER.warn("Realm [{}] is not authorized for the identity provider realm [{}]", fedRequest.getWtrealm(), idp.getRealm());
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        }
+
+        return svc;
+    }
+
+    /**
+     * Handle unauthorized service exception.
+     *
+     * @param req the req
+     * @param ex  the ex
+     * @return the model and view
+     */
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
+        return WebUtils.produceUnauthorizedErrorView();
     }
 }
