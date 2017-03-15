@@ -199,41 +199,7 @@ public abstract class BaseWSFederationRequestController {
             throw new SamlException(e.getMessage(), e);
         }
     }
-
-    /**
-     * Should redirect for authentication ?
-     *
-     * @param fedRequest the fed request
-     * @param response   the response
-     * @param request    the request
-     * @return the boolean
-     */
-    protected boolean shouldRedirectForAuthentication(final WSFederationRequest fedRequest,
-                                                      final HttpServletResponse response,
-                                                      final HttpServletRequest request) {
-        return isSecurityTokenExpired(fedRequest, response, request)
-                || isAuthenticationRequired(fedRequest, response, request);
-    }
-
-    /**
-     * Is security token expired ?
-     *
-     * @param fedRequest the fed request
-     * @param response   the response
-     * @param request    the request
-     * @return the boolean
-     */
-    protected boolean isSecurityTokenExpired(final WSFederationRequest fedRequest,
-                                             final HttpServletResponse response,
-                                             final HttpServletRequest request) {
-        final SecurityToken idpToken = getSecurityTokenFromRequest(request);
-        if (idpToken == null) {
-            return true;
-        }
-
-        return idpToken.isExpired();
-    }
-
+    
     /**
      * Gets security token from request.
      *
@@ -245,10 +211,12 @@ public abstract class BaseWSFederationRequestController {
         if (StringUtils.isNotBlank(cookieValue)) {
             final String sts = securityTokenTicketFactory.createLinkedId(cookieValue);
             final SecurityTokenTicket stt = ticketRegistry.getTicket(sts, SecurityTokenTicket.class);
-            if (stt == null) {
+            if (stt == null || stt.isExpired()) {
+                LOGGER.warn("Security token ticket [{}] is not found or has expired", sts);
                 return null;
             }
-            if (stt.isExpired()) {
+            if (stt.getSecurityToken().isExpired()) {
+                LOGGER.warn("Security token linked to ticket [{}] has expired", sts);
                 return null;
             }
             return stt.getSecurityToken();
@@ -278,20 +246,17 @@ public abstract class BaseWSFederationRequestController {
      * Is authentication required?
      *
      * @param fedRequest the fed request
-     * @param response   the response
      * @param request    the request
      * @return the boolean
      */
-    protected boolean isAuthenticationRequired(final WSFederationRequest fedRequest,
-                                               final HttpServletResponse response,
-                                               final HttpServletRequest request) {
+    protected boolean shouldRenewAuthentication(final WSFederationRequest fedRequest,
+                                                final HttpServletRequest request) {
         if (StringUtils.isBlank(fedRequest.getWfresh()) || NumberUtils.isCreatable(fedRequest.getWfresh())) {
             return false;
         }
-
         final long ttl = Long.parseLong(fedRequest.getWfresh().trim());
         if (ttl == 0) {
-            return true;
+            return false;
         }
 
         final SecurityToken idpToken = getSecurityTokenFromRequest(request);
