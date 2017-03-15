@@ -56,7 +56,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
             if (LdapUtils.containsResultEntry(response)) {
                 final LdapEntry entry = response.getResult().getEntry();
-                LOGGER.debug("Found LDAP entry [{}] to locate account email is [{}]", entry);
+                LOGGER.debug("Found LDAP entry [{}] to use for the account email", entry);
 
                 final String attributeName = passwordManagementProperties.getReset().getEmailAttribute();
                 final LdapAttribute attr = entry.getAttribute(attributeName);
