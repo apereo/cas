@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,7 @@ public class WSFederationMetadataWriter {
             writer.writeStartElement("md", "EntityDescriptor", SAML2_METADATA_NS);
             writer.writeAttribute("ID", referenceID);
 
-            final String idpEntityId = config.getServer().getPrefix().concat("/ws/idp/federation");
+            final String idpEntityId = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST);
             writer.writeAttribute("entityID", idpEntityId);
 
             writer.writeNamespace("md", SAML2_METADATA_NS);
@@ -63,7 +64,7 @@ public class WSFederationMetadataWriter {
             writer.writeNamespace("auth", WS_FEDERATION_NS);
             writer.writeNamespace("xsi", SCHEMA_INSTANCE_NS);
 
-            final String stsUrl = config.getServer().getPrefix().concat("/ws/sts/")
+            final String stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_STS)
                     .concat(config.getAuthn().getWsfedIdP().getIdp().getRealmName());
             writeFederationMetadata(writer, idpEntityId, stsUrl, crypto);
 

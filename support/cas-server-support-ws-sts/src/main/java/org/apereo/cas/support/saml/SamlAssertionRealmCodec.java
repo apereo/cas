@@ -10,7 +10,7 @@ import java.security.cert.X509Certificate;
 
 /**
  * This is {@link SamlAssertionRealmCodec}.
- *
+ * Parse the realm from a SAML assertion.
  * @author Misagh Moayyed
  * @since 5.1.0
  */
