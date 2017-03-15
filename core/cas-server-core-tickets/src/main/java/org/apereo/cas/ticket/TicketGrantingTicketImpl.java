@@ -185,8 +185,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     protected void trackServiceSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
         update();
 
-        final List<Authentication> authentications = getChainedAuthentications();
-        service.setPrincipal(authentications.get(authentications.size() - 1).getPrincipal());
+        service.setPrincipal(getRoot().getAuthentication().getPrincipal());
 
         if (onlyTrackMostRecentSession) {
             final String path = normalizePath(service);
@@ -254,13 +253,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonIgnore
     @Override
     public TicketGrantingTicket getRoot() {
-        TicketGrantingTicket current = this;
-        TicketGrantingTicket parent = current.getGrantingTicket();
-        while (parent != null) {
-            current = parent;
-            parent = current.getGrantingTicket();
+        final TicketGrantingTicket parent = getGrantingTicket();
+        if (parent == null) {
+            return this;
         }
-        return current;
+        return parent.getRoot();
     }
 
     /**

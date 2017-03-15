@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -127,9 +126,7 @@ public final class RegisteredServiceAccessStrategyUtils {
     public static void ensurePrincipalAccessIsAllowedForService(final Service service, final RegisteredService registeredService,
                                                                 final TicketGrantingTicket ticketGrantingTicket)
             throws UnauthorizedServiceException, PrincipalException {
-        final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
-        final Authentication authentication = authentications.get(authentications.size() - 1);
-        ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+        ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket.getRoot().getAuthentication());
 
     }
 
