@@ -46,7 +46,7 @@ The following commandline boolean flags are supported by the build:
 | `enableKotlin`                    | Enable compilation of Kotlin's `.kt` files, if any. 
 
 
-Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`)
+Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`). Also, if you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster. Using the Gradle daemon also is a big help.
 
 ## Tasks
 
