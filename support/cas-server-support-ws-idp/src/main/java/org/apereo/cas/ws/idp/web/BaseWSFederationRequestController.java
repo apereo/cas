@@ -199,7 +199,7 @@ public abstract class BaseWSFederationRequestController {
             throw new SamlException(e.getMessage(), e);
         }
     }
-    
+
     /**
      * Gets security token from request.
      *
@@ -286,12 +286,12 @@ public abstract class BaseWSFederationRequestController {
      * @param fedRequest the fed request
      * @return the ws federation registered service
      */
-    protected WSFederationRegisteredService getWsFederationRegisteredService(final HttpServletResponse response, final HttpServletRequest request,
-                                                                             final WSFederationRequest fedRequest) {
+    protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final HttpServletResponse response,
+                                                                                                 final HttpServletRequest request,
+                                                                                                 final WSFederationRequest fedRequest) {
         final String serviceUrl = constructServiceUrl(request, response, fedRequest);
         final Service targetService = this.serviceSelectionStrategy.resolveServiceFrom(this.webApplicationServiceFactory.createService(serviceUrl));
-        final WSFederationRegisteredService svc = this.servicesManager.findServiceBy(targetService, WSFederationRegisteredService.class);
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(targetService, svc);
+        final WSFederationRegisteredService svc = getWsFederationRegisteredService(targetService);
 
         final WsFederationProperties.IdentityProvider idp = casProperties.getAuthn().getWsfedIdP().getIdp();
         if (StringUtils.isBlank(fedRequest.getWtrealm()) || !StringUtils.equals(fedRequest.getWtrealm(), svc.getRealm())) {
@@ -303,6 +303,18 @@ public abstract class BaseWSFederationRequestController {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
 
+        return svc;
+    }
+
+    /**
+     * Gets ws federation registered service.
+     *
+     * @param targetService the target service
+     * @return the ws federation registered service
+     */
+    protected WSFederationRegisteredService getWsFederationRegisteredService(final Service targetService) {
+        final WSFederationRegisteredService svc = this.servicesManager.findServiceBy(targetService, WSFederationRegisteredService.class);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(targetService, svc);
         return svc;
     }
 

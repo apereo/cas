@@ -1,9 +1,11 @@
 package org.apereo.cas.ws.idp.web;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -63,7 +65,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         switch (fedRequest.getWa().toLowerCase()) {
             case WSFederationConstants.WSIGNOUT10:
             case WSFederationConstants.WSIGNOUT_CLEANUP10:
-                LOGGER.warn("Federation request [{}] is not yet supported", fedRequest.getWa());
+                handleLogoutRequest(fedRequest, request, response);
                 break;
             case WSFederationConstants.WSIGNIN10:
                 handleInitialAuthenticationRequest(fedRequest, response, request);
@@ -74,13 +76,28 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         }
     }
 
+    private void handleLogoutRequest(final WSFederationRequest fedRequest, final HttpServletRequest request,
+                                     final HttpServletResponse response) throws Exception {
+        String logoutUrl = casProperties.getServer().getLogoutUrl();
+        if (StringUtils.isNotBlank(fedRequest.getWreply())) {
+            final Service service = webApplicationServiceFactory.createService(fedRequest.getWreply());
+            final WSFederationRegisteredService registeredService = getWsFederationRegisteredService(service);
+            LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
+                    fedRequest, fedRequest.getWreply(), registeredService);
+            final String logoutParam = casProperties.getLogout().getRedirectParameter();
+            logoutUrl = logoutUrl.concat("?").concat(logoutParam).concat("=").concat(service.getId());
+        }
+        final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
+        authenticationRedirectStrategy.redirect(request, response, logoutUrl);
+    }
+
     private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest,
                                                     final HttpServletResponse response, final HttpServletRequest request) {
-        final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
+        final WSFederationRegisteredService service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
         LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
         redirectToIdentityProvider(fedRequest, response, request, service);
     }
-    
+
     private void redirectToIdentityProvider(final WSFederationRequest fedRequest, final HttpServletResponse response,
                                             final HttpServletRequest request, final WSFederationRegisteredService service) {
         try {

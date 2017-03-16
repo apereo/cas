@@ -77,7 +77,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     protected ModelAndView handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         final WSFederationRequest fedRequest = WSFederationRequest.of(request);
         LOGGER.debug("Received callback profile request [{}]", request.getRequestURI());
-        final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
+        final WSFederationRegisteredService service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
         LOGGER.debug("Located matching service [{}]", service);
 
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
@@ -127,7 +127,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     private String produceRelyingPartyToken(final HttpServletResponse response, final HttpServletRequest request,
                                             final WSFederationRequest fedRequest, final SecurityToken securityToken,
                                             final Assertion assertion) {
-        final WSFederationRegisteredService service = getWsFederationRegisteredService(response, request, fedRequest);
+        final WSFederationRegisteredService service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
         return relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request, assertion);
     }
     
