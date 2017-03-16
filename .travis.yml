@@ -41,7 +41,7 @@ before_install:
 - sudo ./gradlew gulpSetup --stacktrace -q
 - sudo ./gradlew clean --parallel -q
 install:
-- sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace 
+- sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace --refresh-dependencies
 script:
 - travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
 after_success:

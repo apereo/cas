@@ -14,7 +14,8 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
 import static org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction.*;
 
@@ -26,12 +27,12 @@ import static org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction.*;
  */
 public class VerifyPasswordResetRequestAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(VerifyPasswordResetRequestAction.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
     private PasswordManagementService passwordManagementService;
-    
+
     public VerifyPasswordResetRequestAction(final PasswordManagementService passwordManagementService) {
         this.passwordManagementService = passwordManagementService;
     }
@@ -39,15 +40,15 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
-        
+
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
         final String token = request.getParameter(PARAMETER_NAME_TOKEN);
-        
+
         if (StringUtils.isBlank(token)) {
             LOGGER.error("Password reset token is missing");
             return error();
         }
-        
+
         final String username = passwordManagementService.parseToken(token);
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Password reset token could not be verified");
@@ -55,19 +56,20 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
         }
 
         if (pm.getReset().isSecurityQuestionsEnabled()) {
-            final Collection<String> questions = passwordManagementService.getSecurityQuestions(username).keySet();
+            final Map<String, String> questions = passwordManagementService.getSecurityQuestions(username);
             if (questions.isEmpty()) {
-                LOGGER.warn("No security questions could be found for " + username);
+                LOGGER.warn("No security questions could be found for [{}]", username);
                 return error();
             }
-            requestContext.getFlowScope().put("questions", questions);
+            requestContext.getFlowScope().put("questions", new HashSet<>(questions.keySet()));
         } else {
             LOGGER.debug("Security questions are not enabled");
         }
-        
+
         requestContext.getFlowScope().put("token", token);
         requestContext.getFlowScope().put("username", username);
-        requestContext.getFlowScope().put("questionsEnabled", pm.getReset().isSecurityQuestionsEnabled());
+        requestContext.getFlowScope().put("questionsEnabled", 
+                pm.getReset().isSecurityQuestionsEnabled());
 
         if (pm.getReset().isSecurityQuestionsEnabled()) {
             return success();
