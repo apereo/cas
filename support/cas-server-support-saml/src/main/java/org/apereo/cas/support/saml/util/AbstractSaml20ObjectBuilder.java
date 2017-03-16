@@ -7,7 +7,9 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
@@ -196,6 +198,19 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
+     * Add saml2 attribute values for attribute.
+     *
+     * @param attributeName  the attribute name
+     * @param attributeValue the attribute value
+     * @param attributeList  the attribute list
+     */
+    public void addAttributeValuesToSaml2Attribute(final String attributeName,
+                                                   final Object attributeValue,
+                                                   final List<XMLObject> attributeList) {
+        addAttributeValuesToSamlAttribute(attributeName, attributeValue, attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
+    }
+    
+    /**
      * New attribute.
      *
      * @param setFriendlyName       the set friendly name
@@ -213,7 +228,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         if (setFriendlyName) {
             attribute.setFriendlyName(e.getKey());
         }
-        addAttributeValuesToSamlAttribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
+        addAttributeValuesToSaml2Attribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
 
         if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
             final String nameFormat = configuredNameFormats.get(attribute.getName());

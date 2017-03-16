@@ -402,7 +402,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
         final String urlToRedirectTo = buildRedirectUrlByRequestedAuthnContext(initialUrl, authnRequest, request);
 
-        LOGGER.debug("Redirecting SAML authN request to \"[{}]\"", urlToRedirectTo);
+        LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
         final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, urlToRedirectTo);
 
@@ -418,8 +418,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest,
                                                              final HttpServletRequest request) {
-        if (authnRequest.getRequestedAuthnContext() == null
-                || authenticationContextClassMappings == null
+        if (authnRequest.getRequestedAuthnContext() == null || authenticationContextClassMappings == null
                 || this.authenticationContextClassMappings.isEmpty()) {
             return initialUrl;
         }
@@ -569,7 +568,7 @@ public abstract class AbstractSamlProfileHandlerController {
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);
 
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
-        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor = 
+        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
                 getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
 
         if (!adaptor.isPresent()) {
