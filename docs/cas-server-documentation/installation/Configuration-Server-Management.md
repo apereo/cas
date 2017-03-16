@@ -30,9 +30,11 @@ files that can be used to control CAS behavior. Also note that this configuratio
 and refresh the application context as needed. Please [review this guide](Configuration-Management-Reload.html#reload-strategy) to learn more.
 
 Note that by default, all CAS settings and configuration is controlled via the embedded `application.properties` file in the CAS server
-web application. Settings found in external configuration files are and will be able to override the defaults provide by CAS.
+web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the configuration
+inside the main CAS web application and not rely on externalized configuration files.
 
-The naming of the configuration files inside the CAS configuration directory follows the below pattern:
+Settings found in external configuration files are and will be able to override the defaults provide by CAS. The naming of the configuration files 
+inside the CAS configuration directory follows the below pattern:
 
 - An `application.(properties|yml)` file is always loaded.
 - Settings located inside `properties|yml` files whose name matches the value of `spring.application.name` are loaded (i.e `cas.properties`)
@@ -42,8 +44,8 @@ to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap
 
 <div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
 modify the built in <code>application.properties</code> file. This will only complicate and weaken your deployment.
-Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the default or
-<a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
+Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the default, override via <code>application.yml</code> or
+use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
 ### Spring Cloud
@@ -73,6 +75,14 @@ via the following module in it own [WAR overlay](https://github.com/apereo/cas-c
   <version>${cas.version}</version>
 </dependency>
 ```
+
+In addition to the [strategies outlined here](Configuration-Management.html#overview), the configuration server 
+may load CAS settings and properties via the following order and mechanics:
+
+1. Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml)
+2. Profile-specific application properties packaged inside your jar (`application-{profile}.properties|yml`)
+3. Application properties outside of your packaged jar (`application.properties|yml`).
+4. Application properties packaged inside your jar (`application.properties|yml`).
 
 The configuration and behavior of the configuration server is also controlled by its own
 `src/main/resources/bootstrap.properties` file. By default, it runs under port `8888` at `/casconfigserver` inside

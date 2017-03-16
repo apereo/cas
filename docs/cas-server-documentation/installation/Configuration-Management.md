@@ -26,20 +26,15 @@ CAS allows you to externalize your configuration so you can work with the same C
 different environments. You can use properties files, YAML files, environment variables and
 command-line arguments to externalize configuration.
 
-CAS uses a very particular order that is designed to allow sensible overriding of values,
-properties are considered in the following order:
+CAS uses a very particular order that is designed to allow sensible overriding of values. Properties passed to the CAS web application 
+are considered in the following order:
 
 1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
 2. Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable/system property)
 3. JNDI attributes from `java:comp/env`.
 4. Java System properties.
 5. OS environment variables.
-6. Profile-specific application properties outside of your packaged jar (application-{profile}.properties and YAML variants)
-7. Profile-specific application properties packaged inside your jar (application-{profile}.properties and YAML variants)
-8. Application properties outside of your packaged jar (`application.properties` and YAML variants).
-9. Application properties packaged inside your jar (`application.properties` and YAML variants).
-
-All CAS settings can be overridden via the above outlined strategies.
+6. Configuration files (i.e. `application.properties|yml`) indicated by the [configuration server](#configuration-server) and profile.
 
 <div class="alert alert-info"><strong>Managing Configuration</strong><p>In order to manage
 the CAS configuration, you should configure access
