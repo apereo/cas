@@ -27,6 +27,12 @@ CAS uses a very particular order that is designed to allow sensible overriding o
 properties are considered in the following order:
 
 1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
+
+Example:
+```sh
+$ java -jar build/libs/cas.war --spring.cloud.config.server.native.searchLocations=file:///C:/www/cas-gradle-overlay-template/etc/cas/config
+```
+
 2. Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable/system property)
 3. JNDI attributes from `java:comp/env`.
 4. Java System properties.
