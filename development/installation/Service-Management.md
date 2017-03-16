@@ -50,7 +50,7 @@ Registered services present the following metadata:
 | `multifactorPolicy`               | The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](Configuring-Multifactor-Authentication.html).
 
 
-<div class="alert alert-info"><strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, there are additional service types in CAS that may be activated and required depending on the protocol used and the nature of the client application. Always check the the dedicated guide for the capability you have in mind (i.e. OAuth, SAML, etc).</p></div>
+<div class="alert alert-info"><strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, there are additional service types in CAS that may be activated and required depending on the protocol used and the nature of the client application. Always check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML, etc).</p></div>
 
 
 ### Service Access Strategy

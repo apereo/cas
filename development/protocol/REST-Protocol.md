@@ -24,7 +24,6 @@ Support is enabled by including the following to the overlay:
     <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-rest</artifactId>
     <version>${cas.version}</version>
-    <scope>runtime</scope>
 </dependency>
 ```
 
@@ -111,7 +110,6 @@ Support is enabled by including the following in your maven overlay:
     <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-rest-services</artifactId>
     <version>${cas.version}</version>
-    <scope>runtime</scope>
 </dependency>
 ```
 
@@ -138,18 +136,17 @@ the generated identifier of the new service.
 5463544213
 ```
 
-## Add x509 support
+## X.509 Authentication
 
-The feature extends REST communication model to non-interactive authentication.
+The feature extends REST communication model to non-interactive X.509 authentication.
 This pattern may be of interest in case if internal network architecture hides
-the CAS server from external users behind firewall or some messaging bus. And
-allows only trusted Applications to connect the server.
+the CAS server from external users behind firewall or a messaging bus and
+allows only trusted applications to connect to the CAS server.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The x509 feature over REST
-provides a tremendously convenient target for claiming others identity. The x509 provides
-a tremendously convenient target for claiming others identity. To leverage this issue network
-configuration may allow connections to the CAS server only from trusted hosts which in turn
-have strict security limitations and logging.
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
+provides a tremendously convenient target for claiming others identity. To securely use this feature, network
+configuration <strong>MUST<strong> allow connections to the CAS server only from trusted hosts which in turn
+have strict security limitations and logging.</p></div>
 
 Support is enabled by including the following in your maven overlay:
 
