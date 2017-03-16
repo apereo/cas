@@ -809,7 +809,6 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].pool.suspension=false
 # cas.authn.attributeRepository.jdbc[0].pool.minSize=6
 # cas.authn.attributeRepository.jdbc[0].pool.maxSize=18
-# cas.authn.attributeRepository.jdbc[0].pool.maxIdleTime=1000
 # cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
 ```
 
@@ -964,7 +963,6 @@ same IP address.
 # cas.authn.throttle.jdbc.pool.suspension=false
 # cas.authn.throttle.jdbc.pool.minSize=6
 # cas.authn.throttle.jdbc.pool.maxSize=18
-# cas.authn.throttle.jdbc.pool.maxIdleTime=1000
 # cas.authn.throttle.jdbc.pool.maxWait=2000
 ```
 
@@ -2022,7 +2020,6 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 # cas.authn.mfa.trusted.jpa.pool.suspension=false
 # cas.authn.mfa.trusted.jpa.pool.minSize=6
 # cas.authn.mfa.trusted.jpa.pool.maxSize=18
-# cas.authn.mfa.trusted.jpa.pool.maxIdleTime=1000
 # cas.authn.mfa.trusted.jpa.pool.maxWait=2000
 ```
 
@@ -2120,7 +2117,6 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.jpa.database.pool.suspension=false
 # cas.authn.mfa.gauth.jpa.database.pool.minSize=6
 # cas.authn.mfa.gauth.jpa.database.pool.maxSize=18
-# cas.authn.mfa.gauth.jpa.database.pool.maxIdleTime=1000
 # cas.authn.mfa.gauth.jpa.database.pool.maxWait=2000
 ```
 
@@ -2897,7 +2893,6 @@ Store audit logs inside a database.
 # cas.audit.jdbc.pool.suspension=false
 # cas.audit.jdbc.pool.minSize=6
 # cas.audit.jdbc.pool.maxSize=18
-# cas.audit.jdbc.pool.maxIdleTime=1000
 # cas.audit.jdbc.pool.maxWait=2000
 ```
 
@@ -2968,7 +2963,6 @@ used for authentication, etc.
 # cas.monitor.ldap.pool.suspension=false
 # cas.monitor.ldap.pool.minSize=6
 # cas.monitor.ldap.pool.maxSize=18
-# cas.monitor.ldap.pool.maxIdleTime=1000
 # cas.monitor.ldap.pool.maxWait=2000
 
 # cas.monitor.ldap.maxWait=5000
@@ -3066,7 +3060,6 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.pool.suspension=false
 # cas.events.jpa.pool.minSize=6
 # cas.events.jpa.pool.maxSize=18
-# cas.events.jpa.pool.maxIdleTime=1000
 # cas.events.jpa.pool.maxWait=2000
 ```
 
@@ -3295,7 +3288,6 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.pool.suspension=false
 # cas.serviceRegistry.jpa.pool.minSize=6
 # cas.serviceRegistry.jpa.pool.maxSize=18
-# cas.serviceRegistry.jpa.pool.maxIdleTime=1000
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
@@ -3353,7 +3345,6 @@ which may not be appropriate for use in production. Setting the value to
 # cas.ticket.registry.jpa.pool.suspension=false
 # cas.ticket.registry.jpa.pool.minSize=6
 # cas.ticket.registry.jpa.pool.maxSize=18
-# cas.ticket.registry.jpa.pool.maxIdleTime=1000
 # cas.ticket.registry.jpa.pool.maxWait=2000
 
 # cas.ticket.registry.jpa.crypto.signing.key=
