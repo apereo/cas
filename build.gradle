@@ -68,7 +68,7 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
-	
+    
 
     if (project.name == "cas-server-support-bom") {
         println "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
@@ -93,10 +93,10 @@ allprojects {
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
-    Do NOT publish test dependencies into the final POM.
+        Do NOT publish test dependencies into the final POM.
     */
-    conf2ScopeMappings.mappings.remove(configurations.findByName("testCompile"))
-    conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntime"))
+    conf2ScopeMappings.mappings.remove(configurations.findByName("testCompileOnly"))
+    conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntimeOnly"))
 }
 
 subprojects {
@@ -106,7 +106,9 @@ subprojects {
     task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {
         doLast {}
     }
-	apply plugin: "kotlin"
+    if (Boolean.getBoolean("enableKotlin")) {
+        apply plugin: "kotlin"
+    }
     apply plugin: "java-library"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
@@ -119,24 +121,22 @@ subprojects {
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries
-
+    
     repositories {
         mavenLocal()
-        mavenCentral()
-        jcenter()
-
+        maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
         maven { url "http://repo.maven.apache.org/maven2" }
         maven { url "https://jitpack.io" }
         maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
-        maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "http://files.couchbase.com/maven2" }
         maven { url "https://repo.spring.io/milestone" }
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/libs-snapshot" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
+        jcenter()
     }
 
     test {

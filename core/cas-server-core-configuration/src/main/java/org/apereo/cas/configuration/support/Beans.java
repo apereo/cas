@@ -145,10 +145,10 @@ public final class Beans {
             bean.setPassword(jpaProperties.getPassword());
 
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
-            bean.setMinimumIdle(Long.valueOf(jpaProperties.getPool().getMaxIdleTime()).intValue());
+            bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
             bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
-            bean.setInitializationFailFast(jpaProperties.isFailFast());
+            bean.setInitializationFailTimeout(jpaProperties.isFailFast() ? 1 : 0);
             bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
             bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
