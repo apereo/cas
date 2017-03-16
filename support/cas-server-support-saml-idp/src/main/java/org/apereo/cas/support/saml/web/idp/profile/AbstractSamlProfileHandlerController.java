@@ -402,7 +402,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
         final String urlToRedirectTo = buildRedirectUrlByRequestedAuthnContext(initialUrl, authnRequest, request);
 
-        LOGGER.debug("Redirecting SAML authN request to \"[{}]\"", urlToRedirectTo);
+        LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
         final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, urlToRedirectTo);
 
