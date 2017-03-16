@@ -145,7 +145,7 @@ allows only trusted applications to connect to the CAS server.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
 provides a tremendously convenient target for claiming others identity. To securely use this feature, network
-configuration <strong>MUST<strong> allow connections to the CAS server only from trusted hosts which in turn
+configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn
 have strict security limitations and logging.</p></div>
 
 Support is enabled by including the following in your maven overlay:
