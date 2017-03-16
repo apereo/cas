@@ -243,8 +243,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void verifyValidateServiceTicketWithInvalidService() throws Exception {
         this.thrown.expect(UnauthorizedServiceException.class);
-        this.thrown.expectMessage("Unauthorized Service Access. Service [badtestservice] is not found in service registry.");
-
         final Service service = getService("badtestservice");
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
 
