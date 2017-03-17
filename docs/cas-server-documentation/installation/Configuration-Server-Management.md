@@ -79,7 +79,7 @@ via the following module in it own [WAR overlay](https://github.com/apereo/cas-c
 In addition to the [strategies outlined here](Configuration-Management.html#overview), the configuration server 
 may load CAS settings and properties via the following order and mechanics:
 
-1. Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml)
+1. Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml`)
 2. Profile-specific application properties packaged inside your jar (`application-{profile}.properties|yml`)
 3. Application properties outside of your packaged jar (`application.properties|yml`).
 4. Application properties packaged inside your jar (`application.properties|yml`).
