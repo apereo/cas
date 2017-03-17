@@ -118,7 +118,7 @@ public class CloudWatchAppender extends AbstractAppender {
             final PutLogEventsRequest putLogEventsRequest = new PutLogEventsRequest(logGroupName, logStreamName, logEvents);
             putLogEventsRequest.setSequenceToken(sequenceTokenCache);
             try {
-                final PutLogEventsResult putLogEventsResult = awsLogsClient.putLogEvents(putLogEventsRequest); 
+                final PutLogEventsResult putLogEventsResult = awsLogsClient.putLogEvents(putLogEventsRequest);
                 sequenceTokenCache = putLogEventsResult.getNextSequenceToken();
             } catch (final DataAlreadyAcceptedException daae) {
                 sequenceTokenCache = daae.getExpectedSequenceToken();
@@ -141,10 +141,11 @@ public class CloudWatchAppender extends AbstractAppender {
         awsLogEvent.setMessage(message);
         if (!queue.offer(awsLogEvent) && !queueFull) {
             queueFull = true;
-        } else if (queueFull)
+        } else if (queueFull) {
             queueFull = false;
+        }
     }
-    
+
     private String createLogGroupAndLogStreamIfNeeded() {
         LOGGER.debug("Attempting to locate the log group [{}]", logGroupName);
         final DescribeLogGroupsResult describeLogGroupsResult =
@@ -232,6 +233,7 @@ public class CloudWatchAppender extends AbstractAppender {
     /**
      * Create appender cloud watch appender.
      *
+     * @param name                             the name
      * @param awsLogStreamName                 the aws log stream name
      * @param awsLogGroupName                  the aws log group name
      * @param awsLogStreamFlushPeriodInSeconds the aws log stream flush period in seconds
