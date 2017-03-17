@@ -24,7 +24,7 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
-The following SAML SP integrations are provided by CAS:
+The following SAML SP integrations, as samples, are provided by CAS:
 
 <div class="img-cloud">
 <a href="http://www.incommon.org/federation/metadata.html"><img src="https://cloud.githubusercontent.com/assets/1205228/22052578/47d6f570-dd60-11e6-8f03-02cb99d6106d.gif" height="48" width="140"></a> <a href="https://support.zoom.us/hc/en-us/articles/201363003-Getting-Started-with-SSO"><img src="https://cloud.githubusercontent.com/assets/1205228/22052568/475f36d4-dd60-11e6-84f4-a88eb33f3f0a.jpg" height="30" width="130"></a> <a href="https://www.dropbox.com/guide/admin/security/configure-single-sign-on"><img src="https://cloud.githubusercontent.com/assets/1205228/22052575/47ba8930-dd60-11e6-8cb1-9334066d5f0f.png" height="48" width="140"></a> <a href="https://blog.samanage.com/company/saml-single-sign-on-support-samanage/"><img src="https://cloud.githubusercontent.com/assets/1205228/22052581/47e7bcfc-dd60-11e6-85e9-c09926736e5e.png" height="48" width="140"></a> <a href="https://help.salesforce.com/HTViewHelpDoc?id=sso_saml.htm"><img src="https://cloud.githubusercontent.com/assets/1205228/22052579/47da9d74-dd60-11e6-8eac-d66b67e2ebf7.png" height="60" width="140"></a>
