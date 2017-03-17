@@ -392,6 +392,24 @@ ext.libraries = [
                     force = true
                 }
         ],
+        awscloudwatch         : [
+                dependencies.create("com.amazonaws:aws-java-sdk-logs:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    force = true
+                },
+                dependencies.create("com.amazonaws:aws-java-sdk-cloudwatch:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    force = true
+                }
+        ],
         awsjavadynamodb         : [
                 dependencies.create("com.amazonaws:aws-java-sdk-s3:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
