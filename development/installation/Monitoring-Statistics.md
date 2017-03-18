@@ -5,7 +5,7 @@ title: CAS - Monitoring & Statistics
 
 # Monitoring / Statistics
 
-The following endpoints are available and secured by CAS:
+The following endpoints are secured and available by CAS:
 
 | URL                               | Description
 |-----------------------------------|------------------------------------------
@@ -32,6 +32,7 @@ The following endpoints are secured and available by [Spring Boot actuators](htt
 | `/status/health`                  | Reports back general health status of the system, produced by various monitors.
 | `/status/info`                    | CAS version information and other system traits.
 | `/status/metrics`                 | Runtime metrics and stats.
+| `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
 | `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
 | `/status/restart`                 | Restart the application via a `POST`. Disabled by default.
