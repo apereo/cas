@@ -639,12 +639,19 @@ public final class Beans {
             switch (pass) {
                 case CLOSE:
                     cp.setPassivator(new ClosePassivator());
+                    LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     break;
                 case BIND:
-                    final BindRequest bindRequest = new BindRequest();
-                    bindRequest.setDn(l.getBindDn());
-                    bindRequest.setCredential(new Credential(l.getBindCredential()));
-                    cp.setPassivator(new BindPassivator(bindRequest));
+                    if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNoneBlank(l.getBindCredential())) {
+                        final BindRequest bindRequest = new BindRequest();
+                        bindRequest.setDn(l.getBindDn());
+                        bindRequest.setCredential(new Credential(l.getBindCredential()));
+                        cp.setPassivator(new BindPassivator(bindRequest));
+                        LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
+                    } else {
+                        LOGGER.warn("No [{}] passivator could be created for [{}] given bind credentials are not specified", 
+                                l.getPoolPassivator(), l.getLdapUrl());
+                    }
                     break;
                 default:
                     break;

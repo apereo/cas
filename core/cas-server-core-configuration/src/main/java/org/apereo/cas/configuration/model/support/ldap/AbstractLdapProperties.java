@@ -90,7 +90,7 @@ public abstract class AbstractLdapProperties {
 
     private int minPoolSize = 3;
     private int maxPoolSize = 10;
-    private String poolPassivator;
+    private String poolPassivator = "BIND";
 
     private boolean validateOnCheckout = true;
     private boolean validatePeriodically = true;
