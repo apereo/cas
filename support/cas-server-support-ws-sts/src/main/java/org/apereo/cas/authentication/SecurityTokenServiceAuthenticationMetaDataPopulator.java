@@ -15,47 +15,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
 /**
- * This is {@link SecurityTokenServiceAuthenticationPostProcessor}.
+ * This is {@link SecurityTokenServiceAuthenticationMetaDataPopulator}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SecurityTokenServiceAuthenticationPostProcessor implements AuthenticationPostProcessor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityTokenServiceAuthenticationPostProcessor.class);
+public class SecurityTokenServiceAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityTokenServiceAuthenticationMetaDataPopulator.class);
 
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionStrategy selectionStrategy;
     private final CipherExecutor<String, String> credentialCipherExecutor;
     private final SecurityTokenServiceClientBuilder clientBuilder;
 
-    public SecurityTokenServiceAuthenticationPostProcessor(final ServicesManager servicesManager,
-                                                           final AuthenticationServiceSelectionStrategy selectionStrategy,
-                                                           final CipherExecutor<String, String> credentialCipherExecutor, 
-                                                           final SecurityTokenServiceClientBuilder clientBuilder) {
+    public SecurityTokenServiceAuthenticationMetaDataPopulator(final ServicesManager servicesManager,
+                                                               final AuthenticationServiceSelectionStrategy selectionStrategy,
+                                                               final CipherExecutor<String, String> credentialCipherExecutor,
+                                                               final SecurityTokenServiceClientBuilder clientBuilder) {
         this.servicesManager = servicesManager;
         this.selectionStrategy = selectionStrategy;
         this.credentialCipherExecutor = credentialCipherExecutor;
         this.clientBuilder = clientBuilder;
-    }
-
-    @Override
-    public void process(final AuthenticationTransaction transaction, final AuthenticationBuilder builder) {
-
-        if (!this.selectionStrategy.supports(transaction.getService())) {
-            return;
-        }
-
-        final Service service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
-        if (service != null) {
-            final WSFederationRegisteredService rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
-            if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
-                LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
-                throw new UnauthorizedSsoServiceException();
-            }
-            
-            final SecurityTokenServiceClient sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
-            invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
-        }
     }
 
     private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction, final AuthenticationBuilder builder,
@@ -84,5 +64,28 @@ public class SecurityTokenServiceAuthenticationPostProcessor implements Authenti
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
+    }
+
+    @Override
+    public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
+        if (!this.selectionStrategy.supports(transaction.getService())) {
+            return;
+        }
+        final Service service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
+        if (service != null) {
+            final WSFederationRegisteredService rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
+            if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
+                LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
+                throw new UnauthorizedSsoServiceException();
+            }
+
+            final SecurityTokenServiceClient sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
+            invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
+        }
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return true;
     }
 }
