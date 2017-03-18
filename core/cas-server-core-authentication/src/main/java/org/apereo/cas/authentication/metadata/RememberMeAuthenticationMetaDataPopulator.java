@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.metadata;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.slf4j.Logger;
@@ -20,8 +21,8 @@ public class RememberMeAuthenticationMetaDataPopulator implements Authentication
     private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeAuthenticationMetaDataPopulator.class);
 
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-        final RememberMeCredential r = (RememberMeCredential) credential;
+    public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
+        final RememberMeCredential r = (RememberMeCredential) transaction.getCredential();
         if (r.isRememberMe()) {
             LOGGER.debug("Credential is configured to be remembered. Captured this as [{}] attribute",
                     RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);

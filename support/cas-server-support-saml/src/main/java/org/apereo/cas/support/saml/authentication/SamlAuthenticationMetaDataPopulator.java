@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -61,11 +62,9 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     }
 
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-
-        final String credentialsClass = credential.getClass().getName();
+    public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
+        final String credentialsClass = transaction.getCredential().getClass().getName();
         final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
-
         builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
     }
 

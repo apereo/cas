@@ -2,6 +2,7 @@ package org.apereo.cas.support.pac4j.authentication;
 
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.ClientCredential;
 
@@ -20,8 +21,8 @@ public class ClientAuthenticationMetaDataPopulator implements AuthenticationMeta
     public static final String CLIENT_NAME = "clientName";
 
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-        final ClientCredential clientCredential = (ClientCredential) credential;
+    public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
+        final ClientCredential clientCredential = (ClientCredential) transaction.getCredential();
         builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
     }
 
