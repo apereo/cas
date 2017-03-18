@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.metadata.BaseAuthenticationMetadataPopulator;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
@@ -20,7 +22,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SecurityTokenServiceAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
+public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAuthenticationMetadataPopulator {
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityTokenServiceAuthenticationMetaDataPopulator.class);
 
     private final ServicesManager servicesManager;
@@ -87,5 +89,13 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator implements Auth
     @Override
     public boolean supports(final Credential credential) {
         return true;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .toString();
     }
 }
