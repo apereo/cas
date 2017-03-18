@@ -2357,6 +2357,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.testShib.signatureLocation=
 ```
 
+### OpenAthens
+
+```properties
+# cas.samlSP.openAthens.metadata=/path/to/openAthens-metadata.xml
+# cas.samlSP.openAthens.name=openAthens
+# cas.samlSP.openAthens.description=openAthens Integration
+# cas.samlSP.openAthens.attributes=eduPersonPrincipalName,email
+```
+
 ### Web Advisor
 
 ```properties
