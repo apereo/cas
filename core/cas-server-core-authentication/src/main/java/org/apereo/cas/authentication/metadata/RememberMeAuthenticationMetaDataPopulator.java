@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.metadata;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeCredential;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-public class RememberMeAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
+public class RememberMeAuthenticationMetaDataPopulator extends BaseAuthenticationMetadataPopulator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeAuthenticationMetaDataPopulator.class);
 
@@ -39,6 +38,7 @@ public class RememberMeAuthenticationMetaDataPopulator implements Authentication
     @Override
     public String toString() {
         return new ToStringBuilder(this)
+                .appendSuper(super.toString())
                 .toString();
     }
 }
