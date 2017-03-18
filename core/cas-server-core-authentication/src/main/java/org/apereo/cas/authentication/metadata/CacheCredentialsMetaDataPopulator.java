@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
+public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetadataPopulator {
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheCredentialsMetaDataPopulator.class);
     private final CipherExecutor<String, String> cipherExecutor;
 
@@ -49,6 +49,8 @@ public class CacheCredentialsMetaDataPopulator implements AuthenticationMetaData
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).toString();
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .toString();
     }
 }

@@ -60,7 +60,10 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulators(final AuthenticationTransaction transaction) {
-        return authenticationMetaDataPopulatorList;
+        final List<AuthenticationMetaDataPopulator> list = new ArrayList(this.authenticationMetaDataPopulatorList);
+        OrderComparator.sort(list);
+        LOGGER.debug("Sorted and registered metadata populators for this transaction are [{}]", list);
+        return list;
     }
 
     @Override
