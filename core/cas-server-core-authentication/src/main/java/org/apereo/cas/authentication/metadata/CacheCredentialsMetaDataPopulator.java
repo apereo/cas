@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.slf4j.Logger;
@@ -31,7 +32,8 @@ public class CacheCredentialsMetaDataPopulator implements AuthenticationMetaData
     }
 
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
+        final Credential credential = transaction.getCredential();
         LOGGER.debug("Processing request to capture the credential for [{}]", credential.getId());
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
         final String psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword());

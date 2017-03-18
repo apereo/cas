@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 
 import java.util.HashSet;
@@ -22,7 +23,7 @@ import java.util.Set;
 public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDataPopulator {
     
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         Set<String> successes = builder.getSuccesses().keySet();
         if (successes != null && !successes.isEmpty()) {
             successes = new HashSet(successes);
