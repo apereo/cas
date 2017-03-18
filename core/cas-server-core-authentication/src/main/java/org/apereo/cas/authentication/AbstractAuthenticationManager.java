@@ -79,14 +79,14 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * Populate authentication metadata attributes.
      *
      * @param builder     the builder
-     * @param credentials the credentials
+     * @param transaction the transaction
      */
     protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
-                                                            final Collection<Credential> credentials) {
-
-        final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(credentials);
-        pops.forEach(populator -> credentials.stream().filter(populator::supports)
-                .forEach(credential -> populator.populateAttributes(builder, credential)));
+                                                            final AuthenticationTransaction transaction) {
+        LOGGER.debug("Invoking authentication metadata populators for authentication transaction");
+        final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(transaction);
+        pops.forEach(populator -> transaction.getCredentials().stream().filter(populator::supports)
+                .forEach(credential -> populator.populateAttributes(builder, transaction)));
     }
 
     /**
@@ -138,24 +138,15 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         AuthenticationCredentialsLocalBinder.bindCurrent(transaction.getCredentials());
         final AuthenticationBuilder builder = authenticateInternal(transaction);
-
-        authenticationEventExecutionPlan.getAuthenticationPostProcessors().forEach(p -> {
-            LOGGER.info("Invoking authentication post processor [{}]", p);
-            p.process(transaction, builder);
-        });
-
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
         if (principal instanceof NullPrincipal) {
             throw new UnresolvedPrincipalException(authentication);
         }
-
         addAuthenticationMethodAttribute(builder, authentication);
-
         LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
                 principal.getId(), principal.getAttributes(), transaction.getCredentials());
-        populateAuthenticationMetadataAttributes(builder, transaction.getCredentials());
-
+        populateAuthenticationMetadataAttributes(builder, transaction);
         final Authentication a = builder.build();
         AuthenticationCredentialsLocalBinder.bindCurrent(a);
         return a;
@@ -247,11 +238,12 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * Gets authentication metadata populators for transaction.
      *
-     * @param credential the credential
+     * @param transaction the transaction
      * @return the authentication metadata populators for transaction
      */
-    protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(final Collection<Credential> credential) {
-        return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(credential);
+    protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(
+            final AuthenticationTransaction transaction) {
+        return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
     }
 
     /**

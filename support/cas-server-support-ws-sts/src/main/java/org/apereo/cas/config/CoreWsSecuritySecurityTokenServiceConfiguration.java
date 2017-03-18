@@ -26,9 +26,9 @@ import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
 import org.apache.wss4j.dom.validate.Validator;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.SecurityTokenServiceAuthenticationPostProcessor;
+import org.apereo.cas.authentication.SecurityTokenServiceAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -292,11 +292,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
                 casProperties.getServer().getPrefix());
     }
 
-    @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationPostProcessor")
+    @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationMetaDataPopulator")
     @Bean
     @RefreshScope
-    public AuthenticationPostProcessor securityTokenServiceAuthenticationPostProcessor() {
-        return new SecurityTokenServiceAuthenticationPostProcessor(servicesManager,
+    public AuthenticationMetaDataPopulator securityTokenServiceAuthenticationMetaDataPopulator() {
+        return new SecurityTokenServiceAuthenticationMetaDataPopulator(servicesManager,
                 wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor(),
                 securityTokenServiceClientBuilder());
     }
@@ -316,6 +316,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
 
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationPostProcessor(securityTokenServiceAuthenticationPostProcessor());
+        plan.registerMetadataPopulator(securityTokenServiceAuthenticationMetaDataPopulator());
     }
 }

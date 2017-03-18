@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 
@@ -28,7 +29,7 @@ public class AuthenticationContextAttributeMetaDataPopulator implements Authenti
     }
 
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
                 obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
             builder.mergeAttribute(this.authenticationContextAttribute, this.provider.getId());
