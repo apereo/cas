@@ -76,17 +76,10 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
     }
 
     private void loadSettingsFromConfigurationSources(final Environment environment, final Properties props, final File config) {
-        final List<String> profiles = new ArrayList<>();
-        profiles.add(configurationPropertiesEnvironmentManager().getApplicationName());
-        profiles.addAll(Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList()));
-        final String propertyNames = profiles.stream().collect(Collectors.joining("|"));
-        final String regex = String.format("(%s|application)\\.(yml|properties)", propertyNames);
-        LOGGER.debug("Looking for configuration files at [{}] that match the pattern [{}]", config, regex);
-
-        final Collection<File> configFiles = FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
-                .stream()
-                .sorted(Comparator.comparing(File::getName))
-                .collect(Collectors.toList());
+        final List<String> profiles = getApplicationProfiles(environment);
+        final String regex = buildPatternForConfigurationFileDiscovery(config, profiles);
+        final Collection<File> configFiles = scanForConfigurationFilesByPattern(config, regex);
+        
         LOGGER.info("Configuration files found at [{}] are [{}]", config, configFiles);
         configFiles.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
@@ -101,6 +94,31 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
                 props.putAll(pp);
             }
         }));
+    }
+
+    private Collection<File> scanForConfigurationFilesByPattern(final File config, final String regex) {
+        return FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
+                    .stream()
+                    .sorted(Comparator.comparing(File::getName))
+                    .collect(Collectors.toList());
+    }
+
+    private String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
+        final String propertyNames = profiles.stream().collect(Collectors.joining("|"));
+        final String profiledProperties = profiles.stream()
+                .map(p -> String.format("application-%s", p))
+                .collect(Collectors.joining("|"));
+
+        final String regex = String.format("(%s|%s|application)\\.(yml|properties)", propertyNames, profiledProperties);
+        LOGGER.debug("Looking for configuration files at [{}] that match the pattern [{}]", config, regex);
+        return regex;
+    }
+
+    private List<String> getApplicationProfiles(final Environment environment) {
+        final List<String> profiles = new ArrayList<>();
+        profiles.add(configurationPropertiesEnvironmentManager().getApplicationName());
+        profiles.addAll(Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList()));
+        return profiles;
     }
 
     private Map loadYamlProperties(final Resource... resource) {
