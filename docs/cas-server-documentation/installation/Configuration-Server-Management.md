@@ -36,9 +36,10 @@ inside the main CAS web application and not rely on externalized configuration f
 Settings found in external configuration files are and will be able to override the defaults provide by CAS. The naming of the configuration files 
 inside the CAS configuration directory follows the below pattern:
 
-- An `application.(properties|yml)` file is always loaded.
+- An `application.(properties|yml)` file is always loaded, if found.
 - Settings located inside `properties|yml` files whose name matches the value of `spring.application.name` are loaded (i.e `cas.properties`)
 - Settings located inside `properties|yml` files whose name matches the value of `spring.profiles.active` are loaded (i.e `ldap.properties`).
+- Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml`)
 This allows you to, if needed, split your settings into multiple property files and then locate them by assigning their name
 to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`)
 
