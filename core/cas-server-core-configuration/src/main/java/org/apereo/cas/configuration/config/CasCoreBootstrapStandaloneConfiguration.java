@@ -5,6 +5,7 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
+import org.apereo.cas.configuration.support.CasConfigurationJasyptDecryptor;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,9 @@ import java.util.stream.Collectors;
 @Configuration("casStandaloneBootstrapConfiguration")
 public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreBootstrapStandaloneConfiguration.class);
-
+    
+    private CasConfigurationJasyptDecryptor configurationJasyptDecryptor;
+    
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -53,11 +56,13 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
     public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager() {
         return new CasConfigurationPropertiesEnvironmentManager();
     }
-
+    
     @Override
     public PropertySource<?> locate(final Environment environment) {
+        this.configurationJasyptDecryptor = new CasConfigurationJasyptDecryptor(environment);
+        
         final Properties props = new Properties();
-        loadEmbeddedYamlOverriddenProperties(props);
+        loadEmbeddedYamlOverriddenProperties(props, environment);
 
         final File config = configurationPropertiesEnvironmentManager().getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
@@ -75,32 +80,36 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         return new PropertiesPropertySource("standaloneCasConfigService", props);
     }
 
+    private Map decryptProperties(final Map properties) {
+        return this.configurationJasyptDecryptor.decrypt(properties);
+    }
+
     private void loadSettingsFromConfigurationSources(final Environment environment, final Properties props, final File config) {
         final List<String> profiles = getApplicationProfiles(environment);
         final String regex = buildPatternForConfigurationFileDiscovery(config, profiles);
         final Collection<File> configFiles = scanForConfigurationFilesByPattern(config, regex);
-        
+
         LOGGER.info("Configuration files found at [{}] are [{}]", config, configFiles);
         configFiles.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
             if (f.getName().toLowerCase().endsWith("yml")) {
                 final Map pp = loadYamlProperties(new FileSystemResource(f));
                 LOGGER.debug("Found settings [{}] in YAML file [{}]", pp.keySet(), f);
-                props.putAll(pp);
+                props.putAll(decryptProperties(pp));
             } else {
                 final Properties pp = new Properties();
                 pp.load(new FileReader(f));
                 LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), f);
-                props.putAll(pp);
+                props.putAll(decryptProperties(pp));
             }
         }));
     }
 
     private Collection<File> scanForConfigurationFilesByPattern(final File config, final String regex) {
         return FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
-                    .stream()
-                    .sorted(Comparator.comparing(File::getName))
-                    .collect(Collectors.toList());
+                .stream()
+                .sorted(Comparator.comparing(File::getName))
+                .collect(Collectors.toList());
     }
 
     private String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
@@ -130,7 +139,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         return factory.getObject();
     }
 
-    private void loadEmbeddedYamlOverriddenProperties(final Properties props) {
+    private void loadEmbeddedYamlOverriddenProperties(final Properties props, final Environment environment) {
         final Resource resource = resourceLoader.getResource("classpath:/application.yml");
         if (resource != null && resource.exists()) {
             final Map pp = loadYamlProperties(resource);
@@ -138,7 +147,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
                 LOGGER.debug("No properties were located inside [{}]", resource);
             } else {
                 LOGGER.debug("Found settings [{}] in YAML file [{}]", pp.keySet(), resource);
-                props.putAll(pp);
+                props.putAll(decryptProperties(pp));
             }
         }
     }

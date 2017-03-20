@@ -338,6 +338,9 @@ ext.libraries = [
         hazelcast               : dependencies.create("com.hazelcast:hazelcast:$hazelcastVersion") {
             force = true
         },
+        jasypt               : dependencies.create("org.jasypt:jasypt:$jasyptVersion") {
+            force = true
+        },
         hibernate               : [
                 dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")

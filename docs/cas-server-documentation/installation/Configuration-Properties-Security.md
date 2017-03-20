@@ -7,6 +7,32 @@ title: CAS - Securing Configuration Properties
 
 This document describes how to retrieve and secure CAS configuration and properties.
 
+## Standalone
+
+If you are running CAS in standalone mode without the presence of the configuration server,
+you can take advantage of built-it [Jasypt](http://www.jasypt.org/) functionality to decrypt sensitive CAS settings.
+
+Jasypt supplies command-line tools useful for performing encryption, decryption, etc. In order to use the tools, you should download the Jasypt distribution. Once unzipped, you will find a `jasypt-$VERSION/bin` directory a number of `bat|sh` scripts that you can use for encryption/decryption operations `((encrypt|decrypt).(bat|sh)`.
+
+Encrypted settings need to be placed into CAS configuration files as:
+
+```properties
+cas.something.sensitive={cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
+```
+
+You also need to instruct CAS to use the proper algorithm, decryption key and other relevant parameters
+when attempting to decrypt settings. The supported parameters are:
+
+```properties
+cas.standalone.config.security.alg=PBEWithMD5AndTripleDES
+cas.standalone.config.security.provider=BC
+cas.standalone.config.security.iterations=
+cas.standalone.config.security.psw=
+```
+
+The above settings may be passed to CAS using any of the [strategies outline here](Configuration-Management.html#overview),
+though it might be more secure to pass them to CAS as either command-line or system properties.
+
 ## Spring Cloud
 
 Securing CAS settings and decrypting them is entirely handled by
