@@ -241,6 +241,15 @@ public class CasServerProperties {
         private boolean secure = true;
         private int redirectPort;
         private int proxyPort;
+        private String protocol = "AJP/1.3";
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public void setProtocol(final String protocol) {
+            this.protocol = protocol;
+        }
 
         public int getRedirectPort() {
             return redirectPort;
