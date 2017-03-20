@@ -103,7 +103,9 @@ public class CasConfigurationJasyptDecryptor {
                                 LOGGER.error("CAS has found an encrypted setting [{}] yet the decryptor is not initialized and will ignore it. "
                                                 + "Ensure all relevant initialization parameters [{}] are specified to the CAS runtime.",
                                         entry.getKey(),
-                                        Arrays.stream(JasyptEncryptionParameters.values()).map(JasyptEncryptionParameters::getName).collect(Collectors.toList()));
+                                        Arrays.stream(JasyptEncryptionParameters.values())
+                                                .map(JasyptEncryptionParameters::getName)
+                                                .collect(Collectors.toList()));
                             } else {
                                 LOGGER.debug("Decrypt property [{}]...", entry.getKey());
                                 final String value = this.decryptor.decrypt(encValue);
