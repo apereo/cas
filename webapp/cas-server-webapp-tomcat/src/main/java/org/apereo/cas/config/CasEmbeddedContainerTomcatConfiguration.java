@@ -116,7 +116,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
             tomcat.addEngineValves(valve);
         }
     }
-    
+
     private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.HttpProxy proxy = casProperties.getServer().getHttpProxy();
         if (proxy.isEnabled()) {
@@ -125,6 +125,10 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 connector.setSecure(proxy.isSecure());
                 connector.setScheme(proxy.getScheme());
 
+                if (StringUtils.isNotBlank(proxy.getProtocol())) {
+                    LOGGER.debug("Setting HTTP proxying protocol to [{}]", proxy.getProtocol());
+                    connector.setProtocol(proxy.getProtocol());
+                }
                 if (proxy.getRedirectPort() > 0) {
                     LOGGER.debug("Setting HTTP proxying redirect port to [{}]", proxy.getRedirectPort());
                     connector.setRedirectPort(proxy.getRedirectPort());
@@ -138,7 +142,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         } else {
             LOGGER.debug("HTTP proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
         }
-        
+
         if (casProperties.getServer().getHttp().isEnabled()) {
             LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
             final Connector connector = new Connector(casProperties.getServer().getHttp().getProtocol());

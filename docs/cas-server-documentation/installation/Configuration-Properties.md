@@ -267,6 +267,7 @@ yet wish to customize the connector configuration that is linked to the running 
 ```properties
 # cas.server.httpProxy.enabled=true
 # cas.server.httpProxy.secure=true
+# cas.server.httpProxy.protocol=AJP/1.3
 # cas.server.httpProxy.scheme=https
 # cas.server.httpProxy.redirectPort=
 # cas.server.httpProxy.proxyPort=
