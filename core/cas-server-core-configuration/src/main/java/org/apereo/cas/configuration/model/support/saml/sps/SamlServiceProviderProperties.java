@@ -29,6 +29,15 @@ public class SamlServiceProviderProperties {
     private Tableau tableau = new Tableau();
     private WebAdvisor webAdvisor = new WebAdvisor();
     private OpenAthens openAthens = new OpenAthens();
+    private ArcGIS arcGIS = new ArcGIS();
+
+    public ArcGIS getArcGIS() {
+        return arcGIS;
+    }
+
+    public void setArcGIS(final ArcGIS arcGIS) {
+        this.arcGIS = arcGIS;
+    }
 
     public OpenAthens getOpenAthens() {
         return openAthens;
@@ -245,6 +254,13 @@ public class SamlServiceProviderProperties {
         }
     }
 
+    public static class ArcGIS extends AbstractSamlSPProperties {
+        public ArcGIS() {
+            setNameIdAttribute("arcNameId");
+            setAttributes(Arrays.asList("mail,givenName,arcNameId"));
+        }
+    }
+    
     public static class InCommon extends AbstractSamlSPProperties {
         public InCommon() {
             //setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
