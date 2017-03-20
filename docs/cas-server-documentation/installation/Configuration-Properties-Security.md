@@ -64,9 +64,7 @@ to account for special characters such as <code>+</code>.</p></div>
 If you wish to manually encrypt and decrypt settings to ensure the functionality is sane, use:
 
 ```bash
-export ENCRYPTED=`curl https://config.server.endpoint/encrypt -d sensitiveValue | python -c 'import sys,urllib;print urllib.quote(sys.stdin
-.read()
-.strip())'`
+export ENCRYPTED=`curl https://config.server.endpoint/encrypt -d sensitiveValue | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'`
 echo $ENCRYPTED
 curl https://config.server.endpoint/decrypt -d $ENCRYPTED | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'
 ```
