@@ -27,7 +27,6 @@ The following CAS releases will transition into a security-patch mode (SPM) only
 
 | Release        | SPM Starting Date  | Full EOL  |
 | -------------- |:-------------:| --------------:|
-| `4.0.x`        | October 31st, 2016 | October 31st, 2017 |
 | `4.1.x`        | January 31st, 2017 | January 31st, 2018 |
 | `4.2.x`        | January 31st, 2017  | January 31st, 2018 |
 | `5.0.x`        | November 30th, 2017  | November 30th, 2018 |
