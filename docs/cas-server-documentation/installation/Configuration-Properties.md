@@ -2375,6 +2375,16 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.webAdvisor.attributes=uid
 ```
 
+### Arc GIS
+
+```properties
+# cas.samlSP.webAdvisor.metadata=/path/to/arc-metadata.xml
+# cas.samlSP.webAdvisor.name=ArcGIS
+# cas.samlSP.webAdvisor.description=ArcGISIntegration
+# cas.samlSP.dropbox.nameIdAttribute=arcNameId
+# cas.samlSP.webAdvisor.attributes=mail,givenName,arcNameId
+```
+
 ### Office365
 
 ```properties

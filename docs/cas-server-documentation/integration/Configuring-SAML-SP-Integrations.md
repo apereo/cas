@@ -44,6 +44,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://help.evernote.com/hc/en-us/articles/209005217-How-to-configure-SSO-for-your-business"><img src="https://cloud.githubusercontent.com/assets/1205228/22052577/47d6b6e6-dd60-11e6-810e-dd875bf25d17.png" height="48" width="140"></a> 
 <a href="http://www.ellucian.com/Software/Colleague-WebAdvisor/"><img src="https://cloud.githubusercontent.com/assets/1205228/23185912/5c3f2f50-f89a-11e6-8450-6da44a1a9d9d.png" height="48" width="140"></a>
 <a href="https://docs.openathens.net/display/public/MD/SAML+interoperability+requirements/"><img src="https://cloud.githubusercontent.com/assets/1205228/24070833/ffb5f63a-0bd9-11e7-8bda-28301c37188b.png" height="48" width="140"></a>
+<a href="http://server.arcgis.com/en/portal/latest/administer/linux/configuring-a-saml-compliant-identity-provider-with-your-portal.htm"><img src="https://cloud.githubusercontent.com/assets/1205228/24108414/c3851e14-0da2-11e7-97d7-086a93d6873d.png" height="48" width="140"></a>
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).
