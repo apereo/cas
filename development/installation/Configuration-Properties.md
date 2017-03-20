@@ -267,6 +267,7 @@ yet wish to customize the connector configuration that is linked to the running 
 ```properties
 # cas.server.httpProxy.enabled=true
 # cas.server.httpProxy.secure=true
+# cas.server.httpProxy.protocol=AJP/1.3
 # cas.server.httpProxy.scheme=https
 # cas.server.httpProxy.redirectPort=
 # cas.server.httpProxy.proxyPort=
@@ -2373,6 +2374,16 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.webAdvisor.name=Web Advisor
 # cas.samlSP.webAdvisor.description=Web Advisor Integration
 # cas.samlSP.webAdvisor.attributes=uid
+```
+
+### Arc GIS
+
+```properties
+# cas.samlSP.webAdvisor.metadata=/path/to/arc-metadata.xml
+# cas.samlSP.webAdvisor.name=ArcGIS
+# cas.samlSP.webAdvisor.description=ArcGISIntegration
+# cas.samlSP.dropbox.nameIdAttribute=arcNameId
+# cas.samlSP.webAdvisor.attributes=mail,givenName,arcNameId
 ```
 
 ### Office365
