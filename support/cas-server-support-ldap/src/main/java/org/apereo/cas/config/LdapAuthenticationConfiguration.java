@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
+import org.apereo.cas.authentication.handler.support.AuthenticationHandlerUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -42,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -87,7 +87,7 @@ public class LdapAuthenticationConfiguration {
                 .forEach(l -> {
                     final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(l.getPrincipalAttributeList());
                     LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, l.getLdapUrl());
-                    
+
                     LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
                     final Authenticator authenticator = Beans.newLdaptiveAuthenticator(l);
                     authenticator.setReturnAttributes(attributes.keySet().toArray(new String[]{}));
@@ -110,8 +110,7 @@ public class LdapAuthenticationConfiguration {
 
                     if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
                         LOGGER.debug("Ldap authentication for [{}] is filtering credentials by [{}]", l.getLdapUrl(), l.getCredentialCriteria());
-                        final Predicate<String> predicate = Pattern.compile(l.getCredentialCriteria()).asPredicate();
-                        handler.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
+                        handler.setCredentialSelectionPredicate(AuthenticationHandlerUtils.newCredentialSelectionPredicate(l.getCredentialCriteria()));
                     }
 
                     handler.setPrincipalAttributeMap(attributes);
@@ -134,7 +133,7 @@ public class LdapAuthenticationConfiguration {
                 });
         return handlers;
     }
-    
+
 
     private Predicate<LdapAuthenticationProperties> ldapInstanceConfigurationPredicate() {
         return l -> {
@@ -200,7 +199,6 @@ public class LdapAuthenticationConfiguration {
         }
         return cfg;
     }
-
 
 
     /**

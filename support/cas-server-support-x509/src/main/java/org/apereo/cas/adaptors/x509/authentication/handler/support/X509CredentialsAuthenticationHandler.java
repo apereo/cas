@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
@@ -123,7 +124,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
                                                 final boolean maxPathLengthAllowUnspecified,
                                                 final Pattern regExSubjectDnPattern) {
-        this("", null, null, regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
+        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern, 
+                Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
                 false, regExSubjectDnPattern,
                 new NoOpRevocationChecker());
     }
@@ -132,13 +134,14 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                                                 final boolean maxPathLengthAllowUnspecified,
                                                 final boolean checkKeyUsage,
                                                 final boolean requireKeyUsage) {
-        this("", null, null, regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
+        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern, 
+                Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
                 checkKeyUsage, requireKeyUsage, null,
                 new NoOpRevocationChecker());
     }
 
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern, final RevocationChecker revocationChecker) {
-        this("", null, null, regExTrustedIssuerDnPattern, Integer.MAX_VALUE, false,
+        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern, Integer.MAX_VALUE, false,
                 false, false, null,
                 revocationChecker);
     }
