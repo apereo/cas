@@ -459,7 +459,9 @@ public final class Beans {
         LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
 
-        final String urls = l.getLdapUrl().contains(" ") ? l.getLdapUrl() : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
+        final String urls = l.getLdapUrl().contains(" ") 
+                ? l.getLdapUrl() 
+                : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
 
