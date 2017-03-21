@@ -241,7 +241,7 @@ public class X509AuthenticationConfiguration {
         final X509Properties x509 = casProperties.getAuthn().getX509();
         final X509SerialNumberPrincipalResolver r;
         final int radix = x509.getPrincipalSNRadix();
-        if (Character.MAX_RADIX <= radix && radix >= Character.MIN_RADIX) {
+        if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
                 r = new X509SerialNumberPrincipalResolver(radix, x509.isPrincipalHexSNZeroPadding());
             } else {
