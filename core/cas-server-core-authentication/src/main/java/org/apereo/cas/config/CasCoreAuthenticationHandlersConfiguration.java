@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.handler.support.AuthenticationHandlerUtils;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -45,7 +46,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient supportsTrustStoreSslSocketFactoryHttpClient;
@@ -68,11 +69,13 @@ public class CasCoreAuthenticationHandlersConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean(name = "jaasAuthenticationHandler")
     @RefreshScope
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
         final JaasAuthenticationProperties jaas = casProperties.getAuthn().getJaas();
-        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(), servicesManager, jaasPrincipalFactory(), null);
+        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(),
+                servicesManager, jaasPrincipalFactory(), null);
 
         h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
         h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
@@ -83,13 +86,14 @@ public class CasCoreAuthenticationHandlersConfiguration {
             h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
-
+        h.setCredentialSelectionPredicate(AuthenticationHandlerUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
         return h;
     }
 
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
-        return new HttpBasedServiceCredentialsAuthenticationHandler("", servicesManager, proxyPrincipalFactory(), Integer.MIN_VALUE,
+        return new HttpBasedServiceCredentialsAuthenticationHandler(null, servicesManager, 
+                proxyPrincipalFactory(), Integer.MIN_VALUE,
                 supportsTrustStoreSslSocketFactoryHttpClient);
     }
 
@@ -126,6 +130,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public PrincipalFactory acceptUsersPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
+
     private Map<String, String> getParsedUsers() {
         final Pattern pattern = Pattern.compile("::");
 
@@ -160,7 +165,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @Autowired
         @Qualifier("personDirectoryPrincipalResolver")
         private PrincipalResolver personDirectoryPrincipalResolver;
-        
+
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getJaas().getRealm())) {
