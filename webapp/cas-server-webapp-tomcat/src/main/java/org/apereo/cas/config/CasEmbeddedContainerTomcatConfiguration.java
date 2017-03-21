@@ -34,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import org.apache.catalina.valves.SSLValve;
 
 /**
  * This is {@link CasEmbeddedContainerTomcatConfiguration}.
@@ -66,6 +67,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         configureHttpProxy(tomcat);
         configureExtendedAccessLogValve(tomcat);
         configureRewriteValve(tomcat);
+        configureSSLValve(tomcat);
 
         return tomcat;
     }
@@ -193,6 +195,20 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 ajpConnector.setRedirectPort(ajp.getRedirectPort());
             }
             tomcat.addAdditionalTomcatConnectors(ajpConnector);
+        }
+    }
+
+    private void configureSSLValve(final TomcatEmbeddedServletContainerFactory tomcat) {
+        final CasServerProperties.SslValve valveConfig = casProperties.getServer().getSslValve();
+
+        if (valveConfig.isEnabled()) {
+            LOGGER.debug("Adding SSLValve to engine of the embedded tomcat container...");
+            final SSLValve valve = new SSLValve();
+            valve.setSslCipherHeader(valveConfig.getSslCipherHeader());
+            valve.setSslCipherUserKeySizeHeader(valveConfig.getSslCipherUserKeySizeHeader());
+            valve.setSslClientCertHeader(valveConfig.getSslClientCertHeader());
+            valve.setSslSessionIdHeader(valveConfig.getSslSessionIdHeader());
+            tomcat.addEngineValves(valve);
         }
     }
 
