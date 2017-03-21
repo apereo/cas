@@ -73,6 +73,13 @@ should support the duration syntax for full clarity on unit of measure:
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
 
+### Authentication Credential Selection
+
+A number of authentication handlers are allowed to determine whether they can operate on the provided credential
+and as such lend themselves to be tried and tested during the authentication handler selection phase. The credential criteria
+may either be a regular expression pattern that is tested against the credential identifier, or it may be a fully qualified
+class name of your own design that implements `Predicate<Credential>`.
+
 ### Password Encoding
 
 Certain aspects of CAS such as authentication handling support configuration of
@@ -1378,33 +1385,16 @@ Attributes retrieved directly as part of LDAP authentication trump all other att
 
 To learn more about this topic, [please review this guide](LDAP-Authentication.html).
 
-### Active Directory
+The following authentication types are supported:
 
-Users authenticate with `sAMAccountName` typically using a DN format.
 
-### Authenticated Search
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `AD`                    | Acive Directory - Users authenticate with `sAMAccountName` typically using a DN format.     
+| `AUTHENTICATED`         | Manager bind/search type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+| `DIRECT`                | Compute user DN from a format string and perform simple bind. This is relevant when no search is required to compute the DN needed for a bind operation. This option is useful when all users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`, or the username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`
+| `ANONYMOUS`             | Similar semantics as Authentication Search except no `bindDn` and `bindCredential` may be specified to initialize the connection. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
 
-Manager bind/search type of authentication.
-
-- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-
-### Anonymous Search
-
-Similar semantics as Authentication Search except no `bindDn` and `bindCredential` may be specified to initialize the connection.
-
-- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-
-### Direct Bind
-
-Compute user DN from a format string and perform simple bind. This is relevant when
-no search is required to compute the DN needed for a bind operation.
-
-There are two requirements for this use case:
-
-1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
-2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
 ### Connection Strategies
 
@@ -1665,6 +1655,7 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.kerberosKdcSystemProperty=
 # cas.authn.jaas.kerberosRealmSystemProperty=
 # cas.authn.jaas.name=
+# cas.authn.jaas.credentialCriteria=
 
 # cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jaas.passwordEncoder.characterEncoding=

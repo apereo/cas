@@ -169,7 +169,7 @@ public class CasCoreAuditConfiguration {
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", cResolver);
 
-        map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER", new DefaultAuditActionResolver("_TRIGGERED", ""));
+        map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER", new DefaultAuditActionResolver("_TRIGGERED", StringUtils.EMPTY));
         final AuditActionResolver adResolver = new DefaultAuditActionResolver();
         map.put("ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER", adResolver);
 

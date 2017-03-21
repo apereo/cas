@@ -128,7 +128,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
             }
             h = new DuoAuthenticationHandler(name, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
         } else {
-            h = new DuoAuthenticationHandler("", servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
+            h = new DuoAuthenticationHandler(StringUtils.EMPTY, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
         return h;
