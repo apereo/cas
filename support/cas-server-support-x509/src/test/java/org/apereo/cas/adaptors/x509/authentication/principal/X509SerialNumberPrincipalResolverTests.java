@@ -48,18 +48,28 @@ public class X509SerialNumberPrincipalResolverTests extends AbstractX509Certific
     @Test
     public void verifyHexPrincipalOdd() {
         final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver(16, true);
-        X509Certificate mockCert = mock(X509Certificate.class);
-        when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(300l));
+        final X509Certificate mockCert = mock(X509Certificate.class);
+        when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(300L));
 
         final String principal = r.resolvePrincipalInternal(mockCert);
         assertEquals("012c", principal);
     }
 
     @Test
+    public void verifyHexPrincipalOddFalse() {
+        final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver(16, false);
+        final X509Certificate mockCert = mock(X509Certificate.class);
+        when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(300L));
+
+        final String principal = r.resolvePrincipalInternal(mockCert);
+        assertEquals("12c", principal);
+    }
+
+    @Test
     public void verifyHexPrincipalEven() {
         final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver(16, true);
-        X509Certificate mockCert = mock(X509Certificate.class);
-        when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(60300l));
+        final X509Certificate mockCert = mock(X509Certificate.class);
+        when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(60300L));
 
         final String principal = r.resolvePrincipalInternal(mockCert);
         assertEquals("eb8c", principal);

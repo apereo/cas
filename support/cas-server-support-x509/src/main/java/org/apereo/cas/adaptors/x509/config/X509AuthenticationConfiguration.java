@@ -5,7 +5,11 @@ import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetcher;
-import org.apereo.cas.adaptors.x509.authentication.principal.*;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolver;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberAndIssuerDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
@@ -51,6 +55,8 @@ import net.sf.ehcache.Cache;
 @Configuration("x509AuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509AuthenticationConfiguration {
+
+    private static final int HEX = 16;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -234,10 +240,10 @@ public class X509AuthenticationConfiguration {
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
         final X509SerialNumberPrincipalResolver r;
-        final int radix = x509.getPrincipal().getRadix();
-        if (radix > 0) {
-            if (radix == 16) {
-                r = new X509SerialNumberPrincipalResolver(radix, x509.getPrincipal().isHexZeroPadding());
+        final int radix = x509.getPrincipalSNRadix();
+        if (Character.MAX_RADIX <= radix && radix >= Character.MIN_RADIX) {
+            if (radix == HEX) {
+                r = new X509SerialNumberPrincipalResolver(radix, x509.isPrincipalHexSNZeroPadding());
             } else {
                 r = new X509SerialNumberPrincipalResolver(radix, false);
             }

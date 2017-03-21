@@ -17,7 +17,7 @@ public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalReso
      */
     private int radix = 10;
 
-    private boolean zeroPadding = false;
+    private boolean zeroPadding;
 
     public X509SerialNumberPrincipalResolver() {
     }

@@ -13,9 +13,6 @@ public class PersonDirPrincipalResolverProperties {
     private boolean returnNull;
     private boolean principalResolutionFailureFatal;
 
-    private int radix;
-    private boolean hexZeroPadding;
-
     public boolean isPrincipalResolutionFailureFatal() {
         return principalResolutionFailureFatal;
     }
@@ -38,21 +35,5 @@ public class PersonDirPrincipalResolverProperties {
 
     public void setReturnNull(final boolean returnNull) {
         this.returnNull = returnNull;
-    }
-
-    public int getRadix() {
-        return radix;
-    }
-
-    public void setRadix(int radix) {
-        this.radix = radix;
-    }
-
-    public boolean isHexZeroPadding() {
-        return hexZeroPadding;
-    }
-
-    public void setHexZeroPadding(boolean hexZeroPadding) {
-        this.hexZeroPadding = hexZeroPadding;
     }
 }
