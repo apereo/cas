@@ -43,7 +43,7 @@ The following features are supported by the CAS project:
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot), 
 [Spring Cloud](http://projects.spring.io/spring-cloud/) and Thymeleaf.
 
-## Documentation [![Gitter](https://badges.gitter.im/Join Chat.svg)][casgitter]
+## Documentation [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][casgitter]
 
 - [Documentation][wiki]
 - [Release Notes][releasenotes]
