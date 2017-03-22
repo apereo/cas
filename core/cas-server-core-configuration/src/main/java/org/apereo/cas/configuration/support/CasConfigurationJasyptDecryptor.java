@@ -120,7 +120,7 @@ public class CasConfigurationJasyptDecryptor {
      * @param propertyValue The property value to cast
      * @return A {@link String} representing the property value or {@code null} if it is not a {@link String}
      */
-    private String getStringPropertyValue(Object propertyValue) {
+    private String getStringPropertyValue(final Object propertyValue) {
         return propertyValue instanceof String ? (String) propertyValue : null;
     }
 }
