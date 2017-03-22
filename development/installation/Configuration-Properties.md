@@ -73,6 +73,25 @@ should support the duration syntax for full clarity on unit of measure:
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
 
+### Authentication Credential Selection
+
+A number of authentication handlers are allowed to determine whether they can operate on the provided credential
+and as such lend themselves to be tried and tested during the authentication handler selection phase. The credential criteria
+may either be a regular expression pattern that is tested against the credential identifier, or it may be a fully qualified
+class name of your own design that looks similar to:
+
+```java
+import java.util.function.Predicate;
+import org.apereo.cas.authentication.Credential;
+
+public class PredicateExample implements Predicate<Credential> {
+    @Override
+    public boolean test(final Credential credential) {
+        // Examine the credential and return true/false
+    }
+}
+```
+
 ### Password Encoding
 
 Certain aspects of CAS such as authentication handling support configuration of
@@ -134,11 +153,11 @@ Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
 ```properties
 # spring.cloud.vault.host=127.0.0.1
 # spring.cloud.vault.port=8200
+# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
 # spring.cloud.vault.connectionTimeout=3000
 # spring.cloud.vault.readTimeout=5000
 # spring.cloud.vault.enabled=true
 # spring.cloud.vault.fail-fast=true
-# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
 # spring.cloud.vault.scheme=http
 # spring.cloud.vault.generic.enabled=true
 # spring.cloud.vault.generic.backend=secret
@@ -149,23 +168,38 @@ Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
 Load settings from MongoDb.
 
 ```properties
-# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas
+# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/apereocas
 ```
 
 ## Configuration Security
+
+To learn more about how sensitive CAS settings can be
+secured, [please review this guide](Configuration-Properties-Security.html).
+
+### Standalone
+
+```properties
+cas.standalone.config.security.alg=PBEWithMD5AndTripleDES
+cas.standalone.config.security.provider=BC
+cas.standalone.config.security.iterations=
+cas.standalone.config.security.psw=
+```
+
+The above settings may be passed to CAS using any of the [strategies outline here](Configuration-Management.html#overview),
+though it might be more secure to pass them to CAS as either command-line or system properties.
+
+### Spring Cloud
 
 Encrypt and decrypt configuration via Spring Cloud.
 
 ```properties
 # spring.cloud.config.server.encrypt.enabled=true
+
 # encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
 # encrypt.keyStore.password=keystorePassword
 # encrypt.keyStore.alias=DaKey
 # encrypt.keyStore.secret=changeme
 ```
-
-To learn more about how sensitive CAS settings can be
-secured, [please review this guide](Configuration-Properties-Security.html).
 
 ## Cloud Configuration Bus
 
@@ -1378,33 +1412,16 @@ Attributes retrieved directly as part of LDAP authentication trump all other att
 
 To learn more about this topic, [please review this guide](LDAP-Authentication.html).
 
-### Active Directory
+The following authentication types are supported:
 
-Users authenticate with `sAMAccountName` typically using a DN format.
 
-### Authenticated Search
-
-Manager bind/search type of authentication.
-
-- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-
-### Anonymous Search
-
-Similar semantics as Authentication Search except no `bindDn` and `bindCredential` may be specified to initialize the connection.
-
-- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-
-### Direct Bind
-
-Compute user DN from a format string and perform simple bind. This is relevant when
-no search is required to compute the DN needed for a bind operation.
-
-There are two requirements for this use case:
-
-1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
-2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `AD`                    | Acive Directory - Users authenticate with `sAMAccountName` typically using a DN format.     
+| `AUTHENTICATED`         | Manager bind/search type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+| `DIRECT`                | Compute user DN from a format string and perform simple bind. This is relevant when no search is required to compute the DN needed for a bind operation. This option is useful when all users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`, or the username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`
+| `ANONYMOUS`             | Similar semantics as `AUTHENTICATED` except no `bindDn` and `bindCredential` may be specified to initialize the connection. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+| `SASL`                  | Similar semantics as `AUTHENTICATED` except you can specify the SASL mechanism.
 
 ### Connection Strategies
 
@@ -1665,6 +1682,7 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.kerberosKdcSystemProperty=
 # cas.authn.jaas.kerberosRealmSystemProperty=
 # cas.authn.jaas.name=
+# cas.authn.jaas.credentialCriteria=
 
 # cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jaas.passwordEncoder.characterEncoding=
@@ -1799,6 +1817,18 @@ prior to production rollouts.</p></div>
 
 To learn more about this topic, [please review this guide](X509-Authentication.html).
 
+### Principal Resolution
+
+X.509 principal resolution can act on the following principal types:
+
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `SERIAL_NO`             | Resolve the principal by the serial number with a configurable <strong>radix</strong>, ranging from 2 to 36. If <code>radix</code> is <code>16</code>, then the serial number could be filled with leading zeros to even the number of digits.
+| `SERIAL_NO_DN`          | Resolve the principal by serial number and issuer dn.
+| `SUBJECT`               | Resolve the principal by extracting one or more attribute values from the certificate subject DN and combining them with intervening delimiters.
+| `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension.
+| `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
+
 ### CRL Fetching / Revocation
 
 CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability
@@ -1811,22 +1841,29 @@ Available policies cover the following events:
 
 In either event, the following options are available:
 
-- Allow authentication to proceed.
-- Deny authentication and block.
-- Applicable to CRL expiration, throttle the request whereby expired data is permitted up
-to a threshold period of time but not afterward.
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `ALLOW`                 | Allow authentication to proceed.
+| `DENY`                  | Deny authentication and block.
+| `THRESHOLD`             | Applicable to CRL expiration, throttle the request whereby expired data is permitted up to a threshold period of time but not afterward.
+
 
 Revocation certificate checking can be carried out in one of the following ways:
 
-- None.
-- A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.
-- The CRL URI(s) mentioned in the certificate `cRLDistributionPoints` extension field. Caches are available to prevent excessive
-IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `NONE`                  | No revocation is performed.
+| `CRL`                   | The CRL URI(s) mentioned in the certificate `cRLDistributionPoints` extension field. Caches are available to prevent excessive IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.
+| `RESOURCE`              | A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.
+
 
 To fetch CRLs, the following options are available:
 
-- By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.
-- A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI.
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `RESOURCE`              | By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.
+| `LDAP`                  | A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI
+
 
 ```properties
 # cas.authn.x509.crlExpiredPolicy=DENY|ALLOW|THRESHOLD
@@ -1854,6 +1891,8 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.name=
 # cas.authn.x509.principalDescriptor=
+# cas.authn.x509.principalSNRadix=10
+# cas.authn.x509.principalHexSNZeroPadding=false
 # cas.authn.x509.maxPathLength=1
 # cas.authn.x509.throwOnFetchFailure=false
 # cas.authn.x509.valueDelimiter=,
