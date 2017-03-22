@@ -45,13 +45,15 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     public AcceptUsersAuthenticationHandler(final String name) {
         this(name, null, null, null, new HashMap<>());
     }
-    
+
     /**
      * Instantiates a new Accept users authentication handler.
      *
-     * @param name the name
-     * @param servicesManager the services manager
-     * @param users the users
+     * @param name             the name
+     * @param servicesManager  the services manager
+     * @param principalFactory the principal factory
+     * @param order            the order
+     * @param users            the users
      */
     public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                             final Integer order, final Map<String, String> users) {
