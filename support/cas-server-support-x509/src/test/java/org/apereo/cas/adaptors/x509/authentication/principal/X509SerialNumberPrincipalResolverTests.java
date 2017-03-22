@@ -1,13 +1,15 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import static org.junit.Assert.*;
-
-import java.security.cert.X509Certificate;
+import static org.mockito.Mockito.*;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.junit.Test;
+
+import java.math.BigInteger;
+import java.security.cert.X509Certificate;
 
 /**
  * @author Scott Battaglia
@@ -40,4 +42,33 @@ public class X509SerialNumberPrincipalResolverTests extends AbstractX509Certific
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 
+    @Test
+    public void verifyHexPrincipalOdd() {
+        final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver(16, true);
+        final X509Certificate mockCert = mock(X509Certificate.class);
+        when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(300L));
+
+        final String principal = r.resolvePrincipalInternal(mockCert);
+        assertEquals("012c", principal);
+    }
+
+    @Test
+    public void verifyHexPrincipalOddFalse() {
+        final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver(16, false);
+        final X509Certificate mockCert = mock(X509Certificate.class);
+        when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(300L));
+
+        final String principal = r.resolvePrincipalInternal(mockCert);
+        assertEquals("12c", principal);
+    }
+
+    @Test
+    public void verifyHexPrincipalEven() {
+        final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver(16, true);
+        final X509Certificate mockCert = mock(X509Certificate.class);
+        when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(60300L));
+
+        final String principal = r.resolvePrincipalInternal(mockCert);
+        assertEquals("eb8c", principal);
+    }
 }

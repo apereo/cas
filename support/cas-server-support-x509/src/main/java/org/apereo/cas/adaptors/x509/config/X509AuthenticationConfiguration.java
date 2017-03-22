@@ -1,16 +1,15 @@
 package org.apereo.cas.adaptors.x509.config;
 
-import net.sf.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetcher;
-import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberAndIssuerDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberAndIssuerDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
@@ -45,6 +44,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import net.sf.ehcache.Cache;
+
 /**
  * This is {@link X509AuthenticationConfiguration}.
  *
@@ -54,6 +55,8 @@ import java.util.stream.Collectors;
 @Configuration("x509AuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509AuthenticationConfiguration {
+
+    private static final int HEX = 16;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -236,7 +239,17 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver();
+        final X509SerialNumberPrincipalResolver r;
+        final int radix = x509.getPrincipalSNRadix();
+        if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
+            if (radix == HEX) {
+                r = new X509SerialNumberPrincipalResolver(radix, x509.isPrincipalHexSNZeroPadding());
+            } else {
+                r = new X509SerialNumberPrincipalResolver(radix, false);
+            }
+        } else {
+            r = new X509SerialNumberPrincipalResolver();
+        }
         r.setAttributeRepository(attributeRepository);
         r.setPrincipalAttributeName(x509.getPrincipal().getPrincipalAttribute());
         r.setReturnNullIfNoAttributes(x509.getPrincipal().isReturnNull());
