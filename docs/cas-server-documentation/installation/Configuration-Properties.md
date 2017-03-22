@@ -1817,6 +1817,12 @@ prior to production rollouts.</p></div>
 
 To learn more about this topic, [please review this guide](X509-Authentication.html).
 
+### Principal Resolution
+
+X509SerialNumberPrincipalResolver can provide Serial Number with configurable <strong>radix</strong>. Which could be in
+range from 2 to 36. If <strong>radix</strong> is <strong>16</strong> Serial Number could be filled with <strong>leading 0</strong> to even
+number of digits.
+
 ### CRL Fetching / Revocation
 
 CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability
@@ -1872,6 +1878,8 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.name=
 # cas.authn.x509.principalDescriptor=
+# cas.authn.x509.principalSNRadix=10
+# cas.authn.x509.principalHexSNZeroPadding=false
 # cas.authn.x509.maxPathLength=1
 # cas.authn.x509.throwOnFetchFailure=false
 # cas.authn.x509.valueDelimiter=,
