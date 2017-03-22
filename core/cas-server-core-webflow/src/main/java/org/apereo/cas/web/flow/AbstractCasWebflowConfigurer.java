@@ -189,7 +189,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
                                              final String thenStateId, final String elseStateId) {
         if (containsFlowState(flow, id)) {
-            LOGGER.debug("Flow [{}] already contains a definition for state id [[{}]]", flow.getId(), id);
+            LOGGER.debug("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
             return (DecisionState) flow.getTransitionableState(id);
         }
 
@@ -210,7 +210,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void setStartState(final Flow flow, final String state) {
         flow.setStartState(state);
         final TransitionableState startState = getStartState(flow);
-        LOGGER.debug("Start state is now set to [[{}]]", startState.getId());
+        LOGGER.debug("Start state is now set to [{}]", startState.getId());
     }
 
     @Override
@@ -227,7 +227,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final ParserContext ctx = new FluentParserContext();
         final Expression action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
         final EvaluateAction newAction = new EvaluateAction(action, null);
-        LOGGER.debug("Created evaluate action for expression [[{}]]", action.getExpressionString());
+        LOGGER.debug("Created evaluate action for expression [{}]", action.getExpressionString());
         return newAction;
     }
 

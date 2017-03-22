@@ -223,7 +223,7 @@ public class LdapAuthenticationConfiguration {
                             + "back the principal resolved during LDAP authentication directly.");
                     resolver.setChain(Arrays.asList(new EchoingPrincipalResolver()));
                 }
-                LOGGER.info("Ldap authentication for [{}] is to chain principal resolvers via [[{}]] for attribute resolution",
+                LOGGER.info("Ldap authentication for [{}] is to chain principal resolvers via [{}] for attribute resolution",
                         handler.getName(), resolver);
                 plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
             });
