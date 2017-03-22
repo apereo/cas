@@ -5,6 +5,7 @@ dependencies {
     implementation libraries.ldaptive
     implementation libraries.mongo
     implementation libraries.jasypt
+    implementation libraries.groovy
     implementation libraries.bouncycastle
 
     compileOnly project(":api:cas-server-core-api-authentication")
