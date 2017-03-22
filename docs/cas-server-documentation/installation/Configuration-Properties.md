@@ -109,6 +109,45 @@ The following options are supported:
 | `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.  
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
 
+### Authentication Principal Transformation
+
+Authentication handlers that generally deal with username-password credentials
+can be configured to transform the user id prior to executing the authentication sequence.
+The following options may be used:
+
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------
+| `NONE`                  | Do not apply any transformations.
+| `UPPERCASE`             | Convert the username to uppercase.
+| `LOWERCASE`             | Convert the username to lowercase.
+
+### Hibernate & JDBC
+
+Control global properties that are relevant to Hibernate,
+when CAS attempts to employ and utilize database resources,
+connections and queries.
+
+```properties
+# cas.jdbc.showSql=true
+# cas.jdbc.genDdl=true
+```
+
+### DDL Configuration
+
+Note that the default value for Hibernate's DDL setting is `create-drop`
+which may not be appropriate for use in production. Setting the value to
+`validate` may be more desirable, but any of the following options can be used:
+
+| Type                 | Description                            
+|----------------------|----------------------------------------------------------
+| `validate`           | Validate the schema, but make no changes to the database.
+| `update`             | Update the schema.
+| `create`             | Create the schema, destroying previous data.
+| `create-drop`        | Drop the schema at the end of the session.
+
+For more information on configuration of transaction levels and propagation behaviors,
+please review [this guide](http://docs.spring.io/spring-framework/docs/current/javadoc-api/).
+
 ## Configuration Storage
 
 ### Standalone
@@ -3229,6 +3268,16 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.httpClient.truststore.file=classpath:/truststore.jks
 ```
 
+### Hostname Verification
+
+The default options are avaiable for hostname verification:
+
+| Type                    | Description                            
+|-------------------------|--------------------------------------
+| `NONE`                  | Ignore hostname verification.
+| `DEFAULT`               | Enforce hostname verification.
+
+
 ## Service Registry
 
 ```properties
@@ -3417,15 +3466,6 @@ This section controls how that process should behave.
 ### JPA Ticket Registry
 
 To learn more about this topic, [please review this guide](JPA-Ticket-Registry.html).
-
-Note that the default value for Hibernate's DDL setting is `create-drop`
-which may not be appropriate for use in production. Setting the value to
-`validate` may be more desirable, but any of the following options can be used:
-
-* `validate` - validate the schema, but make no changes to the database.
-* `update` - update the schema.
-* `create` - create the schema, destroying previous data.
-* `create-drop` - drop the schema at the end of the session.
 
 ```properties
 # cas.ticket.registry.jpa.ticketLockType=NONE
@@ -4060,17 +4100,6 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 # cas.samlMetadataUi.parameter=entityId
 ```
 
-## Hibernate & JDBC
-
-Control global properties that are relevant to Hibernate,
-when CAS attempts to employ and utilize database resources,
-connections and queries.
-
-```properties
-# cas.jdbc.showSql=true
-# cas.jdbc.genDdl=true
-```
-
 ## Provisioning
 
 ### SCIM
@@ -4101,6 +4130,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.from=
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.emailAttribute=mail
+# cas.authn.pm.reset.securityQuestionsEnabled=true
 
 # Used to sign/encrypt the password-reset link
 # cas.authn.pm.reset.security.encryptionKey=
@@ -4109,8 +4139,18 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 
 ### LDAP Password Management
 
+The following LDAP types are supported:
+
+| Type                    | Description                            
+|-------------------------|--------------------------------------------------
+| `AD`                    | Active Directory.
+| `FreeIPA`               | FreeIPA Directory Server.
+| `EDirectory`            | NetIQ eDirectory.
+| `GENERIC`               | All other directory servers (i.e OpenLDAP, etc).
+
 ```properties
 # cas.authn.pm.ldap.type=GENERIC|AD|FreeIPA|EDirectory
+
 # cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.pm.ldap.connectionStrategy=
 # cas.authn.pm.ldap.useSsl=true
@@ -4138,6 +4178,8 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.blockWaitTime=5000
 # cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
+# Attributes that should be fetched to indicate security questions and answers,
+# assuming security questions are enabled.
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion2=attrAnswer2
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion3=attrAnswer3
@@ -4180,7 +4222,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.jdbc.passwordEncoder.encodingAlgorithm=
 # cas.authn.pm.jdbc.passwordEncoder.secret=
 # cas.authn.pm.jdbc.passwordEncoder.strength=16
-````
+```
 
 ### REST Password Management
 
