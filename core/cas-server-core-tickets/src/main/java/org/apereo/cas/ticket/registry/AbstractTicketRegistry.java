@@ -90,7 +90,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return getTickets().stream().filter(ServiceTicket.class::isInstance).count();
         } catch (final Throwable t) {
             LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
-                            + "Message is: [{}] Returning unknown as [[{}]]",
+                            + "Message is: [{}] Returning unknown as [{}]",
                     this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
@@ -111,7 +111,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
         if (ticket instanceof TicketGrantingTicket) {
             if (ticket instanceof ProxyGrantingTicket) {
-                LOGGER.debug("Removing proxy-granting ticket [[{}]]", ticketId);
+                LOGGER.debug("Removing proxy-granting ticket [{}]", ticketId);
             }
 
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
