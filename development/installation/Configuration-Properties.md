@@ -111,10 +111,19 @@ The following options are supported:
 
 ## Configuration Storage
 
-The following settings are to be loaded by the CAS configuration server, which bootstraps
-the entire CAS running context. They are to be put inside the `src/main/resources/bootstrap.properties`.
-See [this guide](Configuration-Management.html) for more info.
+### Standalone
 
+CAS by default will attempt to locate settings and properties inside a given directory indicated 
+under the setting name `cas.standalone.config` and otherwise falls back to using `/etc/cas/config`.
+
+### Spring Cloud
+
+The following settings are to be loaded by the CAS configuration runtime, which bootstraps
+the entire CAS running context. They are to be put inside the `src/main/resources/bootstrap.properties`
+of the configuration server itself. See [this guide](Configuration-Server-Management.html) for more info. 
+
+The configuration server backed by Spring Cloud supports the following profiles.
+ 
 ### Native
 
 Load settings from external properties/yaml configuration files.
@@ -146,6 +155,8 @@ Load settings from an internal/external Git repository.
 # spring.cloud.config.server.git.password=
 ```
 
+The above configuration also applies to online git-based repositories such as Github, BitBucket, etc.
+
 ### Vault
 
 Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
@@ -165,7 +176,7 @@ Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
 
 ### MongoDb
 
-Load settings from MongoDb.
+Load settings from a MongoDb instance.
 
 ```properties
 # cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/apereocas
@@ -190,7 +201,7 @@ though it might be more secure to pass them to CAS as either command-line or sys
 
 ### Spring Cloud
 
-Encrypt and decrypt configuration via Spring Cloud.
+Encrypt and decrypt configuration via Spring Cloud, if the Spring Cloud configuration server is used.
 
 ```properties
 # spring.cloud.config.server.encrypt.enabled=true
@@ -244,7 +255,7 @@ via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htm
 
 ## Embedded Container
 
-The following properties are related to the embedded containers that ships with CAS.
+The following properties are related to the embedded containers that ship with CAS.
 
 ```properties
 server.contextPath=/cas
@@ -686,6 +697,17 @@ By default, the execution order is the following but can be adjusted per source:
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
 if explicit attribute mappings are defined, then *only mapped attributes* are retrieved.
+
+### Merging Strategies
+
+The following mergeing strategies can be used to resolve conflicts when the same attribute are found from multiple sources:
+
+| Type                    | Description
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `REPLACE`               | Overwrites existing attribute values, if any.
+| `ADD`                   | Retains existing attribute values if any, and ignores values from subsequent sources in the resolution chain.
+| `MERGE`                 | Combines all values into a single attribute, essentially creating a multi-valued attribute.
+
 
 ### Stub
 
@@ -1445,6 +1467,31 @@ LDAP connection configuration injected into the LDAP connection pool can be init
 | `bindDn`/`bindCredential` set to `*`   | Use a fast-bind strategy to initialize the pool.   
 | `bindDn`/`bindCredential` set to blank | Skip connection initializing; perform operations anonymously.
 | SASL mechanism provided                | Use the given SASL mechanism to bind when initializing connections.
+
+
+### Validators
+
+The following LDAP validators can be used to test connection health status:
+
+| Type                    | Description
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `NONE`                  | No validation takes place.
+| `SEARCH`                | Validates a connection is healthy by performing a search operation. Validation is considered successful if the search result size is greater than zero.
+| `COMPARE`               | Validates a connection is healthy by performing a compare operation.
+
+### Passivators
+
+The following options can be used to passivate bjects when they are checked back into the LDAP connection pool:
+
+| Type                    | Description
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `NONE`                  | No passivation takes place.
+| `CLOSE`                 | Passivates a connection by attempting to close it.
+| `BIND`                  | Passivates a connection by performing a bind operation on it.
+
+#### Why Passivators?
+
+You may receive unexpected LDAP failures, when CAS is configured to authenticate using `DIRECT` or `AUTHENTICATED` types and LDAP is locked down to not allow anonymous binds/searches. Every second attempt with a given LDAP connection from the pool would fail if it was on the same connection as a failed login attempt, and the regular connection validator would similarly fail. When a connection is returned back to a pool, it still may contain the principal and credentials from the previous attempt. Before the next bind attempt using that connection, the validator tries to validate the connection again but fails because it's no longer trying with the configured bind credentials but with whatever user DN was used in the previous step. Given the validation failure, the connection is closed and CAS would deny access by default. Passivators attempt to reconnect to LDAP with the configured bind credentials, effectively resetting the connection to what it should be after each bind request.
 
 
 ```properties
