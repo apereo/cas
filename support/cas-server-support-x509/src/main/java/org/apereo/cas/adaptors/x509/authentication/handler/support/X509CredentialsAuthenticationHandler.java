@@ -46,7 +46,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     private static final String KEY_USAGE_OID = "2.5.29.15";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(X509CredentialsAuthenticationHandler.class);
-    
+
     /**
      * The compiled pattern supplied by the deployer.
      */
@@ -88,17 +88,18 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     /**
      * Instantiates a new X 509 credentials authentication handler.
      *
+     * @param name                          the name
+     * @param servicesManager               the services manager
+     * @param principalFactory              the principal factory
      * @param regExTrustedIssuerDnPattern   the regex trusted issuer dn pattern
      * @param maxPathLength                 the max path length
      * @param maxPathLengthAllowUnspecified the max path length allow unspecified
      * @param checkKeyUsage                 the check key usage
      * @param requireKeyUsage               the require key usage
      * @param regExSubjectDnPattern         the regex subject dn pattern
-     * @param revocationChecker             the revocation checker. Sets the component responsible for evaluating
-     *                                      certificate revocation status for client
+     * @param revocationChecker             the revocation checker. Sets the component responsible for evaluating certificate revocation status for client
      *                                      certificates presented to handler. The default checker is a NO-OP implementation
-     *                                      for backward compatibility with previous versions that do not perform revocation
-     *                                      checking.
+     *                                      for backward compatibility with previous versions that do not perform revocation checking.
      */
     public X509CredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                                 final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
@@ -124,7 +125,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
                                                 final boolean maxPathLengthAllowUnspecified,
                                                 final Pattern regExSubjectDnPattern) {
-        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern, 
+        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
                 Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
                 false, regExSubjectDnPattern,
                 new NoOpRevocationChecker());
@@ -134,7 +135,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                                                 final boolean maxPathLengthAllowUnspecified,
                                                 final boolean checkKeyUsage,
                                                 final boolean requireKeyUsage) {
-        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern, 
+        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
                 Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
                 checkKeyUsage, requireKeyUsage, null,
                 new NoOpRevocationChecker());
