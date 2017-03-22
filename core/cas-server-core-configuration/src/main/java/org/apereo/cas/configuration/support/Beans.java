@@ -109,6 +109,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -459,8 +461,8 @@ public final class Beans {
         LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
         final ConnectionConfig cc = new ConnectionConfig();
 
-        final String urls = l.getLdapUrl().contains(" ") 
-                ? l.getLdapUrl() 
+        final String urls = l.getLdapUrl().contains(" ")
+                ? l.getLdapUrl()
                 : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
@@ -651,7 +653,7 @@ public final class Beans {
                         cp.setPassivator(new BindPassivator(bindRequest));
                         LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     } else {
-                        LOGGER.warn("No [{}] passivator could be created for [{}] given bind credentials are not specified", 
+                        LOGGER.warn("No [{}] passivator could be created for [{}] given bind credentials are not specified",
                                 l.getPoolPassivator(), l.getLdapUrl());
                     }
                     break;
@@ -663,6 +665,26 @@ public final class Beans {
         LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", l.getLdapUrl(), l.getBindDn());
         cp.initialize();
         return cp;
+    }
+
+
+    /**
+     * Gets credential selection predicate.
+     *
+     * @param selectionCriteria the selection criteria
+     * @return the credential selection predicate
+     */
+    public static Predicate<org.apereo.cas.authentication.Credential> newCredentialSelectionPredicate(final String selectionCriteria) {
+        try {
+            if (StringUtils.isBlank(selectionCriteria)) {
+                return credential -> true;
+            }
+            final Class predicateClazz = ClassUtils.getClass(selectionCriteria);
+            return (Predicate<org.apereo.cas.authentication.Credential>) predicateClazz.newInstance();
+        } catch (final Exception e) {
+            final Predicate<String> predicate = Pattern.compile(selectionCriteria).asPredicate();
+            return credential -> predicate.test(credential.getId());
+        }
     }
 
     /**
