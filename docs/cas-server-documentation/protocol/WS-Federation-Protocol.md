@@ -118,8 +118,8 @@ The following claims are supported by CAS for release:
 | `WINDOWS_ACCOUNT_NAME`          | `http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname`
 | `PUID`                          | `http://schemas.xmlsoap.org/claims/PUID`
 
-The attribute release policy assigned to relying parties and services is able to link a given standard claim and map it to a attribute
-that may be already available. The configuration looks as such:
+The attribute release policy assigned to relying parties and services is able to link a given standard claim and map it to an attribute
+that should be already available. The configuration looks as such:
 
 ```json
 {
