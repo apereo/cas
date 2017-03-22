@@ -38,10 +38,14 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     /**
      * Instantiates a new Abstract authentication handler.
      *
-     * @param name Handler name.
-     * @param servicesManager the services manager.
+     * @param name             Handler name.
+     * @param servicesManager  the services manager.
+     * @param principalFactory the principal factory
+     * @param order            the order
+     * @param httpClient       the http client
      */
-    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, 
+                                                            final PrincipalFactory principalFactory,
                                                             final Integer order, final HttpClient httpClient) {
         super(name, servicesManager, principalFactory, order);
         this.httpClient = httpClient;

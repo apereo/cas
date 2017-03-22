@@ -27,8 +27,10 @@ import java.util.Optional;
  */
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(RadiusAuthenticationHandler.class);
-    
-    /** Array of RADIUS servers to authenticate against. */
+
+    /**
+     * Array of RADIUS servers to authenticate against.
+     */
     private List<RadiusServer> servers;
 
     /**
@@ -46,9 +48,11 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     /**
      * Instantiates a new Radius authentication handler.
      *
-     * @param principalFactory the principal factory
-     * @param servers RADIUS servers to authenticate against.
-     * @param failoverOnException boolean on whether to failover or not.
+     * @param name                            the name
+     * @param servicesManager                 the services manager
+     * @param principalFactory                the principal factory
+     * @param servers                         RADIUS servers to authenticate against.
+     * @param failoverOnException             boolean on whether to failover or not.
      * @param failoverOnAuthenticationFailure boolean on whether to failover or not.
      */
     public RadiusAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
@@ -68,10 +72,10 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
         try {
             final String username = credential.getUsername();
             final Pair<Boolean, Optional<Map<String, Object>>> result =
-                    RadiusUtils.authenticate(username, credential.getPassword(), this.servers, 
+                    RadiusUtils.authenticate(username, credential.getPassword(), this.servers,
                             this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
-                return createHandlerResult(credential, 
+                return createHandlerResult(credential,
                         this.principalFactory.createPrincipal(username, result.getValue().get()),
                         new ArrayList<>());
             }

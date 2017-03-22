@@ -32,11 +32,12 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     /**
      * Instantiates a new Single logout service message handler.
      *
-     * @param httpClient                          to send the requests
-     * @param logoutMessageCreator                creates the message
-     * @param servicesManager                     finds services to logout from
-     * @param singleLogoutServiceLogoutUrlBuilder creates the URL
-     * @param asyncCallbacks                      if messages are sent in an asynchronous fashion.
+     * @param httpClient                                      to send the requests
+     * @param logoutMessageCreator                            creates the message
+     * @param servicesManager                                 finds services to logout from
+     * @param singleLogoutServiceLogoutUrlBuilder             creates the URL
+     * @param asyncCallbacks                                  if messages are sent in an asynchronous fashion.
+     * @param authenticationRequestServiceSelectionStrategies the authentication request service selection strategies
      */
     public DefaultSingleLogoutServiceMessageHandler(final HttpClient httpClient, final LogoutMessageCreator logoutMessageCreator,
                                                     final ServicesManager servicesManager,

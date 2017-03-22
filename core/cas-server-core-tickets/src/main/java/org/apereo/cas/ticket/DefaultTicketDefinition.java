@@ -22,6 +22,7 @@ public class DefaultTicketDefinition implements TicketDefinition {
      *
      * @param implementationClass the implementation class
      * @param prefix              the prefix
+     * @param order               the order
      */
     public DefaultTicketDefinition(final Class<? extends Ticket> implementationClass, final String prefix,
                                    final int order) {
