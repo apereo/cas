@@ -78,7 +78,19 @@ in each case to learn the exact unit of measure.
 A number of authentication handlers are allowed to determine whether they can operate on the provided credential
 and as such lend themselves to be tried and tested during the authentication handler selection phase. The credential criteria
 may either be a regular expression pattern that is tested against the credential identifier, or it may be a fully qualified
-class name of your own design that implements `Predicate<Credential>`.
+class name of your own design that looks similar to:
+
+```java
+import java.util.function.Predicate;
+import org.apereo.cas.authentication.Credential;
+
+public class PredicateExample implements Predicate<Credential> {
+    @Override
+    public boolean test(final Credential credential) {
+        // Examine the credential and return true/false
+    }
+}
+```
 
 ### Password Encoding
 
@@ -141,11 +153,11 @@ Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
 ```properties
 # spring.cloud.vault.host=127.0.0.1
 # spring.cloud.vault.port=8200
+# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
 # spring.cloud.vault.connectionTimeout=3000
 # spring.cloud.vault.readTimeout=5000
 # spring.cloud.vault.enabled=true
 # spring.cloud.vault.fail-fast=true
-# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
 # spring.cloud.vault.scheme=http
 # spring.cloud.vault.generic.enabled=true
 # spring.cloud.vault.generic.backend=secret
@@ -156,23 +168,38 @@ Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
 Load settings from MongoDb.
 
 ```properties
-# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas
+# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/apereocas
 ```
 
 ## Configuration Security
+
+To learn more about how sensitive CAS settings can be
+secured, [please review this guide](Configuration-Properties-Security.html).
+
+### Standalone
+
+```properties
+cas.standalone.config.security.alg=PBEWithMD5AndTripleDES
+cas.standalone.config.security.provider=BC
+cas.standalone.config.security.iterations=
+cas.standalone.config.security.psw=
+```
+
+The above settings may be passed to CAS using any of the [strategies outline here](Configuration-Management.html#overview),
+though it might be more secure to pass them to CAS as either command-line or system properties.
+
+### Spring Cloud
 
 Encrypt and decrypt configuration via Spring Cloud.
 
 ```properties
 # spring.cloud.config.server.encrypt.enabled=true
+
 # encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
 # encrypt.keyStore.password=keystorePassword
 # encrypt.keyStore.alias=DaKey
 # encrypt.keyStore.secret=changeme
 ```
-
-To learn more about how sensitive CAS settings can be
-secured, [please review this guide](Configuration-Properties-Security.html).
 
 ## Cloud Configuration Bus
 
