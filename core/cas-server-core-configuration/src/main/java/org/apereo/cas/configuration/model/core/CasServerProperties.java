@@ -293,7 +293,7 @@ public class CasServerProperties {
     }
 
     public static class Http {
-        private boolean enabled = true;
+        private boolean enabled;
         private int port = 8080;
         private String protocol = "org.apache.coyote.http11.Http11NioProtocol";
 
