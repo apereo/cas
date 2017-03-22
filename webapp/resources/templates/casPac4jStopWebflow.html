@@ -13,7 +13,8 @@
 
         <div>
             <p/>
-            <table class="table table-bordered table-hover table-responsive">
+            <table th:if="${error != null or reason != null or code != null or description != null}" 
+                   class="table table-bordered table-hover table-responsive">
                 <thead>
                 <tr>
                     <th>Error</th>
@@ -26,7 +27,7 @@
                 </thead>
                 <tbody>
                 <tr class="active">
-                    <td th:text="${error}" />
+                    <td th:text="${error}"/>
                     <td th:text="${reason}" />
                     <td th:text="${code}" />
                     <td th:text="${description}" />
@@ -38,7 +39,6 @@
                 </tr>
                 </tbody>
             </table>
-
         </div>
     </div>
     <p>

@@ -81,6 +81,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Github github = casProperties.getAuthn().getPac4j().getGithub();
         if (StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             final GitHubClient client = new GitHubClient(github.getId(), github.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -89,6 +90,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Dropbox db = casProperties.getAuthn().getPac4j().getDropbox();
         if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             final DropBoxClient client = new DropBoxClient(db.getId(), db.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -97,6 +99,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.WindowsLive live = casProperties.getAuthn().getPac4j().getWindowsLive();
         if (StringUtils.isNotBlank(live.getId()) && StringUtils.isNotBlank(live.getSecret())) {
             final WindowsLiveClient client = new WindowsLiveClient(live.getId(), live.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -105,6 +108,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Yahoo yahoo = casProperties.getAuthn().getPac4j().getYahoo();
         if (StringUtils.isNotBlank(yahoo.getId()) && StringUtils.isNotBlank(yahoo.getSecret())) {
             final YahooClient client = new YahooClient(yahoo.getId(), yahoo.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -113,6 +117,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Foursquare foursquare = casProperties.getAuthn().getPac4j().getFoursquare();
         if (StringUtils.isNotBlank(foursquare.getId()) && StringUtils.isNotBlank(foursquare.getSecret())) {
             final FoursquareClient client = new FoursquareClient(foursquare.getId(), foursquare.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -124,6 +129,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
             if (StringUtils.isNotBlank(google.getScope())) {
                 client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
             }
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -139,6 +145,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
             if (StringUtils.isNotBlank(fb.getFields())) {
                 client.setFields(fb.getFields());
             }
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -155,6 +162,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
             if (StringUtils.isNotBlank(ln.getFields())) {
                 client.setFields(ln.getFields());
             }
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -163,6 +171,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Twitter twitter = casProperties.getAuthn().getPac4j().getTwitter();
         if (StringUtils.isNotBlank(twitter.getId()) && StringUtils.isNotBlank(twitter.getSecret())) {
             final TwitterClient client = new TwitterClient(twitter.getId(), twitter.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -171,6 +180,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Wordpress wp = casProperties.getAuthn().getPac4j().getWordpress();
         if (StringUtils.isNotBlank(wp.getId()) && StringUtils.isNotBlank(wp.getSecret())) {
             final WordPressClient client = new WordPressClient(wp.getId(), wp.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -179,6 +189,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Bitbucket bb = casProperties.getAuthn().getPac4j().getBitbucket();
         if (StringUtils.isNotBlank(bb.getId()) && StringUtils.isNotBlank(bb.getSecret())) {
             final BitbucketClient client = new BitbucketClient(bb.getId(), bb.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -187,6 +198,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         final Pac4jProperties.Paypal paypal = casProperties.getAuthn().getPac4j().getPaypal();
         if (StringUtils.isNotBlank(paypal.getId()) && StringUtils.isNotBlank(paypal.getSecret())) {
             final PayPalClient client = new PayPalClient(paypal.getId(), paypal.getSecret());
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
     }
@@ -199,7 +211,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                 .forEach(cas -> {
                     final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), cas.getProtocol());
                     final CasClient client = new CasClient(cfg);
-                    client.setName(client.getClass().getSimpleName() + index.incrementAndGet());
+                    final int count = index.intValue();
+                    if (count > 0) {
+                        client.setName(client.getClass().getSimpleName() + count);
+                    }
+                    index.incrementAndGet();
+                    LOGGER.debug("Created client [{}]", client);
                     properties.add(client);
                 });
     }
@@ -217,7 +234,13 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                     cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
                     cfg.setDestinationBindingType(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
                     final SAML2Client client = new SAML2Client(cfg);
-                    client.setName(client.getClass().getSimpleName() + index.incrementAndGet());
+                    
+                    final int count = index.intValue();
+                    if (count > 0) {
+                        client.setName(client.getClass().getSimpleName() + count);
+                    }
+                    index.incrementAndGet();
+                    LOGGER.debug("Created client [{}]", client);
                     properties.add(client);
                 });
     }
@@ -238,7 +261,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                     client.setTokenUrl(oauth.getTokenUrl());
                     client.setAuthUrl(oauth.getAuthUrl());
                     client.setCustomParams(oauth.getCustomParams());
-                    client.setName(client.getClass().getSimpleName() + index.incrementAndGet());
+                    final int count = index.intValue();
+                    if (count > 0) {
+                        client.setName(client.getClass().getSimpleName() + count);
+                    }
+                    index.incrementAndGet();
+                    LOGGER.debug("Created client [{}]", client);
                     properties.add(client);
                 });
     }
@@ -279,7 +307,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                             client = new OidcClient(cfg);
                             break;
                     }
-                    client.setName(client.getClass().getSimpleName() + index.incrementAndGet());
+                    final int count = index.intValue();
+                    if (count > 0) {
+                        client.setName(client.getClass().getSimpleName() + count);
+                    }
+                    index.incrementAndGet();
+                    LOGGER.debug("Created client [{}]", client);
                     properties.add(client);
                 });
     }
@@ -308,7 +341,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
         LOGGER.debug("The following clients are built: [{}]", clients);
         if (clients.isEmpty()) {
-            LOGGER.warn("At least one client must be defined with pac4j");
+            LOGGER.warn("No delegated authentication clients are defined/configured");
         }
         return new Clients(casProperties.getServer().getLoginUrl(), new ArrayList<>(clients));
     }
