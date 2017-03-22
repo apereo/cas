@@ -1819,9 +1819,15 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 
 ### Principal Resolution
 
-X509SerialNumberPrincipalResolver can provide Serial Number with configurable <strong>radix</strong>. Which could be in
-range from 2 to 36. If <strong>radix</strong> is <strong>16</strong> Serial Number could be filled with <strong>leading 0</strong> to even
-number of digits.
+X.509 principal resolution can act on the following principal types:
+
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `SERIAL_NO`             | Resolve the principal by the serial number with a configurable <strong>radix</strong>, ranging from 2 to 36. If <code>radix</code> is <code>16</code>, then the serial number could be filled with leading zeros to even the number of digits.
+| `SERIAL_NO_DN`          | Resolve the principal by serial number and issuer dn.
+| `SUBJECT`               | Resolve the principal by extracting one or more attribute values from the certificate subject DN and combining them with intervening delimiters.
+| `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension.
+| `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
 
 ### CRL Fetching / Revocation
 
@@ -1835,22 +1841,29 @@ Available policies cover the following events:
 
 In either event, the following options are available:
 
-- Allow authentication to proceed.
-- Deny authentication and block.
-- Applicable to CRL expiration, throttle the request whereby expired data is permitted up
-to a threshold period of time but not afterward.
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `ALLOW`                 | Allow authentication to proceed.
+| `DENY`                  | Deny authentication and block.
+| `THRESHOLD`             | Applicable to CRL expiration, throttle the request whereby expired data is permitted up to a threshold period of time but not afterward.
+
 
 Revocation certificate checking can be carried out in one of the following ways:
 
-- None.
-- A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.
-- The CRL URI(s) mentioned in the certificate `cRLDistributionPoints` extension field. Caches are available to prevent excessive
-IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `NONE`                  | No revocation is performed.
+| `CRL`                   | The CRL URI(s) mentioned in the certificate `cRLDistributionPoints` extension field. Caches are available to prevent excessive IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.
+| `RESOURCE`              | A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.
+
 
 To fetch CRLs, the following options are available:
 
-- By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.
-- A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI.
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `RESOURCE`              | By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.
+| `LDAP`                  | A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI
+
 
 ```properties
 # cas.authn.x509.crlExpiredPolicy=DENY|ALLOW|THRESHOLD
