@@ -62,7 +62,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
 
         configureAjp(tomcat);
-        configureHttp(tomcat);
+        configureHttpAndProxy(tomcat);
         configureExtendedAccessLog(tomcat);
         configureRewriteValve(tomcat);
 
@@ -117,7 +117,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureHttpAndProxy(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.HttpProxy proxy = casProperties.getServer().getHttpProxy();
         if (proxy.isEnabled()) {
             LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
@@ -143,11 +143,11 @@ public class CasEmbeddedContainerTomcatConfiguration {
             LOGGER.debug("HTTP proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
         }
 
-        if (casProperties.getServer().getHttp().isEnabled()) {
+        final CasServerProperties.Http http = casProperties.getServer().getHttp();
+        if (http.isEnabled()) {
             LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
-            final Connector connector = new Connector(casProperties.getServer().getHttp().getProtocol());
-
-            int port = casProperties.getServer().getHttp().getPort();
+            final Connector connector = new Connector(http.getProtocol());
+            int port = http.getPort();
             if (port <= 0) {
                 LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
                 port = SocketUtils.findAvailableTcpPort();
@@ -163,7 +163,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
     private void configureAjp(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.Ajp ajp = casProperties.getServer().getAjp();
-        if (ajp.isEnabled()) {
+        if (ajp.isEnabled() && ajp.getPort() > 0) {
             LOGGER.debug("Creating AJP configuration for the embedded tomcat container...");
             final Connector ajpConnector = new Connector(ajp.getProtocol());
             ajpConnector.setProtocol(ajp.getProtocol());
@@ -171,9 +171,13 @@ public class CasEmbeddedContainerTomcatConfiguration {
             ajpConnector.setSecure(ajp.isSecure());
             ajpConnector.setAllowTrace(ajp.isAllowTrace());
             ajpConnector.setScheme(ajp.getScheme());
-            ajpConnector.setAsyncTimeout(ajp.getAsyncTimeout());
+            if (ajp.getAsyncTimeout() > 0) {
+                ajpConnector.setAsyncTimeout(ajp.getAsyncTimeout());
+            }
             ajpConnector.setEnableLookups(ajp.isEnableLookups());
-            ajpConnector.setMaxPostSize(ajp.getMaxPostSize());
+            if (ajp.getMaxPostSize() > 0) {
+                ajpConnector.setMaxPostSize(ajp.getMaxPostSize());
+            }
             ajpConnector.addUpgradeProtocol(new Http2Protocol());
 
             if (ajp.getProxyPort() > 0) {

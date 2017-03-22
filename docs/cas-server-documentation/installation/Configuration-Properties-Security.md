@@ -12,7 +12,7 @@ This document describes how to retrieve and secure CAS configuration and propert
 If you are running CAS in standalone mode without the presence of the configuration server,
 you can take advantage of built-it [Jasypt](http://www.jasypt.org/) functionality to decrypt sensitive CAS settings.
 
-Jasypt supplies command-line tools useful for performing encryption, decryption, etc. In order to use the tools, you should download the Jasypt distribution. Once unzipped, you will find a `jasypt-$VERSION/bin` directory a number of `bat|sh` scripts that you can use for encryption/decryption operations `((encrypt|decrypt).(bat|sh)`.
+Jasypt supplies command-line tools useful for performing encryption, decryption, etc. In order to use the tools, you should download the Jasypt distribution. Once unzipped, you will find a `jasypt-$VERSION/bin` directory a number of `bat|sh` scripts that you can use for encryption/decryption operations `(encrypt|decrypt).(bat|sh)`.
 
 Encrypted settings need to be placed into CAS configuration files as:
 

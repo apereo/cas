@@ -79,6 +79,7 @@ public class CasConfigurationJasyptDecryptor {
             LOGGER.debug("Configured decryptor iterations");
             decryptor.setKeyObtentionIterations(Integer.valueOf(iter));
         }
+        this.decryptor.initialize();
     }
 
     private String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
@@ -99,18 +100,9 @@ public class CasConfigurationJasyptDecryptor {
                     if (entry.getValue().startsWith(ENCRYPTED_VALUE_PREFIX)) {
                         try {
                             final String encValue = entry.getValue().substring(ENCRYPTED_VALUE_PREFIX.length());
-                            if (!this.decryptor.isInitialized()) {
-                                LOGGER.error("CAS has found an encrypted setting [{}] yet the decryptor is not initialized and will ignore it. "
-                                                + "Ensure all relevant initialization parameters [{}] are specified to the CAS runtime.",
-                                        entry.getKey(),
-                                        Arrays.stream(JasyptEncryptionParameters.values())
-                                                .map(JasyptEncryptionParameters::getName)
-                                                .collect(Collectors.toList()));
-                            } else {
-                                LOGGER.debug("Decrypt property [{}]...", entry.getKey());
-                                final String value = this.decryptor.decrypt(encValue);
-                                decrypted.put(entry.getKey(), value);
-                            }
+                            LOGGER.debug("Decrypting property [{}]...", entry.getKey());
+                            final String value = this.decryptor.decrypt(encValue);
+                            decrypted.put(entry.getKey(), value);
                         } catch (final Exception e) {
                             LOGGER.error("Could not decrypt property [{}]. Setting will be ignored by CAS", entry.getKey(), e);
                         }
