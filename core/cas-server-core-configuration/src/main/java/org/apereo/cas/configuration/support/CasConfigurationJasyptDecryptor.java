@@ -77,7 +77,6 @@ public class CasConfigurationJasyptDecryptor {
             LOGGER.debug("Configured decryptor iterations");
             decryptor.setKeyObtentionIterations(Integer.valueOf(iter));
         }
-        this.decryptor.initialize();
     }
 
     private String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
@@ -97,6 +96,10 @@ public class CasConfigurationJasyptDecryptor {
                 .forEach(entry -> {
                     if (entry.getValue().startsWith(ENCRYPTED_VALUE_PREFIX)) {
                         try {
+                            if (!this.decryptor.isInitialized()) {
+                                this.decryptor.initialize();
+                            }
+                            
                             final String encValue = entry.getValue().substring(ENCRYPTED_VALUE_PREFIX.length());
                             LOGGER.debug("Decrypting property [{}]...", entry.getKey());
                             final String value = this.decryptor.decrypt(encValue);
