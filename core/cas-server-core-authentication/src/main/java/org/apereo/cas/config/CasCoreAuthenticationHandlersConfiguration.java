@@ -92,7 +92,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
-        return new HttpBasedServiceCredentialsAuthenticationHandler(null, servicesManager, 
+        return new HttpBasedServiceCredentialsAuthenticationHandler(null, servicesManager,
                 proxyPrincipalFactory(), Integer.MIN_VALUE,
                 supportsTrustStoreSslSocketFactoryHttpClient);
     }
