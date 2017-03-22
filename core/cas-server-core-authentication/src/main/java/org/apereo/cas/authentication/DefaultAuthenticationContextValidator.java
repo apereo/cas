@@ -142,7 +142,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM) {
             if (!requestedProvider.get().isAvailable(service)) {
                 LOGGER.debug("Service [{}] is configured to use a [{}] failure mode for multifactor authentication policy. "
-                                + "Since provider [{}] is unavailable at the moment, CAS will knowingly allow [[{}]] as a satisfied criteria "
+                                + "Since provider [{}] is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
                                 + "of the present authentication context", service.getServiceId(),
                         mode, requestedProvider, requestedContext);
                 return Pair.of(true, requestedProvider);

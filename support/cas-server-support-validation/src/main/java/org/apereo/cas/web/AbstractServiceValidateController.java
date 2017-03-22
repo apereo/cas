@@ -172,7 +172,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         final AuthenticationResult authenticationResult =
                 this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
         final TicketGrantingTicket proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId, authenticationResult);
-        LOGGER.debug("Generated proxy-granting ticket [[{}]] off of service ticket [{}] and credential [{}]",
+        LOGGER.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
                 proxyGrantingTicketId.getId(), serviceTicketId, credential);
 
         return proxyGrantingTicketId;
