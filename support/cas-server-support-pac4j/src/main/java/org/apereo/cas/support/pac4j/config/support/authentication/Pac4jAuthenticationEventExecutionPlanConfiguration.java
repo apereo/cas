@@ -343,6 +343,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         if (clients.isEmpty()) {
             LOGGER.warn("No delegated authentication clients are defined/configured");
         }
+
+        LOGGER.info("Located and prepared [{}] delegated authentication client(s)", clients.size());
         return new Clients(casProperties.getServer().getLoginUrl(), new ArrayList<>(clients));
     }
 
@@ -374,6 +376,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         if (!builtClients().findAllClients().isEmpty()) {
+            LOGGER.info("Registering delegated authentication clients...");
             plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver);
             plan.registerMetadataPopulator(clientAuthenticationMetaDataPopulator());
         }
