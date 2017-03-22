@@ -21,17 +21,9 @@ cas.something.sensitive={cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
 ```
 
 You also need to instruct CAS to use the proper algorithm, decryption key and other relevant parameters
-when attempting to decrypt settings. The supported parameters are:
+when attempting to decrypt settings. To see the relevant list of CAS properties for this 
+feature, please [review this guide](Configuration-Properties.html#configuration-security).
 
-```properties
-cas.standalone.config.security.alg=PBEWithMD5AndTripleDES
-cas.standalone.config.security.provider=BC
-cas.standalone.config.security.iterations=
-cas.standalone.config.security.psw=
-```
-
-The above settings may be passed to CAS using any of the [strategies outline here](Configuration-Management.html#overview),
-though it might be more secure to pass them to CAS as either command-line or system properties.
 
 ## Spring Cloud
 
