@@ -38,7 +38,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     @Override
     public boolean supports(final Service service) {
-        return getEntityIdAsParameter(service).isPresent();
+        return service != null && getEntityIdAsParameter(service).isPresent();
     }
 
     /**
