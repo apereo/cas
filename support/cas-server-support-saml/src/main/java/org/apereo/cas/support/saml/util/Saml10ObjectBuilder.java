@@ -1,10 +1,12 @@
 package org.apereo.cas.support.saml.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
+import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.DateTimeUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
@@ -73,6 +75,22 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         samlResponse.setInResponseTo(recipient);
         setInResponseToForSamlResponseIfNeeded(service, samlResponse);
         return samlResponse;
+    }
+
+    /**
+     * Sets in response to for saml 1 response.
+     *
+     * @param service      the service
+     * @param samlResponse the saml 1 response
+     */
+    private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
+        if (service instanceof SamlService) {
+            final SamlService samlService = (SamlService) service;
+            final String requestId = samlService.getRequestID();
+            if (StringUtils.isNotBlank(requestId)) {
+                samlResponse.setInResponseTo(requestId);
+            }
+        }
     }
 
     /**
