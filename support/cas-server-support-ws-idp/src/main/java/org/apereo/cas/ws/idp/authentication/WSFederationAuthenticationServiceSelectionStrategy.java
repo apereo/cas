@@ -41,7 +41,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
 
     @Override
     public boolean supports(final Service service) {
-        return getRealmAsParameter(service).isPresent() && getReplyAsParameter(service).isPresent();
+        return service != null && getRealmAsParameter(service).isPresent() && getReplyAsParameter(service).isPresent();
     }
 
     private static Optional<NameValuePair> getRealmAsParameter(final Service service) {

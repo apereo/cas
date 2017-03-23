@@ -954,40 +954,20 @@ public final class Beans {
      * @return the authenticator
      */
     public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        if (l.getType() == AbstractLdapAuthenticationProperties.AuthenticationTypes.AD) {
-            LOGGER.debug("Creating active directory authenticator for [{}]", l.getLdapUrl());
-            return getActiveDirectoryAuthenticator(l);
+        switch (l.getType()) {
+            case AD:
+                LOGGER.debug("Creating active directory authenticator for [{}]", l.getLdapUrl());
+                return getActiveDirectoryAuthenticator(l);
+            case DIRECT:
+                LOGGER.debug("Creating direct-bind authenticator for [{}]", l.getLdapUrl());
+                return getDirectBindAuthenticator(l);
+            case AUTHENTICATED:
+                LOGGER.debug("Creating authenticated authenticator for [{}]", l.getLdapUrl());
+                return getAuthenticatedOrAnonSearchAuthenticator(l);
+            default:
+                LOGGER.debug("Creating anonymous authenticator for [{}]", l.getLdapUrl());
+                return getAuthenticatedOrAnonSearchAuthenticator(l);
         }
-        if (l.getType() == AbstractLdapAuthenticationProperties.AuthenticationTypes.DIRECT) {
-            LOGGER.debug("Creating direct-bind authenticator for [{}]", l.getLdapUrl());
-            return getDirectBindAuthenticator(l);
-        }
-        if (l.getType() == AbstractLdapAuthenticationProperties.AuthenticationTypes.SASL) {
-            LOGGER.debug("Creating SASL authenticator for [{}]", l.getLdapUrl());
-            return getSaslAuthenticator(l);
-        }
-        if (l.getType() == AbstractLdapAuthenticationProperties.AuthenticationTypes.AUTHENTICATED) {
-            LOGGER.debug("Creating authenticated authenticator for [{}]", l.getLdapUrl());
-            return getAuthenticatedOrAnonSearchAuthenticator(l);
-        }
-
-        LOGGER.debug("Creating anonymous authenticator for [{}]", l.getLdapUrl());
-        return getAuthenticatedOrAnonSearchAuthenticator(l);
-    }
-
-    private static Authenticator getSaslAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        if (StringUtils.isBlank(l.getUserFilter())) {
-            throw new IllegalArgumentException("User filter cannot be empty/blank for sasl authentication");
-        }
-
-        final PooledConnectionFactory connectionFactoryForSearch = Beans.newLdaptivePooledConnectionFactory(l);
-        final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
-        resolver.setBaseDn(l.getBaseDn());
-        resolver.setSubtreeSearch(l.isSubtreeSearch());
-        resolver.setAllowMultipleDns(l.isAllowMultipleDns());
-        resolver.setConnectionFactory(connectionFactoryForSearch);
-        resolver.setUserFilter(l.getUserFilter());
-        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l, Beans.newLdaptivePooledConnectionFactory(l)));
     }
 
     private static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final AbstractLdapAuthenticationProperties l) {
