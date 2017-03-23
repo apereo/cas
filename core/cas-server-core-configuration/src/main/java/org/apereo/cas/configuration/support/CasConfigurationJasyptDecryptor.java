@@ -93,13 +93,12 @@ public class CasConfigurationJasyptDecryptor {
         final Map<Object, Object> decrypted = new HashMap<>();
         settings.entrySet()
                 .forEach(entry -> {
-                    String stringValue = getStringPropertyValue(entry.getValue());
-                    if (stringValue != null && stringValue.startsWith(ENCRYPTED_VALUE_PREFIX)) {
+                    final String stringValue = getStringPropertyValue(entry.getValue());
+                    if (StringUtils.isNotBlank(stringValue) && stringValue.startsWith(ENCRYPTED_VALUE_PREFIX)) {
                         try {
                             if (!this.decryptor.isInitialized()) {
                                 this.decryptor.initialize();
                             }
-
                             final String encValue = stringValue.substring(ENCRYPTED_VALUE_PREFIX.length());
                             LOGGER.debug("Decrypting property [{}]...", entry.getKey());
                             final String value = this.decryptor.decrypt(encValue);
@@ -115,12 +114,12 @@ public class CasConfigurationJasyptDecryptor {
     }
 
     /**
-     * Retrieves the {@link String} of an {@link Object}
+     * Retrieves the {@link String} of an {@link Object}.
      *
      * @param propertyValue The property value to cast
      * @return A {@link String} representing the property value or {@code null} if it is not a {@link String}
      */
     private String getStringPropertyValue(final Object propertyValue) {
-        return propertyValue instanceof String ? (String) propertyValue : null;
+        return propertyValue instanceof String ? propertyValue.toString() : null;
     }
 }
