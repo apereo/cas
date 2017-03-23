@@ -70,11 +70,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
         /**
          * Anonymous Search.
          */
-        ANONYMOUS,
-        /**
-         * SASL bind search.
-         */
-        SASL
+        ANONYMOUS
     }
 
     private AuthenticationTypes type;
