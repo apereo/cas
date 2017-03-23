@@ -588,7 +588,7 @@ security.basic.realm=CAS
 #### LDAP Authentication
 
 ```properties
-# cas.adminPagesSecurity.ldap.type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
+# cas.adminPagesSecurity.ldap.type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
 
 # cas.adminPagesSecurity.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.adminPagesSecurity.ldap.connectionStrategy=
@@ -1479,10 +1479,9 @@ The following authentication types are supported:
 | Type                    | Description                            
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `AD`                    | Acive Directory - Users authenticate with `sAMAccountName` typically using a DN format.     
-| `AUTHENTICATED`         | Manager bind/search type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+| `AUTHENTICATED`         | Manager bind/search or SASL type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
 | `DIRECT`                | Compute user DN from a format string and perform simple bind. This is relevant when no search is required to compute the DN needed for a bind operation. This option is useful when all users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`, or the username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`
 | `ANONYMOUS`             | Similar semantics as `AUTHENTICATED` except no `bindDn` and `bindCredential` may be specified to initialize the connection. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
-| `SASL`                  | Similar semantics as `AUTHENTICATED` except you can specify the SASL mechanism.
 
 ### Connection Strategies
 
@@ -1534,7 +1533,7 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 
 
 ```properties
-# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
+# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
 
 # cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.ldap[0].connectionStrategy=
