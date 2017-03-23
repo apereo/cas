@@ -610,7 +610,6 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.ldap.saslAuthorizationId=
 # cas.adminPagesSecurity.ldap.saslMutualAuth=
 # cas.adminPagesSecurity.ldap.saslQualityOfProtection=
-# cas.adminPagesSecurity.ldap.saslSecurityStrength=
 
 # cas.adminPagesSecurity.ldap.trustCertificates=
 # cas.adminPagesSecurity.ldap.keystore=
@@ -1479,7 +1478,7 @@ The following authentication types are supported:
 | Type                    | Description                            
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `AD`                    | Acive Directory - Users authenticate with `sAMAccountName` typically using a DN format.     
-| `AUTHENTICATED`         | Manager bind/search or SASL type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+| `AUTHENTICATED`         | Manager bind/search type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
 | `DIRECT`                | Compute user DN from a format string and perform simple bind. This is relevant when no search is required to compute the DN needed for a bind operation. This option is useful when all users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`, or the username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`
 | `ANONYMOUS`             | Similar semantics as `AUTHENTICATED` except no `bindDn` and `bindCredential` may be specified to initialize the connection. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
 
