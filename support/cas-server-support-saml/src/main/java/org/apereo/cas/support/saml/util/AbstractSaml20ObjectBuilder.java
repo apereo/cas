@@ -102,7 +102,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_20);
-        setInResponseToForSamlResponseIfNeeded(service, samlResponse);
+        if (StringUtils.isNotBlank(recipient)) {
+            LOGGER.debug("Setting provided RequestId {} as InResponseTo", recipient);
+            samlResponse.setInResponseTo(recipient);
+        } else {
+            LOGGER.debug("No RequestId is provided. Skipping InResponseTo");
+        }
         return samlResponse;
     }
 
@@ -209,7 +214,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                                    final List<XMLObject> attributeList) {
         addAttributeValuesToSamlAttribute(attributeName, attributeValue, attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
     }
-    
+
     /**
      * New attribute.
      *
@@ -314,6 +319,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                               final String recipient, final ZonedDateTime notOnOrAfter,
                               final String inResponseTo) {
 
+        LOGGER.debug("nameIdFormat: {}, nameIdValue: {}, recipient: {}, notOnOrAfter: {}, inResponseTo {}", nameIdFormat, nameIdValue, recipient, notOnOrAfter, inResponseTo);
         final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
 
