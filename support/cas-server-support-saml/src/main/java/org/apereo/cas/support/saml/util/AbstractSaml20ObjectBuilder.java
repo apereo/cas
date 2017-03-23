@@ -319,7 +319,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                               final String recipient, final ZonedDateTime notOnOrAfter,
                               final String inResponseTo) {
 
-        LOGGER.debug("nameIdFormat: {}, nameIdValue: {}, recipient: {}, notOnOrAfter: {}, inResponseTo {}", nameIdFormat, nameIdValue, recipient, notOnOrAfter, inResponseTo);
         final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
 
