@@ -3,6 +3,7 @@ machine:
     version: oraclejdk8
   environment:
     _JAVA_OPTIONS: "-Xms512m -Xmx2048m"
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
 checkout:
   post:
     - sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
