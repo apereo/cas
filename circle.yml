@@ -3,6 +3,13 @@ machine:
     version: oraclejdk8
   environment:
     _JAVA_OPTIONS: "-Xms512m -Xmx2048m"
+checkout:
+  post:
+    - sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
+    - sudo unzip -j -o ./etc/jce8.zip *.jar -d $JAVA_HOME/jre/lib/security
+    - sudo ls $JAVA_HOME/jre/lib/security
+    - sudo cp ./etc/java.security $JAVA_HOME/jre/lib/security
+    - sudo ls $JAVA_HOME/jre/lib/security
 dependencies:
   override:
     - apt-get install -y nodejs
@@ -11,13 +18,6 @@ dependencies:
   cache_directories:
     - "~/.gradle/wrapper"  
     - "~/.gradle/caches"
-checkout:
-  post:
-    - mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
-    - unzip -j -o ./etc/jce8.zip *.jar -d $JAVA_HOME/jre/lib/security
-    - ls $JAVA_HOME/jre/lib/security
-    - cp ./etc/java.security $JAVA_HOME/jre/lib/security
-    - ls $JAVA_HOME/jre/lib/security
 compile:
   override:
     - ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
