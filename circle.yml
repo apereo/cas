@@ -12,9 +12,9 @@ checkout:
     - sudo ls $JAVA_HOME/jre/lib/security
 dependencies:
   override:
-    - apt-get install -y nodejs
+    - sudo apt-get install -y nodejs
     - which npm
-    - npm install --global gulp-cli 
+    - sudo npm install --global gulp-cli 
   cache_directories:
     - "~/.gradle/wrapper"  
     - "~/.gradle/caches"
