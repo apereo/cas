@@ -7,8 +7,9 @@ dependencies:
   override:
     - sudo apt-get install -y nodejs
     - which node
+    - sudo ./gradlew npmInstall --stacktrace
     - which npm
-    - sudo ./gradlew gulpSetup --stacktrace
+    - sudo echo $PATH && sudo PATH="$(which npm)":$PATH && echo $PATH && sudo ./gradlew gulpSetup --stacktrace
   cache_directories:
     - "~/.gradle/wrapper"  
     - "~/.gradle/caches"
