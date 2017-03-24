@@ -1,0 +1,26 @@
+machine:
+  java:
+    version: oraclejdk8
+  environment:
+    _JAVA_OPTIONS: "-Xms512m -Xmx2048m"
+dependencies:
+  override:
+    - npm install
+    - ./gradlew gulpSetup --stacktrace -q
+  cache_directories:
+    - "~/.gradle/wrapper"  
+    - "~/.gradle/caches"
+checkout:
+  post:
+    - sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
+    - sudo unzip -j -o ./etc/jce8.zip *.jar -d $JAVA_HOME/jre/lib/security
+compile:
+  override:
+    - sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
+test:
+  override:
+    - sudo ./gradlew checkstyleTest test --stacktrace --parallel
+general:
+  branches:
+    only:
+      - master
