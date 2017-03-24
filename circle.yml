@@ -5,6 +5,7 @@ machine:
     _JAVA_OPTIONS: "-Xms512m -Xmx2048m"
 dependencies:
   override:
+    - sudo apt-get install -y nodejs
     - sudo npm install npm -g
     - sudo ./gradlew gulpSetup --stacktrace -q
   cache_directories:
