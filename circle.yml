@@ -5,24 +5,25 @@ machine:
     _JAVA_OPTIONS: "-Xms512m -Xmx2048m"
 dependencies:
   override:
-    - sudo apt-get install -y nodejs
-    - sudo ./gradlew installGulp npmInstall --stacktrace
+    - apt-get install -y nodejs
+    - which npm
+    - npm install --global gulp-cli 
   cache_directories:
     - "~/.gradle/wrapper"  
     - "~/.gradle/caches"
 checkout:
   post:
-    - sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
-    - sudo unzip -j -o ./etc/jce8.zip *.jar -d $JAVA_HOME/jre/lib/security
-    - sudo ls $JAVA_HOME/jre/lib/security
-    - sudo cp ./etc/java.security $JAVA_HOME/jre/lib/security
-    - sudo ls $JAVA_HOME/jre/lib/security
+    - mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
+    - unzip -j -o ./etc/jce8.zip *.jar -d $JAVA_HOME/jre/lib/security
+    - ls $JAVA_HOME/jre/lib/security
+    - cp ./etc/java.security $JAVA_HOME/jre/lib/security
+    - ls $JAVA_HOME/jre/lib/security
 compile:
   override:
-    - sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
+    - ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
 test:
   override:
-    - sudo ./gradlew checkstyleTest test --stacktrace --parallel
+    - ./gradlew checkstyleTest test --stacktrace --parallel
 general:
   branches:
     only:
