@@ -14,7 +14,8 @@ dependencies:
   override:
     - sudo apt-get install -y nodejs
     - which npm
-    - sudo npm install --global gulp-cli 
+    - npm --version
+    - npm install --global gulp-cli 
   cache_directories:
     - "~/.gradle/wrapper"  
     - "~/.gradle/caches"
