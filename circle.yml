@@ -16,6 +16,7 @@ dependencies:
     - which npm
     - npm --version
     - npm install --global gulp-cli 
+    - ./gradlew installGulp --stacktrace
   cache_directories:
     - "~/.gradle/wrapper"  
     - "~/.gradle/caches"
