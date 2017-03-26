@@ -19,7 +19,16 @@ public class CasServerProperties {
     private Ajp ajp = new Ajp();
     private Http http = new Http();
     private HttpProxy httpProxy = new HttpProxy();
+    private RemoteIp remoteIp = new RemoteIp();
     private ExtendedAccessLog extAccessLog = new ExtendedAccessLog();
+
+    public RemoteIp getRemoteIp() {
+        return remoteIp;
+    }
+
+    public void setRemoteIp(final RemoteIp remoteIp) {
+        this.remoteIp = remoteIp;
+    }
 
     public HttpProxy getHttpProxy() {
         return httpProxy;
@@ -184,6 +193,108 @@ public class CasServerProperties {
 
         public void setRedirectPort(final int redirectPort) {
             this.redirectPort = redirectPort;
+        }
+    }
+
+    public static class RemoteIp {
+        private boolean enabled;
+        private boolean changeLocalPort;
+        private String domain;
+        private int httpPort = -1;
+        private int httpsPort = -1;
+        private String portHeader;
+        private String protocolHeader;
+        private String remoteIpHeader;
+        private String internalProxies;
+        private String trustedProxies;
+        private String proxiesHeader;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isChangeLocalPort() {
+            return changeLocalPort;
+        }
+
+        public void setChangeLocalPort(final boolean changeLocalPort) {
+            this.changeLocalPort = changeLocalPort;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(final String domain) {
+            this.domain = domain;
+        }
+
+        public int getHttpPort() {
+            return httpPort;
+        }
+
+        public void setHttpPort(final int httpPort) {
+            this.httpPort = httpPort;
+        }
+
+        public int getHttpsPort() {
+            return httpsPort;
+        }
+
+        public void setHttpsPort(final int httpsPort) {
+            this.httpsPort = httpsPort;
+        }
+
+        public String getPortHeader() {
+            return portHeader;
+        }
+
+        public void setPortHeader(final String portHeader) {
+            this.portHeader = portHeader;
+        }
+
+        public String getProtocolHeader() {
+            return protocolHeader;
+        }
+
+        public void setProtocolHeader(final String protocolHeader) {
+            this.protocolHeader = protocolHeader;
+        }
+
+        public String getRemoteIpHeader() {
+            return remoteIpHeader;
+        }
+
+        public void setRemoteIpHeader(final String remoteIpHeader) {
+            this.remoteIpHeader = remoteIpHeader;
+        }
+
+        public String getInternalProxies() {
+            return internalProxies;
+        }
+
+        public void setInternalProxies(final String internalProxies) {
+            this.internalProxies = internalProxies;
+        }
+
+        public String getTrustedProxies() {
+            return trustedProxies;
+        }
+
+        public void setTrustedProxies(final String trustedProxies) {
+            this.trustedProxies = trustedProxies;
+        }
+
+        public String getProxiesHeader() {
+            return proxiesHeader;
+        }
+
+        public void setProxiesHeader(final String proxiesHeader) {
+            this.proxiesHeader = proxiesHeader;
         }
     }
 

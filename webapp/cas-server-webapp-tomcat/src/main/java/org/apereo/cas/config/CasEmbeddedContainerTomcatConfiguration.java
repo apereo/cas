@@ -5,6 +5,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.valves.ExtendedAccessLogValve;
+import org.apache.catalina.valves.RemoteIpValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http2.Http2Protocol;
@@ -62,9 +63,11 @@ public class CasEmbeddedContainerTomcatConfiguration {
         final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
 
         configureAjp(tomcat);
-        configureHttpAndProxy(tomcat);
-        configureExtendedAccessLog(tomcat);
+        configureHttp(tomcat);
+        configureHttpProxy(tomcat);
+        configureExtendedAccessLogValve(tomcat);
         configureRewriteValve(tomcat);
+        configureRemoteIpValve(tomcat);
 
         return tomcat;
     }
@@ -93,7 +96,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureExtendedAccessLog(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureExtendedAccessLogValve(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.ExtendedAccessLog ext = casProperties.getServer().getExtAccessLog();
 
         if (ext.isEnabled() && StringUtils.isNotBlank(ext.getPattern())) {
@@ -117,7 +120,68 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureHttpAndProxy(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureRemoteIpValve(final TomcatEmbeddedServletContainerFactory tomcat) {
+        final CasServerProperties.RemoteIp ip = casProperties.getServer().getRemoteIp();
+        
+        if (ip.isEnabled()) {
+            final RemoteIpValve valve = new RemoteIpValve();
+            valve.setAsyncSupported(true);
+            valve.setRequestAttributesEnabled(true);
+            valve.setChangeLocalPort(ip.isChangeLocalPort());
+            
+            if (StringUtils.isNotBlank(ip.getDomain())) {
+                valve.setDomain(ip.getDomain());
+            }
+            if (ip.getHttpPort() > 0) {
+                valve.setHttpServerPort(ip.getHttpPort());
+            }
+            if (ip.getHttpsPort() > 0) {
+                valve.setHttpsServerPort(ip.getHttpsPort());
+            }
+            if (StringUtils.isNotBlank(ip.getPortHeader())) {
+                valve.setPortHeader(ip.getPortHeader());
+            }
+            if (StringUtils.isNotBlank(ip.getProtocolHeader())) {
+                valve.setProtocolHeader(ip.getProtocolHeader());
+            }
+            if (StringUtils.isNotBlank(ip.getRemoteIpHeader())) {
+                valve.setRemoteIpHeader(ip.getRemoteIpHeader());
+            }
+            if (StringUtils.isNotBlank(ip.getInternalProxies())) {
+                valve.setInternalProxies(ip.getInternalProxies());
+            }
+            if (StringUtils.isNotBlank(ip.getTrustedProxies())) {
+                valve.setTrustedProxies(ip.getTrustedProxies());
+            }
+            if (StringUtils.isNotBlank(ip.getProxiesHeader())) {
+                valve.setProxiesHeader(ip.getProxiesHeader());
+            }
+
+            tomcat.addContextValves(valve);
+            tomcat.addEngineValves(valve);
+        }
+    }
+    
+    private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
+        final CasServerProperties.Http http = casProperties.getServer().getHttp();
+        if (http.isEnabled()) {
+            LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
+            final Connector connector = new Connector(http.getProtocol());
+            int port = http.getPort();
+            if (port <= 0) {
+                LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
+                port = SocketUtils.findAvailableTcpPort();
+            }
+            LOGGER.debug("Set embedded tomcat container HTTP port to [{}]", port);
+            connector.setPort(port);
+
+            LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
+            connector.addUpgradeProtocol(new Http2Protocol());
+            tomcat.addAdditionalTomcatConnectors(connector);
+        }
+    }
+
+    private void configureHttpProxy(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.HttpProxy proxy = casProperties.getServer().getHttpProxy();
         if (proxy.isEnabled()) {
             LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
@@ -142,25 +206,8 @@ public class CasEmbeddedContainerTomcatConfiguration {
         } else {
             LOGGER.debug("HTTP proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
         }
-
-        final CasServerProperties.Http http = casProperties.getServer().getHttp();
-        if (http.isEnabled()) {
-            LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
-            final Connector connector = new Connector(http.getProtocol());
-            int port = http.getPort();
-            if (port <= 0) {
-                LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
-                port = SocketUtils.findAvailableTcpPort();
-            }
-            LOGGER.debug("Set embedded tomcat container HTTP port to [{}]", port);
-            connector.setPort(port);
-
-            LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
-            connector.addUpgradeProtocol(new Http2Protocol());
-            tomcat.addAdditionalTomcatConnectors(connector);
-        }
     }
-
+    
     private void configureAjp(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.Ajp ajp = casProperties.getServer().getAjp();
         if (ajp.isEnabled() && ajp.getPort() > 0) {
