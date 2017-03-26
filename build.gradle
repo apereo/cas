@@ -68,7 +68,7 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
-    
+
 
     if (project.name == "cas-server-support-bom") {
         println "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
@@ -87,9 +87,13 @@ allprojects {
         module {
             downloadSources = false
             downloadJavadoc = false
+            excludeDirs = [file(".gradle")]
+            ["classes", "bin", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
+                excludeDirs << file("$buildDir/$it")
+            }
         }
     }
-    
+
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
@@ -117,11 +121,11 @@ subprojects {
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-	
+
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries
-    
+
     repositories {
         mavenLocal()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
@@ -147,8 +151,7 @@ subprojects {
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
         include "**/*Tests.*"
         exclude "**/*Abstract*.*"
-        classpath = it.classpath + files("${projectDir}/src/main/resources") +
-                files("${projectDir}/src/test/resources")
+        classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
         testLogging {
             events = ["FAILED", "STANDARD_OUT"]
             exceptionFormat = "full"
@@ -171,7 +174,7 @@ subprojects {
             cacheDynamicVersionsFor 5, 'days'
             cacheChangingModulesFor 5, 'days'
         }
-        
+
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
@@ -187,7 +190,6 @@ subprojects {
         archives testJar
     }
 
-
     sourceSets {
         test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
     }
@@ -196,7 +198,6 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     compileJava.options.fork = true
-    
 
     if (Boolean.getBoolean("enableIncremental")) {
         compileJava.options.incremental = true
