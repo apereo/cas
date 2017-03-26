@@ -13,16 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -46,21 +50,40 @@ import java.util.stream.Collectors;
 @Configuration("casStandaloneBootstrapConfiguration")
 public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreBootstrapStandaloneConfiguration.class);
-    
+
     private CasConfigurationJasyptDecryptor configurationJasyptDecryptor;
-    
+
     @Autowired
     private ResourceLoader resourceLoader;
+
+    @ConfigurationPropertiesBinding
+    @Bean
+    public Converter<String, List<Class<? extends Throwable>>> commaSeparatedStringToThrowablesCollection() {
+        return new Converter<String, List<Class<? extends Throwable>>>() {
+            @Override
+            public List<Class<? extends Throwable>> convert(final String source) {
+                try {
+                    final List<Class<? extends Throwable>> classes = new ArrayList<>();
+                    for (final String className : StringUtils.commaDelimitedListToStringArray(source)) {
+                        classes.add((Class<? extends Throwable>) ClassUtils.forName(className.trim(), getClass().getClassLoader()));
+                    }
+                    return classes;
+                } catch (final Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        };
+    }
 
     @Bean
     public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager() {
         return new CasConfigurationPropertiesEnvironmentManager();
     }
-    
+
     @Override
     public PropertySource<?> locate(final Environment environment) {
         this.configurationJasyptDecryptor = new CasConfigurationJasyptDecryptor(environment);
-        
+
         final Properties props = new Properties();
         loadEmbeddedYamlOverriddenProperties(props, environment);
 

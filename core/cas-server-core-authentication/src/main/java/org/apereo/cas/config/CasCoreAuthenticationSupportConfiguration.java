@@ -35,8 +35,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-
+    
     @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
@@ -47,6 +46,7 @@ public class CasCoreAuthenticationSupportConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "authenticationContextValidator")
     public AuthenticationContextValidator authenticationContextValidator() {
         final String contextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final String failureMode = casProperties.getAuthn().getMfa().getGlobalFailureMode();
@@ -55,6 +55,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
         return new RegisteredServiceAuthenticationHandlerResolver(servicesManager);
     }
