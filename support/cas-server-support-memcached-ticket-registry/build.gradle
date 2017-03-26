@@ -2,8 +2,6 @@ description = "Apereo CAS Memcached Integration"
 dependencies {
     
     implementation libraries.memcached
-
-    
     implementation libraries.kryo
 
     compile project(":core:cas-server-core-logging")
@@ -12,11 +10,10 @@ dependencies {
     compile project(":core:cas-server-core-configuration")
 
     testImplementation project(":core:cas-server-core-util")
-    
     testCompileOnly libraries.metrics
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     compileOnly project(":support:cas-server-support-saml")
-    compileOnly project(":support:cas-server-support-saml-googleapps")
+    compileOnly project(":support:cas-server-support-saml-googleapps-core")
 }
