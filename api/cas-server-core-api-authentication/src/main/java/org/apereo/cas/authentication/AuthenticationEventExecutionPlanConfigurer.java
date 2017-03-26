@@ -1,6 +1,4 @@
-package org.apereo.cas.config.support.authentication;
-
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+package org.apereo.cas.authentication;
 
 /**
  * This is {@link AuthenticationEventExecutionPlanConfigurer}.
