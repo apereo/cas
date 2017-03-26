@@ -403,7 +403,7 @@ This valve replaces the apparent client remote IP address and hostname for the r
 # cas.server.remoteIp.proxiesHeader=
 ```
 
-#### Extended Access Log
+#### Extended Access Log Valve
 
 Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
 for the embedded Tomcat container.
