@@ -133,8 +133,7 @@ public class KryoTranscoder implements Transcoder<Object> {
 
         // we add these ones for tests only
         this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
-
-
+        
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
         UnmodifiableCollectionsSerializer.registerSerializers(this.kryo);
         ImmutableListSerializer.registerSerializers(this.kryo);

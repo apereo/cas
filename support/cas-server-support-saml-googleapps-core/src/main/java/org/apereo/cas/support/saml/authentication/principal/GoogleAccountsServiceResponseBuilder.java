@@ -77,7 +77,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     @JsonProperty
     private String casServerPrefix;
-    
+
     /**
      * Instantiates a new Google accounts service response builder.
      *
@@ -136,14 +136,11 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     @Override
     public Response build(final WebApplicationService webApplicationService, final String serviceTicket) {
         final GoogleAccountsService service = (GoogleAccountsService) webApplicationService;
-
         final Map<String, String> parameters = new HashMap<>();
         final String samlResponse = constructSamlResponse(service);
-        final String signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse,
-                this.privateKey, this.publicKey);
+        final String signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
-
         return buildPost(service, parameters);
     }
 
