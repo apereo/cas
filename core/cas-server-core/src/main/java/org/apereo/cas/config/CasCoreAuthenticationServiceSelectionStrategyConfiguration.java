@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.config.support.authentication.AuthenticationServiceSelectionStrategyConfigurer;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

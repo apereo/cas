@@ -34,10 +34,12 @@ public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigur
         LOGGER.debug("Registering core CAS protocol ticket definitions...");
 
         buildAndRegisterProxyTicketDefinition(plan,
-                buildTicketDefinition(plan, ProxyTicket.PROXY_TICKET_PREFIX, ProxyTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
+                buildTicketDefinition(plan, ProxyTicket.PROXY_TICKET_PREFIX, 
+                        ProxyTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
 
         buildAndRegisterServiceTicketDefinition(plan,
-                buildTicketDefinition(plan, ServiceTicket.PREFIX, ServiceTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
+                buildTicketDefinition(plan, ServiceTicket.PREFIX, 
+                        ServiceTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
 
         buildAndRegisterProxyGrantingTicketDefinition(plan,
                 buildTicketDefinition(plan, ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX,
