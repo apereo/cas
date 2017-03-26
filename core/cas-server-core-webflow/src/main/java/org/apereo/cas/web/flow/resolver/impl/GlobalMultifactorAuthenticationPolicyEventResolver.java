@@ -58,21 +58,20 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
             LOGGER.debug("No authentication is available to determine event for principal");
             return null;
         }
-        final String mfaId = globalProviderId;
-        if (StringUtils.isBlank(mfaId)) {
-            LOGGER.debug("No value could be found for request parameter [{}]", mfaId);
+        if (StringUtils.isBlank(globalProviderId)) {
+            LOGGER.debug("No value could be found for request parameter [{}]", globalProviderId);
             return null;
         }
-        LOGGER.debug("Attempting to globally activate [{}]", mfaId);
+        LOGGER.debug("Attempting to globally activate [{}]", globalProviderId);
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            LOGGER.error("No multifactor authentication providers are available in the application context to handle " + mfaId);
+            LOGGER.error("No multifactor authentication providers are available in the application context to handle " + globalProviderId);
             throw new AuthenticationException();
         }
 
-        final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, mfaId);
+        final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, globalProviderId);
 
 
         if (providerFound.isPresent()) {
@@ -86,7 +85,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
             LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
             return null;
         }
-        LOGGER.warn("No multifactor provider could be found for [{}]", mfaId);
+        LOGGER.warn("No multifactor provider could be found for [{}]", globalProviderId);
         throw new AuthenticationException();
     }
 

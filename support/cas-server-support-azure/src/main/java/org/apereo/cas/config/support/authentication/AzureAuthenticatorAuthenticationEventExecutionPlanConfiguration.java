@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationRequestBuil
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.azure.web.flow.AzureAuthenticatorGenerateTokenAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;

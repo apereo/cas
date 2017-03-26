@@ -71,7 +71,7 @@ allprojects {
 
 
     if (project.name == "cas-server-support-bom") {
-        println "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
+        logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
     } else {
         apply from: rootProject.file("gradle/maven.gradle")
     }
