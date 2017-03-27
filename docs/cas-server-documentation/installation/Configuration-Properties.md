@@ -221,6 +221,20 @@ Load settings from a MongoDb instance.
 # cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/apereocas
 ```
 
+### DynamoDb
+
+Load settings from a DynamoDb instance.
+
+```properties
+# cas.spring.cloud.dynamodb.credentialAccessKey=
+# cas.spring.cloud.dynamodb.credentialSecretKey=
+# cas.spring.cloud.dynamodb.endpoint=http://localhost:8000
+# cas.spring.cloud.dynamodb.localAddress=
+# cas.spring.cloud.dynamodb.endpoint=
+# cas.spring.cloud.dynamodb.region=
+# cas.spring.cloud.dynamodb.regionOverride=
+```
+
 ## Configuration Security
 
 To learn more about how sensitive CAS settings can be
