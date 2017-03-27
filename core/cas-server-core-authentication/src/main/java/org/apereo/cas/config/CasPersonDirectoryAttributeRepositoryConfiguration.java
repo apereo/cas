@@ -74,9 +74,14 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
     private void addJsonAttributeRepository(final List<IPersonAttributeDao> list) {
         final Resource r = casProperties.getAuthn().getAttributeRepository().getJson().getConfig().getLocation();
         if (r != null) {
-            final JsonBackedComplexStubPersonAttributeDao dao = new JsonBackedComplexStubPersonAttributeDao(r);
-            LOGGER.debug("Configured JSON attribute sources from [{}]", r);
-            list.add(dao);
+            try {
+                final JsonBackedComplexStubPersonAttributeDao dao = new JsonBackedComplexStubPersonAttributeDao(r);
+                dao.init();
+                LOGGER.debug("Configured JSON attribute sources from [{}]", r);
+                list.add(dao);
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         }
     }
 
@@ -85,7 +90,6 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
         if (groovy.getConfig().getLocation() != null) {
             final GroovyPersonAttributeDao dao = new GroovyPersonAttributeDao(new GroovyScriptDao(applicationContext, casProperties));
             dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
-
             LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getConfig().getLocation());
             list.add(dao);
         }
