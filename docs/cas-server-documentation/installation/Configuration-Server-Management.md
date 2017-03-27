@@ -12,8 +12,6 @@ provided by the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-conf
 you may decide to simply run CAS in a standalone mode removing the need for external configuration server deployment,
 though at the cost of losing features and capabilities relevant for a cloud deployment.
 
-The configuration behavior of CAS is controlled and defined by the `src/main/resources/bootstrap.properties` file.
-
 ## Configuration Profiles
 
 The CAS server web application responds to the following strategies that dictate how settings should be consumed.
