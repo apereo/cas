@@ -141,7 +141,10 @@ public final class Beans {
     public static HikariDataSource newHickariDataSource(final AbstractJpaProperties jpaProperties) {
         try {
             final HikariDataSource bean = new HikariDataSource();
-            bean.setDriverClassName(jpaProperties.getDriverClass());
+
+            if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
+                bean.setDriverClassName(jpaProperties.getDriverClass());
+            }
             bean.setJdbcUrl(jpaProperties.getUrl());
             bean.setUsername(jpaProperties.getUser());
             bean.setPassword(jpaProperties.getPassword());
