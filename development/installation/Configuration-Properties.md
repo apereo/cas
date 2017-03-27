@@ -221,6 +221,20 @@ Load settings from a MongoDb instance.
 # cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/apereocas
 ```
 
+### DynamoDb
+
+Load settings from a DynamoDb instance.
+
+```properties
+# cas.spring.cloud.dynamodb.credentialAccessKey=
+# cas.spring.cloud.dynamodb.credentialSecretKey=
+# cas.spring.cloud.dynamodb.endpoint=http://localhost:8000
+# cas.spring.cloud.dynamodb.localAddress=
+# cas.spring.cloud.dynamodb.endpoint=
+# cas.spring.cloud.dynamodb.region=
+# cas.spring.cloud.dynamodb.regionOverride=
+```
+
 ## Configuration Security
 
 To learn more about how sensitive CAS settings can be
@@ -384,23 +398,6 @@ Enable AJP connections for the embedded Tomcat container,
 # cas.server.ajp.enableLookups=false
 # cas.server.ajp.redirectPort=-1
 # cas.server.ajp.allowTrace=false
-```
-
-#### RemoteIP Valve
-
-This valve replaces the apparent client remote IP address and hostname for the request with the IP address list presented by a proxy or a load balancer via a request headers (e.g. `X-Forwarded-For`). Another feature of this valve is to replace the apparent scheme (`http/https`) and server port with the scheme presented by a proxy or a load balancer via a request header (e.g. `X-Forwarded-Proto`). See [this guide](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/RemoteIpValve.html) to learn more.
-
-```properties
-# cas.server.remoteIp.enabled=false
-# cas.server.remoteIp.domain=
-# cas.server.remoteIp.httpPort=
-# cas.server.remoteIp.httpsPort=
-# cas.server.remoteIp.portHeader=
-# cas.server.remoteIp.protocolHeader=
-# cas.server.remoteIp.remoteIpHeader=
-# cas.server.remoteIp.internalProxies=
-# cas.server.remoteIp.trustedProxies=
-# cas.server.remoteIp.proxiesHeader=
 ```
 
 #### Extended Access Log Valve
