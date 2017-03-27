@@ -230,6 +230,32 @@ To see the relevant list of CAS properties for this feature, please [review this
 CAS is also able to use [Vault](https://www.vaultproject.io/) to
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).
 
+##### DynamoDb
+
+CAS is also able to use [DynamoDb](https://aws.amazon.com/dynamodb/) to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-dynamodb</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+The `DynamoDbCasProperties` table is automatically created by CAS with the following structure:
+
+```json
+{
+    "id": "primary-key",
+    "name": "the-setting-name",
+    "value": "the-setting-value"
+}
+```
+
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#dynamodb).
+
 #### Composite Sources
 
 In some scenarios you may wish to pull configuration data from multiple environment repositories.
