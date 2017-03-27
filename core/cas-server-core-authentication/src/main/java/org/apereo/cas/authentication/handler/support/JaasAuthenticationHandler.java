@@ -59,7 +59,7 @@ import java.util.Set;
  */
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JaasAuthenticationHandler.class);
-    
+
     /**
      * System property key to specify kerb5 realm.
      */
@@ -89,8 +89,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Instantiates a new Jaas authentication handler,
      * and attempts to load/verify the configuration.
      *
-     * @param name the name
-     * @param servicesManager the services manager
+     * @param name             the name
+     * @param servicesManager  the services manager
+     * @param principalFactory the principal factory
+     * @param order            the order
      */
     public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
@@ -113,7 +115,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         final String username = credential.getUsername();
         final String password = credential.getPassword();
-        
+
         final LoginContext lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
         try {
             LOGGER.debug("Attempting authentication for: [{}]", username);
