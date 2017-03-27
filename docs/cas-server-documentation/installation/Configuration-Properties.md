@@ -550,7 +550,7 @@ security.user.password=<predefined-password>
 security.user.role=ACTUATOR
 ```
 
-#### Basic AuthN
+#### Basic Authentication
 
 ```properties
 security.basic.authorizeMode=none|role|authenticated
