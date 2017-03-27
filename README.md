@@ -47,7 +47,7 @@ The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/
 
 - [Documentation][wiki]
 - [Release Notes][releasenotes]
-- [Support] [cassupport]
+- [Support][cassupport]
 
 ## Deployment [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
 
