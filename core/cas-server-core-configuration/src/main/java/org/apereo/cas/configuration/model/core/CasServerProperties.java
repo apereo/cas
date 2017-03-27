@@ -19,17 +19,8 @@ public class CasServerProperties {
     private Ajp ajp = new Ajp();
     private Http http = new Http();
     private HttpProxy httpProxy = new HttpProxy();
-    private RemoteIp remoteIp = new RemoteIp();
     private ExtendedAccessLog extAccessLog = new ExtendedAccessLog();
-
-    public RemoteIp getRemoteIp() {
-        return remoteIp;
-    }
-
-    public void setRemoteIp(final RemoteIp remoteIp) {
-        this.remoteIp = remoteIp;
-    }
-
+    
     public HttpProxy getHttpProxy() {
         return httpProxy;
     }

@@ -5,7 +5,6 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.valves.ExtendedAccessLogValve;
-import org.apache.catalina.valves.RemoteIpValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http2.Http2Protocol;
@@ -67,7 +66,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
         configureHttpProxy(tomcat);
         configureExtendedAccessLogValve(tomcat);
         configureRewriteValve(tomcat);
-        configureRemoteIpValve(tomcat);
 
         return tomcat;
     }
@@ -120,48 +118,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureRemoteIpValve(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasServerProperties.RemoteIp ip = casProperties.getServer().getRemoteIp();
-        
-        if (ip.isEnabled()) {
-            final RemoteIpValve valve = new RemoteIpValve();
-            valve.setAsyncSupported(true);
-            valve.setRequestAttributesEnabled(true);
-            valve.setChangeLocalPort(ip.isChangeLocalPort());
-            
-            if (StringUtils.isNotBlank(ip.getDomain())) {
-                valve.setDomain(ip.getDomain());
-            }
-            if (ip.getHttpPort() > 0) {
-                valve.setHttpServerPort(ip.getHttpPort());
-            }
-            if (ip.getHttpsPort() > 0) {
-                valve.setHttpsServerPort(ip.getHttpsPort());
-            }
-            if (StringUtils.isNotBlank(ip.getPortHeader())) {
-                valve.setPortHeader(ip.getPortHeader());
-            }
-            if (StringUtils.isNotBlank(ip.getProtocolHeader())) {
-                valve.setProtocolHeader(ip.getProtocolHeader());
-            }
-            if (StringUtils.isNotBlank(ip.getRemoteIpHeader())) {
-                valve.setRemoteIpHeader(ip.getRemoteIpHeader());
-            }
-            if (StringUtils.isNotBlank(ip.getInternalProxies())) {
-                valve.setInternalProxies(ip.getInternalProxies());
-            }
-            if (StringUtils.isNotBlank(ip.getTrustedProxies())) {
-                valve.setTrustedProxies(ip.getTrustedProxies());
-            }
-            if (StringUtils.isNotBlank(ip.getProxiesHeader())) {
-                valve.setProxiesHeader(ip.getProxiesHeader());
-            }
-
-            tomcat.addContextValves(valve);
-            tomcat.addEngineValves(valve);
-        }
-    }
-    
     private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.Http http = casProperties.getServer().getHttp();
         if (http.isEnabled()) {
@@ -207,7 +163,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
             LOGGER.debug("HTTP proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
         }
     }
-    
+
     private void configureAjp(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.Ajp ajp = casProperties.getServer().getAjp();
         if (ajp.isEnabled() && ajp.getPort() > 0) {

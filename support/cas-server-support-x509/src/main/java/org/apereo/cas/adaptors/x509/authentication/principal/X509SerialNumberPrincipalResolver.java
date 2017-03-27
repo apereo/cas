@@ -13,7 +13,7 @@ import java.security.cert.X509Certificate;
 public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**
-     * Radix to use in <code>toString</code> method.
+     * Radix to use in {@code toString} method.
      */
     private int radix = 10;
 
