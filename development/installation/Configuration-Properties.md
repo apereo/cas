@@ -386,17 +386,24 @@ Enable AJP connections for the embedded Tomcat container,
 # cas.server.ajp.allowTrace=false
 ```
 
-#### Rewrite Valve
+#### RemoteIP Valve
 
-If and when you choose to deploy CAS at root and remove the default context path,
-CAS by default attempts to deploy a special [`RewriteValve`](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.htm)
-for the embedded container that knows how to reroute urls and such for backward compatibility reasons.
+This valve replaces the apparent client remote IP address and hostname for the request with the IP address list presented by a proxy or a load balancer via a request headers (e.g. `X-Forwarded-For`). Another feature of this valve is to replace the apparent scheme (`http/https`) and server port with the scheme presented by a proxy or a load balancer via a request header (e.g. `X-Forwarded-Proto`). See [this guide](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/RemoteIpValve.html) to learn more.
 
 ```properties
-# cas.server.rewriteValveConfigLocation=classpath:/container/tomcat/rewrite.config
+# cas.server.remoteIp.enabled=false
+# cas.server.remoteIp.domain=
+# cas.server.remoteIp.httpPort=
+# cas.server.remoteIp.httpsPort=
+# cas.server.remoteIp.portHeader=
+# cas.server.remoteIp.protocolHeader=
+# cas.server.remoteIp.remoteIpHeader=
+# cas.server.remoteIp.internalProxies=
+# cas.server.remoteIp.trustedProxies=
+# cas.server.remoteIp.proxiesHeader=
 ```
 
-#### Extended Access Log
+#### Extended Access Log Valve
 
 Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
 for the embedded Tomcat container.
