@@ -17,8 +17,7 @@
                     <col width="45%"/>
                     <col width="10%"/>
                 </colgroup>
-
-                <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+                <tr ng-repeat="row in serviceFormCtrl.serviceData.properties" ng-form="rowForm" demo-tracked-table-row="row">
                     <td th:title="#{services.form.header.properties.name}"
                         ng-switch="row.isEditing"
                         ng-class="name.$dirty ? 'bg-warning' : ''"
@@ -33,14 +32,14 @@
                     </td>
                     <td th:title="#{services.form.header.properties.value}"
                         ng-switch="row.isEditing"
-                        ng-class="propValue.$dirty ? 'bg-warning' : ''"
-                        ng-form="propValue">
-                        <span ng-switch-default="ng-switch-default" class="editable-text">{{row.propValue}}</span>
+                        ng-class="value.$dirty ? 'bg-warning' : ''"
+                        ng-form="value">
+                        <span ng-switch-default="ng-switch-default" class="editable-text">{{row.value}}</span>
                         <div class="controls"
-                             ng-class="propValue.$invalid &amp;&amp; propValue.$dirty ? 'has-error' : ''"
+                             ng-class="value.$invalid &amp;&amp; value.$dirty ? 'has-error' : ''"
                              ng-switch-when="true">
                             <input class="form-control noresize editable-text"
-                                   ng-model="property.tmpRowData.propValue"/>
+                                   ng-model="property.tmpRowData.value"/>
                         </div>
                     </td>
                     <td>
@@ -72,7 +71,7 @@
                                ng-model="row.name" required="required"/></td>
                     <td><input name="addPropertyValue" class="form-control noresize editable-text" rows="2"
                                placeholder="New property value"
-                               ng-model="row.propValue" required="required"/></td>
+                               ng-model="row.value" required="required"/></td>
                     <td>
                         <!-- Add Row toggle -->
                         <button class="btn btn-success btn-sm"
