@@ -235,6 +235,18 @@ Load settings from a DynamoDb instance.
 # cas.spring.cloud.dynamodb.regionOverride=
 ```
 
+### JDBC
+
+Load settings from a RDBMS instance.
+
+```properties
+# cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
+# cas.spring.cloud.jdbc.url=
+# cas.spring.cloud.jdbc.user=
+# cas.spring.cloud.jdbc.password=
+# cas.spring.cloud.jdbc.driverClass=
+```
+
 ## Configuration Security
 
 To learn more about how sensitive CAS settings can be

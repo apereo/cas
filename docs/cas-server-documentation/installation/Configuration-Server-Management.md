@@ -254,6 +254,23 @@ The `DynamoDbCasProperties` table is automatically created by CAS with the follo
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#dynamodb).
 
+##### JDBC
+
+CAS is also able to use a relational database to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-jdbc</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+By default, settings are expected to be found under a `CAS_SETTINGS_TABLE` that contains the fields: `id`, `name` and `value`.
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#jdbc).
+
 #### Composite Sources
 
 In some scenarios you may wish to pull configuration data from multiple environment repositories.
