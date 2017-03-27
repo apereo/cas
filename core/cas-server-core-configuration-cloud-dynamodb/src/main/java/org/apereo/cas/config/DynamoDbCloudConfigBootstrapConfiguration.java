@@ -62,16 +62,14 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         }
     }
 
-    private AmazonDynamoDBClient amazonDynamoDBClient;
-
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        this.amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
-        createSettingsTable(false);
+        final AmazonDynamoDBClient amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
+        createSettingsTable(amazonDynamoDBClient, false);
 
         final ScanRequest scan = new ScanRequest(TABLE_NAME);
         LOGGER.debug("Scanning table with request [{}]", scan);
-        final ScanResult result = this.amazonDynamoDBClient.scan(scan);
+        final ScanResult result = amazonDynamoDBClient.scan(scan);
         LOGGER.debug("Scanned table with result [{}]", scan);
 
         final Properties props = new Properties();
@@ -132,7 +130,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         return client;
     }
 
-    private void createSettingsTable(final boolean deleteTables) {
+    private void createSettingsTable(final AmazonDynamoDBClient amazonDynamoDBClient, final boolean deleteTables) {
         try {
             final CreateTableRequest request = new CreateTableRequest()
                     .withAttributeDefinitions(new AttributeDefinition(ColumnNames.ID.getName(), ScalarAttributeType.S))
