@@ -311,6 +311,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param nameIdFormat the name id format
      * @param nameIdValue  the name id value
      * @param recipient    the recipient
+     * @param notBefore    the not before
      * @param notOnOrAfter the not on or after
      * @param inResponseTo the in response to
      * @return the subject
