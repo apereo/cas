@@ -19,6 +19,11 @@ public interface LogoutExecutionPlan {
      * @param handler the handler
      */
     void registerLogoutHandler(LogoutHandler handler);
-    
+
+    /**
+     * Gets logout handlers.
+     *
+     * @return the logout handlers
+     */
     Collection<LogoutHandler> getLogoutHandlers();
 }
