@@ -224,22 +224,7 @@ public abstract class BaseWSFederationRequestController {
         return null;
     }
 
-    /**
-     * Gets ticket granting ticket from request.
-     *
-     * @param request the request
-     * @return the ticket granting ticket from request
-     */
-    protected TicketGrantingTicket getTicketGrantingTicketFromRequest(final HttpServletRequest request) {
-        final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        if (StringUtils.isNotBlank(cookieValue)) {
-            final TicketGrantingTicket tgt = ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
-            if (tgt != null && !tgt.isExpired()) {
-                return tgt;
-            }
-        }
-        return null;
-    }
+    
 
 
     /**

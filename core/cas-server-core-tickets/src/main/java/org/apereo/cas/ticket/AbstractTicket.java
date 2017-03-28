@@ -89,8 +89,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * @param expirationPolicy the expiration policy for the ticket.
      * @throws IllegalArgumentException if the id or expiration policy is null.
      */
-    public AbstractTicket(final String id,
-                          final ExpirationPolicy expirationPolicy) {
+    public AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         Assert.notNull(expirationPolicy, "expirationPolicy cannot be null");
         Assert.notNull(id, "id cannot be null");
 

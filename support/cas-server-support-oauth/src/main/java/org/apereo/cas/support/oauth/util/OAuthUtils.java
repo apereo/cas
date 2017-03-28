@@ -8,6 +8,7 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
@@ -188,5 +189,16 @@ public final class OAuthUtils {
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Check the grant type against an expected grant type.
+     *
+     * @param type         the given grant type
+     * @param expectedType the expected grant type
+     * @return whether the grant type is the expected one
+     */
+    public static boolean isGrantType(final String type, final OAuth20GrantTypes expectedType) {
+        return expectedType.name().equalsIgnoreCase(type);
     }
 }

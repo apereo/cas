@@ -52,7 +52,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * Unique Id for serialization.
      */
     private static final long serialVersionUID = -8608149809180911599L;
-    
+
     /**
      * The authenticated object for which this ticket was generated for.
      */
@@ -110,16 +110,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @param policy                     the expiration policy for this ticket.
      */
     @JsonCreator
-    public TicketGrantingTicketImpl(@JsonProperty("id")
-                                    final String id,
-                                    @JsonProperty("proxiedBy")
-                                    final Service proxiedBy,
-                                    @JsonProperty("grantingTicket")
-                                    final TicketGrantingTicket parentTicketGrantingTicket,
-                                    @JsonProperty("authentication")
-                                    final Authentication authentication,
-                                    @JsonProperty("expirationPolicy")
-                                    final ExpirationPolicy policy) {
+    public TicketGrantingTicketImpl(@JsonProperty("id") final String id,
+                                    @JsonProperty("proxiedBy") final Service proxiedBy,
+                                    @JsonProperty("grantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
+                                    @JsonProperty("authentication") final Authentication authentication,
+                                    @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
 
         super(id, policy);
 
@@ -140,8 +135,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @param authentication the Authentication request for this ticket
      * @param policy         the expiration policy for this ticket.
      */
-    public TicketGrantingTicketImpl(final String id,
-                                    final Authentication authentication, final ExpirationPolicy policy) {
+    public TicketGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy) {
         this(id, null, null, authentication, policy);
     }
 
