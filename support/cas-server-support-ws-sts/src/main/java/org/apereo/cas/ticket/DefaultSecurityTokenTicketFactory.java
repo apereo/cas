@@ -12,13 +12,13 @@ import org.apereo.cas.util.EncodingUtils;
  */
 public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFactory {
 
-    /**
-     * ExpirationPolicy for refresh tokens.
-     */
-    protected final ExpirationPolicy expirationPolicy;
+    private final ExpirationPolicy expirationPolicy;
+    private final UniqueTicketIdGenerator ticketUniqueTicketIdGenerator;
 
-    public DefaultSecurityTokenTicketFactory(final ExpirationPolicy expirationPolicy) {
+    public DefaultSecurityTokenTicketFactory(final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
+                                             final ExpirationPolicy expirationPolicy) {
         this.expirationPolicy = expirationPolicy;
+        this.ticketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
     }
 
     @Override
@@ -29,11 +29,9 @@ public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFac
     @Override
     public SecurityTokenTicket create(final TicketGrantingTicket ticket, final SecurityToken securityToken) {
         final String token = EncodingUtils.encodeBase64(SerializationUtils.serialize(securityToken));
-        return new DefaultSecurityTokenTicket(createLinkedId(ticket.getId()), ticket, this.expirationPolicy, token);
-    }
-
-    @Override
-    public String createLinkedId(final String ticketGrantingTicket) {
-        return ticketGrantingTicket.replace(TicketGrantingTicket.PREFIX, SecurityTokenTicket.PREFIX);
+        final String id = ticketUniqueTicketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
+        final SecurityTokenTicket stt = new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicy, token);
+        ticket.getDescendantTickets().add(stt.getId());
+        return stt;
     }
 }
