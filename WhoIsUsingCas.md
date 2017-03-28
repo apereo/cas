@@ -1,0 +1,22 @@
+---
+layout: default
+title: Who Is Using CAS?
+---
+
+# Deployments
+
+This is where CAS deployers and adopters advertise their deployment to others to 
+help promote further opportunities for collaboration and adoption. You are welcome to include as much
+information about your deployment as you want to, but at a minimum, it is recommended that each 
+entry in the list contain the name of the deploying institution/organization, 
+a link and perhaps a contact.
+
+## Add Deployments
+
+This page is maintained as part of the Apereo CAS project's documentation. Changes and new additions are to be submitted 
+via [a pull request](/developer/Contributor-Guidelines.html)
+to the `gh-pages` branch of the project repository. You may also contact the project members with any additions and updates to your listing.
+
+<div class="alert alert-warning"><strong>Remember</strong><p>Deployments listed on this page are in no way endorsed or kept up to date by the
+Apereo CAS project or the Apereo foundation for that matter. This is a page for the project deployers by the project deployers. The project
+is also not held responsibible for use of promotional material on this page, such as links, logos, etc. Think carefully before submitting.</p></div>
