@@ -26,11 +26,11 @@ import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
 import org.apache.wss4j.dom.validate.Validator;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.SecurityTokenServiceAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -44,6 +44,8 @@ import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
@@ -311,7 +313,14 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
     @Bean
     @RefreshScope
     public SecurityTokenTicketFactory securityTokenTicketFactory() {
-        return new DefaultSecurityTokenTicketFactory(grantingTicketExpirationPolicy);
+        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy);
+    }
+
+    @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
+    @Bean
+    @RefreshScope
+    public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
+        return new DefaultUniqueTicketIdGenerator();
     }
 
     @Override

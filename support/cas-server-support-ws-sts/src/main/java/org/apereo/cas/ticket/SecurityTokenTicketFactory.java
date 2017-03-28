@@ -20,13 +20,4 @@ public interface SecurityTokenTicketFactory extends TicketFactory {
      * @return the security token ticket
      */
     SecurityTokenTicket create(TicketGrantingTicket ticket, SecurityToken securityToken);
-
-    /**
-     * Gets security token ticket id, by linking it to the ticket granting
-     * ticket that originally issued this ticket.
-     *
-     * @param ticketGrantingTicket the ticket
-     * @return the security token ticket
-     */
-    String createLinkedId(String ticketGrantingTicket);
 }

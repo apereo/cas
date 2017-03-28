@@ -94,6 +94,13 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     private Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     /**
+     * The ticket ids which are tied to this ticket.
+     */
+    @Lob
+    @Column(name = "DESCENDANT_TICKETS", nullable = false, length = Integer.MAX_VALUE)
+    private HashSet<String> descendantTickets = new HashSet<>();
+    
+    /**
      * Instantiates a new ticket granting ticket impl.
      */
     public TicketGrantingTicketImpl() {
@@ -157,8 +164,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * configuration, the ticket may be considered expired.
      */
     @Override
-    public synchronized ServiceTicket grantServiceTicket(final String id,
-                                                         final Service service, final ExpirationPolicy expirationPolicy,
+    public synchronized ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                                          final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
 
         final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
@@ -306,5 +312,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Override
     public String getPrefix() {
         return TicketGrantingTicket.PREFIX;
+    }
+
+    @Override
+    public Collection getDescendantTickets() {
+        return descendantTickets;
     }
 }

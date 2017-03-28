@@ -102,6 +102,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         LOGGER.debug("Adding security token as a ticket to CAS ticket registry...");
         final TicketGrantingTicket tgt = CookieUtils.getTicketGrantingTicketFromRequest(ticketGrantingTicketCookieGenerator, ticketRegistry, request);
         this.ticketRegistry.addTicket(securityTokenTicketFactory.create(tgt, securityToken));
+        this.ticketRegistry.updateTicket(tgt);
     }
 
     private ModelAndView postResponseBackToRelyingParty(final String rpToken,

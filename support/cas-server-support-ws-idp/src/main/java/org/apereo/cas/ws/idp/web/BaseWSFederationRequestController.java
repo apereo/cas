@@ -209,22 +209,28 @@ public abstract class BaseWSFederationRequestController {
     protected SecurityToken getSecurityTokenFromRequest(final HttpServletRequest request) {
         final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {
-            final String sts = securityTokenTicketFactory.createLinkedId(cookieValue);
-            final SecurityTokenTicket stt = ticketRegistry.getTicket(sts, SecurityTokenTicket.class);
-            if (stt == null || stt.isExpired()) {
-                LOGGER.warn("Security token ticket [{}] is not found or has expired", sts);
-                return null;
+            final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
+            if (tgt != null) {
+                final String sts = tgt.getDescendantTickets().stream()
+                        .filter(t -> t.startsWith(SecurityTokenTicket.PREFIX))
+                        .findFirst()
+                        .orElse(null);
+                if (StringUtils.isNotBlank(sts)) {
+                    final SecurityTokenTicket stt = ticketRegistry.getTicket(sts, SecurityTokenTicket.class);
+                    if (stt == null || stt.isExpired()) {
+                        LOGGER.warn("Security token ticket [{}] is not found or has expired", sts);
+                        return null;
+                    }
+                    if (stt.getSecurityToken().isExpired()) {
+                        LOGGER.warn("Security token linked to ticket [{}] has expired", sts);
+                        return null;
+                    }
+                    return stt.getSecurityToken();
+                }
             }
-            if (stt.getSecurityToken().isExpired()) {
-                LOGGER.warn("Security token linked to ticket [{}] has expired", sts);
-                return null;
-            }
-            return stt.getSecurityToken();
         }
         return null;
     }
-
-    
 
 
     /**

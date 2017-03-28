@@ -35,7 +35,11 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     @Override
     public AccessToken create(final Service service, final Authentication authentication, final TicketGrantingTicket ticketGrantingTicket) {
         final String codeId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
-        return new AccessTokenImpl(codeId, service, authentication, this.expirationPolicy, ticketGrantingTicket);
+        final AccessToken at = new AccessTokenImpl(codeId, service, authentication, this.expirationPolicy, ticketGrantingTicket);
+        if (ticketGrantingTicket != null) {
+            ticketGrantingTicket.getDescendantTickets().add(at.getId());
+        }
+        return at;
     }
 
     @Override

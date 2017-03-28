@@ -22,6 +22,7 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
@@ -166,12 +167,15 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                 }
             }
             LOGGER.debug("Creating access token for [{}]", service);
-            final AccessToken accessToken = generateAccessToken(service, authentication, context, token != null ? token.getGrantingTicket() : null);
+
+            final TicketGrantingTicket tgt = token != null ? token.getGrantingTicket() : null;
+            final AccessToken accessToken = generateAccessToken(service, authentication, context, tgt);
+
             RefreshToken refreshToken = null;
             if (generateRefreshToken) {
                 LOGGER.debug("Creating refresh token for [{}]", service);
-                refreshToken = this.refreshTokenFactory.create(service, authentication, token != null ? token.getGrantingTicket() : null);
-                getTicketRegistry().addTicket(refreshToken);
+                refreshToken = this.refreshTokenFactory.create(service, authentication, tgt);
+                addTicketToRegistry(refreshToken, tgt);
             }
             LOGGER.debug("Access token: [{}] / Timeout: [{}] (Seconds) / Refresh Token: [{}]", accessToken,
                     casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
@@ -186,13 +190,20 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     accessToken, refreshToken, casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
 
             LOGGER.debug("Adding OAuth access token [{}] to the registry", accessToken);
-            getTicketRegistry().addTicket(accessToken);
+            addTicketToRegistry(accessToken, tgt);
 
             response.setStatus(HttpServletResponse.SC_OK);
             return null;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);
+        }
+    }
+
+    private void addTicketToRegistry(final OAuthToken ticket, final TicketGrantingTicket ticketGrantingTicket) {
+        getTicketRegistry().addTicket(ticket);
+        if (ticketGrantingTicket != null) {
+            getTicketRegistry().updateTicket(ticketGrantingTicket);
         }
     }
 
