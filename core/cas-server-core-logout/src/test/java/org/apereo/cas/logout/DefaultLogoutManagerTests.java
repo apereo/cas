@@ -31,12 +31,12 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @RunWith(JUnit4.class)
-public class LogoutManagerImplTests {
+public class DefaultLogoutManagerTests {
 
     private static final String ID = "id";
     private static final String URL = "http://www.github.com";
 
-    private LogoutManagerImpl logoutManager;
+    private DefaultLogoutManager logoutManager;
 
     @Mock
     private TicketGrantingTicket tgt;
@@ -52,7 +52,7 @@ public class LogoutManagerImplTests {
     private HttpClient client;
     private DefaultSingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
 
-    public LogoutManagerImplTests() {
+    public DefaultLogoutManagerTests() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -72,7 +72,8 @@ public class LogoutManagerImplTests {
         services.put(ID, this.simpleWebApplicationServiceImpl);
         when(this.tgt.getServices()).thenReturn(services);
 
-        this.logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator(), singleLogoutServiceMessageHandler, false);
+        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), 
+                singleLogoutServiceMessageHandler, false, mock(LogoutExecutionPlan.class));
         this.registeredService = RegisteredServiceTestUtils.getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
     }
@@ -87,7 +88,8 @@ public class LogoutManagerImplTests {
 
     @Test
     public void verifyLogoutDisabled() {
-        this.logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator(), singleLogoutServiceMessageHandler, true);
+        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), 
+                singleLogoutServiceMessageHandler, true, mock(LogoutExecutionPlan.class));
 
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());

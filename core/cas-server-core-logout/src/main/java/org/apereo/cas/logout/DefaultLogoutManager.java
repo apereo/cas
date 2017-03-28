@@ -19,13 +19,14 @@ import java.util.List;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public class LogoutManagerImpl implements LogoutManager {
+public class DefaultLogoutManager implements LogoutManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLogoutManager.class);
 
     private final boolean singleLogoutCallbacksDisabled;
     private final LogoutMessageCreator logoutMessageBuilder;
     private final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
+    private final LogoutExecutionPlan logoutExecutionPlan;
 
     /**
      * Build the logout manager.
@@ -33,12 +34,14 @@ public class LogoutManagerImpl implements LogoutManager {
      * @param logoutMessageBuilder              the builder to construct logout messages.
      * @param singleLogoutServiceMessageHandler who actually perform the logout request
      * @param singleLogoutCallbacksDisabled     Set if the logout is disabled.
+     * @param logoutExecutionPlan               the logout execution plan
      */
-    public LogoutManagerImpl(final LogoutMessageCreator logoutMessageBuilder, final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler,
-                             final boolean singleLogoutCallbacksDisabled) {
+    public DefaultLogoutManager(final LogoutMessageCreator logoutMessageBuilder, final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler,
+                                final boolean singleLogoutCallbacksDisabled, final LogoutExecutionPlan logoutExecutionPlan) {
         this.logoutMessageBuilder = logoutMessageBuilder;
         this.singleLogoutServiceMessageHandler = singleLogoutServiceMessageHandler;
         this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
+        this.logoutExecutionPlan = logoutExecutionPlan;
     }
 
     /**
@@ -56,6 +59,10 @@ public class LogoutManagerImpl implements LogoutManager {
         }
         final List<LogoutRequest> logoutRequests = new ArrayList<>();
         performLogoutForTicket(ticket, logoutRequests);
+        this.logoutExecutionPlan.getLogoutHandlers().forEach(h -> {
+            LOGGER.debug("Invoking logout handler [{}] to process ticket [{}]", h.getClass().getSimpleName(), ticket.getId());
+            h.handle(ticket);
+        });
         LOGGER.info("[{}] logout requests were processed", logoutRequests.size());
         return logoutRequests;
     }
