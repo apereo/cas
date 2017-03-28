@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
@@ -32,9 +33,9 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     }
 
     @Override
-    public RefreshToken create(final Service service, final Authentication authentication) {
+    public RefreshToken create(final Service service, final Authentication authentication, final TicketGrantingTicket ticketGrantingTicket) {
         final String codeId = this.refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
-        return new RefreshTokenImpl(codeId, service, authentication, this.expirationPolicy);
+        return new RefreshTokenImpl(codeId, service, authentication, this.expirationPolicy, ticketGrantingTicket);
     }
 
     @Override

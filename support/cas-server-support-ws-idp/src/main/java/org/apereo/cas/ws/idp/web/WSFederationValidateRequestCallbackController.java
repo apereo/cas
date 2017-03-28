@@ -19,6 +19,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
@@ -99,7 +100,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
     private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken) {
         LOGGER.debug("Adding security token as a ticket to CAS ticket registry...");
-        final TicketGrantingTicket tgt = getTicketGrantingTicketFromRequest(request);
+        final TicketGrantingTicket tgt = WebUtils.getTicketGrantingTicketFromRequest(ticketGrantingTicketCookieGenerator, ticketRegistry, request);
         this.ticketRegistry.addTicket(securityTokenTicketFactory.create(tgt, securityToken));
     }
 
