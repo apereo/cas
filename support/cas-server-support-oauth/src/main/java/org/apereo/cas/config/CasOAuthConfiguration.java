@@ -43,6 +43,7 @@ import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.config.Config;
@@ -100,12 +101,18 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
+    @Bean
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
     }
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
+    @Bean
     public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
@@ -286,7 +293,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 defaultRefreshTokenFactory(),
                 accessTokenResponseGenerator(),
                 profileScopeToAttributesFilter(),
-                casProperties
+                casProperties,
+                ticketGrantingTicketCookieGenerator
         );
     }
 
