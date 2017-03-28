@@ -28,6 +28,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -60,8 +61,9 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private RefreshTokenFactory refreshTokenFactory;
-    private AccessTokenResponseGenerator accessTokenResponseGenerator;
+    private final RefreshTokenFactory refreshTokenFactory;
+    private final AccessTokenResponseGenerator accessTokenResponseGenerator;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     public OAuth20AccessTokenEndpointController(final ServicesManager servicesManager,
                                                 final TicketRegistry ticketRegistry,
@@ -72,11 +74,14 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                                                 final RefreshTokenFactory refreshTokenFactory,
                                                 final AccessTokenResponseGenerator accessTokenResponseGenerator,
                                                 final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                final CasConfigurationProperties casProperties) {
+                                                final CasConfigurationProperties casProperties,
+                                                final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
+                principalFactory, webApplicationServiceServiceFactory,
+                scopeToAttributesFilter, casProperties);
         this.refreshTokenFactory = refreshTokenFactory;
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
     /**
@@ -91,7 +96,6 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
-
             if (!verifyAccessTokenRequest(request, response)) {
                 LOGGER.error("Access token request verification fails");
                 return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST);
@@ -113,7 +117,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                 final String clientId = profile.get().getId();
                 registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
                 LOGGER.debug("Located OAuth registered service [{}]", registeredService);
-                
+
                 // we generate a refresh token if requested by the service but not from a refresh token
                 generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken()
                         && isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE);
@@ -127,7 +131,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
 
                 LOGGER.debug("Locating OAuth token via request parameter [{}]", parameterName);
                 final OAuthToken token = getToken(request, parameterName);
-                
+
                 if (token == null) {
                     LOGGER.error("No token found for authorization_code or refresh_token grant types");
                     return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
@@ -139,10 +143,10 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
             } else {
                 final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
                 LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
-                
+
                 registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
                 LOGGER.debug("Located OAuth registered service [{}]", registeredService);
-                
+
                 generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
 
                 try {
@@ -153,7 +157,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     }
                     LOGGER.debug("Creating matching service request based on [{}]", registeredService);
                     service = createService(registeredService, context);
-                    
+
                     LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
                     authentication = createAuthentication(profile.get(), registeredService, context, service);
 
@@ -179,13 +183,13 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     .filter(t -> t.getType().equalsIgnoreCase(responseType))
                     .findFirst().orElse(OAuth20ResponseTypes.CODE);
             LOGGER.debug("OAuth response type is [{}]", type);
-            
+
             this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
                     accessToken, refreshToken, casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
 
             LOGGER.debug("Adding OAuth access token [{}] to the registry", accessToken);
             getTicketRegistry().addTicket(accessToken);
-            
+
             response.setStatus(HttpServletResponse.SC_OK);
             return null;
         } catch (final Exception e) {
