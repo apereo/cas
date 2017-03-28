@@ -315,7 +315,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20AuthorizeEndpointController(
                 servicesManager, ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
                 oauthPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory(),
-                consentApprovalViewResolver(), profileScopeToAttributesFilter(), casProperties
+                consentApprovalViewResolver(), profileScopeToAttributesFilter(), casProperties,
+                ticketGrantingTicketCookieGenerator
         );
     }
 
