@@ -22,6 +22,7 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
@@ -94,7 +95,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
      */
     @PostMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL)
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        try {
+        try {            
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             if (!verifyAccessTokenRequest(request, response)) {
                 LOGGER.error("Access token request verification fails");
