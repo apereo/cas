@@ -19,10 +19,13 @@ to the `gh-pages` branch of [the project repository](https://github.com/apereo/c
 
 You may also contact the project members directly with any additions and updates to your listing.
 
-<div class="alert alert-warning"><strong>Remember</strong><p>Deployments listed on this page are <strong>NOT</strong> endorsed or kept up to date by the
-Apereo CAS project or the Apereo foundation for that matter. This is a page for the project deployers by the project deployers. The project
-is also <strong>NOT</strong> held responsibible for use of promotional material on this page, such as 
-links, logos, etc. <br/><br/>Think carefully before submitting.</p></div>
+Deployments listed on this page are **NOT** endorsed or kept up to date by the
+Apereo CAS project or the Apereo foundation for that matter. Please keep in mind that this is neither a requirement nor a promise 
+of extra/special support. This is a page for the project deployers by the project deployers. The project
+is also **NOT** held responsibible for use of promotional material on this page, such as 
+links, logos, etc. 
+
+Think carefully before listing your deployment.
 
 ## Current Deployments
 
