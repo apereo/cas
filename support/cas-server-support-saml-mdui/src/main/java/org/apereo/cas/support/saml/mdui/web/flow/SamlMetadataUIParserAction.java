@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -58,26 +59,72 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-        final String entityId = request.getParameter(this.entityIdParameterName);
+        final String entityId = getEntityIdFromRequest(requestContext);
         if (StringUtils.isBlank(entityId)) {
             LOGGER.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
             return success();
         }
-        final WebApplicationService service = this.serviceFactory.createService(entityId);
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            LOGGER.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);
+        final RegisteredService registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
+        verifyRegisteredService(requestContext, registeredService);
+        loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);
+        return success();
+    }
 
-            if (registeredService != null) {
-                WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext,
-                        registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
-            }
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Entity [" + entityId + "] not recognized");
-        }
-
+    /**
+     * Load saml metadata into request context.
+     *
+     * @param requestContext    the request context
+     * @param entityId          the entity id
+     * @param registeredService the registered service
+     */
+    protected void loadSamlMetadataIntoRequestContext(final RequestContext requestContext, final String entityId, final RegisteredService registeredService) {
         final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(this.metadataAdapter, entityId, registeredService);
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
-        return success();
+    }
+
+    /**
+     * Verify registered service.
+     *
+     * @param requestContext    the request context
+     * @param registeredService the registered service
+     */
+    protected void verifyRegisteredService(final RequestContext requestContext, final RegisteredService registeredService) {
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            LOGGER.debug("Service is not recognized/allowed by the CAS service registry", registeredService);
+            if (registeredService != null) {
+                WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+            }
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        }
+    }
+
+    /**
+     * Gets registered service from request.
+     *
+     * @param requestContext the request context
+     * @param entityId       the entity id
+     * @return the registered service from request
+     */
+    protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext, final String entityId) {
+        final Service currentService = WebUtils.getService(requestContext);
+        final WebApplicationService service = this.serviceFactory.createService(entityId);
+        RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        if (registeredService == null) {
+            LOGGER.debug("Entity id not found in the registry. Fallback onto [{}]", entityId, currentService);
+            registeredService = this.servicesManager.findServiceBy(currentService);
+        }
+        LOGGER.debug("Located service definition [{}]", registeredService);
+        return registeredService;
+    }
+
+    /**
+     * Gets entity id from request.
+     *
+     * @param requestContext the request context
+     * @return the entity id from request
+     */
+    protected String getEntityIdFromRequest(final RequestContext requestContext) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        return request.getParameter(this.entityIdParameterName);
     }
 }
