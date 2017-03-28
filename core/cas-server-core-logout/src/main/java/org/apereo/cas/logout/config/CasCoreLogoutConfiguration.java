@@ -36,7 +36,7 @@ import java.util.List;
  */
 @Configuration("casCoreLogoutConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasCoreLogoutConfiguration {
+public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreLogoutConfiguration.class);
 
     @Autowired
