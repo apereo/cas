@@ -14,9 +14,10 @@ a link and perhaps a contact.
 ## Add Deployments
 
 This page is maintained as part of the Apereo CAS project's documentation. Changes and new additions are to be submitted 
-via [a pull request](/developer/Contributor-Guidelines.html)
+via [a pull request](developer/Contributor-Guidelines.html)
 to the `gh-pages` branch of the project repository. You may also contact the project members with any additions and updates to your listing.
 
-<div class="alert alert-warning"><strong>Remember</strong><p>Deployments listed on this page are in no way endorsed or kept up to date by the
+<div class="alert alert-warning"><strong>Remember</strong><p>Deployments listed on this page are <strong>NOT</strong> endorsed or kept up to date by the
 Apereo CAS project or the Apereo foundation for that matter. This is a page for the project deployers by the project deployers. The project
-is also not held responsibible for use of promotional material on this page, such as links, logos, etc. Think carefully before submitting.</p></div>
+is also <strong>NOT</strong> held responsibible for use of promotional material on this page, such as 
+links, logos, etc. <br/>Think carefully before submitting.</p></div>
