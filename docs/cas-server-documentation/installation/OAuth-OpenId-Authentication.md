@@ -25,18 +25,14 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 After enabling OAuth support, the following endpoints will be available:
 
-* `/cas/oauth2.0/authorize`
+## Endpoints
 
-It's the url to call to authorize the user: the CAS login page will be displayed and the user will login.
+| Endpoint                        | Description                                                               | Method
+|---------------------------------|--------------------------------------------------------------------------------------------------------------------
+| `/cas/oauth2.0/authorize`       | Authorize the user and start the CAS authentication flow.                 | `GET`
+| `/cas/oauth2.0/accessToken`     | Get an access token in plain-text or JSON                                 | `POST`
+| `/cas/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
 
-* `/cas/oauth2.0/accessToken`
-
-It's the url to call to get an access token. The returned format will be plain text by default, but it can be JSON
-if set so in the management webapp per OAuth client.
-
-* `/cas/oauth2.0/profile`
-
-It's the url to call to get the profile of the authorized user. The response is in JSON format with all attributes of the user. `/cas/oauth2.0/profile?access_token=ACCESS_TOKEN` returns the user profile.
 
 ## Response Types
 
@@ -51,29 +47,24 @@ The authorization code type is made for UI interactions: the user will enter his
 
 ### Token
 
-The `token` type is also made for UI interactions, but for Javascript applications.
+The `token` type is also made for UI interactions as well as indirect non-interactive (i.e. Javascript) applications.
 
 - `/cas/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK` returns the access token as an anchor parameter of the `CALLBACK` url.
 
 ### Resource Owner
 
-The resource owner password credentials grant type allows the OAuth client to directly send the user's credentials to the OAuth server.
+The `password` grant type allows the OAuth client to directly send the user's credentials to the OAuth server.
 
 - `/cas/oauth2.0/accessToken?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token.
 
 ### Refresh Token
 
 The refresh token grant type retrieves a new access token from a refresh token (emitted for a previous access token),
-when this previous access token is expired
+when this previous access token is expired.
 
-- `/cas/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access token
+- `/cas/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access token.
 
-To get refresh tokens, the OAuth client must be configured to return refresh tokens (`generateRefreshToken` property).
-
-Notice that sensitive information (`client_secret`, `password` and `refresh_token`) should be sent via POST requests.
-
-
-## Add OAuth Clients
+## Register Clients
 
 Every OAuth client must be defined as a CAS service (notice the new *clientId* and *clientSecret* properties, specific to OAuth):
 
@@ -83,9 +74,10 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "clientId": "clientid",
   "clientSecret": "clientSecret",
   "bypassApprovalPrompt": false,
+  "generateRefreshToken": false,
   "serviceId" : "^(https|imaps)://hello.*",
-  "name" : "HTTPS and IMAPS",
-  "id" : 10000001
+  "name" : "My OAuth service",
+  "id" : 100
 }
 ```
 
@@ -98,7 +90,8 @@ See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
 ## OAuth Expiration Policy
 
-The expiration policy for OAuth tokens is controlled by CAS settings and properties.
+The expiration policy for OAuth tokens is controlled by CAS settings and properties. Note that while access and refresh tokens may have their own lifetime and expiration policy, they are typically upper-bound to the length of the CAS single sign-on session.
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
 
 ## Server Configuration
@@ -106,7 +99,6 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 Remember that OAuth features of CAS require session affinity (and optionally session replication),
 as the authorization responses throughout the login flow
 are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers accordinngly.
-
 
 # OpenID Authentication
 
