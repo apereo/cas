@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.HttpConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +52,10 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
                                                   final PrincipalFactory principalFactory,
                                                   final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                   final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                  final CasConfigurationProperties casProperties) {
+                                                  final CasConfigurationProperties casProperties,
+                                                  final CookieRetrievingCookieGenerator cookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
+                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
     }
 
     /**
