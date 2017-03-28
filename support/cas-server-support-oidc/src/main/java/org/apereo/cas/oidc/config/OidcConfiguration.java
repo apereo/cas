@@ -187,7 +187,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
+    
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -265,7 +265,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcAccessTokenEndpointController(
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory,
-                oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties);
+                oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
+                ticketGrantingTicketCookieGenerator);
     }
 
     @Bean

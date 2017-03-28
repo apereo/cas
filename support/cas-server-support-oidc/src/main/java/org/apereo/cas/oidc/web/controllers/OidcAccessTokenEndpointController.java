@@ -14,6 +14,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointCont
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -37,10 +38,11 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
                                              final RefreshTokenFactory refreshTokenFactory,
                                              final AccessTokenResponseGenerator accessTokenResponseGenerator,
                                              final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                             final CasConfigurationProperties casProperties) {
+                                             final CasConfigurationProperties casProperties,
+                                             final CookieRetrievingCookieGenerator cookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, refreshTokenFactory, accessTokenResponseGenerator,
-                scopeToAttributesFilter, casProperties);
+                scopeToAttributesFilter, casProperties, cookieGenerator);
     }
 
     @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL,
