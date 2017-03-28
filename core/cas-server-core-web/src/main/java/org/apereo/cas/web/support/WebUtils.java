@@ -17,7 +17,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
@@ -117,28 +116,7 @@ public final class WebUtils {
         return null;
 
     }
-
-    /**
-     * Gets ticket granting ticket from request.
-     *
-     * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
-     * @param ticketRegistry                      the ticket registry
-     * @param request                             the request
-     * @return the ticket granting ticket from request
-     */
-    public static TicketGrantingTicket getTicketGrantingTicketFromRequest(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                                                          final TicketRegistry ticketRegistry,
-                                                                          final HttpServletRequest request) {
-        final String cookieValue = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        if (StringUtils.isNotBlank(cookieValue)) {
-            final TicketGrantingTicket tgt = ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
-            if (tgt != null && !tgt.isExpired()) {
-                return tgt;
-            }
-        }
-        return null;
-    }
-
+    
     /**
      * Gets http servlet request from request attributes.
      *

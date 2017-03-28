@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +36,11 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                            final OidcServerDiscoverySettings discovery,
                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                           final CasConfigurationProperties casProperties) {
+                                           final CasConfigurationProperties casProperties,
+                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
+                principalFactory, webApplicationServiceServiceFactory, 
+                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
         this.discovery = discovery;
     }
 

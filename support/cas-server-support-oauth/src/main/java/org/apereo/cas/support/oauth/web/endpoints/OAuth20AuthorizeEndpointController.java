@@ -21,12 +21,15 @@ import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
@@ -71,9 +74,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
                                               final OAuthCodeFactory oAuthCodeFactory,
                                               final ConsentApprovalViewResolver consentApprovalViewResolver,
                                               final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                              final CasConfigurationProperties casProperties) {
+                                              final CasConfigurationProperties casProperties,
+                                              final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
+                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
         this.oAuthCodeFactory = oAuthCodeFactory;
         this.consentApprovalViewResolver = consentApprovalViewResolver;
     }
@@ -111,7 +115,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
         }
 
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
-
     }
 
     /**
@@ -167,17 +170,18 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
 
         final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
 
+        final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+                ticketGrantingTicketCookieGenerator, getTicketRegistry(), context.getRequest());
         final String callbackUrl;
         if (isResponseType(responseType, OAuth20ResponseTypes.CODE)) {
-            callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri);
+            callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri, ticketGrantingTicket);
         } else if (isResponseType(responseType, OAuth20ResponseTypes.TOKEN)) {
-            callbackUrl = buildCallbackUrlForImplicitTokenResponseType(context, authentication, service, redirectUri);
+            callbackUrl = buildCallbackUrlForImplicitTokenResponseType(context, authentication, service, redirectUri, ticketGrantingTicket);
         } else {
-            callbackUrl = buildCallbackUrlForTokenResponseType(context, authentication, service,
-                    redirectUri, responseType, clientId);
+            callbackUrl = buildCallbackUrlForTokenResponseType(context, authentication, service, redirectUri, responseType, clientId);
         }
 
-        LOGGER.debug("callbackUrl: [{}]", callbackUrl);
+        LOGGER.debug("Callback URL to redirect: [{}]", callbackUrl);
         if (StringUtils.isBlank(callbackUrl)) {
             return OAuthUtils.produceUnauthorizedErrorView();
         }
@@ -206,9 +210,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
     private String buildCallbackUrlForImplicitTokenResponseType(final J2EContext context,
                                                                 final Authentication authentication,
                                                                 final Service service,
-                                                                final String redirectUri) throws Exception {
+                                                                final String redirectUri,
+                                                                final TicketGrantingTicket ticketGrantingTicket) throws Exception {
 
-        final AccessToken accessToken = generateAccessToken(service, authentication, context);
+        final AccessToken accessToken = generateAccessToken(service, authentication, context, ticketGrantingTicket);
         LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
         return buildCallbackUrlResponseType(authentication, service,
                 redirectUri, accessToken, Collections.emptyList());
@@ -270,10 +275,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
     }
 
     private String buildCallbackUrlForAuthorizationCodeResponseType(final Authentication authentication,
-                                                                    final Service service,
-                                                                    final String redirectUri) {
+                                                                    final Service service, final String redirectUri,
+                                                                    final TicketGrantingTicket ticketGrantingTicket) {
 
-        final OAuthCode code = this.oAuthCodeFactory.create(service, authentication);
+        final OAuthCode code = this.oAuthCodeFactory.create(service, authentication, ticketGrantingTicket);
         LOGGER.debug("Generated OAuth code: [{}]", code);
         getTicketRegistry().addTicket(code);
 

@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -61,10 +62,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
                                                            final RandomStringGenerator clientIdGenerator,
                                                            final RandomStringGenerator clientSecretGenerator,
                                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                           final CasConfigurationProperties casProperties) {
+                                                           final CasConfigurationProperties casProperties,
+                                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
                 principalFactory, webApplicationServiceServiceFactory,
-                scopeToAttributesFilter, casProperties);
+                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
         this.clientRegistrationRequestSerializer = clientRegistrationRequestSerializer;
         this.clientIdGenerator = clientIdGenerator;
         this.clientSecretGenerator = clientSecretGenerator;

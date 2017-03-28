@@ -21,10 +21,13 @@ import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.CookieUtils;
 import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,10 +62,11 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                            final ConsentApprovalViewResolver consentApprovalViewResolver,
                                            final OidcIdTokenGeneratorService idTokenGenerator,
                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                           final CasConfigurationProperties casProperties) {
+                                           final CasConfigurationProperties casProperties,
+                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
-                scopeToAttributesFilter, casProperties);
+                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
         this.idTokenGenerator = idTokenGenerator;
     }
 
@@ -97,8 +101,10 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         }
 
         LOGGER.debug("Handling callback for response type [{}]", responseType);
+        final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+                ticketGrantingTicketCookieGenerator, getTicketRegistry(), context.getRequest());
         return buildCallbackUrlForImplicitTokenResponseType(context, authentication,
-                service, redirectUri, clientId, OAuth20ResponseTypes.IDTOKEN_TOKEN);
+                service, redirectUri, clientId, OAuth20ResponseTypes.IDTOKEN_TOKEN, ticketGrantingTicket);
     }
 
     private String buildCallbackUrlForImplicitTokenResponseType(final J2EContext context,
@@ -106,9 +112,10 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                                                 final Service service,
                                                                 final String redirectUri,
                                                                 final String clientId,
-                                                                final OAuth20ResponseTypes responseType) {
+                                                                final OAuth20ResponseTypes responseType,
+                                                                final TicketGrantingTicket ticketGrantingTicket) {
         try {
-            final AccessToken accessToken = generateAccessToken(service, authentication, context);
+            final AccessToken accessToken = generateAccessToken(service, authentication, context, ticketGrantingTicket);
             LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
             final OidcRegisteredService oidcService = (OidcRegisteredService)
                     OAuthUtils.getRegisteredOAuthService(this.getServicesManager(), clientId);
