@@ -107,11 +107,13 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
             final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
             final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
 
+            LOGGER.debug("OAuth grant type is [{}]", grantType);
             if (isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE) || isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
                 final Optional<UserProfile> profile = manager.get(true);
                 final String clientId = profile.get().getId();
                 registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
-
+                LOGGER.debug("Located OAuth registered service [{}]", registeredService);
+                
                 // we generate a refresh token if requested by the service but not from a refresh token
                 generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken()
                         && isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE);
@@ -123,17 +125,24 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     parameterName = OAuthConstants.REFRESH_TOKEN;
                 }
 
+                LOGGER.debug("Locating OAuth token via request parameter [{}]", parameterName);
                 final OAuthToken token = getToken(request, parameterName);
+                
                 if (token == null) {
                     LOGGER.error("No token found for authorization_code or refresh_token grant types");
                     return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
                 }
+                LOGGER.debug("Found OAuth token [{}]", token);
                 service = token.getService();
                 authentication = token.getAuthentication();
 
             } else {
                 final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+                LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
+                
                 registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
+                LOGGER.debug("Located OAuth registered service [{}]", registeredService);
+                
                 generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
 
                 try {
@@ -142,7 +151,10 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     if (!profile.isPresent()) {
                         throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
                     }
+                    LOGGER.debug("Creating matching service request based on [{}]", registeredService);
                     service = createService(registeredService, context);
+                    
+                    LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
                     authentication = createAuthentication(profile.get(), registeredService, context, service);
 
                     RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
@@ -151,25 +163,27 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                     return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
                 }
             }
-
+            LOGGER.debug("Creating access token for [{}]", service);
             final AccessToken accessToken = generateAccessToken(service, authentication, context);
             RefreshToken refreshToken = null;
             if (generateRefreshToken) {
+                LOGGER.debug("Creating refresh token for [{}]", service);
                 refreshToken = this.refreshTokenFactory.create(service, authentication);
                 getTicketRegistry().addTicket(refreshToken);
             }
-
-            LOGGER.debug("access token: [{}] / timeout: [{}] / refresh token: [{}]", accessToken,
+            LOGGER.debug("Access token: [{}] / Timeout: [{}] (Seconds) / Refresh Token: [{}]", accessToken,
                     casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
 
             final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
             final OAuth20ResponseTypes type = Arrays.stream(OAuth20ResponseTypes.values())
                     .filter(t -> t.getType().equalsIgnoreCase(responseType))
                     .findFirst().orElse(OAuth20ResponseTypes.CODE);
-
+            LOGGER.debug("OAuth response type is [{}]", type);
+            
             this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
                     accessToken, refreshToken, casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
 
+            LOGGER.debug("Adding OAuth access token [{}] to the registry", accessToken);
             getTicketRegistry().addTicket(accessToken);
             
             response.setStatus(HttpServletResponse.SC_OK);
