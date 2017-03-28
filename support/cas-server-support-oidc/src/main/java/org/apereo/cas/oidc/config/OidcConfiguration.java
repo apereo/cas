@@ -283,7 +283,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 new DefaultRandomStringGenerator(),
                 new DefaultRandomStringGenerator(),
                 profileScopeToAttributesFilter(),
-                casProperties);
+                casProperties, ticketGrantingTicketCookieGenerator);
     }
 
     @RefreshScope
@@ -292,7 +292,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcJwksEndpointController(servicesManager, ticketRegistry, oAuth20Validator,
                 defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
-                profileScopeToAttributesFilter(), casProperties);
+                profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator);
     }
 
     @Autowired
@@ -304,7 +304,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
                 discoverySettings, profileScopeToAttributesFilter(),
-                casProperties);
+                casProperties, ticketGrantingTicketCookieGenerator);
     }
 
     @RefreshScope
@@ -314,7 +314,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
                 profileScopeToAttributesFilter(),
-                casProperties);
+                casProperties, ticketGrantingTicketCookieGenerator);
     }
 
     @RefreshScope
@@ -324,7 +324,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory,
                 consentApprovalViewResolver(), oidcIdTokenGenerator(),
-                profileScopeToAttributesFilter(), casProperties);
+                profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator);
     }
 
     @RefreshScope

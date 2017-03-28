@@ -20,9 +20,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
@@ -58,11 +60,17 @@ public abstract class BaseOAuthWrapperController {
      */
     protected final ServicesManager servicesManager;
 
+    /**
+     * Cookie retriever.
+     */
+    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
     private final TicketRegistry ticketRegistry;
     private final OAuth20Validator validator;
     private final AccessTokenFactory accessTokenFactory;
     private final PrincipalFactory principalFactory;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
 
     public BaseOAuthWrapperController(final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry,
@@ -71,7 +79,8 @@ public abstract class BaseOAuthWrapperController {
                                       final PrincipalFactory principalFactory,
                                       final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                       final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                      final CasConfigurationProperties casProperties) {
+                                      final CasConfigurationProperties casProperties,
+                                      final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.servicesManager = servicesManager;
         this.ticketRegistry = ticketRegistry;
         this.validator = validator;
@@ -80,6 +89,7 @@ public abstract class BaseOAuthWrapperController {
         this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
         this.casProperties = casProperties;
         this.scopeToAttributesFilter = scopeToAttributesFilter;
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
     /**
@@ -88,12 +98,14 @@ public abstract class BaseOAuthWrapperController {
      * @param service        the service
      * @param authentication the authentication
      * @param context        the context
+     * @param tgt            the tgt
      * @return an access token
      */
     protected AccessToken generateAccessToken(final Service service,
                                               final Authentication authentication,
-                                              final J2EContext context) {
-        final AccessToken accessToken = this.accessTokenFactory.create(service, authentication);
+                                              final J2EContext context,
+                                              final TicketGrantingTicket tgt) {
+        final AccessToken accessToken = this.accessTokenFactory.create(service, authentication, tgt);
         LOGGER.debug("Creating access token [{}]", accessToken);
         this.ticketRegistry.addTicket(accessToken);
         LOGGER.debug("Added access token [{}] to registry", accessToken);

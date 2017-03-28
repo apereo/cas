@@ -13,8 +13,8 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileControllerController;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
@@ -88,7 +88,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         final Authentication authentication = getAuthentication(principal);
         final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy());
-        final AccessTokenImpl accessToken = (AccessTokenImpl) expiringAccessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
+        final AccessToken accessToken = expiringAccessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
@@ -110,7 +110,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
-        final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
+        final AccessToken accessToken = accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
@@ -143,7 +143,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
-        final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
+        final AccessToken accessToken = accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
