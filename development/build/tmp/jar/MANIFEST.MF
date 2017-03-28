@@ -2,6 +2,6 @@ Manifest-Version: 1.0
 Implementation-Title: cas-server-documentation
 Implementation-Version: 5.1.0-RC3-SNAPSHOT
 Created-By: org.apereo.cas
-Specification-Version: 3bbebd821d28cc358751b340bef2dc47726a690e
+Specification-Version: 65da17e2e7cba026cfc469ffc1615db9901122ea
 Implementation-Vendor: org.apereo.cas
 
