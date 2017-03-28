@@ -9,10 +9,10 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AudienceRestriction;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -311,12 +311,13 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param nameIdFormat the name id format
      * @param nameIdValue  the name id value
      * @param recipient    the recipient
+     * @param notBefore    the not before
      * @param notOnOrAfter the not on or after
      * @param inResponseTo the in response to
      * @return the subject
      */
-    public Subject newSubject(final String nameIdFormat, final String nameIdValue,
-                              final String recipient, final ZonedDateTime notOnOrAfter,
+    public Subject newSubject(final String nameIdFormat, final String nameIdValue, final String recipient,
+                              final ZonedDateTime notBefore, final ZonedDateTime notOnOrAfter,
                               final String inResponseTo) {
 
         final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
@@ -324,6 +325,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         final SubjectConfirmationData data = newSamlObject(SubjectConfirmationData.class);
         data.setRecipient(recipient);
+        data.setNotBefore(DateTimeUtils.dateTimeOf(notBefore));
         data.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
         data.setInResponseTo(inResponseTo);
 
