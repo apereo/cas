@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
@@ -38,12 +39,12 @@ import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuthUtils {
+public final class OAuth20Utils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20Utils.class);
     private static final ObjectWriter WRITER = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
-    private OAuthUtils() {
+    private OAuth20Utils() {
     }
 
     /**
@@ -54,7 +55,7 @@ public final class OAuthUtils {
      * @return a null view
      */
     public static ModelAndView writeTextError(final HttpServletResponse response, final String error) {
-        return OAuthUtils.writeText(response, OAuthConstants.ERROR + '=' + error, HttpStatus.SC_BAD_REQUEST);
+        return OAuth20Utils.writeText(response, OAuthConstants.ERROR + '=' + error, HttpStatus.SC_BAD_REQUEST);
     }
 
     /**
@@ -200,5 +201,17 @@ public final class OAuthUtils {
      */
     public static boolean isGrantType(final String type, final OAuth20GrantTypes expectedType) {
         return expectedType.name().equalsIgnoreCase(type);
+    }
+
+
+    /**
+     * Check the response type against an expected response type.
+     *
+     * @param type         the given response type
+     * @param expectedType the expected response type
+     * @return whether the response type is the expected one
+     */
+    public static boolean isResponseType(final String type, final OAuth20ResponseTypes expectedType) {
+        return expectedType.getType().equalsIgnoreCase(type);
     }
 }
