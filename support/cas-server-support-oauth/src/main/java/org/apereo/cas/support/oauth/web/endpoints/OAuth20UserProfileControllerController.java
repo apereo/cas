@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -77,20 +78,20 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
             LOGGER.error("Missing [{}]", OAuthConstants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuthConstants.MISSING_ACCESS_TOKEN);
         }
-
-        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
-        final Optional<UserProfile> profile = manager.get(true);
-        if (!manager.isAuthenticated() || !profile.isPresent()) {
-            LOGGER.error("Request is no longer authenticated. Authenticated user profile cannot be determined");
-            return buildUnauthorizedResponseEntity(OAuthConstants.INVALID_REQUEST);
-        }
-
+        
         final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-            LOGGER.error("Expired access token: [{}]", OAuthConstants.ACCESS_TOKEN);
+            LOGGER.error("Expired access token: [{}]", accessTokenTicket);
             return buildUnauthorizedResponseEntity(OAuthConstants.EXPIRED_ACCESS_TOKEN);
         }
 
+        final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getGrantingTicket();
+        if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
+            LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired", ticketGrantingTicket, accessTokenTicket);
+            this.ticketRegistry.deleteTicket(accessToken);
+            return buildUnauthorizedResponseEntity(OAuthConstants.EXPIRED_ACCESS_TOKEN);
+        }
+        
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
         final String value = OAuth20Utils.jsonify(map);
         LOGGER.debug("Final user profile is [{}]", value);
