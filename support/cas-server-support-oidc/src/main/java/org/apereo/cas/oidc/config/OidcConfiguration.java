@@ -49,7 +49,7 @@ import org.apereo.cas.support.oauth.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
