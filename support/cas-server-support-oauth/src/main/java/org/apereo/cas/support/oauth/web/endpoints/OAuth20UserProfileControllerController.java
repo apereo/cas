@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
@@ -65,27 +65,27 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         final String accessToken = getAccessTokenFromRequest(request);
         if (StringUtils.isBlank(accessToken)) {
-            LOGGER.error("Missing [{}]", OAuthConstants.ACCESS_TOKEN);
-            return buildUnauthorizedResponseEntity(OAuthConstants.MISSING_ACCESS_TOKEN);
+            LOGGER.error("Missing [{}]", OAuth20Constants.ACCESS_TOKEN);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
         }
         
         final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
             LOGGER.error("Expired access token: [{}]", accessToken);
-            return buildUnauthorizedResponseEntity(OAuthConstants.EXPIRED_ACCESS_TOKEN);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
 
         final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getGrantingTicket();
         if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
             LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired", ticketGrantingTicket, accessTokenTicket);
             this.ticketRegistry.deleteTicket(accessToken);
-            return buildUnauthorizedResponseEntity(OAuthConstants.EXPIRED_ACCESS_TOKEN);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
         
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
@@ -101,15 +101,15 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
      * @return the access token from request
      */
     protected String getAccessTokenFromRequest(final HttpServletRequest request) {
-        String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+        String accessToken = request.getParameter(OAuth20Constants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
             if (StringUtils.isNotBlank(authHeader)
-                    && authHeader.toLowerCase().startsWith(OAuthConstants.BEARER_TOKEN.toLowerCase() + ' ')) {
-                accessToken = authHeader.substring(OAuthConstants.BEARER_TOKEN.length() + 1);
+                    && authHeader.toLowerCase().startsWith(OAuth20Constants.BEARER_TOKEN.toLowerCase() + ' ')) {
+                accessToken = authHeader.substring(OAuth20Constants.BEARER_TOKEN.length() + 1);
             }
         }
-        LOGGER.debug("[{}]: [{}]", OAuthConstants.ACCESS_TOKEN, accessToken);
+        LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);
         return accessToken;
     }
 
@@ -137,7 +137,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
      */
     private ResponseEntity buildUnauthorizedResponseEntity(final String code) {
         final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
-        map.add(OAuthConstants.ERROR, code);
+        map.add(OAuth20Constants.ERROR, code);
         final String value = OAuth20Utils.jsonify(map);
         return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
     }

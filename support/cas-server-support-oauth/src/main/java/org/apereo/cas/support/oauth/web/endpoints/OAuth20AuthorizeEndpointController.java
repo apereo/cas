@@ -14,7 +14,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -100,7 +100,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL)
+    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
@@ -110,7 +110,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final String clientId = context.getRequestParameter(OAuthConstants.CLIENT_ID);
+        final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
         final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
@@ -175,10 +175,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final String redirectUri = context.getRequestParameter(OAuthConstants.REDIRECT_URI);
+        final String redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
 
-        final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
+        final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
 
         final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
                 ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
@@ -244,20 +244,20 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                   final String redirectUri,
                                                   final AccessToken accessToken,
                                                   final List<NameValuePair> params) throws Exception {
-        final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
-        final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
+        final String state = authentication.getAttributes().get(OAuth20Constants.STATE).toString();
+        final String nonce = authentication.getAttributes().get(OAuth20Constants.NONCE).toString();
 
         final URIBuilder builder = new URIBuilder(redirectUri);
         final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(OAuthConstants.ACCESS_TOKEN)
+        stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
                 .append('=')
                 .append(accessToken.getId())
                 .append('&')
-                .append(OAuthConstants.TOKEN_TYPE)
+                .append(OAuth20Constants.TOKEN_TYPE)
                 .append('=')
-                .append(OAuthConstants.TOKEN_TYPE_BEARER)
+                .append(OAuth20Constants.TOKEN_TYPE_BEARER)
                 .append('&')
-                .append(OAuthConstants.EXPIRES_IN)
+                .append(OAuth20Constants.EXPIRES_IN)
                 .append('=')
                 .append(casProperties.getTicket().getTgt().getTimeToKillInSeconds());
 
@@ -268,13 +268,13 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         if (StringUtils.isNotBlank(state)) {
             stringBuilder.append('&')
-                    .append(OAuthConstants.STATE)
+                    .append(OAuth20Constants.STATE)
                     .append('=')
                     .append(EncodingUtils.urlEncode(state));
         }
         if (StringUtils.isNotBlank(nonce)) {
             stringBuilder.append('&')
-                    .append(OAuthConstants.NONCE)
+                    .append(OAuth20Constants.NONCE)
                     .append('=')
                     .append(EncodingUtils.urlEncode(nonce));
         }
@@ -291,16 +291,16 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
 
-        final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
-        final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
+        final String state = authentication.getAttributes().get(OAuth20Constants.STATE).toString();
+        final String nonce = authentication.getAttributes().get(OAuth20Constants.NONCE).toString();
 
         String callbackUrl = redirectUri;
-        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.CODE, code.getId());
+        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.CODE, code.getId());
         if (StringUtils.isNotBlank(state)) {
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.STATE, state);
+            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.STATE, state);
         }
         if (StringUtils.isNotBlank(nonce)) {
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.NONCE, nonce);
+            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.NONCE, nonce);
         }
         return callbackUrl;
     }
@@ -314,13 +314,13 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     private boolean verifyAuthorizeRequest(final HttpServletRequest request) {
 
-        final boolean checkParameterExist = this.validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
-                && this.validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                && this.validator.checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
+        final boolean checkParameterExist = this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
+                && this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
+                && this.validator.checkParameterExist(request, OAuth20Constants.RESPONSE_TYPE);
 
-        final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
-        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
+        final String responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
+        final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
         final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
 
         return checkParameterExist

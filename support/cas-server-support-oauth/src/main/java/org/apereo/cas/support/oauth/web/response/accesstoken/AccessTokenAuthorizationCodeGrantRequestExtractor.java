@@ -1,10 +1,11 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
@@ -48,7 +49,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor {
      */
     public AccessTokenRequestDataHolder extract() {
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
-        final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
+        final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
         final Optional<UserProfile> profile = manager.get(true);
@@ -58,30 +59,28 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor {
 
         // we generate a refresh token if requested by the service but not from a refresh token
         final boolean generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
-        final OAuthToken token = getOAuthToken(request);
+        final OAuthToken token = getOAuthTokenFromRequest();
+        if (token == null) {
+            throw new InvalidTicketException(getOAuthParameter());
+        }
         return new AccessTokenRequestDataHolder(token, generateRefreshToken, registeredService);
     }
 
-    /**
-     * Gets oauth token as code.
-     *
-     * @param request the request
-     * @return the o auth token
-     */
-    protected OAuthToken getOAuthToken(final HttpServletRequest request) {
-        return getOAuthTokenFromRequest(request, OAuthConstants.CODE);
+    protected String getOAuthParameterName() {
+        return OAuth20Constants.CODE;
+    }
+
+    protected String getOAuthParameter() {
+        return request.getParameter(getOAuthParameterName());
     }
 
     /**
-     * Return the OAuth token (a code or a refresh token).
+     * Return the OAuth token.
      *
-     * @param request       the HTTP request
-     * @param parameterName the parameter name
      * @return the OAuth token
      */
-    protected OAuthToken getOAuthTokenFromRequest(final HttpServletRequest request, final String parameterName) {
-        final String codeParameter = request.getParameter(parameterName);
-        final OAuthToken token = this.ticketRegistry.getTicket(codeParameter, OAuthToken.class);
+    protected OAuthToken getOAuthTokenFromRequest() {
+        final OAuthToken token = this.ticketRegistry.getTicket(getOAuthParameter(), OAuthToken.class);
         // token should not be expired
         if (token == null || token.isExpired()) {
             LOGGER.error("Code or refresh token expired: [{}]", token);
@@ -93,7 +92,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor {
         if (token instanceof OAuthCode && !(token instanceof RefreshToken)) {
             this.ticketRegistry.deleteTicket(token.getId());
         }
-
         return token;
     }
 
@@ -104,7 +102,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor {
      * @return true/false
      */
     public static boolean supports(final HttpServletRequest context) {
-        final String grantType = context.getParameter(OAuthConstants.GRANT_TYPE);
+        final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
 }
