@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuthWrapperController {
+public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller {
 
     private final CallbackController callbackController;
     private final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver;

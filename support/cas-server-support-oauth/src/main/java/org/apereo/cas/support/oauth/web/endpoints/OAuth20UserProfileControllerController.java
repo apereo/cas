@@ -41,7 +41,7 @@ import java.util.Optional;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20UserProfileControllerController extends BaseOAuthWrapperController {
+public class OAuth20UserProfileControllerController extends BaseOAuth20Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20UserProfileControllerController.class);
 
     private static final String ID = "id";
@@ -85,7 +85,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
             return buildUnauthorizedResponseEntity(OAuthConstants.INVALID_REQUEST);
         }
 
-        final AccessToken accessTokenTicket = getTicketRegistry().getTicket(accessToken, AccessToken.class);
+        final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
             LOGGER.error("Expired access token: [{}]", OAuthConstants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuthConstants.EXPIRED_ACCESS_TOKEN);

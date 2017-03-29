@@ -55,7 +55,7 @@ import java.util.Optional;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperController {
+public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenEndpointController.class);
 
     @Autowired
@@ -110,10 +110,11 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
             final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
             final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
             LOGGER.debug("OAuth grant type is [{}]", grantType);
-            if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE) || OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
+            if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE)
+                    || OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
                 final Optional<UserProfile> profile = manager.get(true);
                 final String clientId = profile.get().getId();
-                registeredService = OAuth20Utils.getRegisteredOAuthService(getServicesManager(), clientId);
+                registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
                 LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
                 // we generate a refresh token if requested by the service but not from a refresh token
@@ -143,7 +144,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
                 final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
                 LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
-                registeredService = OAuth20Utils.getRegisteredOAuthService(getServicesManager(), clientId);
+                registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
                 LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
                 generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
@@ -200,9 +201,9 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
     }
 
     private void addTicketToRegistry(final OAuthToken ticket, final TicketGrantingTicket ticketGrantingTicket) {
-        getTicketRegistry().addTicket(ticket);
+        this.ticketRegistry.addTicket(ticket);
         if (ticketGrantingTicket != null) {
-            getTicketRegistry().updateTicket(ticketGrantingTicket);
+            this.ticketRegistry.updateTicket(ticketGrantingTicket);
         }
     }
 
@@ -215,17 +216,17 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
      */
     private OAuthToken getToken(final HttpServletRequest request, final String parameterName) {
         final String codeParameter = request.getParameter(parameterName);
-        final OAuthToken token = getTicketRegistry().getTicket(codeParameter, OAuthToken.class);
+        final OAuthToken token = this.ticketRegistry.getTicket(codeParameter, OAuthToken.class);
         // token should not be expired
         if (token == null || token.isExpired()) {
             LOGGER.error("Code or refresh token expired: [{}]", token);
             if (token != null) {
-                getTicketRegistry().deleteTicket(token.getId());
+                this.ticketRegistry.deleteTicket(token.getId());
             }
             return null;
         }
         if (token instanceof OAuthCode && !(token instanceof RefreshToken)) {
-            getTicketRegistry().deleteTicket(token.getId());
+            this.ticketRegistry.deleteTicket(token.getId());
         }
 
         return token;
@@ -260,27 +261,27 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuthWrapperContro
         if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE)) {
             final String clientId = uProfile.getId();
             final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-            final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(getServicesManager(), clientId);
+            final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             return uProfile instanceof OAuthClientProfile
-                    && getValidator().checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                    && getValidator().checkParameterExist(request, OAuthConstants.CODE)
-                    && getValidator().checkCallbackValid(registeredService, redirectUri);
+                    && this.validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+                    && this.validator.checkParameterExist(request, OAuthConstants.CODE)
+                    && this.validator.checkCallbackValid(registeredService, redirectUri);
 
         } else if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
             // refresh token grant type
             return uProfile instanceof OAuthClientProfile
-                    && getValidator().checkParameterExist(request, OAuthConstants.REFRESH_TOKEN);
+                    && this.validator.checkParameterExist(request, OAuthConstants.REFRESH_TOKEN);
 
         } else {
 
             final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-            final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(getServicesManager(), clientId);
+            final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             // resource owner password grant type
             return uProfile instanceof OAuthUserProfile
-                    && getValidator().checkParameterExist(request, OAuthConstants.CLIENT_ID)
-                    && getValidator().checkServiceValid(registeredService);
+                    && this.validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                    && this.validator.checkServiceValid(registeredService);
         }
     }
 
