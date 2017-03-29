@@ -71,7 +71,7 @@ import java.security.SecureRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.apereo.cas.support.oauth.OAuthConstants.*;
+import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 
 /**
  * This this {@link CasOAuthConfiguration}.

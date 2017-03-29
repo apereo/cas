@@ -6,7 +6,7 @@ package org.apereo.cas.support.oauth;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public interface OAuthConstants {
+public interface OAuth20Constants {
 
     /**
      * Authentication context reference values.

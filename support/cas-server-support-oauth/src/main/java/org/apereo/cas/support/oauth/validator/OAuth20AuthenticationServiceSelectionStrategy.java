@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -55,7 +55,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     private Optional<NameValuePair> resolveClientIdFromService(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
-            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuthConstants.CLIENT_ID)).findFirst();
+            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID)).findFirst();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());
         }
@@ -65,7 +65,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     private Optional<NameValuePair> resolveRedirectUri(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
-            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuthConstants.REDIRECT_URI)).findFirst();
+            return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI)).findFirst();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage());
         }

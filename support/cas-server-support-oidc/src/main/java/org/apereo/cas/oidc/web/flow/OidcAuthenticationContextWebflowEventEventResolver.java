@@ -10,7 +10,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -60,11 +60,11 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
             return null;
         }
 
-        String acr = request.getParameter(OAuthConstants.ACR_VALUES);
+        String acr = request.getParameter(OAuth20Constants.ACR_VALUES);
         if (StringUtils.isBlank(acr)) {
             final URIBuilder builderContext = new URIBuilder(StringUtils.trimToEmpty(context.getFlowExecutionUrl()));
             final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                    .stream().filter(p -> p.getName().equals(OAuthConstants.ACR_VALUES))
+                    .stream().filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
                     .findFirst();
             if (parameter.isPresent()) {
                 acr = parameter.get().getValue();

@@ -6,7 +6,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -53,7 +53,7 @@ public class AccessTokenPasswordGrantRequestExtractor {
      * @return the access token request data holder
      */
     public AccessTokenRequestDataHolder extract() {
-        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+        final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
@@ -82,7 +82,7 @@ public class AccessTokenPasswordGrantRequestExtractor {
      * @return true/false
      */
     public static boolean supports(final HttpServletRequest context) {
-        final String grantType = context.getParameter(OAuthConstants.GRANT_TYPE);
+        final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
     }
 }

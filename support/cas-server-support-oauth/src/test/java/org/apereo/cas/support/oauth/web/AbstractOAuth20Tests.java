@@ -26,6 +26,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,6 +65,7 @@ import java.util.List;
                 CasOAuthConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreConfiguration.class,
+                CasCookieConfiguration.class,
                 CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,

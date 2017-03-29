@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.UrlResolver;
@@ -36,13 +36,13 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
         if (url.startsWith(callbackUrl)) {
             final URIBuilder builder = new URIBuilder(url);
 
-            Optional<URIBuilder.BasicNameValuePair> parameter = getQueryParameter(context, OAuthConstants.CLIENT_ID);
+            Optional<URIBuilder.BasicNameValuePair> parameter = getQueryParameter(context, OAuth20Constants.CLIENT_ID);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
 
-            parameter = getQueryParameter(context, OAuthConstants.REDIRECT_URI);
+            parameter = getQueryParameter(context, OAuth20Constants.REDIRECT_URI);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
 
-            parameter = getQueryParameter(context, OAuthConstants.ACR_VALUES);
+            parameter = getQueryParameter(context, OAuth20Constants.ACR_VALUES);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
 
             final String callbackResolved = builder.build().toString();
