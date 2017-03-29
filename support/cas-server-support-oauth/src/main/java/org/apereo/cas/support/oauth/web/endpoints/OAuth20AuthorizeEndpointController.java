@@ -54,7 +54,7 @@ import java.util.stream.Stream;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperController {
+public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeEndpointController.class);
 
     /**
@@ -123,7 +123,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
      * @return the registered service by client id
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
-        return OAuth20Utils.getRegisteredOAuthService(getServicesManager(), clientId);
+        return OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
     }
 
     private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
@@ -170,7 +170,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
         final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
 
         final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-                ticketGrantingTicketCookieGenerator, getTicketRegistry(), context.getRequest());
+                ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
         final String callbackUrl;
         if (OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.CODE)) {
             callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri, ticketGrantingTicket);
@@ -278,7 +278,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
 
         final OAuthCode code = this.oAuthCodeFactory.create(service, authentication, ticketGrantingTicket);
         LOGGER.debug("Generated OAuth code: [{}]", code);
-        getTicketRegistry().addTicket(code);
+        this.ticketRegistry.addTicket(code);
 
         final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
         final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
@@ -303,9 +303,9 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
      */
     private boolean verifyAuthorizeRequest(final HttpServletRequest request) {
 
-        final boolean checkParameterExist = getValidator().checkParameterExist(request, OAuthConstants.CLIENT_ID)
-                && getValidator().checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                && getValidator().checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
+        final boolean checkParameterExist = this.validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                && this.validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+                && this.validator.checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
 
         final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
@@ -314,8 +314,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
 
         return checkParameterExist
                 && checkResponseTypes(responseType, OAuth20ResponseTypes.values())
-                && getValidator().checkServiceValid(registeredService)
-                && getValidator().checkCallbackValid(registeredService, redirectUri);
+                && this.validator.checkServiceValid(registeredService)
+                && this.validator.checkCallbackValid(registeredService, redirectUri);
     }
 
     /**

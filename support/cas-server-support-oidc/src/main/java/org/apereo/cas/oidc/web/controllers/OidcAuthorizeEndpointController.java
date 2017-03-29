@@ -102,7 +102,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
 
         LOGGER.debug("Handling callback for response type [{}]", responseType);
         final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-                ticketGrantingTicketCookieGenerator, getTicketRegistry(), context.getRequest());
+                ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
         return buildCallbackUrlForImplicitTokenResponseType(context, authentication,
                 service, redirectUri, clientId, OAuth20ResponseTypes.IDTOKEN_TOKEN, ticketGrantingTicket);
     }
@@ -118,7 +118,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
             final AccessToken accessToken = generateAccessToken(service, authentication, context, ticketGrantingTicket);
             LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
             final OidcRegisteredService oidcService = (OidcRegisteredService)
-                    OAuth20Utils.getRegisteredOAuthService(this.getServicesManager(), clientId);
+                    OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             final long timeout = casProperties.getTicket().getTgt().getTimeToKillInSeconds();
             final String idToken = this.idTokenGenerator.generate(context.getRequest(),

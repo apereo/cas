@@ -36,18 +36,17 @@ import java.util.ArrayList;
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.
- * It finds the right sub controller to call according to the url.
  *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 @Controller
-public abstract class BaseOAuthWrapperController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
+public abstract class BaseOAuth20Controller {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseOAuth20Controller.class);
 
     /**
      * Collection of CAS settings.
-     **/
+     */
     protected final CasConfigurationProperties casProperties;
 
     /**
@@ -65,22 +64,50 @@ public abstract class BaseOAuthWrapperController {
      */
     protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    private final TicketRegistry ticketRegistry;
-    private final OAuth20Validator validator;
-    private final AccessTokenFactory accessTokenFactory;
-    private final PrincipalFactory principalFactory;
-    private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+    /**
+     * The Ticket registry.
+     */
+    protected final TicketRegistry ticketRegistry;
+    /**
+     * The Validator.
+     */
+    protected final OAuth20Validator validator;
+    /**
+     * The Access token factory.
+     */
+    protected final AccessTokenFactory accessTokenFactory;
+    /**
+     * The Principal factory.
+     */
+    protected final PrincipalFactory principalFactory;
+    /**
+     * The Web application service service factory.
+     */
+    protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
 
-    public BaseOAuthWrapperController(final ServicesManager servicesManager,
-                                      final TicketRegistry ticketRegistry,
-                                      final OAuth20Validator validator,
-                                      final AccessTokenFactory accessTokenFactory,
-                                      final PrincipalFactory principalFactory,
-                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                      final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                      final CasConfigurationProperties casProperties,
-                                      final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+    /**
+     * Instantiates a new Base o auth 20 controller.
+     *
+     * @param servicesManager                     the services manager
+     * @param ticketRegistry                      the ticket registry
+     * @param validator                           the validator
+     * @param accessTokenFactory                  the access token factory
+     * @param principalFactory                    the principal factory
+     * @param webApplicationServiceServiceFactory the web application service service factory
+     * @param scopeToAttributesFilter             the scope to attributes filter
+     * @param casProperties                       the cas properties
+     * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
+     */
+    public BaseOAuth20Controller(final ServicesManager servicesManager,
+                                 final TicketRegistry ticketRegistry,
+                                 final OAuth20Validator validator,
+                                 final AccessTokenFactory accessTokenFactory,
+                                 final PrincipalFactory principalFactory,
+                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                 final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
+                                 final CasConfigurationProperties casProperties,
+                                 final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.servicesManager = servicesManager;
         this.ticketRegistry = ticketRegistry;
         this.validator = validator;
@@ -175,17 +202,5 @@ public abstract class BaseOAuthWrapperController {
             });
         }
         return bldr.build();
-    }
-
-    public ServicesManager getServicesManager() {
-        return servicesManager;
-    }
-
-    public TicketRegistry getTicketRegistry() {
-        return ticketRegistry;
-    }
-
-    public OAuth20Validator getValidator() {
-        return validator;
     }
 }

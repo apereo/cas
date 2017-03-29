@@ -286,7 +286,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
         final OAuthCode code = expiringOAuthCodeFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
-        oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
+        this.ticketRegistry.addTicket(code);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -388,7 +388,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
-        assertNull(oAuth20AccessTokenController.getTicketRegistry().getTicket(code.getId()));
+        assertNull(this.ticketRegistry.getTicket(code.getId()));
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
@@ -411,7 +411,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         }
 
-        final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
+        final AccessToken accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
         final int timeLeft = getTimeLeft(body, refreshToken, json);
@@ -560,7 +560,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         }
 
-        final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
+        final AccessToken accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(GOOD_USERNAME, accessToken.getAuthentication().getPrincipal().getId());
 
         final int timeLeft = getTimeLeft(body, refreshToken, json);
@@ -576,7 +576,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final Service service = factory.createService(registeredService.getServiceId());
         final DefaultRefreshTokenFactory expiringRefreshTokenFactory = new DefaultRefreshTokenFactory(new AlwaysExpiresExpirationPolicy());
         final RefreshToken refreshToken = expiringRefreshTokenFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
-        oAuth20AccessTokenController.getTicketRegistry().addTicket(refreshToken);
+        this.ticketRegistry.addTicket(refreshToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
@@ -687,7 +687,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         }
 
-        final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
+        final AccessToken accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
         final int timeLeft = getTimeLeft(body, false, json);
@@ -714,7 +714,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
         final OAuthCode code = oAuthCodeFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
-        oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
+        this.ticketRegistry.addTicket(code);
         return code;
     }
 
@@ -723,7 +723,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
         final RefreshToken refreshToken = oAuthRefreshTokenFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
-        oAuth20AccessTokenController.getTicketRegistry().addTicket(refreshToken);
+        this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
     }
 
