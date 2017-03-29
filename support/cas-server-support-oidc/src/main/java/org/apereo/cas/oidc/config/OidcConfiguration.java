@@ -46,6 +46,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -114,6 +115,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
             new FirstMultifactorAuthenticationProviderSelector();
 
+    @Autowired
+    @Qualifier("oauthCasAuthenticationBuilder")
+    private OAuth20CasAuthenticationBuilder authenticationBuilder;
+    
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
@@ -266,7 +271,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory,
                 oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
-                ticketGrantingTicketCookieGenerator);
+                ticketGrantingTicketCookieGenerator, authenticationBuilder);
     }
 
     @Bean
@@ -324,7 +329,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory,
                 consentApprovalViewResolver(), oidcIdTokenGenerator(),
-                profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator);
+                profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator,
+                authenticationBuilder);
     }
 
     @RefreshScope

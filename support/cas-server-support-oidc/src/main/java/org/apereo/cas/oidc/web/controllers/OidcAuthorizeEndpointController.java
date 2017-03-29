@@ -15,6 +15,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -63,10 +64,12 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                            final OidcIdTokenGeneratorService idTokenGenerator,
                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                            final CasConfigurationProperties casProperties,
-                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                           final OAuth20CasAuthenticationBuilder authenticationBuilder) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
-                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
+                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator,
+                authenticationBuilder);
         this.idTokenGenerator = idTokenGenerator;
     }
 

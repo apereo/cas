@@ -1,30 +1,30 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenAuthorizationCodeGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenPasswordGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenRefreshTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -63,7 +63,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
     private final RefreshTokenFactory refreshTokenFactory;
     private final AccessTokenResponseGenerator accessTokenResponseGenerator;
-
+    private final OAuth20CasAuthenticationBuilder authenticationBuilder;
 
     public OAuth20AccessTokenEndpointController(final ServicesManager servicesManager,
                                                 final TicketRegistry ticketRegistry,
@@ -75,12 +75,14 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                                 final AccessTokenResponseGenerator accessTokenResponseGenerator,
                                                 final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                 final CasConfigurationProperties casProperties,
-                                                final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+                                                final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                                final OAuth20CasAuthenticationBuilder authenticationBuilder) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
                 principalFactory, webApplicationServiceServiceFactory,
                 scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
         this.refreshTokenFactory = refreshTokenFactory;
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
+        this.authenticationBuilder = authenticationBuilder;
     }
 
     /**
@@ -99,83 +101,19 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                 LOGGER.error("Access token request verification fails");
                 return OAuth20Utils.writeTextError(response, OAuthConstants.INVALID_REQUEST);
             }
-
-            final Service service;
-            final Authentication authentication;
-            OAuthToken token = null;
-            final boolean generateRefreshToken;
-            final OAuthRegisteredService registeredService;
-
             final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
-            final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
-            final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
-            LOGGER.debug("OAuth grant type is [{}]", grantType);
-            if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE)
-                    || OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
-                final Optional<UserProfile> profile = manager.get(true);
-                final String clientId = profile.get().getId();
-                registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
-                LOGGER.debug("Located OAuth registered service [{}]", registeredService);
+            final AccessTokenRequestDataHolder responseHolder = examineAndExtractAccessTokenRequest(request, response);
+            LOGGER.debug("Creating access token for [{}]", responseHolder);
 
-                // we generate a refresh token if requested by the service but not from a refresh token
-                generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken()
-                        && OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE);
-
-                final String parameterName;
-                if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE)) {
-                    parameterName = OAuthConstants.CODE;
-                } else {
-                    parameterName = OAuthConstants.REFRESH_TOKEN;
-                }
-
-                LOGGER.debug("Locating OAuth token via request parameter [{}]", parameterName);
-                token = getToken(request, parameterName);
-
-                if (token == null) {
-                    LOGGER.error("No token found for authorization_code or refresh_token grant types");
-                    return OAuth20Utils.writeTextError(response, OAuthConstants.INVALID_GRANT);
-                }
-                LOGGER.debug("Found OAuth token [{}]", token);
-                service = token.getService();
-                authentication = token.getAuthentication();
-
-            } else {
-                // resource owner password grant type
-                final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-                LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
-
-                registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
-                LOGGER.debug("Located OAuth registered service [{}]", registeredService);
-
-                generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
-
-                try {
-                    final Optional<OAuthUserProfile> profile = manager.get(true);
-                    if (!profile.isPresent()) {
-                        throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
-                    }
-                    LOGGER.debug("Creating matching service request based on [{}]", registeredService);
-                    service = createService(registeredService, context);
-
-                    LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-                    authentication = createAuthentication(profile.get(), registeredService, context, service);
-
-                    RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
-                } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                    return OAuth20Utils.writeTextError(response, OAuthConstants.INVALID_GRANT);
-                }
-            }
-            LOGGER.debug("Creating access token for [{}]", service);
-
-            final TicketGrantingTicket tgt = token != null ? token.getGrantingTicket() : null;
-            final AccessToken accessToken = generateAccessToken(service, authentication, context, tgt);
+            final AccessToken accessToken = generateAccessToken(responseHolder.getService(),
+                    responseHolder.getAuthentication(), context, responseHolder.getTicketGrantingTicket());
 
             RefreshToken refreshToken = null;
-            if (generateRefreshToken) {
-                LOGGER.debug("Creating refresh token for [{}]", service);
-                refreshToken = this.refreshTokenFactory.create(service, authentication, tgt);
-                addTicketToRegistry(refreshToken, tgt);
+            if (responseHolder.isGenerateRefreshToken()) {
+                LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
+                refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
+                        responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket());
+                addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
             }
             LOGGER.debug("Access token: [{}] / Timeout: [{}] (Seconds) / Refresh Token: [{}]", accessToken,
                     casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
@@ -186,11 +124,14 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                     .findFirst().orElse(OAuth20ResponseTypes.CODE);
             LOGGER.debug("OAuth response type is [{}]", type);
 
-            this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
-                    accessToken, refreshToken, casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
+            this.accessTokenResponseGenerator.generate(request, response,
+                    responseHolder.getRegisteredService(),
+                    responseHolder.getService(),
+                    accessToken, refreshToken,
+                    casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
 
             LOGGER.debug("Adding OAuth access token [{}] to the registry", accessToken);
-            addTicketToRegistry(accessToken, tgt);
+            addTicketToRegistry(accessToken, responseHolder.getTicketGrantingTicket());
 
             response.setStatus(HttpServletResponse.SC_OK);
             return null;
@@ -200,36 +141,29 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         }
     }
 
+    private AccessTokenRequestDataHolder examineAndExtractAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        AccessTokenRequestDataHolder responseHolder = null;
+        if (AccessTokenAuthorizationCodeGrantRequestExtractor.supports(request)) {
+            final AccessTokenAuthorizationCodeGrantRequestExtractor ext =
+                    new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager, ticketRegistry, request, response);
+            responseHolder = ext.extract();
+        } else if (AccessTokenRefreshTokenGrantRequestExtractor.supports(request)) {
+            final AccessTokenRefreshTokenGrantRequestExtractor ext =
+                    new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager, ticketRegistry, request, response);
+            responseHolder = ext.extract();
+        } else if (AccessTokenPasswordGrantRequestExtractor.supports(request)) {
+            final AccessTokenPasswordGrantRequestExtractor ext =
+                    new AccessTokenPasswordGrantRequestExtractor(servicesManager, ticketRegistry, request, response, authenticationBuilder);
+            responseHolder = ext.extract();
+        }
+        return responseHolder;
+    }
+
     private void addTicketToRegistry(final OAuthToken ticket, final TicketGrantingTicket ticketGrantingTicket) {
         this.ticketRegistry.addTicket(ticket);
         if (ticketGrantingTicket != null) {
             this.ticketRegistry.updateTicket(ticketGrantingTicket);
         }
-    }
-
-    /**
-     * Return the OAuth token (a code or a refresh token).
-     *
-     * @param request       the HTTP request
-     * @param parameterName the parameter name
-     * @return the OAuth token
-     */
-    private OAuthToken getToken(final HttpServletRequest request, final String parameterName) {
-        final String codeParameter = request.getParameter(parameterName);
-        final OAuthToken token = this.ticketRegistry.getTicket(codeParameter, OAuthToken.class);
-        // token should not be expired
-        if (token == null || token.isExpired()) {
-            LOGGER.error("Code or refresh token expired: [{}]", token);
-            if (token != null) {
-                this.ticketRegistry.deleteTicket(token.getId());
-            }
-            return null;
-        }
-        if (token instanceof OAuthCode && !(token instanceof RefreshToken)) {
-            this.ticketRegistry.deleteTicket(token.getId());
-        }
-
-        return token;
     }
 
     /**
