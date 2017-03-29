@@ -31,7 +31,7 @@ may be removed.
 
 ## Registration
 
-By default, an account registry implementation is included that collects user device registration and saves them into memory.
+By default, an account registry implementation is included that collects user device registrations and saves them into memory.
 Issued tokens are also captured into a self-cleaning cache to prevent token reuse for a configurable period of time.
 This option should only be used for demo and testing purposes. Production deployments of this feature will require a separate
 implementation of the registry that is capable to register accounts into persistent storage.

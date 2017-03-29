@@ -220,6 +220,16 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return getAssertionConsumerServices().get(0);
     }
 
+    /**
+     * Gets assertion consumer service.
+     *
+     * @param binding the binding
+     * @return the assertion consumer service
+     */
+    public AssertionConsumerService getAssertionConsumerService(final String binding) {
+        return getAssertionConsumerServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
+    }
+
     public MetadataResolver getMetadataResolver() {
         return this.metadataResolver;
     }
