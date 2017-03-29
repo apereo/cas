@@ -121,7 +121,7 @@ The generated id may be based off of an existing principal attribute. If left un
     "persistentIdGenerator" : {
       "@class" : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
       "salt" : "aGVsbG93b3JsZA==",
-      "attribute": "",
+      "attribute": ""
     }
   }
 }
