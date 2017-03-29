@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -17,7 +16,10 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.HttpConstants;
+import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This controller returns a profile for the authenticated user
@@ -69,6 +72,39 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
     @GetMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        final String accessToken = getAccessTokenFromRequest(request);
+        if (StringUtils.isBlank(accessToken)) {
+            LOGGER.error("Missing [{}]", OAuthConstants.ACCESS_TOKEN);
+            return buildUnauthorizedResponseEntity(OAuthConstants.MISSING_ACCESS_TOKEN);
+        }
+
+        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+        final Optional<UserProfile> profile = manager.get(true);
+        if (!manager.isAuthenticated() || !profile.isPresent()) {
+            LOGGER.error("Request is no longer authenticated. Authenticated user profile cannot be determined");
+            return buildUnauthorizedResponseEntity(OAuthConstants.INVALID_REQUEST);
+        }
+
+        final AccessToken accessTokenTicket = getTicketRegistry().getTicket(accessToken, AccessToken.class);
+        if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
+            LOGGER.error("Expired access token: [{}]", OAuthConstants.ACCESS_TOKEN);
+            return buildUnauthorizedResponseEntity(OAuthConstants.EXPIRED_ACCESS_TOKEN);
+        }
+
+        final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
+        final String value = OAuth20Utils.jsonify(map);
+        LOGGER.debug("Final user profile is [{}]", value);
+        return new ResponseEntity<>(value, HttpStatus.OK);
+    }
+
+    /**
+     * Gets access token from request.
+     *
+     * @param request the request
+     * @return the access token from request
+     */
+    protected String getAccessTokenFromRequest(final HttpServletRequest request) {
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
@@ -78,41 +114,18 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
             }
         }
         LOGGER.debug("[{}]: [{}]", OAuthConstants.ACCESS_TOKEN, accessToken);
-
-        if (StringUtils.isBlank(accessToken)) {
-            LOGGER.error("Missing [{}]", OAuthConstants.ACCESS_TOKEN);
-            final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
-            map.add(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
-            final String value = OAuth20Utils.jsonify(map);
-            return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
-        }
-
-        final AccessToken accessTokenTicket = getTicketRegistry().getTicket(accessToken, AccessToken.class);
-        if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-            LOGGER.error("Expired access token: [{}]", OAuthConstants.ACCESS_TOKEN);
-            final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
-            map.add(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
-            final String value = OAuth20Utils.jsonify(map);
-            return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
-        }
-
-        final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket.getAuthentication(),
-                accessTokenTicket.getAuthentication().getPrincipal());
-        final String value = OAuth20Utils.jsonify(map);
-        LOGGER.debug("Final user profile is [{}]", value);
-        return new ResponseEntity<>(value, HttpStatus.OK);
+        return accessToken;
     }
 
     /**
      * Write out profile response.
      *
-     * @param authentication the authentication
-     * @param principal      the principal
+     * @param accessToken the access token
      * @return the linked multi value map
      * @throws IOException the io exception
      */
-    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication,
-                                                          final Principal principal) throws IOException {
+    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) throws IOException {
+        final Principal principal = accessToken.getAuthentication().getPrincipal();
         LOGGER.debug("Preparing user profile response based on CAS principal [{}]", principal);
         final Map<String, Object> map = new HashMap<>();
         map.put(ID, principal.getId());
@@ -120,4 +133,16 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
         return map;
     }
 
+    /**
+     * Build unauthorized response entity.
+     *
+     * @param code the code
+     * @return the response entity
+     */
+    private ResponseEntity buildUnauthorizedResponseEntity(final String code) {
+        final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
+        map.add(OAuthConstants.ERROR, code);
+        final String value = OAuth20Utils.jsonify(map);
+        return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
+    }
 }
