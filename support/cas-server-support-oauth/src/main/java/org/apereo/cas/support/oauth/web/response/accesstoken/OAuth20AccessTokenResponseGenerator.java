@@ -7,7 +7,7 @@ import com.google.common.base.Throwables;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -98,12 +98,12 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final RefreshToken refreshTokenId,
                                         final long timeout) {
         final StringBuilder builder = new StringBuilder(
-                String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenId.getId(),
-                        OAuthConstants.EXPIRES_IN, timeout));
+                String.format("%s=%s&%s=%s", OAuth20Constants.ACCESS_TOKEN, accessTokenId.getId(),
+                        OAuth20Constants.EXPIRES_IN, timeout));
 
         if (refreshTokenId != null) {
             builder.append('&')
-                    .append(OAuthConstants.REFRESH_TOKEN)
+                    .append(OAuth20Constants.REFRESH_TOKEN)
                     .append('=')
                     .append(refreshTokenId.getId());
         }
@@ -133,11 +133,11 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final Service service,
                                         final OAuthRegisteredService registeredService,
                                         final OAuth20ResponseTypes responseType) throws Exception {
-        jsonGenerator.writeStringField(OAuthConstants.ACCESS_TOKEN, accessTokenId.getId());
-        jsonGenerator.writeStringField(OAuthConstants.TOKEN_TYPE, OAuthConstants.TOKEN_TYPE_BEARER);
-        jsonGenerator.writeNumberField(OAuthConstants.EXPIRES_IN, timeout);
+        jsonGenerator.writeStringField(OAuth20Constants.ACCESS_TOKEN, accessTokenId.getId());
+        jsonGenerator.writeStringField(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
+        jsonGenerator.writeNumberField(OAuth20Constants.EXPIRES_IN, timeout);
         if (refreshTokenId != null) {
-            jsonGenerator.writeStringField(OAuthConstants.REFRESH_TOKEN, refreshTokenId.getId());
+            jsonGenerator.writeStringField(OAuth20Constants.REFRESH_TOKEN, refreshTokenId.getId());
         }
     }
 }

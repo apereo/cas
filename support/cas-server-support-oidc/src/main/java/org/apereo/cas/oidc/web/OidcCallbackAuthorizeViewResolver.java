@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -35,7 +35,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                 return new ModelAndView(url);
             }
             final Map<String, String> model = new HashMap<>();
-            model.put(OAuthConstants.ERROR, OidcConstants.LOGIN_REQUIRED);
+            model.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
             return new ModelAndView(new MappingJackson2JsonView(), model);
         }
         return new ModelAndView(new RedirectView(url));

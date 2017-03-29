@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +78,7 @@ public class OAuth20Validator {
         final String registeredServiceId = registeredService.getServiceId();
         LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
-            LOGGER.error("Unsupported [{}]: [{}] for registeredServiceId: [{}]", OAuthConstants.REDIRECT_URI, redirectUri, registeredServiceId);
+            LOGGER.error("Unsupported [{}]: [{}] for registeredServiceId: [{}]", OAuth20Constants.REDIRECT_URI, redirectUri, registeredServiceId);
             return false;
         }
         return true;
