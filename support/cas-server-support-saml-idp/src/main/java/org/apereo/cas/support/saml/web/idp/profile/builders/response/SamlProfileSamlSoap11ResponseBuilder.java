@@ -10,14 +10,18 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSi
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPSOAP11Encoder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.ecp.Response;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2
  */
 public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Envelope> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSamlSoap11ResponseBuilder.class);
     private static final long serialVersionUID = -1875903354216171261L;
 
     private final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder;
@@ -54,20 +59,28 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                      final HttpServletRequest request,
                                      final HttpServletResponse response) throws SamlException {
+
+        LOGGER.debug("Locating assertion consumer service url for binding [{}]", SAMLConstants.SAML2_PAOS_BINDING_URI);
+        final AssertionConsumerService acs = adaptor.getAssertionConsumerService(SAMLConstants.SAML2_PAOS_BINDING_URI);
+        if (acs == null) {
+            LOGGER.warn("Could not locate the assertion consumer service url for binding [{}]", SAMLConstants.SAML2_PAOS_BINDING_URI);
+            throw new IllegalArgumentException("Failed to locate the assertion consumer service url for ECP");
+        }
+
+        LOGGER.debug("Located assertion consumer service url [{}]", acs);
         final Response ecpResponse = newEcpResponse(adaptor.getAssertionConsumerService().getLocation());
         final Header header = newSoapObject(Header.class);
         header.getUnknownXMLObjects().add(ecpResponse);
         final Body body = newSoapObject(Body.class);
         final org.opensaml.saml.saml2.core.Response saml2Response =
-                (org.opensaml.saml.saml2.core.Response)
-                        saml2ResponseBuilder.build(authnRequest, request, response,
-                                casAssertion, service, adaptor);
+                (org.opensaml.saml.saml2.core.Response) saml2ResponseBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
         body.getUnknownXMLObjects().add(saml2Response);
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-
         return envelope;
+
+
     }
 
     @Override
