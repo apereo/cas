@@ -2111,9 +2111,20 @@ To learn more about this topic, [please review this guide](Trusted-Authenticatio
 # cas.authn.trusted.name=
 ```
 
-## WS-Fed Authentication
+## WS-Fed Delegated Authentication
 
 To learn more about this topic, [please review this guide](../integration/ADFS-Integration.html).
+
+### Attribute Types
+
+In order to construct the final authenticated principal, CAS may be configured to use the following
+strategies when collecting principal attributes:
+
+| Type                 | Description
+|----------------------|------------------------------------------------------------------------------------------------
+| `CAS`                | Use attributes provided by the delegated WS-Fed instance.
+| `WSFED`              | Use attributes provided by CAS' own attribute resolution mechanics and repository.
+| `BOTH`               | Combine both the above options, where CAS attribute repositories take precedence over WS-Fed.
 
 ```properties
 # cas.authn.wsfed.identityProviderUrl=https://adfs.example.org/adfs/ls/
@@ -2472,6 +2483,19 @@ Control core SAML functionality within CAS.
 Allow CAS to become a SAML2 identity provider.
 To learn more about this topic, [please review this guide](Configuring-SAML2-Authentication.html).
 
+### Attributes Name Formats
+
+Name formats for an individual attribute can be mapped to a number of pre-defined formats, or a custom format of your own choosing.
+A given attribute that is to be encoded in the final SAML response may contain any of the following name formats:
+
+| Type                 | Description                            
+|----------------------|----------------------------------------------------------
+| `basic`              | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
+| `uri`                | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.
+| `unspecified`        | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
+| `urn:my:own:format`  | Map the attribute to `urn:my:own:format`.
+
+
 
 ```properties
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
@@ -2494,7 +2518,7 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.response.skewAllowance=0
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
-# cas.authn.samlIdp.response.attributeNameFormats=username->basic|uri|unspecified|custom-format-etc,...
+# cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 
 # cas.authn.samlIdp.algs.overrideSignatureCanonicalizationAlgorithm=
 # cas.authn.samlIdp.algs.overrideDataEncryptionAlgorithms=
@@ -2554,11 +2578,22 @@ To learn more about this topic, [please review this guide](../integration/Config
 ### Arc GIS
 
 ```properties
-# cas.samlSP.webAdvisor.metadata=/path/to/arc-metadata.xml
-# cas.samlSP.webAdvisor.name=ArcGIS
-# cas.samlSP.webAdvisor.description=ArcGISIntegration
-# cas.samlSP.dropbox.nameIdAttribute=arcNameId
-# cas.samlSP.webAdvisor.attributes=mail,givenName,arcNameId
+# cas.samlSP.arcGIS.metadata=/path/to/arc-metadata.xml
+# cas.samlSP.arcGIS.name=ArcGIS
+# cas.samlSP.arcGIS.description=ArcGIS Integration
+# cas.samlSP.arcGIS.nameIdAttribute=arcNameId
+# cas.samlSP.arcGIS.attributes=mail,givenName,arcNameId
+# cas.samlSP.arcGIS.nameIdFormat=unspecified
+```
+
+### Benefit Focus
+
+```properties
+# cas.samlSP.benefitFocus.metadata=/path/to/benefitFocus-metadata.xml
+# cas.samlSP.benefitFocus.name=Benefit Focus
+# cas.samlSP.benefitFocus.description=Benefit Focus Integration
+# cas.samlSP.benefitFocus.nameIdAttribute=benefitFocusUniqueId
+# cas.samlSP.benefitFocus.nameIdFormat=unspecified
 ```
 
 ### Office365
@@ -2566,7 +2601,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 ```properties
 # cas.samlSP.office365.metadata=/etc/cas/saml/azure.xml
 # cas.samlSP.office365.name=O365
-# cas.samlSP.office365.description=O365 Integration
+# cas.samlSP.office365.description=Office365 Integration
 # cas.samlSP.office365.nameIdAttribute=scopedImmutableID
 # cas.samlSP.office365.attributes=IDPEmail,ImmutableID
 # cas.samlSP.office365.signatureLocation=
