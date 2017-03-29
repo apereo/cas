@@ -9,7 +9,7 @@ import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
+import org.apereo.cas.support.oauth.web.endpoints.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;

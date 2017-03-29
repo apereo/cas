@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
