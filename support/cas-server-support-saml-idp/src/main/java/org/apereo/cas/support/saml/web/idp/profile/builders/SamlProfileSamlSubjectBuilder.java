@@ -51,8 +51,9 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
         final NameID nameID = this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor);
         final ZonedDateTime validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
         final Subject subject = newSubject(nameID.getFormat(), nameID.getValue(),
-                authnRequest.getAssertionConsumerServiceURL(), validFromDate,
-                validFromDate.plusSeconds(this.skewAllowance), authnRequest.getID());
+                authnRequest.getAssertionConsumerServiceURL(),
+                validFromDate.plusSeconds(this.skewAllowance),
+                authnRequest.getID());
         subject.setNameID(nameID);
         return subject;
     }
