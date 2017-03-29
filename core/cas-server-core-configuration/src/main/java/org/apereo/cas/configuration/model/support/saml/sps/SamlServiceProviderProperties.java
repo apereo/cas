@@ -30,6 +30,7 @@ public class SamlServiceProviderProperties {
     private WebAdvisor webAdvisor = new WebAdvisor();
     private OpenAthens openAthens = new OpenAthens();
     private ArcGIS arcGIS = new ArcGIS();
+    private BenefitFocus benefitFocus = new BenefitFocus();
 
     public ArcGIS getArcGIS() {
         return arcGIS;
@@ -175,6 +176,14 @@ public class SamlServiceProviderProperties {
         this.dropbox = dropbox;
     }
 
+    public BenefitFocus getBenefitFocus() {
+        return benefitFocus;
+    }
+
+    public void setBenefitFocus(final BenefitFocus benefitFocus) {
+        this.benefitFocus = benefitFocus;
+    }
+
     public static class Dropbox extends AbstractSamlSPProperties {
         public Dropbox() {
             setNameIdAttribute("mail");
@@ -260,7 +269,7 @@ public class SamlServiceProviderProperties {
             setAttributes(Arrays.asList("mail,givenName,arcNameId"));
         }
     }
-    
+
     public static class InCommon extends AbstractSamlSPProperties {
         public InCommon() {
             //setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
@@ -289,4 +298,11 @@ public class SamlServiceProviderProperties {
             setAttributes(Arrays.asList(PRINCIPAL_NAME, EMAIL));
         }
     }
+
+    public static class BenefitFocus extends AbstractSamlSPProperties {
+        public BenefitFocus() {
+            setNameIdAttribute("benefitFocusUniqueId");
+        }
+    }
+
 }
