@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth;
+package org.apereo.cas.support.oauth.web.response;
 
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
