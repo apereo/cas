@@ -95,7 +95,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                                           final Service service, final String redirectUri,
                                                           final String responseType,
                                                           final String clientId) {
-        if (!isResponseType(responseType, OAuth20ResponseTypes.IDTOKEN_TOKEN)) {
+        if (!OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.IDTOKEN_TOKEN)) {
             return super.buildCallbackUrlForTokenResponseType(context, authentication, service,
                     redirectUri, responseType, clientId);
         }

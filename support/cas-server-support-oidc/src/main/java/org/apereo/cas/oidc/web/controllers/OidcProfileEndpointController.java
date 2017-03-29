@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.web.controllers;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -12,6 +11,7 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileControllerController;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -54,12 +54,13 @@ public class OidcProfileEndpointController extends OAuth20UserProfileControllerC
     }
 
     @Override
-    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication, final Principal principal) throws IOException {
+    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) throws IOException {
+        final Principal principal = accessToken.getAuthentication().getPrincipal();
         final Map<String, Object> map = new HashMap<>(principal.getAttributes());
         if (!map.containsKey(OidcConstants.CLAIM_SUB)) {
             map.put(OidcConstants.CLAIM_SUB, principal.getId());
         }
-        map.put(OidcConstants.CLAIM_AUTH_TIME, authentication.getAuthenticationDate().toEpochSecond());
+        map.put(OidcConstants.CLAIM_AUTH_TIME, accessToken.getAuthentication().getAuthenticationDate().toEpochSecond());
         return map;
     }
 }
