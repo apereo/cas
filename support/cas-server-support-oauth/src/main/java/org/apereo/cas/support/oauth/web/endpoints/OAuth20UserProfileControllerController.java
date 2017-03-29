@@ -10,7 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -83,7 +83,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
             LOGGER.error("Missing [{}]", OAuthConstants.ACCESS_TOKEN);
             final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
             map.add(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
-            final String value = OAuthUtils.jsonify(map);
+            final String value = OAuth20Utils.jsonify(map);
             return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
         }
 
@@ -92,13 +92,13 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
             LOGGER.error("Expired access token: [{}]", OAuthConstants.ACCESS_TOKEN);
             final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
             map.add(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
-            final String value = OAuthUtils.jsonify(map);
+            final String value = OAuth20Utils.jsonify(map);
             return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
         }
 
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket.getAuthentication(),
                 accessTokenTicket.getAuthentication().getPrincipal());
-        final String value = OAuthUtils.jsonify(map);
+        final String value = OAuth20Utils.jsonify(map);
         LOGGER.debug("Final user profile is [{}]", value);
         return new ResponseEntity<>(value, HttpStatus.OK);
     }

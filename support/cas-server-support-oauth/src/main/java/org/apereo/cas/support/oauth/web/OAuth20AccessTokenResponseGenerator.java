@@ -10,7 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.slf4j.Logger;
@@ -107,7 +107,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                     .append('=')
                     .append(refreshTokenId.getId());
         }
-        OAuthUtils.writeText(response, builder.toString(), HttpStatus.SC_OK);
+        OAuth20Utils.writeText(response, builder.toString(), HttpStatus.SC_OK);
     }
 
     /**

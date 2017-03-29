@@ -17,7 +17,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -73,7 +73,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.AUTHORIZE_URL)
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Collection<String> scopes = OAuthUtils.getRequestedScopes(request);
+        final Collection<String> scopes = OAuth20Utils.getRequestedScopes(request);
         if (scopes.isEmpty() || !scopes.contains(OidcConstants.OPENID)) {
             LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect, which requires that scope [{}] MUST be specified, "
                             + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",
@@ -118,7 +118,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
             final AccessToken accessToken = generateAccessToken(service, authentication, context, ticketGrantingTicket);
             LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
             final OidcRegisteredService oidcService = (OidcRegisteredService)
-                    OAuthUtils.getRegisteredOAuthService(this.getServicesManager(), clientId);
+                    OAuth20Utils.getRegisteredOAuthService(this.getServicesManager(), clientId);
 
             final long timeout = casProperties.getTicket().getTgt().getTimeToKillInSeconds();
             final String idToken = this.idTokenGenerator.generate(context.getRequest(),

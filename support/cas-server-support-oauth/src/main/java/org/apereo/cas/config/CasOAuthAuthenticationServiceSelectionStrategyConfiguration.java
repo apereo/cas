@@ -10,7 +10,7 @@ import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutHandler;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.support.oauth.web.OAuth20LogoutHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -53,7 +53,7 @@ public class CasOAuthAuthenticationServiceSelectionStrategyConfiguration
     @RefreshScope
     public AuthenticationServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy() {
         return new OAuth20AuthenticationServiceSelectionStrategy(servicesManager,
-                webApplicationServiceFactory, OAuthUtils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+                webApplicationServiceFactory, OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
     }
 
     @Bean
