@@ -91,7 +91,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy());
         final AccessToken accessToken = expiringAccessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
                 new MockTicketGrantingTicket("casuser"));
-        oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
+        this.ticketRegistry.addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
@@ -114,7 +114,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final Authentication authentication = getAuthentication(principal);
         final AccessToken accessToken = accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
                 new MockTicketGrantingTicket("casuser"));
-        oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
+        this.ticketRegistry.addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
@@ -148,7 +148,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final Authentication authentication = getAuthentication(principal);
         final AccessToken accessToken = accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
                 new MockTicketGrantingTicket("casuser"));
-        oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
+        this.ticketRegistry.addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
         mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' ' + accessToken.getId());

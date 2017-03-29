@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth.logout;
 
 import org.apereo.cas.logout.LogoutHandler;
 import org.apereo.cas.services.ServicesManager;

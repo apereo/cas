@@ -12,7 +12,7 @@ import org.apereo.cas.logout.LogoutHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.support.oauth.web.OAuth20LogoutHandler;
+import org.apereo.cas.support.oauth.logout.OAuth20LogoutHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

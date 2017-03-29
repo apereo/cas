@@ -120,7 +120,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        oAuth20AuthorizeEndpointController.getServicesManager().save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
+        this.servicesManager.save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
 
         final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
@@ -141,7 +141,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
-        oAuth20AuthorizeEndpointController.getServicesManager().save(service);
+        this.servicesManager.save(service);
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -165,7 +165,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
-        oAuth20AuthorizeEndpointController.getServicesManager().save(service);
+        this.servicesManager.save(service);
 
         final CasProfile profile = new CasProfile();
         profile.setId(ID);
@@ -186,7 +186,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
 
         final String code = StringUtils.substringAfter(redirectUrl, "?code=");
-        final OAuthCode oAuthCode = (OAuthCode) oAuth20AuthorizeEndpointController.getTicketRegistry().getTicket(code);
+        final OAuthCode oAuthCode = (OAuthCode) this.ticketRegistry.getTicket(code);
         assertNotNull(oAuthCode);
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -210,7 +210,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
-        oAuth20AuthorizeEndpointController.getServicesManager().save(service);
+        this.servicesManager.save(service);
 
         final CasProfile profile = new CasProfile();
         profile.setId(ID);
@@ -231,7 +231,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
         final String code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
-        final AccessToken accessToken = (AccessToken) oAuth20AuthorizeEndpointController.getTicketRegistry().getTicket(code);
+        final AccessToken accessToken = (AccessToken) this.ticketRegistry.getTicket(code);
         assertNotNull(accessToken);
         final Principal principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -256,7 +256,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
-        oAuth20AuthorizeEndpointController.getServicesManager().save(service);
+        this.servicesManager.save(service);
 
         final CasProfile profile = new CasProfile();
         profile.setId(ID);
@@ -277,7 +277,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
 
         final String code = StringUtils.substringBefore(StringUtils.substringAfter(redirectUrl, "?code="), "&state=");
-        final OAuthCode oAuthCode = (OAuthCode) oAuth20AuthorizeEndpointController.getTicketRegistry().getTicket(code);
+        final OAuthCode oAuthCode = (OAuthCode) this.ticketRegistry.getTicket(code);
         assertNotNull(oAuthCode);
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -302,7 +302,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
-        oAuth20AuthorizeEndpointController.getServicesManager().save(service);
+        this.servicesManager.save(service);
 
         final CasProfile profile = new CasProfile();
         profile.setId(ID);
@@ -324,7 +324,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(redirectUrl.contains('&' + OAuthConstants.STATE + '=' + STATE));
 
         final String code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
-        final AccessToken accessToken = (AccessToken) oAuth20AuthorizeEndpointController.getTicketRegistry().getTicket(code);
+        final AccessToken accessToken = (AccessToken) this.ticketRegistry.getTicket(code);
         assertNotNull(accessToken);
         final Principal principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -349,7 +349,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(false);
-        oAuth20AuthorizeEndpointController.getServicesManager().save(service);
+        this.servicesManager.save(service);
 
         final CasProfile profile = new CasProfile();
         profile.setId(ID);
@@ -370,7 +370,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
 
         final String code = StringUtils.substringAfter(redirectUrl, "?code=");
-        final OAuthCode oAuthCode = (OAuthCode) oAuth20AuthorizeEndpointController.getTicketRegistry().getTicket(code);
+        final OAuthCode oAuthCode = (OAuthCode) this.ticketRegistry.getTicket(code);
         assertNotNull(oAuthCode);
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -395,7 +395,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(false);
-        oAuth20AuthorizeEndpointController.getServicesManager().save(service);
+        this.servicesManager.save(service);
 
         final CasProfile profile = new CasProfile();
         profile.setId(ID);
@@ -416,7 +416,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
 
         final String code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
-        final AccessToken accessToken = (AccessToken) oAuth20AuthorizeEndpointController.getTicketRegistry().getTicket(code);
+        final AccessToken accessToken = (AccessToken) this.ticketRegistry.getTicket(code);
         assertNotNull(accessToken);
         final Principal principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -441,7 +441,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(false);
-        oAuth20AuthorizeEndpointController.getServicesManager().save(service);
+        this.servicesManager.save(service);
 
         final CasProfile profile = new CasProfile();
         profile.setId(ID);
@@ -472,8 +472,8 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     }
 
     private void clearAllServices() {
-        final Collection<RegisteredService> col = oAuth20AuthorizeEndpointController.getServicesManager().getAllServices();
+        final Collection<RegisteredService> col = this.servicesManager.getAllServices();
 
-        col.forEach(r -> oAuth20AuthorizeEndpointController.getServicesManager().delete(r.getId()));
+        col.forEach(r -> this.servicesManager.delete(r.getId()));
     }
 }
