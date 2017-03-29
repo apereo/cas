@@ -1,10 +1,9 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +26,8 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     }
 
     @Override
-    protected OAuthToken getOAuthToken(final HttpServletRequest request) {
-        return getOAuthTokenFromRequest(request, OAuthConstants.REFRESH_TOKEN);
+    protected String getOAuthParameterName() {
+        return OAuth20Constants.REFRESH_TOKEN;
     }
 
     /**
@@ -38,7 +37,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
      * @return true/false
      */
     public static boolean supports(final HttpServletRequest context) {
-        final String grantType = context.getParameter(OAuthConstants.GRANT_TYPE);
+        final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN);
     }
 }

@@ -10,7 +10,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
+import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 
 /**
  * This class has some usefull methods to output data in plain text,
@@ -55,7 +55,7 @@ public final class OAuth20Utils {
      * @return a null view
      */
     public static ModelAndView writeTextError(final HttpServletResponse response, final String error) {
-        return OAuth20Utils.writeText(response, OAuthConstants.ERROR + '=' + error, HttpStatus.SC_BAD_REQUEST);
+        return OAuth20Utils.writeText(response, OAuth20Constants.ERROR + '=' + error, HttpStatus.SC_BAD_REQUEST);
     }
 
     /**
@@ -140,11 +140,11 @@ public final class OAuth20Utils {
      * @return the requested scopes
      */
     public static Collection<String> getRequestedScopes(final HttpServletRequest context) {
-        final Map<String, Object> map = getRequestParameters(Arrays.asList(OAuthConstants.SCOPE), context);
+        final Map<String, Object> map = getRequestParameters(Arrays.asList(OAuth20Constants.SCOPE), context);
         if (map == null || map.isEmpty()) {
             return Collections.emptyList();
         }
-        return (Collection<String>) map.get(OAuthConstants.SCOPE);
+        return (Collection<String>) map.get(OAuth20Constants.SCOPE);
     }
 
     /**
@@ -165,7 +165,7 @@ public final class OAuth20Utils {
     public static ModelAndView produceErrorView(final Exception e) {
         final Map model = new HashMap<>();
         model.put("rootCauseException", e);
-        return new ModelAndView(OAuthConstants.ERROR_VIEW, model);
+        return new ModelAndView(OAuth20Constants.ERROR_VIEW, model);
     }
 
     /**
@@ -175,7 +175,7 @@ public final class OAuth20Utils {
      * @return the string
      */
     public static String casOAuthCallbackUrl(final String serverPrefixUrl) {
-        return serverPrefixUrl.concat(BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        return serverPrefixUrl.concat(BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
     }
     
     /**

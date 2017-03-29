@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,58 +89,83 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      *
      * @param request  the request
      * @param response the response
-     * @return the model and view
      * @throws Exception the exception
      */
-    @PostMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL)
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL)
+    public void handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             if (!verifyAccessTokenRequest(request, response)) {
                 LOGGER.error("Access token request verification fails");
-                return OAuth20Utils.writeTextError(response, OAuthConstants.INVALID_REQUEST);
+                OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_REQUEST);
+                return;
             }
-            final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
-            final AccessTokenRequestDataHolder responseHolder = examineAndExtractAccessTokenRequest(request, response);
-            LOGGER.debug("Creating access token for [{}]", responseHolder);
 
+            final AccessTokenRequestDataHolder responseHolder;
+            try {
+                responseHolder = examineAndExtractAccessTokenGrantRequest(request, response);
+                LOGGER.debug("Creating access token for [{}]", responseHolder);
+            } catch (final Exception e) {
+                LOGGER.error("Access token request verification fails", e);
+                OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_GRANT);
+                return;
+            }
+
+            final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
             final AccessToken accessToken = generateAccessToken(responseHolder.getService(),
                     responseHolder.getAuthentication(), context, responseHolder.getTicketGrantingTicket());
-
             RefreshToken refreshToken = null;
             if (responseHolder.isGenerateRefreshToken()) {
-                LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
-                refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
-                        responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket());
-                addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
+                refreshToken = generateRefreshToken(responseHolder);
             }
-            LOGGER.debug("Access token: [{}] / Timeout: [{}] (Seconds) / Refresh Token: [{}]", accessToken,
-                    casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
+            LOGGER.debug("Access token: [{}] / Refresh Token: [{}]", accessToken, refreshToken);
 
-            final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
-            final OAuth20ResponseTypes type = Arrays.stream(OAuth20ResponseTypes.values())
-                    .filter(t -> t.getType().equalsIgnoreCase(responseType))
-                    .findFirst().orElse(OAuth20ResponseTypes.CODE);
-            LOGGER.debug("OAuth response type is [{}]", type);
-
-            this.accessTokenResponseGenerator.generate(request, response,
-                    responseHolder.getRegisteredService(),
-                    responseHolder.getService(),
-                    accessToken, refreshToken,
-                    casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
+            generateAccessTokenResponse(request, response, responseHolder, context, accessToken, refreshToken);
 
             LOGGER.debug("Adding OAuth access token [{}] to the registry", accessToken);
             addTicketToRegistry(accessToken, responseHolder.getTicketGrantingTicket());
-
             response.setStatus(HttpServletResponse.SC_OK);
-            return null;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
     }
 
-    private AccessTokenRequestDataHolder examineAndExtractAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    private RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
+        LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
+        final RefreshToken refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
+                responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket());
+        LOGGER.debug("Adding OAuth refresh token [{}] to the registry", refreshToken);
+        addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
+        return refreshToken;
+    }
+
+    private void generateAccessTokenResponse(final HttpServletRequest request, final HttpServletResponse response,
+                                             final AccessTokenRequestDataHolder responseHolder,
+                                             final J2EContext context, final AccessToken accessToken,
+                                             final RefreshToken refreshToken) {
+        LOGGER.debug("Generating access token response for [{}]", accessToken);
+
+        final OAuth20ResponseTypes type = getOAuth20ResponseType(context);
+        LOGGER.debug("Located response type as [{}]", type);
+
+        this.accessTokenResponseGenerator.generate(request, response,
+                responseHolder.getRegisteredService(),
+                responseHolder.getService(),
+                accessToken, refreshToken,
+                casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
+    }
+
+    private OAuth20ResponseTypes getOAuth20ResponseType(final J2EContext context) {
+        final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        final OAuth20ResponseTypes type = Arrays.stream(OAuth20ResponseTypes.values())
+                .filter(t -> t.getType().equalsIgnoreCase(responseType))
+                .findFirst().orElse(OAuth20ResponseTypes.CODE);
+        LOGGER.debug("OAuth response type is [{}]", type);
+        return type;
+    }
+
+    private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request, final HttpServletResponse response) {
         AccessTokenRequestDataHolder responseHolder = null;
         if (AccessTokenAuthorizationCodeGrantRequestExtractor.supports(request)) {
             final AccessTokenAuthorizationCodeGrantRequestExtractor ext =
@@ -176,7 +200,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     private boolean verifyAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
 
         // must have the right grant type
-        final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
+        final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         if (!checkGrantTypes(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE, OAuth20GrantTypes.PASSWORD, OAuth20GrantTypes.REFRESH_TOKEN)) {
             return false;
         }
@@ -194,27 +218,27 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         // authorization code grant type
         if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE)) {
             final String clientId = uProfile.getId();
-            final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
+            final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
             final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             return uProfile instanceof OAuthClientProfile
-                    && this.validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                    && this.validator.checkParameterExist(request, OAuthConstants.CODE)
+                    && this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
+                    && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
                     && this.validator.checkCallbackValid(registeredService, redirectUri);
 
         } else if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
             // refresh token grant type
             return uProfile instanceof OAuthClientProfile
-                    && this.validator.checkParameterExist(request, OAuthConstants.REFRESH_TOKEN);
+                    && this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN);
 
         } else {
 
-            final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+            final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
             final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             // resource owner password grant type
             return uProfile instanceof OAuthUserProfile
-                    && this.validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                    && this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
                     && this.validator.checkServiceValid(registeredService);
         }
     }
