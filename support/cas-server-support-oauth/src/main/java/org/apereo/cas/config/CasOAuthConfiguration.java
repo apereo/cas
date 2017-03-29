@@ -10,8 +10,6 @@ import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuth20CasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
@@ -19,14 +17,16 @@ import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttribut
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileControllerController;
+import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
@@ -104,7 +104,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    
+
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
