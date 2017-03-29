@@ -17,7 +17,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -97,7 +97,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
 
         if (!verifyAuthorizeRequest(request) || !isRequestAuthenticated(manager, context)) {
             LOGGER.error("Authorize request verification failed");
-            return OAuthUtils.produceUnauthorizedErrorView();
+            return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
         final String clientId = context.getRequestParameter(OAuthConstants.CLIENT_ID);
@@ -106,7 +106,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return OAuthUtils.produceUnauthorizedErrorView();
+            return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
         final ModelAndView mv = this.consentApprovalViewResolver.resolve(context, registeredService);
@@ -124,7 +124,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
      * @return the registered service by client id
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
-        return OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
+        return OAuth20Utils.getRegisteredOAuthService(getServicesManager(), clientId);
     }
 
     private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
@@ -149,7 +149,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
         final Optional<UserProfile> profile = manager.get(true);
         if (profile == null || !profile.isPresent()) {
             LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");
-            return OAuthUtils.produceUnauthorizedErrorView();
+            return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
         final Service service = createService(registeredService, context);
@@ -162,7 +162,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             LOGGER.error(e.getMessage(), e);
-            return OAuthUtils.produceUnauthorizedErrorView();
+            return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
         final String redirectUri = context.getRequestParameter(OAuthConstants.REDIRECT_URI);
@@ -173,9 +173,9 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
         final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
                 ticketGrantingTicketCookieGenerator, getTicketRegistry(), context.getRequest());
         final String callbackUrl;
-        if (isResponseType(responseType, OAuth20ResponseTypes.CODE)) {
+        if (OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.CODE)) {
             callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri, ticketGrantingTicket);
-        } else if (isResponseType(responseType, OAuth20ResponseTypes.TOKEN)) {
+        } else if (OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.TOKEN)) {
             callbackUrl = buildCallbackUrlForImplicitTokenResponseType(context, authentication, service, redirectUri, ticketGrantingTicket);
         } else {
             callbackUrl = buildCallbackUrlForTokenResponseType(context, authentication, service, redirectUri, responseType, clientId);
@@ -183,9 +183,9 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
 
         LOGGER.debug("Callback URL to redirect: [{}]", callbackUrl);
         if (StringUtils.isBlank(callbackUrl)) {
-            return OAuthUtils.produceUnauthorizedErrorView();
+            return OAuth20Utils.produceUnauthorizedErrorView();
         }
-        return OAuthUtils.redirectTo(callbackUrl);
+        return OAuth20Utils.redirectTo(callbackUrl);
     }
 
     /**
@@ -215,8 +215,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
 
         final AccessToken accessToken = generateAccessToken(service, authentication, context, ticketGrantingTicket);
         LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
-        return buildCallbackUrlResponseType(authentication, service,
-                redirectUri, accessToken, Collections.emptyList());
+        return buildCallbackUrlResponseType(authentication, service, redirectUri, accessToken, Collections.emptyList());
     }
 
     /**
@@ -329,22 +328,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuthWrapperControll
      */
     private boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
         LOGGER.debug("Response type: [{}]", type);
-        final boolean checked = Stream.of(expectedTypes).anyMatch(t -> isResponseType(type, t));
+        final boolean checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
         if (!checked) {
             LOGGER.error("Unsupported response type: [{}]", type);
         }
         return checked;
-    }
-
-    /**
-     * Check the response type against an expected response type.
-     *
-     * @param type         the given response type
-     * @param expectedType the expected response type
-     * @return whether the response type is the expected one
-     */
-    protected boolean isResponseType(final String type, final OAuth20ResponseTypes expectedType) {
-        return expectedType.getType().equalsIgnoreCase(type);
     }
 }
 
