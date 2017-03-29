@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web.response.accesstoken;
+package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Authentication;

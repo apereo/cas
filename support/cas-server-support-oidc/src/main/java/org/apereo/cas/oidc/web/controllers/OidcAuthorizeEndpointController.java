@@ -75,7 +75,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     @Override
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Collection<String> scopes = OAuth20Utils.getRequestedScopes(request);
         if (scopes.isEmpty() || !scopes.contains(OidcConstants.OPENID)) {
             LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect, which requires that scope [{}] MUST be specified, "
@@ -83,7 +83,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                     scopes, OidcConstants.OPENID);
         }
 
-        return super.handleRequestInternal(request, response);
+        return super.handleRequest(request, response);
     }
 
     @Override

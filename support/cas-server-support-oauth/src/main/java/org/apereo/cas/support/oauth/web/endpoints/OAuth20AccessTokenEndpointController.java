@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -16,11 +17,12 @@ import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenAuthorizationCodeGrantRequestExtractor;
-import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenPasswordGrantRequestExtractor;
-import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenRefreshTokenGrantRequestExtractor;
-import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenAuthorizationCodeGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPasswordGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -92,7 +95,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      * @throws Exception the exception
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL)
-    public void handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             if (!verifyAccessTokenRequest(request, response)) {
@@ -114,11 +117,15 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
             final AccessToken accessToken = generateAccessToken(responseHolder.getService(),
                     responseHolder.getAuthentication(), context, responseHolder.getTicketGrantingTicket());
+            LOGGER.debug("Access token: [{}]", accessToken);
+
             RefreshToken refreshToken = null;
             if (responseHolder.isGenerateRefreshToken()) {
                 refreshToken = generateRefreshToken(responseHolder);
+                LOGGER.debug("Refresh Token: [{}]", accessToken, refreshToken);
+            } else {
+                LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", responseHolder.getService());
             }
-            LOGGER.debug("Access token: [{}] / Refresh Token: [{}]", accessToken, refreshToken);
 
             generateAccessTokenResponse(request, response, responseHolder, context, accessToken, refreshToken);
 
@@ -165,22 +172,19 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         return type;
     }
 
-    private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        AccessTokenRequestDataHolder responseHolder = null;
-        if (AccessTokenAuthorizationCodeGrantRequestExtractor.supports(request)) {
-            final AccessTokenAuthorizationCodeGrantRequestExtractor ext =
-                    new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager, ticketRegistry, request, response);
-            responseHolder = ext.extract();
-        } else if (AccessTokenRefreshTokenGrantRequestExtractor.supports(request)) {
-            final AccessTokenRefreshTokenGrantRequestExtractor ext =
-                    new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager, ticketRegistry, request, response);
-            responseHolder = ext.extract();
-        } else if (AccessTokenPasswordGrantRequestExtractor.supports(request)) {
-            final AccessTokenPasswordGrantRequestExtractor ext =
-                    new AccessTokenPasswordGrantRequestExtractor(servicesManager, ticketRegistry, request, response, authenticationBuilder);
-            responseHolder = ext.extract();
-        }
-        return responseHolder;
+    private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
+                                                                                  final HttpServletResponse response) {
+        final List<BaseAccessTokenGrantRequestExtractor> list = Arrays.asList(
+                new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager, ticketRegistry, request, response),
+                new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager, ticketRegistry, request, response),
+                new AccessTokenPasswordGrantRequestExtractor(servicesManager, ticketRegistry, request, response, authenticationBuilder)
+        );
+
+        return list.stream()
+                .filter(ext -> ext.supports(request))
+                .findFirst()
+                .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Request is not supported"))
+                .extract();
     }
 
     private void addTicketToRegistry(final OAuthToken ticket, final TicketGrantingTicket ticketGrantingTicket) {

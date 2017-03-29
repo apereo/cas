@@ -49,7 +49,7 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
     @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
                           '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL})
     @Override
-    public void handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        super.handleRequestInternal(request, response);
+    public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        super.handleRequest(request, response);
     }
 }

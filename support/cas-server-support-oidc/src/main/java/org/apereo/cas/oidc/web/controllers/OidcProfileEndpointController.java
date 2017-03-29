@@ -49,8 +49,8 @@ public class OidcProfileEndpointController extends OAuth20UserProfileControllerC
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return super.handleRequestInternal(request, response);
+    public ResponseEntity<String> handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return super.handleRequest(request, response);
     }
 
     @Override

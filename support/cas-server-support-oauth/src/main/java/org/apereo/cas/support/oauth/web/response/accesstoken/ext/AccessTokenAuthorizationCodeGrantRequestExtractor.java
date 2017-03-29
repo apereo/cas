@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web.response.accesstoken;
+package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -26,27 +26,15 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class AccessTokenAuthorizationCodeGrantRequestExtractor {
+public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenAuthorizationCodeGrantRequestExtractor.class);
-
-    private final ServicesManager servicesManager;
-    private final TicketRegistry ticketRegistry;
-    private final HttpServletRequest request;
-    private final HttpServletResponse response;
 
     public AccessTokenAuthorizationCodeGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
                                                              final HttpServletRequest request, final HttpServletResponse response) {
-        this.servicesManager = servicesManager;
-        this.ticketRegistry = ticketRegistry;
-        this.request = request;
-        this.response = response;
+        super(servicesManager, ticketRegistry, request, response);
     }
 
-    /**
-     * Extract access token request data holder.
-     *
-     * @return the access token request data holder
-     */
+    @Override
     public AccessTokenRequestDataHolder extract() {
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
         final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
@@ -58,12 +46,22 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor {
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
         // we generate a refresh token if requested by the service but not from a refresh token
-        final boolean generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
+        final boolean generateRefreshToken = isAllowedToGenerateRefreshToken(registeredService);
         final OAuthToken token = getOAuthTokenFromRequest();
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter());
         }
         return new AccessTokenRequestDataHolder(token, generateRefreshToken, registeredService);
+    }
+
+    /**
+     * Is allowed to generate refresh token ?
+     *
+     * @param registeredService the registered service
+     * @return the boolean
+     */
+    protected boolean isAllowedToGenerateRefreshToken(final OAuthRegisteredService registeredService) {
+        return registeredService != null && registeredService.isGenerateRefreshToken();
     }
 
     protected String getOAuthParameterName() {
@@ -101,7 +99,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor {
      * @param context the context
      * @return true/false
      */
-    public static boolean supports(final HttpServletRequest context) {
+    @Override
+    public boolean supports(final HttpServletRequest context) {
         final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE);
     }

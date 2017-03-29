@@ -1,12 +1,12 @@
-package org.apereo.cas.support.oauth.web.response.accesstoken;
+package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -28,37 +28,25 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class AccessTokenPasswordGrantRequestExtractor {
+public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenPasswordGrantRequestExtractor.class);
 
-    private final ServicesManager servicesManager;
-    private final TicketRegistry ticketRegistry;
-    private final HttpServletRequest request;
-    private final HttpServletResponse response;
     private final OAuth20CasAuthenticationBuilder authenticationBuilder;
 
     public AccessTokenPasswordGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
                                                     final HttpServletRequest request, final HttpServletResponse response,
                                                     final OAuth20CasAuthenticationBuilder authenticationBuilder) {
-        this.servicesManager = servicesManager;
-        this.ticketRegistry = ticketRegistry;
-        this.request = request;
-        this.response = response;
+        super(servicesManager, ticketRegistry, request, response);
         this.authenticationBuilder = authenticationBuilder;
     }
 
-    /**
-     * Extract access token request data holder.
-     *
-     * @return the access token request data holder
-     */
+    @Override
     public AccessTokenRequestDataHolder extract() {
         final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
-        final boolean generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
 
         final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
@@ -72,16 +60,11 @@ public class AccessTokenPasswordGrantRequestExtractor {
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
         final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context);
         RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
-        return new AccessTokenRequestDataHolder(service, authentication, null, generateRefreshToken, registeredService);
+        return new AccessTokenRequestDataHolder(service, authentication, null, false, registeredService);
     }
 
-    /**
-     * Supports the grant type?
-     *
-     * @param context the context
-     * @return true/false
-     */
-    public static boolean supports(final HttpServletRequest context) {
+    @Override
+    public boolean supports(final HttpServletRequest context) {
         final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
     }

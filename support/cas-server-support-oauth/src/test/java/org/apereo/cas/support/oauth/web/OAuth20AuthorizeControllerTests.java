@@ -63,7 +63,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
     }
 
@@ -73,7 +73,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
     }
 
@@ -84,7 +84,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
     }
 
@@ -96,7 +96,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, "badvalue");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
     }
 
@@ -108,7 +108,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
     }
 
@@ -122,7 +122,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         this.servicesManager.save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
     }
 
@@ -146,7 +146,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.ERROR_VIEW, modelAndView.getViewName());
     }
 
@@ -178,7 +178,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         session.putValue(Pac4jConstants.USER_PROFILES, profile);
         mockRequest.setSession(session);
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
@@ -223,7 +223,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
@@ -269,7 +269,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
@@ -315,7 +315,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
@@ -362,7 +362,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
@@ -408,7 +408,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
@@ -454,7 +454,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
-        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequestInternal(mockRequest, mockResponse);
+        final ModelAndView modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.CONFIRM_VIEW, modelAndView.getViewName());
         final Map<String, Object> model = modelAndView.getModel();
         assertEquals(CommonHelper.addParameter(AUTHORIZE_URL, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true"), model.get("callbackUrl"));
