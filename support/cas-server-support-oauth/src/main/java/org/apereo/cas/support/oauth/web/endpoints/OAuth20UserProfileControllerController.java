@@ -16,10 +16,7 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This controller returns a profile for the authenticated user
@@ -81,7 +77,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
         
         final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-            LOGGER.error("Expired access token: [{}]", accessTokenTicket);
+            LOGGER.error("Expired access token: [{}]", accessToken);
             return buildUnauthorizedResponseEntity(OAuthConstants.EXPIRED_ACCESS_TOKEN);
         }
 
