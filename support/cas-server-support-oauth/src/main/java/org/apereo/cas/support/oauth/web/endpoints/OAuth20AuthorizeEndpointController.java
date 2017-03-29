@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -62,7 +63,14 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     protected OAuthCodeFactory oAuthCodeFactory;
 
-    private ConsentApprovalViewResolver consentApprovalViewResolver;
+    /**
+     * The Consent approval view resolver.
+     */
+    protected final ConsentApprovalViewResolver consentApprovalViewResolver;
+    /**
+     * The Authentication builder.
+     */
+    protected final OAuth20CasAuthenticationBuilder authenticationBuilder;
 
     public OAuth20AuthorizeEndpointController(final ServicesManager servicesManager,
                                               final TicketRegistry ticketRegistry,
@@ -74,11 +82,14 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                               final ConsentApprovalViewResolver consentApprovalViewResolver,
                                               final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                               final CasConfigurationProperties casProperties,
-                                              final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+                                              final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                              final OAuth20CasAuthenticationBuilder authenticationBuilder) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
+                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
+                ticketGrantingTicketCookieGenerator);
         this.oAuthCodeFactory = oAuthCodeFactory;
         this.consentApprovalViewResolver = consentApprovalViewResolver;
+        this.authenticationBuilder = authenticationBuilder;
     }
 
     /**
@@ -151,10 +162,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final Service service = createService(registeredService, context);
+        final Service service = this.authenticationBuilder.buildService(registeredService, context);
         LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        final Authentication authentication = createAuthentication(profile.get(), registeredService, context, service);
+        final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {

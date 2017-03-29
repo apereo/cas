@@ -11,6 +11,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
@@ -294,7 +295,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 accessTokenResponseGenerator(),
                 profileScopeToAttributesFilter(),
                 casProperties,
-                ticketGrantingTicketCookieGenerator
+                ticketGrantingTicketCookieGenerator,
+                oauthCasAuthenticationBuilder()
         );
     }
 
@@ -316,7 +318,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 servicesManager, ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
                 oauthPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory(),
                 consentApprovalViewResolver(), profileScopeToAttributesFilter(), casProperties,
-                ticketGrantingTicketCookieGenerator
+                ticketGrantingTicketCookieGenerator, oauthCasAuthenticationBuilder()
         );
     }
 
@@ -338,6 +340,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuthRefreshTokenExpirationPolicy(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds());
     }
 
+    @ConditionalOnMissingBean(name = "oauthCasAuthenticationBuilder")
+    @Bean
+    @RefreshScope
+    public OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder() {
+        return new OAuth20CasAuthenticationBuilder(oauthPrincipalFactory(), webApplicationServiceFactory,
+                profileScopeToAttributesFilter(), casProperties);
+    }
 
     @Bean
     @RefreshScope
