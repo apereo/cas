@@ -66,7 +66,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
      * @throws Exception the exception
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ResponseEntity<String> handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         final String accessToken = getAccessTokenFromRequest(request);
@@ -74,7 +74,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
             LOGGER.error("Missing [{}]", OAuth20Constants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
         }
-        
+
         final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
             LOGGER.error("Expired access token: [{}]", accessToken);
@@ -87,7 +87,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
             this.ticketRegistry.deleteTicket(accessToken);
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
-        
+
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
         final String value = OAuth20Utils.jsonify(map);
         LOGGER.debug("Final user profile is [{}]", value);

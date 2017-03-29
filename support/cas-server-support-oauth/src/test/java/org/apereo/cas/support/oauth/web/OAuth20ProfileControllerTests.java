@@ -64,7 +64,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -77,7 +77,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, "DOES NOT EXIST");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -97,7 +97,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
@@ -120,7 +120,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
@@ -153,7 +153,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.addHeader("Authorization", OAuth20Constants.BEARER_TOKEN + ' ' + accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
