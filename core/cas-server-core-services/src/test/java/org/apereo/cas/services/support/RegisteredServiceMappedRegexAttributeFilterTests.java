@@ -80,7 +80,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     @Test
     public void verifyPatternFilterExcludeUnmatched() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
-        this.filter.setExcludeUnmatchedAttributes(true);
+        this.filter.setExcludeUnmappedAttributes(true);
         final Map<String, Object> attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), 1);
         assertEquals(CollectionUtils.toCollection(attrs.get("memberOf")).size(), 2);
@@ -105,7 +105,8 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
 
     @Test
     public void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
-        MAPPER.writeValue(JSON_FILE, filter);
+        this.filter.setPatterns(Collections.singletonMap("memberOf", "^\\w{3}$"));
+        MAPPER.writeValue(JSON_FILE, this.filter);
         final RegisteredServiceAttributeFilter filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceMappedRegexAttributeFilter.class);
         assertEquals(filter, filterRead);
     }

@@ -30,7 +30,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceMappedRegexAttributeFilter.class);
     private Map<String, String> patterns;
-    private boolean excludeUnmatchedAttributes;
+    private boolean excludeUnmappedAttributes;
     private boolean completeMatch;
     private int order;
 
@@ -76,7 +76,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
                         }
                     } else {
                         LOGGER.debug("Found attribute [{}] that is not defined in pattern definitions", attributeName);
-                        if (excludeUnmatchedAttributes) {
+                        if (excludeUnmappedAttributes) {
                             LOGGER.debug("Excluding attribute [{}] given unmatched attributes are to be excluded", attributeName);
                         } else {
                             LOGGER.debug("Added unmatched attribute [{}] with value(s)", entry.getKey(), entry.getValue());
@@ -105,8 +105,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
         this.patterns = patterns;
     }
 
-    public boolean isExcludeUnmatchedAttributes() {
-        return excludeUnmatchedAttributes;
+    public boolean isExcludeUnmappedAttributes() {
+        return excludeUnmappedAttributes;
     }
 
     public boolean isCompleteMatch() {
@@ -117,8 +117,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
         this.completeMatch = completeMatch;
     }
 
-    public void setExcludeUnmatchedAttributes(final boolean excludeUnmatchedAttributes) {
-        this.excludeUnmatchedAttributes = excludeUnmatchedAttributes;
+    public void setExcludeUnmappedAttributes(final boolean excludeUnmappedAttributes) {
+        this.excludeUnmappedAttributes = excludeUnmappedAttributes;
     }
 
 
@@ -136,7 +136,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
         final RegisteredServiceMappedRegexAttributeFilter rhs = (RegisteredServiceMappedRegexAttributeFilter) obj;
         return new EqualsBuilder()
                 .append(this.patterns, rhs.patterns)
-                .append(this.excludeUnmatchedAttributes, rhs.excludeUnmatchedAttributes)
+                .append(this.excludeUnmappedAttributes, rhs.excludeUnmappedAttributes)
                 .append(this.completeMatch, rhs.completeMatch)
                 .append(this.order, rhs.order)
                 .isEquals();
@@ -146,7 +146,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(patterns)
-                .append(excludeUnmatchedAttributes)
+                .append(excludeUnmappedAttributes)
                 .append(completeMatch)
                 .append(order)
                 .toHashCode();
