@@ -76,7 +76,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "bypassApprovalPrompt": false,
   "generateRefreshToken": false,
   "serviceId" : "^(https|imaps)://hello.*",
-  "name" : "My OAuth service",
+  "name" : "My OAuth service ",
   "id" : 100
 }
 ```
