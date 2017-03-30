@@ -58,15 +58,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
                         final Set<Object> attributeValues = CollectionUtils.toCollection(entry.getValue());
                         final Pattern pattern = RegexUtils.createPattern(patterns.get(attributeName));
                         LOGGER.debug("Found attribute [{}] in the pattern definitions [{}]. Processing pattern [{}]", attributeName, pattern.pattern());
-                        final List<Object> filteredValues = attributeValues.stream()
-                                .filter(v -> {
-                                    final Matcher matcher = pattern.matcher(v.toString());
-                                    if (completeMatch) {
-                                        return matcher.matches();
-                                    }
-                                    return matcher.find();
-                                })
-                                .collect(Collectors.toList());
+                        final List<Object> filteredValues = filterAttributeValuesByPattern(attributeValues, pattern);
                         LOGGER.debug("Filtered attribute values for [{}] are [{}]", attributeName, filteredValues);
 
                         if (filteredValues.isEmpty()) {
@@ -86,6 +78,26 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
                 });
         LOGGER.debug("Received [{}] attributes. Filtered and released [{}]", givenAttributes.size(), attributesToRelease.size());
         return attributesToRelease;
+    }
+
+    /**
+     * Filter attribute values by pattern and return the list.
+     *
+     * @param attributeValues the attribute values
+     * @param pattern         the pattern
+     * @return the list
+     */
+    protected List<Object> filterAttributeValuesByPattern(final Set<Object> attributeValues, final Pattern pattern) {
+        return attributeValues.stream()
+                .filter(v -> {
+                    final Matcher matcher = pattern.matcher(v.toString());
+                    LOGGER.debug("Matching attribute value [{}] against pattern [{}]", v, pattern.pattern());
+                    if (completeMatch) {
+                        return matcher.matches();
+                    }
+                    return matcher.find();
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
