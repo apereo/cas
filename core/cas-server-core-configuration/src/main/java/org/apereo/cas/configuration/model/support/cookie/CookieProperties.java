@@ -17,6 +17,15 @@ public class CookieProperties {
     private String domain = "";
 
     private boolean secure = true;
+    private boolean httpOnly = true;
+
+    public boolean isHttpOnly() {
+        return httpOnly;
+    }
+
+    public void setHttpOnly(final boolean httpOnly) {
+        this.httpOnly = httpOnly;
+    }
 
     public String getName() {
         return name;

@@ -1906,6 +1906,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 # cas.warningCookie.domain=
 # cas.warningCookie.name=CASPRIVACY
 # cas.warningCookie.secure=true
+# cas.warningCookie.httpOnly=true
 ```
 
 ## Ticket Granting Cookie
@@ -1918,6 +1919,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 # cas.tgc.name=TGC
 # cas.tgc.encryptionKey=
 # cas.tgc.secure=true
+# cas.tgc.httpOnly=true
 # cas.tgc.rememberMeMaxAge=1209600
 # cas.tgc.cipherEnabled=true
 ```

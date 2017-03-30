@@ -32,14 +32,14 @@ public class CasCookieConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator warnCookieGenerator() {
         return configureCookieGenerator(new WarningCookieRetrievingCookieGenerator(),
                 casProperties.getWarningCookie());
     }
-    
+
     @Bean(name = {"defaultCookieValueManager", "cookieValueManager"})
     public CookieValueManager defaultCookieValueManager() {
         if (casProperties.getTgc().isCipherEnabled()) {
@@ -63,13 +63,12 @@ public class CasCookieConfiguration {
                 + "ticket-granting cookies.");
         return new NoOpCipherExecutor();
     }
-    
+
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
         final CookieRetrievingCookieGenerator bean =
-                configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(defaultCookieValueManager()),
-                        casProperties.getTgc());
+                configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(defaultCookieValueManager()), casProperties.getTgc());
         bean.setCookieDomain(casProperties.getTgc().getDomain());
         bean.setRememberMeMaxAge(casProperties.getTgc().getRememberMeMaxAge());
         return bean;
@@ -89,6 +88,7 @@ public class CasCookieConfiguration {
         cookieGenerator.setCookiePath(props.getPath());
         cookieGenerator.setCookieMaxAge(props.getMaxAge());
         cookieGenerator.setCookieSecure(props.isSecure());
+        cookieGenerator.setCookieHttpOnly(props.isHttpOnly());
         return cookieGenerator;
     }
 }
