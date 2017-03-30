@@ -2,36 +2,36 @@ package org.apereo.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
-import org.springframework.util.ReflectionUtils;
-
 import org.springframework.web.util.CookieGenerator;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.
  * The cookie is automatically marked as httpOnly, if the servlet container has support for it.
- * 
+ * <p>
  * <p>
  * Also has support for RememberMe Services
  *
  * @author Scott Battaglia
  * @author Misagh Moayyed
  * @since 3.1
- *
  */
 public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
     private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
 
-    /** The maximum age the cookie should be remembered for.
-     * The default is three months ({@value} in seconds, according to Google) */
+    /**
+     * The maximum age the cookie should be remembered for.
+     * The default is three months ({@value} in seconds, according to Google)
+     */
     private int rememberMeMaxAge = DEFAULT_REMEMBER_ME_MAX_AGE;
 
-    /** Responsible for manging and verifying the cookie value. **/
+    /**
+     * Responsible for manging and verifying the cookie value.
+     **/
     private CookieValueManager casCookieValueManager;
 
     /**
@@ -44,18 +44,20 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
     /**
      * Instantiates a new Cookie retrieving cookie generator.
+     *
      * @param casCookieValueManager the cookie manager
      */
     public CookieRetrievingCookieGenerator(final CookieValueManager casCookieValueManager) {
         super();
         this.casCookieValueManager = casCookieValueManager;
     }
+
     /**
      * Adds the cookie, taking into account {@link RememberMeCredential#REQUEST_PARAMETER_REMEMBER_ME}
      * in the request.
      *
-     * @param request the request
-     * @param response the response
+     * @param request     the request
+     * @param response    the response
      * @param cookieValue the cookie value
      */
     public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
@@ -66,17 +68,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         } else {
             final Cookie cookie = createCookie(theCookieValue);
             cookie.setMaxAge(this.rememberMeMaxAge);
-            if (isCookieSecure()) {
-                cookie.setSecure(true);
-            }
-            if (isCookieHttpOnly()) {
-                final Method setHttpOnlyMethod = ReflectionUtils.findMethod(Cookie.class, "setHttpOnly", boolean.class);
-                if (setHttpOnlyMethod != null) {
-                    cookie.setHttpOnly(true);
-                } else {
-                    logger.debug("Cookie cannot be marked as HttpOnly; container is not using servlet 3.0.");
-                }
-            }
+            cookie.setSecure(isCookieSecure());
+            cookie.setHttpOnly(isCookieHttpOnly());
             response.addCookie(cookie);
         }
     }
@@ -103,7 +96,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
     @Override
     public void setCookieDomain(final String cookieDomain) {
-        
+
         super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
     }
 }
