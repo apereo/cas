@@ -38,23 +38,26 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
     }
 
     @Override
-    public Subject build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public Subject build(final AuthnRequest authnRequest, final HttpServletRequest request, 
+                         final HttpServletResponse response,
                          final Assertion assertion, final SamlRegisteredService service,
-                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-            throws SamlException {
-        return buildSubject(request, response, authnRequest, assertion, service, adaptor);
+                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                         final String binding) throws SamlException {
+        return buildSubject(request, response, authnRequest, assertion, service, adaptor, binding);
     }
 
     private Subject buildSubject(final HttpServletRequest request,
                                  final HttpServletResponse response,
-                                 final AuthnRequest authnRequest, 
+                                 final AuthnRequest authnRequest,
                                  final Assertion assertion,
                                  final SamlRegisteredService service,
-                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        final NameID nameID = this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor);
+                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                 final String binding) throws SamlException {
+        final NameID nameID = this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, 
+                assertion, service, adaptor, binding);
         final ZonedDateTime validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
 
-        final AssertionConsumerService acs = adaptor.getAssertionConsumerServiceForPostBinding();
+        final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);
         if (acs == null) {
             throw new IllegalArgumentException("Failed to locate the assertion consumer service url");
         }

@@ -127,7 +127,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         // but can be omitted in favor of the IdP picking the default endpoint location from metadata.
         String shire = CommonUtils.safeGetParameter(request, SamlIdPConstants.SHIRE);
         if (StringUtils.isBlank(shire)) {
-            final AssertionConsumerService acs = adaptor.get().getAssertionConsumerServiceForPostBinding();
+            final AssertionConsumerService acs = adaptor.get().getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
             if (acs == null) {
                 throw new MessageDecodingException("Unable to resolve SP ACS URL");
             }
@@ -174,7 +174,8 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         ctx.setAutoCreateSubcontexts(true);
 
         if (adaptor.get().isAuthnRequestsSigned()) {
-            samlObjectSigner.encode(authnRequest, registeredService, adaptor.get(), response, request);
+            samlObjectSigner.encode(authnRequest, registeredService, 
+                    adaptor.get(), response, request, SAMLConstants.SAML2_POST_BINDING_URI);
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);

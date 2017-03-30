@@ -59,9 +59,10 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                      final SamlRegisteredService service,
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                      final HttpServletRequest request,
-                                     final HttpServletResponse response) throws SamlException {
+                                     final HttpServletResponse response,
+                                     final String binding) throws SamlException {
 
-        final AssertionConsumerService acs = adaptor.getAssertionConsumerServiceForPaosBinding();
+        final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);
         if (acs == null) {
             LOGGER.warn("Could not locate the assertion consumer service url for binding [{}]", SAMLConstants.SAML2_PAOS_BINDING_URI);
             throw new IllegalArgumentException("Failed to locate the assertion consumer service url for ECP");
@@ -72,7 +73,8 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         final Header header = newSoapObject(Header.class);
         header.getUnknownXMLObjects().add(ecpResponse);
         final Body body = newSoapObject(Body.class);
-        final org.opensaml.saml.saml2.core.Response saml2Response = buildSaml2Response(casAssertion, authnRequest, service, adaptor, request);
+        final org.opensaml.saml.saml2.core.Response saml2Response = 
+                buildSaml2Response(casAssertion, authnRequest, service, adaptor, request, binding);
         body.getUnknownXMLObjects().add(saml2Response);
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
@@ -84,9 +86,11 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
     private org.opensaml.saml.saml2.core.Response buildSaml2Response(final org.jasig.cas.client.validation.Assertion casAssertion,
                                                                      final AuthnRequest authnRequest, final SamlRegisteredService service,
                                                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                     final HttpServletRequest request) {
+                                                                     final HttpServletRequest request,
+                                                                     final String binding) {
         return (org.opensaml.saml.saml2.core.Response)
-                saml2ResponseBuilder.build(authnRequest, request, null, casAssertion, service, adaptor);
+                saml2ResponseBuilder.build(authnRequest, request, null, 
+                        casAssertion, service, adaptor, binding);
     }
 
     @Override
@@ -94,7 +98,8 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                               final Envelope envelope,
                               final HttpServletResponse httpResponse,
                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                              final String relayState) throws SamlException {
+                              final String relayState,
+                              final String binding) throws SamlException {
         try {
             final MessageContext result = new MessageContext();
             final SOAP11Context ctx = result.getSubcontext(SOAP11Context.class, true);

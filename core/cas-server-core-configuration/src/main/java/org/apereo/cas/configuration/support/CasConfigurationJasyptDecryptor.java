@@ -54,7 +54,7 @@ public class CasConfigurationJasyptDecryptor {
 
         final String alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
         if (StringUtils.isNotBlank(alg)) {
-            LOGGER.debug("Configured decryptor algorithm", alg);
+            LOGGER.debug("Configured decryptor algorithm [{}]", alg);
             decryptor.setAlgorithm(alg);
         }
 

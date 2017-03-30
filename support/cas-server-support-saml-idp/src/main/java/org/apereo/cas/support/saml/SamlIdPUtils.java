@@ -49,10 +49,12 @@ public final class SamlIdPUtils {
      *
      * @param outboundContext the outbound context
      * @param adaptor         the adaptor
+     * @param binding         the binding
      * @throws SamlException the saml exception
      */
     public static void preparePeerEntitySamlEndpointContext(final MessageContext outboundContext,
-                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                            final String binding) throws SamlException {
         if (!adaptor.containsAssertionConsumerServices()) {
             throw new SamlException("No assertion consumer service could be found for entity " + adaptor.getEntityId());
         }
@@ -66,7 +68,7 @@ public final class SamlIdPUtils {
         if (endpointContext == null) {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
         }
-        final Endpoint endpoint = adaptor.getAssertionConsumerServiceForPostBinding();
+        final Endpoint endpoint = adaptor.getAssertionConsumerService(binding);
         if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
             throw new SamlException("Assertion consumer service does not define a binding or location for " + adaptor.getEntityId());
         }

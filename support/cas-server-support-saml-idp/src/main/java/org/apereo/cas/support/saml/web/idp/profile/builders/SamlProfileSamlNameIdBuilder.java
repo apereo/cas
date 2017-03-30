@@ -41,7 +41,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     @Override
     public NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                         final Assertion assertion, final SamlRegisteredService service,
-                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                        final String binding)
             throws SamlException {
         return buildNameId(authnRequest, assertion, service, adaptor);
     }
