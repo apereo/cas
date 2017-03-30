@@ -204,7 +204,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return nameIdFormats;
     }
 
-    public List<AssertionConsumerService> getAssertionConsumerServices() {
+    private List<AssertionConsumerService> getAssertionConsumerServices() {
         return (List) this.ssoDescriptor.getEndpoints(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
     }
 
@@ -222,7 +222,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @param binding the binding
      * @return the assertion consumer service
      */
-    public AssertionConsumerService getAssertionConsumerService(final String binding) {
+    private AssertionConsumerService getAssertionConsumerService(final String binding) {
         return getAssertionConsumerServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
     }
 
@@ -238,5 +238,12 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return this.metadataResolver;
     }
 
-
+    /**
+     * Contains assertion consumer services ?
+     *
+     * @return true/false
+     */
+    public boolean containsAssertionConsumerServices() {
+        return !getAssertionConsumerServices().isEmpty();
+    }
 }
