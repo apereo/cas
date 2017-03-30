@@ -23,21 +23,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * This is {@link GoogleAuthentiacatorMongoDbConfiguration}.
+ * This is {@link GoogleAuthenticatorMongoDbConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("googleAuthentiacatorMongoDbConfiguration")
+@Configuration("googleAuthenticatorMongoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
-public class GoogleAuthentiacatorMongoDbConfiguration {
+public class GoogleAuthenticatorMongoDbConfiguration {
 
-    @Autowired
-    @Qualifier("googleAuthenticatorInstance")
-    private IGoogleAuthenticator googleAuthenticatorInstance;
-    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -64,8 +60,10 @@ public class GoogleAuthentiacatorMongoDbConfiguration {
         }
     }
 
+    @Autowired
     @Bean
-    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance") 
+                                                                                   final IGoogleAuthenticator googleAuthenticatorInstance) {
         final MultifactorAuthenticationProperties.GAuth.Mongodb mongo = casProperties.getAuthn().getMfa().getGauth().getMongodb();
         return new MongoDbGoogleAuthenticatorTokenCredentialRepository(
                 googleAuthenticatorInstance,

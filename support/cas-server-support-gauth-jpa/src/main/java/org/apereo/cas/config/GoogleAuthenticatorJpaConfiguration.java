@@ -40,9 +40,6 @@ import javax.sql.DataSource;
 @EnableScheduling
 public class GoogleAuthenticatorJpaConfiguration {
 
-    @Autowired
-    @Qualifier("googleAuthenticatorInstance")
-    private IGoogleAuthenticator googleAuthenticatorInstance;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -89,10 +86,12 @@ public class GoogleAuthenticatorJpaConfiguration {
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
-
+    
+    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
-    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance")
+                                                                               final IGoogleAuthenticator googleAuthenticatorInstance) {
         return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance);
     }
 
