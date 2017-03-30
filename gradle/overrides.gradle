@@ -4,7 +4,7 @@
   may become unnecessary when/if version numbers match.
  */
 ext["hibernateVersion"] = "5.2.9.Final"
-ext["springBootTomcatVersion"] = "8.5.11"
+ext["springBootTomcatVersion"] = "8.5.12"
 ext["hazelcastVersion"] = "3.8"
 ext["infinispanVersion"] = "8.2.6.Final"
 ext["springVersion"] = "4.3.7.RELEASE"

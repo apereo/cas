@@ -155,7 +155,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
      *
      * @param service      the service
      * @param samlResponse the saml response
-     * @param httpResponse the http response
+     * @param httpResponse the http response; may be null to mute encoding.
      * @param adaptor      the adaptor
      * @param relayState   the relay state
      * @return the t

@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 import com.google.common.base.Throwables;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -71,15 +72,21 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         final Header header = newSoapObject(Header.class);
         header.getUnknownXMLObjects().add(ecpResponse);
         final Body body = newSoapObject(Body.class);
-        final org.opensaml.saml.saml2.core.Response saml2Response =
-                (org.opensaml.saml.saml2.core.Response) saml2ResponseBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
+        final org.opensaml.saml.saml2.core.Response saml2Response = buildSaml2Response(casAssertion, authnRequest, service, adaptor, request);
         body.getUnknownXMLObjects().add(saml2Response);
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
+        SamlUtils.logSamlObject(this.configBean, envelope);
         return envelope;
+    }
 
-
+    private org.opensaml.saml.saml2.core.Response buildSaml2Response(final org.jasig.cas.client.validation.Assertion casAssertion,
+                                                                     final AuthnRequest authnRequest, final SamlRegisteredService service,
+                                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                                     final HttpServletRequest request) {
+        return (org.opensaml.saml.saml2.core.Response)
+                saml2ResponseBuilder.build(authnRequest, request, null, casAssertion, service, adaptor);
     }
 
     @Override

@@ -95,16 +95,18 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                               final String relayState) throws SamlException {
         try {
-            final HTTPPostEncoder encoder = new HTTPPostEncoder();
-            encoder.setHttpServletResponse(httpResponse);
-            encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
-            final MessageContext outboundMessageContext = new MessageContext<>();
-            SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundMessageContext, adaptor);
-            outboundMessageContext.setMessage(samlResponse);
-            SAMLBindingSupport.setRelayState(outboundMessageContext, relayState);
-            encoder.setMessageContext(outboundMessageContext);
-            encoder.initialize();
-            encoder.encode();
+            if (httpResponse != null) {
+                final HTTPPostEncoder encoder = new HTTPPostEncoder();
+                encoder.setHttpServletResponse(httpResponse);
+                encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
+                final MessageContext outboundMessageContext = new MessageContext<>();
+                outboundMessageContext.setMessage(samlResponse);
+                SAMLBindingSupport.setRelayState(outboundMessageContext, relayState);
+                SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundMessageContext, adaptor);
+                encoder.setMessageContext(outboundMessageContext);
+                encoder.initialize();
+                encoder.encode();
+            }
             return samlResponse;
         } catch (final Exception e) {
             throw Throwables.propagate(e);

@@ -186,6 +186,6 @@ public final class SamlUtils {
      * @throws SamlException the saml exception
      */
     public static void logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
-        LOGGER.debug("Logging [{}]\n[{}]", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject));
+        LOGGER.debug("Logging [{}]\n\n[{}]", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject));
     }
 }

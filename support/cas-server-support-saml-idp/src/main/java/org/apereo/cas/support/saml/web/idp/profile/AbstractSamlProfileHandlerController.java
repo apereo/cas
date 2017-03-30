@@ -512,13 +512,15 @@ public abstract class AbstractSamlProfileHandlerController {
             final HttpServletRequest request) throws Exception {
         final AuthnRequest authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
-        final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
+        LOGGER.debug("Located issuer [{}] from authentication request", issuer);
 
+        final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
         LOGGER.debug("Fetching saml metadata adaptor for [{}]", issuer);
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
 
         if (!adaptor.isPresent()) {
+            LOGGER.warn("No metadata could be found for [{}]", issuer);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
         }
 
@@ -541,13 +543,14 @@ public abstract class AbstractSamlProfileHandlerController {
                                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws Exception {
         final MessageContext ctx = authenticationContext.getValue();
         if (!SAMLBindingSupport.isMessageSigned(ctx)) {
+            LOGGER.debug("The authentication context is not signed");
             if (adaptor.isAuthnRequestsSigned()) {
-                LOGGER.error("Metadata for [{}] says authentication requests are signed, yet authentication request is not",
-                        adaptor.getEntityId());
+                LOGGER.error("Metadata for [{}] says authentication requests are signed, yet authentication request is not", adaptor.getEntityId());
                 throw new SAMLException("AuthN request is not signed but should be");
             }
-            LOGGER.info("Authentication request is not signed, so there is no need to verify its signature.");
+            LOGGER.debug("Authentication request is not signed, so there is no need to verify its signature.");
         } else {
+            LOGGER.debug("The authentication context is signed; Proceeding to validate signatures...");
             this.samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, ctx);
         }
     }
@@ -568,6 +571,8 @@ public abstract class AbstractSamlProfileHandlerController {
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);
 
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
+
+        LOGGER.debug("Located SAML metadata for [{}]", registeredService);
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
                 getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
 
@@ -575,8 +580,9 @@ public abstract class AbstractSamlProfileHandlerController {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
         }
         LOGGER.debug("Preparing SAML response for [{}]", adaptor.get().getEntityId());
-        this.responseBuilder.build(authenticationContext.getKey(), request, response, casAssertion, registeredService, adaptor.get());
-        LOGGER.info("Built the SAML response for [{}]", adaptor.get().getEntityId());
+        final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
+        this.responseBuilder.build(authenticationContext.getKey(), request, response, casAssertion, registeredService, facade);
+        LOGGER.info("Built the SAML response for [{}]", facade.getEntityId());
     }
 
     /**
