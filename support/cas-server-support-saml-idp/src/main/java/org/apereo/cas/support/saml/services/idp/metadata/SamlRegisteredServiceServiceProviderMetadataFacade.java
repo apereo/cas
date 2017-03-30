@@ -215,11 +215,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     public SingleLogoutService getSingleLogoutService() {
         return getSingleLogoutServices().get(0);
     }
-
-    public AssertionConsumerService getAssertionConsumerService() {
-        return getAssertionConsumerServices().get(0);
-    }
-
+    
     /**
      * Gets assertion consumer service.
      *
@@ -230,6 +226,14 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return getAssertionConsumerServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
     }
 
+    public AssertionConsumerService getAssertionConsumerServiceForPaosBinding() {
+        return getAssertionConsumerService(SAMLConstants.SAML2_PAOS_BINDING_URI);
+    }
+
+    public AssertionConsumerService getAssertionConsumerServiceForPostBinding() {
+        return getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
+    }
+        
     public MetadataResolver getMetadataResolver() {
         return this.metadataResolver;
     }
