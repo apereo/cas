@@ -69,7 +69,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
+    
     @Bean
     public IGoogleAuthenticator googleAuthenticatorInstance() {
         final MultifactorAuthenticationProperties.GAuth gauth = casProperties.getAuthn().getMfa().getGauth();
