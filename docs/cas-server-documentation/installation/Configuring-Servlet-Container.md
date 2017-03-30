@@ -37,6 +37,8 @@ should it need to be extended, can be controlled via the `server.tomcat.valve.re
 Optionally a CAS deployment may be deployed to any number of external servlet containers. The container **MUST** support
 the servlet specification `v3.1.x` at a minimum.
 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>At this time, Apache Tomcat 9 is <strong>NOT</strong> supported.</p></div>
+
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
 * [Apache Tomcat](http://tomcat.apache.org/)
