@@ -45,7 +45,8 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                                     final HttpServletResponse response,
                                     final Assertion assertion,
                                     final SamlRegisteredService service,
-                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                    final String binding) throws SamlException {
         return buildAttributeStatement(assertion, authnRequest, service, adaptor);
     }
 
