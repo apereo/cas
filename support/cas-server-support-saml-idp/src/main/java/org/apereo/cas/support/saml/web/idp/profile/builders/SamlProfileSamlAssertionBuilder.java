@@ -66,20 +66,23 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     @Override
     public Assertion build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                            final org.jasig.cas.client.validation.Assertion casAssertion, final SamlRegisteredService service,
-                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                           final String binding) throws SamlException {
 
         final List<Statement> statements = new ArrayList<>();
-        statements.add(this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
-        statements.add(this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
+        statements.add(this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response,
+                casAssertion, service, adaptor, binding));
+        statements.add(this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request,
+                response, casAssertion, service, adaptor, binding));
 
         final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
         final Assertion assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
                 ZonedDateTime.now(ZoneOffset.UTC), id);
-        assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
+        assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
+                casAssertion, service, adaptor, binding));
         assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(authnRequest,
-                request, response, casAssertion, service, adaptor));
-
-        signAssertion(assertion, request, response, service, adaptor);
+                request, response, casAssertion, service, adaptor, binding));
+        signAssertion(assertion, request, response, service, adaptor, binding);
         return assertion;
     }
 
@@ -91,16 +94,19 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
      * @param response  the response
      * @param service   the service
      * @param adaptor   the adaptor
+     * @param binding   the binding
      * @throws SamlException the saml exception
      */
     protected void signAssertion(final Assertion assertion,
                                  final HttpServletRequest request, final HttpServletResponse response,
                                  final SamlRegisteredService service,
-                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                 final String binding) throws SamlException {
         try {
             if (service.isSignAssertions()) {
                 LOGGER.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
-                this.samlObjectSigner.encode(assertion, service, adaptor, response, request);
+                this.samlObjectSigner.encode(assertion, service, adaptor,
+                        response, request, binding);
             } else {
                 LOGGER.debug("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
             }

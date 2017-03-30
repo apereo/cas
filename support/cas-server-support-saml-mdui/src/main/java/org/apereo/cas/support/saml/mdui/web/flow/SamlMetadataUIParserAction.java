@@ -90,7 +90,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     protected void verifyRegisteredService(final RequestContext requestContext, final RegisteredService registeredService) {
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            LOGGER.debug("Service is not recognized/allowed by the CAS service registry", registeredService);
+            LOGGER.debug("Service [{}] is not recognized/allowed by the CAS service registry", registeredService);
             if (registeredService != null) {
                 WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
             }
@@ -110,7 +110,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         final WebApplicationService service = this.serviceFactory.createService(entityId);
         RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null) {
-            LOGGER.debug("Entity id not found in the registry. Fallback onto [{}]", entityId, currentService);
+            LOGGER.debug("Entity id [{}] not found in the registry. Fallback onto [{}]", entityId, currentService);
             registeredService = this.servicesManager.findServiceBy(currentService);
         }
         LOGGER.debug("Located service definition [{}]", registeredService);

@@ -562,11 +562,13 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param request               the request
      * @param authenticationContext the authentication context
      * @param casAssertion          the cas assertion
+     * @param binding               the binding
      */
     protected void buildSamlResponse(final HttpServletResponse response,
                                      final HttpServletRequest request,
                                      final Pair<AuthnRequest, MessageContext> authenticationContext,
-                                     final Assertion casAssertion) {
+                                     final Assertion casAssertion,
+                                     final String binding) {
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authenticationContext.getKey());
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);
 
@@ -581,7 +583,9 @@ public abstract class AbstractSamlProfileHandlerController {
         }
         LOGGER.debug("Preparing SAML response for [{}]", adaptor.get().getEntityId());
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
-        this.responseBuilder.build(authenticationContext.getKey(), request, response, casAssertion, registeredService, facade);
+        final AuthnRequest authnRequest = authenticationContext.getKey();
+        this.responseBuilder.build(authnRequest, request, response, 
+                casAssertion, registeredService, facade, binding);
         LOGGER.info("Built the SAML response for [{}]", facade.getEntityId());
     }
 

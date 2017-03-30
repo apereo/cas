@@ -35,8 +35,9 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
 
     @Override
     public Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                                  final Assertion assertion, final SamlRegisteredService service,
-                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+                            final Assertion assertion, final SamlRegisteredService service,
+                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                            final String binding)
             throws SamlException {
         return buildConditions(authnRequest, assertion, service, adaptor);
     }

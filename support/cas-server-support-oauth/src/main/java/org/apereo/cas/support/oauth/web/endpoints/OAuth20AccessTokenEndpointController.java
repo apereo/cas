@@ -122,7 +122,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             RefreshToken refreshToken = null;
             if (responseHolder.isGenerateRefreshToken()) {
                 refreshToken = generateRefreshToken(responseHolder);
-                LOGGER.debug("Refresh Token: [{}]", accessToken, refreshToken);
+                LOGGER.debug("Refresh Token: [{}]", refreshToken);
             } else {
                 LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", responseHolder.getService());
             }

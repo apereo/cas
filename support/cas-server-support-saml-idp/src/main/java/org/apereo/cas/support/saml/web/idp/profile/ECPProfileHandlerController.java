@@ -32,6 +32,7 @@ import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.BindingDescriptor;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.soap.messaging.context.SOAP11Context;
@@ -136,7 +137,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             LOGGER.error("SAML ECP request could not be determined from the authentication request");
             return;
         }
-        handleEcpRequest(response, request, soapContext, credential);
+        handleEcpRequest(response, request, soapContext, credential, SAMLConstants.SAML2_PAOS_BINDING_URI);
     }
 
     /**
@@ -146,9 +147,11 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @param request     the request
      * @param soapContext the soap context
      * @param credential  the credential
+     * @param binding     the binding
      */
     protected void handleEcpRequest(final HttpServletResponse response, final HttpServletRequest request,
-                                    final MessageContext soapContext, final Credential credential) {
+                                    final MessageContext soapContext, final Credential credential,
+                                    final String binding) {
         LOGGER.debug("Handling ECP request for SOAP context [{}]", soapContext);
 
         final Envelope envelope = soapContext.getSubcontext(SOAP11Context.class).getEnvelope();
@@ -163,16 +166,20 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
 
             LOGGER.debug("Attempting to authenticate ECP request for credential id [{}]", credential.getId());
             final Authentication authentication = authenticateEcpRequest(credential, authenticationContext);
-            LOGGER.debug("Authenticated [{}] successfully with authenticated principal [{}]", credential.getId(), authentication.getPrincipal());
+            LOGGER.debug("Authenticated [{}] successfully with authenticated principal [{}]", 
+                    credential.getId(), authentication.getPrincipal());
 
             LOGGER.debug("Building ECP SAML response for [{}]", credential.getId());
             final Assertion casAssertion = buildEcpCasAssertion(authentication, serviceRequest.getKey());
 
             LOGGER.debug("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
-            buildSamlResponse(response, request, authenticationContext, casAssertion);
+            buildSamlResponse(response, request, authenticationContext, casAssertion, binding);
         } catch (final AuthenticationException e) {
             LOGGER.error(e.getMessage(), e);
-            final String error = e.getHandlerErrors().values().stream().map(Class::getSimpleName).collect(Collectors.joining(","));
+            final String error = e.getHandlerErrors().values()
+                    .stream()
+                    .map(Class::getSimpleName)
+                    .collect(Collectors.joining(","));
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, error));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -192,7 +199,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                          final Pair<AuthnRequest, String> authenticationContext) {
         request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, authenticationContext.getValue());
         samlEcpFaultResponseBuilder.build(authenticationContext.getKey(), request, response,
-                null, null, null);
+                null, null, null, SAMLConstants.SAML2_PAOS_BINDING_URI);
 
     }
 
@@ -205,7 +212,6 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      */
     protected Authentication authenticateEcpRequest(final Credential credential,
                                                     final Pair<AuthnRequest, MessageContext> authnRequest) {
-
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest.getKey());
         LOGGER.debug("Located issuer [{}] from request prior to authenticating [{}]", issuer, credential.getId());
 

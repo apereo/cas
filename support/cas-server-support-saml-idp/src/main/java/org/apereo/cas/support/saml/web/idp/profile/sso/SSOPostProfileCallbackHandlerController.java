@@ -22,6 +22,7 @@ import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
@@ -126,7 +127,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
 
         final Pair<AuthnRequest, MessageContext> authenticationContext = buildAuthenticationContextPair(request, authnRequest);
         final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
-        buildSamlResponse(response, request, authenticationContext, assertion);
+        buildSamlResponse(response, request, authenticationContext, assertion, SAMLConstants.SAML2_POST_BINDING_URI);
     }
 
     /**

@@ -222,15 +222,15 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @param binding the binding
      * @return the assertion consumer service
      */
-    private AssertionConsumerService getAssertionConsumerService(final String binding) {
+    public AssertionConsumerService getAssertionConsumerService(final String binding) {
         return getAssertionConsumerServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
     }
 
-    public AssertionConsumerService getAssertionConsumerServiceForPaosBinding() {
+    private AssertionConsumerService getAssertionConsumerServiceForPaosBinding() {
         return getAssertionConsumerService(SAMLConstants.SAML2_PAOS_BINDING_URI);
     }
 
-    public AssertionConsumerService getAssertionConsumerServiceForPostBinding() {
+    private AssertionConsumerService getAssertionConsumerServiceForPostBinding() {
         return getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
     }
         
