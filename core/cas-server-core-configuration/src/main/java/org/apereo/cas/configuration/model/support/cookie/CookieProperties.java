@@ -11,14 +11,19 @@ import org.apache.commons.lang3.StringUtils;
 public class CookieProperties {
 
     private String name;
-
     private String path = StringUtils.EMPTY;
-
-    private int maxAge = -1;
-
     private String domain = StringUtils.EMPTY;
-
     private boolean secure = true;
+    private boolean httpOnly = true;
+    private int maxAge = -1;
+    
+    public boolean isHttpOnly() {
+        return httpOnly;
+    }
+
+    public void setHttpOnly(final boolean httpOnly) {
+        this.httpOnly = httpOnly;
+    }
 
     public String getName() {
         return name;
