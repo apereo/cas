@@ -343,7 +343,7 @@ is 3 characters. Therefor, out of the above list, only `groupMembership` is rele
 ### Mapped Regex
 
 The regex filter that is responsible to make sure only a selected set of attributes whose value
-matches a certain regex pattern are released. The selectively applies patterns to attributes mapped 
+matches a certain regex pattern are released. The filter selectively applies patterns to attributes mapped 
 in the configuration. If an attribute is mapped, it is only allowed to be released if it matches the linked pattern.
 If an attribute is not mapped, it may optionally be excluded from the released set of attributes.
 
@@ -379,4 +379,34 @@ The following fields are supported by this filter:
 |----------------------|--------------------------------------------------------------------------
 | `patterns`           | A map of attributes and their associated pattern tried against value(s).
 | `completeMatch`      | Indicates whether pattern-matching should execute over the entire value region.
-| `excludeUnmappedAttributes` | Indicates whether unmapped attributes should be removed from the final bundle.                                
+| `excludeUnmappedAttributes` | Indicates whether unmapped attributes should be removed from the final bundle.                
+
+
+### Reverse Mapped Regex
+
+Identical to the above filter, except that the filter only allows a selected set of attributes whose value
+**does not match* a certain regex pattern are released.
+
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 200,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "attributeFilter" : {
+      "@class": "org.apereo.cas.services.support.RegisteredServiceReverseMappedRegexAttributeFilter",
+      "patterns": {
+          "memberOf": "^\\w{3}$"
+      },
+      "excludeUnmappedAttributes": false,
+      "completeMatch": false,
+      "order": 0
+    },
+    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
+  }
+}
+```
