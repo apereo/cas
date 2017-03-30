@@ -41,7 +41,8 @@ public class CasCookieConfiguration {
     @RefreshScope
     public CookieRetrievingCookieGenerator warnCookieGenerator() {
         final WarningCookieProperties props = casProperties.getWarningCookie();
-        return new WarningCookieRetrievingCookieGenerator(props.getName(), props.getPath(), props.getMaxAge(), props.isSecure());
+        return new WarningCookieRetrievingCookieGenerator(props.getName(), props.getPath(), 
+                props.getMaxAge(), props.isSecure(), props.isHttpOnly());
     }
 
     @ConditionalOnMissingBean(name = "cookieValueManager")
@@ -62,10 +63,9 @@ public class CasCookieConfiguration {
             return new TicketGrantingCookieCipherExecutor(casProperties.getTgc().getEncryptionKey(), casProperties.getTgc().getSigningKey());
         }
 
-        LOGGER.info("Ticket-granting cookie encryption/signing is turned off and "
-                + "MAY NOT be safe in a production environment. "
-                + "Consider using other choices to handle encryption, signing and verification of "
-                + "ticket-granting cookies.");
+        LOGGER.info("Ticket-granting cookie encryption/signing is turned off. This "
+                + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+                + "signing and verification of ticket-granting cookies.");
         return NoOpCipherExecutor.getInstance();
     }
 
@@ -75,8 +75,11 @@ public class CasCookieConfiguration {
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator(@Qualifier("cookieCipherExecutor") final CipherExecutor cipherExecutor) {
         final TicketGrantingCookieProperties tgc = casProperties.getTgc();
         final int rememberMeMaxAge = Long.valueOf(tgc.getRememberMeMaxAge()).intValue();
-        return new TGCCookieRetrievingCookieGenerator(cookieValueManager(cipherExecutor), tgc.getName(),
+        return new TGCCookieRetrievingCookieGenerator(cookieValueManager(cipherExecutor), 
+                tgc.getName(),
                 tgc.getPath(), tgc.getDomain(),
-                rememberMeMaxAge, tgc.isSecure(), tgc.getMaxAge());
+                rememberMeMaxAge, tgc.isSecure(), 
+                tgc.getMaxAge(),
+                tgc.isHttpOnly());
     }
 }
