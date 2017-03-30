@@ -60,15 +60,14 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                      final HttpServletRequest request,
                                      final HttpServletResponse response) throws SamlException {
 
-        LOGGER.debug("Locating assertion consumer service url for binding [{}]", SAMLConstants.SAML2_PAOS_BINDING_URI);
-        final AssertionConsumerService acs = adaptor.getAssertionConsumerService(SAMLConstants.SAML2_PAOS_BINDING_URI);
+        final AssertionConsumerService acs = adaptor.getAssertionConsumerServiceForPaosBinding();
         if (acs == null) {
             LOGGER.warn("Could not locate the assertion consumer service url for binding [{}]", SAMLConstants.SAML2_PAOS_BINDING_URI);
             throw new IllegalArgumentException("Failed to locate the assertion consumer service url for ECP");
         }
 
         LOGGER.debug("Located assertion consumer service url [{}]", acs);
-        final Response ecpResponse = newEcpResponse(adaptor.getAssertionConsumerService().getLocation());
+        final Response ecpResponse = newEcpResponse(acs.getLocation());
         final Header header = newSoapObject(Header.class);
         header.getUnknownXMLObjects().add(ecpResponse);
         final Body body = newSoapObject(Body.class);
