@@ -504,6 +504,7 @@ and you would rather not duplicate the same attribute per every service definiti
 then the following settings are relevant:
 
 ```properties
+# You can see those attributes when using cas/p3/serviceValidate or other protocols able to show multiple attributes
 # cas.authn.attributeRepository.defaultAttributesToRelease=cn,givenName,uid,affiliation
 ```
 
