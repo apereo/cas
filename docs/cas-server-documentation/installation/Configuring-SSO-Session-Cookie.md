@@ -40,14 +40,26 @@ WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Generated signing key XYZ
 ```
 
 You should then grab each generated key for encryption and signing, and put them inside your cas properties for each now-enabled 
-setting.
+setting:
+
+```properties
+# Make sure those keys are coming from your console or have been randomly generated
+# 256 bits key
+cas.tgc.signingKey=ExAmPle_aXArEqX5EYDWG79oJiAP4UMumrOgKH1UoiLel9HIvM8of1mg4QhiHUcMHeS4DeRoR0A
+# 128 bits key
+cas.tgc.encryptionKey=ExAmPle_zMVmlu91ewA3lmlx6T3_4G9WhZftM4OpGGw
+```
 
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
 
 ### Disable Encryption
 
 If you wish to turn off cookie encryption, see the relevant list of CAS properties
-and [review this guide](Configuration-Properties.html).
+and [review this guide](Configuration-Properties.html#ticket-granting-cookie).
+
+```properties
+cas.tgc.cipherEnabled=false
+```
 
 ## Cookie Generation for Renewed Authentications
 
