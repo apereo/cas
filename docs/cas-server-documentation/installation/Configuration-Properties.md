@@ -2575,6 +2575,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.webAdvisor.attributes=uid
 ```
 
+### Adobe Creative Cloud
+
+```properties
+# cas.samlSP.adobeCloud.metadata=/path/to/adobe-metadata.xml
+# cas.samlSP.adobeCloud.name=Adobe Creative Cloud
+# cas.samlSP.adobeCloud.description=Adobe Creative Cloud Integration
+# cas.samlSP.adobeCloud.attributes=Email,FirstName,LastName
+```
+
 ### Arc GIS
 
 ```properties
