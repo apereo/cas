@@ -954,6 +954,7 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 # cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.authn.ldap[0].principalAttributeId=uid
 # cas.authn.ldap[0].principalAttributePassword=userPassword
+# Give an attribute list released from LDAP to CAS, could be used with attributeRepository.defaultAttributesToRelease to be visible on CAS P3 serviceValidate
 # cas.authn.ldap[0].principalAttributeList=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].additionalAttributes=
