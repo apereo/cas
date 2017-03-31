@@ -31,6 +31,15 @@ public class SamlServiceProviderProperties {
     private OpenAthens openAthens = new OpenAthens();
     private ArcGIS arcGIS = new ArcGIS();
     private BenefitFocus benefitFocus = new BenefitFocus();
+    private AdobeCloud adobeCloud = new AdobeCloud();
+
+    public AdobeCloud getAdobeCloud() {
+        return adobeCloud;
+    }
+
+    public void setAdobeCloud(final AdobeCloud adobeCloud) {
+        this.adobeCloud = adobeCloud;
+    }
 
     public ArcGIS getArcGIS() {
         return arcGIS;
@@ -305,4 +314,9 @@ public class SamlServiceProviderProperties {
         }
     }
 
+    public static class AdobeCloud extends AbstractSamlSPProperties {
+        public AdobeCloud() {
+            setAttributes(Arrays.asList("firstName", "lastName", EMAIL));
+        }
+    }
 }
