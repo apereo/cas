@@ -44,9 +44,9 @@ setting:
 
 ```properties
 # Make sure those keys are coming from your console or have been randomly generated
-# 256 bits key
+# Key of size 512
 cas.tgc.signingKey=ExAmPle_aXArEqX5EYDWG79oJiAP4UMumrOgKH1UoiLel9HIvM8of1mg4QhiHUcMHeS4DeRoR0A
-# 128 bits key
+# Key of size 256
 cas.tgc.encryptionKey=ExAmPle_zMVmlu91ewA3lmlx6T3_4G9WhZftM4OpGGw
 ```
 
