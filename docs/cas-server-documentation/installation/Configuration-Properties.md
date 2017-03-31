@@ -1987,6 +1987,9 @@ To learn more about this topic, [please review this guide](Audits.html).
 # cas.audit.singlelineSeparator=|
 # cas.audit.useSingleLine=false
 # cas.audit.appCode=CAS
+# cas.audit.alternateServerAddrHeaderName=
+# cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
+# cas.audit.useServerHostAddress=false
 ```
 
 ### Database
