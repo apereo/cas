@@ -20,9 +20,11 @@ package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.HttpStatus;
+import org.jasig.cas.web.flow.AuthenticationExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.execution.RequestContext;
@@ -40,13 +42,11 @@ import javax.validation.constraints.NotNull;
  */
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements InitializingBean {
 
-    private static final int DEFAULT_FAILURE_THRESHOLD = 100;
+    private static final int DEFAULT_FAILURE_THRESHOLD = 5;
 
-    private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 60;
+    private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 3;
 
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
-
-    private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
     /** Logger object. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -72,7 +72,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @Override
     public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
         // we only care about post because that's the only instance where we can get anything useful besides IP address.
-        if (!"POST".equals(request.getMethod())) {
+        if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return true;
         }
 
@@ -91,7 +91,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @Override
     public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                  final Object o, final ModelAndView modelAndView) throws Exception {
-        if (!"POST".equals(request.getMethod())) {
+        if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return;
         }
 
@@ -100,14 +100,11 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         if (context == null || context.getCurrentEvent() == null) {
             return;
         }
+        final String handleErrorName = (String) context.getFlowScope().get("handleErrorName");
 
-        // User successfully authenticated
-        if (SUCCESSFUL_AUTHENTICATION_EVENT.equals(context.getCurrentEvent().getId())) {
-            return;
+        if (AuthenticationExceptionHandler.isSubmissionFailure(handleErrorName)) {
+            recordSubmissionFailure(request);
         }
-
-        // User submitted invalid credentials, so we update the invalid login count
-        recordSubmissionFailure(request);
     }
 
     public final void setFailureThreshold(final int failureThreshold) {
@@ -144,10 +141,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param request the request
      */
     protected void recordThrottle(final HttpServletRequest request) {
-        logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds. "
-                + "Authentication attempt exceeds the failure threshold {}",
-                request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
-                this.failureThreshold);
+        logger.warn("Throttling submission from {}. Login rate goes above threshold rate: {} logins/second",
+                request.getRemoteAddr(), this.getThresholdRate());
     }
 
     /**
