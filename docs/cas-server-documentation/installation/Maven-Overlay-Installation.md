@@ -65,6 +65,9 @@ To construct the overlay project, you neeed to copy directories and files *that 
 The Gradle overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
 You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
 
+Note: Do **NOT** ever make changes in the build directory. The changesets will be cleaned out and 
+set back to defaults every time you do a build. Put overlaid components inside the source directory
+and/or other instructed locations to avoid surprises.
 
 ## CAS Configuration Server Overlay
 
