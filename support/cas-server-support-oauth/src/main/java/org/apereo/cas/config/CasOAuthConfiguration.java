@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -234,15 +235,16 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private ExpirationPolicy accessTokenExpirationPolicy() {
+        final OAuthProperties oauth = casProperties.getAuthn().getOauth();
         return new OAuthAccessTokenExpirationPolicy(
-                casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds(),
-                casProperties.getAuthn().getOauth().getAccessToken().getTimeToKillInSeconds()
+                oauth.getAccessToken().getMaxTimeToLiveInSeconds(),
+                oauth.getAccessToken().getTimeToKillInSeconds()
         );
     }
 
     private ExpirationPolicy oAuthCodeExpirationPolicy() {
-        return new OAuthCodeExpirationPolicy(casProperties.getAuthn().getOauth().getCode().getNumberOfUses(),
-                casProperties.getAuthn().getOauth().getCode().getTimeToKillInSeconds());
+        final OAuthProperties oauth = casProperties.getAuthn().getOauth();
+        return new OAuthCodeExpirationPolicy(oauth.getCode().getNumberOfUses(), oauth.getCode().getTimeToKillInSeconds());
     }
 
     @Bean

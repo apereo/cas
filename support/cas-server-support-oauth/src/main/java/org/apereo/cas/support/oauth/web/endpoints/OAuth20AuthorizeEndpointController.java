@@ -13,13 +13,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -186,7 +187,9 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         if (OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.CODE)) {
             callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri, ticketGrantingTicket);
         } else if (OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.TOKEN)) {
-            callbackUrl = buildCallbackUrlForImplicitTokenResponseType(context, authentication, service, redirectUri, ticketGrantingTicket);
+            final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication, 
+                    registeredService, ticketGrantingTicket);
+            callbackUrl = buildCallbackUrlForImplicitTokenResponseType(holder, redirectUri);
         } else {
             callbackUrl = buildCallbackUrlForTokenResponseType(context, authentication, service, redirectUri, responseType, clientId);
         }
@@ -217,15 +220,12 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         return null;
     }
 
-    private String buildCallbackUrlForImplicitTokenResponseType(final J2EContext context,
-                                                                final Authentication authentication,
-                                                                final Service service,
-                                                                final String redirectUri,
-                                                                final TicketGrantingTicket ticketGrantingTicket) throws Exception {
-
-        final AccessToken accessToken = generateAccessToken(service, authentication, context, ticketGrantingTicket);
+    private String buildCallbackUrlForImplicitTokenResponseType(final AccessTokenRequestDataHolder holder,
+                                                                final String redirectUri) throws Exception {
+        final AccessToken accessToken = generateAccessToken(holder);
         LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
-        return buildCallbackUrlResponseType(authentication, service, redirectUri, accessToken, Collections.emptyList());
+        return buildCallbackUrlResponseType(holder.getAuthentication(),
+                holder.getService(), redirectUri, accessToken, Collections.emptyList());
     }
 
     /**
