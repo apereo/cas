@@ -194,7 +194,8 @@ public class CasSupportActionsConfiguration {
     @Lazy
     @Bean
     public Action terminateSessionAction() {
-        return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator, warnCookieGenerator);
+        return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+                warnCookieGenerator, casProperties.getLogout());
     }
 
     @Bean

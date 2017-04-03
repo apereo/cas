@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import com.google.common.base.Throwables;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
@@ -32,17 +33,28 @@ public class TerminateSessionAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final CookieRetrievingCookieGenerator warnCookieGenerator;
+    private final LogoutProperties logoutProperties;
 
-    public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService, final CookieRetrievingCookieGenerator tgtCookieGenerator,
-                                  final CookieRetrievingCookieGenerator warnCookieGenerator) {
+    public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService,
+                                  final CookieRetrievingCookieGenerator tgtCookieGenerator,
+                                  final CookieRetrievingCookieGenerator warnCookieGenerator,
+                                  final LogoutProperties logoutProperties) {
         this.centralAuthenticationService = centralAuthenticationService;
         this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;
         this.warnCookieGenerator = warnCookieGenerator;
+        this.logoutProperties = logoutProperties;
     }
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
-        return terminate(requestContext);
+        boolean terminateSession = true;
+        if (logoutProperties.isConfirmLogout()) {
+            terminateSession = isLogoutRequestConfirmed(requestContext);
+        }
+        if (terminateSession) {
+            return terminate(requestContext);
+        }
+        return this.eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_WARN);
     }
 
     /**
@@ -95,5 +107,10 @@ public class TerminateSessionAction extends AbstractAction {
         if (session != null) {
             session.invalidate();
         }
+    }
+
+    private boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        return request.getParameterMap().containsKey("LogoutRequestConfirmed");
     }
 }
