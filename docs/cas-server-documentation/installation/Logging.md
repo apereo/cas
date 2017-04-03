@@ -68,16 +68,6 @@ troubleshooting and diagnostics.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
 
-## Apache Tomcat AsyncLoggers Shutdown
-
-Log4j automatically inserts itself into the runtime application context (i.e. Tomcat) and will clean up
-the logging context once the container is instructed to shut down. However,
-Apache Tomcat seem to by default ignore all JAR files named `log4j*.jar`, which prevents
-this feature from working. You may need to change the `catalina.properties`
-and remove `log4j*.jar` from the `jarsToSkip` property. Failure to do so will stop Tomcat to gracefully shut down and causes logger context threads to hang.
-
-You may need to do something similar on other containers if they skip scanning Log4j JAR files.
-
 ## Routing Logs to Sentry
 
 Log data can be automatically routed to and integrated with [Sentry](../integration/Sentry-Integration.html) to track and monitor CAS events and errors.
