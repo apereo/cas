@@ -23,6 +23,7 @@ public class AccessTokenRequestDataHolder {
     private final OAuthToken token;
     private final boolean generateRefreshToken;
     private final OAuthRegisteredService registeredService;
+    private final TicketGrantingTicket ticketGrantingTicket;
 
     public AccessTokenRequestDataHolder(final OAuthToken token, final boolean generateRefreshToken,
                                         final OAuthRegisteredService registeredService) {
@@ -36,6 +37,18 @@ public class AccessTokenRequestDataHolder {
         this.token = token;
         this.generateRefreshToken = generateRefreshToken;
         this.registeredService = registeredService;
+        this.ticketGrantingTicket = token != null ? token.getGrantingTicket() : null;
+    }
+
+    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
+                                        final OAuthRegisteredService registeredService,
+                                        final TicketGrantingTicket ticketGrantingTicket) {
+        this.service = service;
+        this.authentication = authentication;
+        this.registeredService = registeredService;
+        this.ticketGrantingTicket = ticketGrantingTicket;
+        this.token = null;
+        this.generateRefreshToken = false;
     }
 
     public Service getService() {
@@ -59,7 +72,7 @@ public class AccessTokenRequestDataHolder {
     }
 
     public TicketGrantingTicket getTicketGrantingTicket() {
-        return token != null ? token.getGrantingTicket() : null;
+        return this.ticketGrantingTicket;
     }
 
     @Override
@@ -70,6 +83,7 @@ public class AccessTokenRequestDataHolder {
                 .append("token", token)
                 .append("generateRefreshToken", generateRefreshToken)
                 .append("registeredService", registeredService)
+                .append("ticketGrantingTicket", ticketGrantingTicket)
                 .toString();
     }
 }

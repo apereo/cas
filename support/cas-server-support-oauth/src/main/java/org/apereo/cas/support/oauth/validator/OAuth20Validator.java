@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.0.0
  */
 public class OAuth20Validator {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20Validator.class);
 
     private ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
