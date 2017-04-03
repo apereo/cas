@@ -21,7 +21,7 @@ Support is enabled by including the following module in the overlay:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator).
 
 ## Registration
 
