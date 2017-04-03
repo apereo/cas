@@ -32,6 +32,15 @@ public class SamlServiceProviderProperties {
     private ArcGIS arcGIS = new ArcGIS();
     private BenefitFocus benefitFocus = new BenefitFocus();
     private AdobeCloud adobeCloud = new AdobeCloud();
+    private AcademicWorks academicWorks = new AcademicWorks();
+
+    public AcademicWorks getAcademicWorks() {
+        return academicWorks;
+    }
+
+    public void setAcademicWorks(final AcademicWorks academicWorks) {
+        this.academicWorks = academicWorks;
+    }
 
     public AdobeCloud getAdobeCloud() {
         return adobeCloud;
@@ -317,6 +326,12 @@ public class SamlServiceProviderProperties {
     public static class AdobeCloud extends AbstractSamlSPProperties {
         public AdobeCloud() {
             setAttributes(Arrays.asList("firstName", "lastName", EMAIL));
+        }
+    }
+    
+    public static class AcademicWorks extends AbstractSamlSPProperties {
+        public AcademicWorks() {
+            setAttributes(Arrays.asList("displayName", EMAIL));
         }
     }
 }

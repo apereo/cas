@@ -2645,6 +2645,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.salesforce.signatureLocation=
 ```
 
+### Academic Works
+
+```properties
+# cas.samlSP.academicWorks.metadata=/etc/cas/saml/aw.xml
+# cas.samlSP.academicWorks.name=AcademicWorks
+# cas.samlSP.academicWorks.description=AcademicWorks Integration
+# cas.samlSP.academicWorks.attributes=mail,displayName
+```
+
 ### Zoom
 
 ```properties
