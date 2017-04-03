@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -87,11 +88,21 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
             this.ticketRegistry.deleteTicket(accessToken);
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
-
+        updateAccessTokenUsage(accessTokenTicket);
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
         final String value = OAuth20Utils.jsonify(map);
         LOGGER.debug("Final user profile is [{}]", value);
         return new ResponseEntity<>(value, HttpStatus.OK);
+    }
+
+    private void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
+        final TicketState accessTokenState = TicketState.class.cast(accessTokenTicket);
+        accessTokenState.update();
+        if (accessTokenTicket.isExpired()) {
+            this.ticketRegistry.deleteTicket(accessTokenTicket.getId());
+        } else {
+            this.ticketRegistry.updateTicket(accessTokenTicket);
+        }
     }
 
     /**

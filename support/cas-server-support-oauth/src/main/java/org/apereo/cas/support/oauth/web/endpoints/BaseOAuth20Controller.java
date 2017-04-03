@@ -10,8 +10,10 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.slf4j.Logger;
@@ -117,6 +119,18 @@ public abstract class BaseOAuth20Controller {
         LOGGER.debug("Creating access token [{}]", accessToken);
         addTicketToRegistry(accessToken, responseHolder.getTicketGrantingTicket());
         LOGGER.debug("Added access token [{}] to registry", accessToken);
+        
+        if (responseHolder.getToken() instanceof OAuthCode) {
+            final TicketState codeState = TicketState.class.cast(responseHolder.getToken());
+            codeState.update();
+
+            if (responseHolder.getToken().isExpired()) {
+                this.ticketRegistry.deleteTicket(responseHolder.getToken().getId());
+            } else {
+                this.ticketRegistry.updateTicket(responseHolder.getToken());
+            }
+            this.ticketRegistry.updateTicket(responseHolder.getTicketGrantingTicket());
+        }
         return accessToken;
     }
 
