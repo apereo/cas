@@ -77,7 +77,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
 
         final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-            LOGGER.error("Expired access token: [{}]", accessToken);
+            LOGGER.error("Expired/Missing access token: [{}]", accessToken);
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
 

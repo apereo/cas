@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@EnableTransactionManagement(proxyTargetClass = true)
+@Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public abstract class BaseAccessTokenGrantRequestExtractor {
     /**
      * The Services manager.
