@@ -44,7 +44,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         builder.append(COOKIE_FIELD_SEPARATOR);
         builder.append(clientInfo.getClientIpAddress());
-        
+
         final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
         if (StringUtils.isBlank(userAgent)) {
             throw new IllegalStateException("Request does not specify a user-agent");
@@ -74,14 +74,13 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
         final String remoteAddr = cookieParts[1];
         final String userAgent = cookieParts[2];
 
-        if (StringUtils.isBlank(value) || StringUtils.isBlank(remoteAddr)
-                || StringUtils.isBlank(userAgent)) {
+        if (StringUtils.isBlank(value) || StringUtils.isBlank(remoteAddr) || StringUtils.isBlank(userAgent)) {
             throw new IllegalStateException("Invalid cookie. Required fields are empty");
         }
 
-        if (!remoteAddr.equals(request.getRemoteAddr())) {
-            throw new IllegalStateException("Invalid cookie. Required remote address does not match "
-                    + request.getRemoteAddr());
+        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        if (!remoteAddr.equals(clientInfo.getClientIpAddress())) {
+            throw new IllegalStateException("Invalid cookie. Required remote address does not match " + clientInfo.getClientIpAddress());
         }
 
         final String agent = WebUtils.getHttpServletRequestUserAgent(request);
