@@ -7,8 +7,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuthToken;
-import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.profile.ProfileManager;
@@ -79,16 +77,12 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     protected OAuthToken getOAuthTokenFromRequest() {
         final OAuthToken token = this.ticketRegistry.getTicket(getOAuthParameter(), OAuthToken.class);
-        // token should not be expired
         if (token == null || token.isExpired()) {
-            LOGGER.error("Code or refresh token expired: [{}]", token);
+            LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(), token);
             if (token != null) {
                 this.ticketRegistry.deleteTicket(token.getId());
             }
             return null;
-        }
-        if (token instanceof OAuthCode && !(token instanceof RefreshToken)) {
-            this.ticketRegistry.deleteTicket(token.getId());
         }
         return token;
     }
