@@ -36,7 +36,8 @@ public class AuthyAuthenticationWebflowEventResolver extends AbstractCasWebflowE
         return handleAuthenticationTransactionAndGrantTicketGrantingTicket(context);
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+    @Audit(action = "AUTHENTICATION_EVENT",
+            actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
