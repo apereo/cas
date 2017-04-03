@@ -530,7 +530,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     }
 
     /**
-     * Handle authentication transaction and grant ticket granting ticket set.
+     * Handle authentication transaction and grant ticket granting ticket.
      *
      * @param context the context
      * @return the set
