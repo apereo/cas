@@ -1,0 +1,9 @@
+description = "Apereo CAS Core Configuration - JDBC"
+
+dependencies {
+    compile project(":core:cas-server-core-util")
+    compile project(":support:cas-server-support-jpa-util")
+    provided project(":core:cas-server-core-configuration")
+    implementation libraries.quartz
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+}

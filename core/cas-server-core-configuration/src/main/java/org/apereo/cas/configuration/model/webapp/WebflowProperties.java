@@ -16,7 +16,7 @@ public class WebflowProperties extends CryptographyProperties {
 
     private boolean autoconfigure = true;
     
-    private boolean refresh = true;
+    private boolean refresh;
 
     private boolean alwaysPauseRedirect;
 

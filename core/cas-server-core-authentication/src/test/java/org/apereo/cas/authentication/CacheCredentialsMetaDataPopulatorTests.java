@@ -18,7 +18,7 @@ public class CacheCredentialsMetaDataPopulatorTests {
 
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication());
-        populator.populateAttributes(builder, c);
+        populator.populateAttributes(builder, AuthenticationTransaction.wrap(c));
         final Authentication authn = builder.build();
         assertTrue(authn.getAttributes().containsKey(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD));
         assertTrue(authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD)

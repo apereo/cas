@@ -51,7 +51,8 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
                           final HttpServletResponse response,
                           final org.jasig.cas.client.validation.Assertion casAssertion,
                           final SamlRegisteredService service,
-                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                          final String binding) throws SamlException {
         final Header header = newSoapObject(Header.class);
 
         final Body body = newSoapObject(Body.class);
@@ -74,9 +75,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-
-        encodeFinalResponse(request, response, service, adaptor, envelope);
-
+        encodeFinalResponse(request, response, service, adaptor, envelope, binding);
         return envelope;
     }
 }

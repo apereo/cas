@@ -14,11 +14,12 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -104,102 +105,102 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyClientNoClientId() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyClientNoRedirectUri() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyClientNoAuthorizationCode() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyClientBadAuthorizationCode() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, "badValue");
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, "badValue");
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyClientNoClientSecret() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyClientNoCode() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
 
@@ -207,66 +208,66 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyClientNoCasService() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
         final OAuthCode code = addCode(principal, registeredService);
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyClientRedirectUriDoesNotStartWithServiceId() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, OTHER_REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, OTHER_REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyClientWrongSecret() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, WRONG_CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, WRONG_CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
         final OAuthCode code = addCode(principal, service);
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -284,22 +285,22 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory(new AlwaysExpiresExpirationPolicy());
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
-        final OAuthCode code = expiringOAuthCodeFactory.create(service, authentication);
-        oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
+        final OAuthCode code = expiringOAuthCodeFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
+        this.ticketRegistry.addTicket(code);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         servicesManager.save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_GRANT, mockResponse.getContentAsString());
     }
 
     @Test
@@ -372,45 +373,45 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final Principal principal = createPrincipal();
         final OAuthCode code = addCode(principal, service);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         if (basicAuth) {
             final String auth = CLIENT_ID + ':' + CLIENT_SECRET;
             final String value = Base64.encodeBase64String(auth.getBytes(StandardCharsets.UTF_8));
             mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
         } else {
-            mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-            mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
+            mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         }
-        mockRequest.setParameter(OAuthConstants.CODE, code.getId());
+        mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
-        assertNull(oAuth20AccessTokenController.getTicketRegistry().getTicket(code.getId()));
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
+        assertNull(this.ticketRegistry.getTicket(code.getId()));
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
         final String accessTokenId;
         if (json) {
             assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
-            assertTrue(body.contains('"' + OAuthConstants.ACCESS_TOKEN + "\":\"AT-"));
+            assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
             if (refreshToken) {
-                assertTrue(body.contains('"' + OAuthConstants.REFRESH_TOKEN + "\":\"RT-"));
+                assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
             }
-            assertTrue(body.contains('"' + OAuthConstants.EXPIRES_IN + "\":7"));
-            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + "\":\"", "\",\"");
+            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":7"));
+            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals(MediaType.TEXT_PLAIN_VALUE, mockResponse.getContentType());
-            assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + "=AT-"));
+            assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + "=AT-"));
             if (refreshToken) {
-                assertTrue(body.contains(OAuthConstants.REFRESH_TOKEN + "=RT-"));
+                assertTrue(body.contains(OAuth20Constants.REFRESH_TOKEN + "=RT-"));
             }
-            assertTrue(body.contains(OAuthConstants.EXPIRES_IN + '='));
-            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
+            assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
+            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
         }
 
-        final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
+        final AccessToken accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
         final int timeLeft = getTimeLeft(body, refreshToken, json);
@@ -421,16 +422,16 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final int timeLeft;
         if (json) {
             if (refreshToken) {
-                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuthConstants.EXPIRES_IN + "\":", ","));
+                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuth20Constants.EXPIRES_IN + "\":", ","));
             } else {
-                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuthConstants.EXPIRES_IN + "\":", "}"));
+                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuth20Constants.EXPIRES_IN + "\":", "}"));
             }
         } else {
             if (refreshToken) {
-                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuthConstants.EXPIRES_IN + '=',
-                        '&' + OAuthConstants.REFRESH_TOKEN));
+                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuth20Constants.EXPIRES_IN + '=',
+                        '&' + OAuth20Constants.REFRESH_TOKEN));
             } else {
-                timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuthConstants.EXPIRES_IN + '='));
+                timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuth20Constants.EXPIRES_IN + '='));
             }
         }
         return timeLeft;
@@ -440,61 +441,61 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyUserNoClientId() throws Exception {
         addRegisteredService();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyUserNoCasService() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyUserBadAuthorizationCode() throws Exception {
         addRegisteredService();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyUserBadCredentials() throws Exception {
         addRegisteredService();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, "badPassword");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
@@ -508,7 +509,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyUserAuthWithRefreshToken() throws Exception {
         final OAuthRegisteredService registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
-        internalVerifyUserAuth(true, false);
+        internalVerifyUserAuth(false, false);
     }
 
     @Test
@@ -524,42 +525,41 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final OAuthRegisteredService registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
         registeredService.setJsonFormat(true);
-
-        internalVerifyUserAuth(true, true);
+        internalVerifyUserAuth(false, true);
     }
 
     private void internalVerifyUserAuth(final boolean refreshToken, final boolean json) throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
         mockRequest.setParameter(USERNAME, GOOD_USERNAME);
         mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
         final String accessTokenId;
         if (json) {
             assertEquals("application/json", mockResponse.getContentType());
-            assertTrue(body.contains('"' + OAuthConstants.ACCESS_TOKEN + "\":\"AT-"));
+            assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
             if (refreshToken) {
-                assertTrue(body.contains('"' + OAuthConstants.REFRESH_TOKEN + "\":\"RT-"));
+                assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
             }
-            assertTrue(body.contains('"' + OAuthConstants.EXPIRES_IN + "\":7"));
-            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + "\":\"", "\",\"");
+            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":7"));
+            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals("text/plain", mockResponse.getContentType());
-            assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + '='));
+            assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + '='));
             if (refreshToken) {
-                assertTrue(body.contains(OAuthConstants.REFRESH_TOKEN + '='));
+                assertTrue(body.contains(OAuth20Constants.REFRESH_TOKEN + '='));
             }
-            assertTrue(body.contains(OAuthConstants.EXPIRES_IN + '='));
-            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
+            assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
+            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
         }
 
-        final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
+        final AccessToken accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(GOOD_USERNAME, accessToken.getAuthentication().getPrincipal().getId());
 
         final int timeLeft = getTimeLeft(body, refreshToken, json);
@@ -574,19 +574,19 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
         final DefaultRefreshTokenFactory expiringRefreshTokenFactory = new DefaultRefreshTokenFactory(new AlwaysExpiresExpirationPolicy());
-        final RefreshToken refreshToken = expiringRefreshTokenFactory.create(service, authentication);
-        oAuth20AccessTokenController.getTicketRegistry().addTicket(refreshToken);
+        final RefreshToken refreshToken = expiringRefreshTokenFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
+        this.ticketRegistry.addTicket(refreshToken);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.REFRESH_TOKEN, refreshToken.getId());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_GRANT, mockResponse.getContentAsString());
     }
 
     @Test
@@ -595,37 +595,36 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final RegisteredService service = addRegisteredService();
         final RefreshToken refreshToken = addRefreshToken(principal, service);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, WRONG_CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.REFRESH_TOKEN, refreshToken.getId());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, WRONG_CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyRefreshTokenMissingToken() throws Exception {
         addRegisteredService();
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test
     public void verifyRefreshTokenOK() throws Exception {
-        final RegisteredService service = addRegisteredService();
-
+        final OAuthRegisteredService service = addRegisteredService();
         internalVerifyRefreshTokenOk(service, false);
     }
 
@@ -633,7 +632,6 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyRefreshTokenOKWithRefreshToken() throws Exception {
         final OAuthRegisteredService service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-
         internalVerifyRefreshTokenOk(service, false);
     }
 
@@ -641,7 +639,6 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyJsonRefreshTokenOK() throws Exception {
         final OAuthRegisteredService service = addRegisteredService();
         service.setJsonFormat(true);
-
         internalVerifyRefreshTokenOk(service, true);
     }
 
@@ -650,43 +647,40 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final OAuthRegisteredService service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setJsonFormat(true);
-
         internalVerifyRefreshTokenOk(service, true);
     }
 
-    private void internalVerifyRefreshTokenOk(final RegisteredService service, final boolean json) throws Exception {
+    private void internalVerifyRefreshTokenOk(final OAuthRegisteredService service, final boolean json) throws Exception {
         final Principal principal = createPrincipal();
         final RefreshToken refreshToken = addRefreshToken(principal, service);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
-        mockRequest.setParameter(OAuthConstants.REFRESH_TOKEN, refreshToken.getId());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
-        //This assert fails because deep down inside Oauth2 access token ctrl the refresh token gets deleted
-        //assertNotNull(oAuth20AccessTokenController.getRegistry().getTicket((refreshToken.getId())));
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
         final String accessTokenId;
         if (json) {
             assertEquals("application/json", mockResponse.getContentType());
-            assertTrue(body.contains('"' + OAuthConstants.ACCESS_TOKEN + "\":\"AT-"));
-            assertFalse(body.contains('"' + OAuthConstants.REFRESH_TOKEN + "\":\"RT-"));
-            assertTrue(body.contains('"' + OAuthConstants.EXPIRES_IN + "\":7"));
-            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + "\":\"", "\",\"");
+            assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
+            assertFalse(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
+            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":7"));
+            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals("text/plain", mockResponse.getContentType());
-            assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + '='));
-            assertFalse(body.contains(OAuthConstants.REFRESH_TOKEN + '='));
-            assertTrue(body.contains(OAuthConstants.EXPIRES_IN + '='));
-            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
+            assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + '='));
+            assertFalse(body.contains(OAuth20Constants.REFRESH_TOKEN + '='));
+            assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
+            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
         }
 
-        final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
+        final AccessToken accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
         final int timeLeft = getTimeLeft(body, false, json);
@@ -712,8 +706,8 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final Authentication authentication = getAuthentication(principal);
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
-        final OAuthCode code = oAuthCodeFactory.create(service, authentication);
-        oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
+        final OAuthCode code = oAuthCodeFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
+        this.ticketRegistry.addTicket(code);
         return code;
     }
 
@@ -721,8 +715,8 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final Authentication authentication = getAuthentication(principal);
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
-        final RefreshToken refreshToken = oAuthRefreshTokenFactory.create(service, authentication);
-        oAuth20AccessTokenController.getTicketRegistry().addTicket(refreshToken);
+        final RefreshToken refreshToken = oAuthRefreshTokenFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
+        this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
     }
 

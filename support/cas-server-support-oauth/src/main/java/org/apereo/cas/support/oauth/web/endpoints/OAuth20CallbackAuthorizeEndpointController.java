@@ -6,13 +6,13 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuthWrapperController {
+public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller {
 
     private final CallbackController callbackController;
     private final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver;
@@ -45,9 +45,10 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuthWrapper
                                                       final CallbackController callbackController,
                                                       final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver,
                                                       final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                      final CasConfigurationProperties casProperties) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory, scopeToAttributesFilter,
-                casProperties);
+                                                      final CasConfigurationProperties casProperties,
+                                                      final CookieRetrievingCookieGenerator cookieGenerator) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
+                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.callbackController = callbackController;
         this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;
         this.callbackController.setConfig(config);
@@ -61,8 +62,8 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuthWrapper
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL)
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL)
+    public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         this.callbackController.callback(request, response);
         final String url = StringUtils.remove(response.getHeader("Location"), "redirect:");
         final J2EContext ctx = WebUtils.getPac4jJ2EContext(request, response);

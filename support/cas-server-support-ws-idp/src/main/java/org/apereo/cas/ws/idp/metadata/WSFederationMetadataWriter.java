@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.metadata;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.fediz.core.util.CertsUtils;
 import org.apache.cxf.fediz.core.util.SignatureUtils;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
@@ -95,11 +96,11 @@ public class WSFederationMetadataWriter {
         writer.writeStartElement("md", "RoleDescriptor", WS_FEDERATION_NS);
         writer.writeAttribute(SCHEMA_INSTANCE_NS, "type", "fed:SecurityTokenServiceType");
         writer.writeAttribute("protocolSupportEnumeration", WS_FEDERATION_NS);
-        writer.writeStartElement("", "KeyDescriptor", SAML2_METADATA_NS);
+        writer.writeStartElement(StringUtils.EMPTY, "KeyDescriptor", SAML2_METADATA_NS);
         writer.writeAttribute("use", "signing");
-        writer.writeStartElement("", "KeyInfo", "http://www.w3.org/2000/09/xmldsig#");
-        writer.writeStartElement("", "X509Data", "http://www.w3.org/2000/09/xmldsig#");
-        writer.writeStartElement("", "X509Certificate", "http://www.w3.org/2000/09/xmldsig#");
+        writer.writeStartElement(StringUtils.EMPTY, "KeyInfo", "http://www.w3.org/2000/09/xmldsig#");
+        writer.writeStartElement(StringUtils.EMPTY, "X509Data", "http://www.w3.org/2000/09/xmldsig#");
+        writer.writeStartElement(StringUtils.EMPTY, "X509Certificate", "http://www.w3.org/2000/09/xmldsig#");
 
         try {
             final String keyAlias = crypto.getDefaultX509Identifier();

@@ -1,0 +1,5 @@
+description = "Apereo CAS SAML Server Google Apps SAML Core Support"
+dependencies {
+    compile project(":support:cas-server-support-saml")
+    compile project(":core:cas-server-core-services")
+}

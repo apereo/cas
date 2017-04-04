@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.authenticator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -32,7 +32,7 @@ public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordC
             throws CredentialsException {
         final String id = credentials.getUsername();
         final String secret = credentials.getPassword();
-        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, id);
+        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, id);
 
         if (!this.validator.checkServiceValid(registeredService)) {
             throw new CredentialsException("Service invalid for client identifier: " + id);

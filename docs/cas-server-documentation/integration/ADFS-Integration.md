@@ -69,7 +69,16 @@ to put together an implementation of `WsFederationAttributeMutator` that changes
 ```java
 package org.apereo.cas.support.wsfederation;
 
-@Component("wsfedAttributeMutator")
+@Configuration("myWsFedConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MyWsFedConfiguration {
+
+  @Bean
+  public WsFederationAttributeMutator wsfedAttributeMutator() {
+      return new WsFederationAttributeMutatorImpl(...);
+  }
+}
+
 public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
     public void modifyAttributes(...) {
         ...

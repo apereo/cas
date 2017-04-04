@@ -5,7 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
 import org.pac4j.core.context.J2EContext;
 
@@ -49,7 +49,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
 
         final Set<String> supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getScopes());
         supportedScopes.retainAll(oidcRegisteredService.getScopes());
-        supportedScopes.retainAll(OAuthUtils.getRequestedScopes(ctx));
+        supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
         model.put("scopes", supportedScopes);
     }
 }

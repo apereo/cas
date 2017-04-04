@@ -7,6 +7,24 @@ title: CAS - Securing Configuration Properties
 
 This document describes how to retrieve and secure CAS configuration and properties.
 
+## Standalone
+
+If you are running CAS in standalone mode without the presence of the configuration server,
+you can take advantage of built-it [Jasypt](http://www.jasypt.org/) functionality to decrypt sensitive CAS settings.
+
+Jasypt supplies command-line tools useful for performing encryption, decryption, etc. In order to use the tools, you should download the Jasypt distribution. Once unzipped, you will find a `jasypt-$VERSION/bin` directory a number of `bat|sh` scripts that you can use for encryption/decryption operations `(encrypt|decrypt).(bat|sh)`.
+
+Encrypted settings need to be placed into CAS configuration files as:
+
+```properties
+cas.something.sensitive={cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
+```
+
+You also need to instruct CAS to use the proper algorithm, decryption key and other relevant parameters
+when attempting to decrypt settings. To see the relevant list of CAS properties for this 
+feature, please [review this guide](Configuration-Properties.html#configuration-security).
+
+
 ## Spring Cloud
 
 Securing CAS settings and decrypting them is entirely handled by
@@ -38,9 +56,7 @@ to account for special characters such as <code>+</code>.</p></div>
 If you wish to manually encrypt and decrypt settings to ensure the functionality is sane, use:
 
 ```bash
-export ENCRYPTED=`curl https://config.server.endpoint/encrypt -d sensitiveValue | python -c 'import sys,urllib;print urllib.quote(sys.stdin
-.read()
-.strip())'`
+export ENCRYPTED=`curl https://config.server.endpoint/encrypt -d sensitiveValue | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'`
 echo $ENCRYPTED
 curl https://config.server.endpoint/decrypt -d $ENCRYPTED | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'
 ```

@@ -11,11 +11,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
-import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.apache.logging.log4j.message.Message;
-import org.apache.logging.log4j.message.SimpleMessage;
-import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -49,25 +45,7 @@ public class CasAppender extends AbstractAppender {
 
     @Override
     public void append(final LogEvent logEvent) {
-        final String messageModified = TicketIdSanitizationUtils.sanitize(logEvent.getMessage().getFormattedMessage());
-        final Message message = new SimpleMessage(messageModified);
-        final LogEvent newLogEvent = Log4jLogEvent.newBuilder()
-                .setLevel(logEvent.getLevel())
-                .setLoggerName(logEvent.getLoggerName())
-                .setLoggerFqcn(logEvent.getLoggerFqcn())
-                .setContextMap(logEvent.getContextMap())
-                .setContextStack(logEvent.getContextStack())
-                .setEndOfBatch(logEvent.isEndOfBatch())
-                .setIncludeLocation(logEvent.isIncludeLocation())
-                .setMarker(logEvent.getMarker())
-                .setMessage(message)
-                .setNanoTime(logEvent.getNanoTime())
-                .setSource(logEvent.getSource())
-                .setThreadName(logEvent.getThreadName())
-                .setThrownProxy(logEvent.getThrownProxy())
-                .setThrown(logEvent.getThrown())
-                .setTimeMillis(logEvent.getTimeMillis()).build();
-
+        final LogEvent newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
         final String refName = this.appenderRef.getRef();
         if (StringUtils.isNotBlank(refName)) {
             final Appender appender = this.config.getAppender(refName);
@@ -77,7 +55,7 @@ public class CasAppender extends AbstractAppender {
                 LOGGER.warn("No log appender could be found for [{}]", refName);
             }
         } else {
-            LOGGER.warn("No log appender reference could be located in your logging configuration.");
+            LOGGER.warn("No log appender reference could be located in logging configuration.");
         }
     }
 

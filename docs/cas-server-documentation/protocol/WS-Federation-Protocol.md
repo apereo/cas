@@ -14,8 +14,6 @@ is built on top of [Apache Fediz](http://cxf.apache.org/fediz.html) whose archit
 The WS-Trust OASIS standard specifies a runtime component called Security Token Service. A service consumer requests a security token from the STS which is sent to the service provider. Either the service provider can validate the security token on its own or sends a request to the STS for validation. This pattern is based on an indirect trust relationship between the service provider and the STS instead of a direct trust between the service provider and service consumer. As long as the service consumer is in the possession of a security token issued by a trusted STS, the service provider accepts this security token.
 
 A key benefit of the STS is the reduced complexity for applications. A web service consumer doesn't have to know how to create the various types of security tokens its service providers require. Instead, it sends a request to the STS containing the requirements of the client and the service provider and attaches the returned security token to the outgoing SOAP message to the service provider.
-One service provider could require a SAML 1.1 token, another SAML 2.0 token and another custom binary security token. The service consumer doesn't have to understand SAML 1.1, SAML 2.0 or the custom binary security token. All he has to do is grab the returned token from the STS and attach it to the message. Thus, you can reduce the complexity in your application and move it to a centralized component.
-A web service consumer requests tokens from an STS if the service provider defines an IssuedToken assertion in its security policy. This policy can contain some additional information like the address of the STS, token type, claims, etc.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -41,7 +39,7 @@ need compile-time access to the components within.</p></div>
 
 ### Security Tokens
 
-Security tokens issued are treated as CAS tickets, stored in the ticket registry under the prefix `STS` and follow the same semantics as all other ticket types when it comes to persistence, replication, etc. These tokens are closely tied to the lifetime of the ticket-granting tickets and match their expiration policy. Token themselves do not have a lifespan outside a valid ticket-granting ticket and support for ticket lifetime configuration is not present.
+Security tokens issued are treated as CAS tickets, stored in the ticket registry under the prefix `STS` and follow the same semantics as all other ticket types when it comes to persistence, replication, etc. These tokens are closely tied to the lifetime of the ticket-granting tickets and match their expiration policy. Tokens themselves do not have a lifespan outside a valid ticket-granting ticket and support for ticket lifetime configuration is not present.
 
 ## WS Federation Identity Provider
 
@@ -120,8 +118,8 @@ The following claims are supported by CAS for release:
 | `WINDOWS_ACCOUNT_NAME`          | `http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname`
 | `PUID`                          | `http://schemas.xmlsoap.org/claims/PUID`
 
-The attribute release policy assigned to relying parties and services is able to link a given standard claim and map it to a attribute
-that may be already available. The configuration looks as such:
+The attribute release policy assigned to relying parties and services is able to link a given standard claim and map it to an attribute
+that should be already available. The configuration looks as such:
 
 ```json
 {

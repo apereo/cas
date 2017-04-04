@@ -1,7 +1,7 @@
 package org.apereo.cas.web.report;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
@@ -33,7 +33,7 @@ public class HealthCheckController extends BaseCasMvcEndpoint {
     private CasConfigurationProperties casProperties;
 
     public HealthCheckController(final Monitor<HealthStatus> healthCheckMonitor, final CasConfigurationProperties casProperties) {
-        super("status", "", casProperties.getMonitor().getEndpoints().getStatus(), casProperties);
+        super("status", StringUtils.EMPTY, casProperties.getMonitor().getEndpoints().getStatus(), casProperties);
         this.healthCheckMonitor = healthCheckMonitor;
         this.casProperties = casProperties;
     }

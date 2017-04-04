@@ -43,7 +43,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private final String fieldDisabled;
     private Map<String, String> principalAttributeMap = Collections.emptyMap();
 
-    public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, 
+                                              final PrincipalFactory principalFactory,
                                               final Integer order, final DataSource dataSource, final String sql,
                                               final String fieldPassword, final String fieldExpired, final String fieldDisabled,
                                               final Map<String, String> attributes) {

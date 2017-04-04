@@ -36,7 +36,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
                 final Collection<OneTimeToken> tokens = this.storage.get(token.getUserId());
                 tokens.add(token);
 
-                LOGGER.debug("Storing previously used tokens [[{}]] for user [{}]", tokens, token.getUserId());
+                LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
                 this.storage.put(token.getUserId(), tokens);
             } catch (final Exception e) {
                 LOGGER.warn(e.getMessage(), e);

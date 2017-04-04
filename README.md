@@ -29,9 +29,10 @@ The following features are supported by the CAS project:
 * SAML v1 and v2 Protocol
 * OAuth Protocol
 * OpenID & OpenID Connect Protocol
+* WS-Federation Passive Requestor Protocol
 * Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Stormpath, Remote, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
 * Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID, OpenID Connect, CAS and more.
-* Authorization via ABAC, Time/Date, Internet2's Grouper and more.
+* Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
 * HA clustered deployments via Hazelcast, Ehcache, JPA, Memcached, Apache Ignite, MongoDb, Redis, Couchbase and more.
 * Application registration backed by JSON, LDAP, YAML, JPA, Couchbase, MongoDb and more.
 * Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator and more.
@@ -39,13 +40,14 @@ The following features are supported by the CAS project:
 * Global and per-application user interface theme and branding.
 * Password management and password policy enforcement.
 
-The foundations of CAS are built upon: Spring Framework, Spring Boot, Spring Cloud, Spring Session and Thymeleaf.
+The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot), 
+[Spring Cloud](http://projects.spring.io/spring-cloud/) and Thymeleaf.
 
-## Documentation [![Gitter](https://badges.gitter.im/Join Chat.svg)][casgitter]
+## Documentation [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][casgitter]
 
 - [Documentation][wiki]
 - [Release Notes][releasenotes]
-- [Support] [cassupport]
+- [Support][cassupport]
 
 ## Deployment [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
 
@@ -65,7 +67,9 @@ the project. Utilize the [WAR Overlay method][overlay] instead to build and depl
 
 CAS development is powered by: <br/>
 
-<a href="http://www.jetbrains.com/idea/" target="_blank"><img src="https://apereo.github.io/cas/images/intellijidea.gif" valign="middle" style="vertical-align:middle"></a>
+<a href="http://www.jetbrains.com/idea/" target="_blank">
+<img src="https://apereo.github.io/cas/images/intellijidea.gif" valign="middle" style="vertical-align:middle">
+</a>
 
 [wiki]: https://apereo.github.io/cas
 [overlay]: https://apereo.github.io/cas/development/installation/Maven-Overlay-Installation.html

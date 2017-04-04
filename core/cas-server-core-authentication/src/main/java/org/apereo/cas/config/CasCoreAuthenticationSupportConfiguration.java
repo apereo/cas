@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 /**
  * This is {@link CasCoreAuthenticationSupportConfiguration}.
@@ -34,8 +35,8 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-
+    
+    @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
         final AuthenticationExceptionHandler h = new AuthenticationExceptionHandler();
@@ -45,6 +46,7 @@ public class CasCoreAuthenticationSupportConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "authenticationContextValidator")
     public AuthenticationContextValidator authenticationContextValidator() {
         final String contextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final String failureMode = casProperties.getAuthn().getMfa().getGlobalFailureMode();
@@ -53,6 +55,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
         return new RegisteredServiceAuthenticationHandlerResolver(servicesManager);
     }

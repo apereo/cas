@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +46,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return the boolean
      */
     protected boolean isAccessTokenRequestRequest(final String requestPath) {
-        return doesUriMatchPattern(requestPath, OAuthConstants.ACCESS_TOKEN_URL);
+        return doesUriMatchPattern(requestPath, OAuth20Constants.ACCESS_TOKEN_URL);
     }
 
     /**
@@ -56,7 +56,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return the boolean
      */
     protected boolean isAuthorizationRequest(final String requestPath) {
-        return doesUriMatchPattern(requestPath, OAuthConstants.AUTHORIZE_URL);
+        return doesUriMatchPattern(requestPath, OAuth20Constants.AUTHORIZE_URL);
     }
 
     /**

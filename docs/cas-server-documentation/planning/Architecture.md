@@ -43,12 +43,13 @@ Platforms:
 
 Applications:
 
-* Outlook Web Application (ClearPass + .NET CAS Client)
+* Canvas
 * Atlassian Confluence
 * Atlassian JIRA
 * Drupal
 * Liferay
 * uPortal
+* ...
 
 When the term "CAS client" appears in this manual without further qualification, it refers to the integration
 components such as the Java CAS Client rather than to the application relying upon (a client of) the CAS server.
@@ -66,6 +67,7 @@ Supported protocols:
 * [OpenID Connect](../protocol/OIDC-Protocol.html)
 * [OpenID](../protocol/OpenID-Protocol.html)
 * [OAuth 2.0](../protocol/OAuth-Protocol.html)
+* [WS Federation](../protocol/WS-Federation-Protocol.html)
 
 
 ## Software Components

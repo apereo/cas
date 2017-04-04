@@ -5,13 +5,13 @@ title: CAS - Monitoring & Statistics
 
 # Monitoring / Statistics
 
-The following endpoints are secured and available by CAS:
+The following endpoints are available and secured by CAS:
 
 | URL                               | Description
 |-----------------------------------|------------------------------------------
 | `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management. *
 | `/status`                         | [Monitor CAS status and other underlying components](Configuring-Monitoring.html).
-| `/status/sso`                     | Describes how the CAS application context is auto-configured.
+| `/status/sso`                     | Describes if there exists an active SSO session for this session.
 | `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
 | `/status/logging`                 | Monitor CAS logs in a streaming fashion, and review the audit log.
 | `/status/config`                  | Visual representation of **CAS** application properties and configuration.
@@ -24,7 +24,7 @@ The following endpoints are secured and available by [Spring Boot actuators](htt
 
 | URL                               | Description
 |-----------------------------------|-------------------------------------------------------------------------------------
-| `/status/autoconfig`              | Describes if there exists an active SSO session for this session.
+| `/status/autoconfig`              | Describes how the CAS application context is auto-configured. 
 | `/status/beans`                   | Displays all CAS application context **internal** Spring beans.
 | `/status/configprops`             | List of **internal** configuration properties.
 | `/status/dump`                    | Produces a thread dump for the running CAS server.
@@ -32,7 +32,6 @@ The following endpoints are secured and available by [Spring Boot actuators](htt
 | `/status/health`                  | Reports back general health status of the system, produced by various monitors.
 | `/status/info`                    | CAS version information and other system traits.
 | `/status/metrics`                 | Runtime metrics and stats.
-| `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
 | `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
 | `/status/restart`                 | Restart the application via a `POST`. Disabled by default.

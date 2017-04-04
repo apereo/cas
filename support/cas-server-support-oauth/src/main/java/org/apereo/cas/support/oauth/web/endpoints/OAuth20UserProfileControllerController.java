@@ -1,21 +1,22 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.HttpConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20UserProfileControllerController extends BaseOAuthWrapperController {
+public class OAuth20UserProfileControllerController extends BaseOAuth20Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20UserProfileControllerController.class);
 
     private static final String ID = "id";
@@ -51,9 +52,10 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
                                                   final PrincipalFactory principalFactory,
                                                   final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                   final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                  final CasConfigurationProperties casProperties) {
+                                                  final CasConfigurationProperties casProperties,
+                                                  final CookieRetrievingCookieGenerator cookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties);
+                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
     }
 
     /**
@@ -64,53 +66,73 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
      * @return the response entity
      * @throws Exception the exception
      */
-    @GetMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+
+        final String accessToken = getAccessTokenFromRequest(request);
+        if (StringUtils.isBlank(accessToken)) {
+            LOGGER.error("Missing [{}]", OAuth20Constants.ACCESS_TOKEN);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
+        }
+
+        final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
+        if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
+            LOGGER.error("Expired/Missing access token: [{}]", accessToken);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+        }
+
+        final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getGrantingTicket();
+        if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
+            LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired", ticketGrantingTicket, accessTokenTicket);
+            this.ticketRegistry.deleteTicket(accessToken);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+        }
+        updateAccessTokenUsage(accessTokenTicket);
+        final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
+        final String value = OAuth20Utils.jsonify(map);
+        LOGGER.debug("Final user profile is [{}]", value);
+        return new ResponseEntity<>(value, HttpStatus.OK);
+    }
+
+    private void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
+        final TicketState accessTokenState = TicketState.class.cast(accessTokenTicket);
+        accessTokenState.update();
+        if (accessTokenTicket.isExpired()) {
+            this.ticketRegistry.deleteTicket(accessTokenTicket.getId());
+        } else {
+            this.ticketRegistry.updateTicket(accessTokenTicket);
+        }
+    }
+
+    /**
+     * Gets access token from request.
+     *
+     * @param request the request
+     * @return the access token from request
+     */
+    protected String getAccessTokenFromRequest(final HttpServletRequest request) {
+        String accessToken = request.getParameter(OAuth20Constants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
             if (StringUtils.isNotBlank(authHeader)
-                    && authHeader.toLowerCase().startsWith(OAuthConstants.BEARER_TOKEN.toLowerCase() + ' ')) {
-                accessToken = authHeader.substring(OAuthConstants.BEARER_TOKEN.length() + 1);
+                    && authHeader.toLowerCase().startsWith(OAuth20Constants.BEARER_TOKEN.toLowerCase() + ' ')) {
+                accessToken = authHeader.substring(OAuth20Constants.BEARER_TOKEN.length() + 1);
             }
         }
-        LOGGER.debug("[{}]: [{}]", OAuthConstants.ACCESS_TOKEN, accessToken);
-
-        if (StringUtils.isBlank(accessToken)) {
-            LOGGER.error("Missing [{}]", OAuthConstants.ACCESS_TOKEN);
-            final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
-            map.add(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
-            final String value = OAuthUtils.jsonify(map);
-            return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
-        }
-
-        final AccessToken accessTokenTicket = getTicketRegistry().getTicket(accessToken, AccessToken.class);
-        if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-            LOGGER.error("Expired access token: [{}]", OAuthConstants.ACCESS_TOKEN);
-            final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
-            map.add(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
-            final String value = OAuthUtils.jsonify(map);
-            return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
-        }
-
-        final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket.getAuthentication(),
-                accessTokenTicket.getAuthentication().getPrincipal());
-        final String value = OAuthUtils.jsonify(map);
-        LOGGER.debug("Final user profile is [{}]", value);
-        return new ResponseEntity<>(value, HttpStatus.OK);
+        LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);
+        return accessToken;
     }
 
     /**
      * Write out profile response.
      *
-     * @param authentication the authentication
-     * @param principal      the principal
+     * @param accessToken the access token
      * @return the linked multi value map
      * @throws IOException the io exception
      */
-    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication,
-                                                          final Principal principal) throws IOException {
+    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) throws IOException {
+        final Principal principal = accessToken.getAuthentication().getPrincipal();
         LOGGER.debug("Preparing user profile response based on CAS principal [{}]", principal);
         final Map<String, Object> map = new HashMap<>();
         map.put(ID, principal.getId());
@@ -118,4 +140,16 @@ public class OAuth20UserProfileControllerController extends BaseOAuthWrapperCont
         return map;
     }
 
+    /**
+     * Build unauthorized response entity.
+     *
+     * @param code the code
+     * @return the response entity
+     */
+    private ResponseEntity buildUnauthorizedResponseEntity(final String code) {
+        final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
+        map.add(OAuth20Constants.ERROR, code);
+        final String value = OAuth20Utils.jsonify(map);
+        return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
+    }
 }

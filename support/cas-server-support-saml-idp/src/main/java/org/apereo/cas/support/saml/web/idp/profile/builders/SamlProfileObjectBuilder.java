@@ -29,6 +29,7 @@ public interface SamlProfileObjectBuilder<T extends XMLObject> {
      * @param assertion    the assertion
      * @param service      the service
      * @param adaptor      the adaptor
+     * @param binding      the binding
      * @return the response
      * @throws SamlException the exception
      */
@@ -37,5 +38,6 @@ public interface SamlProfileObjectBuilder<T extends XMLObject> {
             HttpServletResponse response,
             Assertion assertion,
             SamlRegisteredService service,
-            SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException;
+            SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+            String binding) throws SamlException;
 }

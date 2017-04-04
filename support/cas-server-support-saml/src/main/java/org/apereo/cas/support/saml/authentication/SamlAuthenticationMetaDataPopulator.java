@@ -1,10 +1,12 @@
 package org.apereo.cas.support.saml.authentication;
 
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.AuthenticationBuilder;
+import org.apereo.cas.authentication.metadata.BaseAuthenticationMetadataPopulator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,7 @@ import java.util.Map;
  * @since 3.1
  */
 
-public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
+public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetadataPopulator {
 
     /** The Constant ATTRIBUTE_AUTHENTICATION_METHOD. */
     public static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
@@ -61,11 +63,9 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     }
 
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-
-        final String credentialsClass = credential.getClass().getName();
+    public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
+        final String credentialsClass = transaction.getCredential().getClass().getName();
         final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
-
         builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
     }
 
@@ -86,5 +86,13 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
      */
     public void setUserDefinedMappings(final Map<String, String> userDefinedMappings) {
         this.authenticationMethods.putAll(userDefinedMappings);
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("authenticationMethods", authenticationMethods)
+                .toString();
     }
 }

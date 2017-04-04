@@ -2,6 +2,7 @@ package org.apereo.cas.util.spring.boot;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CasVersion;
 import org.springframework.boot.Banner;
@@ -25,7 +26,7 @@ public abstract class AbstractCasBanner implements Banner {
     /** Line separator length. */
     public static final int SEPARATOR_REPEAT_COUNT = 60;
     /** A line separator. */
-    public static final String LINE_SEPARATOR = String.join("", Collections.nCopies(SEPARATOR_REPEAT_COUNT, "-"));
+    public static final String LINE_SEPARATOR = String.join(StringUtils.EMPTY, Collections.nCopies(SEPARATOR_REPEAT_COUNT, "-"));
     
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {

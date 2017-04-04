@@ -57,7 +57,8 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                      final SamlRegisteredService service,
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                      final HttpServletRequest request,
-                                     final HttpServletResponse response) throws SamlException {
+                                     final HttpServletResponse response,
+                                     final String binding) throws SamlException {
         final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
         Response samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
@@ -80,9 +81,9 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         SamlUtils.logSamlObject(this.configBean, samlResponse);
 
         if (service.isSignResponses()) {
-            LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed",
-                    adaptor.getEntityId());
-            samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request);
+            LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", adaptor.getEntityId());
+            samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, 
+                    response, request, binding);
         }
 
         return samlResponse;
@@ -93,18 +94,21 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final Response samlResponse,
                               final HttpServletResponse httpResponse,
                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                              final String relayState) throws SamlException {
+                              final String relayState, 
+                              final String binding) throws SamlException {
         try {
-            final HTTPPostEncoder encoder = new HTTPPostEncoder();
-            encoder.setHttpServletResponse(httpResponse);
-            encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
-            final MessageContext outboundMessageContext = new MessageContext<>();
-            SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundMessageContext, adaptor);
-            outboundMessageContext.setMessage(samlResponse);
-            SAMLBindingSupport.setRelayState(outboundMessageContext, relayState);
-            encoder.setMessageContext(outboundMessageContext);
-            encoder.initialize();
-            encoder.encode();
+            if (httpResponse != null) {
+                final HTTPPostEncoder encoder = new HTTPPostEncoder();
+                encoder.setHttpServletResponse(httpResponse);
+                encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
+                final MessageContext outboundMessageContext = new MessageContext<>();
+                outboundMessageContext.setMessage(samlResponse);
+                SAMLBindingSupport.setRelayState(outboundMessageContext, relayState);
+                SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundMessageContext, adaptor, binding);
+                encoder.setMessageContext(outboundMessageContext);
+                encoder.initialize();
+                encoder.encode();
+            }
             return samlResponse;
         } catch (final Exception e) {
             throw Throwables.propagate(e);

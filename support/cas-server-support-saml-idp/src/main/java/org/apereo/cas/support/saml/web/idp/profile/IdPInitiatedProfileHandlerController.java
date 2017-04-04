@@ -31,6 +31,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -126,7 +127,11 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         // but can be omitted in favor of the IdP picking the default endpoint location from metadata.
         String shire = CommonUtils.safeGetParameter(request, SamlIdPConstants.SHIRE);
         if (StringUtils.isBlank(shire)) {
-            shire = adaptor.get().getAssertionConsumerService().getLocation();
+            final AssertionConsumerService acs = adaptor.get().getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
+            if (acs == null) {
+                throw new MessageDecodingException("Unable to resolve SP ACS URL");
+            }
+            shire = acs.getLocation();
         }
         if (StringUtils.isBlank(shire)) {
             LOGGER.warn("Unable to resolve SP ACS URL for AuthnRequest construction for entityID: [{}]", providerId);
@@ -169,7 +174,8 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         ctx.setAutoCreateSubcontexts(true);
 
         if (adaptor.get().isAuthnRequestsSigned()) {
-            samlObjectSigner.encode(authnRequest, registeredService, adaptor.get(), response, request);
+            samlObjectSigner.encode(authnRequest, registeredService, 
+                    adaptor.get(), response, request, SAMLConstants.SAML2_POST_BINDING_URI);
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);

@@ -107,6 +107,7 @@ The script must return a single `String` value.
 
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
 of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
+The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found, the authenticated principal id is used.
 
 ```json
 {
@@ -119,7 +120,8 @@ of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary
     "@class" : "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
     "persistentIdGenerator" : {
       "@class" : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
-      "salt" : "aGVsbG93b3JsZA=="
+      "salt" : "aGVsbG93b3JsZA==",
+      "attribute": ""
     }
   }
 }
