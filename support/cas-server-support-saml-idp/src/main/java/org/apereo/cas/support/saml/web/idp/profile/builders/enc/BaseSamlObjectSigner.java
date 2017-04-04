@@ -89,6 +89,7 @@ public class BaseSamlObjectSigner {
      * @param adaptor    the adaptor
      * @param response   the response
      * @param request    the request
+     * @param binding    the binding
      * @return the t
      * @throws SamlException the saml exception
      */
@@ -96,11 +97,12 @@ public class BaseSamlObjectSigner {
                                            final SamlRegisteredService service,
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final HttpServletResponse response,
-                                           final HttpServletRequest request) throws SamlException {
+                                           final HttpServletRequest request,
+                                           final String binding) throws SamlException {
         try {
             LOGGER.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
             final MessageContext<T> outboundContext = new MessageContext<>();
-            prepareOutboundContext(samlObject, adaptor, outboundContext);
+            prepareOutboundContext(samlObject, adaptor, outboundContext, binding);
             prepareSecurityParametersContext(adaptor, outboundContext);
             prepareEndpointURLSchemeSecurityHandler(outboundContext);
             prepareSamlOutboundDestinationHandler(outboundContext);
@@ -180,15 +182,17 @@ public class BaseSamlObjectSigner {
      * @param samlObject      the saml object
      * @param adaptor         the adaptor
      * @param outboundContext the outbound context
+     * @param binding         the binding
      * @throws SamlException the saml exception
      */
     protected <T extends SAMLObject> void prepareOutboundContext(final T samlObject,
                                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                 final MessageContext<T> outboundContext) throws SamlException {
+                                                                 final MessageContext<T> outboundContext,
+                                                                 final String binding) throws SamlException {
 
         LOGGER.debug("Outbound saml object to use is [{}]", samlObject.getClass().getName());
         outboundContext.setMessage(samlObject);
-        SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundContext, adaptor);
+        SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundContext, adaptor, binding);
     }
 
     /**

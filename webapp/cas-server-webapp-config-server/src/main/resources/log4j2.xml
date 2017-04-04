@@ -22,15 +22,19 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.apache" level="error" additivity="false">
+        <AsyncLogger name="org.apache" level="info" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.server" level="debug" additivity="false">
+        <AsyncLogger name="org.springframework.cloud.server" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
         <AsyncLogger name="org.springframework.cloud.bus" level="warn" additivity="false">
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="casFile"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.cloud.vault" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>

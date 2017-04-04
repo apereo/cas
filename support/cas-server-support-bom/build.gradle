@@ -89,7 +89,7 @@ install {
 uploadArchives {
     doFirst {
         if (publishReleases || publishSnapshots) {
-            repositories.mavenDeployer.pom = generatePom()
+            repositories.mavenDeployer.pom = generateBom()
         }
     }
 

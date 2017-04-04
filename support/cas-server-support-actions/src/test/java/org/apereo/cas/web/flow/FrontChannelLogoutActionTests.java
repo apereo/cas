@@ -4,7 +4,8 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceMessageHandler;
-import org.apereo.cas.logout.LogoutManagerImpl;
+import org.apereo.cas.logout.DefaultLogoutManager;
+import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
@@ -50,7 +51,8 @@ public class FrontChannelLogoutActionTests {
         final DefaultSingleLogoutServiceMessageHandler handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
                 new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(), false,
                 new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        final LogoutManagerImpl logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator(), handler, false);
+        final DefaultLogoutManager logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
+                handler, false, mock(LogoutExecutionPlan.class));
 
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
 

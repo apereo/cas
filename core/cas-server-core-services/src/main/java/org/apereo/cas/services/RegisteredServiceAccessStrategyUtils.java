@@ -159,7 +159,7 @@ public final class RegisteredServiceAccessStrategyUtils {
         if (!registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             LOGGER.debug("Service [{}] is configured to not use SSO", service.getId());
             if (ticketGrantingTicket.getProxiedBy() != null) {
-                LOGGER.warn("ServiceManagement: Service [[{}]] is not allowed to use SSO for proxying.", service.getId());
+                LOGGER.warn("ServiceManagement: Service [{}] is not allowed to use SSO for proxying.", service.getId());
                 throw new UnauthorizedSsoServiceException();
             } else if (ticketGrantingTicket.getProxiedBy() == null && ticketGrantingTicket.getCountOfUses() > 0) {
                 LOGGER.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());

@@ -14,11 +14,12 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
+import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -44,7 +45,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWrapperController {
+public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcDynamicClientRegistrationEndpointController.class);
 
     private final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer;
@@ -61,10 +62,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
                                                            final RandomStringGenerator clientIdGenerator,
                                                            final RandomStringGenerator clientSecretGenerator,
                                                            final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                           final CasConfigurationProperties casProperties) {
+                                                           final CasConfigurationProperties casProperties,
+                                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
                 principalFactory, webApplicationServiceServiceFactory,
-                scopeToAttributesFilter, casProperties);
+                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
         this.clientRegistrationRequestSerializer = clientRegistrationRequestSerializer;
         this.clientIdGenerator = clientIdGenerator;
         this.clientSecretGenerator = clientSecretGenerator;

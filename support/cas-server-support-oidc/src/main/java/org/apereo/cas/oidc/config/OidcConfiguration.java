@@ -45,11 +45,12 @@ import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -114,6 +115,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
             new FirstMultifactorAuthenticationProviderSelector();
 
+    @Autowired
+    @Qualifier("oauthCasAuthenticationBuilder")
+    private OAuth20CasAuthenticationBuilder authenticationBuilder;
+    
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
@@ -187,7 +192,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
+    
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -265,7 +270,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcAccessTokenEndpointController(
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory,
-                oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties);
+                oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
+                ticketGrantingTicketCookieGenerator, authenticationBuilder);
     }
 
     @Bean
@@ -282,7 +288,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 new DefaultRandomStringGenerator(),
                 new DefaultRandomStringGenerator(),
                 profileScopeToAttributesFilter(),
-                casProperties);
+                casProperties, ticketGrantingTicketCookieGenerator);
     }
 
     @RefreshScope
@@ -291,7 +297,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcJwksEndpointController(servicesManager, ticketRegistry, oAuth20Validator,
                 defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
-                profileScopeToAttributesFilter(), casProperties);
+                profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator);
     }
 
     @Autowired
@@ -303,7 +309,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
                 discoverySettings, profileScopeToAttributesFilter(),
-                casProperties);
+                casProperties, ticketGrantingTicketCookieGenerator);
     }
 
     @RefreshScope
@@ -313,7 +319,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
                 profileScopeToAttributesFilter(),
-                casProperties);
+                casProperties, ticketGrantingTicketCookieGenerator);
     }
 
     @RefreshScope
@@ -323,7 +329,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory,
                 consentApprovalViewResolver(), oidcIdTokenGenerator(),
-                profileScopeToAttributesFilter(), casProperties);
+                profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator,
+                authenticationBuilder);
     }
 
     @RefreshScope

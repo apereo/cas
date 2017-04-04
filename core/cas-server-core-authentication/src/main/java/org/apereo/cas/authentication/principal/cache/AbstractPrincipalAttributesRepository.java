@@ -219,7 +219,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         }
 
         final Map<String, List<Object>> sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
-        LOGGER.debug("Found [{}] attributes for principal [[{}]] from the attribute repository.",
+        LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.",
                 sourceAttributes.size(), p.getId());
 
         if (this.mergingStrategy == null || this.mergingStrategy.getAttributeMerger() == null) {

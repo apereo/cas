@@ -11,6 +11,7 @@ import java.util.Arrays;
 public class SamlServiceProviderProperties {
     private static final String EMAIL = "email";
     private static final String PRINCIPAL_NAME = "eduPersonPrincipalName";
+
     private Dropbox dropbox = new Dropbox();
     private Workday workday = new Workday();
     private SAManage saManage = new SAManage();
@@ -27,6 +28,43 @@ public class SamlServiceProviderProperties {
     private Asana asana = new Asana();
     private Tableau tableau = new Tableau();
     private WebAdvisor webAdvisor = new WebAdvisor();
+    private OpenAthens openAthens = new OpenAthens();
+    private ArcGIS arcGIS = new ArcGIS();
+    private BenefitFocus benefitFocus = new BenefitFocus();
+    private AdobeCloud adobeCloud = new AdobeCloud();
+    private AcademicWorks academicWorks = new AcademicWorks();
+
+    public AcademicWorks getAcademicWorks() {
+        return academicWorks;
+    }
+
+    public void setAcademicWorks(final AcademicWorks academicWorks) {
+        this.academicWorks = academicWorks;
+    }
+
+    public AdobeCloud getAdobeCloud() {
+        return adobeCloud;
+    }
+
+    public void setAdobeCloud(final AdobeCloud adobeCloud) {
+        this.adobeCloud = adobeCloud;
+    }
+
+    public ArcGIS getArcGIS() {
+        return arcGIS;
+    }
+
+    public void setArcGIS(final ArcGIS arcGIS) {
+        this.arcGIS = arcGIS;
+    }
+
+    public OpenAthens getOpenAthens() {
+        return openAthens;
+    }
+
+    public void setOpenAthens(final OpenAthens openAthens) {
+        this.openAthens = openAthens;
+    }
 
     public WebAdvisor getWebAdvisor() {
         return webAdvisor;
@@ -67,7 +105,7 @@ public class SamlServiceProviderProperties {
     public void setZoom(final Zoom zoom) {
         this.zoom = zoom;
     }
-    
+
     public InCommon getInCommon() {
         return inCommon;
     }
@@ -156,6 +194,14 @@ public class SamlServiceProviderProperties {
         this.dropbox = dropbox;
     }
 
+    public BenefitFocus getBenefitFocus() {
+        return benefitFocus;
+    }
+
+    public void setBenefitFocus(final BenefitFocus benefitFocus) {
+        this.benefitFocus = benefitFocus;
+    }
+
     public static class Dropbox extends AbstractSamlSPProperties {
         public Dropbox() {
             setNameIdAttribute("mail");
@@ -194,33 +240,33 @@ public class SamlServiceProviderProperties {
             setNameIdAttribute("studentId");
         }
     }
-    
+
     public static class Office365 extends AbstractSamlSPProperties {
         public Office365() {
             setNameIdAttribute("scopedImmutableID");
             setAttributes(Arrays.asList("IDPEmail,ImmutableID"));
         }
     }
-    
+
     public static class WebAdvisor extends AbstractSamlSPProperties {
         public WebAdvisor() {
             setAttributes(Arrays.asList("uid"));
         }
     }
-    
+
     public static class Webex extends AbstractSamlSPProperties {
         public Webex() {
             setNameIdAttribute(EMAIL);
             setAttributes(Arrays.asList("firstName,lastName"));
         }
     }
-    
+
     public static class Tableau extends AbstractSamlSPProperties {
         public Tableau() {
             setAttributes(Arrays.asList("username"));
         }
     }
-    
+
     public static class TestShib extends AbstractSamlSPProperties {
         public TestShib() {
             //setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
@@ -234,7 +280,14 @@ public class SamlServiceProviderProperties {
             setAttributes(Arrays.asList("mail,sn,givenName"));
         }
     }
-    
+
+    public static class ArcGIS extends AbstractSamlSPProperties {
+        public ArcGIS() {
+            setNameIdAttribute("arcNameId");
+            setAttributes(Arrays.asList("mail,givenName,arcNameId"));
+        }
+    }
+
     public static class InCommon extends AbstractSamlSPProperties {
         public InCommon() {
             //setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
@@ -242,18 +295,43 @@ public class SamlServiceProviderProperties {
             setAttributes(Arrays.asList(PRINCIPAL_NAME));
         }
     }
-    
+
     public static class Evernote extends AbstractSamlSPProperties {
         public Evernote() {
             setNameIdAttribute(EMAIL);
             setNameIdFormat("emailAddress");
         }
     }
-    
+
     public static class Asana extends AbstractSamlSPProperties {
         public Asana() {
             setNameIdAttribute(EMAIL);
             setNameIdFormat("emailAddress");
+        }
+    }
+
+    public static class OpenAthens extends AbstractSamlSPProperties {
+        public OpenAthens() {
+            //setMetadata("https://login.openathens.net/saml/2/metadata-sp");
+            setAttributes(Arrays.asList(PRINCIPAL_NAME, EMAIL));
+        }
+    }
+
+    public static class BenefitFocus extends AbstractSamlSPProperties {
+        public BenefitFocus() {
+            setNameIdAttribute("benefitFocusUniqueId");
+        }
+    }
+
+    public static class AdobeCloud extends AbstractSamlSPProperties {
+        public AdobeCloud() {
+            setAttributes(Arrays.asList("firstName", "lastName", EMAIL));
+        }
+    }
+    
+    public static class AcademicWorks extends AbstractSamlSPProperties {
+        public AcademicWorks() {
+            setAttributes(Arrays.asList("displayName", EMAIL));
         }
     }
 }

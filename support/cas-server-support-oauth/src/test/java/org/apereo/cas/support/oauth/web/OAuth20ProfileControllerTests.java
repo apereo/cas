@@ -11,10 +11,11 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileControllerController;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
@@ -60,27 +61,27 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoGivenAccessToken() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertTrue(entity.getBody().contains(OAuthConstants.MISSING_ACCESS_TOKEN));
+        assertTrue(entity.getBody().contains(OAuth20Constants.MISSING_ACCESS_TOKEN));
     }
 
     @Test
     public void verifyNoExistingAccessToken() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
-        mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, "DOES NOT EXIST");
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, "DOES NOT EXIST");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertTrue(entity.getBody().contains(OAuthConstants.EXPIRED_ACCESS_TOKEN));
+        assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
     }
 
     @Test
@@ -88,17 +89,18 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         final Authentication authentication = getAuthentication(principal);
         final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy());
-        final AccessTokenImpl accessToken = (AccessTokenImpl) expiringAccessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
-        oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
+        final AccessToken accessToken = expiringAccessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
+                new MockTicketGrantingTicket("casuser"));
+        this.ticketRegistry.addTicket(accessToken);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
-        mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertTrue(entity.getBody().contains(OAuthConstants.EXPIRED_ACCESS_TOKEN));
+        assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
     }
 
     @Test
@@ -110,14 +112,15 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
-        final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
-        oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
+        final AccessToken accessToken = accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
+                new MockTicketGrantingTicket("casuser"));
+        this.ticketRegistry.addTicket(accessToken);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
-        mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
@@ -143,13 +146,14 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
-        final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
-        oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
+        final AccessToken accessToken = accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
+                new MockTicketGrantingTicket("casuser"));
+        this.ticketRegistry.addTicket(accessToken);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuthConstants.PROFILE_URL);
-        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' ' + accessToken.getId());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        mockRequest.addHeader("Authorization", OAuth20Constants.BEARER_TOKEN + ' ' + accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 

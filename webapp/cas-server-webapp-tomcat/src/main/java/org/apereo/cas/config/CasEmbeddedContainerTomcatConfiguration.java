@@ -34,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import org.apache.catalina.valves.SSLValve;
 
 /**
  * This is {@link CasEmbeddedContainerTomcatConfiguration}.
@@ -63,8 +64,10 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
         configureAjp(tomcat);
         configureHttp(tomcat);
-        configureExtendedAccessLog(tomcat);
+        configureHttpProxy(tomcat);
+        configureExtendedAccessLogValve(tomcat);
         configureRewriteValve(tomcat);
+        configureSSLValve(tomcat);
 
         return tomcat;
     }
@@ -93,7 +96,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureExtendedAccessLog(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureExtendedAccessLogValve(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.ExtendedAccessLog ext = casProperties.getServer().getExtAccessLog();
 
         if (ext.isEnabled() && StringUtils.isNotBlank(ext.getPattern())) {
@@ -116,34 +119,13 @@ public class CasEmbeddedContainerTomcatConfiguration {
             tomcat.addEngineValves(valve);
         }
     }
-    
+
     private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasServerProperties.HttpProxy proxy = casProperties.getServer().getHttpProxy();
-        if (proxy.isEnabled()) {
-            LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
-            tomcat.getTomcatConnectorCustomizers().add(connector -> {
-                connector.setSecure(proxy.isSecure());
-                connector.setScheme(proxy.getScheme());
-
-                if (proxy.getRedirectPort() > 0) {
-                    LOGGER.debug("Setting HTTP proxying redirect port to [{}]", proxy.getRedirectPort());
-                    connector.setRedirectPort(proxy.getRedirectPort());
-                }
-                if (proxy.getProxyPort() > 0) {
-                    LOGGER.debug("Setting HTTP proxying proxy port to [{}]", proxy.getProxyPort());
-                    connector.setProxyPort(proxy.getProxyPort());
-                }
-                LOGGER.info("Configured connector listening on port [{}]", tomcat.getPort());
-            });
-        } else {
-            LOGGER.debug("HTTP proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
-        }
-        
-        if (casProperties.getServer().getHttp().isEnabled()) {
+        final CasServerProperties.Http http = casProperties.getServer().getHttp();
+        if (http.isEnabled()) {
             LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
-            final Connector connector = new Connector(casProperties.getServer().getHttp().getProtocol());
-
-            int port = casProperties.getServer().getHttp().getPort();
+            final Connector connector = new Connector(http.getProtocol());
+            int port = http.getPort();
             if (port <= 0) {
                 LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
                 port = SocketUtils.findAvailableTcpPort();
@@ -157,9 +139,36 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
+    private void configureHttpProxy(final TomcatEmbeddedServletContainerFactory tomcat) {
+        final CasServerProperties.HttpProxy proxy = casProperties.getServer().getHttpProxy();
+        if (proxy.isEnabled()) {
+            LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
+            tomcat.getTomcatConnectorCustomizers().add(connector -> {
+                connector.setSecure(proxy.isSecure());
+                connector.setScheme(proxy.getScheme());
+
+                if (StringUtils.isNotBlank(proxy.getProtocol())) {
+                    LOGGER.debug("Setting HTTP proxying protocol to [{}]", proxy.getProtocol());
+                    connector.setProtocol(proxy.getProtocol());
+                }
+                if (proxy.getRedirectPort() > 0) {
+                    LOGGER.debug("Setting HTTP proxying redirect port to [{}]", proxy.getRedirectPort());
+                    connector.setRedirectPort(proxy.getRedirectPort());
+                }
+                if (proxy.getProxyPort() > 0) {
+                    LOGGER.debug("Setting HTTP proxying proxy port to [{}]", proxy.getProxyPort());
+                    connector.setProxyPort(proxy.getProxyPort());
+                }
+                LOGGER.info("Configured connector listening on port [{}]", tomcat.getPort());
+            });
+        } else {
+            LOGGER.debug("HTTP proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
+        }
+    }
+
     private void configureAjp(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasServerProperties.Ajp ajp = casProperties.getServer().getAjp();
-        if (ajp.isEnabled()) {
+        if (ajp.isEnabled() && ajp.getPort() > 0) {
             LOGGER.debug("Creating AJP configuration for the embedded tomcat container...");
             final Connector ajpConnector = new Connector(ajp.getProtocol());
             ajpConnector.setProtocol(ajp.getProtocol());
@@ -167,9 +176,13 @@ public class CasEmbeddedContainerTomcatConfiguration {
             ajpConnector.setSecure(ajp.isSecure());
             ajpConnector.setAllowTrace(ajp.isAllowTrace());
             ajpConnector.setScheme(ajp.getScheme());
-            ajpConnector.setAsyncTimeout(ajp.getAsyncTimeout());
+            if (ajp.getAsyncTimeout() > 0) {
+                ajpConnector.setAsyncTimeout(ajp.getAsyncTimeout());
+            }
             ajpConnector.setEnableLookups(ajp.isEnableLookups());
-            ajpConnector.setMaxPostSize(ajp.getMaxPostSize());
+            if (ajp.getMaxPostSize() > 0) {
+                ajpConnector.setMaxPostSize(ajp.getMaxPostSize());
+            }
             ajpConnector.addUpgradeProtocol(new Http2Protocol());
 
             if (ajp.getProxyPort() > 0) {
@@ -182,6 +195,20 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 ajpConnector.setRedirectPort(ajp.getRedirectPort());
             }
             tomcat.addAdditionalTomcatConnectors(ajpConnector);
+        }
+    }
+
+    private void configureSSLValve(final TomcatEmbeddedServletContainerFactory tomcat) {
+        final CasServerProperties.SslValve valveConfig = casProperties.getServer().getSslValve();
+
+        if (valveConfig.isEnabled()) {
+            LOGGER.debug("Adding SSLValve to engine of the embedded tomcat container...");
+            final SSLValve valve = new SSLValve();
+            valve.setSslCipherHeader(valveConfig.getSslCipherHeader());
+            valve.setSslCipherUserKeySizeHeader(valveConfig.getSslCipherUserKeySizeHeader());
+            valve.setSslClientCertHeader(valveConfig.getSslClientCertHeader());
+            valve.setSslSessionIdHeader(valveConfig.getSslSessionIdHeader());
+            tomcat.addEngineValves(valve);
         }
     }
 

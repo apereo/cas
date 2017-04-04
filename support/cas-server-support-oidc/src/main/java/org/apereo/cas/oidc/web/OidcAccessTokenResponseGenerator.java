@@ -7,7 +7,7 @@ import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 

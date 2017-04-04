@@ -24,7 +24,12 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -60,6 +65,7 @@ import java.util.List;
                 CasOAuthConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreConfiguration.class,
+                CasCookieConfiguration.class,
                 CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
                 CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
@@ -74,9 +80,16 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOAuth20Tests {
 
+    @Autowired
+    @Qualifier("ticketRegistry")
+    protected TicketRegistry ticketRegistry;
+    
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
+    
     @Configuration
     public static class OAuthTestConfiguration {
-        
         @Bean
         public List inMemoryRegisteredServices() {
             final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*");
