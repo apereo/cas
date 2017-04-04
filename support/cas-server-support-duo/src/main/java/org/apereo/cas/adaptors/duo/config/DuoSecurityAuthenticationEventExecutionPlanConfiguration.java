@@ -12,7 +12,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
@@ -128,7 +128,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
             }
             h = new DuoAuthenticationHandler(name, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
         } else {
-            h = new DuoAuthenticationHandler("", servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
+            h = new DuoAuthenticationHandler(StringUtils.EMPTY, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
         return h;

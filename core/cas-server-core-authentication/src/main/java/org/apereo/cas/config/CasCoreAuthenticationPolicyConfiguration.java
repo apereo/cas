@@ -69,6 +69,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
         return p;
     }
 
+    @ConditionalOnMissingBean(name = "requiredHandlerAuthenticationPolicyFactory")
     @Bean
     public ContextualAuthenticationPolicyFactory requiredHandlerAuthenticationPolicyFactory() {
         return new RequiredHandlerAuthenticationPolicyFactory();

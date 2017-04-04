@@ -40,6 +40,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
      * Instantiates a new Hazelcast ticket ticketGrantingTicketsRegistry.
      *
      * @param hz       An instance of {@code HazelcastInstance}
+     * @param plan     the plan
      * @param pageSize the page size
      */
     public HazelcastTicketRegistry(final HazelcastInstance hz, final TicketCatalog plan, final int pageSize) {
@@ -49,7 +50,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
         LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}]", this.hazelcastInstance);
     }
-    
+
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
@@ -141,7 +142,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     public void close() throws IOException {
         shutdown();
     }
-    
+
     private IMap<String, Ticket> getTicketMapInstance(final String mapName) {
         try {
             final IMap<String, Ticket> inst = hazelcastInstance.getMap(mapName);

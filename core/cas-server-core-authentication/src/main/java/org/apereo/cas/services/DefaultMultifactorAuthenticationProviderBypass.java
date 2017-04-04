@@ -27,7 +27,6 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
 
     private final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass;
 
-
     public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass) {
         this.bypass = bypass;
     }
@@ -138,7 +137,8 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
      * @return the boolean
      */
     protected boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
-        return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials().stream()
+        return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials()
+                .stream()
                 .filter(e -> e.getCredentialClass().getName().matches(credentialClassType))
                 .findAny()
                 .isPresent();
@@ -201,11 +201,13 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return false;
         }
 
-        final Set<Map.Entry<String, Object>> names = attributes.entrySet().stream().filter(e -> {
-                    LOGGER.debug("Attempting to match [{}] against [{}]", attrName, e.getKey());
-                    return e.getKey().matches(attrName);
-                }
-        ).collect(Collectors.toSet());
+        final Set<Map.Entry<String, Object>> names = attributes.entrySet()
+                .stream()
+                .filter(e -> {
+                            LOGGER.debug("Attempting to match [{}] against [{}]", attrName, e.getKey());
+                            return e.getKey().matches(attrName);
+                        }
+                ).collect(Collectors.toSet());
 
         LOGGER.debug("Found [{}] attributes relevant for multifactor authentication bypass", names.size());
 
@@ -218,16 +220,18 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return matchIfNoValueProvided;
         }
 
-        final Set<Map.Entry<String, Object>> values = names.stream().filter(e -> {
-            
-            final Set<Object> valuesCol = CollectionUtils.toCollection(e.getValue());
-            LOGGER.debug("Matching attribute [{}] with values [{}] against [{}]", e.getKey(), valuesCol, attrValue);
-            
-            return valuesCol.stream()
-                    .filter(v -> v.toString().matches(attrValue))
-                    .findAny()
-                    .isPresent();
-        }).collect(Collectors.toSet());
+        final Set<Map.Entry<String, Object>> values = names
+                .stream()
+                .filter(e -> {
+
+                    final Set<Object> valuesCol = CollectionUtils.toCollection(e.getValue());
+                    LOGGER.debug("Matching attribute [{}] with values [{}] against [{}]", e.getKey(), valuesCol, attrValue);
+
+                    return valuesCol.stream()
+                            .filter(v -> v.toString().matches(attrValue))
+                            .findAny()
+                            .isPresent();
+                }).collect(Collectors.toSet());
 
         LOGGER.debug("Matching attribute values remaining are [{}]", values);
         return !values.isEmpty();

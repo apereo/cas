@@ -101,7 +101,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
                     entityID, SAMLConstants.SAML2_POST_BINDING_URI);
             final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
             LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}] and binding [{}]",
-                    registeredService, entityID, SAMLConstants.SAML2_POST_BINDING_URI);
+                    registeredService.getServiceId(), entityID, SAMLConstants.SAML2_POST_BINDING_URI);
 
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
@@ -204,7 +204,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return nameIdFormats;
     }
 
-    public List<AssertionConsumerService> getAssertionConsumerServices() {
+    private List<AssertionConsumerService> getAssertionConsumerServices() {
         return (List) this.ssoDescriptor.getEndpoints(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
     }
 
@@ -215,14 +215,35 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     public SingleLogoutService getSingleLogoutService() {
         return getSingleLogoutServices().get(0);
     }
-
-    public AssertionConsumerService getAssertionConsumerService() {
-        return getAssertionConsumerServices().get(0);
+    
+    /**
+     * Gets assertion consumer service.
+     *
+     * @param binding the binding
+     * @return the assertion consumer service
+     */
+    public AssertionConsumerService getAssertionConsumerService(final String binding) {
+        return getAssertionConsumerServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
     }
 
+    private AssertionConsumerService getAssertionConsumerServiceForPaosBinding() {
+        return getAssertionConsumerService(SAMLConstants.SAML2_PAOS_BINDING_URI);
+    }
+
+    private AssertionConsumerService getAssertionConsumerServiceForPostBinding() {
+        return getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
+    }
+        
     public MetadataResolver getMetadataResolver() {
         return this.metadataResolver;
     }
 
-
+    /**
+     * Contains assertion consumer services ?
+     *
+     * @return true/false
+     */
+    public boolean containsAssertionConsumerServices() {
+        return !getAssertionConsumerServices().isEmpty();
+    }
 }

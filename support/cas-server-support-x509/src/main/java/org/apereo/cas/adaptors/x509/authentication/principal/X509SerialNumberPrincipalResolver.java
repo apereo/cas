@@ -12,9 +12,28 @@ import java.security.cert.X509Certificate;
  */
 public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
 
+    /**
+     * Radix to use in {@code toString} method.
+     */
+    private int radix = 10;
+
+    private boolean zeroPadding;
+
+    public X509SerialNumberPrincipalResolver() {
+    }
+
+    public X509SerialNumberPrincipalResolver(final int radix, final boolean zeroPadding) {
+        this.radix = radix;
+        this.zeroPadding = zeroPadding;
+    }
+
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        return certificate.getSerialNumber().toString();
+        final String principal = certificate.getSerialNumber().toString(radix);
+        if (zeroPadding && principal.length() % 2 == 1) {
+            return "0" + principal;
+        }
+        return principal;
     }
 
     @Override

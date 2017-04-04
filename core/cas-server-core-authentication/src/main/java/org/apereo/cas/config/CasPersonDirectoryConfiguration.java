@@ -20,6 +20,7 @@ import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,15 +88,16 @@ public class CasPersonDirectoryConfiguration {
     @RefreshScope
     public List<IPersonAttributeDao> jsonAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
-        casProperties.getAuthn().getAttributeRepository().getJson().forEach(json -> {
+        casProperties.getAuthn().getAttributeRepository().getJson().forEach(Unchecked.consumer(json -> {
             final Resource r = json.getConfig().getLocation();
             if (r != null) {
                 final JsonBackedComplexStubPersonAttributeDao dao = new JsonBackedComplexStubPersonAttributeDao(r);
                 dao.setOrder(json.getOrder());
-                LOGGER.debug("Configured JSON attribute sources from [[{}]]", r);
+                dao.init();
+                LOGGER.debug("Configured JSON attribute sources from [{}]", r);
                 list.add(dao);
             }
-        });
+        }));
         return list;
     }
 

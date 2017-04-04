@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -12,7 +13,6 @@ import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolve
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -87,10 +86,9 @@ public class LdapAuthenticationConfiguration {
                 .forEach(l -> {
                     final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(l.getPrincipalAttributeList());
                     LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, l.getLdapUrl());
-                    
+
                     LOGGER.debug("Creating ldap authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
                     final Authenticator authenticator = Beans.newLdaptiveAuthenticator(l);
-                    authenticator.setReturnAttributes(attributes.keySet().toArray(new String[]{}));
                     LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
                             attributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 
@@ -102,7 +100,6 @@ public class LdapAuthenticationConfiguration {
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
                         additionalAttrs.add(l.getPrincipalAttributeId());
                     }
-                    handler.setAdditionalAttributes(additionalAttrs);
                     handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
                     handler.setAllowMissingPrincipalAttributeValue(l.isAllowMissingPrincipalAttributeValue());
                     handler.setPasswordEncoder(Beans.newPasswordEncoder(l.getPasswordEncoder()));
@@ -110,8 +107,7 @@ public class LdapAuthenticationConfiguration {
 
                     if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
                         LOGGER.debug("Ldap authentication for [{}] is filtering credentials by [{}]", l.getLdapUrl(), l.getCredentialCriteria());
-                        final Predicate<String> predicate = Pattern.compile(l.getCredentialCriteria()).asPredicate();
-                        handler.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
+                        handler.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(l.getCredentialCriteria()));
                     }
 
                     handler.setPrincipalAttributeMap(attributes);
@@ -134,7 +130,7 @@ public class LdapAuthenticationConfiguration {
                 });
         return handlers;
     }
-    
+
 
     private Predicate<LdapAuthenticationProperties> ldapInstanceConfigurationPredicate() {
         return l -> {
@@ -202,7 +198,6 @@ public class LdapAuthenticationConfiguration {
     }
 
 
-
     /**
      * The type Ldap authentication event execution plan configuration.
      */
@@ -226,7 +221,7 @@ public class LdapAuthenticationConfiguration {
                             + "back the principal resolved during LDAP authentication directly.");
                     resolver.setChain(Arrays.asList(new EchoingPrincipalResolver()));
                 }
-                LOGGER.debug("Ldap authentication for [{}] is to chain principal resolvers via [[{}]] for attribute resolution",
+                LOGGER.info("Ldap authentication for [{}] is to chain principal resolvers via [{}] for attribute resolution",
                         handler.getName(), resolver);
                 plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
             });
