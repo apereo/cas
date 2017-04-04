@@ -8,11 +8,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.internal.matchers.InstanceOf;
-import org.mockito.internal.matchers.Or;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -265,9 +262,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("hell/o@world:*");
         r.setEvaluationOrder(1000);
-
-        this.thrown.expect(new Or(Arrays.asList(new InstanceOf(RuntimeException.class),
-                new InstanceOf(IOException.class))));
+        this.thrown.expect(IllegalArgumentException.class);
         this.dao.save(r);
     }
 
