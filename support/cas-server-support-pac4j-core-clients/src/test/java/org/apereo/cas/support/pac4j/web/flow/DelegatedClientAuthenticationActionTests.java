@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -132,18 +131,18 @@ public class DelegatedClientAuthenticationActionTests {
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
         final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
-        when(casImpl.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
+        when(casImpl.createTicketGrantingTicket(any())).thenReturn(tgt);
 
         final AuthenticationTransactionManager transManager = mock(AuthenticationTransactionManager.class);
         final AuthenticationManager authNManager = mock(AuthenticationManager.class);
-        when(authNManager.authenticate(any(AuthenticationTransaction.class)))
-                .thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(authNManager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         when(transManager.getAuthenticationManager()).thenReturn(authNManager);
         when(transManager.handle(any(AuthenticationTransaction.class), any(AuthenticationResultBuilder.class))).thenReturn(transManager);
 
         final AuthenticationSystemSupport support = mock(AuthenticationSystemSupport.class);
         when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
+
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
                 "theme", "locale", false);
 
