@@ -16,7 +16,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.J2EContext;
 import org.reflections.Reflections;
@@ -80,7 +80,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         final Principal principal = super.filter(service, profile, registeredService, context);
 
         final OidcRegisteredService oidcService = (OidcRegisteredService) registeredService;
-        final Collection<String> scopes = new ArrayList<>(OAuthUtils.getRequestedScopes(context));
+        final Collection<String> scopes = new ArrayList<>(OAuth20Utils.getRequestedScopes(context));
         scopes.addAll(oidcService.getScopes());
 
         if (!scopes.contains(OidcConstants.OPENID)) {

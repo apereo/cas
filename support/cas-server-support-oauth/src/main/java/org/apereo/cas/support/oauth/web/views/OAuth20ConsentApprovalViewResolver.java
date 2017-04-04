@@ -2,7 +2,7 @@ package org.apereo.cas.support.oauth.web.views;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.util.CommonHelper;
@@ -33,7 +33,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
 
     @Override
     public ModelAndView resolve(final J2EContext context, final OAuthRegisteredService service) {
-        final String bypassApprovalParameter = context.getRequestParameter(OAuthConstants.BYPASS_APPROVAL_PROMPT);
+        final String bypassApprovalParameter = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT);
         LOGGER.debug("bypassApprovalParameter: [{}]", bypassApprovalParameter);
 
         /*
@@ -65,7 +65,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      */
     protected ModelAndView redirectToApproveView(final J2EContext ctx, final OAuthRegisteredService svc) {
         String callbackUrl = ctx.getFullRequestURL();
-        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.BYPASS_APPROVAL_PROMPT, "true");
+        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
         LOGGER.debug("callbackUrl: [{}]", callbackUrl);
 
         final Map<String, Object> model = new HashMap<>();
@@ -94,7 +94,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      * @return the approval view name
      */
     protected String getApprovalViewName() {
-        return OAuthConstants.CONFIRM_VIEW;
+        return OAuth20Constants.CONFIRM_VIEW;
     }
 
     /**

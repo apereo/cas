@@ -1,0 +1,5 @@
+description = "Apereo CAS Core Configuration - DynamoDb"
+dependencies {
+    implementation libraries.awsjavadynamodb
+    compileOnly project(":core:cas-server-core-configuration")
+}

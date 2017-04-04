@@ -10,9 +10,9 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -48,9 +48,9 @@ public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCre
         final UsernamePasswordCredential casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         try {
 
-            final String clientId = context.getRequestParameter(OAuthConstants.CLIENT_ID);
+            final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
             final Service service = this.webApplicationServiceFactory.createService(clientId);
-            final RegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+            final RegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
             final AuthenticationResult authenticationResult = this.authenticationSystemSupport

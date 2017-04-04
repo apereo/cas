@@ -12,8 +12,6 @@ provided by the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-conf
 you may decide to simply run CAS in a standalone mode removing the need for external configuration server deployment,
 though at the cost of losing features and capabilities relevant for a cloud deployment.
 
-The configuration behavior of CAS is controlled and defined by the `src/main/resources/bootstrap.properties` file.
-
 ## Configuration Profiles
 
 The CAS server web application responds to the following strategies that dictate how settings should be consumed.
@@ -30,20 +28,23 @@ files that can be used to control CAS behavior. Also note that this configuratio
 and refresh the application context as needed. Please [review this guide](Configuration-Management-Reload.html#reload-strategy) to learn more.
 
 Note that by default, all CAS settings and configuration is controlled via the embedded `application.properties` file in the CAS server
-web application. Settings found in external configuration files are and will be able to override the defaults provide by CAS.
+web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the configuration
+inside the main CAS web application and not rely on externalized configuration files.
 
-The naming of the configuration files inside the CAS configuration directory follows the below pattern:
+Settings found in external configuration files are and will be able to override the defaults provide by CAS. The naming of the configuration files 
+inside the CAS configuration directory follows the below pattern:
 
-- An `application.(properties|yml)` file is always loaded.
+- An `application.(properties|yml)` file is always loaded, if found.
 - Settings located inside `properties|yml` files whose name matches the value of `spring.application.name` are loaded (i.e `cas.properties`)
 - Settings located inside `properties|yml` files whose name matches the value of `spring.profiles.active` are loaded (i.e `ldap.properties`).
+- Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml`)
 This allows you to, if needed, split your settings into multiple property files and then locate them by assigning their name
 to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`)
 
 <div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
 modify the built in <code>application.properties</code> file. This will only complicate and weaken your deployment.
-Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the default or
-<a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
+Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the default, override via <code>application.yml</code> or
+use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
 ### Spring Cloud
@@ -73,6 +74,14 @@ via the following module in it own [WAR overlay](https://github.com/apereo/cas-c
   <version>${cas.version}</version>
 </dependency>
 ```
+
+In addition to the [strategies outlined here](Configuration-Management.html#overview), the configuration server 
+may load CAS settings and properties via the following order and mechanics:
+
+1. Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml`)
+2. Profile-specific application properties packaged inside your jar (`application-{profile}.properties|yml`)
+3. Application properties outside of your packaged jar (`application.properties|yml`).
+4. Application properties packaged inside your jar (`application.properties|yml`).
 
 The configuration and behavior of the configuration server is also controlled by its own
 `src/main/resources/bootstrap.properties` file. By default, it runs under port `8888` at `/casconfigserver` inside
@@ -218,6 +227,49 @@ To see the relevant list of CAS properties for this feature, please [review this
 
 CAS is also able to use [Vault](https://www.vaultproject.io/) to
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).
+
+##### DynamoDb
+
+CAS is also able to use [DynamoDb](https://aws.amazon.com/dynamodb/) to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-dynamodb</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+The `DynamoDbCasProperties` table is automatically created by CAS with the following structure:
+
+```json
+{
+    "id": "primary-key",
+    "name": "the-setting-name",
+    "value": "the-setting-value"
+}
+```
+
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#dynamodb).
+
+##### JDBC
+
+CAS is also able to use a relational database to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-jdbc</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+By default, settings are expected to be found under a `CAS_SETTINGS_TABLE` that contains the fields: `id`, `name` and `value`.
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#jdbc).
 
 #### Composite Sources
 

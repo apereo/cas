@@ -19,8 +19,9 @@ public class CasServerProperties {
     private Ajp ajp = new Ajp();
     private Http http = new Http();
     private HttpProxy httpProxy = new HttpProxy();
+    private SslValve sslValve = new SslValve();
     private ExtendedAccessLog extAccessLog = new ExtendedAccessLog();
-
+    
     public HttpProxy getHttpProxy() {
         return httpProxy;
     }
@@ -59,6 +60,14 @@ public class CasServerProperties {
 
     public void setAjp(final Ajp ajp) {
         this.ajp = ajp;
+    }
+
+    public SslValve getSslValve() {
+        return sslValve;
+    }
+
+    public void setSslValve(final SslValve sslValve) {
+        this.sslValve = sslValve;
     }
 
     public String getName() {
@@ -186,7 +195,7 @@ public class CasServerProperties {
             this.redirectPort = redirectPort;
         }
     }
-
+    
     public static class ExtendedAccessLog {
         private boolean enabled;
         private String pattern = "c-ip s-ip cs-uri sc-status time X-threadname x-H(secure) x-H(remoteUser)";
@@ -241,6 +250,15 @@ public class CasServerProperties {
         private boolean secure = true;
         private int redirectPort;
         private int proxyPort;
+        private String protocol = "AJP/1.3";
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public void setProtocol(final String protocol) {
+            this.protocol = protocol;
+        }
 
         public int getRedirectPort() {
             return redirectPort;
@@ -284,7 +302,7 @@ public class CasServerProperties {
     }
 
     public static class Http {
-        private boolean enabled = true;
+        private boolean enabled;
         private int port = 8080;
         private String protocol = "org.apache.coyote.http11.Http11NioProtocol";
 
@@ -310,6 +328,56 @@ public class CasServerProperties {
 
         public void setPort(final int port) {
             this.port = port;
+        }
+    }
+
+    public static class SslValve {
+        // default enabled for this valve should stay false
+        // it should only be turned on deliberately
+        private boolean enabled;
+        private String sslClientCertHeader = "ssl_client_cert";
+        private String sslCipherHeader = "ssl_cipher";
+        private String sslSessionIdHeader = "ssl_session_id";
+        private String sslCipherUserKeySizeHeader = "ssl_cipher_usekeysize";
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getSslClientCertHeader() {
+            return sslClientCertHeader;
+        }
+
+        public void setSslClientCertHeader(final String sslClientCertHeader) {
+            this.sslClientCertHeader = sslClientCertHeader;
+        }
+
+        public String getSslCipherHeader() {
+            return sslCipherHeader;
+        }
+
+        public void setSslCipherHeader(final String sslCipherHeader) {
+            this.sslCipherHeader = sslCipherHeader;
+        }
+
+        public String getSslSessionIdHeader() {
+            return sslSessionIdHeader;
+        }
+
+        public void setSslSessionIdHeader(final String sslSessionIdHeader) {
+            this.sslSessionIdHeader = sslSessionIdHeader;
+        }
+
+        public String getSslCipherUserKeySizeHeader() {
+            return sslCipherUserKeySizeHeader;
+        }
+
+        public void setSslCipherUserKeySizeHeader(final String sslCipherUserKeySizeHeader) {
+            this.sslCipherUserKeySizeHeader = sslCipherUserKeySizeHeader;
         }
     }
 }

@@ -22,8 +22,7 @@ public class AuthenticationCredentialsLocalBinderClearingFilter implements Filte
     @Override
     public void doFilter(final ServletRequest servletRequest,
                          final ServletResponse servletResponse,
-                         final FilterChain filterChain)
-            throws IOException, ServletException {
+                         final FilterChain filterChain) throws IOException, ServletException {
 
         try {
             filterChain.doFilter(servletRequest, servletResponse);

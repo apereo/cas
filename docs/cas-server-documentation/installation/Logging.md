@@ -68,19 +68,70 @@ troubleshooting and diagnostics.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
 
-## Apache Tomcat AsyncLoggers Shutdown
-
-Log4j automatically inserts itself into the runtime application context (i.e. Tomcat) and will clean up
-the logging context once the container is instructed to shut down. However,
-Apache Tomcat seem to by default ignore all JAR files named `log4j*.jar`, which prevents
-this feature from working. You may need to change the `catalina.properties`
-and remove `log4j*.jar` from the `jarsToSkip` property. Failure to do so will stop Tomcat to gracefully shut down and causes logger context threads to hang.
-
-You may need to do something similar on other containers if they skip scanning Log4j JAR files.
-
 ## Routing Logs to Sentry
 
 Log data can be automatically routed to and integrated with [Sentry](../integration/Sentry-Integration.html) to track and monitor CAS events and errors.
+
+## Routing Logs to Loggly
+
+Loggly is a cloud-based log management service that makes it easy to access and analyze the mission-critical information within your logs.
+Log data can be automatically routed to Loggly via Rsyslog. The advantage of using Rsyslog is that it can send TCP events without blocking your application, can optionally encrypt the data, and even queue data to add robustness to network failure.
+
+See [this guide](https://www.loggly.com/docs/java-log4j-2/) for more info.
+
+```xml
+...
+<Appenders>
+<Socket name="Loggly" host="localhost" port="514" protocol="UDP">
+    <PatternLayout>
+    <pattern>${hostName} java %d{yyyy-MM-dd HH:mm:ss,SSS}{GMT} %p %t
+        %c %M - %m%n</pattern>
+    </PatternLayout>
+</Socket>
+</Appenders>
+...
+<Loggers>
+<Root level="INFO">
+    <AppenderRef ref="Loggly" />
+</Root>
+</Loggers>
+```
+
+## Routing Logs to CloudWatch
+
+Log data can be automatically routed to [AWS CloudWatch](https://aws.amazon.com/cloudwatch/). Support is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-logging-config-cloudwatch</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+With the above module, you may then declare a specific appender to communicate with AWS CloudWatch:
+
+```xml
+<CloudWatchAppender name="cloudWatch"
+                    awsLogGroupName="LogGroupName"
+                    awsLogStreamName="LogStreamName"
+                    awsLogRegionName="us-west-1"
+                    credentialAccessKey="..."
+                    credentialSecretKey="..."
+                    awsLogStreamFlushPeriodInSeconds="5">
+    <PatternLayout>
+        <Pattern>%5p | %d{ISO8601}{UTC} | %t | %C | %M:%L | %m %ex %n</Pattern>
+    </PatternLayout>
+</CloudWatchAppender>
+...
+<AsyncLogger name="org.apereo" additivity="true" level="debug">
+    <appender-ref ref="cloudWatch" />
+</AsyncLogger>
+```
+
+The AWS credentials for access key, secret key and region, if left undefined, may also be retrieved from
+system properties via `AWS_ACCESS_KEY`, `AWS_SECRET_KEY` and `AWS_REGION_NAME`.
+The group name as well as the stream name are automatically created by CAS, if they are not already found.
 
 ## Routing Logs to Logstash
 

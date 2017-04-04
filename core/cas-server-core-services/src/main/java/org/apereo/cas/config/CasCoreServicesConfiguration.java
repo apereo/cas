@@ -78,6 +78,7 @@ public class CasCoreServicesConfiguration {
         return new ShibbolethCompatiblePersistentIdGenerator();
     }
 
+    @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
         return new DefaultWebApplicationResponseBuilderLocator();
