@@ -39,7 +39,7 @@ need compile-time access to the components within.</p></div>
 
 ### Security Tokens
 
-Security tokens issued are treated as CAS tickets, stored in the ticket registry under the prefix `STS` and follow the same semantics as all other ticket types when it comes to persistence, replication, etc. These tokens are closely tied to the lifetime of the ticket-granting tickets and match their expiration policy. Token themselves do not have a lifespan outside a valid ticket-granting ticket and support for ticket lifetime configuration is not present.
+Security tokens issued are treated as CAS tickets, stored in the ticket registry under the prefix `STS` and follow the same semantics as all other ticket types when it comes to persistence, replication, etc. These tokens are closely tied to the lifetime of the ticket-granting tickets and match their expiration policy. Tokens themselves do not have a lifespan outside a valid ticket-granting ticket and support for ticket lifetime configuration is not present.
 
 ## WS Federation Identity Provider
 
