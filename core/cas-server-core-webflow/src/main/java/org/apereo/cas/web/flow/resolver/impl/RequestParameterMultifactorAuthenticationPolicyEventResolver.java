@@ -89,10 +89,9 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
                 }
                 LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
                 return null;
-            } else {
-                LOGGER.warn("No multifactor provider could be found for request parameter [{}]", (Object[]) values);
-                throw new AuthenticationException();
             }
+            LOGGER.warn("No multifactor provider could be found for request parameter [{}]", (Object[]) values);
+            throw new AuthenticationException();
         }
         LOGGER.debug("No value could be found for request parameter [{}]", mfaRequestParameter);
         return null;

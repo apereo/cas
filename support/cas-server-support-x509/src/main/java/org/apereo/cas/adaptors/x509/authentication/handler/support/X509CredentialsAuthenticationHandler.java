@@ -212,7 +212,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             // Check pathLength for CA cert
             if (pathLength == Integer.MAX_VALUE && !this.maxPathLengthAllowUnspecified) {
                 throw new FailedLoginException("Unlimited certificate path length not allowed by configuration.");
-            } else if (pathLength > this.maxPathLength && pathLength < Integer.MAX_VALUE) {
+            }
+            if (pathLength > this.maxPathLength && pathLength < Integer.MAX_VALUE) {
                 throw new FailedLoginException(String.format(
                         "Certificate path length %s exceeds maximum value %s.", pathLength, this.maxPathLength));
             }
