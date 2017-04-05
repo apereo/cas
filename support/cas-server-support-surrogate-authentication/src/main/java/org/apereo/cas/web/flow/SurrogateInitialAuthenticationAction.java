@@ -72,26 +72,8 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
             WebUtils.putCredential(context, sc);
         }
     }
-
-    @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final Event event = super.doExecute(requestContext);
-        if (event.getId().equals(CasWebflowConstants.STATE_ID_SUCCESS)) {
-            loadSurrogates(requestContext);
-            return new EventFactorySupport().event(this, "surrogateListView");
-        }
-        return event;
-    }
-
-    private void loadSurrogates(final RequestContext requestContext) {
-        final Credential c = WebUtils.getCredential(requestContext);
-        if (c instanceof UsernamePasswordCredential) {
-            final String username = c.getId();
-            final Collection surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
-            surrogates.add(username);
-            requestContext.getFlowScope().put("surrogates", surrogates);
-        }
-    }
+    
+    
 
     private void deconvertFromSurrogatePrincipal(final RequestContext context) {
         final Credential c = WebUtils.getCredential(context);
