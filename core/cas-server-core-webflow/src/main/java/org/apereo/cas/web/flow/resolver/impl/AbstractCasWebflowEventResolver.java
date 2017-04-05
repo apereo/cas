@@ -368,9 +368,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
                         return Collections.singleton(event);
-                    } else {
-                        LOGGER.debug("Provider [{}] could not be verified", provider);
-                    }
+                    } 
+                    LOGGER.debug("Provider [{}] could not be verified", provider);
                 } else {
                     LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
                 }

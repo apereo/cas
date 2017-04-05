@@ -294,9 +294,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
             if (context != null) {
                 return context.getBean("attributeRepository", IPersonAttributeDao.class);
-            } else {
-                LOGGER.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
             }
+            LOGGER.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
         }
         return this.attributeRepository;
     }

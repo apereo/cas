@@ -114,9 +114,8 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
                 if (attribute.isBinary()) {
                     LOGGER.debug("Located entry [{}]. Retrieving first attribute [{}]", entry, attribute);
                     return fetchX509CRLFromAttribute(attribute);
-                } else {
-                    LOGGER.warn("Found certificate attribute [{}] but it is not marked as a binary attribute", this.certificateAttribute);
                 }
+                LOGGER.warn("Found certificate attribute [{}] but it is not marked as a binary attribute", this.certificateAttribute);
             }
 
             LOGGER.debug("Failed to execute the search [{}]", result);
