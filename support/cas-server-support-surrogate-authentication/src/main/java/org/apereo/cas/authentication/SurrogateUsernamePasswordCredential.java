@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * This is {@link SurrogateUsernamePasswordCredential},
  * able to substitute a target username on behalf of the given credentials.
  *
+ * @author Jonathan Johnson
  * @author Misagh Moayyed
  * @since 5.1.0
  */

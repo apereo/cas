@@ -1,18 +1,28 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.JsonResourceSurrogateAuthenticationService;
+import org.apereo.cas.authentication.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.authentication.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.flow.InitialAuthenticationAction;
 import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.Action;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link SurrogateAuthenticationConfiguration}.
@@ -47,7 +57,23 @@ public class SurrogateAuthenticationConfiguration {
     public Action authenticationViaFormAction() {
         return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy, 
-                casProperties.getAuthn().getSurrogate().getSeparator());
+                adaptiveAuthenticationPolicy,
+                casProperties.getAuthn().getSurrogate().getSeparator(),
+                surrogateAuthenticationService());
+    }
+
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
+    @Bean
+    public SurrogateAuthenticationService surrogateAuthenticationService() {
+        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+        if (su.getJson().getConfig().getLocation() != null) {
+            return new JsonResourceSurrogateAuthenticationService(su.getJson().getConfig().getLocation());
+        }
+        final Map<String, Set> accounts = new LinkedHashMap<>();
+        su.getSimple().getSurrogates().forEach((k, v) -> {
+            accounts.put(k, StringUtils.commaDelimitedListToSet(v));
+        });
+        return new SimpleSurrogateAuthenticationService(accounts);
     }
 }
