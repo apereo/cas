@@ -36,9 +36,8 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
             return null;
         }
         if (up.getUsername().contains(this.separator)) {
-            return null;
+            convertToSurrogateCredential(context, up);
         }
-        convertToSurrogateCredential(context, up);
         return null;
     }
 
