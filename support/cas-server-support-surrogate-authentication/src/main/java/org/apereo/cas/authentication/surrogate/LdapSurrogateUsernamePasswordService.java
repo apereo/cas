@@ -1,15 +1,4 @@
-package org.apereo.cas.authentication;
-
-import org.apereo.cas.authentication.principal.Principal;
-import org.ldaptive.Connection;
-import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchOperation;
-import org.ldaptive.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
+package org.apereo.cas.authentication.surrogate;
 
 /**
  * This is {@link LdapSurrogateUsernamePasswordService}.

@@ -24,8 +24,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
 
-import javax.annotation.PostConstruct;
-
 /**
  * This is {@link GrouperMultifactorAuthenticationConfiguration}.
  *
