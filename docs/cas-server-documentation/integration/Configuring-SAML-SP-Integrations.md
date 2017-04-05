@@ -48,6 +48,10 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://helpx.adobe.com/enterprise/kb/configure_shibboleth_idp_for_use_with_Adobe_SSO.html"><img src="https://cloud.githubusercontent.com/assets/1205228/24562072/ac5964ec-165e-11e7-9986-92108c30eb9b.png" height="48" width="90"></a>
 <a href="https://www.academicworks.com/why-academicworks/user-authentication/">
 <img src="https://cloud.githubusercontent.com/assets/1205228/24624808/3c5909b6-18c2-11e7-9922-52ee604aff55.png" height="48" width="240"></a>
+<a href="https://www.infinitecampus.com/">
+<img src="https://cloud.githubusercontent.com/assets/1205228/24698286/4c4d8740-1a05-11e7-844e-54d328e64e2f.png" height="48" width="140"></a>
+<a href="http://www.publicconsultinggroup.com/education/products/easyiep/">
+<img src="https://cloud.githubusercontent.com/assets/1205228/24698500/250b9b4e-1a06-11e7-86d3-5509de835515.png" height="48" width="140"></a>
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).
