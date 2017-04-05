@@ -38,7 +38,8 @@ import java.util.LinkedList;
  */
 public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DuoMultifactorWebflowConfigurer.class);
-    
+    private static final String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
+
     private final VariegatedMultifactorAuthenticationProvider provider;
 
     public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -57,7 +58,8 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
             registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), p.getId(), duoFlowRegistry);
         });
 
-        casProperties.getAuthn().getMfa().getDuo().stream()
+        casProperties.getAuthn().getMfa().getDuo()
+                .stream()
                 .filter(MultifactorAuthenticationProperties.Duo::isTrustedDeviceEnabled)
                 .forEach(duo -> {
                     final String id = duo.getId();
@@ -112,7 +114,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_YES);
-        transModel.setTo("viewLoginFormDuo");
+        transModel.setTo(STATE_ID_VIEW_LOGIN_FORM_DUO);
         trans.add(transModel);
 
         transModel = new TransitionModel();
@@ -159,7 +161,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         /////////////////
 
-        final ViewStateModel viewState = new ViewStateModel("viewLoginFormDuo");
+        final ViewStateModel viewState = new ViewStateModel(STATE_ID_VIEW_LOGIN_FORM_DUO);
         viewState.setView("casDuoLoginView");
         viewState.setModel(CasWebflowConstants.VAR_ID_CREDENTIAL);
         final BinderModel bm = new BinderModel();
