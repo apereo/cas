@@ -48,7 +48,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param result     the result of the authentication attempt.
      * @return An authentication handler result that MAY be different or modified from that provided.
      */
-    protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
+    public HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
         return result;
     }
 
