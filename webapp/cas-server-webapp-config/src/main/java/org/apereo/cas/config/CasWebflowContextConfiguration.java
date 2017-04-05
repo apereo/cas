@@ -87,11 +87,9 @@ public class CasWebflowContextConfiguration {
 
     @Bean
     public ExpressionParser expressionParser() {
-        final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
+        return new WebFlowSpringELExpressionParser(
                 new SpelExpressionParser(),
                 logoutConversionService());
-
-        return parser;
     }
 
     @Bean
