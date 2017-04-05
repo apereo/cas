@@ -76,7 +76,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      */
     protected HttpClient httpClient;
 
-    private transient Object lock = new Object();
+    private final transient Object lock = new Object();
 
     @Autowired
     private CasConfigurationProperties casProperties;
