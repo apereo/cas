@@ -2531,7 +2531,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms=
 ```
 
-
 ## SAML SPs
 
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
@@ -2582,6 +2581,24 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.adobeCloud.name=Adobe Creative Cloud
 # cas.samlSP.adobeCloud.description=Adobe Creative Cloud Integration
 # cas.samlSP.adobeCloud.attributes=Email,FirstName,LastName
+```
+
+### Easy IEP
+
+```properties
+# cas.samlSP.easyIep.metadata=/path/to/easyiep-metadata.xml
+# cas.samlSP.easyIep.name=Easy IEP
+# cas.samlSP.easyIep.description=Easy IEP Integration
+# cas.samlSP.easyIep.attributes=employeeId
+```
+
+### Infinite Campus
+
+```properties
+# cas.samlSP.infiniteCampus.metadata=/path/to/infinitecampus-metadata.xml
+# cas.samlSP.infiniteCampus.name=Infinite Campus
+# cas.samlSP.infiniteCampus.description=Infinite Campus Integration
+# cas.samlSP.infiniteCampus.attributes=employeeId
 ```
 
 ### Arc GIS
