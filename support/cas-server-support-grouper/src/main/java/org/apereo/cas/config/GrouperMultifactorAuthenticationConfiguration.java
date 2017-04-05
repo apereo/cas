@@ -42,11 +42,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
+    
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -74,24 +70,24 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver() {
+    public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
+                                                                                            final AuthenticationSystemSupport authenticationSystemSupport) {
         final AbstractCasWebflowEventResolver r;
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGrouperGroupField())) {
             r = new GrouperMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                    ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector,
+                    ticketRegistrySupport, warnCookieGenerator, 
+                    authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector,
                     casProperties);
             LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
         } else {
             r = new NoOpCasWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
                     warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
         }
-        return r;
-    }
 
-    @PostConstruct
-    public void initConfig() {
-        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(grouperMultifactorAuthenticationWebflowEventResolver());
+        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
+        return r;
     }
 }
