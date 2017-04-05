@@ -1,21 +1,29 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.JsonResourceSurrogateAuthenticationService;
 import org.apereo.cas.authentication.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.authentication.SurrogateAuthenticationHandler;
+import org.apereo.cas.authentication.SurrogateAuthenticationMetadataPopulator;
 import org.apereo.cas.authentication.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.SurrogateSelectionAction;
 import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
+import org.apereo.cas.web.flow.SurrogateSelectionAction;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.SurrogateWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -46,7 +54,7 @@ import java.util.Set;
  */
 @Configuration("surrogateAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SurrogateAuthenticationConfiguration {
+public class SurrogateAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -136,14 +144,33 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     public CasWebflowEventResolver surrogateWebflowEventResolver() {
         return new SurrogateWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
-                servicesManager, ticketRegistrySupport, warnCookieGenerator, 
+                servicesManager, ticketRegistrySupport, warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies,
-                selector, surrogateAuthenticationService(), 
+                selector, surrogateAuthenticationService(),
                 casProperties.getAuthn().getSurrogate().getSeparator());
     }
+
+    @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataPopulator")
+    @Bean
+    public AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator() {
+        return new SurrogateAuthenticationMetadataPopulator();
+    }
+
+    @ConditionalOnMissingBean(name = "surrogatePrincipalFactory")
+    @Bean
+    public PrincipalFactory surrogatePrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
+    
 
     @PostConstruct
     public void initConfig() {
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(surrogateWebflowEventResolver(), 0);
+    }
+
+    @Override
+    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+        plan.registerMetadataPopulator(surrogateAuthenticationMetadataPopulator());
     }
 }
