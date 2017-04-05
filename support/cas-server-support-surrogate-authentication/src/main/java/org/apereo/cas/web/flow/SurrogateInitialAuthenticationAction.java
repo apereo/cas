@@ -3,14 +3,18 @@ package org.apereo.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.authentication.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Collection;
 
 /**
  * This is {@link SurrogateInitialAuthenticationAction}.
@@ -20,13 +24,16 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class SurrogateInitialAuthenticationAction extends InitialAuthenticationAction {
     private final String separator;
+    private final SurrogateAuthenticationService surrogateService;
 
     public SurrogateInitialAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
                                                 final CasWebflowEventResolver webflowEventResolver,
                                                 final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-                                                final String separator) {
+                                                final String separator,
+                                                final SurrogateAuthenticationService surrogateService) {
         super(delegatingWebflowEventResolver, webflowEventResolver, adaptiveAuthenticationPolicy);
         this.separator = separator;
+        this.surrogateService = surrogateService;
     }
 
     @Override
@@ -45,7 +52,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     protected void doPostExecute(final RequestContext context) throws Exception {
         deconvertFromSurrogatePrincipal(context);
     }
-    
+
     private void convertToSurrogateCredential(final RequestContext context, final UsernamePasswordCredential up) {
         final SurrogateUsernamePasswordCredential sc = new SurrogateUsernamePasswordCredential();
 
@@ -65,7 +72,27 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
             WebUtils.putCredential(context, sc);
         }
     }
-    
+
+    @Override
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
+        final Event event = super.doExecute(requestContext);
+        if (event.getId().equals(CasWebflowConstants.STATE_ID_SUCCESS)) {
+            loadSurrogates(requestContext);
+            return new EventFactorySupport().event(this, "surrogateListView");
+        }
+        return event;
+    }
+
+    private void loadSurrogates(final RequestContext requestContext) {
+        final Credential c = WebUtils.getCredential(requestContext);
+        if (c instanceof UsernamePasswordCredential) {
+            final String username = c.getId();
+            final Collection surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            surrogates.add(username);
+            requestContext.getFlowScope().put("surrogates", surrogates);
+        }
+    }
+
     private void deconvertFromSurrogatePrincipal(final RequestContext context) {
         final Credential c = WebUtils.getCredential(context);
         if (c instanceof SurrogateUsernamePasswordCredential) {
