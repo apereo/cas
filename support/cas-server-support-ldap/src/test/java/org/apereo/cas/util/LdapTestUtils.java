@@ -66,9 +66,8 @@ public final class LdapTestUtils {
                     .map(line -> {
                         if (line.contains(BASE_DN_PLACEHOLDER)) {
                             return line.replace(BASE_DN_PLACEHOLDER, baseDn);
-                        } else {
-                            return line;
                         }
+                        return line;
                     })
                     .collect(Collectors.joining(NEWLINE));
         }

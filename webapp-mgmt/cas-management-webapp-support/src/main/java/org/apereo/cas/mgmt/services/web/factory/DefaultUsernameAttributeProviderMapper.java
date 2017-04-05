@@ -61,25 +61,25 @@ public class DefaultUsernameAttributeProviderMapper implements UsernameAttribute
         if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT
                 .toString())) {
             return new DefaultRegisteredServiceUsernameProvider();
-        } else if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types
+        }
+        if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types
                 .ANONYMOUS.toString())) {
             final String salt = userAttrProvider.getValue();
             if (StringUtils.isNotBlank(salt)) {
                 final ShibbolethCompatiblePersistentIdGenerator generator = new
                         ShibbolethCompatiblePersistentIdGenerator(salt);
                 return new AnonymousRegisteredServiceUsernameAttributeProvider(generator);
-            } else {
-                throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
             }
-        } else if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types
+            throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
+        }
+        if (StringUtils.equalsIgnoreCase(uidType, RegisteredServiceUsernameAttributeProviderEditBean.Types
                 .ATTRIBUTE.toString())) {
             final String attr = userAttrProvider.getValue();
 
             if (StringUtils.isNotBlank(attr)) {
                 return new PrincipalAttributeRegisteredServiceUsernameProvider(attr);
-            } else {
-                throw new IllegalArgumentException("Invalid attribute specified for username");
             }
+            throw new IllegalArgumentException("Invalid attribute specified for username");
         }
 
         return null;

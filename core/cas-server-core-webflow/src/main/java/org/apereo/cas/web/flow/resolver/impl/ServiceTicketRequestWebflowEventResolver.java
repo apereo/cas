@@ -82,10 +82,9 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                             + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
                     ticketGrantingTicketId, service);
             return false;
-        } else {
-            LOGGER.debug("Request is not eligible to be issued service tickets just yet");
-            return false;
         }
+        LOGGER.debug("Request is not eligible to be issued service tickets just yet");
+        return false;
     }
 
     /**

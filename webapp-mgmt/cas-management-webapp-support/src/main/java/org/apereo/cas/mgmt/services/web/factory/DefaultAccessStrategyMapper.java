@@ -82,14 +82,19 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
         final RegisteredServiceSupportAccessEditBean supportAccess = bean.getSupportAccess();
 
         final DefaultRegisteredServiceAccessStrategy accessStrategy;
-        if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.REMOTE) {
-            accessStrategy = new RemoteEndpointServiceAccessStrategy();
-        } else if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) {
-            accessStrategy = new GrouperRegisteredServiceAccessStrategy();
-        } else if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME) {
-            accessStrategy = new TimeBasedRegisteredServiceAccessStrategy();
-        } else {
-            accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+        switch (supportAccess.getType()) {
+            case REMOTE:
+                accessStrategy = new RemoteEndpointServiceAccessStrategy();
+                break;
+            case GROUPER:
+                accessStrategy = new GrouperRegisteredServiceAccessStrategy();
+                break;
+            case TIME:
+                accessStrategy = new TimeBasedRegisteredServiceAccessStrategy();
+                break;
+            default:
+                accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+                break;
         }
 
         accessStrategy.setEnabled(supportAccess.isCasEnabled());

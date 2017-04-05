@@ -87,11 +87,11 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
 
                 if (prim instanceof ASN1OctetString) {
                     return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
-                } else if (prim instanceof ASN1String) {
-                    return ((ASN1String) prim).getString();
-                } else {
-                    return null;
                 }
+                if (prim instanceof ASN1String) {
+                    return ((ASN1String) prim).getString();
+                }
+                return null;
             }
         }
         return null;

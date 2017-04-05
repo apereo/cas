@@ -284,10 +284,10 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
     private static LogoutType parseLogoutType(final String logoutType) {
         if (StringUtils.equalsIgnoreCase(logoutType, RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
             return LogoutType.BACK_CHANNEL;
-        } else if (StringUtils.equalsIgnoreCase(logoutType, RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
-            return LogoutType.FRONT_CHANNEL;
-        } else {
-            return LogoutType.NONE;
         }
+        if (StringUtils.equalsIgnoreCase(logoutType, RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
+            return LogoutType.FRONT_CHANNEL;
+        }
+        return LogoutType.NONE;
     }
 }

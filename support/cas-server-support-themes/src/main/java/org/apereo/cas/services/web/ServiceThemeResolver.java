@@ -84,10 +84,9 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
                 if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
                     LOGGER.debug("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
                     return rService.getTheme();
-                } else {
-                    LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...",
-                            rService.getTheme(), rService);
                 }
+                LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...",
+                        rService.getTheme(), rService);
             }
         }
         return getDefaultThemeName();

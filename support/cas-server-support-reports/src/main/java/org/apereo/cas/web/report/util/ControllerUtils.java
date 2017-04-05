@@ -56,9 +56,8 @@ public final class ControllerUtils {
                 loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
                 return Pair.of(logConfigurationFile, loggerContext);
 
-            } else {
-                LOGGER.warn("Logging configuration cannot be found in the environment settings");
             }
+            LOGGER.warn("Logging configuration cannot be found in the environment settings");
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
