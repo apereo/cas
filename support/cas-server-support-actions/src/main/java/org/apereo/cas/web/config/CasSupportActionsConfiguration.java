@@ -111,7 +111,8 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "authenticationViaFormAction")
     @Bean
     public Action authenticationViaFormAction() {
-        return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+        return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, 
+                serviceTicketRequestWebflowEventResolver,
                 adaptiveAuthenticationPolicy);
     }
 
