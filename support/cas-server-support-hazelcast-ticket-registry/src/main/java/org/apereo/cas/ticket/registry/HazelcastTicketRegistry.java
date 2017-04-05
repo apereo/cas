@@ -81,9 +81,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
             if (metadata != null) {
                 final Ticket ticket = getTicketMapInstanceByMetadata(metadata).get(encTicketId);
                 return decodeTicket(ticket);
-            } else {
-                LOGGER.warn("No ticket definition could be found in the catalog to match [{}]", ticketId);
             }
+            LOGGER.warn("No ticket definition could be found in the catalog to match [{}]", ticketId);
         }
         return null;
     }

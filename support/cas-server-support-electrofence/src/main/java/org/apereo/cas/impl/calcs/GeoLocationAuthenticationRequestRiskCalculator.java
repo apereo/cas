@@ -52,20 +52,19 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
                 return LOWEST_RISK_SCORE;
             }
             return getFinalAveragedScore(count, events.size());
-        } else {
-            final String remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
-            LOGGER.debug("Filtering authentication events for location based on ip [{}]", remoteAddr);
-            final GeoLocationResponse response = this.geoLocationService.locate(remoteAddr);
-            if (response != null) {
-                final long count = events.stream().filter(e -> e.getGeoLocation().equals(
-                        new GeoLocationRequest(response.getLatitude(), response.getLongitude()))).count();
-                LOGGER.debug("Total authentication events found for location of [{}]: [{}]", remoteAddr, count);
-                if (count == events.size()) {
-                    LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), loc);
-                    return LOWEST_RISK_SCORE;
-                }
-                return getFinalAveragedScore(count, events.size());
+        }
+        final String remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
+        LOGGER.debug("Filtering authentication events for location based on ip [{}]", remoteAddr);
+        final GeoLocationResponse response = this.geoLocationService.locate(remoteAddr);
+        if (response != null) {
+            final long count = events.stream().filter(e -> e.getGeoLocation().equals(
+                    new GeoLocationRequest(response.getLatitude(), response.getLongitude()))).count();
+            LOGGER.debug("Total authentication events found for location of [{}]: [{}]", remoteAddr, count);
+            if (count == events.size()) {
+                LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), loc);
+                return LOWEST_RISK_SCORE;
             }
+            return getFinalAveragedScore(count, events.size());
         }
         LOGGER.debug("Request does not contain enough geolocation data");
         return HIGHEST_RISK_SCORE;

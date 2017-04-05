@@ -48,15 +48,13 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
             if (message.isSignatureVerified()) {
                 LOGGER.debug("Signature verification request successful.");
                 return new ModelAndView(getSuccessView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
-            } else {
-                LOGGER.debug("Signature verification request unsuccessful.");
-                return new ModelAndView(getFailureView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
             }
-        } else {
-            // we should probably fail here(?),
-            // since we only deal OpenId signature verification
-            return super.handleRequestInternal(request, response);
+            LOGGER.debug("Signature verification request unsuccessful.");
+            return new ModelAndView(getFailureView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
         }
+        // we should probably fail here(?),
+        // since we only deal OpenId signature verification
+        return super.handleRequestInternal(request, response);
     }
     
     @Override
