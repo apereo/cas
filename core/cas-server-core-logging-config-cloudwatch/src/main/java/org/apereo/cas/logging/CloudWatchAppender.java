@@ -105,7 +105,7 @@ public class CloudWatchAppender extends AbstractAppender {
             if (logEvents.isEmpty()) {
                 break;
             }
-            Collections.sort(logEvents, Comparator.comparing(InputLogEvent::getTimestamp));
+            logEvents.sort(Comparator.comparing(InputLogEvent::getTimestamp));
             if (lastReportedTimestamp > 0) {
                 for (final InputLogEvent event : logEvents) {
                     if (event.getTimestamp() < lastReportedTimestamp) {

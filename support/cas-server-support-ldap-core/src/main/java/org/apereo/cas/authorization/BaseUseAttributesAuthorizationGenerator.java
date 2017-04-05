@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This is {@link BaseUseAttributesAuthorizationGenerator}.
@@ -66,9 +67,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     protected void addProfileRolesFromAttributes(final CommonProfile profile,
                                                  final LdapAttribute ldapAttribute,
                                                  final String prefix) {
-        ldapAttribute.getStringValues().forEach(value -> {
-            profile.addRole(prefix.concat(value.toUpperCase()));
-        });
+        ldapAttribute.getStringValues().forEach(value -> profile.addRole(prefix.concat(value.toUpperCase())));
     }
 
     @Override
@@ -83,7 +82,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
             final Response<SearchResult> response = this.userSearchExecutor.search(
                     this.connectionFactory,
                     Beans.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
-                            Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Arrays.asList(username)));
+                            Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Collections.singletonList(username)));
 
             LOGGER.debug("LDAP user search response: [{}]", response);
             userResult = response.getResult();
