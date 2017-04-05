@@ -2583,6 +2583,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.adobeCloud.attributes=Email,FirstName,LastName
 ```
 
+### Securing The Human
+
+```properties
+# cas.samlSP.sansSth.metadata=/path/to/sth-metadata.xml
+# cas.samlSP.sansSth.name=Securing The Human
+# cas.samlSP.sansSth.description=Securing The Human Integration
+# cas.samlSP.sansSth.attributes=email,firstName,lastName,scopedUserId,department,reference
+```
+
 ### Easy IEP
 
 ```properties
