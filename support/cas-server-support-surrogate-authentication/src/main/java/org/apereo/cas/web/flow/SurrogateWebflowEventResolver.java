@@ -27,6 +27,7 @@ import java.util.Set;
  */
 public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolver {
     private final SurrogateAuthenticationService surrogateService;
+    private final String separator;
 
     public SurrogateWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                          final CentralAuthenticationService centralAuthenticationService,
@@ -35,15 +36,21 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
                                          final CookieGenerator warnCookieGenerator,
                                          final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                          final MultifactorAuthenticationProviderSelector selector,
-                                         final SurrogateAuthenticationService surrogateService) {
+                                         final SurrogateAuthenticationService surrogateService,
+                                         final String separator) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
                 warnCookieGenerator, authenticationSelectionStrategies, selector);
         this.surrogateService = surrogateService;
+        this.separator = separator;
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
-        if (loadSurrogates(context)) {
+    public Set<Event> resolveInternal(final RequestContext requestContext) {
+        final Credential c = WebUtils.getCredential(requestContext);
+        if (c.getId().matches("\\w+" + this.separator + "\\w+")) {
+            return null;
+        }
+        if (loadSurrogates(requestContext)) {
             return Collections.singleton(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));
         }
         return null;
