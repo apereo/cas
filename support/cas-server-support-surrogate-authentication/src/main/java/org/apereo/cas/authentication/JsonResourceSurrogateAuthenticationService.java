@@ -17,10 +17,7 @@ import java.util.Map;
  */
 public class JsonResourceSurrogateAuthenticationService implements SurrogateAuthenticationService {
     private final Map<String, List> eligibleAccounts;
-
-    /**
-     * Instantiates a new simple surrogate username password service.
-     */
+    
     public JsonResourceSurrogateAuthenticationService(final Resource json) {
         try {
             final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();

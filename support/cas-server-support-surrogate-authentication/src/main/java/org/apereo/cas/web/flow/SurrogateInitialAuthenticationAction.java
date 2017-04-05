@@ -10,11 +10,8 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Collection;
 
 /**
  * This is {@link SurrogateInitialAuthenticationAction}.
@@ -58,22 +55,22 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
 
         final String tUsername = up.getUsername();
         final String surrogateUsername = tUsername.substring(0, tUsername.indexOf(this.separator));
-        final String username = tUsername.substring(tUsername.indexOf(this.separator) + 1);
-        sc.setUsername(username);
+        final String realUsername = tUsername.substring(tUsername.indexOf(this.separator) + 1);
+
+        if (StringUtils.isBlank(surrogateUsername)) {
+            up.setUsername(realUsername);
+            WebUtils.putCredential(context, up);
+            return;
+        }
+
+        sc.setUsername(realUsername);
         sc.setSurrogateUsername(surrogateUsername);
+        sc.setPassword(up.getPassword());
         if (up instanceof RememberMeCredential) {
             sc.setRememberMe(((RememberMeCredential) up).isRememberMe());
         }
-        sc.setPassword(up.getPassword());
-        if (StringUtils.isBlank(surrogateUsername)) {
-            up.setUsername(username);
-            WebUtils.putCredential(context, up);
-        } else {
-            WebUtils.putCredential(context, sc);
-        }
+        WebUtils.putCredential(context, sc);
     }
-    
-    
 
     private void deconvertFromSurrogatePrincipal(final RequestContext context) {
         final Credential c = WebUtils.getCredential(context);
