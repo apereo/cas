@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * This is {@link SurrogateUsernamePasswordCredential},
@@ -26,7 +27,7 @@ public class SurrogateUsernamePasswordCredential extends RememberMeUsernamePassw
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .appendSuper(super.toString())
                 .append("surrogateUsername", surrogateUsername)
                 .toString();
