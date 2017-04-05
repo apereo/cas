@@ -33,6 +33,24 @@ public class SamlServiceProviderProperties {
     private BenefitFocus benefitFocus = new BenefitFocus();
     private AdobeCloud adobeCloud = new AdobeCloud();
     private AcademicWorks academicWorks = new AcademicWorks();
+    private EasyIep easyIep = new EasyIep();
+    private InfiniteCampus infiniteCampus = new InfiniteCampus();
+
+    public InfiniteCampus getInfiniteCampus() {
+        return infiniteCampus;
+    }
+
+    public void setInfiniteCampus(final InfiniteCampus infiniteCampus) {
+        this.infiniteCampus = infiniteCampus;
+    }
+
+    public EasyIep getEasyIep() {
+        return easyIep;
+    }
+
+    public void setEasyIep(final EasyIep easyIep) {
+        this.easyIep = easyIep;
+    }
 
     public AcademicWorks getAcademicWorks() {
         return academicWorks;
@@ -328,10 +346,22 @@ public class SamlServiceProviderProperties {
             setAttributes(Arrays.asList("firstName", "lastName", EMAIL));
         }
     }
-    
+
     public static class AcademicWorks extends AbstractSamlSPProperties {
         public AcademicWorks() {
             setAttributes(Arrays.asList("displayName", EMAIL));
+        }
+    }
+
+    public static class EasyIep extends AbstractSamlSPProperties {
+        public EasyIep() {
+            setAttributes(Arrays.asList("employeeId"));
+        }
+    }
+
+    public static class InfiniteCampus extends AbstractSamlSPProperties {
+        public InfiniteCampus() {
+            setAttributes(Arrays.asList("employeeId"));
         }
     }
 }
