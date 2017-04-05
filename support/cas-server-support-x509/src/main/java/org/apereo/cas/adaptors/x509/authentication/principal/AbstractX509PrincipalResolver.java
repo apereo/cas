@@ -4,6 +4,7 @@ import java.security.cert.X509Certificate;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 
 /**
@@ -15,7 +16,7 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
-    protected String extractPrincipalId(final Credential credential) {
+    protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
         return resolvePrincipalInternal(((X509CertificateCredential) credential).getCertificate());
     }
 
