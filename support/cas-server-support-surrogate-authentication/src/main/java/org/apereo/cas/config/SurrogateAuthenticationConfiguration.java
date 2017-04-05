@@ -1,11 +1,17 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.spi.PrincipalIdProvider;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.JsonResourceSurrogateAuthenticationService;
-import org.apereo.cas.authentication.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.SurrogateAuthenticationAspect;
-import org.apereo.cas.authentication.SurrogateAuthenticationService;
+import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.audit.SurrogatePrincipalIdProvider;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -14,6 +20,8 @@ import org.apereo.cas.web.flow.SurrogateSelectionAction;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -89,17 +97,39 @@ public class SurrogateAuthenticationConfiguration implements AuthenticationEvent
     @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
     @Bean
     public SurrogateAuthenticationService surrogateAuthenticationService() {
-        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
-        if (su.getJson().getConfig().getLocation() != null) {
-            return new JsonResourceSurrogateAuthenticationService(su.getJson().getConfig().getLocation());
+        try {
+            final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+            if (su.getJson().getConfig().getLocation() != null) {
+                return new JsonResourceSurrogateAuthenticationService(su.getJson().getConfig().getLocation());
+            }
+            final Map<String, Set> accounts = new LinkedHashMap<>();
+            su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
+            return new SimpleSurrogateAuthenticationService(accounts);
+        } catch (final Exception e) {
+            throw new BeanCreationException(e.getMessage(), e);
         }
-        final Map<String, Set> accounts = new LinkedHashMap<>();
-        su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
-        return new SimpleSurrogateAuthenticationService(accounts);
     }
 
     @Bean
     public SurrogateAuthenticationAspect surrogateAuthenticationAspect() {
-        return new SurrogateAuthenticationAspect();
+        return new SurrogateAuthenticationAspect(new DefaultPrincipalFactory(), surrogateAuthenticationService());
+    }
+
+    @Autowired
+    @RefreshScope
+    @Bean
+    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository,
+                                                              @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+        final SurrogatePrincipalResolver bean = new SurrogatePrincipalResolver();
+        bean.setAttributeRepository(attributeRepository);
+        bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
+        bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
+        bean.setPrincipalFactory(principalFactory);
+        return bean;
+    }
+
+    @Bean
+    public PrincipalIdProvider principalIdProvider() {
+        return new SurrogatePrincipalIdProvider();
     }
 }

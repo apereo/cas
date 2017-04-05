@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
 
@@ -23,8 +23,12 @@ public class SimpleSurrogateAuthenticationService implements SurrogateAuthentica
     }
 
     @Override
-    public boolean canAuthenticateAs(final String username, final Principal surrogate) {
-        return this.eligibleAccounts.containsKey(username);
+    public boolean canAuthenticateAs(final String surrogate, final Principal principal) {
+        if (this.eligibleAccounts.containsKey(principal.getId())) {
+            final Set surrogates = this.eligibleAccounts.get(principal.getId());
+            return surrogates.contains(surrogate);
+        }
+        return false;
     }
 
     @Override
