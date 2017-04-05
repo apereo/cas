@@ -47,11 +47,11 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
     @Override
     public Set<Event> resolveInternal(final RequestContext requestContext) {
         final Credential c = WebUtils.getCredential(requestContext);
-        if (c.getId().matches("\\w+" + this.separator + "\\w+")) {
-            return null;
-        }
-        if (loadSurrogates(requestContext)) {
-            return Collections.singleton(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));
+        if (requestContext.getFlowScope().contains("requestSurrogateAccount")) {
+            requestContext.getFlowScope().remove("requestSurrogateAccount");
+            if (loadSurrogates(requestContext)) {
+                return Collections.singleton(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));
+            }
         }
         return null;
     }
