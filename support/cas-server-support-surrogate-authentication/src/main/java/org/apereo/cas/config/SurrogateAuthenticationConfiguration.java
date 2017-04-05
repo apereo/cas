@@ -6,8 +6,6 @@ import org.apereo.cas.authentication.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.SurrogateAuthenticationAspect;
 import org.apereo.cas.authentication.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -18,12 +16,12 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -41,7 +39,7 @@ import java.util.Set;
  */
 @Configuration("surrogateAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureOrder
+@EnableAspectJAutoProxy
 public class SurrogateAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
     @Autowired
@@ -100,13 +98,6 @@ public class SurrogateAuthenticationConfiguration implements AuthenticationEvent
         return new SimpleSurrogateAuthenticationService(accounts);
     }
 
-    @ConditionalOnMissingBean(name = "surrogatePrincipalFactory")
-    @Bean
-    public PrincipalFactory surrogatePrincipalFactory() {
-        return new DefaultPrincipalFactory();
-    }
-
-    @ConditionalOnMissingBean(name = "surrogateAuthenticationAspect")
     @Bean
     public SurrogateAuthenticationAspect surrogateAuthenticationAspect() {
         return new SurrogateAuthenticationAspect();
