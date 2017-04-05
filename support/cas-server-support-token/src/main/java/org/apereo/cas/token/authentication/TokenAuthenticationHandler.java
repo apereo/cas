@@ -44,7 +44,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     }
 
     @Override
-    protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
+    public HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
         final TokenCredential tokenCredential = (TokenCredential) credential;
         tokenCredential.setId(result.getPrincipal().getId());
         return super.postAuthenticate(credential, result);
