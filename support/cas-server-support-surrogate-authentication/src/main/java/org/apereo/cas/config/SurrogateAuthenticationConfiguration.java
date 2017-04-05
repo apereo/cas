@@ -14,6 +14,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.SurrogateSelectionAction;
 import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.SurrogateWebflowEventResolver;
@@ -63,10 +64,6 @@ public class SurrogateAuthenticationConfiguration {
     private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
     @Autowired
-    @Qualifier("authenticationContextValidator")
-    private AuthenticationContextValidator authenticationContextValidator;
-
-    @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -101,9 +98,16 @@ public class SurrogateAuthenticationConfiguration {
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector selector;
 
+    @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer surrogateWebflowConfigurer() {
-        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
+        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, selectSurrogateAction());
+    }
+
+    @ConditionalOnMissingBean(name = "selectSurrogateAction")
+    @Bean
+    public Action selectSurrogateAction() {
+        return new SurrogateSelectionAction(casProperties.getAuthn().getSurrogate().getSeparator());
     }
 
     @Bean
@@ -124,17 +128,18 @@ public class SurrogateAuthenticationConfiguration {
             return new JsonResourceSurrogateAuthenticationService(su.getJson().getConfig().getLocation());
         }
         final Map<String, Set> accounts = new LinkedHashMap<>();
-        su.getSimple().getSurrogates().forEach((k, v) -> {
-            accounts.put(k, StringUtils.commaDelimitedListToSet(v));
-        });
+        su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
         return new SimpleSurrogateAuthenticationService(accounts);
     }
 
+    @ConditionalOnMissingBean(name = "surrogateWebflowEventResolver")
     @Bean
     public CasWebflowEventResolver surrogateWebflowEventResolver() {
         return new SurrogateWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
-                servicesManager, ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
-                selector, surrogateAuthenticationService());
+                servicesManager, ticketRegistrySupport, warnCookieGenerator, 
+                authenticationRequestServiceSelectionStrategies,
+                selector, surrogateAuthenticationService(), 
+                casProperties.getAuthn().getSurrogate().getSeparator());
     }
 
     @PostConstruct
