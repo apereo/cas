@@ -35,6 +35,15 @@ public class SamlServiceProviderProperties {
     private AcademicWorks academicWorks = new AcademicWorks();
     private EasyIep easyIep = new EasyIep();
     private InfiniteCampus infiniteCampus = new InfiniteCampus();
+    private SecuringTheHuman sansSth = new SecuringTheHuman();
+
+    public SecuringTheHuman getSansSth() {
+        return sansSth;
+    }
+
+    public void setSansSth(final SecuringTheHuman sansSth) {
+        this.sansSth = sansSth;
+    }
 
     public InfiniteCampus getInfiniteCampus() {
         return infiniteCampus;
@@ -362,6 +371,12 @@ public class SamlServiceProviderProperties {
     public static class InfiniteCampus extends AbstractSamlSPProperties {
         public InfiniteCampus() {
             setAttributes(Arrays.asList("employeeId"));
+        }
+    }
+    
+    public static class SecuringTheHuman extends AbstractSamlSPProperties {
+        public SecuringTheHuman() {
+            setAttributes(Arrays.asList("firstName", "lastName", EMAIL, "scopedUserId", "department", "reference"));
         }
     }
 }
