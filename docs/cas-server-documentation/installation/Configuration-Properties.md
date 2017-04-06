@@ -1157,7 +1157,6 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 # cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
 # cas.authn.surrogate.ldap.memberAttributeName=memberOf
 # cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
-
 ```
 
 ## Risk-based Authentication
