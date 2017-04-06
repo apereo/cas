@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 
 import java.util.LinkedHashMap;
@@ -64,7 +65,42 @@ public class SurrogateAuthenticationProperties {
     public static class Json extends AbstractConfigProperties {
     }
 
-    public static class Ldap {
+    public static class Ldap extends AbstractLdapProperties {
+        private String baseDn;
+        private String searchFilter;
+        private String memberAttributeName;
+        private String memberAttributeValueRegex;
 
+        public String getMemberAttributeName() {
+            return memberAttributeName;
+        }
+
+        public void setMemberAttributeName(final String memberAttributeName) {
+            this.memberAttributeName = memberAttributeName;
+        }
+
+        public String getMemberAttributeValueRegex() {
+            return memberAttributeValueRegex;
+        }
+
+        public void setMemberAttributeValueRegex(final String memberAttributeValueRegex) {
+            this.memberAttributeValueRegex = memberAttributeValueRegex;
+        }
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getSearchFilter() {
+            return searchFilter;
+        }
+
+        public void setSearchFilter(final String searchFilter) {
+            this.searchFilter = searchFilter;
+        }
     }
 }
