@@ -70,5 +70,5 @@ This is the case where the surrogate user identity is *not* known beforehand, an
 [separator][primary-userid]
 ```
 
-For example, if you are `casuser` and you need locate the surrogate account to which you may want to switch, the credential id provided to CAS would be `+casuser` where the separator is `+` and can be altered via the CAS configuration. You will need to provide your own password of course.
+For example, if you are `casuser` and you need to locate the surrogate account to which you may want to switch, the credential id provided to CAS would be `+casuser` where the separator is `+` and can be altered via the CAS configuration. You will need to provide your own password of course.
 
