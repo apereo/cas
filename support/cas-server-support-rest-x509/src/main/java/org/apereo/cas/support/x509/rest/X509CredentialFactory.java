@@ -32,7 +32,7 @@ public class X509CredentialFactory extends DefaultCredentialFactory {
     public Credential fromRequestBody(final MultiValueMap<String, String> requestBody) {
         final String cert = requestBody.getFirst(CERTIFICATE);
         LOGGER.debug("Certificate in the request body: [{}]", cert);
-        if (StringUtils.isNotBlank(cert)) {
+        if (StringUtils.isBlank(cert)) {
             return super.fromRequestBody(requestBody);
         }
         final InputStream is = new ByteArrayInputStream(cert.getBytes());
