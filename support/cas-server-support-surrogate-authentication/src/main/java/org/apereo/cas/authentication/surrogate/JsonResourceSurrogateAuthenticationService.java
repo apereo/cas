@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication.surrogate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -14,7 +16,17 @@ import java.util.Map;
 public class JsonResourceSurrogateAuthenticationService extends SimpleSurrogateAuthenticationService {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
+    public JsonResourceSurrogateAuthenticationService(final File json) throws Exception {
+        super(MAPPER.readValue(json, Map.class));
+    }
+
     public JsonResourceSurrogateAuthenticationService(final Resource json) throws Exception {
-        super(MAPPER.readValue(json.getFile(), Map.class));
+        this(json.getFile());
+    }
+
+    public static void main(final String[] args) throws Exception {
+        File f = new File("/etc/cas/config/su.json");
+        JsonResourceSurrogateAuthenticationService j = new JsonResourceSurrogateAuthenticationService(f);
+        System.out.println(j.getEligibleAccountsForSurrogateToProxy("casuser"));
     }
 }

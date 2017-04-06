@@ -42,6 +42,7 @@ layout: null
     *   [Trusted](/$version/installation/Trusted-Authentication.html)
     *   [JWT](/$version/installation/JWT-Authentication.html)
     *   [GUA](/$version/installation/GUA-Authentication.html)
+    *   [Surrogate](/$version/installation/Surrogate-Authentication.html)
     *   [Rest](/$version/installation/Rest-Authentication.html)
     *   [Stormpath](/$version/installation/Stormpath-Authentication.html)
     *   [Basic](/$version/installation/Basic-Authentication.html)
