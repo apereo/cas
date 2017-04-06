@@ -1127,6 +1127,39 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
 ```
 
+## Surrogate Authentication
+
+Authenticate on behalf of another user.
+To learn more about this topic, [please review this guide](Surrogate-Authentication.html).
+
+```properties
+# cas.authn.surrogate.separator=+
+```
+
+### Static Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.simple.surrogates.casuser=jsmith,jsmith2
+# cas.authn.surrogate.simple.surrogates.casuser2=jsmith4,jsmith2
+```
+
+### JSON Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.json.config.location=file:/etc/cas/config/surrogates.json
+```
+
+### LDAP Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.ldap.baseDn=
+# cas.authn.surrogate.ldap.searchFilter=principal={user}
+# cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
+# cas.authn.surrogate.ldap.memberAttributeName=memberOf
+# cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
+
+```
+
 ## Risk-based Authentication
 
 Evaluate suspicious authentication requests and take action.
@@ -2488,8 +2521,8 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 Name formats for an individual attribute can be mapped to a number of pre-defined formats, or a custom format of your own choosing.
 A given attribute that is to be encoded in the final SAML response may contain any of the following name formats:
 
-| Type                 | Description                            
-|----------------------|----------------------------------------------------------
+| Type                 | Description
+|----------------------|----------------------------------------------------------------------------
 | `basic`              | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
 | `uri`                | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.
 | `unspecified`        | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
@@ -2530,7 +2563,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.algs.overrideBlackListedSignatureSigningAlgorithms=
 # cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms=
 ```
-
 
 ## SAML SPs
 
@@ -2582,6 +2614,33 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.adobeCloud.name=Adobe Creative Cloud
 # cas.samlSP.adobeCloud.description=Adobe Creative Cloud Integration
 # cas.samlSP.adobeCloud.attributes=Email,FirstName,LastName
+```
+
+### Securing The Human
+
+```properties
+# cas.samlSP.sansSth.metadata=/path/to/sth-metadata.xml
+# cas.samlSP.sansSth.name=Securing The Human
+# cas.samlSP.sansSth.description=Securing The Human Integration
+# cas.samlSP.sansSth.attributes=email,firstName,lastName,scopedUserId,department,reference
+```
+
+### Easy IEP
+
+```properties
+# cas.samlSP.easyIep.metadata=/path/to/easyiep-metadata.xml
+# cas.samlSP.easyIep.name=Easy IEP
+# cas.samlSP.easyIep.description=Easy IEP Integration
+# cas.samlSP.easyIep.attributes=employeeId
+```
+
+### Infinite Campus
+
+```properties
+# cas.samlSP.infiniteCampus.metadata=/path/to/infinitecampus-metadata.xml
+# cas.samlSP.infiniteCampus.name=Infinite Campus
+# cas.samlSP.infiniteCampus.description=Infinite Campus Integration
+# cas.samlSP.infiniteCampus.attributes=employeeId
 ```
 
 ### Arc GIS

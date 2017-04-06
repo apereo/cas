@@ -3457,7 +3457,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>1.10.19</version>
+      <version>2.7.21</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -3475,6 +3475,10 @@
         <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>byte-buddy</artifactId>
+          <groupId>net.bytebuddy</groupId>
         </exclusion>
         <exclusion>
           <artifactId>hamcrest-core</artifactId>
@@ -3687,6 +3691,10 @@
         <exclusion>
           <artifactId>spring-context-support</artifactId>
           <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>mockito-core</artifactId>
+          <groupId>org.mockito</groupId>
         </exclusion>
         <exclusion>
           <artifactId>objenesis</artifactId>
