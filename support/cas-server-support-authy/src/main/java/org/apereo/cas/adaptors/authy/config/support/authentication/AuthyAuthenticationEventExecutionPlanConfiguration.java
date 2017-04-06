@@ -52,7 +52,9 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration implements Authe
         if (StringUtils.isBlank(authy.getApiKey())) {
             throw new IllegalArgumentException("Authy API key must be defined");
         }
-        return new AuthyClientInstance(authy.getApiKey(), authy.getApiUrl(), authy.getMailAttribute(), authy.getPhoneAttribute());
+        return new AuthyClientInstance(authy.getApiKey(), authy.getApiUrl(), 
+                authy.getMailAttribute(), authy.getPhoneAttribute(),
+                authy.getCountryCode());
     }
 
     @RefreshScope
