@@ -19,7 +19,6 @@ function generateNavigationBarAndCrumbs() {
 	clz += "capitalize";      
 	    
 	var page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ").replace(/index/g, "");    
-	    
         crumbs += "<li class='" + clz + "'><a href='#'>" + page + "</a></li>";
     }
 
@@ -327,6 +326,7 @@ function generateDependencyLangFragments() {
       <div class='dropdown-menu'> \
           <a class='dropdown-item' href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a> \
           <a class='dropdown-item' href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Gradle Overlay Project</a> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-webapp-docker'>Deploy CAS via Docker</a> \
       </div> \
   </li> \
   </ul> \
