@@ -16,10 +16,11 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 
 /**
- * This is {@link X509CredentialFactory} that attempts to read the contents 
+ * This is {@link X509CredentialFactory} that attempts to read the contents
  * of the request body under {@link #CERTIFICATE} parameter to locate and construct
- * X509 credentials. If the request body does not contain a certificate, 
+ * X509 credentials. If the request body does not contain a certificate,
  * it will then fallback onto the default behavior of capturing credentials.
+ *
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
