@@ -138,13 +138,16 @@ the generated identifier of the new service.
 
 ## X.509 Authentication
 
-The feature extends REST communication model to non-interactive X.509 authentication.
-This pattern may be of interest in case if internal network architecture hides
+The feature extends the CAS REST API communication model to non-interactive X.509 authentication
+where REST credentials may be retrieved from a certificate embedded in the request rather than
+the usual and default username/password.
+
+This pattern may be of interest in cases where the internal network architecture hides
 the CAS server from external users behind firewall or a messaging bus and
 allows only trusted applications to connect to the CAS server.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
-provides a tremendously convenient target for claiming others identity. To securely use this feature, network
+provides a tremendously convenient target for claiming user identities. To securely use this feature, network
 configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn
 have strict security limitations and logging.</p></div>
 
@@ -153,10 +156,11 @@ Support is enabled by including the following in your maven overlay:
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-x509-rest</artifactId>
+    <artifactId>cas-server-support-rest-x509</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
+
 ## Request a Ticket Granting Ticket
 
 ```bash
