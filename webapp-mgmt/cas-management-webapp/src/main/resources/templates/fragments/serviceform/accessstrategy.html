@@ -55,7 +55,7 @@
                 <tr ng-repeat="mappedValue in serviceFormCtrl.formData.availableAttributes">
                     <td class="va-middle">{{ mappedValue }}</td>
                     <td><input class="form-control noresize"
-                                  ng-model="serviceFormCtrl.serviceData.supportAccess.requiredAttrStr[ mappedValue ]"></input>
+                                  ng-model="serviceFormCtrl.serviceData.supportAccess.requiredAttrStr[ mappedValue ]" />
                     </td>
                 </tr>
                 </tbody>
@@ -84,7 +84,7 @@
                 <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
                    data-toggle="tooltip"
                    data-placement="top"
-                   th:title="#{services.form.tooltip.sas.unauthorizedredirecturl}"></i>
+                   th:title="#{services.form.tooltip.sas.caseinsensitive}"></i>
             </label>
             <div class="col-sm-8">
                 <div class="checkbox checkbox-inline">
