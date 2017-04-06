@@ -49,7 +49,6 @@ public class SurrogateAuthenticationAspect {
             if (!credential.getClass().equals(SurrogateUsernamePasswordCredential.class)) {
                 return jp.proceed();
             }
-
             final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) credential;
             final String targetUserId = surrogateCredentials.getSurrogateUsername();
             if (StringUtils.isBlank(targetUserId)) {
