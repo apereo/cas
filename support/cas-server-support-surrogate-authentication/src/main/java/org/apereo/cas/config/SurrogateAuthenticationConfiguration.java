@@ -24,6 +24,8 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.ConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,12 +48,14 @@ import java.util.Set;
  * This is {@link SurrogateAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author John Gasper
  * @since 5.1.0
  */
 @Configuration("surrogateAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy
 public class SurrogateAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationConfiguration.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -103,11 +107,13 @@ public class SurrogateAuthenticationConfiguration implements AuthenticationEvent
         try {
             final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
             if (su.getJson().getConfig().getLocation() != null) {
+                LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getConfig().getLocation());
                 return new JsonResourceSurrogateAuthenticationService(su.getJson().getConfig().getLocation());
             }
-            
             if (StringUtils.hasText(su.getLdap().getLdapUrl()) && StringUtils.hasText(su.getLdap().getSearchFilter())
                     && StringUtils.hasText(su.getLdap().getBaseDn()) && StringUtils.hasText(su.getLdap().getMemberAttributeName())) {
+                LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",
+                        su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
                 final ConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(su.getLdap());
                 return new LdapSurrogateUsernamePasswordService(factory, su.getLdap().getBaseDn(),
                         su.getLdap().getMemberAttributeName(), su.getLdap().getMemberAttributeValueRegex(),
@@ -116,6 +122,7 @@ public class SurrogateAuthenticationConfiguration implements AuthenticationEvent
 
             final Map<String, Set> accounts = new LinkedHashMap<>();
             su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
+            LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
             return new SimpleSurrogateAuthenticationService(accounts);
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
