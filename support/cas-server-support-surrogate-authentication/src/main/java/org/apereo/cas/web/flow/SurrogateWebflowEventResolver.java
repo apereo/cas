@@ -26,9 +26,13 @@ import java.util.Set;
  * @since 5.1.0
  */
 public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolver {
+    /**
+     * Internal flag to indicate whether surrogate account selection is requested.
+     */
+    public static final String CONTEXT_ATTRIBUTE_REQUEST_SURROGATE = "requestSurrogateAccount";
+    
     private final SurrogateAuthenticationService surrogateService;
-    private final String separator;
-
+    
     public SurrogateWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                          final CentralAuthenticationService centralAuthenticationService,
                                          final ServicesManager servicesManager,
@@ -36,19 +40,16 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
                                          final CookieGenerator warnCookieGenerator,
                                          final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                          final MultifactorAuthenticationProviderSelector selector,
-                                         final SurrogateAuthenticationService surrogateService,
-                                         final String separator) {
+                                         final SurrogateAuthenticationService surrogateService) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
                 warnCookieGenerator, authenticationSelectionStrategies, selector);
         this.surrogateService = surrogateService;
-        this.separator = separator;
     }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext requestContext) {
-        final Credential c = WebUtils.getCredential(requestContext);
-        if (requestContext.getFlowScope().contains("requestSurrogateAccount")) {
-            requestContext.getFlowScope().remove("requestSurrogateAccount");
+        if (requestContext.getFlowScope().getBoolean(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, false)) {
+            requestContext.getFlowScope().remove(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE);
             if (loadSurrogates(requestContext)) {
                 return Collections.singleton(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));
             }

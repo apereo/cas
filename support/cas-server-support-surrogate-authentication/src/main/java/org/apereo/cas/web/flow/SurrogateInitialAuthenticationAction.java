@@ -3,10 +3,10 @@ package org.apereo.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeCredential;
-import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -59,7 +59,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
 
         if (StringUtils.isBlank(surrogateUsername)) {
             up.setUsername(realUsername);
-            context.getFlowScope().put("requestSurrogateAccount", true);
+            context.getFlowScope().put(SurrogateWebflowEventResolver.CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, true);
             WebUtils.putCredential(context, up);
             return;
         }
@@ -70,7 +70,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
         if (up instanceof RememberMeCredential) {
             sc.setRememberMe(((RememberMeCredential) up).isRememberMe());
         }
-        context.getFlowScope().put("requestSurrogateAccount", false);
+        context.getFlowScope().put(SurrogateWebflowEventResolver.CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, false);
         WebUtils.putCredential(context, sc);
     }
 

@@ -10,10 +10,12 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.LdapSurrogateUsernamePasswordService;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.SurrogateSelectionAction;
@@ -21,6 +23,7 @@ import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,6 +105,15 @@ public class SurrogateAuthenticationConfiguration implements AuthenticationEvent
             if (su.getJson().getConfig().getLocation() != null) {
                 return new JsonResourceSurrogateAuthenticationService(su.getJson().getConfig().getLocation());
             }
+            
+            if (StringUtils.hasText(su.getLdap().getLdapUrl()) && StringUtils.hasText(su.getLdap().getSearchFilter())
+                    && StringUtils.hasText(su.getLdap().getBaseDn()) && StringUtils.hasText(su.getLdap().getMemberAttributeName())) {
+                final ConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(su.getLdap());
+                return new LdapSurrogateUsernamePasswordService(factory, su.getLdap().getBaseDn(),
+                        su.getLdap().getMemberAttributeName(), su.getLdap().getMemberAttributeValueRegex(),
+                        su.getLdap().getSearchFilter());
+            }
+
             final Map<String, Set> accounts = new LinkedHashMap<>();
             su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
             return new SimpleSurrogateAuthenticationService(accounts);
