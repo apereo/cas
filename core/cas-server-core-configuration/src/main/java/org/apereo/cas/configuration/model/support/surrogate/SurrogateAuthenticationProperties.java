@@ -68,8 +68,17 @@ public class SurrogateAuthenticationProperties {
     public static class Ldap extends AbstractLdapProperties {
         private String baseDn;
         private String searchFilter;
+        private String surrogateSearchFilter;
         private String memberAttributeName;
         private String memberAttributeValueRegex;
+
+        public String getSurrogateSearchFilter() {
+            return surrogateSearchFilter;
+        }
+
+        public void setSurrogateSearchFilter(final String surrogateSearchFilter) {
+            this.surrogateSearchFilter = surrogateSearchFilter;
+        }
 
         public String getMemberAttributeName() {
             return memberAttributeName;
