@@ -115,9 +115,7 @@ public class SurrogateAuthenticationConfiguration implements AuthenticationEvent
                 LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",
                         su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
                 final ConnectionFactory factory = Beans.newLdaptivePooledConnectionFactory(su.getLdap());
-                return new LdapSurrogateUsernamePasswordService(factory, su.getLdap().getBaseDn(),
-                        su.getLdap().getMemberAttributeName(), su.getLdap().getMemberAttributeValueRegex(),
-                        su.getLdap().getSearchFilter());
+                return new LdapSurrogateUsernamePasswordService(factory, su.getLdap());
             }
 
             final Map<String, Set> accounts = new LinkedHashMap<>();
