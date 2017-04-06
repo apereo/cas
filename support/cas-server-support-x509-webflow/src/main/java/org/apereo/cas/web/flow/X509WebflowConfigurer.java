@@ -1,5 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -13,11 +17,24 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 4.2
  */
 public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(X509WebflowConfigurer.class);
 
     private static final String EVENT_ID_START_X509 = "startX509Authenticate";
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
         super(flowBuilderServices, loginFlowDefinitionRegistry);
+    }
+
+    @Override
+    public void initialize() {
+        if (casProperties.getAuthn().getX509().isNoWebFlow()) {
+            LOGGER.debug("x509 WebFlow is disabled");
+        } else {
+            super.initialize();
+        }
     }
 
     @Override

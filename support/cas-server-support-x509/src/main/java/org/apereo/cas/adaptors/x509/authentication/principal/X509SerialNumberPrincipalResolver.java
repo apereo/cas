@@ -40,6 +40,8 @@ public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalReso
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
+                .append(radix)
+                .append(zeroPadding)
                 .toString();
     }
 }

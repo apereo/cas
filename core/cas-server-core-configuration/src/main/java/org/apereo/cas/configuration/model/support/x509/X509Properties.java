@@ -89,6 +89,7 @@ public class X509Properties {
 
     private int principalSNRadix;
     private boolean principalHexSNZeroPadding;
+    private boolean noWebFlow;
     
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
@@ -393,6 +394,21 @@ public class X509Properties {
 
     public void setPrincipalHexSNZeroPadding(final boolean principalHexSNZeroPadding) {
         this.principalHexSNZeroPadding = principalHexSNZeroPadding;
+    }
+
+    /**
+     * @return the noWebFlow
+     */
+    public boolean isNoWebFlow() {
+        return noWebFlow;
+    }
+
+    /**
+     * @param noWebFlow
+     *            the noWebFlow to set
+     */
+    public void setNoWebFlow(final boolean noWebFlow) {
+        this.noWebFlow = noWebFlow;
     }
 
     public static class Ldap extends AbstractLdapProperties {
