@@ -1157,7 +1157,6 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 # cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
 # cas.authn.surrogate.ldap.memberAttributeName=memberOf
 # cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
-
 ```
 
 ## Risk-based Authentication
@@ -2485,6 +2484,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.apiUrl=
 # cas.authn.mfa.authy.phoneAttribute=phone
 # cas.authn.mfa.authy.mailAttribute=mail
+# cas.authn.mfa.authy.countryCode=1
 # cas.authn.mfa.authy.forceVerification=true
 # cas.authn.mfa.authy.trustedDeviceEnabled=true
 # cas.authn.mfa.authy.name=
