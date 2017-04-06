@@ -135,7 +135,7 @@ public class X509AuthenticationConfiguration {
     }
 
     private RevocationPolicy getRevocationPolicy(final String policy) {
-        switch (policy.toLowerCase()) {
+        switch (policy.trim().toLowerCase()) {
             case "allow":
                 return new AllowRevocationPolicy();
             case "threshold":

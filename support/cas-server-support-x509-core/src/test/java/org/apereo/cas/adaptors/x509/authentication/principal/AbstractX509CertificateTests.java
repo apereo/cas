@@ -1,9 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 
 import java.math.BigInteger;
@@ -25,26 +23,25 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Import(X509AuthenticationConfiguration.class)
 public abstract class AbstractX509CertificateTests extends AbstractCentralAuthenticationServiceTests {
 
     public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
-    
+
     protected static class CasX509Certificate extends X509Certificate {
-        
+
         private static final long serialVersionUID = -4449243195531417769L;
         private final X509Certificate x509Certificate = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
-        
+
         private final boolean valid;
 
         protected CasX509Certificate(final boolean valid) {
             this.valid = valid;
         }
 
-        
+
         @Override
         public void checkValidity() throws CertificateExpiredException,
-        CertificateNotYetValidException {
+                CertificateNotYetValidException {
             if (!this.valid) {
                 throw new CertificateExpiredException();
             }
@@ -177,8 +174,8 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
 
         @Override
         public void verify(final PublicKey arg0) throws CertificateException,
-        NoSuchAlgorithmException, InvalidKeyException,
-        NoSuchProviderException, SignatureException {
+                NoSuchAlgorithmException, InvalidKeyException,
+                NoSuchProviderException, SignatureException {
             // nothing to do right now
         }
     }
