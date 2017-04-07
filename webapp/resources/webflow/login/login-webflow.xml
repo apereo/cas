@@ -39,12 +39,12 @@
         <evaluate expression="authenticationViaFormAction"/>
         <transition on="warn" to="warn"/>
         <transition on="success" to="sendTicketGrantingTicket"/>
-        <transition on="successWithWarnings" to="showMessages"/>
+        <transition on="successWithWarnings" to="showAuthenticationWarningMessages"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
         <transition on="error" to="initializeLoginForm"/>
     </action-state>
 
-    <view-state id="showMessages" view="casLoginMessageView">
+    <view-state id="showAuthenticationWarningMessages" view="casLoginMessageView">
         <on-entry>
             <evaluate expression="sendTicketGrantingTicketAction"/>
             <set name="requestScope.messages" value="messageContext.allMessages"/>

@@ -19,7 +19,7 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
     /**
      * Trusted authentication scope attribute.
      **/
