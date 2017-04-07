@@ -133,6 +133,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 {
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
+  "name": "test",
   "id" : 100,
   "multifactorPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
@@ -175,6 +176,7 @@ functionality, if that provider cannot respond.
 {
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
+  "name": "test",
   "id" : 100,
   "multifactorPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
