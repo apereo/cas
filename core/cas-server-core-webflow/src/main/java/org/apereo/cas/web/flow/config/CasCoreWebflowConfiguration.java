@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
@@ -12,7 +13,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.RedirectToServiceAction;
@@ -40,8 +40,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
-
-import java.util.List;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
@@ -93,8 +91,8 @@ public class CasCoreWebflowConfiguration {
     private MultifactorAuthenticationProviderSelector selector;
 
     @Autowired
-    @Qualifier("authenticationRequestServiceSelectionStrategies")
-    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicyWebflowEventResolver")
     @Bean
@@ -247,17 +245,20 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "clearWebflowCredentialsAction")
     public Action clearWebflowCredentialsAction() {
         return new ClearWebflowCredentialAction();
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "checkWebAuthenticationRequestAction")
     public Action checkWebAuthenticationRequestAction() {
         return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getContentType());
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "redirectToServiceAction")
     public Action redirectToServiceAction() {
-        return new RedirectToServiceAction(servicesManager, authenticationSystemSupport, ticketRegistrySupport, responseBuilderLocator);
+        return new RedirectToServiceAction(responseBuilderLocator);
     }
 }

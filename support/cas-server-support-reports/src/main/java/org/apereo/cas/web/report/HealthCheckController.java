@@ -1,21 +1,22 @@
 package org.apereo.cas.web.report;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.util.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,17 +27,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Marvin S. Addison
  * @since 3.5
  */
-@Controller("healthCheckController")
-@RequestMapping("/status")
-public class HealthCheckController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckController.class);
-    
-    private final Monitor<HealthStatus> healthCheckMonitor;
-    private final long timeout;
+public class HealthCheckController extends BaseCasMvcEndpoint {
 
-    public HealthCheckController(final Monitor<HealthStatus> healthCheckMonitor, final long timeout) {
+    private final Monitor<HealthStatus> healthCheckMonitor;
+    private CasConfigurationProperties casProperties;
+
+    public HealthCheckController(final Monitor<HealthStatus> healthCheckMonitor, final CasConfigurationProperties casProperties) {
+        super("status", StringUtils.EMPTY, casProperties.getMonitor().getEndpoints().getStatus(), casProperties);
         this.healthCheckMonitor = healthCheckMonitor;
-        this.timeout = timeout;
+        this.casProperties = casProperties;
     }
 
     /**
@@ -51,10 +50,12 @@ public class HealthCheckController {
     @ResponseBody
     protected WebAsyncTask<HealthStatus> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
+        ensureEndpointAccessIsAuthorized(request, response);
+        
         final Callable<HealthStatus> asyncTask = () -> {
             final HealthStatus healthStatus = healthCheckMonitor.observe();
             response.setStatus(healthStatus.getCode().value());
-            
+
             if (StringUtils.equals(request.getParameter("format"), "json")) {
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 JsonUtils.render(healthStatus.getDetails(), response);
@@ -72,11 +73,16 @@ public class HealthCheckController {
                     }
                 });
                 response.setContentType(MediaType.TEXT_PLAIN_VALUE);
-                response.getOutputStream().write(sb.toString().getBytes(response.getCharacterEncoding()));
+                try (Writer writer = response.getWriter()) {
+                    IOUtils.copy(new ByteArrayInputStream(sb.toString().getBytes(response.getCharacterEncoding())),
+                            writer,
+                            StandardCharsets.UTF_8);
+                    writer.flush();
+                }
             }
             return null;
         };
 
-        return new WebAsyncTask<>(timeout, asyncTask);
+        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
     }
 }

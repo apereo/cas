@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:http="http://cxf.apache.org/transports/http/configuration"
+       xmlns:util="http://www.springframework.org/schema/util" 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+        http://cxf.apache.org/jaxws
+        http://cxf.apache.org/schemas/jaxws.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://cxf.apache.org/transports/http/configuration
+        http://cxf.apache.org/schemas/configuration/http-conf.xsd">
+        
+    <jaxws:endpoint id="transportSTSRealmAUT"
+                    implementor="#transportSTSProviderBean"
+                    address="/${cas.authn.wsfedIdP.idp.realmName:CAS}/STSServiceTransportUT"
+                    wsdlLocation="classpath:/wsdl/ws-trust-1.4-service.wsdl"
+                    xmlns:ns1="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
+                    serviceName="ns1:SecurityTokenService" 
+                    endpointName="ns1:TransportUT_Port">
+        <jaxws:properties>
+            <entry key="ws-security.ut.validator" value-ref="transportUsernameTokenValidator" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+</beans>
+

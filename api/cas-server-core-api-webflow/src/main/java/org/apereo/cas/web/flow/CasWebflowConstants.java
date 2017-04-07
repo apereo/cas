@@ -62,6 +62,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ERROR = "error";
 
     /**
+     * The view state 'error'.
+     */
+    String VIEW_ID_ERROR = "error";
+    
+    /**
      * The transition state 'authenticationFailure'.
      */
     String TRANSITION_ID_AUTHENTICATION_FAILURE = "authenticationFailure";
@@ -183,6 +188,11 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_REDIRECT = "redirect";
 
+    /**
+     * The view id 'casPostResponseView'.
+     */
+    String VIEW_ID_POST_RESPONSE = "casPostResponseView";
+    
     /**
      * The view id 'casGenericSuccessView'.
      */

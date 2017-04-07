@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -23,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * This is {@link ServiceWarningAction}. Populates the view
  * with the target url of the application after the warning
- * screen is displayed. 
+ * screen is displayed.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -47,7 +48,7 @@ public class ServiceWarningAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
-        
+
         final Service service = WebUtils.getService(context);
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
@@ -56,15 +57,17 @@ public class ServiceWarningAction extends AbstractAction {
             throw new InvalidTicketException(
                     new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
         }
-        
-        final AuthenticationResultBuilder authenticationResultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
+
+        final Credential credential = WebUtils.getCredential(context);
+        final AuthenticationResultBuilder authenticationResultBuilder =
+                authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
         final AuthenticationResult authenticationResult = authenticationResultBuilder.build(service);
 
         final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-        
+
         if (request.getParameterMap().containsKey("ignorewarn")) {
-            if (Boolean.valueOf(request.getParameter("ignorewarn").toString())) {
+            if (Boolean.valueOf(request.getParameter("ignorewarn"))) {
                 this.warnCookieGenerator.removeCookie(response);
             }
         }

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRedisTemplate;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -26,33 +27,31 @@ public class RedisTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    private RedisTicketRegistryProperties redisProperties() {
-        return casProperties.getTicket().getRegistry().getRedis();
-    }
-
+    
     @Bean
     @RefreshScope
     public RedisConnectionFactory redisConnectionFactory() {
-        final JedisPoolConfig poolConfig = this.redisProperties().getPool() != null
-                ? jedisPoolConfig() : new JedisPoolConfig();
+        final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
+        final JedisPoolConfig poolConfig = redis.getPool() != null ? jedisPoolConfig() : new JedisPoolConfig();
 
         final JedisConnectionFactory factory = new JedisConnectionFactory(poolConfig);
-        factory.setHostName(this.redisProperties().getHost());
-        factory.setPort(this.redisProperties().getPort());
-        if (this.redisProperties().getPassword() != null) {
-            factory.setPassword(this.redisProperties().getPassword());
+        factory.setHostName(redis.getHost());
+        factory.setPort(redis.getPort());
+        if (redis.getPassword() != null) {
+            factory.setPassword(redis.getPassword());
         }
-        factory.setDatabase(this.redisProperties().getDatabase());
-        if (this.redisProperties().getTimeout() > 0) {
-            factory.setTimeout(this.redisProperties().getTimeout());
+        factory.setDatabase(redis.getDatabase());
+        if (redis.getTimeout() > 0) {
+            factory.setTimeout(redis.getTimeout());
         }
         return factory;
     }
 
     private JedisPoolConfig jedisPoolConfig() {
+        final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
+
         final JedisPoolConfig config = new JedisPoolConfig();
-        final RedisTicketRegistryProperties.Pool props = this.redisProperties().getPool();
+        final RedisTicketRegistryProperties.Pool props = redis.getPool();
         config.setMaxTotal(props.getMaxActive());
         config.setMaxIdle(props.getMaxIdle());
         config.setMinIdle(props.getMinIdle());
@@ -67,9 +66,12 @@ public class RedisTicketRegistryConfiguration {
         return new TicketRedisTemplate(redisConnectionFactory());
     }
 
-    @Bean(name = {"redisTicketRegistry", "ticketRegistry"})
+    @Bean
     @RefreshScope
-    public TicketRegistry redisTicketRegistry() {
-        return new RedisTicketRegistry(ticketRedisTemplate());
+    public TicketRegistry ticketRegistry() {
+        final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
+        final RedisTicketRegistry r = new RedisTicketRegistry(ticketRedisTemplate());
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(redis.getCrypto()));
+        return r;
     }
 }

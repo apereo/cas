@@ -1,19 +1,21 @@
 package org.apereo.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Action that handles the TicketGrantingTicket creation and destruction. If the
@@ -32,18 +34,15 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private CentralAuthenticationService centralAuthenticationService;
     private ServicesManager servicesManager;
-    private AuthenticationSystemSupport authenticationSystemSupport;
 
-    public SendTicketGrantingTicketAction(final CentralAuthenticationService centralAuthenticationService, 
+    public SendTicketGrantingTicketAction(final CentralAuthenticationService centralAuthenticationService,
                                           final ServicesManager servicesManager,
                                           final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                          final AuthenticationSystemSupport authenticationSystemSupport, 
                                           final boolean renewedAuthn) {
         super();
         this.centralAuthenticationService = centralAuthenticationService;
         this.servicesManager = servicesManager;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-        this.authenticationSystemSupport = authenticationSystemSupport;
         this.createSsoSessionCookieOnRenewAuthentications = renewedAuthn;
     }
 
@@ -51,24 +50,26 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final String ticketGrantingTicketValueFromCookie = (String) context.getFlowScope().get("ticketGrantingTicketId");
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
         if (StringUtils.isBlank(ticketGrantingTicketId)) {
+            LOGGER.debug("No ticket-granting ticket is found in the context.");
             return success();
         }
 
         if (WebUtils.isAuthenticatingAtPublicWorkstation(context)) {
-            LOGGER.info("Authentication is at a public workstation. "
-                    + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
+            LOGGER.info("Authentication is at a public workstation. SSO cookie will not be generated. Requests will be challenged for authentication.");
         } else if (!this.createSsoSessionCookieOnRenewAuthentications && isAuthenticationRenewed(context)) {
             LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");
         } else {
-            LOGGER.debug("Setting TGC for current session.");
-            this.ticketGrantingTicketCookieGenerator.addCookie(WebUtils.getHttpServletRequest(context), WebUtils
-                .getHttpServletResponse(context), ticketGrantingTicketId);
+            LOGGER.debug("Setting TGC for current session linked to [{}].", ticketGrantingTicketId);
+            this.ticketGrantingTicketCookieGenerator.addCookie(request, response, ticketGrantingTicketId);
         }
 
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {
+            LOGGER.debug("Ticket-granting ticket from TGC does not match the ticket-granting ticket from context");
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketValueFromCookie);
         }
 

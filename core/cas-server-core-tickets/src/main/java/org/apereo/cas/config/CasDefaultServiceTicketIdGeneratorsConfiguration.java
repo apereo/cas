@@ -22,9 +22,10 @@ import java.util.Collections;
 @Configuration("casDefaultServiceTicketIdGeneratorsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueTicketIdGeneratorConfigurer {
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.ServiceTicketIdGenerator(

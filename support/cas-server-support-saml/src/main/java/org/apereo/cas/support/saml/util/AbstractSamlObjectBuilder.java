@@ -2,9 +2,7 @@ package org.apereo.cas.support.saml.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.EncodingUtils;
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
@@ -18,9 +16,7 @@ import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml1.core.AttributeValue;
 import org.opensaml.soap.common.SOAPObject;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.slf4j.Logger;
@@ -90,10 +86,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static final long serialVersionUID = -6833230731146922780L;
     private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
 
-    /**
-     * Logger instance.
-     **/
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSamlObjectBuilder.class);
 
     /**
      * The Config bean.
@@ -190,53 +183,30 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     }
 
     /**
-     * Add saml attribute values for attribute.
+     * Add attribute values to saml attribute.
      *
-     * @param attributeName  the attribute name
-     * @param attributeValue the attribute value
-     * @param attributeList  the attribute list
+     * @param attributeName      the attribute name
+     * @param attributeValue     the attribute value
+     * @param attributeList      the attribute list
+     * @param defaultElementName the default element name
      */
-    public void addAttributeValuesToSamlAttribute(final String attributeName,
-                                                  final Object attributeValue, 
-                                                  final List<XMLObject> attributeList) {
+    protected void addAttributeValuesToSamlAttribute(final String attributeName,
+                                                     final Object attributeValue,
+                                                     final List<XMLObject> attributeList,
+                                                     final QName defaultElementName) {
         if (attributeValue == null) {
-            logger.debug("Skipping over SAML attribute {} since it has no value", attributeName);
+            LOGGER.debug("Skipping over SAML attribute [{}] since it has no value", attributeName);
             return;
         }
 
-        logger.debug("Attempting to generate SAML attribute [{}] with value(s) {}", attributeName, attributeValue);
+        LOGGER.debug("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
         if (attributeValue instanceof Collection<?>) {
             final Collection<?> c = (Collection<?>) attributeValue;
-            logger.debug("Generating multi-valued SAML attribute [{}] with values {}", attributeName, c);
-            for (final Object value : c) {
-                attributeList.add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
-            }
+            LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
+            c.stream().map(value -> newAttributeValue(value, defaultElementName)).forEach(attributeList::add);
         } else {
-            logger.debug("Generating SAML attribute [{}] with value {}", attributeName, attributeValue);
-            attributeList.add(newAttributeValue(attributeValue, AttributeValue.DEFAULT_ELEMENT_NAME));
-        }
-    }
-
-    /**
-     * Sets in response to for saml response.
-     *
-     * @param service      the service
-     * @param samlResponse the saml response
-     */
-    public static void setInResponseToForSamlResponseIfNeeded(final Service service, final SignableSAMLObject samlResponse) {
-        if (service instanceof SamlService) {
-            final SamlService samlService = (SamlService) service;
-
-            final String requestId = samlService.getRequestID();
-            if (StringUtils.isNotBlank(requestId)) {
-
-                if (samlResponse instanceof org.opensaml.saml.saml1.core.Response) {
-                    ((org.opensaml.saml.saml1.core.Response) samlResponse).setInResponseTo(requestId);
-                }
-                if (samlResponse instanceof org.opensaml.saml.saml2.core.Response) {
-                    ((org.opensaml.saml.saml2.core.Response) samlResponse).setInResponseTo(requestId);
-                }
-            }
+            LOGGER.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
+            attributeList.add(newAttributeValue(attributeValue, defaultElementName));
         }
     }
 
@@ -323,10 +293,10 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                     .getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
 
             final List<Transform> envelopedTransform = Collections.singletonList(sigFactory.newTransform(Transform.ENVELOPED,
-                            (TransformParameterSpec) null));
+                    (TransformParameterSpec) null));
 
             final Reference ref = sigFactory.newReference(StringUtils.EMPTY, sigFactory
-                            .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform, null, null);
+                    .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform, null, null);
 
             // Create the SignatureMethod based on the type of key
             final SignatureMethod signatureMethod;
@@ -429,7 +399,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
             return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
         } catch (final Exception e) {
-            logger.trace(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
             return null;
         }
     }

@@ -2,12 +2,12 @@ package org.apereo.cas.config;
 
 import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -23,9 +23,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
 
 /**
  * This is {@link GrouperMultifactorAuthenticationConfiguration}.
@@ -43,11 +40,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
+    
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -72,27 +65,27 @@ public class GrouperMultifactorAuthenticationConfiguration {
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     @Autowired
-    @Qualifier("authenticationRequestServiceSelectionStrategies")
-    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver() {
+    public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
+                                                                                            final AuthenticationSystemSupport authenticationSystemSupport) {
         final AbstractCasWebflowEventResolver r;
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGrouperGroupField())) {
             r = new GrouperMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                    ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector,
+                    ticketRegistrySupport, warnCookieGenerator, 
+                    authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector,
                     casProperties);
             LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
         } else {
             r = new NoOpCasWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
                     warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
         }
-        return r;
-    }
 
-    @PostConstruct
-    public void initConfig() {
-        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(grouperMultifactorAuthenticationWebflowEventResolver());
+        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
+        return r;
     }
 }

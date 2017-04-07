@@ -2,7 +2,7 @@ package org.apereo.cas.trusted.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.CurrentCredentialsAndAuthentication;
+import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -42,11 +42,11 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
             return error();
         }
 
-        CurrentCredentialsAndAuthentication.bindCurrent(c);
+        AuthenticationCredentialsLocalBinder.bindCurrent(c);
 
         final String principal = c.getPrincipal().getId();
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
-            LOGGER.debug("Attempt to store trusted authentication record for {}", principal);
+            LOGGER.debug("Attempt to store trusted authentication record for [{}]", principal);
             final MultifactorAuthenticationTrustRecord record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                     MultifactorAuthenticationTrustUtils.generateGeography());
 
@@ -57,9 +57,9 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
                 }
             }
             storage.set(record);
-            LOGGER.debug("Saved trusted authentication record for {} under {}", principal, record.getName());
+            LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
         }
-        LOGGER.debug("Trusted authentication session exists for {}", principal);
+        LOGGER.debug("Trusted authentication session exists for [{}]", principal);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
                 c,
                 trustedProperties.getAuthenticationContextAttribute());

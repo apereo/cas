@@ -36,6 +36,10 @@ import static org.junit.Assert.*;
 @Import(CasSupportActionsConfiguration.class)
 public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTests {
 
+    private static final String TEST = "test";
+    private static final String USERNAME_PARAM = "username";
+    private static final String PASSWORD_PARAM = "password";
+
     @Autowired
     @Qualifier("authenticationViaFormAction")
     private Action action;
@@ -49,8 +53,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
+        request.addParameter(USERNAME_PARAM, TEST);
+        request.addParameter(PASSWORD_PARAM, TEST);
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
@@ -65,8 +69,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockRequestContext context = new MockRequestContext();
 
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
+        request.addParameter(USERNAME_PARAM, TEST);
+        request.addParameter(PASSWORD_PARAM, TEST);
         request.addParameter("warn", "true");
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -84,10 +88,10 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockRequestContext context = new MockRequestContext();
 
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
+        request.addParameter(USERNAME_PARAM, TEST);
+        request.addParameter(PASSWORD_PARAM, TEST);
         request.addParameter("warn", "true");
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST);
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
@@ -102,8 +106,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
-        request.addParameter("username", "test");
-        request.addParameter("password", "test2");
+        request.addParameter(USERNAME_PARAM, TEST);
+        request.addParameter(PASSWORD_PARAM, "test2");
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
@@ -144,7 +148,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
 
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
-                getAuthenticationSystemSupport(), RegisteredServiceTestUtils.getService("test"), c);
+                getAuthenticationSystemSupport(), RegisteredServiceTestUtils.getService(TEST), c);
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -152,7 +156,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService("test").getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(TEST).getId());
 
         final Credential c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -164,7 +168,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyRenewWithServiceAndBadCredentials() throws Exception {
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        final Service service = RegisteredServiceTestUtils.getService("test");
+        final Service service = RegisteredServiceTestUtils.getService(TEST);
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), service, c);
 
@@ -181,7 +185,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         putCredentialInRequestScope(context, c2);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
-
 
     /**
      * Put credentials in request scope.

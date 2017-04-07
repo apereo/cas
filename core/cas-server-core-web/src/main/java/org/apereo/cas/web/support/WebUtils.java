@@ -14,10 +14,14 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
@@ -26,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -39,6 +44,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -155,9 +161,8 @@ public final class WebUtils {
         final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletResponse) servletExternalContext.getNativeResponse();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -350,6 +355,28 @@ public final class WebUtils {
     }
 
     /**
+     * Gets credential.
+     *
+     * @param <T>     the type parameter
+     * @param context the context
+     * @param clazz   the clazz
+     * @return the credential
+     */
+    public static <T extends Credential> T getCredential(final RequestContext context, final Class<T> clazz) {
+        Assert.notNull(clazz, "clazz cannot be null");
+        final Credential credential = getCredential(context);
+        if (credential == null) {
+            return null;
+        }
+        if (!clazz.isAssignableFrom(credential.getClass())) {
+            throw new ClassCastException("credential [" + credential.getId()
+                    + " is of type " + credential.getClass()
+                    + " when we were expecting " + clazz);
+        }
+        return (T) credential;
+    }
+
+    /**
      * Gets credential from the context.
      *
      * @param context the context
@@ -396,8 +423,7 @@ public final class WebUtils {
         final HttpServletRequest request = getHttpServletRequestFromRequestAttributes();
         final HttpServletResponse response = getHttpServletResponseFromRequestAttributes();
         if (request != null && response != null) {
-            final J2EContext context = new J2EContext(request, response);
-            final ProfileManager manager = new ProfileManager(context);
+            final ProfileManager manager = getPac4jProfileManager(request, response);
             final Optional<UserProfile> profile = manager.get(true);
             if (profile != null && profile.isPresent()) {
                 final String id = profile.get().getId();
@@ -407,6 +433,48 @@ public final class WebUtils {
             }
         }
         return PrincipalResolver.UNKNOWN_USER;
+    }
+
+    /**
+     * Gets pac 4 j profile manager.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the pac 4 j profile manager
+     */
+    public static ProfileManager getPac4jProfileManager(final HttpServletRequest request, final HttpServletResponse response) {
+        final J2EContext context = getPac4jJ2EContext(request, response);
+        return getPac4jProfileManager(context);
+    }
+
+    /**
+     * Gets pac4j profile manager.
+     *
+     * @param context the context
+     * @return the pac4j profile manager
+     */
+    public static ProfileManager getPac4jProfileManager(final WebContext context) {
+        return new ProfileManager(context);
+    }
+
+    /**
+     * Gets pac4j context.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the context
+     */
+    public static J2EContext getPac4jJ2EContext(final HttpServletRequest request, final HttpServletResponse response) {
+        return new J2EContext(request, response);
+    }
+
+    /**
+     * Gets pac4j context.
+     *
+     * @return the pac4j context
+     */
+    public static J2EContext getPac4jJ2EContext() {
+        return getPac4jJ2EContext(getHttpServletRequestFromRequestAttributes(), getHttpServletResponseFromRequestAttributes());
     }
 
     /**
@@ -481,6 +549,23 @@ public final class WebUtils {
      */
     public static void putAuthenticationResultBuilder(final AuthenticationResultBuilder builder, final RequestContext ctx) {
         ctx.getConversationScope().put(PARAMETER_AUTHENTICATION_RESULT_BUILDER, builder);
+    }
+
+    /**
+     * Gets the authenticated principal.
+     *
+     * @param requestContext        the request context
+     * @param ticketRegistrySupport the ticket registry support
+     * @return the principal
+     */
+    public static Principal getPrincipalFromRequestContext(final RequestContext requestContext,
+                                                           final TicketRegistrySupport ticketRegistrySupport) {
+        final String tgt = WebUtils.getTicketGrantingTicketId(requestContext);
+        if (StringUtils.isBlank(tgt)) {
+            throw new IllegalArgumentException("No ticket-granting ticket could be found in the context");
+        }
+
+        return ticketRegistrySupport.getAuthenticatedPrincipalFrom(tgt);
     }
 
     /**
@@ -670,7 +755,7 @@ public final class WebUtils {
         try {
             return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         } catch (final Exception e) {
-            LOGGER.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class);
+            LOGGER.warn("Could not locate beans of type [{}]", MultifactorAuthenticationProvider.class);
         }
         return Collections.emptyMap();
     }
@@ -742,5 +827,26 @@ public final class WebUtils {
      */
     public static void putServiceOriginalUrlIntoRequestScope(final RequestContext requestContext, final WebApplicationService service) {
         requestContext.getRequestScope().put("originalUrl", service.getOriginalUrl());
+    }
+
+    /**
+     * Produce unauthorized error view model and view.
+     *
+     * @return the model and view
+     */
+    public static ModelAndView produceUnauthorizedErrorView() {
+        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+    }
+
+    /**
+     * Produce error view model and view.
+     *
+     * @param e the e
+     * @return the model and view
+     */
+    public static ModelAndView produceErrorView(final Exception e) {
+        final Map model = new HashMap<>();
+        model.put("rootCauseException", e);
+        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, model);
     }
 }

@@ -7,8 +7,8 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -35,7 +35,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
     private static final long serialVersionUID = -1875903354216171261L;
 
     public SamlProfileSamlSoap11FaultResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
-                                                     final SamlObjectSigner samlObjectSigner,
+                                                     final BaseSamlObjectSigner samlObjectSigner,
                                                      final VelocityEngineFactory velocityEngineFactory,
                                                      final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                                      final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
@@ -51,7 +51,8 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
                           final HttpServletResponse response,
                           final org.jasig.cas.client.validation.Assertion casAssertion,
                           final SamlRegisteredService service,
-                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                          final String binding) throws SamlException {
         final Header header = newSoapObject(Header.class);
 
         final Body body = newSoapObject(Body.class);
@@ -74,9 +75,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-
-        encodeFinalResponse(request, response, service, adaptor, envelope);
-
+        encodeFinalResponse(request, response, service, adaptor, envelope, binding);
         return envelope;
     }
 }

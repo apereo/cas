@@ -40,12 +40,12 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
         Assert.notNull(this.mongoTemplate);
 
         if (dropCollection) {
-            LOGGER.debug("Dropping database collection: {}", this.collectionName);
+            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: {}", this.collectionName);
+            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
     }
@@ -66,7 +66,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
                 return r.getSecretKey();
             }
         } catch (final NoResultException e) {
-            LOGGER.debug("No record could be found for google authenticator id {}", username);
+            LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         }
         return null;
     }

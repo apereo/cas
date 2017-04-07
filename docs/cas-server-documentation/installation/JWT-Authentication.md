@@ -7,7 +7,7 @@ title: CAS - JWT Authentication
 
 [JSON Web Tokens](http://jwt.io/) are an open, industry standard RFC 7519 method for representing claims securely between two parties.
 CAS provides support for token-based authentication on top of JWT, where an authentication request can be granted an SSO session based
-on a form of credentials that are JWTs. 
+on a form of credentials that are JWTs.
 
 CAS may also be allowed to fully create signed/encrypted JWTs and pass them back to the application in form of service tickets.
 In this case, JWTs are entirely self-contained and contain the authenticated principal as well as all authorized attributes
@@ -15,8 +15,7 @@ in form of JWT claims. To learn more about this functionality, [please review th
 
 ## Overview
 
-CAS expects a `token` parameter to be passed along to the `/login` endpoint. The parameter value must be a 
-JWT. 
+CAS expects a `token` parameter (or request header) to be passed along to the `/login` endpoint. The parameter value must be a JWT.
 
 <div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to use specific signing/encryption algorithms and methods. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 
@@ -31,7 +30,7 @@ System.out.println("encryptionSecret " + encryptionSecret);
 
 final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
 g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
-g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, 
+g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret,
         JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
 final CommonProfile profile = new CommonProfile();
@@ -57,6 +56,8 @@ JWT authentication support is enabled by including the following dependency in t
      <version>${cas.version}</version>
 </dependency>
 ```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jwttoken-authentication).
 
 Configure the appropriate service in your service registry to hold the secrets:
 

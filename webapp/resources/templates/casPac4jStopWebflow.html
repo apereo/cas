@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{screen.pac4j.unauthz.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 th:utext="#{screen.pac4j.unauthz.heading}"/>
+        <p th:utext="#{screen.pac4j.unauthz.message}"/>
+
+        <div>
+            <p/>
+            <table th:if="${error != null or reason != null or code != null or description != null}" 
+                   class="table table-bordered table-hover table-responsive">
+                <thead>
+                <tr>
+                    <th>Error</th>
+                    <th>Reason</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Provider</th>
+                    <th>Destination</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="active">
+                    <td th:text="${error}"/>
+                    <td th:text="${reason}" />
+                    <td th:text="${code}" />
+                    <td th:text="${description}" />
+                    <td th:text="${client}" />
+                    <td>
+                        <a th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}"/>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p>
+        <a class="btn btn-success" th:href="@{/login}" th:text="#{screen.pac4j.unauthz.login}"/>
+        <a class="btn btn-success" th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}"/>
+    </p>
+</div>
+</body>
+</html>

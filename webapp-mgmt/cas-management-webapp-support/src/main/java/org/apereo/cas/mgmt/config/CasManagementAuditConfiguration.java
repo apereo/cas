@@ -13,7 +13,6 @@ import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -36,10 +35,6 @@ public class CasManagementAuditConfiguration {
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
     private static final String AUDIT_ACTION_SUFFIX_SUCCESS = "_SUCCESS";
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    
     @Bean
     public AuditResourceResolver saveServiceResourceResolver() {
         return new ParametersAsStringResourceResolver();
@@ -68,14 +63,14 @@ public class CasManagementAuditConfiguration {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
-                auditablePrincipalResolver(), Collections.singletonList(slf4jAuditTrailManager()),
+                auditablePrincipalResolver(), Collections.singletonList(auditTrailManager()),
                 auditActionResolverMap(),
                 auditResourceResolverMap());
     }
 
-    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
+    @Bean
     @RefreshScope
-    public AuditTrailManager slf4jAuditTrailManager() {
+    public AuditTrailManager auditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
 

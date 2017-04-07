@@ -81,10 +81,10 @@ public class WsFederationAction extends AbstractAction {
             // it's an authentication
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 final String wResult = request.getParameter(WRESULT);
-                LOGGER.debug("Parameter [{}] received: {}", WRESULT, wResult);
+                LOGGER.debug("Parameter [{}] received: [{}]", WRESULT, wResult);
 
                 if (StringUtils.isBlank(wResult)) {
-                    LOGGER.error("No {} parameter is found", WRESULT);
+                    LOGGER.error("No [{}] parameter is found", WRESULT);
                     return error();
                 }
 
@@ -93,7 +93,7 @@ public class WsFederationAction extends AbstractAction {
                 final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wResult, configuration);
 
                 if (assertion == null) {
-                    LOGGER.error("Could not validate assertion via parsing the token from {}", WRESULT);
+                    LOGGER.error("Could not validate assertion via parsing the token from [{}]", WRESULT);
                     return error();
                 }
 
@@ -116,16 +116,16 @@ public class WsFederationAction extends AbstractAction {
 
                         LOGGER.debug("Validated assertion for the created credential successfully");
                         if (this.configuration.getAttributeMutator() != null) {
-                            LOGGER.debug("Modifying credential attributes based on {}", this.configuration.getAttributeMutator().getClass().getSimpleName());
+                            LOGGER.debug("Modifying credential attributes based on [{}]", this.configuration.getAttributeMutator().getClass().getSimpleName());
                             this.configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
                         }
                     } else {
-                        LOGGER.warn("SAML assertions are blank or no longer valid based on RP identifier {} and IdP identifier {}",
+                        LOGGER.warn("SAML assertions are blank or no longer valid based on RP identifier [{}] and IdP identifier [{}]",
                                 rpId, this.configuration.getIdentityProviderIdentifier());
 
                         final String url = authorizationUrl + rpId;
                         context.getFlowScope().put(PROVIDERURL, url);
-                        LOGGER.warn("Created authentication url {} and returning error", url);
+                        LOGGER.warn("Created authentication url [{}] and returning error", url);
                         return error();
                     }
 
@@ -142,28 +142,27 @@ public class WsFederationAction extends AbstractAction {
                     WebUtils.putTicketGrantingTicketInScopes(context,
                             this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
 
-                    LOGGER.info("Token validated and new {} created: {}", credential.getClass().getName(), credential);
+                    LOGGER.info("Token validated and new [{}] created: [{}]", credential.getClass().getName(), credential);
                     return success();
 
                 } catch (final AbstractTicketException e) {
                     LOGGER.error(e.getMessage(), e);
                     return error();
                 }
-            } else {
-                // no authentication : go to login page. save parameters in web session
-                final Service service = (Service) context.getFlowScope().get(SERVICE);
-                if (service != null) {
-                    session.setAttribute(SERVICE, service);
-                }
-                saveRequestParameter(request, session, THEME);
-                saveRequestParameter(request, session, LOCALE);
-                saveRequestParameter(request, session, METHOD);
-
-                final String url = authorizationUrl + getRelyingPartyIdentifier(service);
-
-                LOGGER.info("Preparing to redirect to the IdP {}", url);
-                context.getFlowScope().put(PROVIDERURL, url);
             }
+            // no authentication : go to login page. save parameters in web session
+            final Service service = (Service) context.getFlowScope().get(SERVICE);
+            if (service != null) {
+                session.setAttribute(SERVICE, service);
+            }
+            saveRequestParameter(request, session, THEME);
+            saveRequestParameter(request, session, LOCALE);
+            saveRequestParameter(request, session, METHOD);
+
+            final String url = authorizationUrl + getRelyingPartyIdentifier(service);
+
+            LOGGER.info("Preparing to redirect to the IdP [{}]", url);
+            context.getFlowScope().put(PROVIDERURL, url);
             LOGGER.debug("Returning error event");
             return error();
         } catch (final Exception ex) {
@@ -188,7 +187,7 @@ public class WsFederationAction extends AbstractAction {
                 relyingPartyIdentifier = registeredService.getProperties().get("wsfed.relyingPartyIdentifier").getValue();
             }
         }
-        LOGGER.debug("Determined relying party identifier for {} to be {}", service, relyingPartyIdentifier);
+        LOGGER.debug("Determined relying party identifier for [{}] to be [{}]", service, relyingPartyIdentifier);
         return relyingPartyIdentifier;
     }
 

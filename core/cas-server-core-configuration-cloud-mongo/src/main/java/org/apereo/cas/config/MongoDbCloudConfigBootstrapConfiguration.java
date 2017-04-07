@@ -31,6 +31,7 @@ import java.util.Collections;
 public class MongoDbCloudConfigBootstrapConfiguration extends AbstractMongoConfiguration {
     private static final int TIMEOUT = 5000;
     private static final int DEFAULT_PORT = 27017;
+    
     @Autowired
     private ConfigurableEnvironment environment;
 

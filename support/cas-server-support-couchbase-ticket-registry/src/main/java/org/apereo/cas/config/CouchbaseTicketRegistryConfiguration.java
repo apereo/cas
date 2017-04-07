@@ -46,8 +46,8 @@ public class CouchbaseTicketRegistryConfiguration {
     }
 
     @RefreshScope
-    @Bean(name = {"couchbaseTicketRegistry", "ticketRegistry"})
-    public TicketRegistry couchbaseTicketRegistry() {
+    @Bean
+    public TicketRegistry ticketRegistry() {
         final CouchbaseTicketRegistryProperties couchbase = casProperties.getTicket().getRegistry().getCouchbase();
         final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry(ticketRegistryCouchbaseClientFactory(), couchbase.isQueryEnabled());
         c.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(couchbase.getCrypto()));
@@ -56,6 +56,6 @@ public class CouchbaseTicketRegistryConfiguration {
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, couchbaseTicketRegistry(), false);
+        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry(), false);
     }
 }

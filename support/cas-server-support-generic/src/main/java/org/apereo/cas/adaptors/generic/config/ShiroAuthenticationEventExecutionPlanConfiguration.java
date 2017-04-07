@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -59,17 +59,15 @@ public class ShiroAuthenticationEventExecutionPlanConfiguration implements Authe
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
         final ShiroAuthenticationProperties shiro = casProperties.getAuthn().getShiro();
-        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getRequiredRoles(), shiro.getRequiredPermissions());
+        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiroPrincipalFactory(),
+                shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
-        h.setPrincipalFactory(shiroPrincipalFactory());
-        h.setServicesManager(servicesManager);
         h.loadShiroConfiguration(shiro.getConfig().getLocation());
         h.setPasswordEncoder(Beans.newPasswordEncoder(shiro.getPasswordEncoder()));
         if (shiroPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(shiro.getPrincipalTransformation()));
-        h.setName(shiro.getName());
         return h;
     }
 

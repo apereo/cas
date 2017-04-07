@@ -1,22 +1,27 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AllAuthenticationPolicy;
-import org.apereo.cas.authentication.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.NotPreventedAuthenticationPolicy;
-import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicy;
-import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link CasCoreAuthenticationPolicyConfiguration}.
@@ -31,26 +36,35 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @Autowired(required = false)
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Bean(name = {"authenticationPolicy", "defaultAuthenticationPolicy"})
-    public AuthenticationPolicy defaultAuthenticationPolicy() {
+    @ConditionalOnMissingBean(name = "authenticationPolicy")
+    @Bean
+    public Collection<AuthenticationPolicy> authenticationPolicy() {
         final AuthenticationPolicyProperties police = casProperties.getAuthn().getPolicy();
         if (police.getReq().isEnabled()) {
-            return new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll());
+            final List<AuthenticationPolicy> policies = new ArrayList<>();
+            policies.add(new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll()));
+            return policies;
         }
 
         if (police.getAll().isEnabled()) {
-            return new AllAuthenticationPolicy();
+            final List<AuthenticationPolicy> policies = new ArrayList<>();
+            policies.add(new AllAuthenticationPolicy());
+            return policies;
         }
 
         if (police.getNotPrevented().isEnabled()) {
-            return new NotPreventedAuthenticationPolicy();
+            final List<AuthenticationPolicy> policies = new ArrayList<>();
+            policies.add(new NotPreventedAuthenticationPolicy());
+            return policies;
         }
 
-        return new AnyAuthenticationPolicy(police.getAny().isTryAll());
+        final List<AuthenticationPolicy> policies = new ArrayList<>();
+        policies.add(new AnyAuthenticationPolicy(police.getAny().isTryAll()));
+        return policies;
     }
 
     @Bean
@@ -58,6 +72,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
         return new NotPreventedAuthenticationPolicy();
     }
 
+    @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
     @Bean
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
         final DefaultAdaptiveAuthenticationPolicy p = new DefaultAdaptiveAuthenticationPolicy();
@@ -66,6 +81,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
         return p;
     }
 
+    @ConditionalOnMissingBean(name = "requiredHandlerAuthenticationPolicyFactory")
     @Bean
     public ContextualAuthenticationPolicyFactory requiredHandlerAuthenticationPolicyFactory() {
         return new RequiredHandlerAuthenticationPolicyFactory();

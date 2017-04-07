@@ -7,6 +7,7 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.cas.CasProtocolConstants;
@@ -44,11 +45,12 @@ import static org.junit.Assert.*;
 public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private static final String TEST_VALUE = "testValue";
+    private static final String TEST_ATTRIBUTE = "testAttribute";
+    private static final String PRINCIPAL_ID = "testPrincipal";
     private Saml10SuccessResponseView response;
 
     @Before
     public void setUp() throws Exception {
-
         final List<RegisteredService> list = new ArrayList<>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
@@ -57,7 +59,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final DefaultServicesManager mgmr = new DefaultServicesManager(dao);
         mgmr.load();
         
-        this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr),
+        this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, NoOpCipherExecutor.getInstance()),
                 mgmr, "attribute", new Saml10ObjectBuilder(configBean),
                 new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(),
                 1000, "testIssuer", "whatever");         
@@ -68,10 +70,10 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Map<String, Object> model = new HashMap<>();
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("testAttribute", TEST_VALUE);
+        attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
         attributes.put("testEmptyCollection", Collections.emptyList());
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
         final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
@@ -79,8 +81,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
-        final Authentication primary =
-                CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
+        final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         final Assertion assertion = new ImmutableAssertion(
                 primary, Collections.singletonList(primary),
                 CoreAuthenticationTestUtils.getService(), true);
@@ -91,8 +92,8 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
         final String written = servletResponse.getContentAsString();
 
-        assertTrue(written.contains("testPrincipal"));
-        assertTrue(written.contains("testAttribute"));
+        assertTrue(written.contains(PRINCIPAL_ID));
+        assertTrue(written.contains(TEST_ATTRIBUTE));
         assertTrue(written.contains(TEST_VALUE));
         assertFalse(written.contains("testEmptyCollection"));
         assertTrue(written.contains("testAttributeCollection"));
@@ -107,7 +108,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     public void verifyResponseWithNoAttributes() throws Exception {
         final Map<String, Object> model = new HashMap<>();
 
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal");
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID);
 
         final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
@@ -127,7 +128,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
         final String written = servletResponse.getContentAsString();
 
-        assertTrue(written.contains("testPrincipal"));
+        assertTrue(written.contains(PRINCIPAL_ID));
         assertTrue(written.contains(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT));
         assertTrue(written.contains("AuthenticationMethod="));
     }
@@ -137,16 +138,15 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Map<String, Object> model = new HashMap<>();
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("testAttribute", TEST_VALUE);
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
+        attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
         final Map<String, Object> authnAttributes = new HashMap<>();
         authnAttributes.put("authnAttribute1", "authnAttrbuteV1");
         authnAttributes.put("authnAttribute2", "authnAttrbuteV2");
         authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
 
-        final Authentication primary =
-                CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
+        final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
         final Assertion assertion = new ImmutableAssertion(
                 primary, Collections.singletonList(primary),
@@ -158,8 +158,8 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
         final String written = servletResponse.getContentAsString();
 
-        assertTrue(written.contains("testPrincipal"));
-        assertTrue(written.contains("testAttribute"));
+        assertTrue(written.contains(PRINCIPAL_ID));
+        assertTrue(written.contains(TEST_ATTRIBUTE));
         assertTrue(written.contains(TEST_VALUE));
         assertTrue(written.contains("authnAttribute1"));
         assertTrue(written.contains("authnAttribute2"));

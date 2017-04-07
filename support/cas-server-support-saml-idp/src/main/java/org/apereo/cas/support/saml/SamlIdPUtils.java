@@ -26,10 +26,11 @@ import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlIdPUtils}.
@@ -48,13 +49,13 @@ public final class SamlIdPUtils {
      *
      * @param outboundContext the outbound context
      * @param adaptor         the adaptor
+     * @param binding         the binding
      * @throws SamlException the saml exception
      */
     public static void preparePeerEntitySamlEndpointContext(final MessageContext outboundContext,
-                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-            throws SamlException {
-        final List<AssertionConsumerService> assertionConsumerServices = adaptor.getAssertionConsumerServices();
-        if (assertionConsumerServices.isEmpty()) {
+                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                            final String binding) throws SamlException {
+        if (!adaptor.containsAssertionConsumerServices()) {
             throw new SamlException("No assertion consumer service could be found for entity " + adaptor.getEntityId());
         }
 
@@ -67,7 +68,7 @@ public final class SamlIdPUtils {
         if (endpointContext == null) {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
         }
-        final Endpoint endpoint = assertionConsumerServices.get(0);
+        final Endpoint endpoint = adaptor.getAssertionConsumerService(binding);
         if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
             throw new SamlException("Assertion consumer service does not define a binding or location for " + adaptor.getEntityId());
         }
@@ -84,19 +85,23 @@ public final class SamlIdPUtils {
      * @return the chaining metadata resolver for all saml services
      */
     public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
-                                                                         final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver) {
+                                                                         final String entityID,
+                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
-            final List<MetadataResolver> resolvers = new ArrayList<>();
+            final List<MetadataResolver> resolvers;
             final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
-            for (final RegisteredService registeredService : registeredServices) {
-                final SamlRegisteredService samlRegisteredService = SamlRegisteredService.class.cast(registeredService);
+            resolvers = registeredServices.stream()
+                    .filter(SamlRegisteredService.class::isInstance)
+                    .map(SamlRegisteredService.class::cast)
+                    .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
+                    .collect(Collectors.toList());
 
-                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
-                        SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityID);
-                resolvers.add(adaptor.getMetadataResolver());
-            }
+            LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
             chainingMetadataResolver.setResolvers(resolvers);
             chainingMetadataResolver.setId(entityID);
             chainingMetadataResolver.initialize();
@@ -115,7 +120,7 @@ public final class SamlIdPUtils {
      * @return the assertion consumer service for
      */
     public static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest,
-                                                                          final ServicesManager servicesManager, 
+                                                                          final ServicesManager servicesManager,
                                                                           final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
@@ -153,7 +158,7 @@ public final class SamlIdPUtils {
                 acs.setIsDefault(Boolean.TRUE);
             }
 
-            LOGGER.debug("Resolved AssertionConsumerService from the request is {}", acs);
+            LOGGER.debug("Resolved AssertionConsumerService from the request is [{}]", acs);
             if (StringUtils.isBlank(acs.getBinding())) {
                 throw new SamlException("AssertionConsumerService has no protocol binding defined");
             }

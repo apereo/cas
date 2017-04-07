@@ -8,11 +8,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.internal.matchers.InstanceOf;
-import org.mockito.internal.matchers.Or;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -39,6 +36,10 @@ import static org.junit.Assert.*;
 public abstract class AbstractResourceBasedServiceRegistryDaoTests {
 
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
+    private static final String SERVICE_ID = "testId";
+    private static final String THEME = "theme";
+    private static final String DESCRIPTION = "description";
+    private static final String HTTPS_SERVICE_ID = "^https://.+";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -62,9 +63,9 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithNonExistentServiceAndNoAttributes");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
+        r.setServiceId(SERVICE_ID);
+        r.setTheme(THEME);
+        r.setDescription(DESCRIPTION);
 
         final RegisteredService r2 = this.dao.save(r);
         final RegisteredService r3 = this.dao.findServiceById(r2.getId());
@@ -77,9 +78,9 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void execSaveWithAuthnMethodPolicy() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("execSaveWithAuthnMethodPolicy");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
+        r.setServiceId(SERVICE_ID);
+        r.setTheme(THEME);
+        r.setDescription(DESCRIPTION);
 
         final DefaultRegisteredServiceMultifactorPolicy policy =
                 new DefaultRegisteredServiceMultifactorPolicy();
@@ -99,9 +100,9 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void execSaveMethodWithDefaultUsernameAttribute() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultUsernameAttribute");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
+        r.setServiceId(SERVICE_ID);
+        r.setTheme(THEME);
+        r.setDescription(DESCRIPTION);
         r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
@@ -111,10 +112,10 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void ensureSaveMethodWithDefaultPrincipalAttribute() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultPrincipalAttribute");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn"));
+        r.setServiceId(SERVICE_ID);
+        r.setTheme(THEME);
+        r.setDescription(DESCRIPTION);
+        r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn", "UPPER"));
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
     }
@@ -123,9 +124,9 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void verifySaveMethodWithDefaultAnonymousAttribute() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultAnonymousAttribute");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
+        r.setServiceId(SERVICE_ID);
+        r.setTheme(THEME);
+        r.setDescription(DESCRIPTION);
         r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
                 new ShibbolethCompatiblePersistentIdGenerator("helloworld")
         ));
@@ -144,9 +145,9 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void verifySaveAttributeReleasePolicy() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicy");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
+        r.setServiceId(SERVICE_ID);
+        r.setTheme(THEME);
+        r.setDescription(DESCRIPTION);
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
         final RegisteredService r2 = this.dao.save(r);
@@ -162,9 +163,9 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void verifySaveMethodWithExistingServiceNoAttribute() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithExistingServiceNoAttribute");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
+        r.setServiceId(SERVICE_ID);
+        r.setTheme(THEME);
+        r.setDescription(DESCRIPTION);
         this.dao.save(r);
         r.setTheme("mytheme");
 
@@ -178,7 +179,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void verifySaveAttributeReleasePolicyMappingRules() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyMappingRules");
-        r.setServiceId("testId");
+        r.setServiceId(SERVICE_ID);
 
         final Map<String, String> map = new HashMap<>();
         map.put("attr1", "newattr1");
@@ -203,7 +204,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void verifySaveAttributeReleasePolicyAllowedAttrRules() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRules");
-        r.setServiceId("testId");
+        r.setServiceId(SERVICE_ID);
 
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
@@ -222,7 +223,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     public void verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter");
-        r.setServiceId("testId");
+        r.setServiceId(SERVICE_ID);
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
         r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
@@ -246,7 +247,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void verifyServiceType() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("testServiceType");
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
@@ -258,12 +259,10 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void verifyServiceWithInvalidFileName() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("hell/o@world:*");
         r.setEvaluationOrder(1000);
-
-        this.thrown.expect(new Or(Arrays.asList(new InstanceOf(RuntimeException.class),
-                new InstanceOf(IOException.class))));
+        this.thrown.expect(IllegalArgumentException.class);
         this.dao.save(r);
     }
 
@@ -272,7 +271,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         final List<RegisteredService> list = new ArrayList<>(5);
         IntStream.range(1, 5).forEach(i -> {
             final RegexRegisteredService r = new RegexRegisteredService();
-            r.setServiceId("^https://.+");
+            r.setServiceId(HTTPS_SERVICE_ID);
             r.setName("testServiceType");
             r.setTheme("testtheme");
             r.setEvaluationOrder(1000);
@@ -295,7 +294,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void checkForAuthorizationStrategy() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("checkForAuthorizationStrategy");
         r.setId(42);
 
@@ -316,7 +315,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void verifyAccessStrategyWithStarEndDate() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("verifyAAccessStrategyWithStarEndDate");
         r.setId(62);
 
@@ -337,7 +336,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void verifyAccessStrategyWithEndpoint() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("verifyAccessStrategyWithEndpoint");
         r.setId(62);
 
@@ -359,7 +358,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 "classpath:RSA1024Public.key", "RSA");
 
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("serializePublicKeyForServiceAndVerify");
         r.setId(4245);
         r.setPublicKey(publicKey);
@@ -372,7 +371,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void checkNullabilityOfAccessStrategy() {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("checkNullabilityOfAccessStrategy");
         r.setId(43210);
         r.setAccessStrategy(null);
@@ -386,7 +385,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     @Test
     public void persistCustomServiceProperties() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
+        r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("persistCustomServiceProperties");
         r.setId(4245);
 

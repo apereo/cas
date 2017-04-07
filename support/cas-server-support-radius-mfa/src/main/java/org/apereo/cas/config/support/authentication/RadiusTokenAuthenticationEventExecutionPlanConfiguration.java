@@ -6,7 +6,8 @@ import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -17,7 +18,6 @@ import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,12 +38,9 @@ import java.util.List;
 @Configuration("radiusTokenAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -64,8 +61,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
     @RefreshScope
     public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getRadius().getBypass(),
-                ticketRegistrySupport
+                casProperties.getAuthn().getMfa().getRadius().getBypass()
         );
     }
 
@@ -97,12 +93,8 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
         final MultifactorAuthenticationProperties.Radius radius = casProperties.getAuthn().getMfa().getRadius();
-        final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler(radiusTokenServers(), radius.isFailoverOnException(),
-                radius.isFailoverOnAuthenticationFailure());
-        a.setPrincipalFactory(radiusTokenPrincipalFactory());
-        a.setServicesManager(servicesManager);
-        a.setName(radius.getName());
-        return a;
+        return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager, radiusTokenPrincipalFactory(), radiusTokenServers(),
+                radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
     }
 
     @Bean

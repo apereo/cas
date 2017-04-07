@@ -1,21 +1,23 @@
-
 /*
   Override the version used by Spring boot to match CAS.
   As boot is upgraded, some of these enforcements below
   may become unnecessary when/if version numbers match.
  */
-ext["hibernateVersion"] = "5.2.6.Final"
-ext["springBootTomcatVersion"] = "8.5.9"
-ext["hazelcastVersion"] = "3.7.4"
-ext["infinispanVersion"] = "8.2.2.Final"
-ext["springVersion"] = "4.3.5.RELEASE"
-ext["jacksonDatabindVersion"] = "2.8.5"
+ext["hibernateVersion"] = "5.2.9.Final"
+ext["springBootTomcatVersion"] = "8.5.13"
+ext["hazelcastVersion"] = "3.8"
+ext["infinispanVersion"] = "8.2.6.Final"
+ext["springVersion"] = "4.3.7.RELEASE"
+ext["jacksonDatabindVersion"] = "2.8.7"
 ext["thymeleafVersion"] = "3.0.3.RELEASE"
-ext["thymeleafDialectVersion"] = "2.0.5"
-ext["springSessionVersion"] = "1.2.2.RELEASE"
+ext["thymeleafDialectVersion"] = "2.2.0"
+ext["springSessionVersion"] = "1.3.0.RELEASE"
 ext["hsqlVersion"] = "2.3.4"
 ext["httpCoreVersion"] = "4.4.4"
-ext["hikariVersion"] = "2.5.1"
+ext["hikariVersion"] = "2.6.1"
+ext["groovyVersion"] = "2.4.10"
+ext["log4jVersion"] = "2.8.1"
+ext["commonsBeansVersion"] = "1.9.3"
 
 ext["commons-beanutils.version"] = "1.8.3"
 ext["hazelcast.version"] = ext["hazelcastVersion"]
@@ -30,3 +32,6 @@ ext["spring-session.version"] = ext["springSessionVersion"]
 ext["hsqldb.version"] = ext["hsqlVersion"]
 ext["httpcore.version"] = ext["httpCoreVersion"]
 ext["hikaricp.version"] = ext["hikariVersion"]
+ext["groovy.version"] = ext["groovyVersion"]
+ext["log4j2.version"] = ext["log4jVersion"]
+ext["commons-beanutils.version"] = ext["commonsBeansVersion"]

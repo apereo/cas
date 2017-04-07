@@ -1,8 +1,5 @@
 package org.apereo.cas.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.InetAddress;
 
 /**
@@ -12,8 +9,6 @@ import java.net.InetAddress;
  * @since 5.0.0
  */
 public final class InetAddressUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InetAddressUtils.class);
-
     private InetAddressUtils() {
     }
 
@@ -24,7 +19,7 @@ public final class InetAddressUtils {
      */
     public static String getCasServerHostName() {
         try {
-            final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
+            final String hostName = InetAddress.getLocalHost().getHostName();
             final int index = hostName.indexOf('.');
             if (index > 0) {
                 return hostName.substring(0, index);

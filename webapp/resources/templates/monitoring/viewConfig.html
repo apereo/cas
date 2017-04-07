@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="monitoring/layout">
+
+<head>
+    <title th:text="#{cas.viewconfig.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div id="container">
+    <div layout:fragment="content">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/cupertino/jquery-ui.css"/>
+        <link rel="stylesheet"
+              href="//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css"/>
+
+        <script type="text/javascript" th:inline="javascript">
+            var urls = {
+                getConfiguration: /*[[@{/status/config/getConfiguration}]]*/,
+                updateConfiguration: /*[[@{/status/config/updateConfiguration}]]*/,
+            };
+            var updateEnabled = /*[[${enableUpdate}]]*/ === "true" ;
+            
+            function jqueryReady() {
+                head.load(
+                        /*[[@{/js/viewConfig.js}]]*/
+                );
+            }
+        </script>
+
+        <div class="viewConfig">
+            <div id="loadingMessage"><h3 th:text="#{cas.viewconfig.loading}"/></div>
+
+            <div id="viewConfigError">
+                <h2 th:text="#{cas.viewconfig.errormessage}"></h2>
+                <div>
+                    <input class="btn btn-success" type="button" onclick="location.reload();" th:value="#{cas.viewconfig.button.refresh}"/>
+                </div>
+            </div>
+            
+            <div id="view-configuration">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 th:text="#{cas.viewconfig.pagetitle}">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"/>
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+
+                        <div id="alertWrapper" style="display:none" class="alert alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <p id="resultText"></p>
+                        </div>
+
+
+                        <div id="containers-table" class="container-fluid">
+
+                            <table id="viewConfigsTable" class="display table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th th:text="#{cas.viewconfig.table.column.key}"/>
+                                    <th th:text="#{cas.viewconfig.table.column.value}"/>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div th:replace="fragments/footerButtons"></div>
+
+            <div th:if="${enableRefresh}">
+                <form th:method="${refreshMethod}" th:action="${refreshEndpoint}" id="formRefreshCAS">
+                    <button class="btn btn-refresh"
+                            type="button"
+                            th:inline="text"
+                            th:attr="data-disabled=true,data-title=foo,data-message=bar">
+                        <i class="fa fa-refresh"></i> [[#{cas.dashboard.action.button.refresh}]]
+                    </button>
+                </form>
+            </div>
+
+            <div layout:include="fragments/modal :: modal(
+                    modalId='refreshModal',
+                    modalHeader=#{cas.dashboard.action.button.refresh.modal.title},
+                    modalButtons='true',
+                    modalTopClose=false,
+                    hideCancel=false
+                )"
+                 th:remove="tag">
+                <p layout:fragment="modal-content"><span
+                        th:text="#{cas.dashboard.action.button.refresh.modal.message}"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

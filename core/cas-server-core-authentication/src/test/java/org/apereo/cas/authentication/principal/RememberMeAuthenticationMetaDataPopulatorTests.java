@@ -1,27 +1,27 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.AuthenticationBuilder;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Scott Battaglia
  * @since 3.2.1
- *
  */
 public class RememberMeAuthenticationMetaDataPopulatorTests {
 
@@ -63,7 +63,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
                 .addSuccess("test", new DefaultHandlerResult(handler, meta));
 
         if (this.p.supports(credential)) {
-            this.p.populateAttributes(builder, credential);
+            this.p.populateAttributes(builder, AuthenticationTransaction.wrap(credential));
         }
         return builder;
     }

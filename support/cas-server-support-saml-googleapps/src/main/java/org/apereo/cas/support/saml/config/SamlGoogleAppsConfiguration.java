@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
@@ -39,7 +40,7 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -48,12 +49,14 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
         return Collections.singleton(googleAccountsServiceFactory());
     }
 
+    @ConditionalOnMissingBean(name = "googleAccountsServiceFactory")
     @Bean
     @RefreshScope
     public ServiceFactory googleAccountsServiceFactory() {
         return new GoogleAccountsServiceFactory(googleSaml20ObjectBuilder());
     }
 
+    @ConditionalOnMissingBean(name = "googleSaml20ObjectBuilder")
     @Bean
     public GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder() {
         return new GoogleSaml20ObjectBuilder(openSamlConfigBean);
@@ -63,12 +66,14 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
     @Bean
     @Lazy
     public ResponseBuilder googleAccountsServiceResponseBuilder() {
+        final GoogleAppsProperties gApps = casProperties.getGoogleApps();
         return new GoogleAccountsServiceResponseBuilder(
-                casProperties.getGoogleApps().getPrivateKeyLocation(),
-                casProperties.getGoogleApps().getPublicKeyLocation(),
-                casProperties.getGoogleApps().getKeyAlgorithm(),
+                gApps.getPrivateKeyLocation(),
+                gApps.getPublicKeyLocation(),
+                gApps.getKeyAlgorithm(),
                 servicesManager,
                 googleSaml20ObjectBuilder(),
-                casProperties.getSamlCore().getSkewAllowance());
+                casProperties.getSamlCore().getSkewAllowance(),
+                casProperties.getServer().getPrefix());
     }
 }

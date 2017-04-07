@@ -1,13 +1,13 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
-import org.apereo.cas.authentication.AccountDisabledException;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.InvalidLoginLocationException;
-import org.apereo.cas.authentication.InvalidLoginTimeException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -36,24 +36,19 @@ import java.util.Map;
  */
 public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTestUsernamePasswordAuthenticationHandler.class);
+
     /**
      * Default mapping of special usernames to exceptions raised when that user attempts authentication.
      */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 
-
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
-
-    /**
-     * Instance of logging for subclasses.
-     */
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
      */
     private Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
-
 
     static {
         DEFAULT_USERNAME_ERROR_MAP.put("accountDisabled", new AccountDisabledException("Account disabled"));
@@ -62,10 +57,14 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
         DEFAULT_USERNAME_ERROR_MAP.put("badWorkstation", new InvalidLoginLocationException("Invalid workstation"));
         DEFAULT_USERNAME_ERROR_MAP.put("passwordExpired", new CredentialExpiredException("Password expired"));
     }
-    
+
+    public SimpleTestUsernamePasswordAuthenticationHandler() {
+        super("", null, null, null);
+    }
+
     @PostConstruct
     private void init() {
-        logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",
+        LOGGER.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",
                 this.getClass().getName());
     }
     
@@ -80,22 +79,25 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
         final Exception exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
             throw (GeneralSecurityException) exception;
-        } else if (exception instanceof PreventedException) {
+        }
+        if (exception instanceof PreventedException) {
             throw (PreventedException) exception;
-        } else if (exception instanceof RuntimeException) {
+        }
+        if (exception instanceof RuntimeException) {
             throw (RuntimeException) exception;
-        } else if (exception != null) {
-            logger.debug("Cannot throw checked exception {} since it is not declared by method signature.",
+        }
+        if (exception != null) {
+            LOGGER.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",
                     exception.getClass().getName(),
                     exception);
         }
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
-            logger.debug("User [{}] was successfully authenticated.", username);
+            LOGGER.debug("User [{}] was successfully authenticated.", username);
             return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential),
                     this.principalFactory.createPrincipal(username));
         }
-        logger.debug("User [{}] failed authentication", username);
+        LOGGER.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();
     }
 

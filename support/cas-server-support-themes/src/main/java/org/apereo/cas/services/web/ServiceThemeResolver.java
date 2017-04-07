@@ -49,7 +49,7 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
         super.setDefaultThemeName(defaultThemeName);
         this.servicesManager = servicesManager;
         this.overrides = mobileOverrides.entrySet().stream()
-                .collect(Collectors.toMap((entry) -> Pattern.compile(entry.getKey()), Map.Entry::getValue));
+                .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue));
     }
 
     @Override
@@ -84,10 +84,9 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
                 if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
                     LOGGER.debug("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
                     return rService.getTheme();
-                } else {
-                    LOGGER.warn("Custom theme {} for service {} cannot be located. Falling back to default theme...",
-                            rService.getTheme(), rService);
                 }
+                LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...",
+                        rService.getTheme(), rService);
             }
         }
         return getDefaultThemeName();

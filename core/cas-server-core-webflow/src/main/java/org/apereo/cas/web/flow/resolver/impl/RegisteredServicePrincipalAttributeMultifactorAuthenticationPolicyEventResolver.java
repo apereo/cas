@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -11,16 +12,16 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -33,11 +34,15 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver.class);
+    
     public RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver(
-            final AuthenticationSystemSupport authenticationSystemSupport, final CentralAuthenticationService centralAuthenticationService,
-            final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
-            final CookieGenerator warnCookieGenerator, final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+            final AuthenticationSystemSupport authenticationSystemSupport, 
+            final CentralAuthenticationService centralAuthenticationService,
+            final ServicesManager servicesManager, 
+            final TicketRegistrySupport ticketRegistrySupport,
+            final CookieGenerator warnCookieGenerator, 
+            final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
             final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
                 authenticationSelectionStrategies, selector);
@@ -50,13 +55,13 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyE
 
         final RegisteredServiceMultifactorPolicy policy = service != null ? service.getMultifactorPolicy() : null;
         if (policy == null || service.getMultifactorPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
-            logger.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
+            LOGGER.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
             return null;
         }
 
         if (StringUtils.isBlank(policy.getPrincipalAttributeNameTrigger())
                 || StringUtils.isBlank(policy.getPrincipalAttributeValueToMatch())) {
-            logger.debug("Authentication policy does not define a principal attribute and/or value to trigger multifactor authentication");
+            LOGGER.debug("Authentication policy does not define a principal attribute and/or value to trigger multifactor authentication");
             return null;
         }
 

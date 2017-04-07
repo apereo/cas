@@ -31,26 +31,28 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Credential... credential) throws AuthenticationException {
+    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
+                                                                              final Credential... credential) throws AuthenticationException {
         final DefaultAuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.principalElectionStrategy);
         if (credential != null && credential.length > 0) {
             builder.collect(credential[0]);
         }
-        
-        return this.handleAuthenticationTransaction(builder, credential);
+
+        return this.handleAuthenticationTransaction(service, builder, credential);
     }
 
     @Override
-    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication) {
-        return new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication);
+    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication, final Credential credentials) {
+        return new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication).collect(credentials);
     }
 
     @Override
-    public AuthenticationResultBuilder handleAuthenticationTransaction(final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                       final Credential... credential)
-            throws AuthenticationException {
+    public AuthenticationResultBuilder handleAuthenticationTransaction(final Service service,
+                                                                       final AuthenticationResultBuilder authenticationResultBuilder,
+                                                                       final Credential... credential) throws AuthenticationException {
 
-        this.authenticationTransactionManager.handle(AuthenticationTransaction.wrap(credential), authenticationResultBuilder);
+        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(service, credential);
+        this.authenticationTransactionManager.handle(transaction, authenticationResultBuilder);
         return authenticationResultBuilder;
     }
 
@@ -64,6 +66,6 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     public AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(final Service service, final Credential... credential)
             throws AuthenticationException {
 
-        return this.finalizeAllAuthenticationTransactions(this.handleInitialAuthenticationTransaction(credential), service);
+        return finalizeAllAuthenticationTransactions(handleInitialAuthenticationTransaction(service, credential), service);
     }
 }

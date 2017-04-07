@@ -1,5 +1,6 @@
 package org.apereo.cas.web.v3;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ public class V3ServiceValidateController extends AbstractServiceValidateControll
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping(path = "/p3/serviceValidate")
+    @GetMapping(path = CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3)
     protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }

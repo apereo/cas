@@ -24,13 +24,13 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
 
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
-        LOGGER.debug("Using {}, no caching takes place for {} to add attributes.", id,
+        LOGGER.debug("Using [{}], no caching takes place for [{}] to add attributes.", id,
                 this.getClass().getSimpleName());
     }
 
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
-        LOGGER.debug("{} will return the collection of attributes directly associated with the principal object which are [{}]",
+        LOGGER.debug("[{}] will return the collection of attributes directly associated with the principal object which are [{}]",
                 this.getClass().getSimpleName(), p.getAttributes());
         return p.getAttributes();
     }

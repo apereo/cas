@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProp
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
@@ -22,9 +23,11 @@ import org.apereo.cas.configuration.model.support.rest.RestAuthenticationPropert
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
+import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -40,6 +43,12 @@ import java.util.List;
  */
 public class AuthenticationProperties {
 
+    @NestedConfigurationProperty
+    private SurrogateAuthenticationProperties surrogate = new SurrogateAuthenticationProperties();
+    
+    @NestedConfigurationProperty
+    private GraphicalUserAuthenticationProperties gua = new GraphicalUserAuthenticationProperties();
+    
     @NestedConfigurationProperty
     private PasswordManagementProperties pm = new PasswordManagementProperties();
 
@@ -125,13 +134,42 @@ public class AuthenticationProperties {
     private StormpathProperties stormpath = new StormpathProperties();
 
     @NestedConfigurationProperty
-    private WsFederationProperties wsfed = new WsFederationProperties();
+    private WsFederationDelegationProperties wsfed = new WsFederationDelegationProperties();
 
+    @NestedConfigurationProperty
+    private WsFederationProperties wsfedIdP = new WsFederationProperties();
+    
     @NestedConfigurationProperty
     private X509Properties x509 = new X509Properties();
 
     @NestedConfigurationProperty
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
+
+    private boolean releaseProtocolAttributes = true;
+
+    public SurrogateAuthenticationProperties getSurrogate() {
+        return surrogate;
+    }
+
+    public void setSurrogate(final SurrogateAuthenticationProperties surrogate) {
+        this.surrogate = surrogate;
+    }
+
+    public boolean isReleaseProtocolAttributes() {
+        return releaseProtocolAttributes;
+    }
+
+    public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
+        this.releaseProtocolAttributes = releaseProtocolAttributes;
+    }
+
+    public WsFederationProperties getWsfedIdP() {
+        return wsfedIdP;
+    }
+
+    public void setWsfedIdP(final WsFederationProperties wsfedIdP) {
+        this.wsfedIdP = wsfedIdP;
+    }
 
     public TokenAuthenticationProperties getToken() {
         return token;
@@ -289,11 +327,11 @@ public class AuthenticationProperties {
         this.stormpath = stormpath;
     }
 
-    public WsFederationProperties getWsfed() {
+    public WsFederationDelegationProperties getWsfed() {
         return wsfed;
     }
 
-    public void setWsfed(final WsFederationProperties wsfed) {
+    public void setWsfed(final WsFederationDelegationProperties wsfed) {
         this.wsfed = wsfed;
     }
 
@@ -380,5 +418,13 @@ public class AuthenticationProperties {
 
     public void setPm(final PasswordManagementProperties pm) {
         this.pm = pm;
+    }
+
+    public GraphicalUserAuthenticationProperties getGua() {
+        return gua;
+    }
+
+    public void setGua(final GraphicalUserAuthenticationProperties gua) {
+        this.gua = gua;
     }
 }

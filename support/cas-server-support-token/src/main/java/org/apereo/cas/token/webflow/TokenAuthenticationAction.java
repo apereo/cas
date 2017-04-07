@@ -36,7 +36,8 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
 
     public TokenAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                      final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-                                     final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, final ServicesManager servicesManager) {
+                                     final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, 
+                                     final ServicesManager servicesManager) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.servicesManager = servicesManager;
     }
@@ -45,7 +46,10 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
 
-        final String authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
+        String authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
+        if (StringUtils.isBlank(authTokenValue)) {
+            authTokenValue = request.getHeader(TokenConstants.PARAMETER_NAME_TOKEN);
+        }
         final Service service = WebUtils.getService(requestContext);
 
         if (StringUtils.isNotBlank(authTokenValue) && service != null) {
@@ -54,7 +58,7 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
                 final Credential credential = new TokenCredential(authTokenValue, service);
-                LOGGER.debug("Received token authentication request {} ", credential);
+                LOGGER.debug("Received token authentication request [{}] ", credential);
                 return credential;
             } catch (final Exception e) {
                 LOGGER.warn(e.getMessage(), e);

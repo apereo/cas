@@ -17,7 +17,8 @@ import java.time.ZonedDateTime;
  * @since 3.0.0
  */
 public class CasVersion {
-    private static Logger LOGGER = LoggerFactory.getLogger(CasVersion.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasVersion.class);
     
     /**
      * Private constructor for CasVersion. You should not be able to instantiate
@@ -68,7 +69,7 @@ public class CasVersion {
                 return DateTimeUtils.zonedDateTimeOf(file.lastModified());
             }
             
-            LOGGER.warn("Unhandled url protocol: {} resource: {}", resource.getProtocol(), resource);
+            LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);
             return ZonedDateTime.now();
             
         } catch (final Exception e) {

@@ -36,7 +36,8 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
     private final String searchFilter;
     private final String loadFilter;
 
-    public LdapServiceRegistryDao(final ConnectionFactory connectionFactory, final String baseDn, final LdapRegisteredServiceMapper ldapServiceMapper,
+    public LdapServiceRegistryDao(final ConnectionFactory connectionFactory, final String baseDn, 
+                                  final LdapRegisteredServiceMapper ldapServiceMapper,
                                   final LdapServiceRegistryProperties ldapProperties) {
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
@@ -47,9 +48,9 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
         }
 
         this.searchFilter = '(' + this.ldapServiceMapper.getIdAttribute() + "={0})";
-        LOGGER.debug("Configured search filter to {}", this.searchFilter);
+        LOGGER.debug("Configured search filter to [{}]", this.searchFilter);
         this.loadFilter = "(objectClass=" + this.ldapServiceMapper.getObjectClass() + ')';
-        LOGGER.debug("Configured load filter to {}", this.loadFilter);
+        LOGGER.debug("Configured load filter to [{}]", this.loadFilter);
     }
 
     @Override
@@ -86,7 +87,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
         }
 
         if (StringUtils.isNotBlank(currentDn)) {
-            LOGGER.debug("Updating registered service at {}", currentDn);
+            LOGGER.debug("Updating registered service at [{}]", currentDn);
             final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, entry);
         }
@@ -138,10 +139,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
         try {
             final Response<SearchResult> response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                for (final LdapEntry entry : response.getResult().getEntries()) {
-                    final RegisteredService svc = this.ldapServiceMapper.mapToRegisteredService(entry);
-                    list.add(svc);
-                }
+                response.getResult().getEntries().stream().map(this.ldapServiceMapper::mapToRegisteredService).forEach(list::add);
             }
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
@@ -151,7 +149,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private Response<SearchResult> getSearchResultResponse() throws LdapException {
         return LdapUtils.executeSearchOperation(this.connectionFactory,
-                this.baseDn, Beans.newSearchFilter(this.loadFilter));
+                this.baseDn, Beans.newLdaptiveSearchFilter(this.loadFilter));
     }
 
     @Override
@@ -180,7 +178,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForServiceById(final Long id) throws LdapException {
-        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter,
+        final SearchFilter filter = Beans.newLdaptiveSearchFilter(this.searchFilter,
                 Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 Arrays.asList(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);

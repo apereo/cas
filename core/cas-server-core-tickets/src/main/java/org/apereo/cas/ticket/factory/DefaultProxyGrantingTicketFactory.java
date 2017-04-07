@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link DefaultTicketGrantingTicketFactory} is responsible
+ * The {@link DefaultProxyGrantingTicketFactory} is responsible
  * for creating {@link ProxyGrantingTicket} objects.
  *
  * @author Misagh Moayyed
@@ -79,9 +79,9 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     protected String produceTicketIdentifier() {
         String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode proxy-granting ticket {}", pgtId);
+            LOGGER.debug("Attempting to encode proxy-granting ticket [{}]", pgtId);
             pgtId = this.cipherExecutor.encode(pgtId);
-            LOGGER.debug("Encoded proxy-granting ticket id {}", pgtId);
+            LOGGER.debug("Encoded proxy-granting ticket id [{}]", pgtId);
         }
         return pgtId;
     }

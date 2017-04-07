@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.0.0
  */
 public class OAuth20Validator {
-
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20Validator.class);
 
     private ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
@@ -38,9 +37,9 @@ public class OAuth20Validator {
      */
     public boolean checkParameterExist(final HttpServletRequest request, final String name) {
         final String parameter = request.getParameter(name);
-        logger.debug("{}: {}", name, parameter);
+        LOGGER.debug("[{}]: [{}]", name, parameter);
         if (StringUtils.isBlank(parameter)) {
-            logger.error("Missing: {}", name);
+            LOGGER.error("Missing: [{}]", name);
             return false;
         }
         return true;
@@ -58,7 +57,7 @@ public class OAuth20Validator {
         }
 
         final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-        logger.debug("Check registered service: {}", registeredService);
+        LOGGER.debug("Check registered service: [{}]", registeredService);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             return true;
@@ -76,9 +75,9 @@ public class OAuth20Validator {
      */
     public boolean checkCallbackValid(final RegisteredService registeredService, final String redirectUri) {
         final String registeredServiceId = registeredService.getServiceId();
-        logger.debug("Found: {} vs redirectUri: {}", registeredService, redirectUri);
+        LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
-            logger.error("Unsupported {}: {} for registeredServiceId: {}", OAuthConstants.REDIRECT_URI, redirectUri, registeredServiceId);
+            LOGGER.error("Unsupported [{}]: [{}] for registeredServiceId: [{}]", OAuth20Constants.REDIRECT_URI, redirectUri, registeredServiceId);
             return false;
         }
         return true;
@@ -92,9 +91,9 @@ public class OAuth20Validator {
      * @return whether the secret is valid
      */
     public boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret) {
-        logger.debug("Found: {} in secret check", registeredService);
+        LOGGER.debug("Found: [{}] in secret check", registeredService);
         if (!StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
-            logger.error("Wrong client secret for service: {}", registeredService);
+            LOGGER.error("Wrong client secret for service: [{}]", registeredService);
             return false;
         }
         return true;

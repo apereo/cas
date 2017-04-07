@@ -1,11 +1,14 @@
 package org.apereo.cas.support.saml.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
+import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.DateTimeUtils;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -13,6 +16,7 @@ import org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeStatement;
+import org.opensaml.saml.saml1.core.AttributeValue;
 import org.opensaml.saml.saml1.core.Audience;
 import org.opensaml.saml.saml1.core.AudienceRestrictionCondition;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -25,6 +29,8 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.StatusMessage;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +38,7 @@ import javax.xml.namespace.QName;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,7 +48,8 @@ import java.util.Map;
  * @since 4.1
  */
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Saml10ObjectBuilder.class);
+    
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
     private static final long serialVersionUID = -4711012620700270554L;
 
@@ -67,6 +75,22 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         samlResponse.setInResponseTo(recipient);
         setInResponseToForSamlResponseIfNeeded(service, samlResponse);
         return samlResponse;
+    }
+
+    /**
+     * Sets in response to for saml 1 response.
+     *
+     * @param service      the service
+     * @param samlResponse the saml 1 response
+     */
+    private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
+        if (service instanceof SamlService) {
+            final SamlService samlService = (SamlService) service;
+            final String requestId = samlService.getRequestID();
+            if (StringUtils.isNotBlank(requestId)) {
+                samlResponse.setInResponseTo(requestId);
+            }
+        }
     }
 
     /**
@@ -184,6 +208,19 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     }
 
     /**
+     * Add saml1 attribute values for attribute.
+     *
+     * @param attributeName  the attribute name
+     * @param attributeValue the attribute value
+     * @param attributeList  the attribute list
+     */
+    public void addAttributeValuesToSaml1Attribute(final String attributeName,
+                                                   final Object attributeValue,
+                                                   final List<XMLObject> attributeList) {
+        addAttributeValuesToSamlAttribute(attributeName, attributeValue, attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
+    }
+    
+    /**
      * New attribute statement.
      *
      * @param subject the subject
@@ -199,7 +236,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         attrStatement.setSubject(subject);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
+                LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
             final Attribute attribute = newSamlObject(Attribute.class);
@@ -209,7 +246,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                 attribute.setAttributeNamespace(attributeNamespace);
             }
 
-            addAttributeValuesToSamlAttribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
+            addAttributeValuesToSaml1Attribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
             attrStatement.getAttributes().add(attribute);
         }
 

@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.digest.DigestAuthenticationHandler;
@@ -48,11 +48,7 @@ public class DigestAuthenticationEventExecutionPlanConfiguration implements Auth
     @RefreshScope
     public AuthenticationHandler digestAuthenticationHandler() {
         final DigestProperties digest = casProperties.getAuthn().getDigest();
-        final DigestAuthenticationHandler r = new DigestAuthenticationHandler();
-        r.setPrincipalFactory(digestAuthenticationPrincipalFactory());
-        r.setServicesManager(servicesManager);
-        r.setName(digest.getName());
-        return r;
+        return new DigestAuthenticationHandler(digest.getName(), servicesManager, digestAuthenticationPrincipalFactory());
     }
     
     @Override

@@ -356,9 +356,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             final Pattern pattern = RegexUtils.concatenate(values, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
                 return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
-            } else {
-                return availableValues.stream().anyMatch(values::contains);
             }
+            return availableValues.stream().anyMatch(values::contains);
         });
     }
 }

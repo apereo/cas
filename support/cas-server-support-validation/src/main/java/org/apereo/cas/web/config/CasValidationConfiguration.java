@@ -53,11 +53,7 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
+    
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
     private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
@@ -131,20 +127,22 @@ public class CasValidationConfiguration {
                 protocolAttributeEncoder,
                 servicesManager,
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                casProperties.getView().getCas3().isReleaseProtocolAttributes());
+                casProperties.getAuthn().isReleaseProtocolAttributes());
     }
 
     @Bean
     public View cas3ServiceSuccessView() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        final boolean isReleaseProtocolAttributes = casProperties.getView().getCas3().isReleaseProtocolAttributes();
+        final boolean isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30ResponseView(true, protocolAttributeEncoder,
                 servicesManager, authenticationContextAttribute, cas3SuccessView, isReleaseProtocolAttributes);
     }
 
     @Autowired
     @Bean
-    public V3ServiceValidateController v3ServiceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+    public V3ServiceValidateController v3ServiceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
+                                                                   @Qualifier("defaultAuthenticationSystemSupport")
+                                                                   final AuthenticationSystemSupport authenticationSystemSupport) {
         final V3ServiceValidateController c = new V3ServiceValidateController();
         c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
         c.setSuccessView(cas3ServiceSuccessView());
@@ -163,7 +161,9 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Bean
-    public V3ProxyValidateController v3ProxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+    public V3ProxyValidateController v3ProxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
+                                                               @Qualifier("defaultAuthenticationSystemSupport")
+                                                               final AuthenticationSystemSupport authenticationSystemSupport) {
         final V3ProxyValidateController c = new V3ProxyValidateController();
         c.setValidationSpecification(cas20ProtocolValidationSpecification);
         c.setSuccessView(cas3ServiceSuccessView());
@@ -182,7 +182,9 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Bean
-    public ProxyValidateController proxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+    public ProxyValidateController proxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
+                                                           @Qualifier("defaultAuthenticationSystemSupport")
+                                                           final AuthenticationSystemSupport authenticationSystemSupport) {
         final ProxyValidateController c = new ProxyValidateController();
         c.setValidationSpecification(cas20ProtocolValidationSpecification);
         c.setSuccessView(cas3ServiceSuccessView());
@@ -201,7 +203,9 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Bean
-    public LegacyValidateController legacyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+    public LegacyValidateController legacyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
+                                                             @Qualifier("defaultAuthenticationSystemSupport")
+                                                             final AuthenticationSystemSupport authenticationSystemSupport) {
         final LegacyValidateController c = new LegacyValidateController();
         c.setValidationSpecification(this.cas10ProtocolValidationSpecification);
         c.setSuccessView(cas1ServiceSuccessView());
@@ -225,7 +229,9 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Bean
-    public ServiceValidateController serviceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+    public ServiceValidateController serviceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
+                                                               @Qualifier("defaultAuthenticationSystemSupport")
+                                                               final AuthenticationSystemSupport authenticationSystemSupport) {
         final ServiceValidateController c = new ServiceValidateController();
         c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
         c.setSuccessView(cas2ServiceSuccessView());

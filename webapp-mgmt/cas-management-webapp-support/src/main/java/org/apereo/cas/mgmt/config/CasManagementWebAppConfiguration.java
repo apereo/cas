@@ -1,7 +1,6 @@
 package org.apereo.cas.mgmt.config;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -26,6 +25,8 @@ import org.apereo.cas.mgmt.services.web.factory.PrincipalAttributesRepositoryMap
 import org.apereo.cas.mgmt.services.web.factory.ProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
+import org.apereo.cas.mgmt.web.CasManagementRootController;
+import org.apereo.cas.mgmt.web.CasManagementSecurityInterceptor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -39,9 +40,7 @@ import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizat
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.engine.DefaultSecurityLogic;
-import org.pac4j.core.exception.HttpAction;
-import org.pac4j.springframework.web.SecurityInterceptor;
+import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,7 +51,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -60,14 +58,11 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.Controller;
-import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,7 +80,7 @@ import java.util.Properties;
 @Configuration("casManagementWebAppConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
-    
+
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
     private List formDataPopulators = new ArrayList<>();
@@ -112,8 +107,8 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "attributeRepository")
-    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao stubAttributeRepository() {
+    @Bean
+    public IPersonAttributeDao attributeRepository() {
         return Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
     }
 
@@ -134,17 +129,8 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    protected Controller rootController() {
-        return new ParameterizableViewController() {
-            @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                         final HttpServletResponse response)
-                    throws Exception {
-                final String url = request.getContextPath() + "/manage.html";
-                return new ModelAndView(new RedirectView(response.encodeURL(url)));
-            }
-
-        };
+    public Controller rootController() {
+        return new CasManagementRootController();
     }
 
     @Bean
@@ -162,9 +148,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
-        return new CasManagementSecurityInterceptor();
+        return new CasManagementSecurityInterceptor(config());
     }
-    
+
     @RefreshScope
     @Bean
     public Properties userProperties() {
@@ -184,7 +170,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         final List<String> authzAttributes = casProperties.getMgmt().getAuthzAttributes();
         if (!authzAttributes.isEmpty()) {
             if ("*".equals(authzAttributes)) {
-                return commonProfile -> commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
+                return new PermitAllAuthorizationGenerator();
             }
             return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[]{}), new String[]{});
         }
@@ -214,7 +200,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
-   
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
@@ -247,7 +232,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public FormDataPopulator attributeFormDataPopulator() {
-        return new AttributeFormDataPopulator(stubAttributeRepository());
+        return new AttributeFormDataPopulator(attributeRepository());
     }
 
     @Bean
@@ -308,38 +293,13 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     /**
-     * The Cas management security interceptor.
+     * The Permit all authorization generator.
      */
-    public class CasManagementSecurityInterceptor extends SecurityInterceptor {
-
-        public CasManagementSecurityInterceptor() {
-            super(config(), "CasClient", "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
-            final DefaultSecurityLogic logic = new DefaultSecurityLogic() {
-                @Override
-                protected HttpAction forbidden(final WebContext context, final List currentClients, final List list, final String authorizers) {
-                    return HttpAction.redirect("Authorization failed", context, "authorizationFailure");
-                }
-
-                @Override
-                protected boolean loadProfilesFromSession(final WebContext context, final List currentClients) {
-                    return true;
-                }
-            };
-
-            logic.setSaveProfileInSession(true);
-            setSecurityLogic(logic);
-        }
-
+    public class PermitAllAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
         @Override
-        public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                               final Object handler, final ModelAndView modelAndView) throws Exception {
-            if (!StringUtils.isEmpty(request.getQueryString())
-                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
-                final RedirectView v = new RedirectView(request.getRequestURL().toString());
-                v.setExposeModelAttributes(false);
-                v.setExposePathVariables(false);
-                modelAndView.setView(v);
-            }
+        public CommonProfile generate(final WebContext webContext, final CommonProfile commonProfile) {
+            commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
+            return commonProfile;
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.authentication;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -11,7 +12,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
@@ -20,7 +20,6 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
                                                               final CentralAuthenticationService centralAuthenticationService,
                                                               final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
                                                               final CookieGenerator warnCookieGenerator,
-                                                              final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                              final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                               final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
                 authenticationSelectionStrategies, selector);
@@ -46,14 +45,16 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
     @Override
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final Collection<String> requestMfaMethod) {
-        final Optional<MultifactorAuthenticationProvider> providerFound = providers.values().stream()
+        final Optional<MultifactorAuthenticationProvider> providerFound = providers.values()
+                .stream()
                 .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
                 .findFirst();
         if (providerFound.isPresent()) {
             final MultifactorAuthenticationProvider provider = providerFound.get();
             if (provider instanceof VariegatedMultifactorAuthenticationProvider) {
                 final VariegatedMultifactorAuthenticationProvider multi = VariegatedMultifactorAuthenticationProvider.class.cast(provider);
-                return multi.getProviders().stream()
+                return multi.getProviders()
+                        .stream()
                         .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
                         .findFirst();
             }

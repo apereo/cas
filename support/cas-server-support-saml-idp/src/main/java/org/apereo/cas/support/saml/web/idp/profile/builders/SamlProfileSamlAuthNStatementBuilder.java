@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.SecureRandom;
 import java.time.ZonedDateTime;
 
 /**
@@ -40,11 +41,13 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     @Override
-    public AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request,
+    public AuthnStatement build(final AuthnRequest authnRequest, 
+                                final HttpServletRequest request,
                                 final HttpServletResponse response,
-                                final Assertion assertion, final SamlRegisteredService service,
-                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-            throws SamlException {
+                                final Assertion assertion, 
+                                final SamlRegisteredService service,
+                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                final String binding) throws SamlException {
         return buildAuthnStatement(assertion, authnRequest, adaptor, service);
     }
 
@@ -60,12 +63,11 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      */
     private AuthnStatement buildAuthnStatement(final Assertion assertion, final AuthnRequest authnRequest,
                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                               final SamlRegisteredService service)
-            throws SamlException {
+                                               final SamlRegisteredService service) throws SamlException {
 
         final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        final AuthnStatement statement = newAuthnStatement(authenticationMethod,
-                DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()));
+        final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
+        final AuthnStatement statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
         if (assertion.getValidUntilDate() != null) {
             final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
             statement.setSessionNotOnOrAfter(

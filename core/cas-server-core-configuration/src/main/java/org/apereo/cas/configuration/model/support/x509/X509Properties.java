@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 public class X509Properties {
 
+    private static final String DENY = "DENY";
+
     /**
      * The  Principal types.
      */
@@ -80,11 +82,13 @@ public class X509Properties {
     private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
     private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
 
-    private String crlResourceUnavailablePolicy = "DENY";
-    private String crlResourceExpiredPolicy = "DENY";
+    private String crlResourceUnavailablePolicy = DENY;
+    private String crlResourceExpiredPolicy = DENY;
+    private String crlUnavailablePolicy = DENY;
+    private String crlExpiredPolicy = DENY;
 
-    private String crlUnavailablePolicy = "DENY";
-    private String crlExpiredPolicy = "DENY";
+    private int principalSNRadix;
+    private boolean principalHexSNZeroPadding;
     
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
@@ -373,6 +377,22 @@ public class X509Properties {
 
     public void setCrlExpiredPolicy(final String crlExpiredPolicy) {
         this.crlExpiredPolicy = crlExpiredPolicy;
+    }
+
+    public int getPrincipalSNRadix() {
+        return principalSNRadix;
+    }
+
+    public void setPrincipalSNRadix(final int principalSNRadix) {
+        this.principalSNRadix = principalSNRadix;
+    }
+
+    public boolean isPrincipalHexSNZeroPadding() {
+        return principalHexSNZeroPadding;
+    }
+
+    public void setPrincipalHexSNZeroPadding(final boolean principalHexSNZeroPadding) {
+        this.principalHexSNZeroPadding = principalHexSNZeroPadding;
     }
 
     public static class Ldap extends AbstractLdapProperties {

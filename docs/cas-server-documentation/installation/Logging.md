@@ -10,26 +10,26 @@ failure; it can be customized to produce additional information for troubleshoot
 Logging framework as a facade for the [Log4J engine](http://logging.apache.org) by default.
 
 The default log4j configuration file is located in `src/main/resources/log4j2.xml`.
-By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code and `WARN` for
-messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set
-these levels to  `DEBUG`.
+By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code. For debugging and diagnostic purposes you may want to set these levels to  `DEBUG`.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though,
-you probably want to run them both as <code>WARN</code>.</p></div>
+<div class="alert alert-warning"><strong>Production</strong><p>You should always run everything under
+<code>WARN</code>. In production
+warnings and errors are things you care about. Everything else is just diagnostics. Only
+turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a particular issue.</p></div>
 
 ## Configuration
 
-It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
+It is often time helpful to externalize the `log4j2.xml` file to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
-via the CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+via the CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
 
-<div class="alert alert-info"><strong>Monitoring Logs</strong><p>To review log settings and output, 
+<div class="alert alert-info"><strong>Monitoring Logs</strong><p>To review log settings and output,
  you may also use the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
 ### Log Levels
 
 While log levels can directly be massaged via the native `log4j2.xml` syntax, they may also be modified
-using the usual CAS properties. 
+using the usual CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
 
 ### Refresh Interval
 
@@ -66,18 +66,93 @@ SERVER IP ADDRESS: ...
 Certain number of characters are left at the trailing end of the ticket id to assist with
 troubleshooting and diagnostics.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
 
-## AsyncLoggers Shutdown with Tomcat
+## Routing Logs to Sentry
 
-Log4j automatically inserts itself into the runtime application context (i.e. Tomcat) and will clean up
-the logging context once the container is instructed to shut down. However,
-Tomcat ignores all JAR files named `log4j*.jar`, which prevents
-this feature from working. You may need to change the `catalina.properties`
-and remove `log4j*.jar` from the `jarsToSkip` property.
-You may need to do something similar on other containers if they skip scanning Log4j JAR files.
+Log data can be automatically routed to and integrated with [Sentry](../integration/Sentry-Integration.html) to track and monitor CAS events and errors.
 
-Failure to do so will stop Tomcat to gracefully shut down and causes logger context threads to hang.
+## Routing Logs to Loggly
+
+Loggly is a cloud-based log management service that makes it easy to access and analyze the mission-critical information within your logs.
+Log data can be automatically routed to Loggly via Rsyslog. The advantage of using Rsyslog is that it can send TCP events without blocking your application, can optionally encrypt the data, and even queue data to add robustness to network failure.
+
+See [this guide](https://www.loggly.com/docs/java-log4j-2/) for more info.
+
+```xml
+...
+<Appenders>
+<Socket name="Loggly" host="localhost" port="514" protocol="UDP">
+    <PatternLayout>
+    <pattern>${hostName} java %d{yyyy-MM-dd HH:mm:ss,SSS}{GMT} %p %t
+        %c %M - %m%n</pattern>
+    </PatternLayout>
+</Socket>
+</Appenders>
+...
+<Loggers>
+<Root level="INFO">
+    <AppenderRef ref="Loggly" />
+</Root>
+</Loggers>
+```
+
+## Routing Logs to CloudWatch
+
+Log data can be automatically routed to [AWS CloudWatch](https://aws.amazon.com/cloudwatch/). Support is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-logging-config-cloudwatch</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+With the above module, you may then declare a specific appender to communicate with AWS CloudWatch:
+
+```xml
+<CloudWatchAppender name="cloudWatch"
+                    awsLogGroupName="LogGroupName"
+                    awsLogStreamName="LogStreamName"
+                    awsLogRegionName="us-west-1"
+                    credentialAccessKey="..."
+                    credentialSecretKey="..."
+                    awsLogStreamFlushPeriodInSeconds="5">
+    <PatternLayout>
+        <Pattern>%5p | %d{ISO8601}{UTC} | %t | %C | %M:%L | %m %ex %n</Pattern>
+    </PatternLayout>
+</CloudWatchAppender>
+...
+<AsyncLogger name="org.apereo" additivity="true" level="debug">
+    <appender-ref ref="cloudWatch" />
+</AsyncLogger>
+```
+
+The AWS credentials for access key, secret key and region, if left undefined, may also be retrieved from
+system properties via `AWS_ACCESS_KEY`, `AWS_SECRET_KEY` and `AWS_REGION_NAME`.
+The group name as well as the stream name are automatically created by CAS, if they are not already found.
+
+## Routing Logs to Logstash
+
+CAS logging framework has the ability route log messages to a TCP/UDP endpoint.
+This configuration assumes that the Logstash server has enabled its [TCP input](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-tcp.html) on port `9500`:
+
+```xml
+...
+<Appenders>
+    <Socket name="socket" host="localhost" connectTimeoutMillis="3000"
+            port="9500" protocol="TCP" ignoreExceptions="false">
+      <SerializedLayout />
+    </Socket>
+</Appenders>
+...
+<AsyncLogger name="org.apereo" additivity="true" level="debug">
+    <appender-ref ref="cas" />
+    <appender-ref ref="socket" />
+</AsyncLogger>
+
+```
 
 ## Routing Logs to SysLog
 
@@ -94,11 +169,8 @@ messages needs to be routed over to this instance:
             facility="LOCAL0" enterpriseNumber="18060" newLine="true"
             messageId="Audit" id="App"/>
 </Appenders>
-
 ...
-
-<AsyncLogger name="org.apereo" additivity="true">
-    <level value="DEBUG" />
+<AsyncLogger name="org.apereo" additivity="true" level="debug">
     <appender-ref ref="cas" />
     <appender-ref ref="SYSLOG" />
 </AsyncLogger>

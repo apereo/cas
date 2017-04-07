@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.authentication;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
@@ -39,7 +40,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(
                 CoreAuthenticationTestUtils.getPrincipal());
-        this.populator.populateAttributes(builder, credentials);
+        this.populator.populateAttributes(builder, AuthenticationTransaction.wrap(credentials));
         final Authentication auth = builder.build();
 
         assertEquals(
@@ -52,7 +53,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         final CustomCredential credentials = new CustomCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(
                 CoreAuthenticationTestUtils.getPrincipal());
-        this.populator.populateAttributes(builder, credentials);
+        this.populator.populateAttributes(builder, AuthenticationTransaction.wrap(credentials));
         final Authentication auth = builder.build();
 
         assertNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
@@ -69,7 +70,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
         final AuthenticationBuilder builder = newAuthenticationBuilder(
                 CoreAuthenticationTestUtils.getPrincipal());
-        this.populator.populateAttributes(builder, credentials);
+        this.populator.populateAttributes(builder, AuthenticationTransaction.wrap(credentials));
         final Authentication auth = builder.build();
 
         assertEquals(
@@ -78,6 +79,8 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     private static class CustomCredential implements Credential {
+
+        private static final long serialVersionUID = 8040541789035593268L;
 
         @Override
         public String getId() {

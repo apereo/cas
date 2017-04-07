@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 5.1.0
  */
 public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRiskNotifier {
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseAuthenticationRiskNotifier.class);
+    
     /**
      * Cas properties.
      */

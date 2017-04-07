@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.security.auth.login.FailedLoginException;
@@ -20,7 +22,12 @@ import java.security.GeneralSecurityException;
 public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private boolean isTypedIdUsed;
-    
+
+    public AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                              final Integer order) {
+        super(name, servicesManager, principalFactory, order);
+    }
+
     /**
      * Build the handler result.
      *

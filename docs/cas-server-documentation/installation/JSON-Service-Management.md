@@ -31,7 +31,7 @@ A sample JSON file follows:
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#resource-based-jsonyaml-service-registry).
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have
@@ -54,7 +54,7 @@ JSON fileName = serviceName + "-" + serviceNumericId + ".json"
 ```
 
 
-Based on the above formula, for example the above JSON snippet shall be named: `testJsonFile-103935657744185.json`. Remember that because files are created based on the `serviceName`, you will need to make sure [characters considered invalid for file names](https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words) are not used as part of the name. 
+Based on the above formula, for example the above JSON snippet shall be named: `testJsonFile-103935657744185.json`. Remember that because files are created based on the `serviceName`, you will need to make sure [characters considered invalid for file names](https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words) are not used as part of the name.
 
 <div class="alert alert-warning"><strong>Duplicate Services</strong><p>
 As you add more files to the directory, you need to be absolutely sure that no two service definitions

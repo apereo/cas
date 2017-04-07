@@ -61,7 +61,7 @@ public final class MultifactorAuthenticationTrustUtils {
         final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authn)
                 .addAttribute(attributeName, Boolean.TRUE)
                 .build();
-        LOGGER.debug("Updated authentication session to remember trusted multifactor record via {}", attributeName);
+        LOGGER.debug("Updated authentication session to remember trusted multifactor record via [{}]", attributeName);
         authn.update(newAuthn);
     }
 

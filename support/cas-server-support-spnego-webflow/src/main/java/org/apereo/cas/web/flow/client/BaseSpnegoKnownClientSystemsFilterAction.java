@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
  */
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseSpnegoKnownClientSystemsFilterAction.class);
+    
     /** Pattern of ip addresses to check. **/
     private Pattern ipsToCheckPattern;
 
@@ -74,12 +74,12 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         final String remoteIp = getRemoteIp(context);
-        logger.debug("Current user IP {}", remoteIp);
+        LOGGER.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {
-            logger.info("Spnego should be activated for {}", remoteIp);
+            LOGGER.info("Spnego should be activated for [{}]", remoteIp);
             return yes();
         }
-        logger.info("Spnego should is skipped for {}", remoteIp);
+        LOGGER.info("Spnego should is skipped for [{}]", remoteIp);
         return no();
     }
 
@@ -111,11 +111,11 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     protected boolean ipPatternMatches(final String remoteIp) {
         final Matcher matcher = this.ipsToCheckPattern.matcher(remoteIp);
         if (matcher.find()) {
-            logger.debug("Remote IP address {} should be checked based on the defined pattern {}",
+            LOGGER.debug("Remote IP address [{}] should be checked based on the defined pattern [{}]",
                     remoteIp, this.ipsToCheckPattern.pattern());
             return true;
         }
-        logger.debug("No pattern or remote IP defined, or pattern does not match remote IP [{}]",
+        LOGGER.debug("No pattern or remote IP defined, or pattern does not match remote IP [{}]",
                 remoteIp);
         return false;
     }
@@ -131,16 +131,16 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     private String getRemoteIp(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         String userAddress = request.getRemoteAddr();
-        logger.debug("Remote Address = {}", userAddress);
+        LOGGER.debug("Remote Address = [{}]", userAddress);
 
         if (StringUtils.isNotBlank(this.alternativeRemoteHostAttribute)) {
 
             userAddress = request.getHeader(this.alternativeRemoteHostAttribute);
-            logger.debug("Header Attribute [{}] = [{}]", this.alternativeRemoteHostAttribute, userAddress);
+            LOGGER.debug("Header Attribute [{}] = [{}]", this.alternativeRemoteHostAttribute, userAddress);
 
             if (StringUtils.isBlank(userAddress)) {
                 userAddress = request.getRemoteAddr();
-                logger.warn("No value could be retrieved from the header [{}]. Falling back to [{}].",
+                LOGGER.warn("No value could be retrieved from the header [{}]. Falling back to [{}].",
                         this.alternativeRemoteHostAttribute, userAddress);
             }
         }
@@ -188,12 +188,12 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         try {
             t.join(this.timeout);
         } catch (final InterruptedException e) {
-            logger.debug("Threaded lookup failed.  Defaulting to IP {}.", remoteIp, e);
+            LOGGER.debug("Threaded lookup failed.  Defaulting to IP [{}].", remoteIp, e);
         }
 
         final String remoteHostName = revDNS.get();
-        logger.debug("Found remote host name {}.", remoteHostName);
+        LOGGER.debug("Found remote host name [{}].", remoteHostName);
 
-        return StringUtils.isNotEmpty(remoteHostName) ? remoteHostName : remoteIp;
+        return StringUtils.isNotBlank(remoteHostName) ? remoteHostName : remoteIp;
     }
 }

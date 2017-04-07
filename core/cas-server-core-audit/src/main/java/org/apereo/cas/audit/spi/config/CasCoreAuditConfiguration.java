@@ -66,8 +66,8 @@ public class CasCoreAuditConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "auditTrailManager")
-    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
-    public DelegatingAuditTrailManager slf4jAuditTrailManager() {
+    @Bean
+    public DelegatingAuditTrailManager auditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(casProperties.getAudit().isUseSingleLine());
         mgmr.setEntrySeparator(casProperties.getAudit().getSinglelineSeparator());
@@ -78,7 +78,7 @@ public class CasCoreAuditConfiguration {
     @Bean
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         final AuditProperties audit = casProperties.getAudit();
-        
+
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ClientInfoThreadLocalFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
@@ -93,32 +93,37 @@ public class CasCoreAuditConfiguration {
         if (StringUtils.isNotBlank(audit.getAlternateServerAddrHeaderName())) {
             initParams.put(ClientInfoThreadLocalFilter.CONST_SERVER_IP_ADDRESS_HEADER, audit.getAlternateServerAddrHeaderName());
         }
-        
+
         initParams.put(ClientInfoThreadLocalFilter.CONST_USE_SERVER_HOST_ADDRESS, String.valueOf(audit.isUseServerHostAddress()));
         bean.setInitParameters(initParams);
         return bean;
     }
 
+    @ConditionalOnMissingBean(name = "authenticationActionResolver")
     @Bean
     public AuditActionResolver authenticationActionResolver() {
         return new DefaultAuditActionResolver("_SUCCESS", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
+    @ConditionalOnMissingBean(name = "ticketCreationActionResolver")
     @Bean
     public AuditActionResolver ticketCreationActionResolver() {
         return new DefaultAuditActionResolver("_CREATED", "_NOT_CREATED");
     }
 
+    @ConditionalOnMissingBean(name = "ticketValidationActionResolver")
     @Bean
     public AuditActionResolver ticketValidationActionResolver() {
         return new DefaultAuditActionResolver("D", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
+    @ConditionalOnMissingBean(name = "returnValueResourceResolver")
     @Bean
     public AuditResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();
     }
 
+    @ConditionalOnMissingBean(name = "nullableReturnValueResourceResolver")
     @Bean
     public AuditResourceResolver nullableReturnValueResourceResolver() {
         return new AuditResourceResolver() {
@@ -149,6 +154,7 @@ public class CasCoreAuditConfiguration {
         };
     }
 
+    @ConditionalOnMissingBean(name = "auditActionResolverMap")
     @Bean
     public Map<String, AuditActionResolver> auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
@@ -156,11 +162,12 @@ public class CasCoreAuditConfiguration {
         final AuditActionResolver resolver = authenticationActionResolver();
         map.put("AUTHENTICATION_RESOLVER", resolver);
         map.put("SAVE_SERVICE_ACTION_RESOLVER", resolver);
-        
+        map.put("CHANGE_PASSWORD_ACTION_RESOLVER", resolver);
+
         final AuditActionResolver defResolver = new DefaultAuditActionResolver();
         map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", defResolver);
         map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", defResolver);
-        
+
         final AuditActionResolver cResolver = ticketCreationActionResolver();
         map.put("CREATE_PROXY_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("GRANT_SERVICE_TICKET_RESOLVER", cResolver);
@@ -168,7 +175,7 @@ public class CasCoreAuditConfiguration {
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", cResolver);
 
-        map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER", new DefaultAuditActionResolver("_TRIGGERED", ""));
+        map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER", new DefaultAuditActionResolver("_TRIGGERED", StringUtils.EMPTY));
         final AuditActionResolver adResolver = new DefaultAuditActionResolver();
         map.put("ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER", adResolver);
 
@@ -177,6 +184,7 @@ public class CasCoreAuditConfiguration {
         return map;
     }
 
+    @ConditionalOnMissingBean(name = "auditResourceResolverMap")
     @Bean
     public Map<String, AuditResourceResolver> auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
@@ -189,22 +197,26 @@ public class CasCoreAuditConfiguration {
         map.put("GRANT_PROXY_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
         map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
         return map;
     }
 
+    @ConditionalOnMissingBean(name = "auditablePrincipalResolver")
     @Bean
     public PrincipalResolver auditablePrincipalResolver(@Qualifier("principalIdProvider") final PrincipalIdProvider principalIdProvider) {
         return new ThreadLocalPrincipalResolver(principalIdProvider);
     }
 
+    @ConditionalOnMissingBean(name = "ticketResourceResolver")
     @Bean
     public AuditResourceResolver ticketResourceResolver() {
         return new TicketAsFirstParameterResourceResolver();
     }
 
+    @ConditionalOnMissingBean(name = "messageBundleAwareResourceResolver")
     @Bean
     public AuditResourceResolver messageBundleAwareResourceResolver() {
         return new MessageBundleAwareResourceResolver();

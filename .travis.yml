@@ -13,11 +13,15 @@ branches:
   - master
 jdk:
 - oraclejdk8
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - '$HOME/.gradle/caches'
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/    
 git:
-  depth: 3
+  depth: 1
 notifications:
   slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
 env:
@@ -37,12 +41,15 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
+- sudo apt-get install -y nodejs
+- sudo ./gradlew gulpSetup --stacktrace -q
+- sudo ./gradlew clean --parallel -q
 install:
-- ./gradlew clean bootRepackage install --parallel -x test --stacktrace
+- sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
 script:
 - travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
 - chmod -R 777 ./travis/deploy-to-sonatype.sh
-- ./travis/deploy-to-sonatype.sh
+- travis_wait ./travis/deploy-to-sonatype.sh

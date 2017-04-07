@@ -40,7 +40,8 @@ import java.util.List;
  * @since 5.0.0
  */
 public final class SamlUtils {
-    private static Logger LOGGER = LoggerFactory.getLogger(SamlUtils.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlUtils.class);
 
     private SamlUtils() {
     }
@@ -107,10 +108,14 @@ public final class SamlUtils {
      * @throws Exception the exception
      */
     public static SignatureValidationFilter buildSignatureValidationFilter(final ResourceLoader resourceLoader,
-                                                                           final String signatureResourceLocation) throws
-            Exception {
-        final Resource resource = resourceLoader.getResource(signatureResourceLocation);
-        return buildSignatureValidationFilter(resource);
+                                                                           final String signatureResourceLocation) throws Exception {
+        try {
+            final Resource resource = resourceLoader.getResource(signatureResourceLocation);
+            return buildSignatureValidationFilter(resource);
+        } catch (final Exception e){
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**
@@ -121,6 +126,11 @@ public final class SamlUtils {
      * @throws Exception the exception
      */
     public static SignatureValidationFilter buildSignatureValidationFilter(final Resource signatureResourceLocation) throws Exception {
+        if (!ResourceUtils.doesResourceExist(signatureResourceLocation)) {
+            LOGGER.warn("Resource [{}] cannot be located", signatureResourceLocation);
+            return null;
+        }
+
         final List<KeyInfoProvider> keyInfoProviderList = new ArrayList<>();
         keyInfoProviderList.add(new RSAKeyValueProvider());
         keyInfoProviderList.add(new DSAKeyValueProvider());
@@ -131,7 +141,7 @@ public final class SamlUtils {
         final BasicCredential credential = buildCredentialForMetadataSignatureValidation(signatureResourceLocation);
         LOGGER.info("Successfully resolved credentials from [{}]", signatureResourceLocation);
 
-        LOGGER.debug("Configuring credential resolver for key signature trust engine @ {}", credential.getCredentialType().getSimpleName());
+        LOGGER.debug("Configuring credential resolver for key signature trust engine @ [{}]", credential.getCredentialType().getSimpleName());
         final StaticCredentialResolver resolver = new StaticCredentialResolver(credential);
         final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
         final ExplicitKeySignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyInfoResolver);
@@ -159,7 +169,7 @@ public final class SamlUtils {
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
 
-            LOGGER.debug("Credential cannot be extracted from {} via X.509. Treating it as a public key to locate credential...", 
+            LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...",
                     resource);
             final BasicResourceCredentialFactoryBean credentialFactoryBean = new BasicResourceCredentialFactoryBean();
             credentialFactoryBean.setPublicKeyInfo(resource);
@@ -176,6 +186,6 @@ public final class SamlUtils {
      * @throws SamlException the saml exception
      */
     public static void logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
-        LOGGER.debug("Logging [{}]\n{}", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject));
+        LOGGER.debug("Logging [{}]\n\n[{}]", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject));
     }
 }

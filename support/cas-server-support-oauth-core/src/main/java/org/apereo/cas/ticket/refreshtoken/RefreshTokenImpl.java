@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
 import org.apereo.cas.ticket.ExpirationPolicy;
 
@@ -30,15 +31,20 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
     /**
      * Constructs a new refresh token with unique id for a service and authentication.
      *
-     * @param id the unique identifier for the ticket.
-     * @param service the service this ticket is for.
-     * @param authentication the authentication.
-     * @param expirationPolicy the expiration policy.
+     * @param id                   the unique identifier for the ticket.
+     * @param service              the service this ticket is for.
+     * @param authentication       the authentication.
+     * @param expirationPolicy     the expiration policy.
+     * @param ticketGrantingTicket the ticket granting ticket
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public RefreshTokenImpl(final String id,
-                            final Service service, final Authentication authentication,
-                            final ExpirationPolicy expirationPolicy) {
-        super(id, service, authentication, expirationPolicy);
+    public RefreshTokenImpl(final String id, final Service service, final Authentication authentication,
+                            final ExpirationPolicy expirationPolicy, final TicketGrantingTicket ticketGrantingTicket) {
+        super(id, service, authentication, expirationPolicy, ticketGrantingTicket);
+    }
+
+    @Override
+    public String getPrefix() {
+        return RefreshToken.PREFIX;
     }
 }

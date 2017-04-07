@@ -8,8 +8,9 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.RemoteAddressWebflowConfigurer;
@@ -71,11 +72,10 @@ public class CasRemoteAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
-        final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler();
-        bean.setIpNetworkRange(casProperties.getAuthn().getRemoteAddress().getIpAddressRange());
-        bean.setPrincipalFactory(remoteAddressPrincipalFactory());
-        bean.setServicesManager(servicesManager);
-        bean.setName(casProperties.getAuthn().getRemoteAddress().getName());
+        final RemoteAddressAuthenticationProperties remoteAddress = casProperties.getAuthn().getRemoteAddress();
+        final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(), servicesManager,
+                remoteAddressPrincipalFactory());
+        bean.setIpNetworkRange(remoteAddress.getIpAddressRange());
         return bean;
     }
 

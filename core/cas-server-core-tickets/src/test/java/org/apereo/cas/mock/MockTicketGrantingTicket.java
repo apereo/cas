@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
@@ -35,7 +36,7 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public class MockTicketGrantingTicket implements TicketGrantingTicket {
+public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     private static final long serialVersionUID = 6546995681334670659L;
@@ -50,8 +51,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     private boolean expired;
 
-    private Service proxiedBy;
-
     private Map<String, Service> services = new HashMap<>();
 
     private Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
@@ -60,11 +59,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         id = ID_GENERATOR.getNewTicketId("TGT");
         final CredentialMetaData metaData = new BasicCredentialMetaData(c);
         authentication = new DefaultAuthenticationBuilder(
-                            new DefaultPrincipalFactory().createPrincipal(principal, attributes))
-                            .addCredential(metaData)
-                            .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                            new DefaultHandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
-                            .build();
+                new DefaultPrincipalFactory().createPrincipal(principal, attributes))
+                .addCredential(metaData)
+                .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
+                        new DefaultHandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
+                .build();
 
         created = ZonedDateTime.now(ZoneOffset.UTC);
     }
@@ -78,6 +77,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         return authentication;
     }
 
+    @Override
+    public void update() {
+        usageCount++;
+    }
+
     public ServiceTicket grantServiceTicket(final Service service) {
         return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, false, true);
     }
@@ -89,13 +93,13 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
             final ExpirationPolicy expirationPolicy,
             final boolean credentialProvided,
             final boolean onlyTrackMostRecentSession) {
-        usageCount++;
+        update();
         return new MockServiceTicket(id, service, this);
     }
 
     @Override
     public Service getProxiedBy() {
-        return this.proxiedBy;
+        return null;
     }
 
     @Override
@@ -107,7 +111,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     public TicketGrantingTicket getRoot() {
         return this;
     }
-    
+
     @Override
     public List<Authentication> getChainedAuthentications() {
         return Collections.emptyList();
@@ -136,6 +140,16 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Override
     public int getCountOfUses() {
         return usageCount;
+    }
+
+    @Override
+    public ZonedDateTime getLastTimeUsed() {
+        return created;
+    }
+
+    @Override
+    public ZonedDateTime getPreviousTimeUsed() {
+        return created;
     }
 
     @Override
@@ -177,4 +191,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     public int hashCode() {
         return this.id.hashCode();
     }
+
+    @Override
+    public String getPrefix() {
+        return TicketGrantingTicket.PREFIX;
+    }
+
+
 }

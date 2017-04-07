@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
-import org.apereo.cas.support.events.CasRegisteredServiceSavedEvent;
-import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +79,20 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     }
 
     @Override
+    public <T extends RegisteredService> T findServiceBy(final Service serviceId, final Class<T> clazz) {
+        return findServiceBy(serviceId.getId(), clazz);
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceBy(final String serviceId, final Class<T> clazz) {
+        return orderedServices.stream()
+                .filter(s -> s.getClass().isAssignableFrom(clazz) && s.matches(serviceId))
+                .map(clazz::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
     public RegisteredService findServiceBy(final long id) {
         final RegisteredService r = this.services.get(id);
 
@@ -99,7 +113,8 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         return findServiceBy(service) != null;
     }
 
-    @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+    @Audit(action = "SAVE_SERVICE", 
+            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
@@ -118,14 +133,14 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     @Override
     @PostConstruct
     public void load() {
-        LOGGER.debug("Loading services from {}", this.serviceRegistryDao);
+        LOGGER.debug("Loading services from [{}]", this.serviceRegistryDao);
         this.services = this.serviceRegistryDao.load().stream()
                 .collect(Collectors.toConcurrentMap(r -> {
-                    LOGGER.debug("Adding registered service {}", r.getServiceId());
+                    LOGGER.debug("Adding registered service [{}]", r.getServiceId());
                     return r.getId();
                 }, r -> r, (r, s) -> s == null ? r : s));
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
-        LOGGER.info("Loaded {} services from {}.", this.services.size(), this.serviceRegistryDao);
+        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
     }
 
     @Override

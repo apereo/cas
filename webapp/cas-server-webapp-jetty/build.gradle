@@ -1,0 +1,7 @@
+apply from: project.file("../gradle/webapp.gradle")
+
+description = "Apereo CAS Web Application via Jetty"
+
+dependencies {
+    compile libraries.springbootjetty
+}

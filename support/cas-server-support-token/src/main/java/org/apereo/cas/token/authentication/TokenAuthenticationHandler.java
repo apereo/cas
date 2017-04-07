@@ -7,10 +7,13 @@ import com.nimbusds.jose.JWSAlgorithm;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractTokenWrapperAuthenticationHandler;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.token.TokenConstants;
 import org.pac4j.core.credentials.TokenCredentials;
@@ -18,6 +21,8 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,8 +36,15 @@ import java.util.Set;
  * @since 4.2.0
  */
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationHandler.class);
+
+    public TokenAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+                                      final PrincipalNameTransformer principalNameTransformer) {
+        super(name, servicesManager, principalFactory, null, principalNameTransformer);
+    }
+
     @Override
-    protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
+    public HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
         final TokenCredential tokenCredential = (TokenCredential) credential;
         tokenCredential.setId(result.getPrincipal().getId());
         return super.postAuthenticate(credential, result);
@@ -41,7 +53,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     @Override
     protected Authenticator<TokenCredentials> getAuthenticator(final Credential credential) {
         final TokenCredential tokenCredential = (TokenCredential) credential;
-        logger.debug("Locating token secret for service [{}]", tokenCredential.getService());
+        LOGGER.debug("Locating token secret for service [{}]", tokenCredential.getService());
 
         final RegisteredService service = this.servicesManager.findServiceBy(tokenCredential.getService());
         final String signingSecret = getRegisteredServiceJwtSigningSecret(service);
@@ -90,11 +102,11 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 final EncryptionMethod encMethod = findAlgorithmFamily(sets, encryptionSecretMethod);
                 a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, encAlg, encMethod));
             } else {
-                logger.warn("JWT authentication is configured to share a single key for both signing/encryption");
+                LOGGER.warn("JWT authentication is configured to share a single key for both signing/encryption");
             }
             return a;
         }
-        logger.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
+        LOGGER.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
                 service.getServiceId(), TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
         return null;
     }
@@ -132,18 +144,18 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      */
     protected String getRegisteredServiceJwtSecret(final RegisteredService service, final String propName) {
         if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
-            logger.debug("Service is not defined/found or its access is disabled in the registry");
+            LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
         if (service.getProperties().containsKey(propName)) {
             final RegisteredServiceProperty propSigning = service.getProperties().get(propName);
             final String tokenSigningSecret = propSigning.getValue();
             if (StringUtils.isNotBlank(tokenSigningSecret)) {
-                logger.debug("Found the secret value {} for service [{}]", propName, service.getServiceId());
+                LOGGER.debug("Found the secret value [{}] for service [{}]", propName, service.getServiceId());
                 return tokenSigningSecret;
             }
         }
-        logger.warn("Service [{}] does not define a property [{}] in the registry",
+        LOGGER.warn("Service [{}] does not define a property [{}] in the registry",
                 service.getServiceId(), propName);
         return null;
     }

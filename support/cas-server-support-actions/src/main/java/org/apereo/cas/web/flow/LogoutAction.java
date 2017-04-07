@@ -1,14 +1,18 @@
 package org.apereo.cas.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -27,23 +31,20 @@ import java.util.List;
  * @since 3.0.0
  */
 public class LogoutAction extends AbstractLogoutAction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogoutAction.class);
 
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
-    /**
-     * Boolean to determine if we will redirect to any url provided in the
-     * service request parameter.
-     */
-    private boolean followServiceRedirects;
+    private final LogoutProperties logoutProperties;
 
     public LogoutAction(final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                         final ServicesManager servicesManager,
-                        final boolean followServiceRedirects) {
+                        final LogoutProperties logoutProperties) {
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.servicesManager = servicesManager;
-        this.followServiceRedirects = followServiceRedirects;
+        this.logoutProperties = logoutProperties;
     }
 
     @Override
@@ -53,33 +54,37 @@ public class LogoutAction extends AbstractLogoutAction {
         boolean needFrontSlo = false;
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
         if (logoutRequests != null) {
-            for (final LogoutRequest logoutRequest : logoutRequests) {
-                // if some logout request must still be attempted
-                if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
-                    needFrontSlo = true;
-                    break;
-                }
-            }
+            needFrontSlo = logoutRequests
+                    .stream()
+                    .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED);
         }
 
-        final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        if (this.followServiceRedirects && service != null) {
+        final String paramName = StringUtils.defaultIfEmpty(logoutProperties.getRedirectParameter(), CasProtocolConstants.PARAMETER_SERVICE);
+        LOGGER.debug("Using parameter name [{}] to detect destination service, if any", paramName);
+        final String service = request.getParameter(paramName);
+        LOGGER.debug("Located target service [{}] for redirection after logout", paramName);
+
+        if (logoutProperties.isFollowServiceRedirects() && StringUtils.isNotBlank(service)) {
             final Service webAppService = webApplicationServiceFactory.createService(service);
             final RegisteredService rService = this.servicesManager.findServiceBy(webAppService);
 
             if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()) {
+                LOGGER.debug("Redirecting to service [{}]", service);
                 WebUtils.putLogoutRedirectUrl(context, service);
+            } else {
+                LOGGER.warn("Cannot redirect to [{}] given the service is unauthorized to use CAS. "
+                        + "Ensure the service is registered with CAS and is enabled to allowed access", service);
             }
+        } else {
+            LOGGER.debug("No target service is located for redirection after logout, or CAS is not allowed to follow redirects after logout");
         }
 
         // there are some front services to logout, perform front SLO
         if (needFrontSlo) {
+            LOGGER.debug("Proceeding forward with front-channel single logout");
             return new Event(this, FRONT_EVENT);
         }
+        LOGGER.debug("Moving forward to finish the logout process");
         return new Event(this, FINISH_EVENT);
-    }
-
-    public void setFollowServiceRedirects(final boolean followServiceRedirects) {
-        this.followServiceRedirects = followServiceRedirects;
     }
 }

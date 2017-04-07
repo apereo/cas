@@ -8,14 +8,16 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
@@ -32,11 +34,12 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
         extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseSamlProfileSamlResponseBuilder.class);
 
     /**
      * The Saml object encoder.
      */
-    protected SamlObjectSigner samlObjectSigner;
+    protected BaseSamlObjectSigner samlObjectSigner;
 
     /**
      * The Velocity engine factory.
@@ -51,7 +54,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     private SamlObjectEncrypter samlObjectEncrypter;
 
     public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
-                                              final SamlObjectSigner samlObjectSigner,
+                                              final BaseSamlObjectSigner samlObjectSigner,
                                               final VelocityEngineFactory velocityEngineFactory,
                                               final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                               final SamlObjectEncrypter samlObjectEncrypter) {
@@ -68,10 +71,13 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                    final HttpServletResponse response,
                    final org.jasig.cas.client.validation.Assertion casAssertion,
                    final SamlRegisteredService service,
-                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        final Assertion assertion = buildSamlAssertion(authnRequest, request, response, casAssertion, service, adaptor);
-        final T finalResponse = buildResponse(assertion, casAssertion, authnRequest, service, adaptor, request, response);
-        return encodeFinalResponse(request, response, service, adaptor, finalResponse);
+                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                   final String binding) throws SamlException {
+        final Assertion assertion = buildSamlAssertion(authnRequest, request, response,
+                casAssertion, service, adaptor, binding);
+        final T finalResponse = buildResponse(assertion, casAssertion, authnRequest,
+                service, adaptor, request, response, binding);
+        return encodeFinalResponse(request, response, service, adaptor, finalResponse, binding);
     }
 
     /**
@@ -82,16 +88,18 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
      * @param service       the service
      * @param adaptor       the adaptor
      * @param finalResponse the final response
+     * @param binding       the binding
      * @return the response
      */
     protected T encodeFinalResponse(final HttpServletRequest request,
                                     final HttpServletResponse response,
                                     final SamlRegisteredService service,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                    final T finalResponse) {
+                                    final T finalResponse,
+                                    final String binding) {
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        logger.debug("RelayState is [{}]", relayState);
-        return encode(service, finalResponse, response, adaptor, relayState);
+        LOGGER.debug("RelayState is [{}]", relayState);
+        return encode(service, finalResponse, response, adaptor, relayState, binding);
     }
 
     /**
@@ -103,6 +111,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
      * @param casAssertion the cas assertion
      * @param service      the service
      * @param adaptor      the adaptor
+     * @param binding      the binding
      * @return the assertion
      */
     protected Assertion buildSamlAssertion(final AuthnRequest authnRequest,
@@ -110,8 +119,10 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                            final HttpServletResponse response,
                                            final org.jasig.cas.client.validation.Assertion casAssertion,
                                            final SamlRegisteredService service,
-                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        return this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
+                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                           final String binding) {
+        return this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response,
+                casAssertion, service, adaptor, binding);
     }
 
 
@@ -125,6 +136,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
      * @param adaptor      the adaptor
      * @param request      the request
      * @param response     the response
+     * @param binding      the binding
      * @return the response
      * @throws SamlException the saml exception
      */
@@ -134,7 +146,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                        SamlRegisteredService service,
                                        SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                        HttpServletRequest request,
-                                       HttpServletResponse response) throws SamlException;
+                                       HttpServletResponse response,
+                                       String binding) throws SamlException;
 
     /**
      * Build entity issuer issuer.
@@ -152,9 +165,10 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
      *
      * @param service      the service
      * @param samlResponse the saml response
-     * @param httpResponse the http response
+     * @param httpResponse the http response; may be null to mute encoding.
      * @param adaptor      the adaptor
      * @param relayState   the relay state
+     * @param binding      the binding
      * @return the t
      * @throws SamlException the saml exception
      */
@@ -162,7 +176,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                 T samlResponse,
                                 HttpServletResponse httpResponse,
                                 SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                String relayState) throws SamlException;
+                                String relayState,
+                                String binding) throws SamlException;
 
     /**
      * Encrypt assertion.
@@ -181,12 +196,12 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         try {
             if (service.isEncryptAssertions()) {
-                logger.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
+                LOGGER.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
                 final EncryptedAssertion encryptedAssertion =
                         this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
                 return encryptedAssertion;
             }
-            logger.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
+            LOGGER.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
             return assertion;
         } catch (final Exception e) {
             throw new SamlException("Unable to marshall assertion for encryption", e);

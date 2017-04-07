@@ -1,0 +1,33 @@
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+
+description = "Apereo CAS Spring Cloud Configuration Server"
+
+javadoc {
+    enabled false
+}
+
+bootRun {
+    addResources = true
+    jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5005,server=y,suspend=n"]
+}
+
+war {
+    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+}
+
+springBoot  {
+    mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
+}
+
+bootRepackage {
+    mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
+    enabled = !rootProject.publishReleases
+}
+
+dependencies {
+    providedRuntime libraries.springboottomcat
+    runtimeOnly libraries.springsecuritywebconfig
+    compile libraries.springcloudconfigserver
+    compile project(":core:cas-server-core-util")
+}

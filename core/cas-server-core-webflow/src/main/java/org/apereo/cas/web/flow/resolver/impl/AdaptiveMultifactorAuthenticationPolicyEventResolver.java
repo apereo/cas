@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
@@ -13,18 +14,18 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -38,7 +39,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdaptiveMultifactorAuthenticationPolicyEventResolver.class);
+    
     private final GeoLocationService geoLocationService;
     private final Map multifactorMap;
 
@@ -46,7 +48,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                                                                 final CentralAuthenticationService centralAuthenticationService,
                                                                 final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
                                                                 final CookieGenerator warnCookieGenerator,
-                                                                final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                                final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                                 final MultifactorAuthenticationProviderSelector selector,
                                                                 final CasConfigurationProperties casProperties, final GeoLocationService geoLocationService) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
@@ -61,26 +63,26 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         final Authentication authentication = WebUtils.getAuthentication(context);
 
         if (service == null || authentication == null) {
-            logger.debug("No service or authentication is available to determine event for principal");
+            LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
         
 
         if (multifactorMap == null || multifactorMap.isEmpty()) {
-            logger.debug("Adaptive authentication is not configured to require multifactor authentication");
+            LOGGER.debug("Adaptive authentication is not configured to require multifactor authentication");
             return null;
         }
         
         final Map<String, MultifactorAuthenticationProvider> providerMap = 
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            logger.error("No multifactor authentication providers are available in the application context");
+            LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
         
         final Set<Event> providerFound = checkRequireMultifactorProvidersForRequest(context, service, authentication);
         if (providerFound != null && !providerFound.isEmpty()) {
-            logger.warn("Found multifactor authentication providers {} required for this authentication event", providerFound);
+            LOGGER.warn("Found multifactor authentication providers [{}] required for this authentication event", providerFound);
             return providerFound;
         }
         
@@ -92,7 +94,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                                                                   final Authentication authentication) {
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         final String clientIp = clientInfo.getClientIpAddress();
-        logger.debug("Located client IP address as [{}]", clientIp);
+        LOGGER.debug("Located client IP address as [{}]", clientIp);
 
         final String agent = WebUtils.getHttpServletRequestUserAgent();
         final Map<String, MultifactorAuthenticationProvider> providerMap =
@@ -105,7 +107,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, mfaMethod);
 
             if (!providerFound.isPresent()) {
-                logger.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] is absent in the configuration.",
+                LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] is absent in the configuration.",
                             mfaMethod, pattern, mfaMethod);
                 throw new AuthenticationException();
             }
@@ -128,7 +130,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             if (loc != null) {
                 final String address = loc.build();
                 if (address.matches(pattern)) {
-                    logger.debug("Current address [{}] at [{}] matches the provided pattern {} for "
+                    LOGGER.debug("Current address [{}] at [{}] matches the provided pattern [{}] for "
                                     + "adaptive authentication and is required to use [{}]",
                             address, clientIp, pattern, mfaMethod);
                     return true;
@@ -140,7 +142,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
     private boolean checkUserAgentOrClientIp(final String clientIp, final String agent, final String mfaMethod, final String pattern) {
         if (agent.matches(pattern) || clientIp.matches(pattern)) {
-            logger.debug("Current user agent [{}] at [{}] matches the provided pattern {} for "
+            LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
                          + "adaptive authentication and is required to use [{}]",
                         agent, clientIp, pattern, mfaMethod);
 
@@ -153,13 +155,13 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                                   final Authentication authentication, 
                                   final MultifactorAuthenticationProvider provider) {
         if (provider.isAvailable(service)) {
-            logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
+            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
                     provider, service.getName());
             final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, provider));
             return Collections.singleton(event);
         }
-        logger.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
+        LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
         return null;
     }
 

@@ -1,8 +1,11 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceMessageHandler;
-import org.apereo.cas.logout.LogoutManagerImpl;
+import org.apereo.cas.logout.DefaultLogoutManager;
+import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
@@ -32,9 +35,6 @@ import static org.mockito.Mockito.*;
 public class FrontChannelLogoutActionTests {
 
     private static final String FLOW_EXECUTION_KEY = "12234";
-    private static final String TICKET_ID = "ST-XXX";
-    private static final String TEST_URL = "https://www.apereo.org";
-
     private FrontChannelLogoutAction frontChannelLogoutAction;
 
     private RequestContext requestContext;
@@ -49,8 +49,10 @@ public class FrontChannelLogoutActionTests {
     @Before
     public void onSetUp() throws Exception {
         final DefaultSingleLogoutServiceMessageHandler handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
-                new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(), false);
-        final LogoutManagerImpl logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator(), handler, false);
+                new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(), false,
+                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+        final DefaultLogoutManager logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
+                handler, false, mock(LogoutExecutionPlan.class));
 
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
 

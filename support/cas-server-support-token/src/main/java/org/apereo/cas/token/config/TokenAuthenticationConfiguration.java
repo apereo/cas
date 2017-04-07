@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
@@ -78,12 +78,8 @@ public class TokenAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
         final TokenAuthenticationProperties token = casProperties.getAuthn().getToken();
-        final TokenAuthenticationHandler h = new TokenAuthenticationHandler();
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(token.getPrincipalTransformation()));
-        h.setPrincipalFactory(tokenPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        h.setName(token.getName());
-        return h;
+        return new TokenAuthenticationHandler(token.getName(), servicesManager, tokenPrincipalFactory(),
+                Beans.newPrincipalNameTransformer(token.getPrincipalTransformation()));
     }
 
     @Bean

@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration imp
         credentials.put("bob", "62831");
         credentials.put("mallory", "14142");
 
-        plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(users));
+        plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler("", null, null, null, users));
         plan.registerAuthenticationHandler(new TestOneTimePasswordAuthenticationHandler(credentials));
     }
 }

@@ -18,3 +18,5 @@ Trusted authentication handler support is enabled by including the following dep
   <version>${cas.version}</version>
 </dependency>
 ```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#trusted-authentication).

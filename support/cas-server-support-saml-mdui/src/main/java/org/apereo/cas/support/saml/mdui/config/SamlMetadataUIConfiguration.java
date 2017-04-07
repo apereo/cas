@@ -15,12 +15,15 @@ import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.StaticMetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserAction;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurer;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,6 +52,8 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlMetadataUIConfiguration {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataUIConfiguration.class);
+
     private static final String DEFAULT_SEPARATOR = "::";
 
     @Autowired
@@ -72,7 +77,8 @@ public class SamlMetadataUIConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @javax.annotation.Resource(name = "webApplicationServiceFactory")
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     @ConditionalOnMissingBean(name = "samlMetadataUIWebConfigurer")
@@ -81,14 +87,18 @@ public class SamlMetadataUIConfiguration {
         return new SamlMetadataUIWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, samlMetadataUIParserAction());
     }
 
+    @ConditionalOnMissingBean(name = "samlMetadataUIParserAction")
     @Bean
     public Action samlMetadataUIParserAction() {
-        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        return new SamlMetadataUIParserAction(parameter, metadataAdapter(), serviceFactory, servicesManager);
+        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(),
+                SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter(),
+                serviceFactory, servicesManager);
     }
 
+    @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
     @Bean
-    public MetadataResolverAdapter metadataAdapter() {
+    public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter() {
         return new ChainingMetadataResolverAdapter(Arrays.asList(getStaticMetadataResolverAdapter(), getDynamicMetadataResolverAdapter()));
     }
 
@@ -117,13 +127,25 @@ public class SamlMetadataUIConfiguration {
                 filters.add(new RequiredValidUntilFilter(casProperties.getSamlMetadataUi().getMaxValidity()));
             }
 
-            if (StringUtils.isNotEmpty(signingKey)) {
+            boolean addResource = true;
+            if (StringUtils.isNotBlank(signingKey)) {
                 final SignatureValidationFilter sigFilter = SamlUtils.buildSignatureValidationFilter(this.resourceLoader, signingKey);
-                sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
-                filters.add(sigFilter);
+                if (sigFilter != null) {
+                    sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
+                    filters.add(sigFilter);
+                } else {
+                    LOGGER.warn("Failed to locate the signing key [{}] for [{}]", signingKey, metadataFile);
+                    addResource = false;
+                }
             }
             chain.setFilters(filters);
-            resources.put(this.resourceLoader.getResource(metadataFile), chain);
+
+            final Resource resource = this.resourceLoader.getResource(metadataFile);
+            if (addResource && ResourceUtils.doesResourceExist(resource)) {
+                resources.put(resource, chain);
+            } else {
+                LOGGER.warn("Skipping metadata [{}]; Either the resource cannot be retrieved or its signing key is missing", metadataFile);
+            }
         }));
     }
 

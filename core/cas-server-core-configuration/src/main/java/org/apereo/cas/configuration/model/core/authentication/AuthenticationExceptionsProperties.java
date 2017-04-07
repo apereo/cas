@@ -11,13 +11,13 @@ import java.util.List;
  */
 
 public class AuthenticationExceptionsProperties {
-    private List exceptions = new ArrayList<>();
+    private List<Class<? extends Exception>> exceptions = new ArrayList<>();
 
-    public List getExceptions() {
+    public List<Class<? extends Exception>> getExceptions() {
         return exceptions;
     }
 
-    public void setExceptions(final List exceptions) {
+    public void setExceptions(final List<Class<? extends Exception>> exceptions) {
         this.exceptions = exceptions;
     }
 }

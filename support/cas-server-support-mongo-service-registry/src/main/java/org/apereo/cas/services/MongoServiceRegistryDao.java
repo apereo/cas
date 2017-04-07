@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -42,36 +41,28 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
         this.dropCollection = dropCollection;
-    }
 
-    public MongoServiceRegistryDao() {
-    }
-
-    /**
-     * Initialized registry post construction.
-     * Will decide if the configured collection should
-     * be dropped and recreated.
-     */
-    @PostConstruct
-    public void init() {
         Assert.notNull(this.mongoTemplate);
 
         if (this.dropCollection) {
-            LOGGER.debug("Dropping database collection: {}", this.collectionName);
+            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: {}", this.collectionName);
+            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
     }
 
+    public MongoServiceRegistryDao() {
+    }
+    
     @Override
     public boolean delete(final RegisteredService svc) {
         if (this.findServiceById(svc.getId()) != null) {
             this.mongoTemplate.remove(svc, this.collectionName);
-            LOGGER.debug("Removed registered service: {}", svc);
+            LOGGER.debug("Removed registered service: [{}]", svc);
             return true;
         }
         return false;
@@ -101,7 +92,7 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
             ((AbstractRegisteredService) svc).setId(svc.hashCode());
         }
         this.mongoTemplate.save(svc, this.collectionName);
-        LOGGER.debug("Saved registered service: {}", svc);
+        LOGGER.debug("Saved registered service: [{}]", svc);
         return this.findServiceById(svc.getId());
     }
 

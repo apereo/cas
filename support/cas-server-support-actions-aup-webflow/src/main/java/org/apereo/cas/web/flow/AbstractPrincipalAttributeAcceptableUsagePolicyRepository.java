@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -20,32 +20,39 @@ import java.util.Map;
 public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1883808902502739L;
 
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPrincipalAttributeAcceptableUsagePolicyRepository.class);
 
     /**
      * Single-valued attribute in LDAP that describes whether the policy
      * has been accepted. Its value must match either TRUE/FALSE.
      */
     protected String aupAttributeName;
-    
-    private TicketRegistrySupport ticketRegistrySupport;
+
+    /**
+     * Ticket registry support.
+     */
+    protected TicketRegistrySupport ticketRegistrySupport;
+
+    public AbstractPrincipalAttributeAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
+    }
 
     @Override
-    public boolean verify(final RequestContext requestContext, final Credential credential) {
-        final Principal principal = getPrincipal(requestContext);
+    public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
+        final Principal principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
         final Map<String, Object> attributes = principal.getAttributes();
-        logger.debug("Principal attributes found for {} are {}", principal.getId(), attributes);
+        LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
 
         if (attributes != null && attributes.containsKey(this.aupAttributeName)) {
             final Object value = attributes.get(this.aupAttributeName);
-            logger.debug("Evaluating attribute value {} found for {}", value, this.aupAttributeName);
+            LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, this.aupAttributeName);
             if (value.toString().equalsIgnoreCase(Boolean.TRUE.toString())) {
-                return true;
+                return Pair.of(true, principal);
             }
         }
 
-        logger.warn("Usage policy has not been accepted by {}", principal.getId());
-        return false;
+        LOGGER.warn("Usage policy has not been accepted by [{}]", principal.getId());
+        return Pair.of(false, principal);
     }
 
     public void setAupAttributeName(final String aupAttributeName) {
@@ -54,20 +61,5 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
 
     public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
         this.ticketRegistrySupport = ticketRegistrySupport;
-    }
-
-    /**
-     * Gets the authenticated principal.
-     *
-     * @param requestContext the request context
-     * @return the principal
-     */
-    protected Principal getPrincipal(final RequestContext requestContext) {
-        final String tgt = WebUtils.getTicketGrantingTicketId(requestContext);
-        if (StringUtils.isBlank(tgt)) {
-            throw new IllegalArgumentException("No ticket-granting ticket could be found in the context");
-        }
-
-        return this.ticketRegistrySupport.getAuthenticatedPrincipalFrom(tgt);
     }
 }

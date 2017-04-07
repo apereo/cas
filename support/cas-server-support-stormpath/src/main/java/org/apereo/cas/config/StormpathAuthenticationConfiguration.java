@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.StormpathAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -46,14 +46,11 @@ public class StormpathAuthenticationConfiguration {
     public AuthenticationHandler stormpathAuthenticationHandler() {
         final StormpathProperties stormpath = casProperties.getAuthn().getStormpath();
 
-        final StormpathAuthenticationHandler handler =
-                new StormpathAuthenticationHandler(stormpath.getApiKey(), stormpath.getApplicationId(), stormpath.getSecretkey());
+        final StormpathAuthenticationHandler handler = new StormpathAuthenticationHandler(stormpath.getName(), servicesManager, stormpathPrincipalFactory(),
+                null, stormpath.getApiKey(), stormpath.getApplicationId(), stormpath.getSecretkey());
 
         handler.setPasswordEncoder(Beans.newPasswordEncoder(stormpath.getPasswordEncoder()));
         handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(stormpath.getPrincipalTransformation()));
-        handler.setPrincipalFactory(stormpathPrincipalFactory());
-        handler.setServicesManager(servicesManager);
-        handler.setName(stormpath.getName());
         return handler;
     }
 

@@ -48,25 +48,23 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
             if (message.isSignatureVerified()) {
                 LOGGER.debug("Signature verification request successful.");
                 return new ModelAndView(getSuccessView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
-            } else {
-                LOGGER.debug("Signature verification request unsuccessful.");
-                return new ModelAndView(getFailureView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
             }
-        } else {
-            // we should probably fail here(?),
-            // since we only deal OpenId signature verification
-            return super.handleRequestInternal(request, response);
+            LOGGER.debug("Signature verification request unsuccessful.");
+            return new ModelAndView(getFailureView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
         }
+        // we should probably fail here(?),
+        // since we only deal OpenId signature verification
+        return super.handleRequestInternal(request, response);
     }
     
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         final String openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
-            LOGGER.info("Handling request. openid.mode : {}", openIdMode);
+            LOGGER.info("Handling request. openid.mode : [{}]", openIdMode);
             return true;
         }
-        LOGGER.info("Cannot handle request. openid.mode : {}", openIdMode);
+        LOGGER.info("Cannot handle request. openid.mode : [{}]", openIdMode);
         return false;
     }
 }

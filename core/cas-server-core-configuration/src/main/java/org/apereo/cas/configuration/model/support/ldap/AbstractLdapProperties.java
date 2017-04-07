@@ -37,7 +37,25 @@ public abstract class AbstractLdapProperties {
          */
         EDirectory
     }
-    
+
+    /**
+     * The ldap connection pool passivator.
+     */
+    public enum LdapConnectionPoolPassivator {
+        /**
+         * No passivator.
+         */
+        NONE,
+        /**
+         * Close passivator.
+         */
+        CLOSE,
+        /**
+         * Bind passivator.
+         */
+        BIND
+    }
+
     /**
      * Describe ldap connection strategies.
      */
@@ -72,9 +90,12 @@ public abstract class AbstractLdapProperties {
 
     private int minPoolSize = 3;
     private int maxPoolSize = 10;
+    private String poolPassivator = "BIND";
 
     private boolean validateOnCheckout = true;
     private boolean validatePeriodically = true;
+    
+    private String validateTimeout = "PT5S";
     private String validatePeriod = "PT5M";
 
     private boolean failFast = true;
@@ -108,6 +129,22 @@ public abstract class AbstractLdapProperties {
     private Validator validator = new Validator();
 
     private String name;
+
+    public String getValidateTimeout() {
+        return validateTimeout;
+    }
+
+    public void setValidateTimeout(final String validateTimeout) {
+        this.validateTimeout = validateTimeout;
+    }
+
+    public String getPoolPassivator() {
+        return poolPassivator;
+    }
+
+    public void setPoolPassivator(final String poolPassivator) {
+        this.poolPassivator = poolPassivator;
+    }
 
     public String getConnectionStrategy() {
         return connectionStrategy;

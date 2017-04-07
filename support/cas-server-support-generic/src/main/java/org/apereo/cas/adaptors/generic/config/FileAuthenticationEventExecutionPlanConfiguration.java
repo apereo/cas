@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
-import org.apereo.cas.config.support.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -59,16 +59,14 @@ public class FileAuthenticationEventExecutionPlanConfiguration implements Authen
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
         final FileAuthenticationProperties fileProperties = casProperties.getAuthn().getFile();
-        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getFilename(), fileProperties.getSeparator());
-        h.setPrincipalFactory(filePrincipalFactory());
-        h.setServicesManager(servicesManager);
+        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory(),
+                fileProperties.getFilename(), fileProperties.getSeparator());
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(fileProperties.getPasswordEncoder()));
         if (filePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
-        h.setName(fileProperties.getName());
 
         return h;
     }

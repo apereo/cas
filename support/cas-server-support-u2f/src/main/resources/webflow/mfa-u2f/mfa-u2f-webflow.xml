@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <var name="credential" class="org.apereo.cas.adaptors.u2f.U2FTokenCredential" />
+    
+    <on-start>
+        <evaluate expression="initialFlowSetupAction" />
+    </on-start>
+
+    <action-state id="initializeLoginForm">
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="accountRegistrationCheck"/>
+    </action-state>
+
+    <action-state id="accountRegistrationCheck">
+        <evaluate expression="u2fCheckAccountRegistrationAction" />
+        <transition on="register" to="viewRegistrationU2f"/>
+        <transition on="success" to="viewLoginForm"/>
+    </action-state>
+    
+    <view-state id="viewRegistrationU2f" view="casU2fRegistrationView">
+        <on-entry>
+            <evaluate expression="u2fStartRegistrationAction" />
+            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
+        </on-entry>
+        <transition on="submit" to="saveRegistration"/>
+    </view-state>
+
+    <action-state id="saveRegistration">
+        <evaluate expression="u2fSaveAccountRegistrationAction" />
+        <transition on="success" to="viewLoginForm"/>
+    </action-state>
+
+    <view-state id="viewLoginForm" view="casU2fLoginView" model="credential">
+        <binder>
+            <binding property="token" required="true"/>
+        </binder>
+        <on-entry>
+            <evaluate expression="u2fStartAuthenticationAction" />
+            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
+        </on-entry>
+        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
+    </view-state>
+    
+    <action-state id="realSubmit">
+        <evaluate expression="u2fAuthenticationWebflowAction" />
+        <transition on="success" to="success" />
+        <transition on="error" to="initializeLoginForm" />
+    </action-state>
+
+    <end-state id="success" />
+
+</flow>
