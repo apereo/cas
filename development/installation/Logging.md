@@ -47,6 +47,51 @@ server environment.
 </Configuration>
 ```
 
+## Log File Rotation
+
+The default configuration specifies triggering policies for rolling over logs, at startup, size or at specific times. These policies apply to `RollingFile` appenders.
+
+For example, the following XML fragment defines policies that rollover the log when the JVM starts, when the log size reaches `10` megabytes, and when the current date no longer matches the log’s start date.
+
+```xml
+<RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
+                    filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
+    ...
+    <Policies>
+        <OnStartupTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+        <TimeBasedTriggeringPolicy />
+    </Policies>
+    ...
+</RollingFile>
+```
+
+The triggering policies determines **if** a rollover should be performed and rollover strategy can also be design to indicate **how** that should be done. If no strategy is configured, the default will be used.
+
+To find more a comprehensive documentation, please [review the guides here](http://logging.apache.org).
+
+### Rollover Strategy
+
+Customized rollover strategies provide a delete action that gives users more control over what files are deleted at rollover time than what was possible with the DefaultRolloverStrategy max attribute. The delete action lets users configure one or more conditions that select the files to delete relative to a base directory.
+
+For example, the following appender at rollover time deletes all files under the base directory that match the `*/*.log` glob and are `7` days old or older.
+
+```xml
+<RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
+             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
+    ...
+    <DefaultRolloverStrategy max="5">
+        <Delete basePath="${baseDir}" maxDepth="2">
+            <IfFileName glob="*/*.log" />
+            <IfLastModified age="7d" />
+        </Delete>
+    </DefaultRolloverStrategy>
+    ...
+</RollingFile>
+```
+
+To find more a comprehensive documentation, please [review the guides here](http://logging.apache.org).
+
 ## Log Data Sanitation
 
 For security purposes, CAS by default will attempt to remove TGT and PGT ids from all log data.
