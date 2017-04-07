@@ -78,7 +78,7 @@ public class ThreadContextMDCServletFilter implements Filter {
             });
 
             Collections.list(request.getAttributeNames())
-                    .forEach(a -> addContextAttribute(a, request.getAttribute(a).toString()));
+                    .forEach(a -> addContextAttribute(a, request.getAttribute(a)));
 
             final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
             if (StringUtils.isNotBlank(cookieValue)) {
@@ -93,9 +93,9 @@ public class ThreadContextMDCServletFilter implements Filter {
         }
     }
 
-    private void addContextAttribute(final String attributeName, final String value) {
-        if (StringUtils.isNotBlank(value)) {
-            MDC.put(attributeName, value);
+    private void addContextAttribute(final String attributeName, final Object value) {
+        if (value != null && StringUtils.isNotBlank(value.toString())) {
+            MDC.put(attributeName, value.toString());
         }
     }
 
