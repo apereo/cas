@@ -97,7 +97,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         try {
             response.setContentType(MediaType.TEXT_PLAIN_VALUE);
             if (!verifyAccessTokenRequest(request, response)) {
-                LOGGER.error("Access token request verification fails");
+                LOGGER.error("Access token request verification failed");
                 OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_REQUEST);
                 return;
             }
@@ -107,14 +107,14 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                 responseHolder = examineAndExtractAccessTokenGrantRequest(request, response);
                 LOGGER.debug("Creating access token for [{}]", responseHolder);
             } catch (final Exception e) {
-                LOGGER.error("Access token request verification fails", e);
+                LOGGER.error("Could not identify and extract access token request", e);
                 OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_GRANT);
                 return;
             }
 
             final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
             final AccessToken accessToken = generateAccessToken(responseHolder);
-            LOGGER.debug("Access token: [{}]", accessToken);
+            LOGGER.debug("Access token generated is: [{}]", accessToken);
 
             RefreshToken refreshToken = null;
             if (responseHolder.isGenerateRefreshToken()) {
@@ -192,12 +192,14 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     private boolean verifyAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.AUTHORIZATION_CODE, OAuth20GrantTypes.PASSWORD, OAuth20GrantTypes.REFRESH_TOKEN)) {
+            LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
 
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
         final Optional<UserProfile> profile = manager.get(true);
         if (profile == null || !profile.isPresent()) {
+            LOGGER.warn("Could not locate authenticated profile for this request");
             return false;
         }
 
@@ -207,18 +209,22 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
             final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
 
+            LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
+            
             return uProfile instanceof OAuthClientProfile
                     && this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
                     && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
                     && this.validator.checkCallbackValid(registeredService, redirectUri);
 
         }
+        
         if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
             return uProfile instanceof OAuthClientProfile && this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN);
         }
 
         if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD)) {
             final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+            LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
             final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             return uProfile instanceof OAuthUserProfile
