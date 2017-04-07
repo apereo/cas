@@ -480,13 +480,16 @@ If none is specified, one is automatically detected and used by CAS.
 On startup, CAS will display a banner along with some diagnostics info.
 In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
 
-## Admin Status Endpoints
+## Spring Boot Endpoints
 
 The following properties describe access controls and settings for the `/status`
-endpoint of CAS which provides administrative functionality and oversight into the CAS software.
+endpoint of CAS which provides administrative functionality and oversight into the CAS software. These endpoints are specific to Spring Boot.
+
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
+# Globally control whether endpoints are enabled
+# or marked as sesitive to require authentication.
 # endpoints.enabled=true
 # endpoints.sensitive=true
 
@@ -496,8 +499,9 @@ management.security.roles=ACTUATOR,ADMIN
 management.security.sessions=if_required
 
 # Each of the below endpoints can either be disabled
-# or can be individually marked as 'sensitive' (or not)
-# to enable authentication.
+# or can be marked as 'sensitive' (or not)
+# to enable authentication. The global flags above control
+# everything and individual settings below act as overrides.
 
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
@@ -539,7 +543,10 @@ The format of the file is as such:
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
 - `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
 
-### CAS Endpoints Security
+### CAS Endpoints
+
+These are the collection of endpoints that are specific to CAS.
+To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
 # cas.monitor.endpoints.enabled=false
@@ -585,9 +592,9 @@ The format of the file is as such:
 # cas.monitor.endpoints.singleSignOnStatus.sensitive=true
 ```
 
-### Admin Status Endpoints With Spring Security
+### Securing Endpoints With Spring Security
 
-Status endpoints may also be secured by Spring Security. You can define the authentication scheme/paths via the below settings.
+Monitoring endpoints may also be secured by Spring Security. You can define the authentication scheme/paths via the below settings.
 
 ```properties
 # security.ignored[0]=/**
@@ -686,7 +693,8 @@ security.basic.realm=CAS
 
 ## Web Application Session
 
-Control the web application session behavior.
+Control the CAS web application session behavior 
+as it's treated by the underlying servlet container engine.
 
 ```properties
 # server.session.timeout=300
@@ -702,14 +710,24 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 
 ```properties
 spring.thymeleaf.encoding=UTF-8
-spring.thymeleaf.cache=false
+
+# Controls  whether views should be cached by CAS.
+# When turned on, ad-hoc chances to views are not automatically
+# picked up by CAS until a restart. Small incremental performance
+# improvements are to be expected.
+spring.thymeleaf.cache=true
+
+# Instruct CAS to locate views at the below location.
+# This location can be externalized to a directory outside
+# the cas web application.
 # spring.thymeleaf.prefix=classpath:/templates/
 
+# Indicate where core CAS-protocol related views should be found
+# in the view directory hierarchy.
 # cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
 # cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
 # cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
 # cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
-
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
 
