@@ -333,11 +333,6 @@ server.port=8443
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
-
-server.maxHttpHeaderSize=2097152
-server.useForwardHeaders=true
-server.connectionTimeout=20000
-
 # server.ssl.ciphers=
 # server.ssl.clientAuth=
 # server.ssl.enabled=
@@ -349,6 +344,10 @@ server.connectionTimeout=20000
 # server.ssl.trustStorePassword=
 # server.ssl.trustStoreProvider=
 # server.ssl.trustStoreType=
+
+server.maxHttpHeaderSize=2097152
+server.useForwardHeaders=true
+server.connectionTimeout=20000
 ```
 
 ### Embedded Tomcat Container
@@ -446,7 +445,6 @@ backend cas-pool
   option forwardfor
   cookie SERVERID-cas insert indirect nocache
   server cas-1 192.168.2.10:8080 check cookie cas-1
-
 ```
 
 #### Extended Access Log Valve
