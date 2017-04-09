@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -33,7 +34,7 @@ import java.util.List;
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
     private static final long serialVersionUID = -6231886395225437320L;
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSamlNameIdBuilder.class);
-    
+
     public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
     }
@@ -63,9 +64,61 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                final Assertion assertion,
                                final SamlRegisteredService service,
                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+        final List<String> supportedNameFormats = getSupportedNameIdFormats(service, adaptor);
+        final String requiredNameFormat = getRequiredNameIdFormatIfAny(authnRequest);
+        validateRequiredNameIdFormatIfAny(authnRequest, adaptor, supportedNameFormats, requiredNameFormat);
+        return determineNameId(authnRequest, assertion, supportedNameFormats);
+    }
 
+    /**
+     * Validate required name id format if any.
+     *
+     * @param authnRequest         the authn request
+     * @param adaptor              the adaptor
+     * @param supportedNameFormats the supported name formats
+     * @param requiredNameFormat   the required name format
+     */
+    protected void validateRequiredNameIdFormatIfAny(final AuthnRequest authnRequest,
+                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                     final List<String> supportedNameFormats,
+                                                     final String requiredNameFormat) {
+        if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
+            LOGGER.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
+                    requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest), adaptor.getEntityId());
+            throw new SamlException("Required NameID format cannot be provided because it is not supported");
+        }
+    }
+
+    /**
+     * Gets required name id format if any.
+     *
+     * @param authnRequest the authn request
+     * @return the required name id format if any
+     */
+    protected String getRequiredNameIdFormatIfAny(final AuthnRequest authnRequest) {
+        String requiredNameFormat = null;
+        if (authnRequest.getNameIDPolicy() != null) {
+            requiredNameFormat = authnRequest.getNameIDPolicy().getFormat();
+            LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
+            if (NameID.ENCRYPTED.equals(requiredNameFormat)) {
+                LOGGER.warn("Encrypted NameID formats are not supported");
+                requiredNameFormat = null;
+            }
+        }
+        return requiredNameFormat;
+    }
+
+    /**
+     * Gets supported name id formats.
+     *
+     * @param service the service
+     * @param adaptor the adaptor
+     * @return the supported name id formats
+     */
+    protected List<String> getSupportedNameIdFormats(final SamlRegisteredService service,
+                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         final List<String> supportedNameFormats = adaptor.getSupportedNameIdFormats();
-        LOGGER.debug("Metadata for [{}] declares support for the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
+        LOGGER.debug("Metadata for [{}] declares the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
 
         if (supportedNameFormats.isEmpty()) {
             supportedNameFormats.add(NameIDType.TRANSIENT);
@@ -76,49 +129,88 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             supportedNameFormats.add(0, fmt);
             LOGGER.debug("Added required nameId format [{}] based on saml service configuration for [{}]", fmt, service.getServiceId());
         }
+        return supportedNameFormats;
+    }
 
-        String requiredNameFormat = null;
-        if (authnRequest.getNameIDPolicy() != null) {
-            requiredNameFormat = authnRequest.getNameIDPolicy().getFormat();
-            LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
-            if (NameID.ENCRYPTED.equals(requiredNameFormat)) {
-                LOGGER.warn("Encrypted NameID formats are not supported");
-                requiredNameFormat = null;
-            }
-        }
-
-        if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
-            LOGGER.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
-                    requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest), adaptor.getEntityId());
-            throw new SamlException("Required NameID format cannot be provided because it is not supported");
-        }
-
+    /**
+     * Determine name id name id.
+     *
+     * @param authnRequest         the authn request
+     * @param assertion            the assertion
+     * @param supportedNameFormats the supported name formats
+     * @return the name id
+     */
+    protected NameID determineNameId(final AuthnRequest authnRequest,
+                                     final Assertion assertion,
+                                     final List<String> supportedNameFormats) {
         for (final String nameFormat : supportedNameFormats) {
-            try {
-                LOGGER.debug("Evaluating NameID format [{}]", nameFormat);
-
-                final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
-                encoder.setNameFormat(nameFormat);
-                if (authnRequest.getNameIDPolicy() != null) {
-                    final String qualifier = authnRequest.getNameIDPolicy().getSPNameQualifier();
-                    LOGGER.debug("NameID qualifier is set to [{}]", qualifier);
-                    encoder.setNameQualifier(qualifier);
-                }
-                final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
-                final IdPAttributeValue<String> value = new StringAttributeValue(assertion.getPrincipal().getName());
-                LOGGER.debug("NameID attribute value is set to [{}]", assertion.getPrincipal().getName());
-                attribute.setValues(Collections.singletonList(value));
-                LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
-
-                final NameID nameid = encoder.encode(attribute);
-                LOGGER.debug("Final NameID encoded is [{}] with value [{}]", nameid.getFormat(), nameid.getValue());
+            LOGGER.debug("Evaluating NameID format [{}]", nameFormat);
+            final NameID nameid = encodeNameIdBasedOnNameFormat(authnRequest, assertion, nameFormat);
+            if (nameid != null) {
                 return nameid;
-
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
             }
         }
         return null;
+    }
+
+    /**
+     * Encode name id based on name format name id.
+     *
+     * @param authnRequest the authn request
+     * @param assertion    the assertion
+     * @param nameFormat   the name format
+     * @return the name id
+     * @throws AttributeEncodingException the attribute encoding exception
+     */
+    protected NameID encodeNameIdBasedOnNameFormat(final AuthnRequest authnRequest,
+                                                   final Assertion assertion,
+                                                   final String nameFormat) {
+        try {
+            final IdPAttribute attribute = prepareNameIdAttribute(assertion);
+            final SAML2StringNameIDEncoder encoder = prepareNameIDEncoder(authnRequest, nameFormat, attribute);
+            LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
+            final NameID nameid = encoder.encode(attribute);
+            LOGGER.debug("Final NameID encoded with format [{}] has value [{}]", nameid.getFormat(), nameid.getValue());
+            return nameid;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Prepare name id attribute id p attribute.
+     *
+     * @param assertion the assertion
+     * @return the id p attribute
+     */
+    protected IdPAttribute prepareNameIdAttribute(final Assertion assertion) {
+        final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
+        final IdPAttributeValue<String> value = new StringAttributeValue(assertion.getPrincipal().getName());
+        LOGGER.debug("NameID attribute value is set to [{}]", assertion.getPrincipal().getName());
+        attribute.setValues(Collections.singletonList(value));
+        return attribute;
+    }
+
+    /**
+     * Prepare name id encoder saml 2 string name id encoder.
+     *
+     * @param authnRequest the authn request
+     * @param nameFormat   the name format
+     * @param attribute    the attribute
+     * @return the saml 2 string name id encoder
+     */
+    protected SAML2StringNameIDEncoder prepareNameIDEncoder(final AuthnRequest authnRequest,
+                                                            final String nameFormat,
+                                                            final IdPAttribute attribute) {
+        final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
+        encoder.setNameFormat(nameFormat);
+        if (authnRequest.getNameIDPolicy() != null) {
+            final String qualifier = authnRequest.getNameIDPolicy().getSPNameQualifier();
+            LOGGER.debug("NameID qualifier is set to [{}]", qualifier);
+            encoder.setNameQualifier(qualifier);
+        }
+        return encoder;
     }
 
     private String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
