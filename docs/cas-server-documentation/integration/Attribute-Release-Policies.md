@@ -242,7 +242,7 @@ that receives a list of parameters. The collection of current attributes in proc
 as well as a logger object are passed to this function. The result must produce a
 map whose `key`s are attributes names and whose `value`s are a list of attribute values.
 
-## Chaining Policies
+### Chaining Policies
 
 Attribute release policies can be chained together to process multiple rules.
 The order of policy invocation is the same as the definition order defined for the service itself.
