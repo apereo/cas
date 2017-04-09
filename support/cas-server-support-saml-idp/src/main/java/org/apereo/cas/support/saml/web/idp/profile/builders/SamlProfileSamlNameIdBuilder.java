@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
-import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -160,14 +159,13 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param assertion    the assertion
      * @param nameFormat   the name format
      * @return the name id
-     * @throws AttributeEncodingException the attribute encoding exception
      */
     protected NameID encodeNameIdBasedOnNameFormat(final AuthnRequest authnRequest,
                                                    final Assertion assertion,
                                                    final String nameFormat) {
         try {
             final IdPAttribute attribute = prepareNameIdAttribute(assertion);
-            final SAML2StringNameIDEncoder encoder = prepareNameIDEncoder(authnRequest, nameFormat, attribute);
+            final SAML2StringNameIDEncoder encoder = prepareNameIdEncoder(authnRequest, nameFormat, attribute);
             LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
             final NameID nameid = encoder.encode(attribute);
             LOGGER.debug("Final NameID encoded with format [{}] has value [{}]", nameid.getFormat(), nameid.getValue());
@@ -200,7 +198,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param attribute    the attribute
      * @return the saml 2 string name id encoder
      */
-    protected SAML2StringNameIDEncoder prepareNameIDEncoder(final AuthnRequest authnRequest,
+    protected SAML2StringNameIDEncoder prepareNameIdEncoder(final AuthnRequest authnRequest,
                                                             final String nameFormat,
                                                             final IdPAttribute attribute) {
         final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
