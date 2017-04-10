@@ -84,7 +84,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
 
         final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getGrantingTicket();
         if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
-            LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired", ticketGrantingTicket, accessTokenTicket);
+            LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found", ticketGrantingTicket, accessTokenTicket);
             this.ticketRegistry.deleteTicket(accessToken);
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
