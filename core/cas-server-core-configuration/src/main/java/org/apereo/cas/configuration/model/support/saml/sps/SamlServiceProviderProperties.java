@@ -410,6 +410,7 @@ public class SamlServiceProviderProperties {
         public Slack() {
             setNameIdFormat("persistent");
             setAttributes(Arrays.asList("User.Email", "User.Username", "first_name", "last_name"));
+            setNameIdAttribute("employeeId");
         }
     }
 
