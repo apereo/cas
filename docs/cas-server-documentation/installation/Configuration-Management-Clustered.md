@@ -53,6 +53,8 @@ Support is enabled by including the following dependency in the final overlay:
 </dependency>
 ```
 
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#rabbitmq).
+
 ## Kafka
 
 Apache Kafka is an open-source message broker project developed by the Apache Software Foundation.
@@ -69,3 +71,5 @@ Support is enabled by including the following dependency in the final overlay:
      <version>${cas.version}</version>
 </dependency>
 ```
+
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#kafka).

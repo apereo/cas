@@ -202,7 +202,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-mongo</artifactId>
+     <artifactId>cas-server-core-configuration-cloud-mongo</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -228,6 +228,22 @@ To see the relevant list of CAS properties for this feature, please [review this
 CAS is also able to use [Vault](https://www.vaultproject.io/) to
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).
 
+##### Apache ZooKeeper
+
+CAS is also able to use [Apache ZooKeeper](https://zookeeper.apache.org/) to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-cloud-zookeeper</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#zookeeper).
+
 ##### DynamoDb
 
 CAS is also able to use [DynamoDb](https://aws.amazon.com/dynamodb/) to locate properties and settings.
@@ -237,7 +253,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-dynamodb</artifactId>
+     <artifactId>cas-server-core-configuration-cloud-dynamodb</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -263,7 +279,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-jdbc</artifactId>
+     <artifactId>cas-server-core-configuration-cloud-jdbc</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
