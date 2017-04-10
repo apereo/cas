@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -12,6 +14,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
@@ -62,7 +65,10 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
         final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context);
         RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
-        return new AccessTokenRequestDataHolder(service, authentication, null, false, registeredService);
+        
+        final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(
+                new DefaultAuthenticationResult(authentication, service));
+        return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket);
     }
 
     @Override
