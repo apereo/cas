@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
@@ -15,9 +16,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
@@ -71,8 +72,15 @@ public class OAuth20CasAuthenticationBuilder {
      * @param context           the context
      * @return the service
      */
-    public Service buildService(final RegisteredService registeredService, final J2EContext context) {
-        return webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+    public Service buildService(final OAuthRegisteredService registeredService, final J2EContext context) {
+        String id = context.getRequestHeader(CasProtocolConstants.PARAMETER_SERVICE);
+        if (StringUtils.isBlank(id)) {
+            id = context.getRequestHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
+        }
+        if (StringUtils.isBlank(id)) {
+            id = registeredService.getClientId();
+        }
+        return webApplicationServiceServiceFactory.createService(id);
     }
 
     /**
@@ -83,7 +91,7 @@ public class OAuth20CasAuthenticationBuilder {
      * @param context           the context
      * @return the built authentication
      */
-    public Authentication build(final UserProfile profile, final RegisteredService registeredService, final J2EContext context) {
+    public Authentication build(final UserProfile profile, final OAuthRegisteredService registeredService, final J2EContext context) {
         final Service service = buildService(registeredService, context);
         final Principal newPrincipal =
                 this.scopeToAttributesFilter.filter(service,
