@@ -242,7 +242,24 @@ that receives a list of parameters. The collection of current attributes in proc
 as well as a logger object are passed to this function. The result must produce a
 map whose `key`s are attributes names and whose `value`s are a list of attribute values.
 
-## Chaining Policies
+You are also allowed to stuff inlined groovy scripts into the `scriptFile` attribute. The script
+has access to the collection of resolved `attributes` as well as a `logger` object.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy",
+    "scriptFile" : "groovy { return attributes }"
+  }
+}
+```
+
+### Chaining Policies
 
 Attribute release policies can be chained together to process multiple rules.
 The order of policy invocation is the same as the definition order defined for the service itself.
@@ -265,7 +282,7 @@ The order of policy invocation is the same as the definition order defined for t
 }
 ```
 
-## Attribute Filters
+## Attribute Value Filters
 
 While each policy defines what principal attributes may be allowed for a given service,
 there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**.

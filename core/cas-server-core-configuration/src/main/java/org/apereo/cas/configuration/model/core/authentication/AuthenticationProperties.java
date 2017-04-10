@@ -23,6 +23,7 @@ import org.apereo.cas.configuration.model.support.rest.RestAuthenticationPropert
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
+import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
@@ -42,6 +43,9 @@ import java.util.List;
  */
 public class AuthenticationProperties {
 
+    @NestedConfigurationProperty
+    private SurrogateAuthenticationProperties surrogate = new SurrogateAuthenticationProperties();
+    
     @NestedConfigurationProperty
     private GraphicalUserAuthenticationProperties gua = new GraphicalUserAuthenticationProperties();
     
@@ -142,6 +146,14 @@ public class AuthenticationProperties {
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
 
     private boolean releaseProtocolAttributes = true;
+
+    public SurrogateAuthenticationProperties getSurrogate() {
+        return surrogate;
+    }
+
+    public void setSurrogate(final SurrogateAuthenticationProperties surrogate) {
+        this.surrogate = surrogate;
+    }
 
     public boolean isReleaseProtocolAttributes() {
         return releaseProtocolAttributes;

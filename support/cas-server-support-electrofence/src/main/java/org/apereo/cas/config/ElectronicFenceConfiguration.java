@@ -47,7 +47,6 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
-import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -67,14 +66,10 @@ public class ElectronicFenceConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -102,7 +97,7 @@ public class ElectronicFenceConfiguration {
     @Autowired
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -130,11 +125,17 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")
     @Bean
+    @Autowired
     @RefreshScope
-    public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
-        return new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector, authenticationRiskEvaluator(),
+    public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
+                                                                                   final AuthenticationSystemSupport authenticationSystemSupport) {
+        final CasWebflowEventResolver r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
+                servicesManager,
+                ticketRegistrySupport, warnCookieGenerator,
+                authenticationRequestServiceSelectionStrategies, selector, authenticationRiskEvaluator(),
                 authenticationRiskMitigator(), casProperties);
+        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r, 0);
+        return r;
     }
 
     @ConditionalOnMissingBean(name = "blockAuthenticationContingencyPlan")
@@ -239,10 +240,5 @@ public class ElectronicFenceConfiguration {
         if (StringUtils.isNotBlank(sms.getText()) && StringUtils.isNotBlank(sms.getFrom())) {
             b.getNotifiers().add(authenticationRiskSmsNotifier());
         }
-    }
-
-    @PostConstruct
-    public void init() {
-        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(riskAwareAuthenticationWebflowEventResolver(), 0);
     }
 }

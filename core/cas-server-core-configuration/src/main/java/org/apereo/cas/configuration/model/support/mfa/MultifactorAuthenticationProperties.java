@@ -659,12 +659,20 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String apiUrl;
         private String phoneAttribute = "phone";
         private String mailAttribute = "mail";
+        private String countryCode = "1";
         private boolean forceVerification = true;
         private boolean trustedDeviceEnabled;
 
-
         public Authy() {
             setId("mfa-authy");
+        }
+
+        public String getCountryCode() {
+            return countryCode;
+        }
+
+        public void setCountryCode(final String countryCode) {
+            this.countryCode = countryCode;
         }
 
         public boolean isTrustedDeviceEnabled() {

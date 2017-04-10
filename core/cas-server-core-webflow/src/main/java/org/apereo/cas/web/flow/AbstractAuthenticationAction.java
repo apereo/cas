@@ -28,7 +28,8 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
     private final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
     public AbstractAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
-                                        final CasWebflowEventResolver webflowEventResolver, final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
+                                        final CasWebflowEventResolver webflowEventResolver, 
+                                        final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
         this.initialAuthenticationAttemptWebflowEventResolver = delegatingWebflowEventResolver;
         this.serviceTicketRequestWebflowEventResolver = webflowEventResolver;
         this.adaptiveAuthenticationPolicy = adaptiveAuthenticationPolicy;

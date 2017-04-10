@@ -57,8 +57,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
-
-    private static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
+    
     private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
 
@@ -207,10 +206,36 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         final AuthenticationResult authenticationResult =
                 this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-
-        boolean issueTicketGrantingTicket = true;
         final Authentication authentication = authenticationResult.getAuthentication();
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        final TicketGrantingTicket tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
+        
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        WebUtils.putAuthenticationResult(authenticationResult, context);
+        WebUtils.putAuthentication(tgt.getAuthentication(), context);
+
+        if (addWarningMessagesToMessageContextIfNeeded(tgt, context.getMessageContext())) {
+            return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS);
+        }
+
+        return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+    }
+
+    private TicketGrantingTicket createOrUpdateTicketGrantingTicket(final AuthenticationResult authenticationResult, 
+                                                                    final Authentication authentication, final String ticketGrantingTicket) {
+        final TicketGrantingTicket tgt;
+        if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
+            tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+        } else {
+            tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
+            tgt.getAuthentication().update(authentication);
+            this.centralAuthenticationService.updateTicket(tgt);
+        }
+        return tgt;
+    }
+
+    private boolean shouldIssueTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) {
+        boolean issueTicketGrantingTicket = true;
         if (StringUtils.isNotBlank(ticketGrantingTicket)) {
             LOGGER.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
             final Authentication authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
@@ -224,26 +249,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 LOGGER.debug("Resulting authentication is different from the context");
             }
         }
-
-        final TicketGrantingTicket tgt;
-        if (issueTicketGrantingTicket) {
-            tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-        } else {
-            tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
-            tgt.getAuthentication().update(authentication);
-            this.centralAuthenticationService.updateTicket(tgt);
-        }
-
-
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        WebUtils.putAuthenticationResult(authenticationResult, context);
-        WebUtils.putAuthentication(tgt.getAuthentication(), context);
-
-        if (addWarningMessagesToMessageContextIfNeeded(tgt, context.getMessageContext())) {
-            return newEvent(SUCCESS_WITH_WARNINGS);
-        }
-
-        return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        return issueTicketGrantingTicket;
     }
 
     /**
@@ -368,9 +374,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
                         return Collections.singleton(event);
-                    } else {
-                        LOGGER.debug("Provider [{}] could not be verified", provider);
-                    }
+                    } 
+                    LOGGER.debug("Provider [{}] could not be verified", provider);
                 } else {
                     LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
                 }

@@ -99,26 +99,31 @@ public class CasCoreAuditConfiguration {
         return bean;
     }
 
+    @ConditionalOnMissingBean(name = "authenticationActionResolver")
     @Bean
     public AuditActionResolver authenticationActionResolver() {
         return new DefaultAuditActionResolver("_SUCCESS", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
+    @ConditionalOnMissingBean(name = "ticketCreationActionResolver")
     @Bean
     public AuditActionResolver ticketCreationActionResolver() {
         return new DefaultAuditActionResolver("_CREATED", "_NOT_CREATED");
     }
 
+    @ConditionalOnMissingBean(name = "ticketValidationActionResolver")
     @Bean
     public AuditActionResolver ticketValidationActionResolver() {
         return new DefaultAuditActionResolver("D", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
+    @ConditionalOnMissingBean(name = "returnValueResourceResolver")
     @Bean
     public AuditResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();
     }
 
+    @ConditionalOnMissingBean(name = "nullableReturnValueResourceResolver")
     @Bean
     public AuditResourceResolver nullableReturnValueResourceResolver() {
         return new AuditResourceResolver() {
@@ -149,6 +154,7 @@ public class CasCoreAuditConfiguration {
         };
     }
 
+    @ConditionalOnMissingBean(name = "auditActionResolverMap")
     @Bean
     public Map<String, AuditActionResolver> auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
@@ -178,6 +184,7 @@ public class CasCoreAuditConfiguration {
         return map;
     }
 
+    @ConditionalOnMissingBean(name = "auditResourceResolverMap")
     @Bean
     public Map<String, AuditResourceResolver> auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
@@ -197,16 +204,19 @@ public class CasCoreAuditConfiguration {
         return map;
     }
 
+    @ConditionalOnMissingBean(name = "auditablePrincipalResolver")
     @Bean
     public PrincipalResolver auditablePrincipalResolver(@Qualifier("principalIdProvider") final PrincipalIdProvider principalIdProvider) {
         return new ThreadLocalPrincipalResolver(principalIdProvider);
     }
 
+    @ConditionalOnMissingBean(name = "ticketResourceResolver")
     @Bean
     public AuditResourceResolver ticketResourceResolver() {
         return new TicketAsFirstParameterResourceResolver();
     }
 
+    @ConditionalOnMissingBean(name = "messageBundleAwareResourceResolver")
     @Bean
     public AuditResourceResolver messageBundleAwareResourceResolver() {
         return new MessageBundleAwareResourceResolver();

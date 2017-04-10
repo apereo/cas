@@ -15,7 +15,8 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 public class InitialAuthenticationAction extends AbstractAuthenticationAction {
 
     public InitialAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
-                                       final CasWebflowEventResolver webflowEventResolver, final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
+                                       final CasWebflowEventResolver webflowEventResolver, 
+                                       final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
         super(delegatingWebflowEventResolver, webflowEventResolver, adaptiveAuthenticationPolicy);
     }
 }
