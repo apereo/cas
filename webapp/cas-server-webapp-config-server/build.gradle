@@ -33,7 +33,4 @@ dependencies {
     compile libraries.springcloudconfigserver
 
     compile project(":core:cas-server-core-util")
-
-   compile project(":core:cas-server-core-configuration-cloud-zookeeper")
-
 }
