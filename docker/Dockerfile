@@ -66,11 +66,6 @@ WORKDIR /cas-overlay
 
 ENV JAVA_HOME /opt/jre-home
 ENV PATH $PATH:$JAVA_HOME/bin:.
-
-ENTRYPOINT echo $SOURCE_BRANCH
-CMD echo ${SOURCE_BRANCH}
-CMD ["sh", "-c", "echo ${SOURCE_BRANCH}"]
-
 RUN ./mvnw clean package -T 10 -Dcas.version=5.0.4
 
 CMD ["cas-overlay/bin/run-cas.sh"]
