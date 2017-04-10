@@ -21,7 +21,7 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
     /**
      * Event id to signal the policy needs to be accepted.
      **/
-    private static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
+    protected static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
 
     private final AcceptableUsagePolicyRepository repository;
 
