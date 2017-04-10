@@ -51,6 +51,7 @@ RUN mkdir -p /cas-overlay/bin \
 COPY cas-overlay/bin/*.* /cas-overlay/bin/
 COPY cas-overlay/maven/*.* /cas-overlay/maven/
 COPY cas-overlay/mvnw /cas-overlay/mvnw
+COPY cas-overlay/pom.xml /cas-overlay/pom.xml
 
 RUN chmod -R +x cas-overlay/bin \
     && chmod +x cas-overlay/mvnw \
@@ -65,6 +66,10 @@ WORKDIR /cas-overlay
 
 ENV JAVA_HOME /opt/jre-home
 ENV PATH $PATH:$JAVA_HOME/bin:.
+
+RUN echo $SOURCE_BRANCH
+RUN echo $DOCKER_TAG
+RUN echo $IMAGE_NAME
 
 RUN ./mvnw clean package -T 10 -Dcas.version=5.0.4
 
