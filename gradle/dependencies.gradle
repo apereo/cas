@@ -1804,6 +1804,25 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.apache.curator", module: "curator-recipes")
+                    exclude(group: "org.apache.curator", module: "curator-framework")
+                    exclude(group: "org.apache.curator", module: "curator-client")
+                    exclude(group: "com.google.guava", module: "guava")
+                    force = true
+                },
+                dependencies.create("org.apache.curator:curator-recipes:3.3.0") {
+                    exclude(group: "org.apache.zookeeper", module: "zookeeper")
+                    exclude(group: "com.google.guava", module: "guava")
+                    force = true
+                },
+                dependencies.create("org.apache.curator:curator-framework:3.3.0") {
+                    exclude(group: "org.apache.zookeeper", module: "zookeeper")
+                    exclude(group: "com.google.guava", module: "guava")
+                    force = true
+                },
+                dependencies.create("org.apache.curator:curator-client:3.3.0") {
+                    exclude(group: "org.apache.zookeeper", module: "zookeeper")
+                    exclude(group: "com.google.guava", module: "guava")
                     force = true
                 }
         ],
@@ -1815,6 +1834,7 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.apache.curator", module: "curator-recipes")
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-zookeeper:$springCloudZookeeperVersion") {
@@ -1825,6 +1845,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.apache.curator", module: "curator-recipes")
                     force = true
                 }
         ],
