@@ -64,6 +64,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
         final ActionState actionState = createActionState(flow, STATE_ID_AUP_CHECK, createAcceptableUsagePolicyAction("verify"));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        createStateDefaultTransition(actionState, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        actionState.getTransitionSet().add(createTransition(AcceptableUsagePolicyFormAction.EVENT_ID_MUST_ACCEPT, 
+                ACCEPTABLE_USAGE_POLICY_VIEW));
     }
 }
