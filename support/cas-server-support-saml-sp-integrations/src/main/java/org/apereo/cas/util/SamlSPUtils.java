@@ -118,6 +118,10 @@ public final class SamlSPUtils {
 
             LOGGER.debug("Registering saml service [{}] by entity id [{}]", sp.getName(), entityIds);
             service.setServiceId(entityIds);
+
+            service.setSignAssertions(sp.isSignAssertions());
+            service.setSignResponses(sp.isSignResponses());
+            
             return service;
         } catch (final Exception e) {
             throw Throwables.propagate(e);

@@ -36,6 +36,24 @@ public class SamlServiceProviderProperties {
     private EasyIep easyIep = new EasyIep();
     private InfiniteCampus infiniteCampus = new InfiniteCampus();
     private SecuringTheHuman sansSth = new SecuringTheHuman();
+    private Slack slack = new Slack();
+    private Zendesk zendesk = new Zendesk();
+
+    public Zendesk getZendesk() {
+        return zendesk;
+    }
+
+    public void setZendesk(final Zendesk zendesk) {
+        this.zendesk = zendesk;
+    }
+
+    public Slack getSlack() {
+        return slack;
+    }
+
+    public void setSlack(final Slack slack) {
+        this.slack = slack;
+    }
 
     public SecuringTheHuman getSansSth() {
         return sansSth;
@@ -248,6 +266,10 @@ public class SamlServiceProviderProperties {
     }
 
     public static class Workday extends AbstractSamlSPProperties {
+        public Workday() {
+            setSignAssertions(true);
+            setSignResponses(true);
+        }
     }
 
     public static class Salesforce extends AbstractSamlSPProperties {
@@ -272,6 +294,8 @@ public class SamlServiceProviderProperties {
         public Office365() {
             setNameIdAttribute("scopedImmutableID");
             setAttributes(Arrays.asList("IDPEmail,ImmutableID"));
+            setSignResponses(false);
+            setSignAssertions(true);
         }
     }
 
@@ -285,6 +309,8 @@ public class SamlServiceProviderProperties {
         public Webex() {
             setNameIdAttribute(EMAIL);
             setAttributes(Arrays.asList("firstName,lastName"));
+            setSignResponses(false);
+            setSignAssertions(true);
         }
     }
 
@@ -373,10 +399,25 @@ public class SamlServiceProviderProperties {
             setAttributes(Arrays.asList("employeeId"));
         }
     }
-    
+
     public static class SecuringTheHuman extends AbstractSamlSPProperties {
         public SecuringTheHuman() {
             setAttributes(Arrays.asList("firstName", "lastName", EMAIL, "scopedUserId", "department", "reference"));
+        }
+    }
+
+    public static class Slack extends AbstractSamlSPProperties {
+        public Slack() {
+            setNameIdFormat("persistent");
+            setAttributes(Arrays.asList("User.Email", "User.Username", "first_name", "last_name"));
+        }
+    }
+
+    public static class Zendesk extends AbstractSamlSPProperties {
+        public Zendesk() {
+            setNameIdFormat("emailAddress");
+            setNameIdAttribute("email");
+            setAttributes(Arrays.asList("organization", "tags", "phone", "role"));
         }
     }
 }
