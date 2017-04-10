@@ -18,6 +18,24 @@ public abstract class AbstractSamlSPProperties {
     private List<String> attributes = new ArrayList<>();
     private String signatureLocation;
     private List<String> entityIds = new ArrayList<>();
+    private boolean signResponses = true;
+    private boolean signAssertions;
+
+    public boolean isSignResponses() {
+        return signResponses;
+    }
+
+    public void setSignResponses(final boolean signResponses) {
+        this.signResponses = signResponses;
+    }
+
+    public boolean isSignAssertions() {
+        return signAssertions;
+    }
+
+    public void setSignAssertions(final boolean signAssertions) {
+        this.signAssertions = signAssertions;
+    }
 
     public List<String> getEntityIds() {
         return entityIds;

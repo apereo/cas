@@ -6,17 +6,17 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link CasSamlSPTestShibConfiguration}.
+ * This is {@link CasSamlSPZendeskConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.0
  */
-@Configuration("casSamlSPTestShibConfiguration")
+@Configuration("casSamlSPZendeskConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasSamlSPTestShibConfiguration extends BaseCasSamlSPConfiguration {
+public class CasSamlSPZendeskConfiguration extends BaseCasSamlSPConfiguration {
 
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
-        return casProperties.getSamlSP().getTestShib();
+        return casProperties.getSamlSP().getZendesk();
     }
 }
