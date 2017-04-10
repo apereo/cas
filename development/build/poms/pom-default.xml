@@ -2753,6 +2753,10 @@
           <groupId>org.apache.tomcat.embed</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jul-to-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>jboss-logging</artifactId>
           <groupId>org.jboss.logging</groupId>
         </exclusion>
@@ -2813,6 +2817,10 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>ognl</artifactId>
           <groupId>ognl</groupId>
         </exclusion>
@@ -2833,12 +2841,20 @@
           <groupId>org.jboss.spec.javax.servlet</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>log4j-over-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
           <artifactId>spring-boot-starter-logging</artifactId>
           <groupId>org.springframework.boot</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jul-to-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -2861,12 +2877,12 @@
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>jboss-logging</artifactId>
-          <groupId>org.jboss.logging</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>jul-to-slf4j</artifactId>
           <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jboss-logging</artifactId>
+          <groupId>org.jboss.logging</groupId>
         </exclusion>
         <exclusion>
           <artifactId>logback-classic</artifactId>
@@ -3065,6 +3081,10 @@
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jul-to-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>slf4j-api</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
@@ -3129,6 +3149,10 @@
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>jul-to-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>slf4j-api</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
@@ -3191,6 +3215,10 @@
         <exclusion>
           <artifactId>spring-core</artifactId>
           <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jul-to-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
           <artifactId>jackson-annotations</artifactId>
