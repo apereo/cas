@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
+import javax.persistence.PostLoad;
 import java.util.Locale;
 
 /**
@@ -30,9 +31,21 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     @Override
     public final String resolveUsername(final Principal principal, final Service service) {
         final String username = resolveUsernameInternal(principal, service);
+        if (canonicalizationMode == null) {
+            return username;
+        }
         return CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(username.trim(), Locale.getDefault());
     }
 
+    /**
+     * Initializes the registered service with default values
+     * for fields that are unspecified. Only triggered by JPA.
+     */
+    @PostLoad
+    public void initialize() {
+        setCanonicalizationMode(CaseCanonicalizationMode.NONE.name());
+    }
+    
     /**
      * Resolve username internal string.
      *
@@ -49,7 +62,6 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     public void setCanonicalizationMode(final String canonicalizationMode) {
         this.canonicalizationMode = canonicalizationMode;
     }
-
 
     @Override
     public boolean equals(final Object obj) {

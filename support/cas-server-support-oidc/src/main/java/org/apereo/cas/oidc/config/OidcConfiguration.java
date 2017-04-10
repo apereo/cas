@@ -84,7 +84,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
@@ -118,7 +117,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("oauthCasAuthenticationBuilder")
     private OAuth20CasAuthenticationBuilder authenticationBuilder;
-    
+
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
@@ -141,10 +140,6 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("oauth20AuthenticationServiceSelectionStrategy")
@@ -192,7 +187,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -271,7 +266,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory,
                 oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
-                ticketGrantingTicketCookieGenerator, authenticationBuilder);
+                ticketGrantingTicketCookieGenerator, authenticationBuilder, centralAuthenticationService);
     }
 
     @Bean
@@ -303,8 +298,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory")
-                                                                   final OidcServerDiscoverySettings discoverySettings) {
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") 
+                                                                       final OidcServerDiscoverySettings discoverySettings) {
         return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
                 oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
@@ -333,13 +328,17 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 authenticationBuilder);
     }
 
+    @Autowired
     @RefreshScope
     @Bean
-    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        return new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
+    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
+                                                                                     final AuthenticationSystemSupport authenticationSystemSupport) {
+        final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
                 multifactorAuthenticationProviderSelector);
+        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
+        return r;
     }
 
     @Bean
@@ -428,8 +427,4 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 .collect(Collectors.toSet());
     }
 
-    @PostConstruct
-    public void initOidcConfig() {
-        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(oidcAuthenticationContextWebflowEventResolver());
-    }
 }

@@ -333,11 +333,6 @@ server.port=8443
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
-
-server.maxHttpHeaderSize=2097152
-server.useForwardHeaders=true
-server.connectionTimeout=20000
-
 # server.ssl.ciphers=
 # server.ssl.clientAuth=
 # server.ssl.enabled=
@@ -349,6 +344,10 @@ server.connectionTimeout=20000
 # server.ssl.trustStorePassword=
 # server.ssl.trustStoreProvider=
 # server.ssl.trustStoreType=
+
+server.maxHttpHeaderSize=2097152
+server.useForwardHeaders=true
+server.connectionTimeout=20000
 ```
 
 ### Embedded Tomcat Container
@@ -446,7 +445,6 @@ backend cas-pool
   option forwardfor
   cookie SERVERID-cas insert indirect nocache
   server cas-1 192.168.2.10:8080 check cookie cas-1
-
 ```
 
 #### Extended Access Log Valve
@@ -480,13 +478,16 @@ If none is specified, one is automatically detected and used by CAS.
 On startup, CAS will display a banner along with some diagnostics info.
 In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
 
-## Admin Status Endpoints
+## Spring Boot Endpoints
 
 The following properties describe access controls and settings for the `/status`
-endpoint of CAS which provides administrative functionality and oversight into the CAS software.
+endpoint of CAS which provides administrative functionality and oversight into the CAS software. These endpoints are specific to Spring Boot.
+
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
+# Globally control whether endpoints are enabled
+# or marked as sesitive to require authentication.
 # endpoints.enabled=true
 # endpoints.sensitive=true
 
@@ -496,8 +497,9 @@ management.security.roles=ACTUATOR,ADMIN
 management.security.sessions=if_required
 
 # Each of the below endpoints can either be disabled
-# or can be individually marked as 'sensitive' (or not)
-# to enable authentication.
+# or can be marked as 'sensitive' (or not)
+# to enable authentication. The global flags above control
+# everything and individual settings below act as overrides.
 
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
@@ -539,7 +541,10 @@ The format of the file is as such:
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
 - `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
 
-### CAS Endpoints Security
+### CAS Endpoints
+
+These are the collection of endpoints that are specific to CAS.
+To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
 # cas.monitor.endpoints.enabled=false
@@ -585,9 +590,9 @@ The format of the file is as such:
 # cas.monitor.endpoints.singleSignOnStatus.sensitive=true
 ```
 
-### Admin Status Endpoints With Spring Security
+### Securing Endpoints With Spring Security
 
-Status endpoints may also be secured by Spring Security. You can define the authentication scheme/paths via the below settings.
+Monitoring endpoints may also be secured by Spring Security. You can define the authentication scheme/paths via the below settings.
 
 ```properties
 # security.ignored[0]=/**
@@ -686,7 +691,8 @@ security.basic.realm=CAS
 
 ## Web Application Session
 
-Control the web application session behavior.
+Control the CAS web application session behavior 
+as it's treated by the underlying servlet container engine.
 
 ```properties
 # server.session.timeout=300
@@ -702,14 +708,24 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 
 ```properties
 spring.thymeleaf.encoding=UTF-8
-spring.thymeleaf.cache=false
+
+# Controls  whether views should be cached by CAS.
+# When turned on, ad-hoc chances to views are not automatically
+# picked up by CAS until a restart. Small incremental performance
+# improvements are to be expected.
+spring.thymeleaf.cache=true
+
+# Instruct CAS to locate views at the below location.
+# This location can be externalized to a directory outside
+# the cas web application.
 # spring.thymeleaf.prefix=classpath:/templates/
 
+# Indicate where core CAS-protocol related views should be found
+# in the view directory hierarchy.
 # cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
 # cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
 # cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
 # cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
-
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
 
@@ -1125,6 +1141,38 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.rejectIpAddresses=127.+
 
 # cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
+```
+
+## Surrogate Authentication
+
+Authenticate on behalf of another user.
+To learn more about this topic, [please review this guide](Surrogate-Authentication.html).
+
+```properties
+# cas.authn.surrogate.separator=+
+```
+
+### Static Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.simple.surrogates.casuser=jsmith,jsmith2
+# cas.authn.surrogate.simple.surrogates.casuser2=jsmith4,jsmith2
+```
+
+### JSON Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.json.config.location=file:/etc/cas/config/surrogates.json
+```
+
+### LDAP Surrogate Accounts
+
+```properties
+# cas.authn.surrogate.ldap.baseDn=
+# cas.authn.surrogate.ldap.searchFilter=principal={user}
+# cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
+# cas.authn.surrogate.ldap.memberAttributeName=memberOf
+# cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
 ```
 
 ## Risk-based Authentication
@@ -2452,6 +2500,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.apiUrl=
 # cas.authn.mfa.authy.phoneAttribute=phone
 # cas.authn.mfa.authy.mailAttribute=mail
+# cas.authn.mfa.authy.countryCode=1
 # cas.authn.mfa.authy.forceVerification=true
 # cas.authn.mfa.authy.trustedDeviceEnabled=true
 # cas.authn.mfa.authy.name=
@@ -2488,8 +2537,8 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 Name formats for an individual attribute can be mapped to a number of pre-defined formats, or a custom format of your own choosing.
 A given attribute that is to be encoded in the final SAML response may contain any of the following name formats:
 
-| Type                 | Description                            
-|----------------------|----------------------------------------------------------
+| Type                 | Description
+|----------------------|----------------------------------------------------------------------------
 | `basic`              | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
 | `uri`                | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.
 | `unspecified`        | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
@@ -2530,7 +2579,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.algs.overrideBlackListedSignatureSigningAlgorithms=
 # cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms=
 ```
-
 
 ## SAML SPs
 
@@ -2582,6 +2630,55 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.adobeCloud.name=Adobe Creative Cloud
 # cas.samlSP.adobeCloud.description=Adobe Creative Cloud Integration
 # cas.samlSP.adobeCloud.attributes=Email,FirstName,LastName
+```
+
+### Securing The Human
+
+```properties
+# cas.samlSP.sansSth.metadata=/path/to/sth-metadata.xml
+# cas.samlSP.sansSth.name=Securing The Human
+# cas.samlSP.sansSth.description=Securing The Human Integration
+# cas.samlSP.sansSth.attributes=email,firstName,lastName,scopedUserId,department,reference
+```
+
+### Easy IEP
+
+```properties
+# cas.samlSP.easyIep.metadata=/path/to/easyiep-metadata.xml
+# cas.samlSP.easyIep.name=Easy IEP
+# cas.samlSP.easyIep.description=Easy IEP Integration
+# cas.samlSP.easyIep.attributes=employeeId
+```
+
+### Infinite Campus
+
+```properties
+# cas.samlSP.infiniteCampus.metadata=/path/to/infinitecampus-metadata.xml
+# cas.samlSP.infiniteCampus.name=Infinite Campus
+# cas.samlSP.infiniteCampus.description=Infinite Campus Integration
+# cas.samlSP.infiniteCampus.attributes=employeeId
+```
+
+### Slack
+
+```properties
+# cas.samlSP.slack.metadata=/path/to/slack-metadata.xml
+# cas.samlSP.slack.name=Slack
+# cas.samlSP.slack.description=Slack Integration
+# cas.samlSP.slack.attributes=User.Email,User.Username,first_name,last_name
+# cas.samlSP.slack.nameIdFormat=persistent
+# cas.samlSP.slack.nameIdAttribute=employeeId
+```
+
+### Zendesk
+
+```properties
+# cas.samlSP.zendesk.metadata=/path/to/zendesk-metadata.xml
+# cas.samlSP.zendesk.name=Zendesk
+# cas.samlSP.zendesk.description=Zendesk Integration
+# cas.samlSP.zendesk.attributes=organization,tags,phone,role
+# cas.samlSP.zendesk.nameIdFormat=emailAddress
+# cas.samlSP.zendesk.nameIdAttribute=email
 ```
 
 ### Arc GIS

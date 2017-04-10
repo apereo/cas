@@ -51,11 +51,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
                                          final Integer order) {
         this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName();
         this.servicesManager = servicesManager;
-        if (principalFactory == null) {
-            this.principalFactory = new DefaultPrincipalFactory();
-        } else {
-            this.principalFactory = principalFactory;
-        }
+        this.principalFactory = principalFactory == null ? new DefaultPrincipalFactory() : principalFactory;
         if (order == null) {
             this.order = RandomUtils.nextInt(1, Integer.MAX_VALUE);
         } else {

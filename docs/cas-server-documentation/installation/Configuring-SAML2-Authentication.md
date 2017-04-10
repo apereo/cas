@@ -28,7 +28,7 @@ The following CAS endpoints respond to supported SAML2 profiles:
 SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 
 | Parameter                         | Description
-|-----------------------------------|------------------------------------------
+|-----------------------------------|-----------------------------------------------------------------
 | `providerId`                      | Required. Entity ID of the service provider.
 | `shire`                           | Optional. Response location (ACS URL) of the service provider.
 | `target`                          | Optional. Relay state.
@@ -163,6 +163,9 @@ The following fields are available for SAML services:
 | `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entities descriptors that contain no entity descriptors. Default is `true`.
 | `metadataCriteriaRemoveRolelessEntityDescriptors` | Controls whether to keep entity descriptors that contain no roles. Default is `true`.
 | `attributeNameFormats` | Map that defines attribute name formats for a given attribute name to be encoded in the SAML response.
+| `nameIdQualifier` | If defined, will overwrite the `NameQualifier` attribute of the produced subject's name id.
+| `serviceProviderNameIdQualifier` | If defined, will overwrite the `SPNameQualifier` attribute of the produced subject's name id.
+
 
 ### Metadata Aggregates
 

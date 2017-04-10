@@ -19,6 +19,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * This is {@link CasCoreAuthenticationPolicyConfiguration}.
  *
@@ -38,21 +42,29 @@ public class CasCoreAuthenticationPolicyConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationPolicy")
     @Bean
-    public AuthenticationPolicy authenticationPolicy() {
+    public Collection<AuthenticationPolicy> authenticationPolicy() {
         final AuthenticationPolicyProperties police = casProperties.getAuthn().getPolicy();
         if (police.getReq().isEnabled()) {
-            return new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll());
+            final List<AuthenticationPolicy> policies = new ArrayList<>();
+            policies.add(new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll()));
+            return policies;
         }
 
         if (police.getAll().isEnabled()) {
-            return new AllAuthenticationPolicy();
+            final List<AuthenticationPolicy> policies = new ArrayList<>();
+            policies.add(new AllAuthenticationPolicy());
+            return policies;
         }
 
         if (police.getNotPrevented().isEnabled()) {
-            return new NotPreventedAuthenticationPolicy();
+            final List<AuthenticationPolicy> policies = new ArrayList<>();
+            policies.add(new NotPreventedAuthenticationPolicy());
+            return policies;
         }
 
-        return new AnyAuthenticationPolicy(police.getAny().isTryAll());
+        final List<AuthenticationPolicy> policies = new ArrayList<>();
+        policies.add(new AnyAuthenticationPolicy(police.getAny().isTryAll()));
+        return policies;
     }
 
     @Bean

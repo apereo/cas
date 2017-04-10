@@ -1,6 +1,7 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.authentication.Credential;
@@ -29,7 +30,7 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
      * @return the principal id
      */
     @Override
-    protected String extractPrincipalId(final Credential credentials) {
+    protected String extractPrincipalId(final Credential credentials, final Principal currentPrincipal) {
         final WsFederationCredential wsFedCredentials = (WsFederationCredential) credentials;
 
         final Map<String, List<Object>> attributes = wsFedCredentials.getAttributes();

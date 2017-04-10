@@ -79,8 +79,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
-        /**
-         * Map each entry in the aNllowed list into an array first
+        /*
+         * Map each entry in the allowed list into an array first
          * by the original key, value and the original entry itself.
          * Then process the array to populate the map for allowed attributes
          */

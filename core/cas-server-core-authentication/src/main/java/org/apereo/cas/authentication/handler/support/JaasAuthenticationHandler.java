@@ -214,7 +214,8 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);
                     return false;
-                } else if (callback.getClass().equals(PasswordCallback.class)) {
+                }
+                if (callback.getClass().equals(PasswordCallback.class)) {
                     ((PasswordCallback) callback).setPassword(this.password.toCharArray());
                     return false;
                 }

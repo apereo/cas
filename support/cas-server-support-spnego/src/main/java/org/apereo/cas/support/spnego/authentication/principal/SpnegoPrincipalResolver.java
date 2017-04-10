@@ -2,6 +2,7 @@ package org.apereo.cas.support.spnego.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 
 /**
@@ -15,7 +16,7 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
-    protected String extractPrincipalId(final Credential credential) {
+    protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
         final SpnegoCredential c = (SpnegoCredential) credential;
         final String id = c.getPrincipal().getId();
         return id;
