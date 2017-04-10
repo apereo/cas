@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -35,8 +36,9 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
     public AccessTokenPasswordGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
                                                     final HttpServletRequest request, final HttpServletResponse response,
-                                                    final OAuth20CasAuthenticationBuilder authenticationBuilder) {
-        super(servicesManager, ticketRegistry, request, response);
+                                                    final OAuth20CasAuthenticationBuilder authenticationBuilder,
+                                                    final CentralAuthenticationService centralAuthenticationService) {
+        super(servicesManager, ticketRegistry, request, response, centralAuthenticationService);
         this.authenticationBuilder = authenticationBuilder;
     }
 
