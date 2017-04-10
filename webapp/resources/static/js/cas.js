@@ -55,10 +55,8 @@ function areCookiesEnabled() {
     $.cookie('cookiesEnabled', 'true');
     var value = $.cookie('cookiesEnabled');
     $.removeCookie('cookiesEnabled');
-    if (value != undefined) {
-        return true;
-    }
-    return false;
+    return value != undefined;
+    
 }
 
 function animateCasMessageBoxes() {

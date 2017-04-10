@@ -116,7 +116,7 @@ public final class WebUtils {
         return null;
 
     }
-    
+
     /**
      * Gets http servlet request from request attributes.
      *
@@ -161,9 +161,8 @@ public final class WebUtils {
         final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletResponse) servletExternalContext.getNativeResponse();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -353,6 +352,28 @@ public final class WebUtils {
      */
     public static void putRegisteredService(final RequestContext context, final RegisteredService registeredService) {
         context.getFlowScope().put(PARAMETER_REGISTERED_SERVICE, registeredService);
+    }
+
+    /**
+     * Gets credential.
+     *
+     * @param <T>     the type parameter
+     * @param context the context
+     * @param clazz   the clazz
+     * @return the credential
+     */
+    public static <T extends Credential> T getCredential(final RequestContext context, final Class<T> clazz) {
+        Assert.notNull(clazz, "clazz cannot be null");
+        final Credential credential = getCredential(context);
+        if (credential == null) {
+            return null;
+        }
+        if (!clazz.isAssignableFrom(credential.getClass())) {
+            throw new ClassCastException("credential [" + credential.getId()
+                    + " is of type " + credential.getClass()
+                    + " when we were expecting " + clazz);
+        }
+        return (T) credential;
     }
 
     /**

@@ -54,6 +54,12 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(length = 255, updatable = true, insertable = true)
     private String metadataSignatureLocation;
 
+    @Column(length = 255, updatable = true, insertable = true)
+    private String serviceProviderNameIdQualifier;
+
+    @Column(length = 255, updatable = true, insertable = true)
+    private String nameIdQualifier;
+
     @Column(updatable = true, insertable = true)
     private boolean signAssertions;
 
@@ -71,7 +77,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column(updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
-    
+
     @ElementCollection
     @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
     @MapKeyColumn(name = "key")
@@ -197,6 +203,22 @@ public class SamlRegisteredService extends RegexRegisteredService {
         this.attributeNameFormats = attributeNameFormats;
     }
 
+    public String getServiceProviderNameIdQualifier() {
+        return serviceProviderNameIdQualifier;
+    }
+
+    public void setServiceProviderNameIdQualifier(final String serviceProviderNameIdQualifier) {
+        this.serviceProviderNameIdQualifier = serviceProviderNameIdQualifier;
+    }
+
+    public String getNameIdQualifier() {
+        return nameIdQualifier;
+    }
+
+    public void setNameIdQualifier(final String nameIdQualifier) {
+        this.nameIdQualifier = nameIdQualifier;
+    }
+
     @Override
     protected AbstractRegisteredService newInstance() {
         return new SamlRegisteredService();
@@ -223,6 +245,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setMetadataCriteriaRemoveRolelessEntityDescriptors(samlRegisteredService.isMetadataCriteriaRemoveRolelessEntityDescriptors());
             setMetadataCriteriaRoles(samlRegisteredService.getMetadataCriteriaRoles());
             setAttributeNameFormats(samlRegisteredService.getAttributeNameFormats());
+
+            setNameIdQualifier(samlRegisteredService.getNameIdQualifier());
+            setServiceProviderNameIdQualifier(samlRegisteredService.serviceProviderNameIdQualifier);
 
         } catch (final Exception e) {
             throw Throwables.propagate(e);
@@ -257,6 +282,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataCriteriaRemoveRolelessEntityDescriptors, rhs.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append(this.metadataCriteriaRoles, rhs.metadataCriteriaRoles)
                 .append(this.attributeNameFormats, rhs.attributeNameFormats)
+                .append(this.serviceProviderNameIdQualifier, rhs.serviceProviderNameIdQualifier)
+                .append(this.nameIdQualifier, rhs.nameIdQualifier)
                 .isEquals();
     }
 
@@ -278,6 +305,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append(this.metadataCriteriaRoles)
                 .append(this.attributeNameFormats)
+                .append(this.serviceProviderNameIdQualifier)
+                .append(this.nameIdQualifier)
                 .toHashCode();
     }
 
@@ -299,6 +328,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("metadataCriteriaRemoveRolelessEntityDescriptors", this.metadataCriteriaRemoveRolelessEntityDescriptors)
                 .append("metadataCriteriaRoles", this.metadataCriteriaRoles)
                 .append("attributeNameFormats", this.attributeNameFormats)
+                .append("serviceProviderNameIdQualifier", this.serviceProviderNameIdQualifier)
+                .append("nameIdQualifier", this.nameIdQualifier)
                 .toString();
     }
 }

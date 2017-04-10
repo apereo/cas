@@ -1,6 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.Credential;
 
@@ -14,7 +15,7 @@ import org.apereo.cas.authentication.Credential;
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
-    protected String extractPrincipalId(final Credential credential) {
+    protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
         return ((OpenIdCredential) credential).getUsername();
     }
 
