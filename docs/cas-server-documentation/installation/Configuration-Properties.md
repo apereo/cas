@@ -2659,6 +2659,28 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.infiniteCampus.attributes=employeeId
 ```
 
+### Slack
+
+```properties
+# cas.samlSP.slack.metadata=/path/to/slack-metadata.xml
+# cas.samlSP.slack.name=Slack
+# cas.samlSP.slack.description=Slack Integration
+# cas.samlSP.slack.attributes=User.Email,User.Username,first_name,last_name
+# cas.samlSP.slack.nameIdFormat=persistent
+# cas.samlSP.slack.nameIdAttribute=employeeId
+```
+
+### Zendesk
+
+```properties
+# cas.samlSP.zendesk.metadata=/path/to/zendesk-metadata.xml
+# cas.samlSP.zendesk.name=Zendesk
+# cas.samlSP.zendesk.description=Zendesk Integration
+# cas.samlSP.zendesk.attributes=organization,tags,phone,role
+# cas.samlSP.zendesk.nameIdFormat=emailAddress
+# cas.samlSP.zendesk.nameIdAttribute=email
+```
+
 ### Arc GIS
 
 ```properties
