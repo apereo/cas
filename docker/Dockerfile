@@ -43,22 +43,18 @@ RUN cd / \
 #     && rm server-jre-$java_version-linux-x64.tar.gz \
 #     && ln -s /opt/jdk$java_semver/ /opt/jre-home;
 
-# Download the CAS overlay project
-RUN cd / \
-    && git clone --depth 1 --single-branch https://github.com/apereo/cas-overlay-template.git cas-overlay \
-    && mkdir -p /etc/cas \
-    && mkdir -p /etc/cas/services \
-    && mkdir -p /etc/cas/config \
-    && mkdir -p cas-overlay/bin \
-    && cp -f cas-overlay/etc/cas/config/*.* /etc/cas/config;
-
 COPY thekeystore /etc/cas/
-COPY bin/*.* cas-overlay/bin/
 
-RUN chmod -R 750 cas-overlay/bin \
-    && chmod 750 cas-overlay/mvnw \
-    && chmod 750 cas-overlay/build.sh \
-    && chmod 750 /opt/jre-home/bin/java;
+RUN mkdir -p /cas-overlay/bin \
+    && mkdir -p /cas-overlay/maven 
+
+COPY cas-overlay/bin/*.* /cas-overlay/bin/
+COPY cas-overlay/maven/*.* /cas-overlay/maven/
+COPY cas-overlay/mvnw /cas-overlay/mvnw
+
+RUN chmod -R +x cas-overlay/bin \
+    && chmod +x cas-overlay/mvnw \
+    && chmod +x /opt/jre-home/bin/java;
 
 # Enable if you are using Oracle Java
 #	&& chmod 750 /opt/jre-home/jre/bin/java;
@@ -70,6 +66,6 @@ WORKDIR /cas-overlay
 ENV JAVA_HOME /opt/jre-home
 ENV PATH $PATH:$JAVA_HOME/bin:.
 
-RUN ./mvnw clean package -T 10
+RUN ./mvnw clean package -T 10 -Dcas.version=5.0.4
 
-CMD ["/cas-overlay/bin/run-cas.sh"]
+CMD ["cas-overlay/bin/run-cas.sh"]
