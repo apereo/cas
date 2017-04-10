@@ -42,9 +42,8 @@ public class InfinispanTicketRegistryConfiguration {
         final String cacheName = span.getCacheName();
         if (StringUtils.isBlank(cacheName)) {
             return cacheManager().getCache();
-        } else {
-            return cacheManager().getCache(cacheName);
         }
+        return cacheManager().getCache(cacheName);
     }
 
     @Bean

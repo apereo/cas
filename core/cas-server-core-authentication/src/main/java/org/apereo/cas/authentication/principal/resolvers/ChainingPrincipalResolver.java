@@ -68,13 +68,15 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     @Override
     public Principal resolve(final Credential credential, final Principal principal, final AuthenticationHandler handler) {
         final List<Principal> principals = new ArrayList<>();
-        chain.stream().filter(resolver -> resolver.supports(credential)).forEach(resolver -> {
-            LOGGER.debug("Invoking principal resolver [{}]", resolver);
-            final Principal p = resolver.resolve(credential, principal, handler);
-            if (p != null) {
-                principals.add(p);
-            }
-        });
+        chain.stream()
+                .filter(resolver -> resolver.supports(credential))
+                .forEach(resolver -> {
+                    LOGGER.debug("Invoking principal resolver [{}]", resolver);
+                    final Principal p = resolver.resolve(credential, principal, handler);
+                    if (p != null) {
+                        principals.add(p);
+                    }
+                });
 
         if (principals.isEmpty()) {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
@@ -96,7 +98,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 .map(p -> p.getId().trim().toLowerCase())
                 .distinct()
                 .collect(Collectors.toSet()).size();
-        
+
         if (count > 1) {
             throw new PrincipalException("Resolved principals by the chain are not unique because principal resolvers have produced CAS principals "
                     + "with different identifiers which typically is the result of a configuration issue.",
@@ -120,7 +122,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     public boolean supports(final Credential credential) {
         return this.chain.get(0).supports(credential);
     }
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

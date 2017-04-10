@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
@@ -20,15 +21,15 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutS
     @Override
     public URL determineLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) {
         try {
-            URL logoutUrl = new URL(singleLogoutService.getOriginalUrl());
             final URL serviceLogoutUrl = registeredService.getLogoutUrl();
-
             if (serviceLogoutUrl != null) {
-                LOGGER.debug("Logout request will be sent to [{}] for service [{}]",
-                        serviceLogoutUrl, singleLogoutService);
-                logoutUrl = serviceLogoutUrl;
+                LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
+                return serviceLogoutUrl;
             }
-            return logoutUrl;
+            if (UrlValidator.getInstance().isValid(singleLogoutService.getOriginalUrl())) {
+                return new URL(singleLogoutService.getOriginalUrl());
+            }
+            return null;
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }

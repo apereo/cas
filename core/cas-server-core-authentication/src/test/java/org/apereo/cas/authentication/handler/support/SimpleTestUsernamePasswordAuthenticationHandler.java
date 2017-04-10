@@ -79,11 +79,14 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
         final Exception exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
             throw (GeneralSecurityException) exception;
-        } else if (exception instanceof PreventedException) {
+        }
+        if (exception instanceof PreventedException) {
             throw (PreventedException) exception;
-        } else if (exception instanceof RuntimeException) {
+        }
+        if (exception instanceof RuntimeException) {
             throw (RuntimeException) exception;
-        } else if (exception != null) {
+        }
+        if (exception != null) {
             LOGGER.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",
                     exception.getClass().getName(),
                     exception);

@@ -29,7 +29,6 @@ import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
-import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
@@ -61,7 +60,6 @@ import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccesso
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -147,8 +145,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.error("Login flow registry is not configured correctly.");
             return null;
         }
-        final boolean found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds())
-                .filter(f -> f.equals(FLOW_ID_LOGIN)).findFirst().isPresent();
+        final boolean found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).anyMatch(f -> f.equals(FLOW_ID_LOGIN));
         if (found) {
             return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         }
@@ -471,20 +468,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     /**
-     * Register flow definition into login flow registry.
-     *
-     * @param sourceRegistry the source registry
-     */
-    protected void registerFlowDefinitionIntoLoginFlowRegistry(final FlowDefinitionRegistry sourceRegistry) {
-        final String[] flowIds = sourceRegistry.getFlowDefinitionIds();
-        for (final String flowId : flowIds) {
-            final FlowDefinition definition = sourceRegistry.getFlowDefinition(flowId);
-            LOGGER.debug("Registering flow definition [{}]", flowId);
-            this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
-        }
-    }
-
-    /**
      * Create mapper to subflow state.
      *
      * @param mappings the mappings
@@ -531,37 +514,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return new GenericSubflowAttributeMapper(inputMapper, outputMapper);
     }
 
-    /**
-     * Register multifactor provider authentication webflow.
-     *
-     * @param flow      the flow
-     * @param subflowId the subflow id
-     * @param registry  the registry
-     */
-    protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId,
-                                                                    final FlowDefinitionRegistry registry) {
-
-        final SubflowState subflowState = createSubflowState(flow, subflowId, subflowId);
-
-        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
-        final String targetStateId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
-
-        final List<DefaultMapping> mappings = new ArrayList<>();
-        final Mapper inputMapper = createMapperToSubflowState(mappings);
-        final SubflowAttributeMapper subflowMapper = createSubflowAttributeMapper(inputMapper, null);
-        subflowState.setAttributeMapper(subflowMapper);
-        subflowState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId));
-
-        LOGGER.debug("Retrieved action state [{}]", actionState.getId());
-        createTransitionForState(actionState, subflowId, subflowId);
-
-        registerFlowDefinitionIntoLoginFlowRegistry(registry);
-
-        final TransitionableState state = flow.getTransitionableState(CasWebflowConstants
-                .TRANSITION_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
-        createTransitionForState(state, subflowId, subflowId);
-    }
-
     public void setLogoutFlowDefinitionRegistry(final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
         this.logoutFlowDefinitionRegistry = logoutFlowDefinitionRegistry;
     }
@@ -579,6 +531,21 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             return false;
         }
         return flow.containsState(stateId);
+    }
+
+    /**
+     * Contains transition boolean.
+     *
+     * @param state      the state
+     * @param transition the transition
+     * @return the boolean
+     */
+    protected boolean containsTransition(final TransitionableState state, final String transition) {
+        if (state == null) {
+            LOGGER.error("State is not configured correctly and cannot be null.");
+            return false;
+        }
+        return state.getTransition(transition) != null;
     }
 
     /**

@@ -91,25 +91,24 @@ public class CasConfigurationJasyptDecryptor {
      */
     public Map<Object, Object> decrypt(final Map<Object, Object> settings) {
         final Map<Object, Object> decrypted = new HashMap<>();
-        settings.entrySet()
-                .forEach(entry -> {
-                    final String stringValue = getStringPropertyValue(entry.getValue());
-                    if (StringUtils.isNotBlank(stringValue) && stringValue.startsWith(ENCRYPTED_VALUE_PREFIX)) {
-                        try {
-                            if (!this.decryptor.isInitialized()) {
-                                this.decryptor.initialize();
-                            }
-                            final String encValue = stringValue.substring(ENCRYPTED_VALUE_PREFIX.length());
-                            LOGGER.debug("Decrypting property [{}]...", entry.getKey());
-                            final String value = this.decryptor.decrypt(encValue);
-                            decrypted.put(entry.getKey(), value);
-                        } catch (final Exception e) {
-                            LOGGER.error("Could not decrypt property [{}]. Setting will be ignored by CAS", entry.getKey(), e);
-                        }
-                    } else {
-                        decrypted.put(entry.getKey(), entry.getValue());
+        settings.forEach((key, value1) -> {
+            final String stringValue = getStringPropertyValue(value1);
+            if (StringUtils.isNotBlank(stringValue) && stringValue.startsWith(ENCRYPTED_VALUE_PREFIX)) {
+                try {
+                    if (!this.decryptor.isInitialized()) {
+                        this.decryptor.initialize();
                     }
-                });
+                    final String encValue = stringValue.substring(ENCRYPTED_VALUE_PREFIX.length());
+                    LOGGER.debug("Decrypting property [{}]...", key);
+                    final String value = this.decryptor.decrypt(encValue);
+                    decrypted.put(key, value);
+                } catch (final Exception e) {
+                    LOGGER.error("Could not decrypt property [{}]. Setting will be ignored by CAS", key, e);
+                }
+            } else {
+                decrypted.put(key, value1);
+            }
+        });
         return decrypted;
     }
 

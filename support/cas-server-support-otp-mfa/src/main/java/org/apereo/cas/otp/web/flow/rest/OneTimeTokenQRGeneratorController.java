@@ -37,7 +37,7 @@ public class OneTimeTokenQRGeneratorController {
      * @param request  the request
      * @throws Exception the exception
      */
-    @GetMapping(path= { "/otp/qrgen" })
+    @GetMapping(path = {"/otp/qrgen"})
     public void generate(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         response.setContentType("image/png");
         final String key = request.getParameter("key");
@@ -63,13 +63,14 @@ public class OneTimeTokenQRGeneratorController {
                 graphics.fillRect(0, 0, width, width);
                 graphics.setColor(Color.BLACK);
 
-                IntStream.range(0, width).forEach(i -> {
-                    IntStream.range(0, width).filter(j -> byteMatrix.get(i, j)).forEach(j -> graphics.fillRect(i, j, 1, 1));
-                });
+                IntStream.range(0, width)
+                        .forEach(i -> IntStream.range(0, width)
+                                .filter(j -> byteMatrix.get(i, j))
+                                .forEach(j -> graphics.fillRect(i, j, 1, 1)));
             } finally {
                 graphics.dispose();
             }
-            
+
             ImageIO.write(image, "png", stream);
         } catch (final Exception e) {
             throw Throwables.propagate(e);

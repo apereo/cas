@@ -94,7 +94,7 @@ dependencies {
 
     compile project(":webapp:cas-server-webapp-config")
     compile project(":webapp:cas-server-webapp-init")
-    
+
     implementation libraries.pac4j
     implementation libraries.thymeleaf
     implementation libraries.groovy

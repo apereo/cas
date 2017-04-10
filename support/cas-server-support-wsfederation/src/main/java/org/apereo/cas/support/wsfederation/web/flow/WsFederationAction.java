@@ -149,21 +149,20 @@ public class WsFederationAction extends AbstractAction {
                     LOGGER.error(e.getMessage(), e);
                     return error();
                 }
-            } else {
-                // no authentication : go to login page. save parameters in web session
-                final Service service = (Service) context.getFlowScope().get(SERVICE);
-                if (service != null) {
-                    session.setAttribute(SERVICE, service);
-                }
-                saveRequestParameter(request, session, THEME);
-                saveRequestParameter(request, session, LOCALE);
-                saveRequestParameter(request, session, METHOD);
-
-                final String url = authorizationUrl + getRelyingPartyIdentifier(service);
-
-                LOGGER.info("Preparing to redirect to the IdP [{}]", url);
-                context.getFlowScope().put(PROVIDERURL, url);
             }
+            // no authentication : go to login page. save parameters in web session
+            final Service service = (Service) context.getFlowScope().get(SERVICE);
+            if (service != null) {
+                session.setAttribute(SERVICE, service);
+            }
+            saveRequestParameter(request, session, THEME);
+            saveRequestParameter(request, session, LOCALE);
+            saveRequestParameter(request, session, METHOD);
+
+            final String url = authorizationUrl + getRelyingPartyIdentifier(service);
+
+            LOGGER.info("Preparing to redirect to the IdP [{}]", url);
+            context.getFlowScope().put(PROVIDERURL, url);
             LOGGER.debug("Returning error event");
             return error();
         } catch (final Exception ex) {

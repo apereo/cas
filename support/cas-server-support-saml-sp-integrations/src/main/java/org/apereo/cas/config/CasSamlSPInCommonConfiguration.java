@@ -43,7 +43,6 @@ public class CasSamlSPInCommonConfiguration {
                 casProperties.getSamlSP().getInCommon(),
                 samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
-            service.setSignResponses(true);
             SamlSPUtils.saveService(service, servicesManager);
 
             LOGGER.info("Launching background thread to load the InCommon metadata. Depending on bandwidth, this might take a while...");
@@ -56,7 +55,6 @@ public class CasSamlSPInCommonConfiguration {
                             chainingResolver.getResolvers().size());
                 }
             }).start();
-
         }
     }
 }

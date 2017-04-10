@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.azure.web.flow;
 
-import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.AbstractCasMultifactorWebflowConfigurer;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -10,7 +10,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class AzureAuthenticatorMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class AzureAuthenticatorMultifactorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
 
     /** Webflow event id. */
     public static final String MFA_AZURE_EVENT_ID = "mfa-azure";

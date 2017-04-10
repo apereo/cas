@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -40,10 +41,12 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
                                              final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                              final CasConfigurationProperties casProperties,
                                              final CookieRetrievingCookieGenerator cookieGenerator,
-                                             final OAuth20CasAuthenticationBuilder authenticationBuilder) {
+                                             final OAuth20CasAuthenticationBuilder authenticationBuilder,
+                                             final CentralAuthenticationService centralAuthenticationService) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, refreshTokenFactory, accessTokenResponseGenerator,
-                scopeToAttributesFilter, casProperties, cookieGenerator, authenticationBuilder);
+                scopeToAttributesFilter, casProperties, cookieGenerator, authenticationBuilder,
+                centralAuthenticationService);
     }
 
     @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,

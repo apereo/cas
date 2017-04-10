@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -84,6 +85,10 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -298,7 +303,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 profileScopeToAttributesFilter(),
                 casProperties,
                 ticketGrantingTicketCookieGenerator,
-                oauthCasAuthenticationBuilder()
+                oauthCasAuthenticationBuilder(),
+                centralAuthenticationService
         );
     }
 

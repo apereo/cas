@@ -66,17 +66,15 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     if (EmailValidator.getInstance().isValid(email)) {
                         LOGGER.debug("Email address [{}] matches a valid email address", email);
                         return email;
-                    } else {
-                        LOGGER.error("Email [{}] is not a valid address", email);
                     }
+                    LOGGER.error("Email [{}] is not a valid address", email);
                 } else {
                     LOGGER.error("Could not locate an LDAP attribute [{}] for [{}] and base DN [{}]",
                             attributeName, filter.format(), ldap.getBaseDn());
                 }
                 return null;
-            } else {
-                LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
             }
+            LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

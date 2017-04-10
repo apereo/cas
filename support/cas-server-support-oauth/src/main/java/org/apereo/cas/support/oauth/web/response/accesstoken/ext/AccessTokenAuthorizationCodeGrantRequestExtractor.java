@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -28,8 +29,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenAuthorizationCodeGrantRequestExtractor.class);
 
     public AccessTokenAuthorizationCodeGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                                             final HttpServletRequest request, final HttpServletResponse response) {
-        super(servicesManager, ticketRegistry, request, response);
+                                                             final HttpServletRequest request, final HttpServletResponse response,
+                                                             final CentralAuthenticationService centralAuthenticationService) {
+        super(servicesManager, ticketRegistry, request, response, centralAuthenticationService);
     }
 
     @Override

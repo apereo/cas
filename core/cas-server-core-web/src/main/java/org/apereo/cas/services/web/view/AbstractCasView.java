@@ -51,7 +51,7 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final ServicesManager servicesManager;
 
-    
+
     /**
      * authentication context attribute name.
      */
@@ -252,9 +252,9 @@ public abstract class AbstractCasView extends AbstractView {
             if (value instanceof Collection || value instanceof Map || value instanceof Object[]
                     || value instanceof Iterator || value instanceof Enumeration) {
                 return value;
-            } else {
-                return Collections.singleton(value);
             }
+            return Collections.singleton(value);
+
         }));
     }
 

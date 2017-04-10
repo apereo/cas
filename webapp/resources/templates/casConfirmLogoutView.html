@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title>Confirm Logout</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-info">
+        <h2 th:utext="#{screen.logout.confirm.header}"/>
+        <p th:utext="#{screen.logout.confirm.text}"/>
+
+        <div align="center">
+            <form method="post" id="fm1">
+                <input type="hidden" name="LogoutRequestConfirmed" value="true"/>
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="success"/>
+                <input class="btn btn-primary btn-lg"
+                       name="success"
+                       accesskey="l"
+                       th:value="#{screen.welcome.button.logout}"
+                       type="submit"/>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

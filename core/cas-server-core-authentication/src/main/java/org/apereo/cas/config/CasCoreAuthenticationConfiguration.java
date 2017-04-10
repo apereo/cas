@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     @Bean
     public AuthenticationManager casAuthenticationManager(@Qualifier("authenticationPolicy")
-                                                          final AuthenticationPolicy authenticationPolicy,
+                                                          final Collection<AuthenticationPolicy> authenticationPolicy,
                                                           @Qualifier("registeredServiceAuthenticationHandlerResolver")
                                                           final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
                                                           @Qualifier("authenticationEventExecutionPlan")

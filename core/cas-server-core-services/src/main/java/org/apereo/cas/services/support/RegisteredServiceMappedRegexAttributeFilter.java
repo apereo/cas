@@ -57,7 +57,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
                     if (patterns.containsKey(attributeName)) {
                         final Set<Object> attributeValues = CollectionUtils.toCollection(entry.getValue());
                         final Pattern pattern = RegexUtils.createPattern(patterns.get(attributeName));
-                        LOGGER.debug("Found attribute [{}] in the pattern definitions [{}]. Processing pattern [{}]", attributeName, pattern.pattern());
+                        LOGGER.debug("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());
                         final List<Object> filteredValues = filterAttributeValuesByPattern(attributeValues, pattern);
                         LOGGER.debug("Filtered attribute values for [{}] are [{}]", attributeName, filteredValues);
 
@@ -71,7 +71,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
                         if (excludeUnmappedAttributes) {
                             LOGGER.debug("Excluding attribute [{}] given unmatched attributes are to be excluded", attributeName);
                         } else {
-                            LOGGER.debug("Added unmatched attribute [{}] with value(s)", entry.getKey(), entry.getValue());
+                            LOGGER.debug("Added unmatched attribute [{}] with value(s) [{}]", entry.getKey(), entry.getValue());
                             attributesToRelease.put(entry.getKey(), entry.getValue());
                         }
                     }

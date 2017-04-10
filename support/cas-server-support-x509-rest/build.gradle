@@ -1,6 +1,0 @@
-
-description = "Apereo CAS X509 REST Implementation"
-dependencies {
-    compile project(":support:cas-server-support-rest")
-    compile project(":support:cas-server-support-x509")
-}

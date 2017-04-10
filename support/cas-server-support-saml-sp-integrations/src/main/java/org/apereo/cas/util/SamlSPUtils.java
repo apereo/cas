@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
@@ -49,7 +50,6 @@ public final class SamlSPUtils {
      */
     public static SamlRegisteredService newSamlServiceProviderService(final AbstractSamlSPProperties sp,
                                                                       final SamlRegisteredServiceCachingMetadataResolver resolver) {
-
         if (StringUtils.isBlank(sp.getMetadata())) {
             LOGGER.debug("Skipped registration of [{}] since no metadata location is found", sp.getName());
             return null;
@@ -72,7 +72,9 @@ public final class SamlSPUtils {
             }
 
             final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(attributesToRelease);
-            service.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(attributes));
+            final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
+            policy.addPolicy(new ReturnMappedAttributeReleasePolicy(attributes));
+            service.setAttributeReleasePolicy(policy);
             
             service.setMetadataCriteriaRoles(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart());
             service.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
@@ -116,6 +118,10 @@ public final class SamlSPUtils {
 
             LOGGER.debug("Registering saml service [{}] by entity id [{}]", sp.getName(), entityIds);
             service.setServiceId(entityIds);
+
+            service.setSignAssertions(sp.isSignAssertions());
+            service.setSignResponses(sp.isSignResponses());
+            
             return service;
         } catch (final Exception e) {
             throw Throwables.propagate(e);

@@ -68,6 +68,7 @@ public class CasWebApplication {
         final Banner banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
                 .banner(banner)
+                .web(true)
                 .properties(properties)
                 .logStartupInfo(true)
                 .run(args);

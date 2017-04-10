@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Dmitriy Kopylenko
  * @since 4.0.0
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class TicketsResourceTests {
 
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
@@ -65,8 +65,10 @@ public class TicketsResourceTests {
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
-        this.ticketsResourceUnderTest = new TicketsResource(new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
-                new DefaultPrincipalElectionStrategy()), new DefaultCredentialFactory(), ticketSupport, new WebApplicationServiceFactory(), casMock);
+        this.ticketsResourceUnderTest = new TicketsResource(
+                new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
+                new DefaultPrincipalElectionStrategy()), new DefaultCredentialFactory(), 
+                ticketSupport, new WebApplicationServiceFactory(), casMock);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")

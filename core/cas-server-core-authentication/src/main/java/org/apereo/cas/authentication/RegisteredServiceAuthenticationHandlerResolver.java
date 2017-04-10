@@ -63,9 +63,8 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
                 }
                 LOGGER.debug("Authentication handlers for this transaction are [{}]", handlerSet);
                 return handlerSet;
-            } else {
-                LOGGER.debug("No specific authentication handlers are required for this transaction");
             }
+            LOGGER.debug("No specific authentication handlers are required for this transaction");
         }
 
         final String handlers = candidateHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining());

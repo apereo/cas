@@ -38,6 +38,16 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_REAL_SUBMIT = "realSubmit";
 
     /**
+     * The state id 'successWithWarnings'.
+     */
+    String STATE_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
+    
+    /**
+     * The transition state 'successWithWarnings'.
+     */
+    String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
+    
+    /**
      * The decision state 'checkRegistrationRequired'.
      */
     String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
@@ -65,6 +75,11 @@ public interface CasWebflowConstants {
      * The view state 'error'.
      */
     String VIEW_ID_ERROR = "error";
+
+    /**
+     * The view state 'showAuthenticationWarningMessages'.
+     */
+    String VIEW_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
     
     /**
      * The transition state 'authenticationFailure'.

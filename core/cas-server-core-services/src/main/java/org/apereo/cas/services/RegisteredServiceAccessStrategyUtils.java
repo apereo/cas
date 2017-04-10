@@ -84,8 +84,7 @@ public final class RegisteredServiceAccessStrategyUtils {
             throws UnauthorizedServiceException, PrincipalException {
         ensureServiceAccessIsAllowed(service, registeredService);
         final Principal principal = authentication.getPrincipal();
-        final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy()
-                .getAttributes(principal, registeredService);
+        final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal, registeredService);
         if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principalAttrs)) {
             LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].", service.getId(), principal);
 
@@ -161,7 +160,8 @@ public final class RegisteredServiceAccessStrategyUtils {
             if (ticketGrantingTicket.getProxiedBy() != null) {
                 LOGGER.warn("ServiceManagement: Service [{}] is not allowed to use SSO for proxying.", service.getId());
                 throw new UnauthorizedSsoServiceException();
-            } else if (ticketGrantingTicket.getProxiedBy() == null && ticketGrantingTicket.getCountOfUses() > 0) {
+            }
+            if (ticketGrantingTicket.getProxiedBy() == null && ticketGrantingTicket.getCountOfUses() > 0) {
                 LOGGER.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
                 throw new UnauthorizedSsoServiceException();
             }

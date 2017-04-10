@@ -50,10 +50,10 @@ public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
             final String value = proxyPolicy.getValue();
             if (StringUtils.isNotBlank(value) && RegexUtils.isValidRegex(value)) {
                 return new RegexMatchingRegisteredServiceProxyPolicy(value);
-            } else {
-                throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
             }
-        } else if (type == RegisteredServiceProxyPolicyBean.Types.REFUSE) {
+            throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
+        }
+        if (type == RegisteredServiceProxyPolicyBean.Types.REFUSE) {
             return new RefuseRegisteredServiceProxyPolicy();
         }
 
