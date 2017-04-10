@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -64,7 +65,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     private final RefreshTokenFactory refreshTokenFactory;
     private final AccessTokenResponseGenerator accessTokenResponseGenerator;
     private final OAuth20CasAuthenticationBuilder authenticationBuilder;
-
+    private final CentralAuthenticationService centralAuthenticationService;
+    
     public OAuth20AccessTokenEndpointController(final ServicesManager servicesManager,
                                                 final TicketRegistry ticketRegistry,
                                                 final OAuth20Validator validator,
@@ -76,13 +78,15 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                                 final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                 final CasConfigurationProperties casProperties,
                                                 final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                                final OAuth20CasAuthenticationBuilder authenticationBuilder) {
+                                                final OAuth20CasAuthenticationBuilder authenticationBuilder,
+                                                final CentralAuthenticationService centralAuthenticationService) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
                 principalFactory, webApplicationServiceServiceFactory,
                 scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
         this.refreshTokenFactory = refreshTokenFactory;
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
         this.authenticationBuilder = authenticationBuilder;
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     /**
@@ -170,9 +174,12 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
                                                                                   final HttpServletResponse response) {
         final List<BaseAccessTokenGrantRequestExtractor> list = Arrays.asList(
-                new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager, ticketRegistry, request, response),
-                new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager, ticketRegistry, request, response),
-                new AccessTokenPasswordGrantRequestExtractor(servicesManager, ticketRegistry, request, response, authenticationBuilder)
+                new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager, ticketRegistry,
+                        request, response, centralAuthenticationService),
+                new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager, ticketRegistry,
+                        request, response, centralAuthenticationService),
+                new AccessTokenPasswordGrantRequestExtractor(servicesManager, ticketRegistry, request,
+                        response, authenticationBuilder, centralAuthenticationService)
         );
 
         return list.stream()
@@ -210,14 +217,14 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
-            
+
             return uProfile instanceof OAuthClientProfile
                     && this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
                     && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
                     && this.validator.checkCallbackValid(registeredService, redirectUri);
 
         }
-        
+
         if (OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN)) {
             return uProfile instanceof OAuthClientProfile && this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN);
         }

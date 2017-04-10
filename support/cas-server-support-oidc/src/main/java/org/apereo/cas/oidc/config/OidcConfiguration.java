@@ -266,7 +266,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory,
                 oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
-                ticketGrantingTicketCookieGenerator, authenticationBuilder);
+                ticketGrantingTicketCookieGenerator, authenticationBuilder, centralAuthenticationService);
     }
 
     @Bean
