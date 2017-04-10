@@ -64,7 +64,6 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
         final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context);
         RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
-        
         final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(
                 new DefaultAuthenticationResult(authentication, service));
         return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket);
