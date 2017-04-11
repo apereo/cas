@@ -3113,6 +3113,8 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.accessToken.releaseProtocolAttributes=true
 # cas.authn.oauth.accessToken.timeToKillInSeconds=7200
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
+
+# cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
 ```
 
 
