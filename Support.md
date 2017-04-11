@@ -15,7 +15,7 @@ Please take the following steps to obtain support from the CAS user community.
 
 ### Search Archives
 
-The [Google Groups mirror](https://groups.google.com/forum/#!forum/jasig-cas-user) of the community discussion list
+The [Google Groups mirror](Mailing-Lists.html) of the community discussion list
 provides an excellent search interface for list archives.
 In countless cases a particular question has been asked and answered multiple times.
 Please search the archives before posting to the community discussion list.
