@@ -24,9 +24,9 @@ provides an excellent search interface for list archives.
 In countless cases a particular question has been asked and answered multiple times.
 Please search the archives before posting to the community discussion list.
 
-### Chat Room 
+### Chat Room  [![Gitter](https://badges.gitter.im/Join Chat.svg)][casgitter]
 
-The CAS community chat room is provided by [![Gitter](https://badges.gitter.im/Join Chat.svg)][casgitter]
+The CAS community chat room is provided by [Gitter][casgitter].
 
 ### Mailing Lists
 
