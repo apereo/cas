@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.listener;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -10,6 +11,7 @@ import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticat
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
+import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -63,7 +65,8 @@ public class DefaultCasEventListener {
      */
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-        LOGGER.info("CAS is ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
+        AsciiArtUtils.printAsciiArt(System.out, "READY", StringUtils.EMPTY);
+        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
     }
 
     /**
