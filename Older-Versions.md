@@ -15,3 +15,6 @@ CAS documentation is available for the following versions:
 | `4.2.x`                | [See this guide](4.2.x/index.html)
 | `4.1.x`                | [See this guide](4.1.x/index.html)
 | `4.0.x`                | [See this guide](4.0.x/index.html)
+
+Be sure to checkout the projects [Release Policy](developer/Release-Policy.html) 
+and the [Maintenance Policy](developer/Maintenance-Policy.html).
