@@ -56,14 +56,14 @@ public final class AsciiArtUtils {
      */
     public static void printAsciiArt(final PrintStream out, final String asciiArt, final String additional) {
         try {
-            out.print(ANSI_CYAN);
+            out.println(ANSI_CYAN);
             if (StringUtils.isNotBlank(additional)) {
                 out.println(FigletFont.convertOneLine(asciiArt));
                 out.println(additional);
             } else {
                 out.print(FigletFont.convertOneLine(asciiArt));
             }
-            out.println(ANSI_RESET);
+            out.print(ANSI_RESET);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
