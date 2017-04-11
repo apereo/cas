@@ -121,7 +121,7 @@ public class OAuthProperties {
         }
 
         public static class ResourceOwner {
-            private boolean requireServiceHeader = true;
+            private boolean requireServiceHeader;
 
             public boolean isRequireServiceHeader() {
                 return requireServiceHeader;
