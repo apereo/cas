@@ -163,10 +163,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final Service service = this.authenticationBuilder.buildService(registeredService, context);
+        final Service service = this.authenticationBuilder.buildService(registeredService, context, false);
         LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context);
+        final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
