@@ -63,7 +63,6 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-monitoring).
 
-
 ## LDAP
 
 ```xml
