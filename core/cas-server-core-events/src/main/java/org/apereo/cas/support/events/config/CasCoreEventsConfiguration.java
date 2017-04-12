@@ -1,7 +1,6 @@
 package org.apereo.cas.support.events.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.NoOpCasEventRepository;
 import org.apereo.cas.support.events.listener.DefaultCasEventListener;
@@ -25,10 +24,8 @@ public class CasCoreEventsConfiguration {
     @Autowired
     @Bean
     public DefaultCasEventListener defaultCasEventListener(@Qualifier("casEventRepository") 
-                                                           final CasEventRepository casEventRepository,
-                                                           @Qualifier("configurationPropertiesEnvironmentManager") 
-                                                           final CasConfigurationPropertiesEnvironmentManager configManager) {
-        return new DefaultCasEventListener(casEventRepository, configManager);
+                                                           final CasEventRepository casEventRepository) {
+        return new DefaultCasEventListener(casEventRepository);
     }
 
     @ConditionalOnMissingBean(name = "casEventRepository")
