@@ -5,7 +5,7 @@ dependencies {
     
     implementation libraries.openid4java
     implementation libraries.httpclient
-    api libraries.persondirectory
+    implementation libraries.persondirectory
     
     compile project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-logout")

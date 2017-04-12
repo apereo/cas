@@ -1810,22 +1810,48 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     force = true
                 },
-                dependencies.create("org.apache.curator:curator-recipes:2.12.0") {
+                dependencies.create("org.apache.curator:curator-recipes:$curatorVersion") {
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
-                dependencies.create("org.apache.curator:curator-framework:2.12.0") {
+                dependencies.create("org.apache.curator:curator-framework:$curatorVersion") {
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
-                dependencies.create("org.apache.curator:curator-client:2.12.0") {
+                dependencies.create("org.apache.curator:curator-client:$curatorVersion") {
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        springcloudsleuth : [
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-sleuth:$springCloudSleuthVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.fasterxml", module: "classmate")
+                    force = true
+                },
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-zipkin:$springCloudSleuthVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.fasterxml", module: "classmate")
                     force = true
                 }
         ],

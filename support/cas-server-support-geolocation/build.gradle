@@ -4,5 +4,5 @@ dependencies {
     compile project(":core:cas-server-core-configuration")
     compile project(":api:cas-server-core-api-authentication")
     implementation libraries.groovy
-    api libraries.userinfogeocoding
+    implementation libraries.userinfogeocoding
 }
