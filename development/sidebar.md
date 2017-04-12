@@ -28,8 +28,9 @@ layout: null
 
 * [Authentication](#casauthentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
-    *   [Database](/$version/installation/Database-Authentication.html)
-        *   [Password Policy](/$version/installation/Password-Policy-Enforcement.html)
+    *   [Methods](#authnmethods)
+         *   [Database](/$version/installation/Database-Authentication.html)
+            *   [Password Policy](/$version/installation/Password-Policy-Enforcement.html)
     *   [JAAS](/$version/installation/JAAS-Authentication.html)
     *   [X.509](/$version/installation/X509-Authentication.html)
     *   [Adaptive](/$version/installation/Configuring-Adaptive-Authentication.html)
