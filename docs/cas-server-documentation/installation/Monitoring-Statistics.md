@@ -9,15 +9,15 @@ The following endpoints are available and secured by CAS:
 
 | URL                               | Description
 |-----------------------------------|------------------------------------------
-| `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management. *
+| `/status/dashboard`               | The control panel to CAS server functionality and management.
 | `/status`                         | [Monitor CAS status and other underlying components](Configuring-Monitoring.html).
-| `/status/sso`                     | Describes if there exists an active SSO session for this session.
+| `/status/sso`                     | Describes if there exists an active SSO session for this request.
 | `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
-| `/status/logging`                 | Monitor CAS logs in a streaming fashion, and review the audit log.
-| `/status/config`                  | Visual representation of **CAS** application properties and configuration.
+| `/status/logging`                 | Monitor CAS logs in a streaming fashion and review the audit log.
+| `/status/config`                  | Visual representation of application properties and configuration.
 | `/status/ssosessions`             | Report of active SSO sessions and authentications. Examine attributes, services and log users out.
 | `/status/trustedDevs`             | Reports on the [registered trusted devices/browsers](Multifactor-TrustedDevice-Authentication.html).
-| `/status/authnEvents`             | When enabled, report on the [events captured by CAS](Configuring-Authentication-Events.html).
+| `/status/authnEvents`             | When enabled, reports on the [events captured by CAS](Configuring-Authentication-Events.html).
 | `/status/attrresolution`          | Examine resolution of user attributes via [CAS attribute resolution](../integration/Attribute-Resolution.html).
 
 The following endpoints are secured and available 
