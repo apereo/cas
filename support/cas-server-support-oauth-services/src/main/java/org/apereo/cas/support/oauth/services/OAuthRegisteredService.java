@@ -45,11 +45,11 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     @Lob
     @Column(name = "supported_grants", length = Integer.MAX_VALUE)
-    private Set<String> supportedGrantTypes = new HashSet<>();
+    private HashSet<String> supportedGrantTypes = new HashSet<>();
 
     @Lob
     @Column(name = "supported_responses", length = Integer.MAX_VALUE)
-    private Set<String> supportedResponseTypes = new HashSet<>();
+    private HashSet<String> supportedResponseTypes = new HashSet<>();
 
     public String getClientId() {
         return this.clientId;
@@ -96,7 +96,7 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     }
 
     public void setSupportedGrantTypes(final Set<String> supportedGrantTypes) {
-        this.supportedGrantTypes = supportedGrantTypes;
+        this.supportedGrantTypes = new HashSet<>(supportedGrantTypes);
     }
 
     public Set<String> getSupportedResponseTypes() {
@@ -104,7 +104,7 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     }
 
     public void setSupportedResponseTypes(final Set<String> supportedResponseTypes) {
-        this.supportedResponseTypes = supportedResponseTypes;
+        this.supportedResponseTypes = new HashSet<>(supportedResponseTypes);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class OAuthRegisteredService extends RegexRegisteredService {
         builder.append("jsonFormat", isJsonFormat());
         builder.append("supportedResponseTypes", getSupportedResponseTypes());
         builder.append("supportedGrantTypes", getSupportedGrantTypes());
-        
+
         return builder.toString();
     }
 
