@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 /**
  * This is {@link CasEurekaServerWebApplication}.
@@ -38,6 +39,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
                 RedisRepositoriesAutoConfiguration.class})
 @EnableEurekaServer
 public class CasEurekaServerWebApplication {
+    protected CasEurekaServerWebApplication() {
+    }
+
     /**
      * Main.
      *
