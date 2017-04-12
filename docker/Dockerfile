@@ -4,6 +4,7 @@ MAINTAINER Apereo Foundation
 MAINTAINER Misagh Moayyed
 
 ENV PATH=$PATH:$JRE_HOME/bin
+ARG CASVERSION
 
 RUN yum -y install wget tar unzip git \
     && yum -y clean all
@@ -66,6 +67,6 @@ WORKDIR /cas-overlay
 
 ENV JAVA_HOME /opt/jre-home
 ENV PATH $PATH:$JAVA_HOME/bin:.
-RUN ./mvnw clean package -T 10 -Dcas.version=5.0.4
+RUN ./mvnw clean package -T 10 -Dcas.version=$CASVERSION
 
 CMD ["cas-overlay/bin/run-cas.sh"]
