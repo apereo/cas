@@ -2,13 +2,11 @@ package org.apereo.cas.support.events.listener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
-import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.AsciiArtUtils;
@@ -19,14 +17,8 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
-import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
-import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.event.EventListener;
-
-import java.util.Collection;
 
 /**
  * This is {@link DefaultCasEventListener} that attempts to consume CAS events
@@ -39,16 +31,10 @@ import java.util.Collection;
 public class DefaultCasEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasEventListener.class);
     
-    @Autowired(required = false)
-    private ContextRefresher contextRefresher;
-    
     private final CasEventRepository casEventRepository;
-    private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
     
-    public DefaultCasEventListener(final CasEventRepository casEventRepository,
-                                   final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
+    public DefaultCasEventListener(final CasEventRepository casEventRepository) {
         this.casEventRepository = casEventRepository;
-        this.configurationPropertiesEnvironmentManager = configurationPropertiesEnvironmentManager;
     }
 
     /**
@@ -62,50 +48,10 @@ public class DefaultCasEventListener {
         LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
     }
 
-    /**
-     * Handle refresh event when issued to this CAS server locally.
-     *
-     * @param event the event
-     */
-    @EventListener
-    public void handleRefreshEvent(final EnvironmentChangeEvent event) {
-        LOGGER.debug("Received event [{}]", event);
-        configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
-    }
-
-    /**
-     * Handle refresh event when issued by the cloud bus.
-     *
-     * @param event the event
-     */
-    @EventListener
-    public void handleRefreshEvent(final RefreshRemoteApplicationEvent event) {
-        LOGGER.debug("Received event [{}]", event);
-        configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
-    }
-
-    /**
-     * Handle configuration modified event.
-     *
-     * @param event the event
-     */
-    @EventListener
-    public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
-        if (this.contextRefresher == null) {
-            LOGGER.warn("Unable to refresh application context, since no refresher is available");
-            return;
-        }
-        
-        if (event.isEligibleForContextRefresh()) {
-            LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
-            final Collection<String> keys = this.contextRefresher.refresh();
-            LOGGER.debug("Refreshed the following settings: [{}].", keys);
-            configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
-            LOGGER.info("CAS finished rebinding configuration with new settings [{}]", keys);
-        }
-    }
     
 
+    
+    
     /**
      * Handle TGT creation event.
      *
