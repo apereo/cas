@@ -7,10 +7,16 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * This is {@link CasConfigurationPropertiesEnvironmentManager}.
@@ -19,7 +25,11 @@ import java.io.File;
  * @since 5.1.0
  */
 public class CasConfigurationPropertiesEnvironmentManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationPropertiesEnvironmentManager.class);
 
+    @Autowired
+    private ConfigurationPropertiesBindingPostProcessor binder;
+    
     @Autowired
     private Environment environment;
 
@@ -35,7 +45,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
     public String getApplicationName() {
         return environment.getRequiredProperty("spring.application.name");
     }
-    
+
     /**
      * Save property for standalone profile.
      *
@@ -45,7 +55,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
         try {
             final File file = getStandaloneProfileConfigurationDirectory();
             final Parameters params = new Parameters();
-            
+
             final FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
                     new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
                             .configure(params.properties().setFile(new File(file, getApplicationName() + ".properties")));
@@ -56,5 +66,20 @@ public class CasConfigurationPropertiesEnvironmentManager {
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    /**
+     * Rebind cas configuration properties.
+     */
+    public void rebindCasConfigurationProperties() {
+        final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+        final Map<String, CasConfigurationProperties> map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
+        final String name = map.keySet().iterator().next();
+        LOGGER.debug("Reloading CAS configuration via [{}]", name);
+        final Object e = applicationContext.getBean(name);
+        this.binder.postProcessBeforeInitialization(e, name);
+        final Object bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
+        LOGGER.debug("Reloaded CAS configuration [{}]", name);
     }
 }
