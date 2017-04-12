@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "Docker image: $IMAGE_NAME"
+echo "Docker repository: $DOCKER_REPO"
+echo "Docker tag: $DOCKER_TAG"
+echo "Docker source branch: $SOURCE_BRANCH"
+echo "Docker source commit: $SOURCE_COMMIT"
+echo "Docker commit message: $COMMIT_MSG"
+
+echo "Building CAS docker image tagged as $DOCKER_TAG"
+docker build --build-arg CASVERSION=$DOCKER_TAG -t $IMAGE_NAME
+echo "Built CAS image successfully tagged as v$cas_version"
