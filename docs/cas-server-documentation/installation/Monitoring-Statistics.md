@@ -86,6 +86,37 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 Monitors allow you to watch the internal state of a given CAS component.
 See [this guide](Configuring-Monitoring.html) for more info.
 
+## Distributed Tracing
+
+Support for distributed tracing of requests is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-support-sleuth</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+![image](https://cloud.githubusercontent.com/assets/1205228/24955152/8798ad9c-1f97-11e7-8b9d-fccc3c306c42.png)
+
+For most users [Sleuth](https://cloud.spring.io/spring-cloud-sleuth/) should be invisible, and all
+interactions with external systems should be instrumented automatically.
+
+Trace data is captured automatically and passed along to [Zipkin](https://github.com/openzipkin/zipkin), which helps 
+gather timing data needed to troubleshoot latency problems.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#sleuth-distributed-tracing).
+
+### Troubleshooting
+
+```xml
+ <AsyncLogger name="org.springframework.cloud" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</AsyncLogger>
+```
+
 ## Metrics
 
 Supported metrics include:
@@ -122,7 +153,6 @@ All performance data and metrics are routed to a log file via the Log4j configur
 <CasAppender name="casPerf">
     <AppenderRef ref="perfFileAppender" />
 </CasAppender>
-
 ```
 
 
