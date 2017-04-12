@@ -9,7 +9,7 @@ CAS installation is a fundamentally source-oriented process, and we recommend a
 WAR overlay (1) project to organize
 customizations such as component configuration and UI design.
 The output of a WAR overlay build is a `cas.war` file that can be deployed to a servlet container like
-[Apache Tomcat](http://tomcat.apache.org/whichversion.html).
+[Apache Tomcat](Configuring-Servlet-Container.html).
 
 ## What is a WAR Overlay?
 
@@ -65,19 +65,19 @@ To construct the overlay project, you neeed to copy directories and files *that 
 The Gradle overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
 You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
 
-Note: Do **NOT** ever make changes in the build directory. The changesets will be cleaned out and 
+Note: Do **NOT** ever make changes in the above-noted build directory. The changesets will be cleaned out and 
 set back to defaults every time you do a build. Put overlaid components inside the source directory
 and/or other instructed locations to avoid surprises.
 
 ## CAS Configuration Server Overlay
 
-- [Maven WAR overlay](https://github.com/apereo/cas-configserver-overlay)
+َSee this [Maven WAR overlay](https://github.com/apereo/cas-configserver-overlay) for more details.
 
 To learn more about the configuration server, please [review this guide](Configuration-Server-Management.html).
 
 ## Dockerized Deployment
 
-- See [this guide](Docker-Installation.html) for more info.
+See [this guide](Docker-Installation.html) for more info.
 
 ## Servlet Container
 
