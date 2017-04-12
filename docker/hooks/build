@@ -7,6 +7,18 @@ echo "Docker source branch: $SOURCE_BRANCH"
 echo "Docker source commit: $SOURCE_COMMIT"
 echo "Docker commit message: $COMMIT_MSG"
 
-echo "Building CAS docker image tagged as $DOCKER_TAG"
-docker build --build-arg CASVERSION=$DOCKER_TAG -t $IMAGE_NAME
-echo "Built CAS image successfully tagged as v$cas_version"
+
+if [ $cas_version == "latest" ]
+ then
+    echo "Getting gradle.properties file off of master to locate CAS version..."
+    wget https://raw.githubusercontent.com/apereo/cas/master/gradle.properties
+    cat gradle.properties | grep "version=" > version.xyz
+    cat version.xyz
+    export cas_version=`(cut -d '=' -f 2 version.xyz)`
+ else
+    cas_version=$DOCKER_TAG
+fi
+
+echo "Building CAS docker image tagged as $cas_version"
+# docker build --build-arg CASVERSION=$cas_version -t $IMAGE_NAME
+echo "Built CAS image successfully tagged as $cas_version"
