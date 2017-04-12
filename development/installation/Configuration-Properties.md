@@ -3113,8 +3113,9 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.accessToken.releaseProtocolAttributes=true
 # cas.authn.oauth.accessToken.timeToKillInSeconds=7200
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
-```
 
+# cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
+```
 
 ## Localization
 
@@ -3253,6 +3254,18 @@ Store audit logs inside a database.
 # cas.audit.jdbc.pool.minSize=6
 # cas.audit.jdbc.pool.maxSize=18
 # cas.audit.jdbc.pool.maxWait=2000
+```
+
+## Sleuth Distributed Tracing
+
+To learn more about this topic, [please review this guide](Monitoring-Statistics.html#distributed-tracing).
+
+```properties
+# spring.sleuth.sampler.percentage = 0.5
+# spring.sleuth.enabled=true
+
+# spring.zipkin.enabled=true
+# spring.zipkin.baseUrl=http://localhost:9411/
 ```
 
 ## Monitoring

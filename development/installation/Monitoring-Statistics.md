@@ -20,7 +20,8 @@ The following endpoints are available and secured by CAS:
 | `/status/authnEvents`             | When enabled, report on the [events captured by CAS](Configuring-Authentication-Events.html).
 | `/status/attrresolution`          | Examine resolution of user attributes via [CAS attribute resolution](../integration/Attribute-Resolution.html).
 
-The following endpoints are secured and available by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
+The following endpoints are secured and available 
+by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
 
 | URL                               | Description
 |-----------------------------------|-------------------------------------------------------------------------------------
@@ -86,66 +87,38 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 Monitors allow you to watch the internal state of a given CAS component.
 See [this guide](Configuring-Monitoring.html) for more info.
 
-## Metrics
+## Distributed Tracing
 
-Supported metrics include:
-
-- Run count and elapsed times for all supported garbage collectors
-- Memory usage for all memory pools, including off-heap memory
-- Breakdown of thread states, including deadlocks
-- File descriptor usage
-- ...
-
-### Metric Refresh Interval
-
-The metrics reporting interval can be configured via CAS properties.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#metrics--performance-stats).
-
-### Loggers
-
-All performance data and metrics are routed to a log file via the Log4j configuration:
+Support for distributed tracing of requests is enabled by including the following dependency in the WAR overlay:
 
 ```xml
-...
-<RollingFile name="perfFileAppender" fileName="perfStats.log" append="true"
-             filePattern="perfStats-%d{yyyy-MM-dd-HH}-%i.log">
-    <PatternLayout pattern="%m%n"/>
-    <Policies>
-        <OnStartupTriggeringPolicy />
-        <SizeBasedTriggeringPolicy size="10 MB"/>
-        <TimeBasedTriggeringPolicy />
-    </Policies>
-</RollingFile>
-
-...
-
-<CasAppender name="casPerf">
-    <AppenderRef ref="perfFileAppender" />
-</CasAppender>
-
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-support-sleuth</artifactId>
+     <version>${cas.version}</version>
+</dependency>
 ```
 
+![image](https://cloud.githubusercontent.com/assets/1205228/24955152/8798ad9c-1f97-11e7-8b9d-fccc3c306c42.png)
 
-### Sample Output
+For most users [Sleuth](https://cloud.spring.io/spring-cloud-sleuth/) should be invisible, and all
+interactions with external systems should be instrumented automatically.
 
-```bash
-type=GAUGE, name=jvm.gc.Copy.count, value=22
-type=GAUGE, name=jvm.gc.Copy.time, value=466
-type=GAUGE, name=jvm.gc.MarkSweepCompact.count, value=3
-type=GAUGE, name=jvm.gc.MarkSweepCompact.time, value=414
-type=GAUGE, name=jvm.memory.heap.committed, value=259653632
-type=GAUGE, name=jvm.memory.heap.init, value=268435456
-type=GAUGE, name=jvm.memory.heap.max, value=1062338560
-type=GAUGE, name=jvm.memory.heap.usage, value=0.09121857348376773
-type=GAUGE, name=jvm.memory.heap.used, value=96905008
+Trace data is captured automatically and passed along to [Zipkin](https://github.com/openzipkin/zipkin), which helps 
+gather timing data needed to troubleshoot latency problems.
 
-type=METER, name=org.apereo.cas.DefaultCentralAuthenticationService.CREATE_TICKET_GRANTING_TICKET_METER, count=0,
-mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#sleuth-distributed-tracing).
 
-type=METER, name=org.apereo.cas.DefaultCentralAuthenticationService.DESTROY_TICKET_GRANTING_TICKET_METER,
-count=0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond
+### Troubleshooting
 
-type=TIMER, name=org.apereo.cas.DefaultCentralAuthenticationService.GRANT_SERVICE_TICKET_TIMER, count=0,
-min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0,
-mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
+```xml
+ <AsyncLogger name="org.springframework.cloud" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</AsyncLogger>
 ```
+
+## Metrics
+
+Metrics allow to gain insight into the running CAS software, and provide ways to measure the behavior of critical components. 
+See [this guide](Configuring-Metrics.html) for more info.
