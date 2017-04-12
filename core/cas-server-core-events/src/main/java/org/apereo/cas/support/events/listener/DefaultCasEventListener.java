@@ -2,7 +2,7 @@ package org.apereo.cas.support.events.listener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
@@ -21,15 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * This is {@link DefaultCasEventListener} that attempts to consume CAS events
@@ -41,21 +38,17 @@ import java.util.Map;
  */
 public class DefaultCasEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasEventListener.class);
-
-
-    @Autowired
-    private ConfigurationPropertiesBindingPostProcessor binder;
-
+    
     @Autowired(required = false)
     private ContextRefresher contextRefresher;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
+    
     private final CasEventRepository casEventRepository;
-
-    public DefaultCasEventListener(final CasEventRepository casEventRepository) {
+    private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
+    
+    public DefaultCasEventListener(final CasEventRepository casEventRepository,
+                                   final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
         this.casEventRepository = casEventRepository;
+        this.configurationPropertiesEnvironmentManager = configurationPropertiesEnvironmentManager;
     }
 
     /**
@@ -77,7 +70,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
         LOGGER.debug("Received event [{}]", event);
-        rebindCasConfigurationProperties();
+        configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
     }
 
     /**
@@ -88,7 +81,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleRefreshEvent(final RefreshRemoteApplicationEvent event) {
         LOGGER.debug("Received event [{}]", event);
-        rebindCasConfigurationProperties();
+        configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
     }
 
     /**
@@ -107,24 +100,11 @@ public class DefaultCasEventListener {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
             final Collection<String> keys = this.contextRefresher.refresh();
             LOGGER.debug("Refreshed the following settings: [{}].", keys);
-            rebindCasConfigurationProperties();
+            configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
             LOGGER.info("CAS finished rebinding configuration with new settings [{}]", keys);
         }
     }
-
-    /**
-     * Rebind cas configuration properties.
-     */
-    public void rebindCasConfigurationProperties() {
-        final Map<String, CasConfigurationProperties> map = this.applicationContext.getBeansOfType(CasConfigurationProperties.class);
-        final String name = map.keySet().iterator().next();
-        LOGGER.debug("Reloading CAS configuration via [{}]", name);
-        final Object e = this.applicationContext.getBean(name);
-        this.binder.postProcessBeforeInitialization(e, name);
-        final Object bean = this.applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
-        this.applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
-        LOGGER.debug("Reloaded CAS configuration [{}]", name);
-    }
+    
 
     /**
      * Handle TGT creation event.

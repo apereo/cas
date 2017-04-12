@@ -6,8 +6,7 @@ dependencies {
     compile project(":api:cas-server-core-api-events")
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-util")
-    
-
+    implementation libraries.springcloudbus
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
 }
 
