@@ -118,19 +118,24 @@ layout: null
 * [Logs & Audits](#logs_audits)
     *   [Logging](/$version/installation/Logging.html)
     *   [Audits](/$version/installation/Audits.html)
-    *   [Monitoring & Statistics](/$version/installation/Monitoring-Statistics.html)
-
+    
+*   [Monitoring & Statistics](/$version/installation/Monitoring-Statistics.html)
+    *   [Metrics](/$version/installation/Configuring-Metrics.html)
+    *   [Monitors](/$version/installation/Configuring-Monitoring.html)
+    *   [Sentry](/$version/integration/Sentry-Integration.html)
+        
 * [User Interface](#user_interface)
-    *   [UI Customization](/$version/installation/User-Interface-Customization.html)
+    *   [Overview](/$version/installation/User-Interface-Customization.html)
         *   [CSS & JavaScript](/$version/installation/User-Interface-Customization-CSSJS.html)
         *   [Views](/$version/installation/User-Interface-Customization-Views.html)
         *   [Localization](/$version/installation/User-Interface-Customization-Localization.html)
         *   [Dynamic Themes](/$version/installation/User-Interface-Customization-Themes.html)
-    *   [Webflow Customization](/$version/installation/Webflow-Customization.html)
-        *   [Exceptions](/$version/installation/Webflow-Customization-Exceptions.html)
-        *   [Sessions](/$version/installation/Webflow-Customization-Sessions.html)
-        *   [Acceptable Usage Policy](/$version/installation/Webflow-Customization-AUP.html)
-
+    *   [Acceptable Usage Policy](/$version/installation/Webflow-Customization-AUP.html)
+        
+*   [Webflow Management](/$version/installation/Webflow-Customization.html)
+    *   [Error Handling](/$version/installation/Webflow-Customization-Exceptions.html)
+    *   [Session Persistence](/$version/installation/Webflow-Customization-Sessions.html)
+   
 * [Protocols](#protocols)
     *   [Overview](/$version/protocol/Protocol-Overview.html)
     *   [CAS](/$version/protocol/CAS-Protocol.html)
@@ -144,15 +149,14 @@ layout: null
     *   [REST](/$version/protocol/REST-Protocol.html)
 
 * [Integration](#appintegration)
-    *   [SAML2 SPs](/$version/integration/Configuring-SAML-SP-Integrations.html)
+    *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)
         *   [Google Apps](/$version/integration/Google-Apps-Integration.html)
     *   [Google reCAPTCHA](/$version/integration/Configuring-Google-reCAPTCHA.html)
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [SCIM Provisioning](/$version/integration/SCIM-Integration.html)
-    *   [Sentry Monitoring](/$version/integration/Sentry-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
-    *   [Shibboleth IdP](/$version/integration/Shibboleth.html)
+    *   [Shibboleth Identity Provider](/$version/integration/Shibboleth.html)
 
 * [Developer](#developer)
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
