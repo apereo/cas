@@ -37,11 +37,28 @@ public final class AsciiArtUtils {
      * @param asciiArt   the ascii art
      * @param additional the additional
      */
-    public static void printAsciiArt(final Logger out, final String asciiArt, final String additional) {
+    public static void printAsciiArtWarning(final Logger out, final String asciiArt, final String additional) {
         try {
             out.warn(ANSI_CYAN);
             out.warn("\n\n".concat(FigletFont.convertOneLine(asciiArt)).concat(additional));
             out.warn(ANSI_RESET);
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
+    /**
+     * Print ascii art info.
+     *
+     * @param out        the out
+     * @param asciiArt   the ascii art
+     * @param additional the additional
+     */
+    public static void printAsciiArtInfo(final Logger out, final String asciiArt, final String additional) {
+        try {
+            out.info(ANSI_CYAN);
+            out.info("\n\n".concat(FigletFont.convertOneLine(asciiArt)).concat(additional));
+            out.info(ANSI_RESET);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -63,7 +80,7 @@ public final class AsciiArtUtils {
             } else {
                 out.print(FigletFont.convertOneLine(asciiArt));
             }
-            out.print(ANSI_RESET);
+            out.println(ANSI_RESET);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
