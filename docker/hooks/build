@@ -11,7 +11,10 @@ echo "Docker commit message: $COMMIT_MSG"
 if [ $DOCKER_TAG == "latest" ]
  then
     echo "Getting gradle.properties file off of master to locate CAS version..."
-    wget https://raw.githubusercontent.com/apereo/cas/master/gradle.properties
+    echo "Current working directory: " && pwd
+    echo "Current directory listings: " && ls
+    echo "Root directory listings: " && ls ..
+    cd ..
     cat gradle.properties | grep "version=" > version.xyz
     cat version.xyz
     export cas_version=`(cut -d '=' -f 2 version.xyz)`
