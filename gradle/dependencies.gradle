@@ -1796,7 +1796,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        zookeeper    : [
+        zookeeper               : [
                 dependencies.create("org.apache.zookeeper:zookeeper:$zookeeperVersion") {
                     exclude(group: "jline", module: "jline")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1829,7 +1829,25 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springcloudsleuth : [
+        springcloudeurekaserver : [
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-eureka-server:$springCloudEurekaVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "io.reactivex", module:"rxjava")
+                    exclude(group: "com.netflix.servo", module:"servo-core")
+                    force = true
+                },
+                dependencies.create("com.netflix.eureka:eureka-client:$eurekaClientVersion") {
+                    exclude(group: "com.netflix.netflix-commons", module:"netflix-eventbus")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        springcloudsleuth       : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-sleuth:$springCloudSleuthVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
