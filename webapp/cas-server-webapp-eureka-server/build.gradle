@@ -28,5 +28,6 @@ bootRepackage {
 dependencies {
     providedRuntime libraries.springboottomcat
     implementation libraries.springcloudeurekaserver
+    implementation libraries.springintegration
     compile project(":core:cas-server-core-util")
 }
