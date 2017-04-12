@@ -50,15 +50,8 @@ server environment.
 
 ### Log Patterns
 
-By default most appenders that are provided via the `log4j2.xml` file use pattern-based layouts to format log messages:
-
-```xml
-...
-    <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;}%n"/>
-...
-```
-
-The following alternative layouts may also be used:
+By default most appenders that are provided via the `log4j2.xml` file use
+pattern-based layouts to format log messages. The following alternative layouts may also be used:
 
 | Layout                        | Description
 |-------------------------------|------------------------------------------------------------------------
