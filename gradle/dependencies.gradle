@@ -1931,7 +1931,7 @@ ext.libraries = [
                 }
         ],
         springcloudvault        : [
-                dependencies.create("org.springframework.cloud:spring-cloud-vault-starter-config:$springCloudVaultVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-vault-config$springCloudVaultVersion") {
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework", module: "spring-beans")
