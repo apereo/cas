@@ -121,7 +121,8 @@ layout: null
     *   [Logging](/$version/installation/Logging.html)
     *   [Audits](/$version/installation/Audits.html)
     
-*   [Monitoring & Statistics](/$version/installation/Monitoring-Statistics.html)
+* [Monitoring & Statistics](#monitoroverview)
+    *   [Overview](/$version/installation/Monitoring-Statistics.html) 
     *   [Metrics](/$version/installation/Configuring-Metrics.html)
     *   [Monitors](/$version/installation/Configuring-Monitoring.html)
     *   [Sentry](/$version/integration/Sentry-Integration.html)
@@ -134,7 +135,8 @@ layout: null
         *   [Dynamic Themes](/$version/installation/User-Interface-Customization-Themes.html)
     *   [Acceptable Usage Policy](/$version/installation/Webflow-Customization-AUP.html)
         
-*   [Webflow Management](/$version/installation/Webflow-Customization.html)
+*   [Webflow Management](#webflowmgmt)
+    *   [Overview](/$version/installation/Webflow-Customization.html) 
     *   [Error Handling](/$version/installation/Webflow-Customization-Exceptions.html)
     *   [Session Persistence](/$version/installation/Webflow-Customization-Sessions.html)
    
