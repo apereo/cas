@@ -132,6 +132,19 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
+### Signing & Encryption
+
+A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to 
+manually and beforehand create the signing and encryption keys.
+
+Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) 
+of a cerain size for the key, you are to use the following set of commands to generate the token:
+
+```bash
+wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
+java -jar jwk-gen.jar -t oct -s [size]
+```
+
 ### DDL Configuration
 
 Note that the default value for Hibernate's DDL setting is `create-drop`
@@ -1961,6 +1974,9 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 # cas.authn.token.crypto.alg=AES
 ```
 
+The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
+The signing key is a JWK whose length is defined by the encryption key size setting.
+
 ## Stormpath Authentication
 
 To learn more about this topic, [please review this guide](Stormpath-Authentication.html).
@@ -2236,13 +2252,19 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 
 ```properties
 # cas.authn.mfa.trusted.authenticationContextAttribute=isFromTrustedMultifactorAuthentication
-# cas.authn.mfa.trusted.encryptionKey=
-# cas.authn.mfa.trusted.signingKey=
-# cas.authn.mfa.trusted.cipherEnabled=true
 # cas.authn.mfa.trusted.deviceRegistrationEnabled=true
 # cas.authn.mfa.trusted.expiration=30
 # cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
+
+# cas.authn.mfa.trusted.encryptionKey=
+# cas.authn.mfa.trusted.signingKey=
+# cas.authn.mfa.trusted.cipherEnabled=true
 ```
+
+### Signing & Encryption
+
+The signing and encryption keys are both JWKs of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ### JDBC Storage
 
@@ -3085,16 +3107,23 @@ To learn more about this topic, [please review this guide](WS-Federation-Protoco
 # cas.authn.wsfedIdP.sts.subjectNameIdFormat=unspecified
 # cas.authn.wsfedIdP.sts.encryptTokens=true
 
-# Used to secure authentication requests between the IdP and STS
-# cas.authn.wsfedIdP.sts.encryptionKey=
-# cas.authn.wsfedIdP.sts.signingKey=
-
 # cas.authn.wsfedIdP.sts.realm.keystoreFile=/etc/cas/config/stscasrealm.jks
 # cas.authn.wsfedIdP.sts.realm.keystorePassword=storepass
 # cas.authn.wsfedIdP.sts.realm.keystoreAlias=realmcas
 # cas.authn.wsfedIdP.sts.realm.keyPassword=cas
 # cas.authn.wsfedIdP.sts.realm.issuer=CAS
 ```
+
+### Signing & Encryption
+
+```properties
+# Used to secure authentication requests between the IdP and STS
+# cas.authn.wsfedIdP.sts.encryptionKey=
+# cas.authn.wsfedIdP.sts.signingKey=
+```
+
+The signing and encryption keys are both JWKs of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## OAuth2
 
@@ -3152,14 +3181,20 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 # cas.tgc.path=
 # cas.tgc.maxAge=-1
 # cas.tgc.domain=
-# cas.tgc.signingKey=
 # cas.tgc.name=TGC
-# cas.tgc.encryptionKey=
 # cas.tgc.secure=true
 # cas.tgc.httpOnly=true
 # cas.tgc.rememberMeMaxAge=1209600
+
+# cas.tgc.encryptionKey=
+# cas.tgc.signingKey=
 # cas.tgc.cipherEnabled=true
 ```
+
+### Signing & Encryption
+
+The signing and encryption keys are both JWKs of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## Logout
 
@@ -3198,6 +3233,9 @@ the last resort in getting an integration to work...maybe not even then.</p></di
 # cas.clearpass.cipherEnabled=true;
 ```
 
+The signing and encryption keys are both JWKs of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
+
 ## Message Bundles
 
 To learn more about this topic, [please review this guide](User-Interface-Customization-Localization.html).
@@ -3209,8 +3247,6 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.messageBundle.useCodeMessage=true
 # cas.messageBundle.baseNames=classpath:custom_messages,classpath:messages
 ```
-
-
 
 ## Audits
 
@@ -3677,6 +3713,10 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 
 To learn more about this topic, [please review this guide](Configuring-Ticketing-Components.html).
 
+### Signing & Encryption
+
+The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
+The signing key is a JWK whose length is defined by the encryption key size setting.
 
 ### Cleaner
 
@@ -4019,6 +4059,9 @@ when shared with client applications on outgoing calls.
 # cas.ticket.security.signingKey=
 ```
 
+The signing and encryption keys are both JWKs of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
+
 ## Service Tickets Behavior
 
 Controls the expiration policy of service tickets, as well as other properties
@@ -4205,12 +4248,13 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 
 # cas.webflow.signing.key=
 # cas.webflow.signing.keySize=512
-
 # cas.webflow.encryption.keySize=16
 # cas.webflow.encryption.key=
-
 # cas.webflow.alg=AES
 ```
+
+The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
+The signing key is a JWK whose length is defined by the encryption key size setting.
 
 ### Authentication Exceptions
 
@@ -4363,6 +4407,10 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.security.encryptionKey=
 # cas.authn.pm.reset.security.signingKey=
 ```
+
+The signing and encryption keys are both JWKs of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
+
 
 ### LDAP Password Management
 
