@@ -7,7 +7,7 @@ import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.context.event.EventListener;
 
 /**
- * This is {@link CasConfigurationEventListener}.
+ * This is {@link CasCloudBusConfigurationEventListener}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
