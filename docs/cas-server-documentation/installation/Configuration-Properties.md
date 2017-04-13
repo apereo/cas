@@ -1974,6 +1974,9 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 # cas.authn.token.crypto.alg=AES
 ```
 
+The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
+The signing key is a JWK whose length is defined by the encryption key size setting.
+
 ## Stormpath Authentication
 
 To learn more about this topic, [please review this guide](Stormpath-Authentication.html).
@@ -3710,13 +3713,10 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 
 To learn more about this topic, [please review this guide](Configuring-Ticketing-Components.html).
 
-### Encryption
+### Signing & Encryption
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-
-### Signing
-
-This is a JWK whose length is defined by the encryption key size setting.
+The signing key is a JWK whose length is defined by the encryption key size setting.
 
 ### Cleaner
 
@@ -4248,12 +4248,13 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 
 # cas.webflow.signing.key=
 # cas.webflow.signing.keySize=512
-
 # cas.webflow.encryption.keySize=16
 # cas.webflow.encryption.key=
-
 # cas.webflow.alg=AES
 ```
+
+The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
+The signing key is a JWK whose length is defined by the encryption key size setting.
 
 ### Authentication Exceptions
 
