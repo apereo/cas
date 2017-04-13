@@ -30,7 +30,7 @@ layout: null
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
     *   [Methods](#authnmethods)
         *   [LDAP](/$version/installation/LDAP-Authentication.html)
-                *   [Password Policy](/$version/installation/Password-Policy-Enforcement.html)
+            *   [Password Policy](/$version/installation/Password-Policy-Enforcement.html)
         *   [Database](/$version/installation/Database-Authentication.html)
             *   [Password Policy](/$version/installation/Password-Policy-Enforcement.html)
         *   [JAAS](/$version/installation/JAAS-Authentication.html)
@@ -56,15 +56,9 @@ layout: null
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
     *   [Surrogate](/$version/installation/Surrogate-Authentication.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
-    
-*   [SSO & SLO](#ssoandslo) 
-    *   [SSO Session](/$version/installation/Configuring-SSO-Session-Cookie.html)
-    *   [Remember Me](/$version/installation/Configuring-LongTerm-Authentication.html)
-    *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
 
-*   [Password Management](/$version/installation/Password-Management.html)
-
-*   [Multifactor Authentication](/$version/installation/Configuring-Multifactor-Authentication.html)
+*   [Multifactor Authentication](#mfaauthn)
+    *   [Overview](/$version/installation/Configuring-Multifactor-Authentication.html)
     *   [Providers](#mfaproviders)
         *   [Duo Security](/$version/installation/DuoSecurity-Authentication.html)
         *   [YubiKey](/$version/installation/YubiKey-Authentication.html)
@@ -76,6 +70,14 @@ layout: null
     *   [Trusted Devices](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
     *   [Adaptive](/$version/installation/Configuring-Adaptive-Authentication.html)
     *   [GUA](/$version/installation/GUA-Authentication.html)
+    
+*   [SSO & SLO](#ssoandslo) 
+    *   [SSO Session](/$version/installation/Configuring-SSO-Session-Cookie.html)
+    *   [Remember Me](/$version/installation/Configuring-LongTerm-Authentication.html)
+    *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
+
+*   [Password Management](#pswmgmt)
+    *   [Overview](/$version/installation/Password-Management.html) 
         
 * [Attributes](#casattributes)
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
