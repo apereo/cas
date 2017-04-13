@@ -218,7 +218,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
         final Ticket encodedTicket = new EncodedTicket(ByteSource.wrap(encodedTicketObject), encodedTicketId);
-        LOGGER.info("Created [{}]", encodedTicket);
+        LOGGER.debug("Created encoded ticket [{}]", encodedTicket);
         return encodedTicket;
     }
 
@@ -240,12 +240,12 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 return null;
             }
 
-            LOGGER.info("Attempting to decode [{}]", result);
+            LOGGER.debug("Attempting to decode [{}]", result);
             final EncodedTicket encodedTicket = (EncodedTicket) result;
 
             final Ticket ticket = SerializationUtils.decodeAndDeserializeObject(
                     encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
-            LOGGER.info("Decoded [{}]", ticket);
+            LOGGER.debug("Decoded ticket to [{}]", ticket);
             return ticket;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
