@@ -132,7 +132,7 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
-## Signing & Encryption
+### Signing & Encryption
 
 A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to 
 manually and beforehand create the signing and encryption keys.
