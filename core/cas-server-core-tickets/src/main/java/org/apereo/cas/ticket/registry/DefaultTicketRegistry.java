@@ -56,9 +56,9 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticket) {
         Assert.notNull(ticket, "ticket cannot be null");
-
+        final Ticket encTicket = encodeTicket(ticket);
         LOGGER.debug("Added ticket [{}] to registry.", ticket.getId());
-        this.cache.put(ticket.getId(), ticket);
+        this.cache.put(encTicket.getId(), encTicket);
     }
 
     @Override

@@ -92,9 +92,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         setSigningKey(signingKeyToUse);
         this.secretKeyEncryptionKey = prepareJsonWebTokenKey(secretKeyToUse);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
-
-        LOGGER.debug("Initialized cipher encryption sequence via [{}]",
-                contentEncryptionAlgorithmIdentifier);
+        LOGGER.debug("Initialized cipher encryption sequence via [{}]", contentEncryptionAlgorithmIdentifier);
 
     }
 
