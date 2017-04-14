@@ -111,6 +111,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ### Troubleshooting
 
+To enable additional logging, modify the logging configuration file to add the following:
+
 ```xml
  <AsyncLogger name="org.springframework.cloud" level="debug" additivity="false">
     <AppenderRef ref="casConsole"/>

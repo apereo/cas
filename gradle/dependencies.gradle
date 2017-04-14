@@ -170,6 +170,10 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("commons-beanutils:commons-beanutils:$commonsBeansVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    force = true
+                },
+                dependencies.create("commons-logging:commons-logging:$commonsLoggingVersion") {
                     force = true
                 },
                 dependencies.create("org.apache.commons:commons-configuration2:$commonsConfigVersion") {
@@ -1670,13 +1674,13 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springintegration : [
+        springintegration       : [
                 dependencies.create("org.springframework.integration:spring-integration-core:$springIntegrationVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
-        springcloudbus : [
+        springcloudbus          : [
                 dependencies.create("org.springframework.cloud:spring-cloud-bus:$springCloudBusVersion") {
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
                     exclude(group: "org.objenesis", module: "objenesis")
@@ -1863,21 +1867,117 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springcloudeurekaserver : [
-                dependencies.create("org.springframework.cloud:spring-cloud-starter-eureka-server:$springCloudEurekaVersion") {
+        springcloudeureka       : [
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-eureka:$springCloudEurekaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "io.reactivex", module:"rxjava")
-                    exclude(group: "com.netflix.servo", module:"servo-core")
+                    exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "com.netflix.eureka", module: "eureka-client")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
+
                     force = true
-                },
+                }
+        ],
+        eurekaclient            : [
                 dependencies.create("com.netflix.eureka:eureka-client:$eurekaClientVersion") {
-                    exclude(group: "com.netflix.netflix-commons", module:"netflix-eventbus")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
+                    exclude(group: "com.netflix.netflix-commons", module: "netflix-eventbus")
+                    force = true
+                },
+                dependencies.create("com.netflix.netflix-commons:netflix-eventbus:0.3.0") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    force = true
+                }
+        ],
+        ribbon : [
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-ribbon:$springCloudEurekaVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-httpclient")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    force = true
+                },
+                dependencies.create("com.netflix.ribbon:ribbon:$ribbonVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "com.netflix.hystrix", module: "hystrix-core")
+                    exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-httpclient")
+                    force = true
+                },
+                dependencies.create("com.netflix.ribbon:ribbon-loadbalancer:$ribbonVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    force = true
+                },
+                dependencies.create("com.netflix.ribbon:ribbon-httpclient:$ribbonVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    force = true
+                },
+                dependencies.create("com.netflix.ribbon:ribbon-eureka:$ribbonVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "com.netflix.eureka", module: "eureka-client")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    force = true
+                },
+                dependencies.create("com.netflix.ribbon:ribbon-transport:$ribbonVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
+                    force = true
+                }        
+        ],
+        springcloudeurekaserver : [
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-eureka-server:$springCloudEurekaVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "com.netflix.eureka", module: "eureka-client")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-starter-ribbon")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
+                    exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
                     force = true
                 }
         ],
