@@ -27,6 +27,7 @@ ext["hikariVersion"] = "2.6.1"
 ext["groovyVersion"] = "2.4.10"
 ext["log4jVersion"] = "2.8.2"
 ext["commonsBeansVersion"] = "1.9.3"
+ext["dropwizardMetricsVersion"] = "3.2.2"
 
 ext["commons-beanutils.version"] = "1.8.3"
 ext["hazelcast.version"] = ext["hazelcastVersion"]
@@ -44,3 +45,4 @@ ext["hikaricp.version"] = ext["hikariVersion"]
 ext["groovy.version"] = ext["groovyVersion"]
 ext["log4j2.version"] = ext["log4jVersion"]
 ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
+ext["dropwizard-metrics.version"] = ext["dropwizardMetricsVersion"]
