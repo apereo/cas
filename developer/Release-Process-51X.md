@@ -85,6 +85,7 @@ Update the following overlay projects to point to the newly released CAS version
 - [CAS Webapp Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
 - [CAS Configuration Server Overlay](https://github.com/apereo/cas-configserver-overlay)
 - [CAS Services Management WebApp Overlay](https://github.com/apereo/cas-services-management-overlay)
+- [CAS Discovery Server Overlay](https://github.com/apereo/cas-discoveryserver-overlay)
 
 ## Update Travis
 
