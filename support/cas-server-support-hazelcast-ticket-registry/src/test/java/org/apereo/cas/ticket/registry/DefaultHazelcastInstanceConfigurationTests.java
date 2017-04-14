@@ -85,7 +85,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertEquals(5701, config.getNetworkConfig().getPort());
         assertEquals(2, config.getMapConfigs().size());
     }
-
+        
     @After
     public void shutdownHz() {
         LOGGER.info("Shutting down hazelcast instance [{}]", this.hzInstance.getConfig().getInstanceName());

@@ -47,7 +47,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         this.centralAuthenticationService = centralAuthenticationService;
         this.metricsRegistry = metricsRegistry;
         this.healthCheckRegistry = healthCheckRegistry;
-        this.casProperties = casProperties; 
+        this.casProperties = casProperties;
     }
 
     /**
@@ -98,10 +98,8 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping(value = "/getTicketStats")
     @ResponseBody
-    public Map<String, Object> getTicketStats(final HttpServletRequest request,
-                                              final HttpServletResponse response) {
+    public Map<String, Object> getTicketStats(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-
         final Map<String, Object> model = new HashMap<>();
 
         int unexpiredTgts = 0;
@@ -114,12 +112,14 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         for (final Ticket ticket : tickets) {
             if (ticket instanceof ServiceTicket) {
                 if (ticket.isExpired()) {
+                    this.centralAuthenticationService.deleteTicket(ticket.getId());
                     expiredSts++;
                 } else {
                     unexpiredSts++;
                 }
             } else {
                 if (ticket.isExpired()) {
+                    this.centralAuthenticationService.deleteTicket(ticket.getId());
                     expiredTgts++;
                 } else {
                     unexpiredTgts++;
@@ -147,7 +147,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest,
                                                  final HttpServletResponse httpServletResponse) throws Exception {
         ensureEndpointAccessIsAuthorized(httpServletRequest, httpServletResponse);
-        
+
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());

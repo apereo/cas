@@ -172,7 +172,7 @@ public class HazelcastTicketRegistryConfiguration {
 
         LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeout [{}] second(s)",
                 definition.getProperties().getStorageName(), definition.getProperties().getStorageTimeout());
-        
+
         return new MapConfig()
                 .setName(definition.getProperties().getStorageName())
                 .setMaxIdleSeconds((int) definition.getProperties().getStorageTimeout())
