@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -45,9 +44,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
         this.ticketRegistry = ticketRegistry;
         this.isCleanerEnabled = isCleanerEnabled;
     }
-
-    @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:20000}",
-               fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
+    
     @Override
     public void clean() {
         try {
