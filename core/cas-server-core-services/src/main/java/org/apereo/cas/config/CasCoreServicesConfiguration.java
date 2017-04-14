@@ -90,6 +90,7 @@ public class CasCoreServicesConfiguration {
         return new WebApplicationServiceResponseBuilder();
     }
 
+    @ConditionalOnMissingBean(name = "casAttributeEncoder")
     @RefreshScope
     @Bean
     public ProtocolAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao")
@@ -105,11 +106,14 @@ public class CasCoreServicesConfiguration {
         return new NoOpProtocolAttributeEncoder();
     }
 
+    @ConditionalOnMissingBean(name = "registeredServiceCipherExecutor")
     @Bean
+    @RefreshScope
     public RegisteredServiceCipherExecutor registeredServiceCipherExecutor() {
         return new DefaultRegisteredServiceCipherExecutor();
     }
 
+    @ConditionalOnMissingBean(name = "servicesManager")
     @Bean
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
         return new DefaultServicesManager(serviceRegistryDao);
@@ -117,6 +121,7 @@ public class CasCoreServicesConfiguration {
 
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
     @Bean
+    @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
                 + "Changes that are made to service definitions during runtime WILL be LOST upon container restarts.");
