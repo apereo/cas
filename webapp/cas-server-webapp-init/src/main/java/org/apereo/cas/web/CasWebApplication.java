@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -47,10 +48,11 @@ import java.util.Map;
                 DataSourceTransactionManagerAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 RedisRepositoriesAutoConfiguration.class})
-@EnableAsync
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
+@EnableDiscoveryClient
 public class CasWebApplication {
     /**
      * Instantiates a new Cas web application.
