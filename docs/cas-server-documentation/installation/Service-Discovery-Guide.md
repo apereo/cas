@@ -21,8 +21,10 @@ CAS provides a Eureka-enabled service discovery server that is based on [Spring 
 
 When deployed the following URLs become available:
 
-- `/`: Home page (HTML UI) listing service registrations
-- `/eureka/apps`: Raw registration metadata
+| URL                | Description
+|--------------------|-----------------------------------------------
+| `/`                | Home page listing service registrations.
+| `/eureka/apps`     | Raw registration metadata.
 
 ### High Availability Mode
 
