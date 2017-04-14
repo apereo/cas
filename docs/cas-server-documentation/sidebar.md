@@ -7,13 +7,12 @@ layout: null
     *   [Getting Started](/$version/planning/Getting-Started.html)
     *   [Installation Requirements](/$version/planning/Installation-Requirements.html)
     *   [Security Guide](/$version/planning/Security-Guide.html)
-    *   [High Availability Guide](/$version/planning/High-Availability-Guide.html)
     *   [Upgrade Guide](/$version/planning/Upgrade-Guide.html)
     *   [Release Policy](/cas/developer/Release-Policy.html)
     *   [Maintenance Policy](/cas/developer/Maintenance-Policy.html)
 
 * [Installation](#casinstallation)
-    *   [WAR Overlay](/$version/installation/Maven-Overlay-Installation.html)
+    *   [WAR Overlays](/$version/installation/Maven-Overlay-Installation.html)
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
@@ -139,7 +138,11 @@ layout: null
     *   [Overview](/$version/installation/Webflow-Customization.html) 
     *   [Error Handling](/$version/installation/Webflow-Customization-Exceptions.html)
     *   [Session Persistence](/$version/installation/Webflow-Customization-Sessions.html)
-   
+
+* [High Availability](#highavailability)
+    *   [Overview](/$version/planning/High-Availability-Guide.html)
+    *   [Service Discovery](/$version/installation/Service-Discovery-Guide.html)
+    
 * [Protocols](#protocols)
     *   [Overview](/$version/protocol/Protocol-Overview.html)
     *   [CAS](/$version/protocol/CAS-Protocol.html)
