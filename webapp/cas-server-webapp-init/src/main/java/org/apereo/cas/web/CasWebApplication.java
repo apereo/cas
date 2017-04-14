@@ -35,6 +35,7 @@ import java.util.Map;
 @ImportResource(locations = {
         "classpath:/deployerConfigContext.groovy",
         "classpath:/deployerConfigContext.xml"})
+@EnableDiscoveryClient
 @SpringBootApplication(
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
@@ -52,7 +53,6 @@ import java.util.Map;
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
-@EnableDiscoveryClient
 public class CasWebApplication {
     /**
      * Instantiates a new Cas web application.
