@@ -48,3 +48,14 @@ please [review this guide](Configuration-Properties.html#eureka-service-discover
 ### Authentication
 
 Support for HTTP basic authentication will be automatically added if one of Eureka server URLs in the configuration has credentials embedded in it (curl style, like `http://user:password@localhost:8761/eureka`). 
+
+### Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+<AsyncLogger name="com.netflix" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</AsyncLogger>
+```
