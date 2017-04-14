@@ -19,6 +19,11 @@ CAS provides a Eureka-enabled service discovery server that is based on [Spring 
 - To run the Eureka discovery server, please [use this WAR overlay](https://github.com/apereo/cas-discoveryserver-overlay).
 - Look for a suitable and relevant ready-made Docker image via `docker search eureka`.
 
+When deployed the following URLs become available:
+
+- `/`: Home page (HTML UI) listing service registrations
+- `/eureka/apps`: Raw registration metadata
+
 ### High Availability Mode
 
 You always want to make sure the discovery server is run in high-availabilty mode. One option is to ensure each individual Eureka server is peer aware. See [this guide](http://cloud.spring.io/spring-cloud-static/spring-cloud.html#_peer_awareness) to learn how to manage that.
