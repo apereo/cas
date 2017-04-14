@@ -1935,7 +1935,6 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.netflix.hystrix", module: "hystrix-core")
                     exclude(group: "io.reactivex", module: "rxjava")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
