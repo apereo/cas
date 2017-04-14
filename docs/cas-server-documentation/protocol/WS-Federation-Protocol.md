@@ -39,12 +39,20 @@ need compile-time access to the components within.</p></div>
 
 ### Security Tokens
 
-Security tokens issued are treated as CAS tickets, stored in the ticket registry under the prefix `STS` and follow the same semantics as all other ticket types when it comes to persistence, replication, etc. These tokens are closely tied to the lifetime of the ticket-granting tickets and match their expiration policy. Tokens themselves do not have a lifespan outside a valid ticket-granting ticket and support for ticket lifetime configuration is not present.
+Security tokens issued are treated as CAS tickets, stored in the ticket registry under 
+the prefix `STS` and follow the same semantics as all other ticket types when it comes to persistence, 
+replication, etc. These tokens are closely tied to the lifetime of the ticket-granting tickets and match 
+their expiration policy. Tokens themselves do not have a lifespan outside a valid ticket-granting ticket 
+and support for ticket lifetime configuration is not present.
 
 ## WS Federation Identity Provider
 
-The security model of the STS builds on the foundation established by WS-Security and WS-Trust. The primary issue for Web browsers is that there is no easy way to directly send web service (SOAP) requests. Consequently, the processing must be performed within the confines of the base HTTP 1.1 functionality (`GET`, `POST`, redirects, and cookies) and conform as closely as possible to the WS-Trust protocols for token acquisition.
-The IDP is in charge of transforming the SignIn request of the browser to a SOAP request for the STS and the response of the STS to the SignInResponse for the browser. Further the browser user must authenticate himself with the IDP. At the time of initial authentication an artifact/cookie may be created for the browser so that every request for a resource doesn't require user interaction.
+The security model of the STS builds on the foundation established by WS-Security and WS-Trust. 
+The primary issue for Web browsers is that there is no easy way to directly send web service (SOAP) requests. 
+Consequently, the processing must be performed within the confines of the base HTTP 1.1 functionality (`GET`, `POST`, redirects, and cookies) 
+and conform as closely as possible to the WS-Trust protocols for token acquisition.
+The IdP is in charge of transforming the sign-in request of the browser to a SOAP request for the STS and the response of the 
+STS to the sign-in response for the browser. Further the browser user must authenticate with the IdP.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -65,8 +73,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Realms
 
-At this point, by default security token service's endpoint operate using a single realm configuration and identity provider configuration is only able to recognize and request tokens for a single realm.
-While support for multiple realms is not there yet, in general the underlying configuration and components should allow for that feature to exist in later releases. The default realm recognized by CAS is set to be `urn:org:apereo:cas:ws:idp:realm-CAS`. Registration of clients need to ensure this value is matches.
+At this point, by default security token service's endpoint operate using a single realm configuration and identity provider 
+configuration is only able to recognize and request tokens for a single realm.
+While support for multiple realms is not there yet, in general the underlying configuration 
+should allow for that feature to exist in later releases. The default realm recognized by 
+CAS is set to be `urn:org:apereo:cas:ws:idp:realm-CAS`. Registration of clients need to ensure this value is matched.
 
 ## Register Clients
 
