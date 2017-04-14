@@ -19,5 +19,5 @@ if [ $DOCKER_TAG == "latest" ]
 fi
 
 echo "Building CAS version $cas_version tagged as $DOCKER_TAG for image $IMAGE_NAME"
-docker build --build-arg CASVERSION=$cas_version -t $IMAGE_NAME
+docker build --build-arg CASVERSION=$cas_version -t $IMAGE_NAME .
 echo "Built CAS image $IMAGE_NAME successfully."

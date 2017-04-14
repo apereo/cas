@@ -1487,6 +1487,7 @@ ext.libraries = [
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
             exclude(group: "javax.xml.bind", module: "jaxb-api")
+            exclude(group: "org.apache.httpcomponents", module: "httpclient")
             force = true
         },
         textmagic               : dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
