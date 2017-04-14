@@ -4371,11 +4371,28 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 # cas.samlMetadataUi.parameter=entityId
 ```
 
+## Eureka Service Discovery
+
+To learn more about this topic, [please review this guide](Service-Discovery-Guide.html).
+
+```properties
+eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
+eureka.client.enabled=true
+eureka.instance.statusPageUrl=${cas.server.prefix}/status/info
+eureka.instance.healthCheckUrl=${cas.server.prefix}/status/health
+eureka.instance.homePageUrl=${cas.server.prefix}/
+eureka.client.healthcheck.enabled=true
+
+spring.cloud.config.discovery.enabled=false
+```
+
 ## Provisioning
 
 ### SCIM
 
 Provision the authenticated CAS principal via SCIM.
+To learn more about this topic, [please review this guide](../integration/SCIM-Integration.html).
+
 
 ```properties
 # cas.scim.version=2
