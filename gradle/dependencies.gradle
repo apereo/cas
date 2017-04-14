@@ -1883,7 +1883,6 @@ ext.libraries = [
                     exclude(group: "com.netflix.eureka", module: "eureka-client")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.guava", module: "guava")
-
                     force = true
                 }
         ],
@@ -1903,8 +1902,13 @@ ext.libraries = [
                 },
                 dependencies.create("com.netflix.netflix-commons:netflix-eventbus:0.3.0") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.netflix.servo", module: "servo-core")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 }
         ],
@@ -1916,25 +1920,39 @@ ext.libraries = [
                     exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-httpclient")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
                     force = true
                 },
                 dependencies.create("com.netflix.ribbon:ribbon:$ribbonVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "com.netflix.hystrix", module: "hystrix-core")
                     exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     force = true
                 },
                 dependencies.create("com.netflix.ribbon:ribbon-loadbalancer:$ribbonVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "io.reactivex", module: "rxjava")
                     exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
                     force = true
                 },
                 dependencies.create("com.netflix.ribbon:ribbon-httpclient:$ribbonVersion") {
@@ -1944,15 +1962,22 @@ ext.libraries = [
                     exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
                     exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
                     force = true
                 },
                 dependencies.create("com.netflix.ribbon:ribbon-eureka:$ribbonVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "io.reactivex", module: "rxjava")
                     exclude(group: "com.netflix.eureka", module: "eureka-client")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
                     exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 },
                 dependencies.create("com.netflix.ribbon:ribbon-transport:$ribbonVersion") {
@@ -1962,6 +1987,9 @@ ext.libraries = [
                     exclude(group: "com.netflix.servo", module: "servo-core")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
                     force = true
                 }        
         ],
@@ -1978,6 +2006,8 @@ ext.libraries = [
                     exclude(group: "com.netflix.ribbon", module: "ribbon")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "commons-lang", module: "commons-lang")
                     force = true
                 }
         ],
