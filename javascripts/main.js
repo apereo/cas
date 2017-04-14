@@ -354,9 +354,10 @@ function responsiveTables() {
     });
 }
 
-function copyButton() {
+function highlightButtons() {
     $('div.highlight').each(function() {
         var btn = '<button class="copy-button hidden-md-down fa fa-clipboard" />';
+	btn += '<button class="top-button hidden-md-down fa fa-arrow-up" />';
         $(this).append( btn );
     });
 }
@@ -383,7 +384,7 @@ $(function () {
     responsiveImages();
     responsiveTables();
 
-    copyButton();
+    highlightButtons();
 
     var formattedVersion = getActiveDocumentationVersionInView();
     if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
