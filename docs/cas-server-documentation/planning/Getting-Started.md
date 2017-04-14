@@ -84,7 +84,7 @@ Otherwise, try to generalize and contribute back to keep maintenance costs down.
 Repeatedly, failure to comply with this strategy
 will likely lead to disastrous results in the long run.
 
-## Troubleshoot
+## Troubleshooting
 
 The [troubleshooting guide](../installation/Troubleshooting-Guide.html) might have some answers 
 for issues you may have run into and it generally tries to describe a strategy useful for troubleshooting
