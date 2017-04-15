@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -49,15 +50,17 @@ public class CasCoreTicketsSchedulingConfiguration {
                                                        @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
         final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().isEnabled();
         if (isCleanerEnabled) {
-            LOGGER.debug("Default ticket registry cleaner is enabled");
-            return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager,
-                    ticketRegistry, isCleanerEnabled);
+            LOGGER.debug("Ticket registry cleaner is enabled");
+            return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
         }
-        return new NoOpTicketRegistryCleaner(lockingStrategy, logoutManager,
-                ticketRegistry, isCleanerEnabled);
+        LOGGER.debug("Ticket registry cleaner is not enabled. "
+                + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
+                + "clean up tickets based on expiration and eviction policies");
+        return new NoOpTicketRegistryCleaner();
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleanerScheduler")
+    @ConditionalOnProperty(prefix = "cas.ticket.registry.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     @Autowired
     @RefreshScope
@@ -66,6 +69,14 @@ public class CasCoreTicketsSchedulingConfiguration {
         return new TicketRegistryCleanerScheduler(ticketRegistryCleaner);
     }
 
+
+    /**
+     * The Ticket registry cleaner scheduler. Because the cleaner itself is marked
+     * with {@link org.springframework.transaction.annotation.Transactional},
+     * we need to create a separate scheduler component that simply invokes it
+     * so that {@link Scheduled} annotations can be processed and not interfere
+     * with transaction semantics of the cleaner.
+     */
     public static class TicketRegistryCleanerScheduler {
         private final TicketRegistryCleaner ticketRegistryCleaner;
 

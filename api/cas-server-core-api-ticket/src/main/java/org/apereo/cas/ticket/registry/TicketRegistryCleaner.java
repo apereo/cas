@@ -12,5 +12,5 @@ public interface TicketRegistryCleaner {
      * Clean the ticket registry by collecting
      * tickets in the storage unit that may be expired.
      */
-    void clean();
+    default void clean() {}
 }
