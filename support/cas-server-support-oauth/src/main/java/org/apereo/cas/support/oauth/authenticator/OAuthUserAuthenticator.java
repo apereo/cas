@@ -59,7 +59,7 @@ public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCre
             final Principal principal = authentication.getPrincipal();
 
             final OAuthUserProfile profile = new OAuthUserProfile();
-            final String id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service);
+            final String id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
             LOGGER.debug("Created profile id [{}]", id);
 
             profile.setId(id);
