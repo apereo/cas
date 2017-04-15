@@ -50,7 +50,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider implements Regi
     }
 
     @Override
-    public String resolveUsername(final Principal principal, final Service service) {
+    public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
         if (this.persistentIdGenerator == null) {
             throw new IllegalArgumentException("No persistent id generator is defined");
         }

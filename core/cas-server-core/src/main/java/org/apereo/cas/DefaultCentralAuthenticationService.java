@@ -316,7 +316,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             final Map<String, Object> attributesToRelease = attributePolicy != null
                     ? attributePolicy.getAttributes(principal, registeredService) : new HashMap<>();
 
-            final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService);
+            final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
             final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);

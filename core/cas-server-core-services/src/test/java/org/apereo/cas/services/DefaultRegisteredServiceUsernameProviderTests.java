@@ -27,17 +27,19 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
-        final String id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService());
+        final String id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
+                RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
         assertEquals(id, principal.getId().toUpperCase());
     }
-    
+
     @Test
     public void verifyRegServiceUsername() {
         final DefaultRegisteredServiceUsernameProvider provider = new DefaultRegisteredServiceUsernameProvider();
 
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
-        final String id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService());
+        final String id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
+                RegisteredServiceTestUtils.getRegisteredService("id"));
         assertEquals(id, principal.getId());
     }
 
