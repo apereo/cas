@@ -4,16 +4,19 @@ import org.apereo.cas.config.support.CasConfigurationEmbeddedValueResolver;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 import org.springframework.core.Ordered;
-import org.springframework.format.support.DefaultFormattingConversionService;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
+import org.springframework.util.StringValueResolver;
 
-import javax.annotation.PostConstruct;
 import javax.validation.MessageInterpolator;
 
 /**
@@ -27,6 +30,9 @@ import javax.validation.MessageInterpolator;
 @EnableScheduling
 public class CasCoreUtilConfiguration {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     @Bean
     public ApplicationContextProvider applicationContextProvider() {
         return new ApplicationContextProvider();
@@ -42,14 +48,12 @@ public class CasCoreUtilConfiguration {
         return new CommunicationsManager();
     }
 
-    @PostConstruct
-    public void init() {
-        final ConfigurableApplicationContext applicationContext = applicationContextProvider().getConfigurableApplicationContext();
-        final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
-        applicationContext.getEnvironment().setConversionService(conversionService);
-        final ScheduledAnnotationBeanPostProcessor p = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
-        p.setEmbeddedValueResolver(new CasConfigurationEmbeddedValueResolver(applicationContext));
+    @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public StringValueResolver durationCapableScheduledAnnotationBeanPostProcessor() {
+        final StringValueResolver resolver = new CasConfigurationEmbeddedValueResolver(applicationContext);
+        final ScheduledAnnotationBeanPostProcessor sch = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
+        sch.setEmbeddedValueResolver(resolver);
+        return resolver;
     }
-
-
 }
