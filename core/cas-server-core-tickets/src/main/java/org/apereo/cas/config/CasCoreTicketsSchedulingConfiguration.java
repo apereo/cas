@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -59,6 +60,7 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnMissingBean(name = "ticketRegistryCleanerScheduler")
     @Bean
     @Autowired
+    @RefreshScope
     public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler(@Qualifier("ticketRegistryCleaner") 
                                                                          final TicketRegistryCleaner ticketRegistryCleaner) {
         return new TicketRegistryCleanerScheduler(ticketRegistryCleaner);
@@ -71,8 +73,8 @@ public class CasCoreTicketsSchedulingConfiguration {
             this.ticketRegistryCleaner = ticketRegistryCleaner;
         }
 
-        @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:20000}",
-                fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
+        @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:PT20S}",
+                fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:PT10S}")
         public void run() {
             this.ticketRegistryCleaner.clean();
         }

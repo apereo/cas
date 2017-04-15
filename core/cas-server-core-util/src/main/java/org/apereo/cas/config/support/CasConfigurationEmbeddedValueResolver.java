@@ -3,6 +3,7 @@ package org.apereo.cas.config.support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.ConversionService;
@@ -19,9 +20,9 @@ public class CasConfigurationEmbeddedValueResolver extends EmbeddedValueResolver
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationEmbeddedValueResolver.class);
     private final ConfigurableApplicationContext applicationContext;
 
-    public CasConfigurationEmbeddedValueResolver(final ConfigurableApplicationContext applicationContext) {
-        super(applicationContext.getBeanFactory());
-        this.applicationContext = applicationContext;
+    public CasConfigurationEmbeddedValueResolver(final ApplicationContext applicationContext) {
+        super(((ConfigurableApplicationContext) applicationContext).getBeanFactory());
+        this.applicationContext = ConfigurableApplicationContext.class.cast(applicationContext);
     }
 
     @Override
