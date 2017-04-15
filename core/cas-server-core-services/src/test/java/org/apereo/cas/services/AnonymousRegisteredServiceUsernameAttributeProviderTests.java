@@ -32,7 +32,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         when(service.getId()).thenReturn("id");
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn("uid");
-        final String id = provider.resolveUsername(principal, service);
+        final String id = provider.resolveUsername(principal, service, RegisteredServiceTestUtils.getRegisteredService("id"));
         assertNotNull(id);
     }
 
@@ -40,7 +40,6 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     public void verifyEquality() {
         final AnonymousRegisteredServiceUsernameAttributeProvider provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator(CASROX));
-
         final AnonymousRegisteredServiceUsernameAttributeProvider provider2 = new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator(CASROX));
 
@@ -51,11 +50,8 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     public void verifySerializeADefaultRegisteredServiceUsernameProviderToJson() throws IOException {
         final AnonymousRegisteredServiceUsernameAttributeProvider providerWritten = new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator(CASROX));
-
         MAPPER.writeValue(JSON_FILE, providerWritten);
-
         final RegisteredServiceUsernameAttributeProvider providerRead = MAPPER.readValue(JSON_FILE, AnonymousRegisteredServiceUsernameAttributeProvider.class);
-
         assertEquals(providerWritten, providerRead);
     }
 }
