@@ -1,3 +1,4 @@
+description = "Apereo CAS Shibboleth IdP Attribute Resolver Support"
 apply plugin: "groovy"
 
 dependencies {

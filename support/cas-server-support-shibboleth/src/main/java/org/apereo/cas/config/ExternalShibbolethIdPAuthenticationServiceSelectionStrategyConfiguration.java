@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfi
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.support.saml.ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,14 +15,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link SamlIdPAuthenticationServiceSelectionStrategyConfiguration}.
+ * This is {@link ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("samlIdPAuthenticationServiceSelectionStrategyConfiguration")
+@Configuration("externalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
+public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -31,15 +31,15 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration implemen
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
+    @ConditionalOnMissingBean(name = "shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")
     @Bean
-    public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(webApplicationServiceFactory,
-                casProperties.getServer().getPrefix());
+    public AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy() {
+        return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(webApplicationServiceFactory,
+                casProperties.getAuthn().getShibIdP().getServerUrl());
     }
 
     @Override
     public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
-        plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy());
+        plan.registerStrategy(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy());
     }
 }
