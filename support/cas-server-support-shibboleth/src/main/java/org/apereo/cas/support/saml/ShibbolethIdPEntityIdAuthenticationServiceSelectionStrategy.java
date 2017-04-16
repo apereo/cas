@@ -1,10 +1,11 @@
-package org.apereo.cas.support.saml.services;
+package org.apereo.cas.support.saml;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.jasig.cas.client.util.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -12,24 +13,24 @@ import org.springframework.core.Ordered;
 import java.util.Optional;
 
 /**
- * This is {@link SamlIdPEntityIdAuthenticationServiceSelectionStrategy}.
+ * This is {@link ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
+public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPEntityIdAuthenticationServiceSelectionStrategy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.class);
 
     private int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
-    private final String casServerPrefix;
+    private final String idpServerPrefix;
 
-    public SamlIdPEntityIdAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory,
-                                                                 final String casServerPrefix) {
+    public ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory,
+                                                                       final String idpServerPrefix) {
         this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.casServerPrefix = casServerPrefix;
+        this.idpServerPrefix = idpServerPrefix;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     @Override
     public boolean supports(final Service service) {
-        final String casPattern = "^".concat(casServerPrefix).concat(".+");
+        final String casPattern = "^".concat(idpServerPrefix).concat(".+");
         return service != null && service.getId().matches(casPattern)
                 && getEntityIdAsParameter(service).isPresent();
     }
@@ -52,11 +53,16 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
      * @param service the service
      * @return the entity id as parameter
      */
-    protected static Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
-        final URIBuilder builder = new URIBuilder(service.getId());
-        final Optional<URIBuilder.BasicNameValuePair> param = builder.getQueryParams().stream()
-                .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
-        return param;
+    protected static Optional<NameValuePair> getEntityIdAsParameter(final Service service) {
+        try {
+            final URIBuilder builder = new URIBuilder(service.getId());
+            final Optional<NameValuePair> param = builder.getQueryParams().stream()
+                    .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
+            return param;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return Optional.empty();
     }
 
     @Override
