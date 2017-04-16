@@ -1026,6 +1026,13 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
 ```
 
+### Shibboleth Integrations
+
+To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
+
+```properties
+# cas.authn.shibIdP.serverUrl=https://idp.example.org
+```
 
 ### Default Bundle
 
