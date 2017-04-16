@@ -96,11 +96,14 @@ public class CasConfigurationJasyptDecryptor {
             if (StringUtils.isNotBlank(stringValue) && stringValue.startsWith(ENCRYPTED_VALUE_PREFIX)) {
                 try {
                     if (!this.decryptor.isInitialized()) {
+                        LOGGER.debug("Initializing decryptor...", key);
                         this.decryptor.initialize();
                     }
                     final String encValue = stringValue.substring(ENCRYPTED_VALUE_PREFIX.length());
                     LOGGER.debug("Decrypting property [{}]...", key);
                     final String value = this.decryptor.decrypt(encValue);
+
+                    LOGGER.debug("Decrypted property [{}] successfully.", key);
                     decrypted.put(key, value);
                 } catch (final Exception e) {
                     LOGGER.error("Could not decrypt property [{}]. Setting will be ignored by CAS", key, e);
