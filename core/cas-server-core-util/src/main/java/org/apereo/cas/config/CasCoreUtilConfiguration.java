@@ -8,15 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.util.StringValueResolver;
 
+import javax.annotation.PostConstruct;
 import javax.validation.MessageInterpolator;
 
 /**
@@ -56,5 +59,13 @@ public class CasCoreUtilConfiguration {
         final ScheduledAnnotationBeanPostProcessor sch = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
         sch.setEmbeddedValueResolver(resolver);
         return resolver;
+    }
+
+    @PostConstruct
+    public void init() {
+        final ConfigurableApplicationContext ctx = applicationContextProvider().getConfigurableApplicationContext();
+        final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
+        conversionService.setEmbeddedValueResolver(new CasConfigurationEmbeddedValueResolver(ctx));
+        ctx.getEnvironment().setConversionService(conversionService);
     }
 }
