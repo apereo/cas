@@ -21,6 +21,7 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
@@ -92,6 +93,9 @@ public class AuthenticationProperties {
     private RemoteAddressAuthenticationProperties remoteAddress = new RemoteAddressAuthenticationProperties();
 
     @NestedConfigurationProperty
+    private ShibbolethIdPProperties shibIdP = new ShibbolethIdPProperties();
+    
+    @NestedConfigurationProperty
     private ShiroAuthenticationProperties shiro = new ShiroAuthenticationProperties();
 
     @NestedConfigurationProperty
@@ -146,6 +150,14 @@ public class AuthenticationProperties {
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
 
     private boolean releaseProtocolAttributes = true;
+
+    public ShibbolethIdPProperties getShibIdP() {
+        return shibIdP;
+    }
+
+    public void setShibIdP(final ShibbolethIdPProperties shibIdP) {
+        this.shibIdP = shibIdP;
+    }
 
     public SurrogateAuthenticationProperties getSurrogate() {
         return surrogate;

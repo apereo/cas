@@ -10,7 +10,8 @@ failure; it can be customized to produce additional information for troubleshoot
 Logging framework as a facade for the [Log4J engine](http://logging.apache.org) by default.
 
 The default log4j configuration file is located in `src/main/resources/log4j2.xml`.
-By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code. For debugging and diagnostic purposes you may want to set these levels to  `DEBUG`.
+By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code.
+For debugging and diagnostic purposes you may want to set these levels to  `DEBUG`.
 
 <div class="alert alert-warning"><strong>Production</strong><p>You should always run everything under
 <code>WARN</code>. In production
@@ -46,6 +47,26 @@ server environment.
         ...
 </Configuration>
 ```
+
+### Log Patterns
+
+By default most appenders that are provided via the `log4j2.xml` file use
+pattern-based layouts to format log messages. The following alternative layouts may also be used:
+
+| Layout                        | Description
+|-------------------------------|------------------------------------------------------------------------
+| `CsvParameterLayout`          | Converts an event's parameters into a CSV record, ignoring the message.
+| `GelfLayout`                  | Lays out events in the Graylog Extended Log Format (GELF).
+| `HTMLLayout`                  | Generates an HTML page and adds each LogEvent to a row in a table
+| `JSONLayout`                  | Creates log events in well-formed or fragmented JSON.
+| `PatternLayout`               | Formats the log even based on a conversion pattern.
+| `RFC5424Layout`               | Formats log events in accordance with [RFC 5424](http://tools.ietf.org/html/rfc5424), the enhanced Syslog specification.
+| `SerializedLayout`            | Log events are transformed into byte arrays useful in JMS or socket connections.
+| `SyslogLayout`                | Formats log events as BSD Syslog records.
+| `XMLLayout`                   | Creates log events in well-formed or fragmented XML.
+| `YamlLayout`                  | Creates log events in YAML.
+
+To learn more about nuances and configuration settings for each, please refer to the [official Log4J guides](http://logging.apache.org).
 
 ## Log File Rotation
 
@@ -100,7 +121,7 @@ This will of course include messages that are routed to a log destination by the
 
 ```bash
 WHO: audit:unknown
-WHAT: TGT-****************************************************123456-cas01.example.org
+WHAT: TGT-******************123456-cas01.example.org
 ACTION: TICKET_GRANTING_TICKET_DESTROYED
 APPLICATION: CAS
 WHEN: Sat Jul 12 04:10:35 PDT 2014
@@ -117,9 +138,35 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 Log data can be automatically routed to and integrated with [Sentry](../integration/Sentry-Integration.html) to track and monitor CAS events and errors.
 
+## Routing Logs to Papertrail
+
+[Papertrail](https://papertrailapp.com) is a cloud-based log management service that provides aggregated logging tools, 
+flexible system groups, team-wide access, long-term archives, charts and analytics exports, monitoring webhooks and more.
+
+See [this guide](http://help.papertrailapp.com/kb/configuration/java-log4j-logging/#log4j2) for more info.
+
+```xml
+...
+<Appenders>
+    <Syslog name="Papertrail"
+            host="<host>.papertrailapp.com"
+            port="XXXXX"
+            protocol="TCP" appName="MyApp" mdcId="mdc"
+            facility="LOCAL0" enterpriseNumber="18060" newLine="true"
+            format="RFC5424" ignoreExceptions="false" exceptionPattern="%throwable{full}">
+    </Syslog>
+</Appenders>
+...
+<Loggers>
+    <Root level="INFO">
+        <AppenderRef ref="Papertrail" />
+    </Root>
+</Loggers>
+```
+
 ## Routing Logs to Loggly
 
-Loggly is a cloud-based log management service that makes it easy to access and analyze the mission-critical information within your logs.
+[Loggly](https://www.loggly.com) is a cloud-based log management service that makes it easy to access and analyze the mission-critical information within your logs.
 Log data can be automatically routed to Loggly via Rsyslog. The advantage of using Rsyslog is that it can send TCP events without blocking your application, can optionally encrypt the data, and even queue data to add robustness to network failure.
 
 See [this guide](https://www.loggly.com/docs/java-log4j-2/) for more info.
@@ -127,18 +174,18 @@ See [this guide](https://www.loggly.com/docs/java-log4j-2/) for more info.
 ```xml
 ...
 <Appenders>
-<Socket name="Loggly" host="localhost" port="514" protocol="UDP">
-    <PatternLayout>
-    <pattern>${hostName} java %d{yyyy-MM-dd HH:mm:ss,SSS}{GMT} %p %t
-        %c %M - %m%n</pattern>
-    </PatternLayout>
-</Socket>
+    <Socket name="Loggly" host="localhost" port="514" protocol="UDP">
+        <PatternLayout>
+        <pattern>${hostName} java %d{yyyy-MM-dd HH:mm:ss,SSS}{GMT} %p %t
+            %c %M - %m%n</pattern>
+        </PatternLayout>
+    </Socket>
 </Appenders>
 ...
 <Loggers>
-<Root level="INFO">
-    <AppenderRef ref="Loggly" />
-</Root>
+    <Root level="INFO">
+        <AppenderRef ref="Loggly" />
+    </Root>
 </Loggers>
 ```
 

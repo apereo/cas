@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -43,6 +45,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
+        HazelcastTicketRegistryReplicationTests.HazelcastTestConfiguration.class,
         HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
@@ -58,9 +61,11 @@ import static org.junit.Assert.*;
         CasCoreHttpConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreLogoutConfiguration.class,
+        RefreshAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreLogoutConfiguration.class})
-@ContextConfiguration("classpath:HazelcastInstanceConfigurationTests-config.xml")
+@ContextConfiguration(locations = "classpath:HazelcastInstanceConfigurationTests-config.xml",
+        initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(locations = {"classpath:/hazelcast.properties"})
 @DirtiesContext
 public class ProvidedHazelcastInstanceConfigurationTests {

@@ -3,14 +3,12 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PostConstruct;
@@ -52,7 +50,8 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         this.serviceRegistryDao = serviceRegistryDao;
     }
 
-    @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
+    @Audit(action = "DELETE_SERVICE",
+            actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final long id) {
@@ -113,7 +112,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         return findServiceBy(service) != null;
     }
 
-    @Audit(action = "SAVE_SERVICE", 
+    @Audit(action = "SAVE_SERVICE",
             actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
@@ -128,8 +127,8 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     /**
      * Load services that are provided by the DAO.
      */
-    @Scheduled(initialDelayString = "${cas.serviceRegistry.startDelay:20000}",
-            fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
+    @Scheduled(initialDelayString = "${cas.serviceRegistry.startDelay:PT20S}",
+            fixedDelayString = "${cas.serviceRegistry.repeatInterval:PT60S}")
     @Override
     @PostConstruct
     public void load() {
@@ -157,17 +156,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     public int count() {
         return services.size();
     }
-
-    /**
-     * Handle services manager refresh event.
-     *
-     * @param event the event
-     */
-    @EventListener
-    protected void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
-        load();
-    }
-
+    
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);

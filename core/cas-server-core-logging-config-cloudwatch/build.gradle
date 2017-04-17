@@ -1,6 +1,6 @@
 description = "Apereo CAS Core Logging AWS CloudWatch"
 dependencies {
-    api libraries.awscloudwatch
+    implementation libraries.awscloudwatch
     compile project(":api:cas-server-core-api-ticket")
     compile project(":core:cas-server-core-web")
     compileOnly project(":core:cas-server-core-logging-config")

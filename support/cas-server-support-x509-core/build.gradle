@@ -7,8 +7,8 @@ dependencies {
     implementation libraries.bouncycastle
     implementation libraries.ldaptive
     implementation libraries.httpclient
-    api libraries.persondirectory
-    api libraries.ehcache
+    implementation libraries.persondirectory
+    implementation libraries.ehcache
 
     testImplementation project(":support:cas-server-support-generic")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")

@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockService;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -24,15 +25,21 @@ import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
 
 import static org.junit.Assert.*;
 
@@ -45,7 +52,9 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @Transactional
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+        SessionMonitorJpaTests.JpaTestConfiguration.class,
+        RefreshAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
@@ -61,6 +70,7 @@ import static org.junit.Assert.*;
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         JpaTicketRegistryConfiguration.class})
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class SessionMonitorJpaTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
@@ -70,6 +80,17 @@ public class SessionMonitorJpaTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry jpaRegistry;
 
+    @TestConfiguration
+    public static class JpaTestConfiguration {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @PostConstruct
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
+    }
+    
     @Test
     @Rollback(false)
     public void verifyObserveOkJpaTicketRegistry() throws Exception {

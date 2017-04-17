@@ -30,7 +30,7 @@ public class InitialFlowSetupActionTests extends AbstractCentralAuthenticationSe
     @Autowired
     @Qualifier("initialFlowSetupAction")
     private Action action;
-
+        
     @Test
     public void verifyNoServiceFound() throws Exception {
         final MockRequestContext context = new MockRequestContext();

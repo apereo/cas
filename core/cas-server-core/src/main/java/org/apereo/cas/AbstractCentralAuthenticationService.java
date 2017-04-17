@@ -188,6 +188,15 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 .collect(Collectors.toSet());
     }
 
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+    @Timed(name = "DELETE_TICKET_TIMER")
+    @Metered(name = "DELETE_TICKET_METER")
+    @Counted(name = "DELETE_TICKET_COUNTER", monotonic = true)
+    @Override
+    public void deleteTicket(final String ticketId) {
+        this.ticketRegistry.deleteTicket(ticketId);
+    }
+
     /**
      * Gets the authentication satisfied by policy.
      *
@@ -255,7 +264,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
         synchronized (ticket) {
             if (ticket.isExpired()) {
-                this.ticketRegistry.deleteTicket(id);
+                deleteTicket(id);
                 LOGGER.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
                 throw new InvalidTicketException(id);
             }

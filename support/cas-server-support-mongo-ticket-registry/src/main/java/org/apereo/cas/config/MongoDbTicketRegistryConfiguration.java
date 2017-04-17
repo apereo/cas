@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTick
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.MongoDbTicketRegistry;
-import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
@@ -44,7 +43,7 @@ public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfigurati
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() throws Exception {
-        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry(), false);
+        return new NoOpTicketRegistryCleaner();
     }
 
     @Override

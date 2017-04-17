@@ -4,9 +4,9 @@
   "description": "CAS UI automation",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Jasig/cas"
+    "url": "https://github.com/apereo/cas"
   },
-  "homepage": "http://jasig.github.io/cas",
+  "homepage": "http://apereo.github.io/cas",
   "keywords": [
     "CAS",
     "Central Authentication Service"
@@ -15,7 +15,7 @@
     "node": ">=5.11.0 <6.0"
   },
   "bugs": {
-    "url": "https://github.com/Jasig/cas/issues"
+    "url": "https://github.com/apereo/cas/issues"
   },
   "contributors": [],
   "dependencies": {

@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 /**
- * Implementation of the NonInteractiveCredentialsAction that looks for a user
- * principal that is set in the {@code HttpServletRequest} and attempts
- * to construct a Principal (and thus a PrincipalBearingCredential). If it
+ * Implementation of the {@link AbstractNonInteractiveCredentialsAction} that looks for a user
+ * principal that is set in the {@link HttpServletRequest} and attempts
+ * to construct a Principal (and thus a {@link PrincipalBearingCredential}). If it
  * doesn't find one, this class returns and error event which tells the web flow
  * it could not find any credentials.
  *

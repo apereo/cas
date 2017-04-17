@@ -13,10 +13,9 @@ and navigated. In order for this navigation to work, some form of conversational
 ## Client-side Sessions
 
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte
-stream in the flow execution identifier provided to the client when rendering a view.
-
-CAS automatically attempts to store
-and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication.
+stream in the flow execution identifier provided to the client when rendering a view. CAS automatically attempts to store
+and keep track of this state on the client in an encrypted form via encryption and signing keys
+to remove the need for session cleanup, termination and replication.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow).
 

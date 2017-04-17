@@ -16,6 +16,7 @@ A pac4j authenticator (and profile creator) can be wrapped
 in a CAS authentication handler and used for authentication.
 
 ## Dependency
+
 Support is added by including the following dependency in the WAR overlay:
 
 ```xml

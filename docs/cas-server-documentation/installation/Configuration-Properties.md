@@ -115,7 +115,7 @@ Authentication handlers that generally deal with username-password credentials
 can be configured to transform the user id prior to executing the authentication sequence.
 The following options may be used:
 
-| Type                    | Description                            
+| Type                    | Description
 |-------------------------|----------------------------------------------------------
 | `NONE`                  | Do not apply any transformations.
 | `UPPERCASE`             | Convert the username to uppercase.
@@ -130,6 +130,95 @@ connections and queries.
 ```properties
 # cas.jdbc.showSql=true
 # cas.jdbc.genDdl=true
+```
+
+### Container-based JDBC Connections <a name="dataSourceName"></a>
+
+If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)
+then you can set the `dataSourceName` property on any of the configuration items that require a database
+connection. When using a container configured data source, many of the pool related parameters will not be used.
+If `dataSourceName` is specified but the JNDI lookup fails, a data source will be created with the configured 
+(or default) CAS pool parameters.
+
+The `dataSourceName` property can be either a JNDI name for the datasource or a resource name prefixed with 
+`java:/comp/env/`. If it is a resource name then you need an entry in a `web.xml` that you can add to your
+CAS overlay. It should contain an entry like this:
+
+```xml
+    <resource-ref>
+        <res-ref-name>jdbc/casDataSource</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+```
+
+In Apache Tomcat a container datasource can be defined like this in the `context.xml`:
+
+```xml
+<Resource name="jdbc/casDataSource"
+    auth="Container"
+    type="javax.sql.DataSource"
+    driverClassName="org.postgresql.Driver"
+    url="jdbc:postgresql://casdb.example.com:5432/xyz_db"
+    username="cas"
+    password="xyz"
+    testWhileIdle="true"
+    testOnBorrow="true"
+    testOnReturn="false"
+    validationQuery="select 1"
+    validationInterval="30000"
+    timeBetweenEvictionRunsMillis="30000"
+    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+    minIdle="0"
+    maxIdle="5"
+    initialSize="0"
+    maxActive="20"
+    maxWait="10000" />
+```
+
+Or in Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file like this:
+
+```xml
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd">
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+<New id="datasource.cas" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg></Arg> <!-- empty scope arg is JVM scope -->
+    <Arg>jdbc/casDataSource</Arg> <!-- name that matches resource in web.xml-->
+    <Arg>
+        <New class="org.apache.commons.dbcp.BasicDataSource">
+            <Set name="driverClassName">oracle.jdbc.OracleDriver</Set>
+            <Set name="url">jdbc:oracle:thin:@//casdb.example.com:1521/ntrs"</Set>
+            <Set name="username">cas</Set>
+            <Set name="password">xyz</Set>
+            <Set name="validationQuery">select dummy from dual</Set>
+            <Set name="testOnBorrow">true</Set>
+            <Set name="testOnReturn">false</Set>
+            <Set name="testWhileIdle">false</Set>
+            <Set name="defaultAutoCommit">false</Set>
+            <Set name="initialSize">0</Set>
+            <Set name="maxActive">15</Set>
+            <Set name="minIdle">0</Set>
+            <Set name="maxIdle">5</Set>
+            <Set name="maxWait">2000</Set>
+        </New>
+    </Arg>
+</New>
+</Configure>
+```
+
+### Signing & Encryption
+
+A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to 
+manually and beforehand create the signing and encryption keys.
+
+Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) 
+of a cerain size for the key, you are to use the following set of commands to generate the token:
+
+```bash
+wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
+java -jar jwk-gen.jar -t oct -s [size]
 ```
 
 ### DDL Configuration
@@ -219,6 +308,18 @@ Load settings from a MongoDb instance.
 
 ```properties
 # cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/apereocas
+```
+
+### ZooKeeper
+
+Load settings from an Apache ZooKeeper instance.
+
+```properties
+spring.cloud.zookeeper.connectString=localhost:2181
+spring.cloud.zookeeper.enabled=true
+spring.cloud.zookeeper.config.enabled=true
+spring.cloud.zookeeper.maxRetries=10
+spring.cloud.zookeeper.config.root=cas/config
 ```
 
 ### DynamoDb
@@ -641,6 +742,7 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.jdbc.autocommit=false
 # cas.adminPagesSecurity.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.adminPagesSecurity.jdbc.idleTimeout=5000
+# cas.adminPagesSecurity.jdbc.[dataSourceName](#dataSourceName)=
 ```
 
 #### LDAP Authentication
@@ -974,6 +1076,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].pool.minSize=6
 # cas.authn.attributeRepository.jdbc[0].pool.maxSize=18
 # cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
+# cas.authn.attributeRepository.jdbc[0].[dataSourceName](#dataSourceName)=
 ```
 
 ### Grouper
@@ -1002,6 +1105,13 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
 ```
 
+### Shibboleth Integrations
+
+To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
+
+```properties
+# cas.authn.shibIdP.serverUrl=https://idp.example.org
+```
 
 ### Default Bundle
 
@@ -1128,6 +1238,7 @@ same IP address.
 # cas.authn.throttle.jdbc.pool.minSize=6
 # cas.authn.throttle.jdbc.pool.maxSize=18
 # cas.authn.throttle.jdbc.pool.maxWait=2000
+# cas.authn.throttle.jdbc.[dataSourceName](#dataSourceName)=
 ```
 
 ## Adaptive Authentication
@@ -1389,6 +1500,7 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].credentialCriteria=
 # cas.authn.jdbc.query[0].name=
 # cas.authn.jdbc.query[0].order=0
+# cas.authn.jdbc.query[0].[dataSourceName](#dataSourceName)=
 
 # cas.authn.jdbc.query[0].fieldPassword=password
 # cas.authn.jdbc.query[0].fieldExpired=
@@ -1433,6 +1545,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].credentialCriteria=
 # cas.authn.jdbc.search[0].name=
 # cas.authn.jdbc.search[0].order=0
+# cas.authn.jdbc.search[0].[dataSourceName](#dataSourceName)=
 
 # cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
@@ -1469,7 +1582,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].credentialCriteria=
 # cas.authn.jdbc.bind[0].name=
 # cas.authn.jdbc.bind[0].order=0
-
+# cas.authn.jdbc.bind[0].[dataSourceName](#dataSourceName)=
 # cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
@@ -1520,7 +1633,7 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].credentialCriteria=
 # cas.authn.jdbc.encode[0].name=
 # cas.authn.jdbc.encode[0].order=0
-
+# cas.authn.jdbc.encode[0].[dataSourceName](#dataSourceName)=
 # cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
@@ -1950,6 +2063,9 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 # cas.authn.token.crypto.alg=AES
 ```
 
+The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
+The signing key [is a JWK](#signing--encryption) whose length is defined by the encryption key size setting.
+
 ## Stormpath Authentication
 
 To learn more about this topic, [please review this guide](Stormpath-Authentication.html).
@@ -2225,13 +2341,19 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 
 ```properties
 # cas.authn.mfa.trusted.authenticationContextAttribute=isFromTrustedMultifactorAuthentication
-# cas.authn.mfa.trusted.encryptionKey=
-# cas.authn.mfa.trusted.signingKey=
-# cas.authn.mfa.trusted.cipherEnabled=true
 # cas.authn.mfa.trusted.deviceRegistrationEnabled=true
 # cas.authn.mfa.trusted.expiration=30
 # cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
+
+# cas.authn.mfa.trusted.encryptionKey=
+# cas.authn.mfa.trusted.signingKey=
+# cas.authn.mfa.trusted.cipherEnabled=true
 ```
+
+### Signing & Encryption
+
+The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ### JDBC Storage
 
@@ -2251,6 +2373,7 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 # cas.authn.mfa.trusted.jpa.autocommit=false
 # cas.authn.mfa.trusted.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.mfa.trusted.jpa.idleTimeout=5000
+# cas.authn.mfa.trusted.jpa.[dataSourceName](#dataSourceName)=
 
 # cas.authn.mfa.trusted.jpa.pool.suspension=false
 # cas.authn.mfa.trusted.jpa.pool.minSize=6
@@ -2348,6 +2471,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.jpa.database.autocommit=false
 # cas.authn.mfa.gauth.jpa.database.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.mfa.gauth.jpa.database.idleTimeout=5000
+# cas.authn.mfa.gauth.jpa.database.[dataSourceName](#dataSourceName)=
 
 # cas.authn.mfa.gauth.jpa.database.pool.suspension=false
 # cas.authn.mfa.gauth.jpa.database.pool.minSize=6
@@ -3074,16 +3198,23 @@ To learn more about this topic, [please review this guide](WS-Federation-Protoco
 # cas.authn.wsfedIdP.sts.subjectNameIdFormat=unspecified
 # cas.authn.wsfedIdP.sts.encryptTokens=true
 
-# Used to secure authentication requests between the IdP and STS
-# cas.authn.wsfedIdP.sts.encryptionKey=
-# cas.authn.wsfedIdP.sts.signingKey=
-
 # cas.authn.wsfedIdP.sts.realm.keystoreFile=/etc/cas/config/stscasrealm.jks
 # cas.authn.wsfedIdP.sts.realm.keystorePassword=storepass
 # cas.authn.wsfedIdP.sts.realm.keystoreAlias=realmcas
 # cas.authn.wsfedIdP.sts.realm.keyPassword=cas
 # cas.authn.wsfedIdP.sts.realm.issuer=CAS
 ```
+
+### Signing & Encryption
+
+```properties
+# Used to secure authentication requests between the IdP and STS
+# cas.authn.wsfedIdP.sts.encryptionKey=
+# cas.authn.wsfedIdP.sts.signingKey=
+```
+
+The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## OAuth2
 
@@ -3102,8 +3233,9 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.accessToken.releaseProtocolAttributes=true
 # cas.authn.oauth.accessToken.timeToKillInSeconds=7200
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
-```
 
+# cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
+```
 
 ## Localization
 
@@ -3140,14 +3272,20 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 # cas.tgc.path=
 # cas.tgc.maxAge=-1
 # cas.tgc.domain=
-# cas.tgc.signingKey=
 # cas.tgc.name=TGC
-# cas.tgc.encryptionKey=
 # cas.tgc.secure=true
 # cas.tgc.httpOnly=true
 # cas.tgc.rememberMeMaxAge=1209600
+
+# cas.tgc.encryptionKey=
+# cas.tgc.signingKey=
 # cas.tgc.cipherEnabled=true
 ```
+
+### Signing & Encryption
+
+The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## Logout
 
@@ -3186,6 +3324,9 @@ the last resort in getting an integration to work...maybe not even then.</p></di
 # cas.clearpass.cipherEnabled=true;
 ```
 
+The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
+
 ## Message Bundles
 
 To learn more about this topic, [please review this guide](User-Interface-Customization-Localization.html).
@@ -3197,8 +3338,6 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.messageBundle.useCodeMessage=true
 # cas.messageBundle.baseNames=classpath:custom_messages,classpath:messages
 ```
-
-
 
 ## Audits
 
@@ -3237,11 +3376,24 @@ Store audit logs inside a database.
 # cas.audit.jdbc.autocommit=false
 # cas.audit.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.audit.jdbc.idleTimeout=5000
+# cas.audit.jdbc.[dataSourceName](#dataSourceName)=
 
 # cas.audit.jdbc.pool.suspension=false
 # cas.audit.jdbc.pool.minSize=6
 # cas.audit.jdbc.pool.maxSize=18
 # cas.audit.jdbc.pool.maxWait=2000
+```
+
+## Sleuth Distributed Tracing
+
+To learn more about this topic, [please review this guide](Monitoring-Statistics.html#distributed-tracing).
+
+```properties
+# spring.sleuth.sampler.percentage = 0.5
+# spring.sleuth.enabled=true
+
+# spring.zipkin.enabled=true
+# spring.zipkin.baseUrl=http://localhost:9411/
 ```
 
 ## Monitoring
@@ -3299,6 +3451,7 @@ for authentication or attribute retrieval.
 # cas.monitor.jdbc.autocommit=false
 # cas.monitor.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.monitor.jdbc.idleTimeout=5000
+# cas.monitor.jdbc.[dataSourceName](#dataSourceName)=
 ```
 
 ### LDAP Connection Pool
@@ -3404,6 +3557,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.autocommit=false
 # cas.events.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.events.jpa.idleTimeout=5000
+# cas.events.jpa.[dataSourceName](#dataSourceName)=
 
 # cas.events.jpa.pool.suspension=false
 # cas.events.jpa.pool.minSize=6
@@ -3642,6 +3796,7 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.autocommit=false
 # cas.serviceRegistry.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.serviceRegistry.jpa.idleTimeout=5000
+# cas.serviceRegistry.jpa.[dataSourceName](#dataSourceName)=
 
 # cas.serviceRegistry.jpa.pool.suspension=false
 # cas.serviceRegistry.jpa.pool.minSize=6
@@ -3653,6 +3808,10 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 
 To learn more about this topic, [please review this guide](Configuring-Ticketing-Components.html).
 
+### Signing & Encryption
+
+The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
+The signing key [is a JWK](#signing--encryption) whose length is defined by the encryption key size setting.
 
 ### Cleaner
 
@@ -3690,6 +3849,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.autocommit=false
 # cas.ticket.registry.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.ticket.registry.jpa.idleTimeout=5000
+# cas.ticket.registry.jpa.[dataSourceName](#dataSourceName)=
 
 # cas.ticket.registry.jpa.pool.suspension=false
 # cas.ticket.registry.jpa.pool.minSize=6
@@ -3995,6 +4155,9 @@ when shared with client applications on outgoing calls.
 # cas.ticket.security.signingKey=
 ```
 
+The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
+
 ## Service Tickets Behavior
 
 Controls the expiration policy of service tickets, as well as other properties
@@ -4181,12 +4344,13 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 
 # cas.webflow.signing.key=
 # cas.webflow.signing.keySize=512
-
 # cas.webflow.encryption.keySize=16
 # cas.webflow.encryption.key=
-
 # cas.webflow.alg=AES
 ```
+
+The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
+The signing key [is a JWK](#signing--encryption) whose length is defined by the encryption key size setting.
 
 ### Authentication Exceptions
 
@@ -4303,11 +4467,28 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 # cas.samlMetadataUi.parameter=entityId
 ```
 
+## Eureka Service Discovery
+
+To learn more about this topic, [please review this guide](Service-Discovery-Guide.html).
+
+```properties
+eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
+eureka.client.enabled=true
+eureka.instance.statusPageUrl=${cas.server.prefix}/status/info
+eureka.instance.healthCheckUrl=${cas.server.prefix}/status/health
+eureka.instance.homePageUrl=${cas.server.prefix}/
+eureka.client.healthcheck.enabled=true
+
+spring.cloud.config.discovery.enabled=false
+```
+
 ## Provisioning
 
 ### SCIM
 
 Provision the authenticated CAS principal via SCIM.
+To learn more about this topic, [please review this guide](../integration/SCIM-Integration.html).
+
 
 ```properties
 # cas.scim.version=2
@@ -4339,6 +4520,10 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.security.encryptionKey=
 # cas.authn.pm.reset.security.signingKey=
 ```
+
+The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
+
 
 ### LDAP Password Management
 
@@ -4419,6 +4604,7 @@ The following LDAP types are supported:
 # cas.authn.pm.jdbc.autocommit=false
 # cas.authn.pm.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.pm.jdbc.idleTimeout=5000
+# cas.authn.pm.jdbc.[dataSourceName](#dataSourceName)=
 
 # cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.pm.jdbc.passwordEncoder.characterEncoding=
@@ -4434,3 +4620,5 @@ The following LDAP types are supported:
 # cas.authn.pm.rest.endpointUrlSecurityQuestions=
 # cas.authn.pm.rest.endpointUrlChange=
 ```
+
+

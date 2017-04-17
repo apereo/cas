@@ -6,6 +6,7 @@ dependencies {
 
     compile project(":core:cas-server-core-web")
     compile project(":support:cas-server-support-actions")
+    
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
@@ -14,5 +15,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-cookie")
+    
     compileOnly libraries.bouncycastle
 }

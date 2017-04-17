@@ -71,7 +71,7 @@ public class JpaTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceTicket() {
-        return Beans.newHickariDataSource(casProperties.getTicket().getRegistry().getJpa());
+        return Beans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
     @Bean

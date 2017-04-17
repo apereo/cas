@@ -26,7 +26,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * Encrypt using the given cipher associated with the service,
      * and encode the data in base 64.
      *
-     * @param data the data
+     * @param data    the data
      * @param service the registered service
      * @return the encoded piece of data in base64
      */
@@ -50,8 +50,8 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * Default behavior will encode the data based on the
      * registered service public key's algorithm using {@link javax.crypto.Cipher}.
      *
-     * @param data the data
-     * @param publicKey the public key
+     * @param data              the data
+     * @param publicKey         the public key
      * @param registeredService the registered service
      * @return a byte[] that contains the encrypted result
      */
@@ -77,14 +77,12 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      */
     private PublicKey createRegisteredServicePublicKey(final RegisteredService registeredService) throws Exception {
         if (registeredService.getPublicKey() == null) {
-            LOGGER.debug("No public key is defined for service [{}]. No encoding will take place.",
-                    registeredService);
+            LOGGER.debug("No public key is defined for service [{}]. No encoding will take place.", registeredService);
             return null;
         }
         final PublicKey publicKey = registeredService.getPublicKey().createInstance();
         if (publicKey == null) {
-            LOGGER.debug("No public key instance created for service [{}]. No encoding will take place.",
-                    registeredService);
+            LOGGER.debug("No public key instance created for service [{}]. No encoding will take place.", registeredService);
             return null;
         }
         return publicKey;
@@ -93,7 +91,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
     /**
      * Initialize cipher based on service public key.
      *
-     * @param publicKey the public key
+     * @param publicKey         the public key
      * @param registeredService the registered service
      * @return the false if no public key is found
      * or if cipher cannot be initialized, etc.
@@ -101,13 +99,11 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
     private Cipher initializeCipherBasedOnServicePublicKey(final PublicKey publicKey,
                                                            final RegisteredService registeredService) {
         try {
-            LOGGER.debug("Using public key [{}] to initialize the cipher",
-                    registeredService.getPublicKey());
+            LOGGER.debug("Using public key [{}] to initialize the cipher", registeredService.getPublicKey());
 
             final Cipher cipher = Cipher.getInstance(publicKey.getAlgorithm());
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            LOGGER.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]",
-                    publicKey.getAlgorithm());
+            LOGGER.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]", publicKey.getAlgorithm());
             return cipher;
         } catch (final Exception e) {
             LOGGER.warn("Cipher could not be initialized for service [{}]. Error [{}]",

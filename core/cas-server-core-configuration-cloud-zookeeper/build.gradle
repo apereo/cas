@@ -1,0 +1,7 @@
+description = "Apereo CAS Core Configuration - Apache Zookeeper"
+dependencies {
+    implementation libraries.springcloudzookeeper
+    implementation libraries.zookeeper
+    implementation libraries.springcloudbus
+    compileOnly project(":core:cas-server-core-configuration")
+}

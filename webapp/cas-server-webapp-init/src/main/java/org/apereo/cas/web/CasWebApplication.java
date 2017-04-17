@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -34,6 +35,7 @@ import java.util.Map;
 @ImportResource(locations = {
         "classpath:/deployerConfigContext.groovy",
         "classpath:/deployerConfigContext.xml"})
+@EnableDiscoveryClient
 @SpringBootApplication(
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
@@ -47,8 +49,8 @@ import java.util.Map;
                 DataSourceTransactionManagerAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 RedisRepositoriesAutoConfiguration.class})
-@EnableAsync
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
 public class CasWebApplication {
@@ -71,6 +73,7 @@ public class CasWebApplication {
                 .web(true)
                 .properties(properties)
                 .logStartupInfo(true)
+                .contextClass(CasWebApplicationContext.class)
                 .run(args);
     }
 }

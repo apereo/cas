@@ -1,6 +1,7 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -103,6 +104,10 @@ public class CasSupportActionsConfiguration {
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver;
 
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    
     @Bean
     public HandlerExceptionResolver errorHandlerResolver() {
         return new FlowExecutionExceptionResolver();
@@ -119,7 +124,7 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "serviceAuthorizationCheck")
     @Bean
     public Action serviceAuthorizationCheck() {
-        return new ServiceAuthorizationCheck(this.servicesManager);
+        return new ServiceAuthorizationCheck(this.servicesManager, authenticationRequestServiceSelectionStrategies);
     }
 
     @ConditionalOnMissingBean(name = "sendTicketGrantingTicketAction")
@@ -138,6 +143,7 @@ public class CasSupportActionsConfiguration {
 
     @ConditionalOnMissingBean(name = "initializeLoginAction")
     @Bean
+    @RefreshScope
     public Action initializeLoginAction() {
         return new InitializeLoginAction(servicesManager);
     }

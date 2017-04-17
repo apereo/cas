@@ -13,9 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.
  * The cookie is automatically marked as httpOnly, if the servlet container has support for it.
- * <p>
- * <p>
- * Also has support for RememberMe Services
+ * Also has support for remember-me.
  *
  * @author Scott Battaglia
  * @author Misagh Moayyed
@@ -41,11 +39,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      * Instantiates a new cookie retrieving cookie generator
      * with a default cipher of {@link NoOpCookieValueManager}.
      *
-     * @param name   cookie name
-     * @param path   cookie path
-     * @param maxAge cookie max age
-     * @param secure if cookie is only for HTTPS
-     * @param domain cookie domain
+     * @param name     cookie name
+     * @param path     cookie path
+     * @param maxAge   cookie max age
+     * @param secure   if cookie is only for HTTPS
+     * @param domain   cookie domain
+     * @param httpOnly the http only
      */
     public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge,
                                            final boolean secure, final String domain,
@@ -63,6 +62,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      * @param domain                cookie domain
      * @param casCookieValueManager the cookie manager
      * @param rememberMeMaxAge      cookie rememberMe max age
+     * @param httpOnly              the http only
      */
     public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge,
                                            final boolean secure, final String domain,

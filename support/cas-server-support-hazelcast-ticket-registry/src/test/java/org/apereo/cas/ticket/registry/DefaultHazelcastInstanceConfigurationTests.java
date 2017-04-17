@@ -18,7 +18,9 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.SchedulingUtils;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,11 +29,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -42,8 +48,10 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
+        DefaultHazelcastInstanceConfigurationTests.HazelcastTestConfiguration.class,
         HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        RefreshAutoConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         HazelcastTicketRegistryTicketCatalogConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
@@ -61,7 +69,8 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreLogoutConfiguration.class})
-@ContextConfiguration(locations="classpath:HazelcastInstanceConfigurationTests-config.xml")
+@ContextConfiguration(locations = "classpath:HazelcastInstanceConfigurationTests-config.xml",
+        initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(properties = {"cas.ticket.registry.hazelcast.configLocation="})
 @DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {
@@ -75,6 +84,17 @@ public class DefaultHazelcastInstanceConfigurationTests {
         return hzInstance;
     }
 
+    @TestConfiguration
+    public static class HazelcastTestConfiguration {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @PostConstruct
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
+    }
+    
     @Test
     public void correctHazelcastInstanceIsCreated() throws Exception {
         assertNotNull(this.hzInstance);

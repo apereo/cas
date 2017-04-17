@@ -1,14 +1,15 @@
 description = "Apereo CAS SAML Core/Common Functionality"
 dependencies {
     api libraries.opensaml
-    implementation libraries.shibidp
     api libraries.bouncycastle
-
+    api libraries.jdom
+    api libraries.xmlapis
+    
+    implementation libraries.shibidp
+    
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-services")
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-validation")
-    api libraries.jdom
 
-    api libraries.xmlapis
 }

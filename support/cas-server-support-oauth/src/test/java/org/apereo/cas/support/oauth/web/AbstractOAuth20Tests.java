@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfi
 import org.apereo.cas.config.CasOAuthConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -26,18 +27,22 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,18 +83,31 @@ import java.util.List;
                 CasCoreUtilConfiguration.class})
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public abstract class AbstractOAuth20Tests {
-
+    @Autowired
+    protected ApplicationContext applicationContext;
+    
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
+
     
-    @Configuration
+    
+    @TestConfiguration
     public static class OAuthTestConfiguration {
+        @Autowired
+        protected ApplicationContext applicationContext;
+        
+        @PostConstruct
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
+        
         @Bean
         public List inMemoryRegisteredServices() {
             final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*");

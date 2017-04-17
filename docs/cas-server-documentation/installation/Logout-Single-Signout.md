@@ -135,6 +135,7 @@ To configure a service specific endpoint, try the following example:
 ### Asynchronous SLO Messages
 
 By default, backchannel logout messages are sent to endpoint in an asynchronous fashion.
+This behavior can be modified via CAS settings. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logout).
 
 ## SSO Session vs. Application Session
 

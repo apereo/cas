@@ -1,0 +1,35 @@
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+
+description = "Apereo CAS Spring Cloud Eureka Service Discovery Server"
+
+javadoc {
+    enabled false
+}
+
+bootRun {
+    addResources = true
+    jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5009,server=y,suspend=n"]
+}
+
+war {
+    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+}
+
+springBoot  {
+    mainClass = "org.apereo.cas.CasEurekaServerWebApplication"
+}
+
+bootRepackage {
+    mainClass = "org.apereo.cas.CasEurekaServerWebApplication"
+    enabled = !rootProject.publishReleases
+}
+
+dependencies {
+    providedRuntime libraries.springboottomcat
+    implementation libraries.springcloudeurekaserver
+    implementation libraries.eurekaclient
+    implementation libraries.ribbon
+    implementation libraries.springintegration
+    compile project(":core:cas-server-core-util")
+}

@@ -19,7 +19,6 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
-import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
@@ -78,7 +77,7 @@ public class HazelcastTicketRegistryConfiguration {
     @Autowired
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry(ticketCatalog), false);
+        return new NoOpTicketRegistryCleaner();
     }
 
     @Autowired
@@ -172,7 +171,7 @@ public class HazelcastTicketRegistryConfiguration {
 
         LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeout [{}] second(s)",
                 definition.getProperties().getStorageName(), definition.getProperties().getStorageTimeout());
-        
+
         return new MapConfig()
                 .setName(definition.getProperties().getStorageName())
                 .setMaxIdleSeconds((int) definition.getProperties().getStorageTimeout())

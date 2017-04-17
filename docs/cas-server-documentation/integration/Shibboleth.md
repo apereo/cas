@@ -15,8 +15,7 @@ is routed to the IdP, the following may take place:
 perform the requested action, e.g. attribute release.
 
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must
-authenticate before the
-IDP proceeds with the requested action.
+authenticate before the IdP proceeds with the requested action.
 
 ## SSO for Shibboleth IdP (External)
 
@@ -38,6 +37,9 @@ The entity ID is passed in form of a url parameter to the CAS server as such:
 ```
 https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<relying-party-entity-id>
 ```
+
+You can also take advantage of the `entityId` parameter and treat it as a normal CAS service definition,
+so it can be used for multifactor authentication and authorization. See [this guide](../installation/Configuration-Multifactor-Authentication-Triggers.html) for more info.
 
 ## Displaying SAML MDUI
 

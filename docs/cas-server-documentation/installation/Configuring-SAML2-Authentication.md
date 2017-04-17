@@ -294,6 +294,8 @@ please [review this guide](../integration/Configuring-SAML-SP-Integrations.html)
 
 ## Troubleshooting
 
+To enable additional logging, modify the logging configuration file to add the following:
+
 ```xml
 <AsyncLogger name="org.opensaml" level="debug" additivity="false">
     <AppenderRef ref="console"/>

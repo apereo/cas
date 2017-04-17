@@ -1,0 +1,7 @@
+description = "Apereo CAS Spring Cloud Sleuth Support"
+dependencies {
+    implementation libraries.springcloudsleuth
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-configuration")
+}

@@ -123,10 +123,12 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public MvcEndpoint statisticsController() {
-        return new StatisticsController(centralAuthenticationService, metricsRegistry, healthCheckRegistry, casProperties);
+    public MvcEndpoint statisticsController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
+        return new StatisticsController(auditTrailManager, centralAuthenticationService, 
+                metricsRegistry, healthCheckRegistry, casProperties);
     }
 
     @Bean

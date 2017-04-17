@@ -1,0 +1,23 @@
+#!/bin/bash
+
+echo "Docker image: $IMAGE_NAME"
+echo "Docker repository: $DOCKER_REPO"
+echo "Docker tag: $DOCKER_TAG"
+echo "Docker source branch: $SOURCE_BRANCH"
+echo "Docker source commit: $SOURCE_COMMIT"
+echo "Docker commit message: $COMMIT_MSG"
+
+
+if [ $DOCKER_TAG == "latest" ]
+ then
+    cd ..
+    cat gradle.properties | grep "version=" > version.xyz
+    echo -n "Current CAS version: " && cat version.xyz
+    export cas_version=`(cut -d '=' -f 2 version.xyz)`
+ else
+    cas_version=$DOCKER_TAG
+fi
+
+echo "Building CAS version $cas_version tagged as $DOCKER_TAG for image $IMAGE_NAME"
+docker build --build-arg CASVERSION=$cas_version -t $IMAGE_NAME .
+echo "Built CAS image $IMAGE_NAME successfully."

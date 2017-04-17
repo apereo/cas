@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -30,8 +31,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     public AccessTokenAuthorizationCodeGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
                                                              final HttpServletRequest request, final HttpServletResponse response,
-                                                             final CentralAuthenticationService centralAuthenticationService) {
-        super(servicesManager, ticketRegistry, request, response, centralAuthenticationService);
+                                                             final CentralAuthenticationService centralAuthenticationService,
+                                                             final OAuthProperties oAuthProperties) {
+        super(servicesManager, ticketRegistry, request, response, centralAuthenticationService, oAuthProperties);
     }
 
     @Override
