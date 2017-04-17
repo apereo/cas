@@ -115,7 +115,7 @@ Authentication handlers that generally deal with username-password credentials
 can be configured to transform the user id prior to executing the authentication sequence.
 The following options may be used:
 
-| Type                    | Description                            
+| Type                    | Description
 |-------------------------|----------------------------------------------------------
 | `NONE`                  | Do not apply any transformations.
 | `UPPERCASE`             | Convert the username to uppercase.
@@ -135,16 +135,16 @@ connections and queries.
 ### Container-based JDBC Connections <a name="dataSourceName"></a>
 
 If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)
-then you can set the dataSourceName property on any of the configuration items that require a database
+then you can set the `dataSourceName` property on any of the configuration items that require a database
 connection. When using a container configured data source, many of the pool related parameters will not be used.
-If dataSourceName is specified but the JNDI lookup fails, a data source will be created with the configured 
+If `dataSourceName` is specified but the JNDI lookup fails, a data source will be created with the configured 
 (or default) CAS pool parameters.
 
-The dataSourceName property can be either a JNDI name for the datasource or a resource name prefixed with 
-java:/comp/env/. If it is a resource name then you need an entry in a web.xml that you can add to your
+The `dataSourceName` property can be either a JNDI name for the datasource or a resource name prefixed with 
+`java:/comp/env/`. If it is a resource name then you need an entry in a `web.xml` that you can add to your
 CAS overlay. It should contain an entry like this:
 
-```
+```xml
     <resource-ref>
         <res-ref-name>jdbc/casDataSource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -152,32 +152,33 @@ CAS overlay. It should contain an entry like this:
     </resource-ref>
 ```
 
-In Tomcat a container datasource can be defined like this in the context.xml:
-```
-    <Resource name="jdbc/casDataSource"
-       auth="Container"
-       type="javax.sql.DataSource"
-       driverClassName="org.postgresql.Driver"
-       url="jdbc:postgresql://casdb.example.com:5432/xyz_db"
-       username="cas"
-       password="xyz"
-       testWhileIdle="true"
-       testOnBorrow="true"
-       testOnReturn="false"
-       validationQuery="select 1"
-       validationInterval="30000"
-       timeBetweenEvictionRunsMillis="30000"
-       factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-       minIdle="0"
-       maxIdle="5"
-       initialSize="0"
-       maxActive="20"
-       maxWait="10000" />
+In Apache Tomcat a container datasource can be defined like this in the `context.xml`:
+
+```xml
+<Resource name="jdbc/casDataSource"
+    auth="Container"
+    type="javax.sql.DataSource"
+    driverClassName="org.postgresql.Driver"
+    url="jdbc:postgresql://casdb.example.com:5432/xyz_db"
+    username="cas"
+    password="xyz"
+    testWhileIdle="true"
+    testOnBorrow="true"
+    testOnReturn="false"
+    validationQuery="select 1"
+    validationInterval="30000"
+    timeBetweenEvictionRunsMillis="30000"
+    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+    minIdle="0"
+    maxIdle="5"
+    initialSize="0"
+    maxActive="20"
+    maxWait="10000" />
 ```
 
-Or in a Jetty a pool can be put in JNDI with a jetty.xml or jetty-env.xml file like this:
+Or in Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file like this:
 
-```
+```xml
 <?xml version="1.0"?>
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd">
 
@@ -205,9 +206,7 @@ Or in a Jetty a pool can be put in JNDI with a jetty.xml or jetty-env.xml file l
     </Arg>
 </New>
 </Configure>
-
 ```
-
 
 ### Signing & Encryption
 
