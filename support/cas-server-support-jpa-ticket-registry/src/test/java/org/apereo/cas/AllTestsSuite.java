@@ -14,7 +14,6 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({SessionMonitorJpaTests.class, JpaTicketRegistryTests.class,
-        JpaLockingStrategyTests.class
-        })
+        JpaLockingStrategyTests.class})
 public class AllTestsSuite {
 }

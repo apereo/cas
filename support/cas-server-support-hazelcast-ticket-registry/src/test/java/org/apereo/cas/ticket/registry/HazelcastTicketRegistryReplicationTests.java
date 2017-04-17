@@ -13,10 +13,11 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -24,18 +25,22 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
@@ -47,8 +52,10 @@ import static org.junit.Assert.*;
  * @since 4.1.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(locations = {"classpath:HazelcastTicketRegistryTests-context.xml"})
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, 
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class, locations = {"classpath:HazelcastTicketRegistryTests-context.xml"})
+@SpringBootTest(classes = {
+        HazelcastTicketRegistryReplicationTests.HazelcastTestConfiguration.class,
+        RefreshAutoConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCoreHttpConfiguration.class,
@@ -82,6 +89,17 @@ public class HazelcastTicketRegistryReplicationTests {
 
     public void setHzTicketRegistry2(final HazelcastTicketRegistry hzTicketRegistry2) {
         this.hzTicketRegistry2 = hzTicketRegistry2;
+    }
+
+    @TestConfiguration
+    public static class HazelcastTestConfiguration {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @PostConstruct
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
     }
 
     @Test

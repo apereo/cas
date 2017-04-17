@@ -16,22 +16,28 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorMongoDbConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -44,7 +50,9 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {GoogleAuthenticatorMongoDbConfiguration.class,
+        classes = {
+                MongoDbGoogleAuthenticatorAccountRegistryTests.MongoTestConfiguration.class,
+                GoogleAuthenticatorMongoDbConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
                 CasCoreLogoutConfiguration.class,
@@ -68,6 +76,7 @@ import static org.junit.Assert.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
 @EnableScheduling
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class MongoDbGoogleAuthenticatorAccountRegistryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
@@ -78,5 +87,16 @@ public class MongoDbGoogleAuthenticatorAccountRegistryTests {
         registry.save("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
         final String s = registry.getSecret("uid");
         assertEquals(s, "secret");
+    }
+
+    @TestConfiguration
+    public static class MongoTestConfiguration {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @PostConstruct
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
     }
 }

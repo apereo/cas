@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.config.support.CasConfigurationEmbeddedValueResolver;
+import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
@@ -16,7 +17,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.util.StringValueResolver;
 
 import javax.annotation.PostConstruct;
@@ -55,10 +55,7 @@ public class CasCoreUtilConfiguration {
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public StringValueResolver durationCapableStringValueResolver() {
-        final StringValueResolver resolver = new CasConfigurationEmbeddedValueResolver(applicationContext);
-        final ScheduledAnnotationBeanPostProcessor sch = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
-        sch.setEmbeddedValueResolver(resolver);
-        return resolver;
+        return SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
     }
 
     @PostConstruct
