@@ -25,6 +25,7 @@ git:
 notifications:
   slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
 env:
+  matrix:
   - TEST_SUITE="checkstyleMain bootRepackage install --parallel -x test --stacktrace"
   - TEST_SUITE="checkstyleTest test --stacktrace --parallel"
   global:
