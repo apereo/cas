@@ -1,5 +1,6 @@
 package org.apereo.cas.config.init;
 
+import org.apereo.cas.config.support.CasConfigurationEmbeddedValueResolver;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.format.support.DefaultFormattingConversionService;
@@ -12,8 +13,10 @@ import org.springframework.format.support.DefaultFormattingConversionService;
  */
 public class EnvironmentConversionServiceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     @Override
-    public void initialize(final ConfigurableApplicationContext applicationContext) {
+    public void initialize(final ConfigurableApplicationContext ctx) {
         final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
-        applicationContext.getEnvironment().setConversionService(conversionService);
+        conversionService.setEmbeddedValueResolver(new CasConfigurationEmbeddedValueResolver(ctx));
+        ctx.getEnvironment().setConversionService(conversionService);
+
     }
 }
