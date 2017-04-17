@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -55,7 +57,8 @@ public class ServiceAuthorizationCheckTests {
         when(this.servicesManager.findServiceBy(this.undefinedService)).thenReturn(null);
         when(this.servicesManager.getAllServices()).thenReturn(list);
         
-        this.serviceAuthorizationCheck = new ServiceAuthorizationCheck(this.servicesManager);
+        this.serviceAuthorizationCheck = new ServiceAuthorizationCheck(this.servicesManager, 
+                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
     }
 
     @Test

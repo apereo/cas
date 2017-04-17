@@ -16,21 +16,27 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorJpaConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -42,7 +48,9 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {GoogleAuthenticatorJpaConfiguration.class,
+@SpringBootTest(classes = {
+        JpaGoogleAuthenticatorAccountRegistryTests.JpaTestConfiguration.class,
+        GoogleAuthenticatorJpaConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,
@@ -65,12 +73,24 @@ import static org.junit.Assert.*;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class JpaGoogleAuthenticatorAccountRegistryTests {
 
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
 
+    @TestConfiguration
+    public static class JpaTestConfiguration {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @PostConstruct
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
+    }
+    
     @Test
     public void verifySave() {
         registry.save("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));

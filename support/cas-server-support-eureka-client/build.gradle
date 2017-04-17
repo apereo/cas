@@ -1,0 +1,8 @@
+description = "Apereo CAS Spring Cloud Eureka Client"
+dependencies {
+    implementation libraries.eurekaclient
+    implementation libraries.ribbon
+    implementation libraries.springcloudeureka
+    provided project(":core:cas-server-core-util")
+    provided project(":core:cas-server-core-configuration")
+}

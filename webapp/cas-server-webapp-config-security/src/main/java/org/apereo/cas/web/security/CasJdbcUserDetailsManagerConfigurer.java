@@ -22,7 +22,7 @@ public class CasJdbcUserDetailsManagerConfigurer extends JdbcUserDetailsManagerC
     public void configure(final AuthenticationManagerBuilder auth) throws Exception {
         usersByUsernameQuery(adminPagesSecurityProperties.getJdbc().getQuery());
         rolePrefix(adminPagesSecurityProperties.getJdbc().getRolePrefix());
-        dataSource(Beans.newHickariDataSource(adminPagesSecurityProperties.getJdbc()));
+        dataSource(Beans.newDataSource(adminPagesSecurityProperties.getJdbc()));
         passwordEncoder(Beans.newPasswordEncoder(adminPagesSecurityProperties.getJdbc().getPasswordEncoder()));
         super.configure(auth);
     }

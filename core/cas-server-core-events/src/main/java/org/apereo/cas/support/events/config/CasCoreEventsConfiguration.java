@@ -20,9 +20,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casCoreEventsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreEventsConfiguration {
+
     @Autowired
     @Bean
-    public DefaultCasEventListener defaultCasEventListener(@Qualifier("casEventRepository")
+    public DefaultCasEventListener defaultCasEventListener(@Qualifier("casEventRepository") 
                                                            final CasEventRepository casEventRepository) {
         return new DefaultCasEventListener(casEventRepository);
     }

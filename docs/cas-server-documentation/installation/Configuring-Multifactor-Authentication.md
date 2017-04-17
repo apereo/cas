@@ -26,6 +26,7 @@ The following multifactor providers are supported by CAS.
 | Authy Authenticator   | `mfa-authy`     | [See this guide](AuthyAuthenticator-Authentication.html).
 | YubiKey               | `mfa-yubikey`   | [See this guide](YubiKey-Authentication.html).
 | RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
+| WiKID                 | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
 | Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
 | Microsoft Azure       | `mfa-azure`     | [See this guide](MicrosoftAzure-Authentication.html).
 | FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
@@ -33,132 +34,8 @@ The following multifactor providers are supported by CAS.
 
 ## Triggers
 
-Multifactor authentication can be activated based on the following triggers.
-
-### Global
-
-MFA can be triggered for all applications and users regardless of individual settings.
-
-### Applications
-
-MFA can be triggered for a specific application registered inside the CAS service registry.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^(https|imaps)://.*",
-  "id" : 100,
-  "multifactorPolicy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ]
-  }
-}
-```
-
-### Global Principal Attribute
-
-MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.
-
-- Trigger MFA based on a principal attribute(s) whose value(s) matches a regex pattern.
-**Note** that this behavior is only applicable if there is only a **single MFA provider** configured, since that would allow CAS
-to know what provider to next activate.
-
-- Trigger MFA based on a principal attribute(s) whose value(s) **EXACTLY** matches an MFA provider.
-This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning
-provider ids to attributes as values.
-
-Needless to say, the attributes need to have been resolved for the principal prior to this step.
-
-### Global Authentication Attribute
-
-MFA can be triggered for all users/subjects whose *authentication event/metadata* has resolved a specific attribute
-that matches one of the below conditions:
-
-- Trigger MFA based on a *authentication attribute(s)* whose value(s) matches a regex pattern.
-**Note** that this behavior is only applicable if there is only a **single MFA provider** configured, since that would allow CAS
-to know what provider to next activate.
-
-- Trigger MFA based on a *authentication attribute(s)* whose value(s) **EXACTLY** matches an MFA provider.
-This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning
-provider ids to attributes as values.
-
-Needless to say, the attributes need to have been resolved for the authentication event prior to this step. This trigger
-is generally useful when the underlying authentication engine signals CAS to perform additional validation of credentials.
-This signal may be captured by CAS as an attribute that is part of the authentication event metadata which can then trigger
-additional multifactor authentication events.
-
-An example of this scenario would be the "Access Challenge response" produced by RADIUS servers.
-
-### Adaptive
-
-MFA can be triggered based on the specific nature of a request that may be considered outlawed. For instance,
-you may want all requests that are submitted from a specific IP pattern, or from a particular geographical location
-to be forced to go through MFA. CAS is able to adapt itself to various properties of the incoming request
-and will route the flow to execute MFA. See [this guide](Configuring-Adaptive-Authentication.html) for more info.
-
-### Grouper
-
-MFA can be triggered by [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/)
-groups to which the authenticated principal is assigned.
-Groups are collected by CAS and then cross-checked against all available/configured MFA providers.
-The group's comparing factor **MUST** be defined in CAS to activate this behavior
-and it can be based on the group's name, display name, etc where
-a successful match against a provider id shall activate the chosen MFA provider.
-
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-grouper</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
-
-You will also need to ensure `grouper.client.properties` is available on the classpath
-with the following configured properties:
-
-```properties
-grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
-grouperClient.webService.login = banderson
-grouperClient.webService.password = password
-```
-
-### REST
-
-MFA can be triggered based on the results of a remote REST endpoint of your design. If the endpoint is configured,
-CAS shall issue a `POST`, providing the principal id. The body of the response in the event of a successful `200`
-status code is expected to be the MFA provider id which CAS should activate.
-
-### Opt-In Request Parameter
-
-MFA can be triggered for a specific authentication request, provided
-the initial request to the CAS `/login` endpoint contains a parameter
-that indicates the required MFA authentication flow. The parameter name
-is configurable, but its value must match the authentication provider id
-of an available MFA provider described above.
-
-```bash
-https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
-```
-
-### Principal Attribute Per Application
-
-As a hybrid option, MFA can be triggered for a specific application registered inside the CAS service registry, provided
-the authenticated principal carries an attribute that matches a configured attribute value. The attribute
-value can be an arbitrary regex pattern. See below to learn about how to configure MFA settings.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^(https|imaps)://.*",
-  "id" : 100,
-  "multifactorPolicy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
-    "principalAttributeNameTrigger" : "memberOf",
-    "principalAttributeValueToMatch" : "faculty|allMfaMembers"
-  }
-}
-```
+Multifactor authentication can be activated via a number of triggers.
+To learn more, [please see this guide](Configuring-Multifactor-Authentication-Triggers.html).
 
 ## Bypass Rules
 

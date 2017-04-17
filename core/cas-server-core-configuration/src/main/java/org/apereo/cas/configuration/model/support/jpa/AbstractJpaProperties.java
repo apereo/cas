@@ -22,6 +22,7 @@ public abstract class AbstractJpaProperties {
     private String defaultSchema;
     private String healthQuery = StringUtils.EMPTY;
     private String idleTimeout = "PT10M";
+    private String dataSourceName;
 
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
@@ -158,5 +159,13 @@ public abstract class AbstractJpaProperties {
 
     public void setAutocommit(final boolean autocommit) {
         this.autocommit = autocommit;
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(final String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 }

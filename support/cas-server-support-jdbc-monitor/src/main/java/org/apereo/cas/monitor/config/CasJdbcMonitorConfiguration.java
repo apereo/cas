@@ -49,6 +49,6 @@ public class CasJdbcMonitorConfiguration {
     @Bean
     @RefreshScope
     public DataSource monitorDataSource() {
-        return Beans.newHickariDataSource(casProperties.getMonitor().getJdbc());
+        return Beans.newDataSource(casProperties.getMonitor().getJdbc());
     }
 }

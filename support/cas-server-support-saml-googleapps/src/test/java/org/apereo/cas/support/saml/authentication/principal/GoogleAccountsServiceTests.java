@@ -27,6 +27,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredService;
@@ -35,6 +36,7 @@ import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.CompressionUtils;
+import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
@@ -47,11 +49,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.time.ZoneOffset;
@@ -67,7 +73,9 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SamlGoogleAppsConfiguration.class, 
+@SpringBootTest(classes = {
+        GoogleAccountsServiceTests.CasTestConfiguration.class,
+        SamlGoogleAppsConfiguration.class, 
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
@@ -97,6 +105,7 @@ import static org.mockito.Mockito.*;
         CasCoreTicketCatalogConfiguration.class,
         CasCoreUtilConfiguration.class})
 @TestPropertySource(locations = "classpath:/gapps.properties")
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
@@ -112,6 +121,17 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private GoogleAccountsService googleAccountsService;
 
+    @TestConfiguration
+    public static class CasTestConfiguration {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @PostConstruct
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
+    }
+    
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
 

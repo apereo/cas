@@ -116,7 +116,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             AuthenticationCredentialsLocalBinder.bindCurrent(ticket.getAuthentication());
 
             final List<LogoutRequest> logoutRequests = this.logoutManager.performLogout(ticket);
-            this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+            deleteTicket(ticketGrantingTicketId);
 
             doPublishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket));
 
@@ -313,11 +313,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             final RegisteredServiceAttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
             LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
 
-            @SuppressWarnings("unchecked")
             final Map<String, Object> attributesToRelease = attributePolicy != null
                     ? attributePolicy.getAttributes(principal, registeredService) : new HashMap<>();
 
-            final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService);
+            final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
             final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
@@ -336,7 +335,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             return assertion;
         } finally {
             if (serviceTicket.isExpired()) {
-                this.ticketRegistry.deleteTicket(serviceTicketId);
+                deleteTicket(serviceTicketId);
             } else {
                 this.ticketRegistry.updateTicket(serviceTicket);
             }
