@@ -140,7 +140,7 @@ public class PasswordManagementConfiguration {
                 return new JdbcPasswordManagementService(passwordManagementCipherExecutor(),
                         casProperties.getServer().getPrefix(),
                         casProperties.getAuthn().getPm(),
-                        Beans.newHickariDataSource(casProperties.getAuthn().getPm().getJdbc()));
+                        Beans.newDataSource(casProperties.getAuthn().getPm().getJdbc()));
             }
 
             if (StringUtils.isNotBlank(pm.getRest().getEndpointUrlChange())

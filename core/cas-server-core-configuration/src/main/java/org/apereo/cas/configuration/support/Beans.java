@@ -89,6 +89,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
+import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
+import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
@@ -114,6 +116,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.sql.DataSource;
+
+
 /**
  * A re-usable collection of utility methods for object instantiations and configurations used cross various
  * {@code @Bean} creation methods throughout CAS server.
@@ -133,15 +138,36 @@ public final class Beans {
     }
 
     /**
-     * New hickari data source.
-     *
-     * @param jpaProperties the jpa properties
-     * @return the hikari data source
+     * Get new data source, from JNDI lookup or created via direct configuration
+     * of Hikari pool. If jpaProperties contains dataSourceName a lookup will be
+     * attempted If datasource not found via JNDI it will be
+     * 
+     * @param jpaProperties
+     *            the jpa properties
+     * @return the data source
      */
-    public static HikariDataSource newHickariDataSource(final AbstractJpaProperties jpaProperties) {
-        try {
-            final HikariDataSource bean = new HikariDataSource();
+    public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
+        final HikariDataSource bean = new HikariDataSource();
 
+        final String dataSourceName = jpaProperties.getDataSourceName();
+        if (StringUtils.isNotBlank(dataSourceName)) {
+            try {
+                final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+                // if user wants to do lookup as resource, they may include
+                // java:/comp/env
+                // in dataSourceName and put resource reference in web.xml
+                // otherwise dataSourceName is used as JNDI name
+                dsLookup.setResourceRef(false);
+                final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
+                bean.setDataSource(containerDataSource);
+                return bean;
+            } catch (final DataSourceLookupFailureException e) {
+                LOGGER.warn("Lookup of datasource [{}] failed due to {} "
+                        + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
+            }
+        }
+
+        try {
             if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
                 bean.setDriverClassName(jpaProperties.getDriverClass());
             }
@@ -162,6 +188,7 @@ public final class Beans {
             bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
             return bean;
         } catch (final Exception e) {
+            LOGGER.error("Error creating DataSource: {}", e.getMessage());
             throw new IllegalArgumentException(e);
         }
     }
