@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.test.context.TestConfiguration;
 
 /**
  * This is {@link CasTestAuthenticationEventExecutionPlanConfiguration}.
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casTestAuthenticationEventExecutionPlanConfiguration")
+@TestConfiguration("casTestAuthenticationEventExecutionPlanConfiguration")
 public class CasTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")

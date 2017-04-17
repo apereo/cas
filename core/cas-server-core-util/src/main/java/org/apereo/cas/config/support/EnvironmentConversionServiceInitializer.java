@@ -1,6 +1,5 @@
-package org.apereo.cas.config.init;
+package org.apereo.cas.config.support;
 
-import org.apereo.cas.config.support.CasConfigurationEmbeddedValueResolver;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.format.support.DefaultFormattingConversionService;
