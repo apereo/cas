@@ -47,8 +47,7 @@ before_install:
 - sudo apt-get install -y nodejs
 - sudo ./gradlew gulpSetup --stacktrace -q
 - sudo ./gradlew clean --parallel -q
-script:
-- sudo ./gradlew $BUILD_CMD
+script: "sudo ./gradlew $BUILD_CMD"
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
