@@ -25,9 +25,6 @@ git:
 notifications:
   slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
 env:
-  matrix:
-  - BUILD_CMD="checkstyleMain bootRepackage install --parallel -x test --stacktrace"
-  - BUILD_CMD="checkstyleTest test --stacktrace --parallel"
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
   - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
@@ -47,7 +44,10 @@ before_install:
 - sudo apt-get install -y nodejs
 - sudo ./gradlew gulpSetup --stacktrace -q
 - sudo ./gradlew clean --parallel -q
-script: "sudo ./gradlew $BUILD_CMD"
+install:
+- sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
+script:
+- travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
