@@ -20,6 +20,7 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
@@ -93,10 +94,8 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "casAttributeEncoder")
     @RefreshScope
     @Bean
-    public ProtocolAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao")
-                                                        final ServiceRegistryDao serviceRegistryDao,
-                                                        @Qualifier("cacheCredentialsCipherExecutor")
-                                                        final CipherExecutor cacheCredentialsCipherExecutor) {
+    public ProtocolAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao,
+                                                        @Qualifier("cacheCredentialsCipherExecutor") final CipherExecutor cacheCredentialsCipherExecutor) {
         return new DefaultCasProtocolAttributeEncoder(servicesManager(serviceRegistryDao),
                 registeredServiceCipherExecutor(), cacheCredentialsCipherExecutor);
     }
@@ -115,8 +114,15 @@ public class CasCoreServicesConfiguration {
 
     @ConditionalOnMissingBean(name = "servicesManager")
     @Bean
+    @RefreshScope
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
         return new DefaultServicesManager(serviceRegistryDao);
+    }
+
+    @Bean
+    @RefreshScope
+    public RegisteredServicesEventListener registeredServicesEventListener(@Qualifier("servicesManager") final ServicesManager servicesManager) {
+        return new RegisteredServicesEventListener(servicesManager);
     }
 
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
@@ -129,7 +135,7 @@ public class CasCoreServicesConfiguration {
         final List<RegisteredService> services = new ArrayList<>();
         if (context.containsBean("inMemoryRegisteredServices")) {
             services.addAll(context.getBean("inMemoryRegisteredServices", List.class));
-        }         
+        }
         return new InMemoryServiceRegistry(services);
     }
 
