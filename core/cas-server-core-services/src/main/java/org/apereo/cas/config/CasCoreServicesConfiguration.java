@@ -59,7 +59,7 @@ public class CasCoreServicesConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationContext context;
+    private ApplicationContext applicationContext;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -124,7 +124,7 @@ public class CasCoreServicesConfiguration {
     public RegisteredServicesEventListener registeredServicesEventListener(@Qualifier("servicesManager") final ServicesManager servicesManager) {
         return new RegisteredServicesEventListener(servicesManager);
     }
-
+    
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
     @Bean
     @RefreshScope
@@ -133,8 +133,8 @@ public class CasCoreServicesConfiguration {
                 + "Changes that are made to service definitions during runtime WILL be LOST upon container restarts.");
 
         final List<RegisteredService> services = new ArrayList<>();
-        if (context.containsBean("inMemoryRegisteredServices")) {
-            services.addAll(context.getBean("inMemoryRegisteredServices", List.class));
+        if (applicationContext.containsBean("inMemoryRegisteredServices")) {
+            services.addAll(applicationContext.getBean("inMemoryRegisteredServices", List.class));
         }
         return new InMemoryServiceRegistry(services);
     }
