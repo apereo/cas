@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -84,7 +83,7 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        return Collections.unmodifiableCollection(this.cache.values());
+        return decodeTickets(this.cache.values());
     }
 
     @Override
