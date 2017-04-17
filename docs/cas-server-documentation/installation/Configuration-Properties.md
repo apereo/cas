@@ -315,9 +315,10 @@ Load settings from a MongoDb instance.
 Load settings from an Apache ZooKeeper instance.
 
 ```properties
-spring.cloud.zookeeper.connect-string=localhost:2181
+spring.cloud.zookeeper.connectString=localhost:2181
 spring.cloud.zookeeper.enabled=true
 spring.cloud.zookeeper.config.enabled=true
+spring.cloud.zookeeper.maxRetries=10
 spring.cloud.zookeeper.config.root=cas/config
 ```
 
