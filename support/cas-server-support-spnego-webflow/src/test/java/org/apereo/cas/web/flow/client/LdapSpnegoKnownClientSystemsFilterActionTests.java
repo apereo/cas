@@ -17,7 +17,9 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.SpnegoConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.SpnegoWebflowActionsConfiguration;
@@ -27,10 +29,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -38,6 +43,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
+
+import javax.annotation.PostConstruct;
 
 import static org.junit.Assert.*;
 
@@ -48,8 +55,10 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SpnegoConfiguration.class, 
-        SpnegoWebflowActionsConfiguration.class, 
+@SpringBootTest(classes = {
+        LdapSpnegoKnownClientSystemsFilterActionTests.CasTestConfiguration.class,
+        SpnegoConfiguration.class,
+        SpnegoWebflowActionsConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasPersonDirectoryConfiguration.class,
@@ -69,18 +78,31 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreHttpConfiguration.class})
-@TestPropertySource(locations={"classpath:/spnego.properties"})
+@TestPropertySource(locations = {"classpath:/spnego.properties"})
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapTests {
-    
+
     @Autowired
     @Qualifier("ldapSpnegoClientAction")
     private Action action;
-    
+
     @BeforeClass
     public static void bootstrap() throws Exception {
         initDirectoryServer();
     }
 
+    @TestConfiguration
+    public static class CasTestConfiguration {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @PostConstruct
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
+    }
+
+    
     @Test
     public void ensureLdapAttributeShouldDoSpnego() throws Exception {
         final MockRequestContext ctx = new MockRequestContext();
