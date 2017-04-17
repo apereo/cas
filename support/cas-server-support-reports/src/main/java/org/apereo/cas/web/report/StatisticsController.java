@@ -5,9 +5,11 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.inspektr.audit.AuditActionContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
@@ -22,6 +24,7 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Scott Battaglia
@@ -34,20 +37,23 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
 
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
+    private final DelegatingAuditTrailManager auditTrailManager;
     private final CentralAuthenticationService centralAuthenticationService;
     private final MetricRegistry metricsRegistry;
     private final HealthCheckRegistry healthCheckRegistry;
     private final CasConfigurationProperties casProperties;
 
-    public StatisticsController(final CentralAuthenticationService centralAuthenticationService,
+    public StatisticsController(final DelegatingAuditTrailManager auditTrailManager, 
+                                final CentralAuthenticationService centralAuthenticationService,
                                 final MetricRegistry metricsRegistry,
                                 final HealthCheckRegistry healthCheckRegistry,
                                 final CasConfigurationProperties casProperties) {
         super("casstats", "/stats", casProperties.getMonitor().getEndpoints().getStatistics(), casProperties);
+        this.auditTrailManager = auditTrailManager;
         this.centralAuthenticationService = centralAuthenticationService;
         this.metricsRegistry = metricsRegistry;
         this.healthCheckRegistry = healthCheckRegistry;
-        this.casProperties = casProperties; 
+        this.casProperties = casProperties;
     }
 
     /**
@@ -89,6 +95,22 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         return model;
     }
 
+
+    /**
+     * Gets authn audit.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the authn audit
+     * @throws Exception the exception
+     */
+    @GetMapping(value = "/getAuthnAudit")
+    @ResponseBody
+    public Set<AuditActionContext> getAuthnAudit(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ensureEndpointAccessIsAuthorized(request, response);
+        return this.auditTrailManager.get();
+    }
+
     /**
      * Gets ticket stats.
      *
@@ -98,10 +120,8 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping(value = "/getTicketStats")
     @ResponseBody
-    public Map<String, Object> getTicketStats(final HttpServletRequest request,
-                                              final HttpServletResponse response) {
+    public Map<String, Object> getTicketStats(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-
         final Map<String, Object> model = new HashMap<>();
 
         int unexpiredTgts = 0;
@@ -114,12 +134,14 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         for (final Ticket ticket : tickets) {
             if (ticket instanceof ServiceTicket) {
                 if (ticket.isExpired()) {
+                    this.centralAuthenticationService.deleteTicket(ticket.getId());
                     expiredSts++;
                 } else {
                     unexpiredSts++;
                 }
             } else {
                 if (ticket.isExpired()) {
+                    this.centralAuthenticationService.deleteTicket(ticket.getId());
                     expiredTgts++;
                 } else {
                     unexpiredTgts++;
@@ -147,7 +169,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest,
                                                  final HttpServletResponse httpServletResponse) throws Exception {
         ensureEndpointAccessIsAuthorized(httpServletRequest, httpServletResponse);
-        
+
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());

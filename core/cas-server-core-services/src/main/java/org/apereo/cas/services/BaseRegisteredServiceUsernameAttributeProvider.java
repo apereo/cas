@@ -1,10 +1,15 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import javax.persistence.PostLoad;
 import java.util.Locale;
@@ -17,8 +22,10 @@ import java.util.Locale;
  */
 public abstract class BaseRegisteredServiceUsernameAttributeProvider implements RegisteredServiceUsernameAttributeProvider {
     private static final long serialVersionUID = -8381275200333399951L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseRegisteredServiceUsernameAttributeProvider.class);
 
     private String canonicalizationMode = CaseCanonicalizationMode.NONE.name();
+    private boolean encryptUsername;
 
     public BaseRegisteredServiceUsernameAttributeProvider() {
         setCanonicalizationMode(CaseCanonicalizationMode.NONE.name());
@@ -29,12 +36,39 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     }
 
     @Override
-    public final String resolveUsername(final Principal principal, final Service service) {
+    public final String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
         final String username = resolveUsernameInternal(principal, service);
         if (canonicalizationMode == null) {
-            return username;
+            canonicalizationMode = CaseCanonicalizationMode.NONE.name();
         }
-        return CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(username.trim(), Locale.getDefault());
+
+        final String uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(username.trim(), Locale.getDefault());
+        LOGGER.debug("Resolved username for [{}] is [{}]", service.getId(), uid);
+
+        if (!this.encryptUsername) {
+            return uid;
+        }
+        final String encryptedId = encryptResolvedUsername(principal, service, registeredService, uid);
+        if (StringUtils.isBlank(encryptedId)) {
+            throw new IllegalArgumentException("Could not encrypt username " + uid + " for service " + service);
+        }
+        return encryptedId;
+    }
+
+    /**
+     * Encrypt resolved username.
+     *
+     * @param principal         the principal
+     * @param service           the service
+     * @param registeredService the registered service
+     * @param username          the username
+     * @return the encrypted username or null
+     */
+    protected String encryptResolvedUsername(final Principal principal, final Service service,
+                                             final RegisteredService registeredService, final String username) {
+        final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+        final RegisteredServiceCipherExecutor cipher = applicationContext.getBean("registeredServiceCipherExecutor", RegisteredServiceCipherExecutor.class);
+        return cipher.encode(username, registeredService);
     }
 
     /**
@@ -45,7 +79,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     public void initialize() {
         setCanonicalizationMode(CaseCanonicalizationMode.NONE.name());
     }
-    
+
     /**
      * Resolve username internal string.
      *
@@ -63,6 +97,14 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
         this.canonicalizationMode = canonicalizationMode;
     }
 
+    public boolean isEncryptUsername() {
+        return encryptUsername;
+    }
+
+    public void setEncryptUsername(final boolean encryptUsername) {
+        this.encryptUsername = encryptUsername;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -77,6 +119,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
         final BaseRegisteredServiceUsernameAttributeProvider rhs = (BaseRegisteredServiceUsernameAttributeProvider) obj;
         return new EqualsBuilder()
                 .append(this.canonicalizationMode, rhs.canonicalizationMode)
+                .append(this.encryptUsername, rhs.encryptUsername)
                 .isEquals();
     }
 
@@ -84,6 +127,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(canonicalizationMode)
+                .append(encryptUsername)
                 .toHashCode();
     }
 }

@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
-import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
@@ -69,10 +68,7 @@ public class MemcachedTicketRegistryConfiguration {
     }
 
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) {
-        return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(),
-                logoutManager,
-                ticketRegistry(memcachedClientIF),
-                false);
+    public TicketRegistryCleaner ticketRegistryCleaner() {
+        return new NoOpTicketRegistryCleaner();
     }
 }

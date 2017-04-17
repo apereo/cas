@@ -158,7 +158,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-        final String userId = registeredService.getUsernameAttributeProvider().resolveUsername(service.getPrincipal(), service);
+        final String userId = registeredService.getUsernameAttributeProvider().resolveUsername(service.getPrincipal(), service, registeredService);
 
         final org.opensaml.saml.saml2.core.Response response = this.samlObjectBuilder.newResponse(
                 this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, service.getId(), service);

@@ -130,7 +130,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
-
+    
     @NestedConfigurationProperty
     private ClearpassProperties clearpass = new ClearpassProperties();
 
@@ -175,7 +175,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private WebflowProperties webflow = new WebflowProperties();
-
+    
     public AuditProperties getAudit() {
         return audit;
     }

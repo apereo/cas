@@ -55,7 +55,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     @Autowired
     private ResourceLoader resourceLoader;
-
+    
     @ConfigurationPropertiesBinding
     @Bean
     public Converter<String, List<Class<? extends Throwable>>> commaSeparatedStringToThrowablesCollection() {

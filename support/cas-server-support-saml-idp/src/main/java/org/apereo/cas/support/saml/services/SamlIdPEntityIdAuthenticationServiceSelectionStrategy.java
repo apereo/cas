@@ -23,10 +23,13 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPEntityIdAuthenticationServiceSelectionStrategy.class);
 
     private int order = Ordered.HIGHEST_PRECEDENCE;
-    private ServiceFactory webApplicationServiceFactory;
+    private final ServiceFactory webApplicationServiceFactory;
+    private final String casServerPrefix;
 
-    public SamlIdPEntityIdAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory) {
+    public SamlIdPEntityIdAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory,
+                                                                 final String casServerPrefix) {
         this.webApplicationServiceFactory = webApplicationServiceFactory;
+        this.casServerPrefix = casServerPrefix;
     }
 
     @Override
@@ -38,7 +41,9 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     @Override
     public boolean supports(final Service service) {
-        return service != null && getEntityIdAsParameter(service).isPresent();
+        final String casPattern = "^".concat(casServerPrefix).concat(".*");
+        return service != null && service.getId().matches(casPattern)
+                && getEntityIdAsParameter(service).isPresent();
     }
 
     /**

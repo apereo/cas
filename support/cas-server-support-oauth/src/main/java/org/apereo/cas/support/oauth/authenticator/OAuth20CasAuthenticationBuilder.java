@@ -70,12 +70,17 @@ public class OAuth20CasAuthenticationBuilder {
      *
      * @param registeredService the registered service
      * @param context           the context
+     * @param useServiceHeader  the use service header
      * @return the service
      */
-    public Service buildService(final OAuthRegisteredService registeredService, final J2EContext context) {
-        String id = context.getRequestHeader(CasProtocolConstants.PARAMETER_SERVICE);
-        if (StringUtils.isBlank(id)) {
-            id = context.getRequestHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
+    public Service buildService(final OAuthRegisteredService registeredService, final J2EContext context, final boolean useServiceHeader) {
+        String id = null;
+        if (useServiceHeader) {
+            id = context.getRequestHeader(CasProtocolConstants.PARAMETER_SERVICE);
+            if (StringUtils.isBlank(id)) {
+                id = context.getRequestHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
+            }
+            LOGGER.debug("Located service based on request header is [{}]", id);
         }
         if (StringUtils.isBlank(id)) {
             id = registeredService.getClientId();
@@ -89,10 +94,13 @@ public class OAuth20CasAuthenticationBuilder {
      * @param profile           the given user profile
      * @param registeredService the registered service
      * @param context           the context
+     * @param service           the service
      * @return the built authentication
      */
-    public Authentication build(final UserProfile profile, final OAuthRegisteredService registeredService, final J2EContext context) {
-        final Service service = buildService(registeredService, context);
+    public Authentication build(final UserProfile profile,
+                                final OAuthRegisteredService registeredService,
+                                final J2EContext context,
+                                final Service service) {
         final Principal newPrincipal =
                 this.scopeToAttributesFilter.filter(service,
                         this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes()),
