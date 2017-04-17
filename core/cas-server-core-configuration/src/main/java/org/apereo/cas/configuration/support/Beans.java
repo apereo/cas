@@ -141,9 +141,8 @@ public final class Beans {
      * Get new data source, from JNDI lookup or created via direct configuration
      * of Hikari pool. If jpaProperties contains dataSourceName a lookup will be
      * attempted If datasource not found via JNDI it will be
-     * 
-     * @param jpaProperties
-     *            the jpa properties
+     *
+     * @param jpaProperties the jpa properties
      * @return the data source
      */
     public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
@@ -153,10 +152,11 @@ public final class Beans {
         if (StringUtils.isNotBlank(dataSourceName)) {
             try {
                 final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-                // if user wants to do lookup as resource, they may include
-                // java:/comp/env
-                // in dataSourceName and put resource reference in web.xml
-                // otherwise dataSourceName is used as JNDI name
+                /*
+                 if user wants to do lookup as resource, they may include java:/comp/env
+                 in dataSourceName and put resource reference in web.xml
+                 otherwise dataSourceName is used as JNDI name
+                  */
                 dsLookup.setResourceRef(false);
                 final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
                 bean.setDataSource(containerDataSource);
@@ -188,7 +188,7 @@ public final class Beans {
             bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
             return bean;
         } catch (final Exception e) {
-            LOGGER.error("Error creating DataSource: {}", e.getMessage());
+            LOGGER.error("Error creating DataSource: [{}]", e.getMessage());
             throw new IllegalArgumentException(e);
         }
     }
