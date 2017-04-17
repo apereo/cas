@@ -52,7 +52,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         this.serviceRegistryDao = serviceRegistryDao;
     }
 
-    @Audit(action = "DELETE_SERVICE", 
+    @Audit(action = "DELETE_SERVICE",
             actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
@@ -114,7 +114,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         return findServiceBy(service) != null;
     }
 
-    @Audit(action = "SAVE_SERVICE", 
+    @Audit(action = "SAVE_SERVICE",
             actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
@@ -158,17 +158,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     public int count() {
         return services.size();
     }
-
-    /**
-     * Handle services manager refresh event.
-     *
-     * @param event the event
-     */
-    @EventListener
-    protected void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
-        load();
-    }
-
+    
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
