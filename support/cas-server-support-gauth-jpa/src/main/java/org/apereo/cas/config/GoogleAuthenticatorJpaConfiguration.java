@@ -53,7 +53,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceGoogleAuthenticator() {
-        return Beans.newHickariDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
+        return Beans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
     }
 
     @Bean

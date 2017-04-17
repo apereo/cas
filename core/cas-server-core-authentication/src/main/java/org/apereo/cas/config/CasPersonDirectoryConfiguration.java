@@ -161,13 +161,13 @@ public class CasPersonDirectoryConfiguration {
                 if (jdbc.isSingleRow()) {
                     LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new SingleRowJdbcPersonAttributeDao(
-                            Beans.newHickariDataSource(jdbc),
+                            Beans.newDataSource(jdbc),
                             jdbc.getSql()
                     );
                 } else {
                     LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new MultiRowJdbcPersonAttributeDao(
-                            Beans.newHickariDataSource(jdbc),
+                            Beans.newDataSource(jdbc),
                             jdbc.getSql()
                     );
                     LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
