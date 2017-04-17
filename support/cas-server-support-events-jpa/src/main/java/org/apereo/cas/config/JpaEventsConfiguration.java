@@ -46,7 +46,7 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceEvent() {
-        return Beans.newHickariDataSource(casProperties.getEvents().getJpa());
+        return Beans.newDataSource(casProperties.getEvents().getJpa());
     }
     
     public String[] jpaEventPackagesToScan() {

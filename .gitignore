@@ -37,3 +37,4 @@ reports
 
 *.asc
 *.css
+/.nb-gradle/
