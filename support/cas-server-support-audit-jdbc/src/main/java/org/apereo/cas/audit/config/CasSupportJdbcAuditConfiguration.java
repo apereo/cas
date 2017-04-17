@@ -84,7 +84,7 @@ public class CasSupportJdbcAuditConfiguration {
     @Bean
     @RefreshScope
     public DataSource inspektrAuditTrailDataSource() {
-        return Beans.newHickariDataSource(casProperties.getAudit().getJdbc());
+        return Beans.newDataSource(casProperties.getAudit().getJdbc());
     }
 
     @Bean

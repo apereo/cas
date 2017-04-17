@@ -30,7 +30,7 @@ public class CasJdbcThrottlingConfiguration {
 
     @Bean
     public DataSource inspektrAuditTrailDataSource() {
-        return Beans.newHickariDataSource(casProperties.getAuthn().getThrottle().getJdbc());
+        return Beans.newDataSource(casProperties.getAuthn().getThrottle().getJdbc());
     }
 
     @Autowired

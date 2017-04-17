@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 
 import static org.apereo.cas.configuration.support.Beans.newHibernateEntityManagerFactoryBean;
 import static org.apereo.cas.configuration.support.Beans.newHibernateJpaVendorAdapter;
-import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
+import static org.apereo.cas.configuration.support.Beans.newDataSource;
 
 /**
  * This this {@link JpaServiceRegistryConfiguration}.
@@ -78,7 +78,7 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceService() {
-        return newHickariDataSource(casProperties.getServiceRegistry().getJpa());
+        return newDataSource(casProperties.getServiceRegistry().getJpa());
     }
 
     @Bean

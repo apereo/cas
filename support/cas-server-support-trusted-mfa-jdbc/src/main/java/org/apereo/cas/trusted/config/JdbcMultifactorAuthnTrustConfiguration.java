@@ -48,7 +48,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceMfaTrustedAuthn() {
-        return Beans.newHickariDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());
+        return Beans.newDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());
     }
 
     @Bean
