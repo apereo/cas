@@ -41,7 +41,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     @Override
     public boolean supports(final Service service) {
-        final String casPattern = "^".concat(casServerPrefix).concat(".+");
+        final String casPattern = "^".concat(casServerPrefix).concat(".*");
         return service != null && service.getId().matches(casPattern)
                 && getEntityIdAsParameter(service).isPresent();
     }

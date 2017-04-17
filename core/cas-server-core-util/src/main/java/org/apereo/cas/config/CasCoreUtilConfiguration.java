@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.util.StringValueResolver;
@@ -49,7 +50,8 @@ public class CasCoreUtilConfiguration {
 
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-    public StringValueResolver durationCapableScheduledAnnotationBeanPostProcessor() {
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public StringValueResolver durationCapableStringValueResolver() {
         final StringValueResolver resolver = new CasConfigurationEmbeddedValueResolver(applicationContext);
         final ScheduledAnnotationBeanPostProcessor sch = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
         sch.setEmbeddedValueResolver(resolver);
