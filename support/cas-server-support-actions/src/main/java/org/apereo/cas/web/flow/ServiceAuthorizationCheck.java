@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -21,24 +22,28 @@ import org.springframework.webflow.execution.RequestContext;
 public class ServiceAuthorizationCheck extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAuthorizationCheck.class);
 
-    private ServicesManager servicesManager;
-    
+    private final ServicesManager servicesManager;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
     /**
      * Initialize the component with an instance of the services manager.
-     * @param servicesManager the service registry instance.
+     *
+     * @param servicesManager                                 the service registry instance.
+     * @param authenticationRequestServiceSelectionStrategies the service selection strategy
      */
-    public ServiceAuthorizationCheck(final ServicesManager servicesManager) {
+    public ServiceAuthorizationCheck(final ServicesManager servicesManager,
+                                     final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
         this.servicesManager = servicesManager;
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
     }
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
-        final Service service = WebUtils.getService(context);
-        //No service == plain /login request. Return success indicating transition to the login form
+        final Service service = authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(context));
         if (service == null) {
             return success();
         }
-        
+
         if (this.servicesManager.getAllServices().isEmpty()) {
             final String msg = String.format("No service definitions are found in the service manager. "
                     + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
