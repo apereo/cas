@@ -73,6 +73,7 @@ public class CasWebApplication {
                 .web(true)
                 .properties(properties)
                 .logStartupInfo(true)
+                .contextClass(CasWebApplicationContext.class)
                 .run(args);
     }
 }
