@@ -101,6 +101,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
             final GroovyShell shell = new GroovyShell(binding);
             binding.setVariable("attributes", principal.getAttributes());
             binding.setVariable("id", principal.getId());
+            binding.setVariable("logger", LOGGER);
             final Object res = shell.evaluate(script);
             return res;
         } catch (final Exception e) {

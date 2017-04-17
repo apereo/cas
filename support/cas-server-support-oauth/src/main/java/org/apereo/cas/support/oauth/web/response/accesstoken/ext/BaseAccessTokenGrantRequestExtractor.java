@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -36,18 +37,25 @@ public abstract class BaseAccessTokenGrantRequestExtractor {
     protected final HttpServletResponse response;
 
     /**
+     * OAuth settings.
+     */
+    protected final OAuthProperties oAuthProperties;
+    
+    /**
      * The Services manager.
      */
     protected final CentralAuthenticationService centralAuthenticationService;
 
     public BaseAccessTokenGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
                                                 final HttpServletRequest request, final HttpServletResponse response,
-                                                final CentralAuthenticationService centralAuthenticationService) {
+                                                final CentralAuthenticationService centralAuthenticationService,
+                                                final OAuthProperties oAuthProperties) {
         this.servicesManager = servicesManager;
         this.ticketRegistry = ticketRegistry;
         this.request = request;
         this.response = response;
         this.centralAuthenticationService = centralAuthenticationService;
+        this.oAuthProperties = oAuthProperties;
     }
 
     /**

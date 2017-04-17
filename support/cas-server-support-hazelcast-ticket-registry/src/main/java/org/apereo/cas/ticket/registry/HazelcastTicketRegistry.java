@@ -89,8 +89,10 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
+        final String encTicketId = encodeTicketId(ticketId);
         final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
-        return getTicketMapInstanceByMetadata(metadata).remove(ticketId) != null;
+        final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
+        return map.remove(encTicketId) != null;
     }
 
     @Override

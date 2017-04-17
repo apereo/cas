@@ -1,7 +1,8 @@
 description = "Apereo CAS X.509 Client Certificate Support"
 dependencies {
     compile project(":support:cas-server-support-x509-core")
-    api libraries.persondirectory
+    
+    implementation libraries.persondirectory
     implementation libraries.httpclient
     implementation libraries.ehcache
 

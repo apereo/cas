@@ -202,7 +202,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-mongo</artifactId>
+     <artifactId>cas-server-core-configuration-cloud-mongo</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -228,6 +228,48 @@ To see the relevant list of CAS properties for this feature, please [review this
 CAS is also able to use [Vault](https://www.vaultproject.io/) to
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).
 
+##### Apache ZooKeeper
+
+CAS is also able to use [Apache ZooKeeper](https://zookeeper.apache.org/) to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-cloud-zookeeper</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#zookeeper).
+
+
+You will need to map CAS settings to ZooKeeper's nodes that contain values. The parent node for all settings should match the configuration root value provided to CAS. Under the root, you could have folders such as `cas`, `cas,dev`, `cas,local`, etc where `dev` and `local` are Spring profiles.
+
+
+To create nodes and values in Apache ZooKeeper, try the following commands
+as a sample:
+
+```bash
+zookeeper-client -server zookeeper1:2181
+create /cas cas
+create /cas/config cas
+create /cas/config/cas cas
+create /cas/config/cas/settingName casuser::Test
+```
+
+Creating nodes and directories in Apache ZooKeeper may require providing a value. The above sample commands show that the value `cas` is provided when creating directories. Always check with the official Apache ZooKeeper guides. You may not need to do that step.
+
+Finally in your CAS properties, the new `settingName` setting can be used as a reference.
+
+```properties
+cas.something.something=${settingName}
+```
+
+...where `${settingName}` gets the value of the contents of the Apache ZooKeeper node `cas/config/cas/settingName`.
+
+
 ##### DynamoDb
 
 CAS is also able to use [DynamoDb](https://aws.amazon.com/dynamodb/) to locate properties and settings.
@@ -237,7 +279,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-dynamodb</artifactId>
+     <artifactId>cas-server-core-configuration-cloud-dynamodb</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -263,7 +305,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-jdbc</artifactId>
+     <artifactId>cas-server-core-configuration-cloud-jdbc</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

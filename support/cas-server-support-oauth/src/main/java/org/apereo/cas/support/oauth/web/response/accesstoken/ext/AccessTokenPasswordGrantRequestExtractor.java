@@ -2,8 +2,10 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -36,11 +38,14 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
     private final OAuth20CasAuthenticationBuilder authenticationBuilder;
 
-    public AccessTokenPasswordGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                                    final HttpServletRequest request, final HttpServletResponse response,
+    public AccessTokenPasswordGrantRequestExtractor(final ServicesManager servicesManager,
+                                                    final TicketRegistry ticketRegistry,
+                                                    final HttpServletRequest request,
+                                                    final HttpServletResponse response,
                                                     final OAuth20CasAuthenticationBuilder authenticationBuilder,
-                                                    final CentralAuthenticationService centralAuthenticationService) {
-        super(servicesManager, ticketRegistry, request, response, centralAuthenticationService);
+                                                    final CentralAuthenticationService centralAuthenticationService,
+                                                    final OAuthProperties oAuthProperties) {
+        super(servicesManager, ticketRegistry, request, response, centralAuthenticationService, oAuthProperties);
         this.authenticationBuilder = authenticationBuilder;
     }
 
@@ -59,13 +64,18 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
             throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
         }
         LOGGER.debug("Creating matching service request based on [{}]", registeredService);
-        final Service service = this.authenticationBuilder.buildService(registeredService, context);
+        final boolean requireServiceHeader = oAuthProperties.getGrants().getResourceOwner().isRequireServiceHeader();
+        if (requireServiceHeader) {
+            LOGGER.debug("Using request headers to identify and build the target service url");
+        }
+        final Service service = this.authenticationBuilder.buildService(registeredService, context, requireServiceHeader);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-        final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context);
+        final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
         RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
-        final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(
-                new DefaultAuthenticationResult(authentication, service));
+
+        final AuthenticationResult result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
+        final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
         return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket);
     }
 
