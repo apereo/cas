@@ -11,7 +11,7 @@ import org.springframework.util.StringValueResolver;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SchedulingUtils {
+public final class SchedulingUtils {
     private SchedulingUtils() {
     }
 
