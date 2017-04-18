@@ -123,6 +123,7 @@ layout: null
     
 * [Monitoring & Statistics](#monitoroverview)
     *   [Overview](/$version/installation/Monitoring-Statistics.html) 
+    *   [Administration Server](/$version/installation/Configuring-Monitoring-Administration.html)
     *   [Metrics](/$version/installation/Configuring-Metrics.html)
     *   [Monitors](/$version/installation/Configuring-Monitoring.html)
     *   [Sentry](/$version/integration/Sentry-Integration.html)
