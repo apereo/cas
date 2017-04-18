@@ -132,7 +132,7 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
-### Container-based JDBC Connections <a name="dataSourceName"></a>
+### Container-based JDBC Connections
 
 If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)
 then you can set the `dataSourceName` property on any of the configuration items that require a database
@@ -315,9 +315,10 @@ Load settings from a MongoDb instance.
 Load settings from an Apache ZooKeeper instance.
 
 ```properties
-spring.cloud.zookeeper.connect-string=localhost:2181
+spring.cloud.zookeeper.connectString=localhost:2181
 spring.cloud.zookeeper.enabled=true
 spring.cloud.zookeeper.config.enabled=true
+spring.cloud.zookeeper.maxRetries=10
 spring.cloud.zookeeper.config.root=cas/config
 ```
 
@@ -753,7 +754,7 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.jdbc.autocommit=false
 # cas.adminPagesSecurity.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.adminPagesSecurity.jdbc.idleTimeout=5000
-# cas.adminPagesSecurity.jdbc.[dataSourceName](#dataSourceName)=
+# cas.adminPagesSecurity.jdbc.dataSourceName=
 ```
 
 #### LDAP Authentication
@@ -1087,7 +1088,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].pool.minSize=6
 # cas.authn.attributeRepository.jdbc[0].pool.maxSize=18
 # cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
-# cas.authn.attributeRepository.jdbc[0].[dataSourceName](#dataSourceName)=
+# cas.authn.attributeRepository.jdbc[0].dataSourceName=
 ```
 
 ### Grouper
@@ -1249,7 +1250,7 @@ same IP address.
 # cas.authn.throttle.jdbc.pool.minSize=6
 # cas.authn.throttle.jdbc.pool.maxSize=18
 # cas.authn.throttle.jdbc.pool.maxWait=2000
-# cas.authn.throttle.jdbc.[dataSourceName](#dataSourceName)=
+# cas.authn.throttle.jdbc.dataSourceName=
 ```
 
 ## Adaptive Authentication
@@ -1511,7 +1512,7 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].credentialCriteria=
 # cas.authn.jdbc.query[0].name=
 # cas.authn.jdbc.query[0].order=0
-# cas.authn.jdbc.query[0].[dataSourceName](#dataSourceName)=
+# cas.authn.jdbc.query[0].dataSourceName=
 
 # cas.authn.jdbc.query[0].fieldPassword=password
 # cas.authn.jdbc.query[0].fieldExpired=
@@ -1556,7 +1557,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].credentialCriteria=
 # cas.authn.jdbc.search[0].name=
 # cas.authn.jdbc.search[0].order=0
-# cas.authn.jdbc.search[0].[dataSourceName](#dataSourceName)=
+# cas.authn.jdbc.search[0].dataSourceName=
 
 # cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
@@ -1593,7 +1594,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].credentialCriteria=
 # cas.authn.jdbc.bind[0].name=
 # cas.authn.jdbc.bind[0].order=0
-# cas.authn.jdbc.bind[0].[dataSourceName](#dataSourceName)=
+# cas.authn.jdbc.bind[0].dataSourceName=
 # cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
@@ -1644,7 +1645,7 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].credentialCriteria=
 # cas.authn.jdbc.encode[0].name=
 # cas.authn.jdbc.encode[0].order=0
-# cas.authn.jdbc.encode[0].[dataSourceName](#dataSourceName)=
+# cas.authn.jdbc.encode[0].dataSourceName=
 # cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
@@ -2384,7 +2385,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 # cas.authn.mfa.trusted.jpa.autocommit=false
 # cas.authn.mfa.trusted.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.mfa.trusted.jpa.idleTimeout=5000
-# cas.authn.mfa.trusted.jpa.[dataSourceName](#dataSourceName)=
+# cas.authn.mfa.trusted.jpa.dataSourceName=
 
 # cas.authn.mfa.trusted.jpa.pool.suspension=false
 # cas.authn.mfa.trusted.jpa.pool.minSize=6
@@ -2482,7 +2483,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.jpa.database.autocommit=false
 # cas.authn.mfa.gauth.jpa.database.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.mfa.gauth.jpa.database.idleTimeout=5000
-# cas.authn.mfa.gauth.jpa.database.[dataSourceName](#dataSourceName)=
+# cas.authn.mfa.gauth.jpa.database.dataSourceName=
 
 # cas.authn.mfa.gauth.jpa.database.pool.suspension=false
 # cas.authn.mfa.gauth.jpa.database.pool.minSize=6
@@ -3387,7 +3388,7 @@ Store audit logs inside a database.
 # cas.audit.jdbc.autocommit=false
 # cas.audit.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.audit.jdbc.idleTimeout=5000
-# cas.audit.jdbc.[dataSourceName](#dataSourceName)=
+# cas.audit.jdbc.dataSourceName=
 
 # cas.audit.jdbc.pool.suspension=false
 # cas.audit.jdbc.pool.minSize=6
@@ -3462,7 +3463,7 @@ for authentication or attribute retrieval.
 # cas.monitor.jdbc.autocommit=false
 # cas.monitor.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.monitor.jdbc.idleTimeout=5000
-# cas.monitor.jdbc.[dataSourceName](#dataSourceName)=
+# cas.monitor.jdbc.dataSourceName=
 ```
 
 ### LDAP Connection Pool
@@ -3568,7 +3569,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.autocommit=false
 # cas.events.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.events.jpa.idleTimeout=5000
-# cas.events.jpa.[dataSourceName](#dataSourceName)=
+# cas.events.jpa.dataSourceName=
 
 # cas.events.jpa.pool.suspension=false
 # cas.events.jpa.pool.minSize=6
@@ -3807,7 +3808,7 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.autocommit=false
 # cas.serviceRegistry.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.serviceRegistry.jpa.idleTimeout=5000
-# cas.serviceRegistry.jpa.[dataSourceName](#dataSourceName)=
+# cas.serviceRegistry.jpa.dataSourceName=
 
 # cas.serviceRegistry.jpa.pool.suspension=false
 # cas.serviceRegistry.jpa.pool.minSize=6
@@ -3860,7 +3861,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.autocommit=false
 # cas.ticket.registry.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.ticket.registry.jpa.idleTimeout=5000
-# cas.ticket.registry.jpa.[dataSourceName](#dataSourceName)=
+# cas.ticket.registry.jpa.dataSourceName=
 
 # cas.ticket.registry.jpa.pool.suspension=false
 # cas.ticket.registry.jpa.pool.minSize=6
@@ -4615,7 +4616,7 @@ The following LDAP types are supported:
 # cas.authn.pm.jdbc.autocommit=false
 # cas.authn.pm.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.pm.jdbc.idleTimeout=5000
-# cas.authn.pm.jdbc.[dataSourceName](#dataSourceName)=
+# cas.authn.pm.jdbc.dataSourceName=
 
 # cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.pm.jdbc.passwordEncoder.characterEncoding=
