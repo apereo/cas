@@ -1,0 +1,32 @@
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+
+description = "Apereo CAS Spring Boot Admin Server"
+
+javadoc {
+    enabled false
+}
+
+bootRun {
+    addResources = true
+    jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5010,server=y,suspend=n"]
+}
+
+war {
+    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+}
+
+springBoot  {
+    mainClass = "org.apereo.cas.CasSpringBootAdminServerWebApplication"
+}
+
+bootRepackage {
+    mainClass = "org.apereo.cas.CasSpringBootAdminServerWebApplication"
+    enabled = !rootProject.publishReleases
+}
+
+dependencies {
+    providedRuntime libraries.springboottomcat
+    implementation libraries.springbootadminserver
+    compile project(":core:cas-server-core-util")
+}

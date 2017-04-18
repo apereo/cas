@@ -38,6 +38,8 @@ by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/refere
 | `/status/restart`                 | Restart the application via a `POST`. Disabled by default.
 | `/status/refresh`                 | Refresh the application configuration via a `POST` to let components reload and recognize new values.
 
+Actuator endpoints provided by Spring Boot can also be visually managed and monitored via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
+
 ## Security
 
 All urls that are scoped to the `/status` endpoint are modeled after Spring Boot's own actuator endpoints
