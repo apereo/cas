@@ -10,7 +10,7 @@ The service registry component of CAS has the ability to allow for configuration
 what should be the designated user identifier that is returned to the application.
 
 * Ensure the attribute is available and resolved for the principal
-* Set the `usernameAttributeProvider` property of the given service to once of the attribute providers.
+* Set the `usernameAttributeProvider` property of the given service to one of the attribute providers.
 * A number of providers are able to perform canonicalization on the final user id returned to transform it
 into uppercase/lowercase. This is noted by the `canonicalizationMode` whose allowed values are `UPPER`, `LOWER` or `NONE`.
 
