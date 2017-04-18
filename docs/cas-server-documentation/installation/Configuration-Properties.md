@@ -641,7 +641,19 @@ The format of the file is as such:
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
 - `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
 
-### CAS Endpoints
+### Spring Boot Admin Server
+
+To learn more about this topic, [please review this guide](Configuring-Monitoring-Administration.html).
+
+```properties
+# spring.boot.admin.url=https://bootadmin.example.org:8444
+# spring.boot.admin.client.managementUrl=${cas.server.prefix}/status
+# spring.boot.admin.client.name=Apereo CAS
+# spring.boot.admin.client.metadata.user.name=
+# spring.boot.admin.client.metadata.user.password=
+```
+
+## CAS Endpoints
 
 These are the collection of endpoints that are specific to CAS.
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
