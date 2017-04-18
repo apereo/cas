@@ -5,7 +5,7 @@ title: CAS - Monitoring
 
 # CAS Spring Boot Administration
 
-CAS takes advantage of the [Spring Boot Admin](https://github.com/codecentric/spring-boot-admin) to manage and monitor its internal state visually. As a Spring Boot Admin client, CAS registers itself with the Spring Boot Admin server over HTTP and reports back its status and health to the server's web interface.
+CAS takes advantage of the [Spring Boot Admin][bootadmindocs] to manage and monitor its internal state visually. As a Spring Boot Admin client, CAS registers itself with the Spring Boot Admin server over HTTP and reports back its status and health to the server's web interface.
 
 ## Admin Server
 
@@ -31,8 +31,10 @@ Support is added by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-Note that CAS server's actuator endpoints are by default secured. In order to allow secure communication between the CAS server and the Spring Boot Admin server, [please see guide](http://codecentric.github.io/spring-boot-admin/1.5.0/#_securing_client_actuator_endpoints).
+Note that CAS server's actuator endpoints are by default secured. In order to allow secure communication between the CAS server and the Spring Boot Admin server, [please see guide][bootadmindocs].
 
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-boot-admin-server).
+
+[bootadmindocs]: http://codecentric.github.io/spring-boot-admin/1.5.0/#_securing_client_actuator_endpoints
