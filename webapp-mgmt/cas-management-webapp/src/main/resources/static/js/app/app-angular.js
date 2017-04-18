@@ -289,6 +289,16 @@ if (array.length == 3) {
     ]);
 
 
+  app.controller('oauthController', [
+    '$scope',
+    function($scope) {
+        this.handleUserDefinedScope = function(value) {
+            if (value == 'user_defined') {
+                // Do nothing for now
+            }
+        };
+  }]);
+
     /**
      * Rejected Attributes controller
      */
@@ -640,6 +650,14 @@ if (array.length == 3) {
                     {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
                     {name: 'SAML Client', value: 'saml'},
                     {name: 'OIDC Client', value: 'oidc'}
+                ],
+                oidcScopes: [
+                    {name: 'Profile', value: 'profile'},
+                    {name: 'Email', value: 'email'},
+                    {name: 'Address', value: 'address'},
+                    {name: 'Phone', value: 'phone'},
+                    {name: 'Offline Access', value: 'offline_access'},
+                    {name: 'User Defined', value: 'user_defined'}
                 ],
                 logoutTypeList: [
                     {name: 'NONE', value: 'none'},
