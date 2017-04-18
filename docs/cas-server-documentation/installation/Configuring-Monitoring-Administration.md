@@ -9,9 +9,11 @@ CAS takes advantage of the [Spring Boot Admin][bootadmindocs] to manage and moni
 
 ## Admin Server
 
-To run the Eureka discovery server, please use [this WAR overlay](https://github.com/apereo/cas-bootadmin-overlay).
+To run the Spring Boot Admin server, please use [this WAR overlay](https://github.com/apereo/cas-bootadmin-overlay).
 
-Note that the admin server's API endpoints MUST be secured. To learn more about options, please [see this guide](http://codecentric.github.io/spring-boot-admin/1.5.0/#securing-spring-boot-admin).
+<div class="alert alert-warning"><strong>Secure Endpoints</strong><p>Note that the admin server's API endpoints MUST be secured. It is also best to run both the Admin server and the registering CAS server node under HTTPS, specially if credentials are used to authenticate into endpoints.</p></div>
+
+To learn more about options, please [see this guide][bootadmindocs].
 
 Here is a sample screenshot of the CAS server reporting status to the Admin server:
 
@@ -37,4 +39,4 @@ Note that CAS server's actuator endpoints are by default secured. In order to al
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-boot-admin-server).
 
-[bootadmindocs]: http://codecentric.github.io/spring-boot-admin/1.5.0/#_securing_client_actuator_endpoints
+[bootadmindocs]: https://codecentric.github.io/spring-boot-admin/1.5.0/
