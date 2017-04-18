@@ -35,4 +35,4 @@ Note that CAS server's actuator endpoints are by default secured. In order to al
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-connection-pool).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-boot-admin-server).
