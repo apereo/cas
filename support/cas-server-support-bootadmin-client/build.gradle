@@ -1,0 +1,6 @@
+description = "Apereo CAS Spring Boot Admin Client"
+dependencies {
+    compile libraries.springbootadminclient
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-web")
+}
