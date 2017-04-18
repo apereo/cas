@@ -92,10 +92,10 @@ dependencies {
     compile project(":support:cas-server-support-themes")
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
-
+    
     compile project(":webapp:cas-server-webapp-config")
     compile project(":webapp:cas-server-webapp-init")
-
+    
     implementation libraries.pac4j
     implementation libraries.thymeleaf
     implementation libraries.groovy
