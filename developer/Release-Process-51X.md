@@ -86,6 +86,7 @@ Update the following overlay projects to point to the newly released CAS version
 - [CAS Configuration Server Overlay](https://github.com/apereo/cas-configserver-overlay)
 - [CAS Services Management WebApp Overlay](https://github.com/apereo/cas-services-management-overlay)
 - [CAS Discovery Server Overlay](https://github.com/apereo/cas-discoveryserver-overlay)
+- [CAS Spring Boot Admin Server Overlay](https://github.com/apereo/cas-bootadmin-overlay)
 
 ## Update Travis
 
