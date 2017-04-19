@@ -115,7 +115,7 @@ of an available MFA provider described above.
 https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
 ```
 
-### Principal Attribute Per Application
+## Principal Attribute Per Application
 
 As a hybrid option, MFA can be triggered for a specific application registered inside the CAS service registry, provided
 the authenticated principal carries an attribute that matches a configured attribute value. The attribute
@@ -135,7 +135,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 }
 ```
 
-### Entity Id Request Parameter
+## Entity Id Request Parameter
 
 In situations where authentication is delegated to CAS, most commonly via a [Shibboleth Identity Provider](https://shibboleth.net/products/identity-provider.html),
 the entity id may be passed as a request parameter to CAS to be treated as a CAS registered service.
