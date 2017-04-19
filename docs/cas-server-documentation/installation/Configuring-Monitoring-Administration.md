@@ -21,7 +21,7 @@ Here is a sample screenshot of the CAS server reporting status to the Admin serv
 
 ## CAS Server as Client
 
-Each individual CAS server is given the ability to auto-register itself with the admin server, provided configuration is made available to instruct the CAS server how to locate and connect to the discover server service.
+Each individual CAS server is given the ability to auto-register itself with the admin server, provided configuration is made available to instruct the CAS server how to locate and connect to the admin server.
 
 Support is added by including the following dependency in the WAR overlay:
 
