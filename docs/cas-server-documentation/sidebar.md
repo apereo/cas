@@ -61,6 +61,7 @@ layout: null
     *   [Attribute Release](/$version/integration/Attribute-Release.html)
         *   [Principal Id](/$version/integration/Attribute-Release-PrincipalId.html)
         *   [Release Policies](/$version/integration/Attribute-Release-Policies.html)
+        *   [Consent](/$version/integration/Attribute-Release-Consent.html)
         *   [Caching](/$version/integration/Attribute-Release-Caching.html)
         
 *   [Multifactor Authentication](#mfaauthn)
