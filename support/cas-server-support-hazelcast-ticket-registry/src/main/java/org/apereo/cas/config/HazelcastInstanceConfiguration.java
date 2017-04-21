@@ -51,7 +51,6 @@ public class HazelcastInstanceConfiguration {
     private CasConfigurationProperties casProperties;
         
     @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
-    @RefreshScope
     public TicketRegistry hazelcastTicketRegistry() {
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
                 casProperties.getTicket().getRegistry().getHazelcast().getMapName(),
