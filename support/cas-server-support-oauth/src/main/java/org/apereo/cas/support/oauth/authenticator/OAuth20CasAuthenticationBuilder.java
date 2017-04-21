@@ -118,8 +118,8 @@ public class OAuth20CasAuthenticationBuilder {
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
-                .addAttribute("permissions", profile.getPermissions())
-                .addAttribute("roles", profile.getRoles())
+                .addAttribute("permissions", new ArrayList(profile.getPermissions()))
+                .addAttribute("roles", new ArrayList<>(profile.getRoles()))
                 .addAttribute(OAuth20Constants.STATE, state)
                 .addAttribute(OAuth20Constants.NONCE, nonce)
                 .addCredential(metadata)
