@@ -23,6 +23,7 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.HashSet;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -117,9 +118,14 @@ public class OAuth20CasAuthenticationBuilder {
         final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
+        /** 
+         * pac4j UserProfile.getPermissions() and getRoles() returns UnmodifiableSet which Jackson Serializer
+         * happily serializes to json but unable to deserialize.
+         * We have to wrap it to HashSet to avoid such problem
+         */
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
-                .addAttribute("permissions", profile.getPermissions())
-                .addAttribute("roles", profile.getRoles())
+                .addAttribute("permissions", new HashSet(profile.getPermissions()))
+                .addAttribute("roles", new HashSet(profile.getRoles()))
                 .addAttribute(OAuth20Constants.STATE, state)
                 .addAttribute(OAuth20Constants.NONCE, nonce)
                 .addCredential(metadata)
