@@ -26,4 +26,14 @@ public interface ConsentEngine extends Serializable {
     Map<String, Object> getConsentableAttributes(Authentication authentication,
                                                  Service service,
                                                  RegisteredService registeredService);
+
+    /**
+     * Is consent required?
+     *
+     * @param service           the service
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @return the boolean
+     */
+    boolean isConsentRequiredFor(Service service, RegisteredService registeredService, Authentication authentication);
 }
