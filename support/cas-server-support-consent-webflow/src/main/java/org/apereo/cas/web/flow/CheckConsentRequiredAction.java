@@ -11,8 +11,18 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 public class CheckConsentRequiredAction extends AbstractAction {
+    /**
+     * Indicates that webflow should proceed with consent.
+     */
+    public static final String EVENT_ID_CONSENT_REQUIRED = "consentRequired";
+
+    /**
+     * Indicates that webflow should bypass and skip consent.
+     */
+    public static final String EVENT_ID_CONSENT_SKIPPED = "consentSkipped";
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return new Event(this, "misagh");
+        return new Event(this, "");
     }
 }
