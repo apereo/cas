@@ -32,11 +32,7 @@ public class DefaultConsentEngine implements ConsentEngine {
     public boolean isConsentRequiredFor(final Service service,
                                         final RegisteredService registeredService,
                                         final Authentication authentication) {
-
         final ConsentDecision decision = consentRepository.findConsentDecision(service, registeredService, authentication);
-        if (decision == null) {
-            return true;
-        }
-        return false;
+        return decision == null;
     }
 }
