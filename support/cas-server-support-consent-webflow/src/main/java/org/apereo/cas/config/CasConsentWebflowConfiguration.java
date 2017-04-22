@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casConsentWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnBean(name = "consentRepository")
 public class CasConsentWebflowConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentWebflowConfiguration.class);

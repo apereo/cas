@@ -15,10 +15,28 @@ import java.util.Map;
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
 
+    private final ConsentRepository consentRepository;
+
+    public DefaultConsentEngine(final ConsentRepository consentRepository) {
+        this.consentRepository = consentRepository;
+    }
+
     @Override
     public Map<String, Object> getConsentableAttributes(final Authentication authentication,
                                                         final Service service,
                                                         final RegisteredService registeredService) {
         return null;
+    }
+
+    @Override
+    public boolean isConsentRequiredFor(final Service service,
+                                        final RegisteredService registeredService,
+                                        final Authentication authentication) {
+
+        final ConsentDecision decision = consentRepository.findConsentDecision(service, registeredService, authentication);
+        if (decision == null) {
+            return true;
+        }
+        return false;
     }
 }

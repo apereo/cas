@@ -35,7 +35,6 @@ public class CheckConsentRequiredAction extends AbstractAction {
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final AuthenticationSystemSupport authenticationSystemSupport;
-
     private final ConsentRepository consentRepository;
     private final ConsentEngine consentEngine;
 
@@ -80,6 +79,24 @@ public class CheckConsentRequiredAction extends AbstractAction {
             return EVENT_ID_CONSENT_SKIPPED;
         }
 
+        return isConsentRequired(service, registeredService, authentication, requestContext);
+    }
+
+    /**
+     * Is consent required string.
+     *
+     * @param service           the service
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @param requestContext    the request context
+     * @return the event id.
+     */
+    protected String isConsentRequired(final Service service, final RegisteredService registeredService,
+                                       final Authentication authentication, final RequestContext requestContext) {
+        final boolean required = this.consentEngine.isConsentRequiredFor(service, registeredService, authentication);
+        if (!required) {
+            return EVENT_ID_CONSENT_SKIPPED;
+        }
         return EVENT_ID_CONSENT_REQUIRED;
     }
 }
