@@ -1,6 +1,15 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,8 +30,47 @@ public class CheckConsentRequiredAction extends AbstractAction {
      */
     public static final String EVENT_ID_CONSENT_SKIPPED = "consentSkipped";
 
+    private final ServicesManager servicesManager;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+
+    public CheckConsentRequiredAction(final ServicesManager servicesManager,
+                                      final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                      final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.servicesManager = servicesManager;
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
+        this.authenticationSystemSupport = authenticationSystemSupport;
+    }
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return new Event(this, "");
+        final String consentEvent = determineConsentEvent(requestContext);
+        return new EventFactorySupport().event(this, consentEvent);
+    }
+
+    /**
+     * Determine consent event string.
+     *
+     * @param requestContext the request context
+     * @return the string
+     */
+    protected String determineConsentEvent(final RequestContext requestContext) {
+        final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
+        if (service == null) {
+            return EVENT_ID_CONSENT_SKIPPED;
+        }
+
+        RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
+        if (registeredService == null) {
+            registeredService = this.servicesManager.findServiceBy(service);
+        }
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+
+        final Authentication authentication = WebUtils.getAuthentication(requestContext);
+        if (authentication == null) {
+            return EVENT_ID_CONSENT_SKIPPED;
+        }
+
+        return EVENT_ID_CONSENT_REQUIRED;
     }
 }
