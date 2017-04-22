@@ -1,5 +1,6 @@
 ![][casimg]
 # Central Authentication Service (CAS)
+[![ghit.me](https://ghit.me/badge.svg?repo=apereo/cas)](https://ghit.me/repo/apereo/cas)
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
 [![](https://heroku-badge.herokuapp.com/?app=jasigcas&root=/cas/login)][caswebheroku]
 [![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt&root=/cas-management/login)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
