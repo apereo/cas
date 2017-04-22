@@ -4251,6 +4251,8 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
 
 ```properties
+# server.contextPath=/cas-management
+
 # cas.mgmt.adminRoles[0]=ROLE_ADMIN
 # cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
 
