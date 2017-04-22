@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link CasConsentWebflowConfiguration}.
@@ -35,6 +37,11 @@ public class CasConsentWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Bean
+    public Action checkConsentRequiredAction() {
+        return new CheckConsentRequiredAction();
+    }
 
     @Bean
     public CasWebflowConfigurer consentWebflowConfigurer() {
