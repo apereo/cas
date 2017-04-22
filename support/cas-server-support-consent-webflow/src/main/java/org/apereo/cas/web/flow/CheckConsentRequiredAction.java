@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.consent.ConsentEngine;
+import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -34,12 +36,19 @@ public class CheckConsentRequiredAction extends AbstractAction {
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
+    private final ConsentRepository consentRepository;
+    private final ConsentEngine consentEngine;
+
     public CheckConsentRequiredAction(final ServicesManager servicesManager,
                                       final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                      final AuthenticationSystemSupport authenticationSystemSupport) {
+                                      final AuthenticationSystemSupport authenticationSystemSupport,
+                                      final ConsentRepository consentRepository,
+                                      final ConsentEngine consentEngine) {
         this.servicesManager = servicesManager;
         this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
         this.authenticationSystemSupport = authenticationSystemSupport;
+        this.consentRepository = consentRepository;
+        this.consentEngine = consentEngine;
     }
 
     @Override
