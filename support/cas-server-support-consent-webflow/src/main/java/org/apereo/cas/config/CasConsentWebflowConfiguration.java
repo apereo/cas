@@ -1,11 +1,17 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * This is {@link CasConsentWebflowConfiguration}.
@@ -20,6 +26,18 @@ public class CasConsentWebflowConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentWebflowConfiguration.class);
 
     @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Bean
+    public CasWebflowConfigurer consentWebflowConfigurer() {
+        return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
+    }
 }
