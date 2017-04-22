@@ -34,51 +34,48 @@ public class CasConsentJdbcConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public ConsentRepository consentRepository() {
         return new JdbcConsentRepository();
     }
 
-    Needs to be reviewed.
-
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter() {
+    public HibernateJpaVendorAdapter jpaConsentVendorAdapter() {
         return Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @RefreshScope
     @Bean
-    public DataSource dataSourceMfaTrustedAuthn() {
-        return Beans.newDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());
+    public DataSource dataSourceConsent() {
+        return Beans.newDataSource(casProperties.getConsent().getJpa());
     }
 
     @Bean
-    public String[] jpaMfaTrustedAuthnPackagesToScan() {
-        return new String[]{"org.apereo.cas.trusted.authentication.api"};
+    public String[] jpaConsentPackagesToScan() {
+        return new String[]{"org.apereo.cas.consent"};
     }
 
     @Lazy
     @Bean
-    public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
+    public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
                 Beans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
-                                jpaMfaTrustedAuthnVendorAdapter(),
-                                "jpaMfaTrustedAuthnContext",
-                                jpaMfaTrustedAuthnPackagesToScan(),
-                                dataSourceMfaTrustedAuthn()),
-                        casProperties.getAuthn().getMfa().getTrusted().getJpa());
-
+                                jpaConsentVendorAdapter(),
+                                "jpaConsentContext",
+                                jpaConsentPackagesToScan(),
+                                dataSourceConsent()),
+                        casProperties.getConsent().getJpa());
         bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
     }
 
     @Autowired
     @Bean
-    public PlatformTransactionManager transactionManagerMfaAuthnTrust(
-            @Qualifier("mfaTrustedAuthnEntityManagerFactory") final EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManagerConsent(
+            @Qualifier("consentEntityManagerFactory") final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;

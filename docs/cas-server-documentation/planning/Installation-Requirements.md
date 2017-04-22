@@ -43,10 +43,10 @@ No particular preference on the operating system, though Linux-based installs ar
 
 ## Internet Connectivity
 
-Internet connectivity is generally required for the build phase of any Maven/Gradle based project, including the recommended WAR overlays used to install CAS. The build process resolves dependencies by searching online repositories containing artifacts (jar files in most cases) that are downloaded and installed locally. 
+Internet connectivity is generally required for the build phase of any Maven/Gradle based project, including the recommended WAR overlays used to install CAS. The build process resolves dependencies by searching online repositories containing artifacts (jar files in most cases) that are downloaded and installed locally.
 
 ## Hardware
 
 Anecdotal community evidence seems to suggest that CAS deployments would perform well on a dual-core 2.00Ghz processor with 4GB of memory, at a minimum. Enough disk space (preferrably SSD) is also needed to house CAS-generated logs, if logs are kept on the server itself.
 
-Remember that the above requirements are simply *suggestions*. You may get by perfectly fine with more or less, depending on your deployment and request volume. Start with the bare minimum and be prepared to adjust and strengthen  capacity on demand if needed.
+Remember that the above requirements are simply *suggestions*. You may get by perfectly fine with more or less, depending on your deployment and request volume. Start with the bare minimum and be prepared to adjust and strengthen capacity on demand if needed.
