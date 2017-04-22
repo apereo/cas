@@ -493,6 +493,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 
 # cas.monitor.endpoints.singleSignOnStatus.enabled=false
 # cas.monitor.endpoints.singleSignOnStatus.sensitive=true
+
+# cas.monitor.endpoints.springWebflowReport.enabled=false
+# cas.monitor.endpoints.springWebflowReport.sensitive=true
 ```
 
 ### Securing Endpoints With Spring Security
