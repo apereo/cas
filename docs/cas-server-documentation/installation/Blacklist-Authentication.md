@@ -9,6 +9,7 @@ Blacklist authentication components are those that specifically deny access to a
 Those that fail to match against the predefined set will blindly be accepted.
 
 ## Configuration
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
