@@ -11,6 +11,8 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -37,6 +39,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * The {@link TicketGrantingTicket} this is associated with.
      */
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
+    @JsonProperty("grantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
     
     /** The service this ticket is valid for. */
