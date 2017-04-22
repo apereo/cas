@@ -83,6 +83,16 @@ function disableEmptyInputFormSubmission() {
             $("#fm1 input[name=submit]").attr('disabled', 'true');
         }
     });
+    setTimeout(function(){
+        var uid = $("#username").val();
+        if (uid != null && uid != "") {
+            $("#username").change();
+            $("#username").focus();
+            $("#fm1 input[name=submit]").removeAttr('disabled');
+        }
+
+    }, 100);
+
 }
 
 function resourceLoadedSuccessfully() {
