@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -23,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casConsentCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnBean(name = "consentRepository")
 public class CasConsentCoreConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentCoreConfiguration.class);

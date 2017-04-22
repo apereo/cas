@@ -6,9 +6,15 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -17,18 +23,33 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Entity
+@Table(name = "ConsentDecision")
 public class ConsentDecision {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principal;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String service;
 
+    @Column(nullable = false)
     private LocalDateTime date;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private long reminder = 14;
-    private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String attributeNames;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String attributeValues;
 
     public LocalDateTime getDate() {
@@ -47,11 +68,11 @@ public class ConsentDecision {
         this.reminder = reminder;
     }
 
-    public ChronoUnit getReminderTimeUnit() {
+    public TimeUnit getReminderTimeUnit() {
         return reminderTimeUnit;
     }
 
-    public void setReminderTimeUnit(final ChronoUnit reminderTimeUnit) {
+    public void setReminderTimeUnit(final TimeUnit reminderTimeUnit) {
         this.reminderTimeUnit = reminderTimeUnit;
     }
 
