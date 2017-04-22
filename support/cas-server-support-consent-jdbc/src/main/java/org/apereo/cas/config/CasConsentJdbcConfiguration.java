@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.consent.ConsentRepository;
-import org.apereo.cas.consent.JdbcConsentRepository;
+import org.apereo.cas.consent.JpaConsentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,7 +37,7 @@ public class CasConsentJdbcConfiguration {
 
     @Bean
     public ConsentRepository consentRepository() {
-        return new JdbcConsentRepository();
+        return new JpaConsentRepository();
     }
 
     @RefreshScope
