@@ -18,6 +18,8 @@ import java.util.stream.StreamSupport;
  * @since 5.1.0
  */
 public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
+    private static final String VIEW_ID_CONSENT_VIEW = "casConsentView";
+
     public ConsentWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
         super(flowBuilderServices, loginFlowDefinitionRegistry);
@@ -30,13 +32,18 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
         if (flow != null) {
             createConsentRequiredCheckAction(flow);
             createConsentTransitions(flow);
+            createConsentView(flow);
         }
+    }
+
+    private void createConsentView(final Flow flow) {
+        createViewState(flow, VIEW_ID_CONSENT_VIEW, VIEW_ID_CONSENT_VIEW);
     }
 
     private void createConsentTransitions(final Flow flow) {
         final ActionState sendTicket = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
         final TransitionDefinition success = sendTicket.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        createTransitionForState(sendTicket, CheckConsentRequiredAction.EVENT_ID_CONSENT_REQUIRED, "consentRequiredView");
+        createTransitionForState(sendTicket, CheckConsentRequiredAction.EVENT_ID_CONSENT_REQUIRED, VIEW_ID_CONSENT_VIEW);
         createTransitionForState(sendTicket, CheckConsentRequiredAction.EVENT_ID_CONSENT_SKIPPED, success.getTargetStateId());
     }
 
@@ -44,7 +51,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final ActionState sendTicket = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
         final List<Action> actions = StreamSupport.stream(sendTicket.getActionList().spliterator(), false)
                 .collect(Collectors.toList());
-        actions.add(0, createEvaluateAction("checkConsentRequired"));
+        actions.add(0, createEvaluateAction("checkConsentRequiredAction"));
         sendTicket.getActionList().forEach(a -> sendTicket.getActionList().remove(a));
         actions.forEach(sendTicket.getActionList()::add);
     }
