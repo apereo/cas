@@ -12,7 +12,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
 public class MonitorProperties {
 
     private int freeMemThreshold = 10;
@@ -207,7 +206,7 @@ public class MonitorProperties {
     }
 
     public class Endpoints extends BaseEndpoint {
-        
+
         private Dashboard dashboard = new Dashboard();
         private AuditEvents auditEvents = new AuditEvents();
         private AuthenticationEvents authenticationEvents = new AuthenticationEvents();
@@ -221,12 +220,21 @@ public class MonitorProperties {
         private TrustedDevices trustedDevices = new TrustedDevices();
         private Status status = new Status();
         private SingleSignOnStatus singleSignOnStatus = new SingleSignOnStatus();
+        private SpringWebflowReport springWebflowReport = new SpringWebflowReport();
 
         public Endpoints() {
             setSensitive(Boolean.TRUE);
             setEnabled(Boolean.TRUE);
         }
-        
+
+        public SpringWebflowReport getSpringWebflowReport() {
+            return springWebflowReport;
+        }
+
+        public void setSpringWebflowReport(final SpringWebflowReport springWebflowReport) {
+            this.springWebflowReport = springWebflowReport;
+        }
+
         public SingleSignOnStatus getSingleSignOnStatus() {
             return singleSignOnStatus;
         }
@@ -368,6 +376,9 @@ public class MonitorProperties {
         }
 
         public class SingleSignOnStatus extends BaseEndpoint {
+        }
+
+        public class SpringWebflowReport extends BaseEndpoint {
         }
     }
 }
