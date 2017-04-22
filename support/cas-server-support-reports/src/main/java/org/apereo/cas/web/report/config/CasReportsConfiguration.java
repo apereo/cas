@@ -21,6 +21,7 @@ import org.apereo.cas.web.report.MetricsController;
 import org.apereo.cas.web.report.PersonDirectoryAttributeResolutionController;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
+import org.apereo.cas.web.report.SpringWebflowReportController;
 import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.TrustedDevicesController;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -121,6 +122,12 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @RefreshScope
     public MvcEndpoint ssoStatusController() {
         return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
+    }
+
+    @Bean
+    @RefreshScope
+    public MvcEndpoint swfReportController() {
+        return new SpringWebflowReportController(casProperties);
     }
 
     @Autowired
