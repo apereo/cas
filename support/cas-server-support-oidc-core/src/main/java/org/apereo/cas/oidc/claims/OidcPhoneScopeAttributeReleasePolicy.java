@@ -15,7 +15,7 @@ import java.util.List;
 public class OidcPhoneScopeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
 
-    private List<String> allowedAttributes = Arrays.asList("phone_number", "phone_number_verified");
+    private final List<String> allowedAttributes = Arrays.asList("phone_number", "phone_number_verified");
 
     public OidcPhoneScopeAttributeReleasePolicy() {
         super(OidcConstants.PHONE);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="60">
+<Configuration monitorInterval="15">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;}%n"/>
         </Console>
         <RollingFile name="cas-management" fileName="cas-management.log" append="true"
                      filePattern="cas-management-%d{yyyy-MM-dd-HH}-%i.log.gz">
