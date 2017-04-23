@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title>Consent</title>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css"/>
+    <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var data = {
+            attributes: /*[[${attributes}]]*/
+        };
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:inline="javascript">
+
+        function jqueryReady() {
+            head.load(
+                    /*[[@{/js/consent.js}]]*/
+            );
+        }
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <h1>Attribute Consent</h1>
+    <div class="box fl-panel" id="login" th:if="${attributes}">
+        <table id="attributesTable" class="display table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Attribute</th>
+                <th>Value(s)</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="consentOptions">
+        <h2>Options</h2>
+        <div class="radio">
+            <label><input type="radio" name="optradio">Every Time</label>
+            <span class="help-block">This is some help text...</span>
+        </div>
+        <div class="radio">
+            <label><input type="radio" name="optradio">Attribute Name</label>
+            <span class="help-block">This is some help text...</span>
+        </div>
+        <div class="radio">
+            <label><input type="radio" name="optradio" disabled>Attribute Value</label>
+            <span class="help-block">This is some help text...</span>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <h2>Reminders</h2>
+        <div class="col-xs-2">
+            <div class="input-group input-group-sm">
+                <span class="input-group-addon"><input type="checkbox"></span>
+                <input type="text" class="form-control">
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
