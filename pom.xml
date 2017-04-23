@@ -84,11 +84,16 @@
             <type>war</type>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-bootadmin-client</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
     </dependencies>
 
     <properties>
         <cas.version>5.1.0-RC4-SNAPSHOT</cas.version>
-        <springboot.version>1.5.1.RELEASE</springboot.version>
+        <springboot.version>1.5.3.RELEASE</springboot.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
