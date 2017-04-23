@@ -37,15 +37,23 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Application Registration](installation/Service-Management.html)
 * [Attribute Release](integration/Attribute-Release.html)
 
-## Demo
+## Demos
 
-The CAS web application is available for demo at [https://jasigcas.herokuapp.com/cas](https://jasigcas.herokuapp.com/cas)
+The following demos are provided by the Apereo CAS project:
 
-It is important to note that this is a public demo site, used by the project for basic showcases and integration tests. It is **NOT** set up for internal demos and it may go down and up as the project needs without notice. If you have a need for a demo instance with a modified UI, that would be one you set up for your deployment. 
+| Demo                    | Branch                   | Location
+|-------------------------|--------------------------|----------------------------------------------------
+| CAS Web Application     | `heroku`                 | [See this](https://jasigcas.herokuapp.com/cas).
+| [CAS Services Management](installation/Installing-ServicesMgmt-Webapp.html) | `heroku-mgmtwebapp`      | [See this](https://jasigcasmgmt.herokuapp.com/cas-management).
+| [CAS Boot Administration](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [See this](https://casbootadminserver.herokuapp.com).
+| [CAS Zipkin](installation/Monitoring-Statistics.html#distributed-tracing) | `heroku-zipkinserver`    | [See this](https://caszipkinserver.herokuapp.com).
+
+It is important to note that these are public demo sites, used by the project for basic showcases and integration tests. They are **NOT** set up for internal demos as they may go up and down as the project needs without notice. 
+
+If you have a need for a demo instance with a modified UI, that would be one you [set up for your deployment](installation/Maven-Overlay-Installation.html). 
 
 ## Development
 
 CAS development is powered by: <br/>
 
 <a href="http://www.jetbrains.com/idea/" target="_blank"><img src="../images/intellijidea.gif" valign="middle" style="vertical-align:middle"></a>
-

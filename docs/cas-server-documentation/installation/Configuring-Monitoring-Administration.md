@@ -15,10 +15,6 @@ To run the Spring Boot Admin server, please use [this WAR overlay](https://githu
 
 To learn more about options, please [see this guide][bootadmindocs].
 
-## Demo
-
-The CAS Spring Boot Administration server web application is available for demo at https://casbootadminserver.herokuapp.com.
-
 ## CAS Server as Client
 
 Each individual CAS server is given the ability to auto-register itself with the admin server, provided configuration is made available to instruct the CAS server how to locate and connect to the admin server.
