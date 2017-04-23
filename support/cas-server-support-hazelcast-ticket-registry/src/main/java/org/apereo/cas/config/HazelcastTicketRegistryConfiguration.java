@@ -15,7 +15,6 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
@@ -42,9 +41,8 @@ import java.util.Set;
  * {@link HazelcastTicketRegistry}.
  * <p>
  * This configuration class has the smarts to choose the configuration source for the {@link HazelcastInstance}
- * that it produces by either loading the native hazelcast XML config file from a resource location indicated by
- * {@code hz.config.location} property or if that property is
- * not set nor a valid location, creates HazelcastInstance programmatically
+ * that it produces by either loading the native hazelcast XML config file from a resource location
+ * or it creates the {@link HazelcastInstance} programmatically
  * with a handful properties and their defaults (if not set) that it exposes to CAS deployers.
  *
  * @author Misagh Moayyed
@@ -58,10 +56,6 @@ public class HazelcastTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("logoutManager")
-    private LogoutManager logoutManager;
 
     @Autowired
     @Bean

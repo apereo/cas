@@ -70,7 +70,7 @@
 
     <action-state id="sendTicketGrantingTicket">
         <evaluate expression="sendTicketGrantingTicketAction"/>
-        <transition to="serviceCheck"/>
+        <transition on="success" to="serviceCheck"/>
     </action-state>
     
     <action-state id="generateServiceTicket">

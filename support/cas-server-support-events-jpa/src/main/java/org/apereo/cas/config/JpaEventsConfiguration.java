@@ -65,7 +65,6 @@ public class JpaEventsConfiguration {
                                 dataSourceEvent()),
                         casProperties.getEvents().getJpa());
 
-        bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
     }
     
