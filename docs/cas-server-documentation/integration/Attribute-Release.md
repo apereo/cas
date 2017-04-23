@@ -23,6 +23,11 @@ See [this guide](Attribute-Release-PrincipalId.html) for more info.
 Decide how CAS should release attributes to applications.
 See [this guide](Attribute-Release-Policies.html) for more info.
 
+## Attribute Consent
+
+Provide the ability to enforce user consent to attribute release.
+See [this guide](Attribute-Release-Consent.html) for more info.
+
 ## Caching Attributes
 
 Control how resolved attributes by CAS should be cached.
