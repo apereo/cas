@@ -41,7 +41,7 @@ public class ConsentDecision {
     private LocalDateTime date;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
-    private long reminder = 14;
+    private Long reminder = 14L;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
