@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -41,14 +40,12 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createConsentTransitions(final Flow flow) {
-        final ActionState sendTicket = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
-        final TransitionDefinition success = sendTicket.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        final ActionState sendTicket = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
         createTransitionForState(sendTicket, CheckConsentRequiredAction.EVENT_ID_CONSENT_REQUIRED, VIEW_ID_CONSENT_VIEW);
-        createTransitionForState(sendTicket, CheckConsentRequiredAction.EVENT_ID_CONSENT_SKIPPED, success.getTargetStateId());
     }
 
     private void createConsentRequiredCheckAction(final Flow flow) {
-        final ActionState sendTicket = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
+        final ActionState sendTicket = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
         final List<Action> actions = StreamSupport.stream(sendTicket.getActionList().spliterator(), false)
                 .collect(Collectors.toList());
         actions.add(0, createEvaluateAction("checkConsentRequiredAction"));
