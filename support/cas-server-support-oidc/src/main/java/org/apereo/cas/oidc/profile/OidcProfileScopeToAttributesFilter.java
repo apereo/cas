@@ -79,18 +79,22 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                             final RegisteredService registeredService, final J2EContext context) {
         final Principal principal = super.filter(service, profile, registeredService, context);
 
-        final OidcRegisteredService oidcService = (OidcRegisteredService) registeredService;
-        final Collection<String> scopes = new ArrayList<>(OAuth20Utils.getRequestedScopes(context));
-        scopes.addAll(oidcService.getScopes());
+        if (registeredService instanceof OidcRegisteredService) {
+            final OidcRegisteredService oidcService = (OidcRegisteredService) registeredService;
+            final Collection<String> scopes = new ArrayList<>(OAuth20Utils.getRequestedScopes(context));
+            scopes.addAll(oidcService.getScopes());
 
-        if (!scopes.contains(OidcConstants.OPENID)) {
-            LOGGER.debug("Request does not indicate a scope [{}] that can identify OpenID Connect", scopes);
+            if (!scopes.contains(OidcConstants.OPENID)) {
+                LOGGER.debug("Request does not indicate a scope [{}] that can identify OpenID Connect", scopes);
+                return principal;
+            }
+
+            final Map<String, Object> attributes = new HashMap<>();
+            filterAttributesByScope(scopes, attributes, principal, oidcService);
+            return this.principalFactory.createPrincipal(profile.getId(), attributes);
+        } else {
             return principal;
         }
-
-        final Map<String, Object> attributes = new HashMap<>();
-        filterAttributesByScope(scopes, attributes, principal, oidcService);
-        return this.principalFactory.createPrincipal(profile.getId(), attributes);
     }
 
     private void filterAttributesByScope(final Collection<String> stream,
