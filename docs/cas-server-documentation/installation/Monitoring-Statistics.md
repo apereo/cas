@@ -12,6 +12,7 @@ The following endpoints are available and secured by CAS:
 | `/status/dashboard`               | The control panel to CAS server functionality and management.
 | `/status`                         | [Monitor CAS status and other underlying components](Configuring-Monitoring.html).
 | `/status/sso`                     | Describes if there exists an active SSO session for this request.
+| `/status/swf`                     | Describes the current configured state of CAS webflow in JSON.
 | `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
 | `/status/logging`                 | Monitor CAS logs in a streaming fashion and review the audit log.
 | `/status/config`                  | Visual representation of application properties and configuration.

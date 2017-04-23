@@ -1,5 +1,5 @@
 
-description = "Apereo CAS YubiKey Support"
+description = "Apereo CAS YubiKey Core"
 dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-webflow")
