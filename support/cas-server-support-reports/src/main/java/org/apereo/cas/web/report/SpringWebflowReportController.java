@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -15,7 +14,6 @@ import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
-import org.springframework.webflow.execution.Action;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
