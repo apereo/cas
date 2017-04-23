@@ -8,6 +8,8 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import com.zaxxer.hikari.HikariDataSource;
+import groovy.lang.GroovyClassLoader;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -31,6 +33,7 @@ import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.codehaus.groovy.control.CompilerConfiguration;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.BindRequest;
@@ -88,6 +91,9 @@ import org.ldaptive.ssl.X509CredentialConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
@@ -101,6 +107,7 @@ import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
+import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -115,8 +122,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import javax.sql.DataSource;
 
 
 /**
@@ -698,7 +703,6 @@ public final class Beans {
         return cp;
     }
 
-
     /**
      * Gets credential selection predicate.
      *
@@ -710,6 +714,19 @@ public final class Beans {
             if (StringUtils.isBlank(selectionCriteria)) {
                 return credential -> true;
             }
+
+            if (selectionCriteria.endsWith(".groovy")) {
+                final ResourceLoader loader = new DefaultResourceLoader();
+                final Resource resource = loader.getResource(selectionCriteria);
+                if (resource != null) {
+                    final String script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+                    final GroovyClassLoader classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
+                            new CompilerConfiguration(), true);
+                    final Class<Predicate> clz = classLoader.parseClass(script);
+                    return clz.newInstance();
+                }
+            }
+
             final Class predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<org.apereo.cas.authentication.Credential>) predicateClazz.newInstance();
         } catch (final Exception e) {
