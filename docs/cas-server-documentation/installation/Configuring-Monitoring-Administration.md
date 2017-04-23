@@ -15,9 +15,9 @@ To run the Spring Boot Admin server, please use [this WAR overlay](https://githu
 
 To learn more about options, please [see this guide][bootadmindocs].
 
-Here is a sample screenshot of the CAS server reporting status to the Admin server:
+## Demo
 
-![image](https://cloud.githubusercontent.com/assets/1205228/25130035/eba2e902-2455-11e7-809f-8d71105bd6d8.png)
+The CAS Spring Boot Administration server web application is available for demo at https://casbootadminserver.herokuapp.com.
 
 ## CAS Server as Client
 
