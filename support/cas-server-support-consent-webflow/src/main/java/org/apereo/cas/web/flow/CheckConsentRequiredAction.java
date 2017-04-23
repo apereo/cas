@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -27,11 +28,6 @@ public class CheckConsentRequiredAction extends AbstractAction {
      */
     public static final String EVENT_ID_CONSENT_REQUIRED = "consentRequired";
 
-    /**
-     * Indicates that webflow should bypass and skip consent.
-     */
-    public static final String EVENT_ID_CONSENT_SKIPPED = "consentSkipped";
-
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -53,7 +49,9 @@ public class CheckConsentRequiredAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final String consentEvent = determineConsentEvent(requestContext);
-        return new EventFactorySupport().event(this, consentEvent);
+        return StringUtils.isBlank(consentEvent)
+                ? null
+                : new EventFactorySupport().event(this, consentEvent);
     }
 
     /**
@@ -65,7 +63,7 @@ public class CheckConsentRequiredAction extends AbstractAction {
     protected String determineConsentEvent(final RequestContext requestContext) {
         final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
         if (service == null) {
-            return EVENT_ID_CONSENT_SKIPPED;
+            return null;
         }
 
         RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
@@ -76,7 +74,7 @@ public class CheckConsentRequiredAction extends AbstractAction {
 
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
         if (authentication == null) {
-            return EVENT_ID_CONSENT_SKIPPED;
+            return null;
         }
 
         return isConsentRequired(service, registeredService, authentication, requestContext);
@@ -94,6 +92,6 @@ public class CheckConsentRequiredAction extends AbstractAction {
     protected String isConsentRequired(final Service service, final RegisteredService registeredService,
                                        final Authentication authentication, final RequestContext requestContext) {
         final boolean required = this.consentEngine.isConsentRequiredFor(service, registeredService, authentication);
-        return required ? EVENT_ID_CONSENT_REQUIRED : EVENT_ID_CONSENT_SKIPPED;
+        return required ? EVENT_ID_CONSENT_REQUIRED : null;
     }
 }

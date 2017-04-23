@@ -68,7 +68,6 @@ public class JdbcMultifactorAuthnTrustConfiguration {
                                 dataSourceMfaTrustedAuthn()),
                         casProperties.getAuthn().getMfa().getTrusted().getJpa());
 
-        bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
     }
 

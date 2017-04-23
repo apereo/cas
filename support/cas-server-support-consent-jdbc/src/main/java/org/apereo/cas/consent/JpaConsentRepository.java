@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -22,15 +23,30 @@ import javax.persistence.PersistenceContext;
 public class JpaConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 6599908862493270206L;
 
+    private static final String SELECT_QUERY = "SELECT r from ConsentDecision r ";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaConsentRepository.class);
 
     @PersistenceContext(unitName = "consentEntityManagerFactory")
     private EntityManager entityManager;
 
     @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
+
+    @Override
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
-        return null;
+        try {
+            return this.entityManager.createQuery(
+                    SELECT_QUERY.concat("where r.principal = :principal and r.service = :service"), ConsentDecision.class)
+                    .setParameter("principal", authentication.getPrincipal().getId())
+                    .setParameter("service", service.getId())
+                    .getSingleResult();
+        } catch (final NoResultException e) {
+            return null;
+        }
     }
 }
