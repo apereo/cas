@@ -47,6 +47,7 @@ The following demos are provided by the Apereo CAS project:
 | [CAS Services Management](installation/Installing-ServicesMgmt-Webapp.html) | `heroku-mgmtwebapp`      | [![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt&root=/cas-management/login)](https://jasigcasmgmt.herokuapp.com/cas-management) 
 | [CAS Boot Administration](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [![](https://heroku-badge.herokuapp.com/?app=casbootadminserver&)](https://casbootadminserver.herokuapp.com/)
 | [CAS Zipkin](installation/Monitoring-Statistics.html#distributed-tracing) | `heroku-zipkinserver`    | [![](https://heroku-badge.herokuapp.com/?app=caszipkinserver)](https://caszipkinserver.herokuapp.com/)
+| [CAS Discovery](installation/Service-Discovery-Guide.html) | `heroku-discoveryserver`    | [![](https://heroku-badge.herokuapp.com/?app=caseureka)](https://caseureka.herokuapp.com/)
 
 It is important to note that these are public demo sites, used by the project for basic showcases and integration tests. They are **NOT** set up for internal demos as they may go up and down as the project needs without notice. 
 
