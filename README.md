@@ -2,12 +2,7 @@
 # Central Authentication Service (CAS)
 [![ghit.me](https://ghit.me/badge.svg?repo=apereo/cas)](https://ghit.me/repo/apereo/cas)
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) 
-[![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
-[![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b)
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC)
-[![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas)](https://cla-assistant.io/apereo/cas)
-[![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas)
+
 
 ## Introduction
 
@@ -42,13 +37,17 @@ The following features are supported by the CAS project:
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot), 
 [Spring Cloud](http://projects.spring.io/spring-cloud/) and Thymeleaf.
 
+## Development [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) [![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC) [![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas)](https://cla-assistant.io/apereo/cas) [![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas)
+
+To build the project locally, please follow [this guide](https://apereo.github.io/cas/developer/Build-Process.html).
+
 ## Documentation [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][casgitter] [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas) [![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.apereo.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
 
 - [Documentation][wiki]
 - [Release Notes][releasenotes]
 - [Support][cassupport]
 
-## Deployment [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
+## Deployment [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 
 It is recommended to build and deploy CAS locally using the [WAR Overlay method][overlay]. 
 This approach does not require the adopter to *explicitly* download any version of CAS, but 
@@ -61,14 +60,6 @@ the project. Utilize the [WAR Overlay method][overlay] instead to build and depl
 ## Contributions
 
 - [How to contribute][contribute]
-
-## Development
-
-CAS development is powered by: <br/>
-
-<a href="http://www.jetbrains.com/idea/" target="_blank">
-<img src="https://apereo.github.io/cas/images/intellijidea.gif" valign="middle" style="vertical-align:middle">
-</a>
 
 [wiki]: https://apereo.github.io/cas
 [overlay]: https://apereo.github.io/cas/development/installation/Maven-Overlay-Installation.html
