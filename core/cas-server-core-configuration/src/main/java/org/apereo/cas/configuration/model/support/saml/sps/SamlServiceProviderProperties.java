@@ -26,6 +26,7 @@ public class SamlServiceProviderProperties {
     private Zoom zoom = new Zoom();
     private Evernote evernote = new Evernote();
     private Asana asana = new Asana();
+    private Gartner gartner = new Gartner();
     private Tableau tableau = new Tableau();
     private WebAdvisor webAdvisor = new WebAdvisor();
     private OpenAthens openAthens = new OpenAthens();
@@ -38,6 +39,14 @@ public class SamlServiceProviderProperties {
     private SecuringTheHuman sansSth = new SecuringTheHuman();
     private Slack slack = new Slack();
     private Zendesk zendesk = new Zendesk();
+
+    public Gartner getGartner() {
+        return gartner;
+    }
+
+    public void setGartner(final Gartner gartner) {
+        this.gartner = gartner;
+    }
 
     public Zendesk getZendesk() {
         return zendesk;
@@ -419,6 +428,12 @@ public class SamlServiceProviderProperties {
             setNameIdFormat("emailAddress");
             setNameIdAttribute("email");
             setAttributes(Arrays.asList("organization", "tags", "phone", "role"));
+        }
+    }
+
+    public static class Gartner extends AbstractSamlSPProperties {
+        public Gartner() {
+            setAttributes("urn:oid:2.5.4.42", "urn:oid:2.5.4.4", "urn:oid:0.9.2342.19200300.100.1.3");
         }
     }
 }
