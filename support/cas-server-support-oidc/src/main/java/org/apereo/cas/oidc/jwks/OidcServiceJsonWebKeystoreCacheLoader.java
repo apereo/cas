@@ -40,7 +40,7 @@ public class OidcServiceJsonWebKeystoreCacheLoader extends CacheLoader<OidcRegis
         return Optional.of(key);
     }
 
-    private RsaJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
+    private static RsaJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
         if (jwks.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("No JSON web keys are available in the keystore");
             return null;
@@ -96,14 +96,14 @@ public class OidcServiceJsonWebKeystoreCacheLoader extends CacheLoader<OidcRegis
         return Optional.empty();
     }
 
-    private JsonWebKeySet buildJsonWebKeySet(final Resource resource) throws Exception {
+    private static JsonWebKeySet buildJsonWebKeySet(final Resource resource) throws Exception {
         LOGGER.debug("Loading JSON web key from [{}]", resource);
         final String json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
         return buildJsonWebKeySet(json);
     }
 
-    private JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
+    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
         final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(json);
         final RsaJsonWebKey webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
         if (webKey == null || webKey.getPublicKey() == null) {

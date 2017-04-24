@@ -177,7 +177,7 @@ public class WsFederationConfiguration implements Serializable {
     }
 
     private void createSigningWallet(final List<Resource> signingCertificateFiles) {
-        this.signingWallet = signingCertificateFiles.stream().map(this::getSigningCredential).collect(Collectors.toList());
+        this.signingWallet = signingCertificateFiles.stream().map(WsFederationConfiguration::getSigningCredential).collect(Collectors.toList());
     }
 
     /**
@@ -258,7 +258,7 @@ public class WsFederationConfiguration implements Serializable {
      * @param resource the signing certificate file
      * @return an X509 credential
      */
-    private Credential getSigningCredential(final Resource resource) {
+    private static Credential getSigningCredential(final Resource resource) {
         try(InputStream inputStream = resource.getInputStream()) {
             final CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);

@@ -143,8 +143,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param adaptor the adaptor
      * @return the supported name id formats
      */
-    protected List<String> getSupportedNameIdFormats(final SamlRegisteredService service,
-                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+    protected static List<String> getSupportedNameIdFormats(final SamlRegisteredService service,
+                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         final List<String> supportedNameFormats = adaptor.getSupportedNameIdFormats();
         LOGGER.debug("Metadata for [{}] declares the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
 
@@ -252,7 +252,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return encoder;
     }
 
-    private String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
+    private static String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
         final String fmt = service.getRequiredNameIdFormat().trim();
         if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
             return NameIDType.EMAIL;

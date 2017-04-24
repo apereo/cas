@@ -83,7 +83,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
      * @param requestBody the request body
      * @return the string
      */
-    private String extractRequestId(final String requestBody) {
+    private static String extractRequestId(final String requestBody) {
         if (!requestBody.contains("RequestID")) {
             LOGGER.debug("Request body does not contain a request id");
             return null;
@@ -106,7 +106,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
      * @param request the request
      * @return the request body
      */
-    private String getRequestBody(final HttpServletRequest request) {
+    private static String getRequestBody(final HttpServletRequest request) {
         try(BufferedReader reader = request.getReader()) {
             if (reader == null) {
                 LOGGER.debug("Request body could not be read because it's empty.");
