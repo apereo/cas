@@ -161,7 +161,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                 casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
     }
 
-    private OAuth20ResponseTypes getOAuth20ResponseType(final J2EContext context) {
+    private static OAuth20ResponseTypes getOAuth20ResponseType(final J2EContext context) {
         final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         final OAuth20ResponseTypes type = Arrays.stream(OAuth20ResponseTypes.values())
                 .filter(t -> t.getType().equalsIgnoreCase(responseType))
@@ -249,7 +249,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      * @param expectedTypes the expected grant types
      * @return whether the grant type is supported
      */
-    private boolean isGrantTypeSupported(final String type, final OAuth20GrantTypes... expectedTypes) {
+    private static boolean isGrantTypeSupported(final String type, final OAuth20GrantTypes... expectedTypes) {
         LOGGER.debug("Grant type: [{}]", type);
 
         for (final OAuth20GrantTypes expectedType : expectedTypes) {

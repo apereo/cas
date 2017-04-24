@@ -130,7 +130,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return totalCount != 0;
     }
 
-    private String getTicketEntityName(final TicketDefinition tk) {
+    private static String getTicketEntityName(final TicketDefinition tk) {
         return tk.getImplementationClass().getSimpleName();
     }
 

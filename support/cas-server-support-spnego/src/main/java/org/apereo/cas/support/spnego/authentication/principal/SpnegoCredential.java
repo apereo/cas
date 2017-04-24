@@ -150,7 +150,7 @@ public class SpnegoCredential implements Credential, Serializable {
      * @param source  the byte array source
      * @return the byte[] read from the source or null
      */
-    private byte[] consumeByteSourceOrNull(final ByteSource source) {
+    private static byte[] consumeByteSourceOrNull(final ByteSource source) {
         try {
             if (source == null || source.isEmpty()) {
                 return null;

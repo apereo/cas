@@ -55,8 +55,8 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * @param registeredService the registered service
      * @return a byte[] that contains the encrypted result
      */
-    protected byte[] encodeInternal(final String data, final PublicKey publicKey,
-                                    final RegisteredService registeredService) {
+    protected static byte[] encodeInternal(final String data, final PublicKey publicKey,
+                                           final RegisteredService registeredService) {
         try {
             final Cipher cipher = initializeCipherBasedOnServicePublicKey(publicKey, registeredService);
             if (cipher != null) {
@@ -75,7 +75,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * @return the public key
      * @throws Exception the exception, if key cant be created
      */
-    private PublicKey createRegisteredServicePublicKey(final RegisteredService registeredService) throws Exception {
+    private static PublicKey createRegisteredServicePublicKey(final RegisteredService registeredService) throws Exception {
         if (registeredService.getPublicKey() == null) {
             LOGGER.debug("No public key is defined for service [{}]. No encoding will take place.", registeredService);
             return null;
@@ -96,8 +96,8 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * @return the false if no public key is found
      * or if cipher cannot be initialized, etc.
      */
-    private Cipher initializeCipherBasedOnServicePublicKey(final PublicKey publicKey,
-                                                           final RegisteredService registeredService) {
+    private static Cipher initializeCipherBasedOnServicePublicKey(final PublicKey publicKey,
+                                                                  final RegisteredService registeredService) {
         try {
             LOGGER.debug("Using public key [{}] to initialize the cipher", registeredService.getPublicKey());
 

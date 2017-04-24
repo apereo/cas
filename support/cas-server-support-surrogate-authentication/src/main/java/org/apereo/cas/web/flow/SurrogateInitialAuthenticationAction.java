@@ -74,7 +74,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
         WebUtils.putCredential(context, sc);
     }
 
-    private void deconvertFromSurrogatePrincipal(final RequestContext context) {
+    private static void deconvertFromSurrogatePrincipal(final RequestContext context) {
         final Credential c = WebUtils.getCredential(context);
         if (c instanceof SurrogateUsernamePasswordCredential) {
             final SurrogateUsernamePasswordCredential sc = SurrogateUsernamePasswordCredential.class.cast(c);

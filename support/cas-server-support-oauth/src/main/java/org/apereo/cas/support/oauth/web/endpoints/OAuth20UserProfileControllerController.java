@@ -146,7 +146,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
      * @param code the code
      * @return the response entity
      */
-    private ResponseEntity buildUnauthorizedResponseEntity(final String code) {
+    private static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
         final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
         map.add(OAuth20Constants.ERROR, code);
         final String value = OAuth20Utils.jsonify(map);

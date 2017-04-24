@@ -293,7 +293,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * @param pattern   the pattern
      * @return true, if successful
      */
-    private boolean doesNameMatchPattern(final Principal principal, final Pattern pattern) {
+    private static boolean doesNameMatchPattern(final Principal principal, final Pattern pattern) {
         if (pattern != null) {
             final String name = principal.getName();
             final boolean result = pattern.matcher(name).matches();

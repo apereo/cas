@@ -137,13 +137,13 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
      * @param authnRequest the authn request
      * @return the pair
      */
-    protected Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
-                                                                                final AuthnRequest authnRequest) {
+    protected static Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
+                                                                                       final AuthnRequest authnRequest) {
         final MessageContext<SAMLObject> messageContext = bindRelayStateParameter(request);
         return Pair.of(authnRequest, messageContext);
     }
 
-    private MessageContext<SAMLObject> bindRelayStateParameter(final HttpServletRequest request) {
+    private static MessageContext<SAMLObject> bindRelayStateParameter(final HttpServletRequest request) {
         final MessageContext<SAMLObject> messageContext = new MessageContext<>();
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
         LOGGER.debug("RelayState is [{}]", relayState);

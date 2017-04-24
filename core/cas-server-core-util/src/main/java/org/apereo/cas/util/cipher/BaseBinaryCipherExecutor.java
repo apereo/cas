@@ -100,7 +100,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         }
     }
 
-    private String generateOctetJsonWebKeyOfSize(final int size) {
+    private static String generateOctetJsonWebKeyOfSize(final int size) {
         try {
             final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
             final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);

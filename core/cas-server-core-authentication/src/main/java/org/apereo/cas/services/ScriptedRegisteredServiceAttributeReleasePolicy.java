@@ -65,7 +65,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
         return new HashMap<>();
     }
 
-    private Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes, final Matcher matcherInline) throws ScriptException {
+    private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes,
+                                                                           final Matcher matcherInline) throws ScriptException {
         final String script = matcherInline.group(1).trim();
         final ScriptEngine engine = new ScriptEngineManager().getEngineByName("groovy");
         if (engine == null) {

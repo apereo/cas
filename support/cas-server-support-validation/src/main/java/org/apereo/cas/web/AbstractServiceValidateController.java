@@ -463,7 +463,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param service authenticating service
      * @throws UnauthorizedServiceException if service is determined to be unauthorized
      */
-    private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
+    private static void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
         if (registeredService == null) {
             final String msg = String.format("Service [%s] is not found in service registry.", service.getId());
             LOGGER.warn(msg);

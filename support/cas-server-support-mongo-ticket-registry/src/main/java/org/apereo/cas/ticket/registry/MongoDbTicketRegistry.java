@@ -112,7 +112,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         final Collection<TicketHolder> c = this.mongoTemplate.findAll(TicketHolder.class, this.collectionName);
-        return c.stream().map(this::deserializeTicketFromMongoDocument).collect(Collectors.toSet());
+        return c.stream().map(MongoDbTicketRegistry::deserializeTicketFromMongoDocument).collect(Collectors.toSet());
     }
 
     @Override
@@ -145,19 +145,19 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return count;
     }
 
-    private int getTimeToLive(final Ticket ticket) {
+    private static int getTimeToLive(final Ticket ticket) {
         return ticket.getExpirationPolicy().getTimeToLive().intValue();
     }
 
-    private String serializeTicketForMongoDocument(final Ticket ticket) {
+    private static String serializeTicketForMongoDocument(final Ticket ticket) {
         return BaseTicketSerializers.serializeTicket(ticket);
     }
 
-    private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
+    private static Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
         return BaseTicketSerializers.deserializeTicket(holder.getJson(), holder.getType());
     }
 
-    private TicketHolder buildTicketAsDocument(final Ticket ticket) {
+    private static TicketHolder buildTicketAsDocument(final Ticket ticket) {
         final String json = serializeTicketForMongoDocument(ticket);
         return new TicketHolder(json, ticket.getId(), ticket.getClass().getName(), getTimeToLive(ticket));
     }

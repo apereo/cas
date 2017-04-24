@@ -140,7 +140,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         return false;
     }
 
-    private boolean checkUserAgentOrClientIp(final String clientIp, final String agent, final String mfaMethod, final String pattern) {
+    private static boolean checkUserAgentOrClientIp(final String clientIp, final String agent, final String mfaMethod, final String pattern) {
         if (agent.matches(pattern) || clientIp.matches(pattern)) {
             LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
                          + "adaptive authentication and is required to use [{}]",
