@@ -2,10 +2,13 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
 
 <head>
-    <title>Consent</title>
+    <title th:text="#{screen.consent.title}"></title>
+    
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css"/>
     <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
     <script src="//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -26,8 +29,10 @@
 
 <body id="cas">
 <div layout:fragment="content">
-    <h1>Attribute Consent</h1>
-    <div class="box fl-panel" id="login" th:if="${attributes}">
+
+    <div class="alert alert-info">
+        <h1 th:text="#{screen.consent.title}"></h1>
+        <p>The following attributes will be released to <strong>[<span th:text="${service.id}"/>]</strong>:</p>
         <table id="attributesTable" class="display table table-striped table-bordered">
             <thead>
             <tr>
@@ -38,35 +43,76 @@
             <tbody>
             </tbody>
         </table>
-    </div>
 
-    <div id="consentOptions">
-        <h2>Options</h2>
-        <div class="radio">
-            <label><input type="radio" name="optradio">Every Time</label>
-            <span class="help-block">This is some help text...</span>
-        </div>
-        <div class="radio">
-            <label><input type="radio" name="optradio">Attribute Name</label>
-            <span class="help-block">This is some help text...</span>
-        </div>
-        <div class="radio">
-            <label><input type="radio" name="optradio" disabled>Attribute Value</label>
-            <span class="help-block">This is some help text...</span>
-        </div>
-    </div>
-
-
-    <div class="row">
-        <h2>Reminders</h2>
-        <div class="col-xs-2">
-            <div class="input-group input-group-sm">
-                <span class="input-group-addon"><input type="checkbox"></span>
-                <input type="text" class="form-control">
+        <br><br>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Consent Options</div>
+            <div class="panel-body">
+                <div class="radio">
+                    <label><input type="radio" name="optradio" value="always"><strong>Every Time</strong></label>
+                    <span class="help-block">Display the consent screen every I attempt to log into <span th:text="${service.id}"/></span>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio" value="name" checked><strong>Attribute Name</strong></label>
+                    <span class="help-block">
+                        Show the consent screen, if an attribute is added or removed from the collection of attributes released
+                        to <span th:text="${service.id}"/>.
+                    </span>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="optradio" value="value"><strong>Attribute Value</strong></label>
+                    <span class="help-block">
+                         Show the consent screen, if:
+                        <ul>
+                            <li>A new attribute is authorized for release to <span th:text="${service.id}"/>.</li>
+                            <li>An attribute is removed.</li>
+                            <li>An attribute value has changed.</li>
+                        </ul>
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Reminder Options</div>
+            <div class="panel-body">
+                <span>
+                    Show the consent screen, as a reminder, in that event that there is no change to the collection of attributes
+                    released to <span th:text="${service.id}"/>  <p/>
+                </span>
+                <table>
+                    <tr>
+                        <td>
+                            <input class="form-control" type="number">
+                        </td>
+                        <td>
+                            <select class="selectpicker">
+                                <option value="day">Days</option>
+                                <option value="hour">Hours</option>
+                                <option value="month">Months</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
 
+            </div>
+        </div>
+
+        <div align="center">
+            <form method="post" id="fm1">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="confirm"/>
+                <input class="btn btn-primary btn-lg"
+                       name="confirm"
+                       accesskey="l"
+                       th:value="#{screen.consent.confirm}"
+                       type="submit"/>
+                &nbsp;
+                <a class="btn btn-success btn-lg" id="cancel" name="cancel"
+                   th:href="@{/login}" th:text="#{screen.consent.cancel}"/>
+            </form>
+        </div>
+
+    </div>
 </div>
 </body>
 </html>
