@@ -51,8 +51,10 @@ public class WsFederationAction extends AbstractAction {
     private final ServicesManager servicesManager;
     private final String authorizationUrl;
 
-    public WsFederationAction(final AuthenticationSystemSupport authenticationSystemSupport, final CentralAuthenticationService centralAuthenticationService,
-                              final WsFederationConfiguration wsFederationConfiguration, final WsFederationHelper wsFederationHelper,
+    public WsFederationAction(final AuthenticationSystemSupport authenticationSystemSupport,
+                              final CentralAuthenticationService centralAuthenticationService,
+                              final WsFederationConfiguration wsFederationConfiguration,
+                              final WsFederationHelper wsFederationHelper,
                               final ServicesManager servicesManager) {
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -74,99 +76,114 @@ public class WsFederationAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) throws Exception {
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-            final HttpSession session = request.getSession();
-
             final String wa = request.getParameter(WA);
-
-            // it's an authentication
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
-                final String wResult = request.getParameter(WRESULT);
-                LOGGER.debug("Parameter [{}] received: [{}]", WRESULT, wResult);
-
-                if (StringUtils.isBlank(wResult)) {
-                    LOGGER.error("No [{}] parameter is found", WRESULT);
-                    return error();
-                }
-
-                // create credentials
-                LOGGER.debug("Attempting to create an assertion from the token parameter");
-                final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wResult, configuration);
-
-                if (assertion == null) {
-                    LOGGER.error("Could not validate assertion via parsing the token from [{}]", WRESULT);
-                    return error();
-                }
-
-                LOGGER.debug("Attempting to validate the signature on the assertion");
-                if (!this.wsFederationHelper.validateSignature(assertion, this.configuration)) {
-                    LOGGER.error("WS Requested Security Token is blank or the signature is not valid.");
-                    return error();
-                }
-
-                try {
-                    final Service service = (Service) session.getAttribute(SERVICE);
-
-                    LOGGER.debug("Creating credential based on the provided assertion");
-                    final WsFederationCredential credential = this.wsFederationHelper.createCredentialFromToken(assertion);
-
-                    final String rpId = getRelyingPartyIdentifier(service);
-                    if (credential != null && credential.isValid(rpId,
-                            this.configuration.getIdentityProviderIdentifier(),
-                            this.configuration.getTolerance())) {
-
-                        LOGGER.debug("Validated assertion for the created credential successfully");
-                        if (this.configuration.getAttributeMutator() != null) {
-                            LOGGER.debug("Modifying credential attributes based on [{}]", this.configuration.getAttributeMutator().getClass().getSimpleName());
-                            this.configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
-                        }
-                    } else {
-                        LOGGER.warn("SAML assertions are blank or no longer valid based on RP identifier [{}] and IdP identifier [{}]",
-                                rpId, this.configuration.getIdentityProviderIdentifier());
-
-                        final String url = authorizationUrl + rpId;
-                        context.getFlowScope().put(PROVIDERURL, url);
-                        LOGGER.warn("Created authentication url [{}] and returning error", url);
-                        return error();
-                    }
-
-                    context.getFlowScope().put(SERVICE, service);
-                    restoreRequestAttribute(request, session, THEME);
-                    restoreRequestAttribute(request, session, LOCALE);
-                    restoreRequestAttribute(request, session, METHOD);
-
-                    LOGGER.debug("Creating final authentication result based on the given credential");
-                    final AuthenticationResult authenticationResult =
-                            this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-
-                    LOGGER.debug("Attempting to create a ticket-granting ticket for the authentication result");
-                    WebUtils.putTicketGrantingTicketInScopes(context,
-                            this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
-
-                    LOGGER.info("Token validated and new [{}] created: [{}]", credential.getClass().getName(), credential);
-                    return success();
-
-                } catch (final AbstractTicketException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    return error();
-                }
+                return handleWsFederationAuthenticationRequest(context);
             }
-            // no authentication : go to login page. save parameters in web session
-            final Service service = (Service) context.getFlowScope().get(SERVICE);
-            if (service != null) {
-                session.setAttribute(SERVICE, service);
-            }
-            saveRequestParameter(request, session, THEME);
-            saveRequestParameter(request, session, LOCALE);
-            saveRequestParameter(request, session, METHOD);
-
-            final String url = authorizationUrl + getRelyingPartyIdentifier(service);
-
-            LOGGER.info("Preparing to redirect to the IdP [{}]", url);
-            context.getFlowScope().put(PROVIDERURL, url);
-            LOGGER.debug("Returning error event");
-            return error();
+            return routeToLoginRequest(context);
         } catch (final Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
+            return error();
+        }
+    }
+
+    private Event routeToLoginRequest(final RequestContext context) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpSession session = request.getSession();
+
+        final Service service = (Service) context.getFlowScope().get(SERVICE);
+        if (service != null) {
+            session.setAttribute(SERVICE, service);
+        }
+        saveRequestParameter(request, session, THEME);
+        saveRequestParameter(request, session, LOCALE);
+        saveRequestParameter(request, session, METHOD);
+
+        final String url = authorizationUrl + getRelyingPartyIdentifier(service);
+
+        LOGGER.info("Preparing to redirect to the IdP [{}]", url);
+        context.getFlowScope().put(PROVIDERURL, url);
+        LOGGER.debug("Returning error event");
+        return error();
+    }
+
+    private Event handleWsFederationAuthenticationRequest(final RequestContext context) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+
+        final String wResult = request.getParameter(WRESULT);
+        LOGGER.debug("Parameter [{}] received: [{}]", WRESULT, wResult);
+
+        if (StringUtils.isBlank(wResult)) {
+            LOGGER.error("No [{}] parameter is found", WRESULT);
+            return error();
+        }
+
+        // create credentials
+        LOGGER.debug("Attempting to create an assertion from the token parameter");
+        final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wResult, configuration);
+
+        if (assertion == null) {
+            LOGGER.error("Could not validate assertion via parsing the token from [{}]", WRESULT);
+            return error();
+        }
+
+        LOGGER.debug("Attempting to validate the signature on the assertion");
+        if (!this.wsFederationHelper.validateSignature(assertion, this.configuration)) {
+            LOGGER.error("WS Requested Security Token is blank or the signature is not valid.");
+            return error();
+        }
+
+        return buildCredentialsFromAssertion(context, assertion);
+    }
+
+    private Event buildCredentialsFromAssertion(final RequestContext context, final Assertion assertion) {
+        try {
+            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+            final HttpSession session = request.getSession();
+
+            final Service service = (Service) session.getAttribute(SERVICE);
+
+            LOGGER.debug("Creating credential based on the provided assertion");
+            final WsFederationCredential credential = this.wsFederationHelper.createCredentialFromToken(assertion);
+
+            final String rpId = getRelyingPartyIdentifier(service);
+            if (credential != null && credential.isValid(rpId,
+                    this.configuration.getIdentityProviderIdentifier(),
+                    this.configuration.getTolerance())) {
+
+                LOGGER.debug("Validated assertion for the created credential successfully");
+                if (this.configuration.getAttributeMutator() != null) {
+                    LOGGER.debug("Modifying credential attributes based on [{}]", this.configuration.getAttributeMutator().getClass().getSimpleName());
+                    this.configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
+                }
+            } else {
+                LOGGER.warn("SAML assertions are blank or no longer valid based on RP identifier [{}] and IdP identifier [{}]",
+                        rpId, this.configuration.getIdentityProviderIdentifier());
+
+                final String url = authorizationUrl + rpId;
+                context.getFlowScope().put(PROVIDERURL, url);
+                LOGGER.warn("Created authentication url [{}] and returning error", url);
+                return error();
+            }
+
+            context.getFlowScope().put(SERVICE, service);
+            restoreRequestAttribute(request, session, THEME);
+            restoreRequestAttribute(request, session, LOCALE);
+            restoreRequestAttribute(request, session, METHOD);
+
+            LOGGER.debug("Creating final authentication result based on the given credential");
+            final AuthenticationResult authenticationResult =
+                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+
+            LOGGER.debug("Attempting to create a ticket-granting ticket for the authentication result");
+            WebUtils.putTicketGrantingTicketInScopes(context,
+                    this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
+
+            LOGGER.info("Token validated and new [{}] created: [{}]", credential.getClass().getName(), credential);
+            return success();
+
+        } catch (final AbstractTicketException e) {
+            LOGGER.error(e.getMessage(), e);
             return error();
         }
     }

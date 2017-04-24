@@ -336,7 +336,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param expectedTypes the expected response types
      * @return whether the response type is supported
      */
-    private boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
+    private static boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
         LOGGER.debug("Response type: [{}]", type);
         final boolean checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
         if (!checked) {

@@ -136,7 +136,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
         return DuoUserAccountAuthStatus.AUTH;
     }
 
-    private String buildUrlHttpScheme(final String url) {
+    private static String buildUrlHttpScheme(final String url) {
         if (!url.startsWith("http")) {
             return "https://" + url;
         }

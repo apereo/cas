@@ -108,7 +108,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
      * X509Certificate#getSubjectAlternativeNames</a>
      */
-    private ASN1Sequence getAltnameSequence(final List sanItem) {
+    private static ASN1Sequence getAltnameSequence(final List sanItem) {
         //Should not be the case, but still, a extra "safety" check
         if (sanItem.size() < 2) {
             LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
@@ -129,7 +129,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
      * X509Certificate#getSubjectAlternativeNames</a>
      */
-    private ASN1Sequence getAltnameSequence(final byte[] sanValue) {
+    private static ASN1Sequence getAltnameSequence(final byte[] sanValue) {
         ASN1Primitive oct = null;
         try (ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
             try (ASN1InputStream input = new ASN1InputStream(bInput)) {

@@ -79,7 +79,7 @@ public class CasConfigurationJasyptDecryptor {
         }
     }
 
-    private String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
+    private static String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
         return environment.getProperty(param.getName(), param.getDefaultValue());
     }
 
@@ -121,7 +121,7 @@ public class CasConfigurationJasyptDecryptor {
      * @param propertyValue The property value to cast
      * @return A {@link String} representing the property value or {@code null} if it is not a {@link String}
      */
-    private String getStringPropertyValue(final Object propertyValue) {
+    private static String getStringPropertyValue(final Object propertyValue) {
         return propertyValue instanceof String ? propertyValue.toString() : null;
     }
 }
