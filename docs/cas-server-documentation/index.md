@@ -43,7 +43,7 @@ The following demos are provided by the Apereo CAS project:
 
 | Demo                    | Source Branch            | Location
 |-------------------------|--------------------------|----------------------------------------------------
-| CAS Web Application     | `heroku`                 | [See this](https://jasigcas.herokuapp.com/cas).
+| CAS Web Application     | `heroku-caswebapp`       | [See this](https://jasigcas.herokuapp.com/cas).
 | [CAS Services Management](installation/Installing-ServicesMgmt-Webapp.html) | `heroku-mgmtwebapp`      | [See this](https://jasigcasmgmt.herokuapp.com/cas-management).
 | [CAS Boot Administration](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [See this](https://casbootadminserver.herokuapp.com).
 | [CAS Zipkin](installation/Monitoring-Statistics.html#distributed-tracing) | `heroku-zipkinserver`    | [See this](https://caszipkinserver.herokuapp.com).
