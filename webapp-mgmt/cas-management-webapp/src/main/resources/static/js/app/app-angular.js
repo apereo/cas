@@ -702,6 +702,11 @@ if (array.length == 3) {
                 samlDirectionList: [
                     {name: 'INCLUDE', value: 'INCLUDE'},
                     {name: 'EXCLUDE', value: 'EXCLUDE'}
+                ],
+                canonicalizationList : [
+                  {name: 'NONE', value: 'NONE'},
+                  {name: 'UPPER', value: 'UPPER'},
+                  {name: 'LOWER', value: 'LOWER'}
                 ]
             };
 
