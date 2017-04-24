@@ -97,7 +97,7 @@ Support for distributed tracing of requests is enabled by including the followin
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-support-sleuth</artifactId>
+     <artifactId>cas-server-support-sleuth</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
