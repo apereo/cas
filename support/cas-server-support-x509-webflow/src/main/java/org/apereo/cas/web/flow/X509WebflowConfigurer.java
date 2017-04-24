@@ -8,7 +8,24 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 /**
  * The {@link X509WebflowConfigurer} is responsible for
  * adjusting the CAS webflow context for x509 integration.
- *
+ * 
+ * Creates a flow that starts by trying to construct credentials using an X509 
+ * certificate found as request attribute with key javax.servlet.request.X509Certificate
+ * {@link X509CertificateCredentialsNonInteractiveAction}
+ * If the check of the certificate is valid, flow goes to sendTicketGrantingTicket.
+ * On error or authenticationFailure, the user is sent to the login page. 
+ * The authenticationFailure outcome can happen when CAS got a valid certificate but 
+ * couldn't find entry for the certificate in an attribute repository and 
+ * falling back to principal from the certificate is turned off via:
+ * cas.authn.x509.principal.returnNull=true
+ * 
+ * Credentials are cleared out at the end of the action in case the user
+ * is sent to the login page where the X509 credentials object will cause
+ * errors (e.g. no username property) 
+ * 
+ * The X509 action is added to the main login flow by overriding the success
+ * outcome of the initializeLoginForm action.
+ * 
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -31,6 +48,9 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
                     CasWebflowConstants.TRANSITION_ID_WARN));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR,
                     CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+                    CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+
             actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
 
