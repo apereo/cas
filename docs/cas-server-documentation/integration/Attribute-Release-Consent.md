@@ -7,6 +7,8 @@ title: CAS - Attribute Release Consent
 
 CAS provides the ability to enforce user consent to attribute release.
 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>This feature, currently in development, is very experimental and incomplete at this point.</p></div>
+
 Support is enabled by including the following module in the Overlay:
 
 ```xml
