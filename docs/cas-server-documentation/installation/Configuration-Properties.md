@@ -2612,6 +2612,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.zendesk.nameIdAttribute=email
 ```
 
+### Gartner
+
+```properties
+# cas.samlSP.gartner.metadata=/path/to/gartner-metadata.xml
+# cas.samlSP.gartner.name=Gartner
+# cas.samlSP.gartner.description=Gartner Integration
+# cas.samlSP.gartner.attributes=urn:oid:2.5.4.42,urn:oid:2.5.4.4,urn:oid:0.9.2342.19200300.100.1.3
+```
+
 ### Arc GIS
 
 ```properties
