@@ -1919,6 +1919,7 @@ ext.libraries = [
         springcloudeureka       : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-eureka:$springCloudEurekaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
@@ -1947,6 +1948,7 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
+                    exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "com.netflix.netflix-commons", module: "netflix-eventbus")
                     force = true
                 },
@@ -1958,6 +1960,7 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 }
@@ -1965,6 +1968,7 @@ ext.libraries = [
         ribbon                  : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-ribbon:$springCloudEurekaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "com.netflix.ribbon", module: "ribbon")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-loadbalancer")
