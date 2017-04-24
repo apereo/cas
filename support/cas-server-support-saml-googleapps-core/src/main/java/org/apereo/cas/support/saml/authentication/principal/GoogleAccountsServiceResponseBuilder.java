@@ -161,7 +161,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final String userId = registeredService.getUsernameAttributeProvider().resolveUsername(service.getPrincipal(), service, registeredService);
 
         final org.opensaml.saml.saml2.core.Response response = this.samlObjectBuilder.newResponse(
-                this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, service.getId(), service);
+                this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
         final String sessionIndex = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
