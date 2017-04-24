@@ -105,8 +105,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         this.ticketRegistry.updateTicket(tgt);
     }
 
-    private ModelAndView postResponseBackToRelyingParty(final String rpToken,
-                                                        final WSFederationRequest fedRequest) throws Exception {
+    private static ModelAndView postResponseBackToRelyingParty(final String rpToken,
+                                                               final WSFederationRequest fedRequest) throws Exception {
         final String postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
 
         final Map model = new HashMap<>();
@@ -134,8 +134,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     }
     
 
-    private SecurityToken validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request,
-                                                           final HttpServletResponse response) {
+    private static SecurityToken validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request,
+                                                                  final HttpServletResponse response) {
         LOGGER.debug("Validating security token in CAS assertion...");
 
         final AttributePrincipal principal = assertion.getPrincipal();

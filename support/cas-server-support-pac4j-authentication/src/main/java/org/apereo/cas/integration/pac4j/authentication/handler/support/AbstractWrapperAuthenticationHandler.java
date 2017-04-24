@@ -86,7 +86,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      *
      * @return the web context
      */
-    protected final WebContext getWebContext() {
+    protected static WebContext getWebContext() {
         return WebUtils.getPac4jJ2EContext(
                         WebUtils.getHttpServletRequestFromRequestAttributes(),
                         WebUtils.getHttpServletResponseFromRequestAttributes());
