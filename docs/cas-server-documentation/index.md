@@ -41,7 +41,7 @@ We recommend reading the following documentation in order to plan and execute a 
 
 The following demos are provided by the Apereo CAS project:
 
-| Demo                    | Branch                   | Location
+| Demo                    | Source Branch            | Location
 |-------------------------|--------------------------|----------------------------------------------------
 | CAS Web Application     | `heroku`                 | [See this](https://jasigcas.herokuapp.com/cas).
 | [CAS Services Management](installation/Installing-ServicesMgmt-Webapp.html) | `heroku-mgmtwebapp`      | [See this](https://jasigcasmgmt.herokuapp.com/cas-management).
