@@ -50,7 +50,7 @@ public class HazelcastInstanceConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
         
-    @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
+    @Bean(name = {"hazelcastTicketRegistry"})
     @RefreshScope
     public TicketRegistry hazelcastTicketRegistry() {
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
