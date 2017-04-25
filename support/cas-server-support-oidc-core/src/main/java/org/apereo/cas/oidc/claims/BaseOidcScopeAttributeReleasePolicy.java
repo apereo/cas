@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
@@ -83,7 +84,8 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes, final RegisteredService service) {
+    protected Map<String, Object> getAttributesInternal(final Principal principal,
+                                                        final Map<String, Object> attributes, final RegisteredService service) {
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());

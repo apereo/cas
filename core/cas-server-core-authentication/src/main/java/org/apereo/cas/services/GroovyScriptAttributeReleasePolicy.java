@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,8 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes,
+    protected Map<String, Object> getAttributesInternal(final Principal principal,
+                                                        final Map<String, Object> attributes,
                                                         final RegisteredService service) {
         final ClassLoader parent = getClass().getClassLoader();
         try (GroovyClassLoader loader = new GroovyClassLoader(parent)) {

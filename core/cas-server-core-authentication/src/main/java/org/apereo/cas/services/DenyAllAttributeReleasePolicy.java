@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes,
+    protected Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes,
                                                         final RegisteredService service) {
         LOGGER.debug("Ignoring all attributes given the service is designed to never receive any.");
         return Collections.emptyMap();

@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ws.idp.WSFederationClaims;
@@ -48,7 +49,8 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attrs, final RegisteredService service) {
+    protected Map<String, Object> getAttributesInternal(final Principal principal,
+                                                        final Map<String, Object> attrs, final RegisteredService service) {
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
