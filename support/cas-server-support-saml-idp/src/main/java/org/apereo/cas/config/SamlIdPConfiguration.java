@@ -59,6 +59,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
+import javax.net.ssl.HostnameVerifier;
+
 /**
  * The {@link SamlIdPConfiguration}.
  *
@@ -73,6 +75,10 @@ public class SamlIdPConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("hostnameVerifier")
+    private HostnameVerifier hostnameVerifier;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
@@ -83,7 +89,7 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
-    
+
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
     private VelocityEngineFactory velocityEngineFactory;
@@ -95,12 +101,12 @@ public class SamlIdPConfiguration {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
-        
+
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
         return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver());
     }
-    
+
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
     @Bean
     @RefreshScope
@@ -383,7 +389,8 @@ public class SamlIdPConfiguration {
                 casProperties.getServer().getLogoutUrl(),
                 idp.getLogout().isForceSignedLogoutRequests(),
                 idp.getLogout().isSingleLogoutCallbacksDisabled(),
-                samlObjectSignatureValidator());
+                samlObjectSignatureValidator(),
+                this.hostnameVerifier);
     }
 
     @Bean

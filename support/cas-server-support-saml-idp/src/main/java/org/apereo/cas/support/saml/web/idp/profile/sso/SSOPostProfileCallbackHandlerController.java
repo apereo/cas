@@ -16,6 +16,7 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerCon
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.jasig.cas.client.ssl.HttpsURLConnectionFactory;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
@@ -29,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
@@ -43,6 +45,8 @@ import java.util.Set;
 public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(SSOPostProfileCallbackHandlerController.class);
 
+    private final HostnameVerifier hostnameVerifier;
+    
     /**
      * Instantiates a new idp-sso post saml profile handler controller.
      *
@@ -80,7 +84,8 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
                                                    final String logoutUrl,
                                                    final boolean forceSignedLogoutRequests,
                                                    final boolean singleLogoutCallbacksDisabled,
-                                                   final SamlObjectSignatureValidator samlObjectSignatureValidator) {
+                                                   final SamlObjectSignatureValidator samlObjectSignatureValidator,
+                                                   final HostnameVerifier hostnameVerifier) {
         super(samlObjectSigner,
                 parserPool,
                 authenticationSystemSupport,
@@ -98,6 +103,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
                 forceSignedLogoutRequests,
                 singleLogoutCallbacksDisabled,
                 samlObjectSignatureValidator);
+        this.hostnameVerifier = hostnameVerifier;
     }
 
     /**
@@ -157,6 +163,11 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
         final AuthnRequest authnRequest = pair.getKey();
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(this.serverPrefix);
+
+        final HttpsURLConnectionFactory factory = new HttpsURLConnectionFactory();
+        factory.setHostnameVerifier(this.hostnameVerifier);
+        validator.setURLConnectionFactory(factory);
+        
         validator.setRenew(authnRequest.isForceAuthn());
         final String serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.debug("Created service url for validation: [{}]", serviceUrl);

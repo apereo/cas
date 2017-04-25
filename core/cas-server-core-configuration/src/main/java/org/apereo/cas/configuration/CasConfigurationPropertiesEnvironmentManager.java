@@ -29,7 +29,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
 
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
-    
+
     @Autowired
     private Environment environment;
 
@@ -40,6 +40,15 @@ public class CasConfigurationPropertiesEnvironmentManager {
      */
     public File getStandaloneProfileConfigurationDirectory() {
         return environment.getProperty("cas.standalone.config", File.class, new File("/etc/cas/config"));
+    }
+
+    /**
+     * Gets standalone profile configuration file.
+     *
+     * @return the standalone profile configuration file
+     */
+    public File getStandaloneProfileConfigurationFile() {
+        return environment.getProperty("cas.standalone.config.file", File.class);
     }
 
     public String getApplicationName() {
