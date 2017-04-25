@@ -140,7 +140,7 @@ layout: null
 *   [Webflow Management](#webflowmgmt)
     *   [Overview](/$version/installation/Webflow-Customization.html) 
     *   [Error Handling](/$version/installation/Webflow-Customization-Exceptions.html)
-    *   [Extending Webflow](/$version/installation/Webfow-Customization-Extensions.html) 
+    *   [Extending Webflow](/$version/installation/Webflow-Customization-Extensions.html) 
     *   [Session Persistence](/$version/installation/Webflow-Customization-Sessions.html)
 
 * [High Availability](#highavailability)
