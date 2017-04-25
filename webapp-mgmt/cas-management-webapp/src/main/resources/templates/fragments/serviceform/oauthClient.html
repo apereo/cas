@@ -37,14 +37,14 @@
                 </label>
 
                 <div class="col-sm-8">
-                    <select class="form-control" id="scopes"
+                    <select class="form-control" id="scopes" multiple
                             ng-model="serviceFormCtrl.serviceData.oidc.scopes">
                         <option ng-repeat="opt in serviceFormCtrl.selectOptions.oidcScopes"
                                 ng-attr-value="{{ opt.value }}"
                                 ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.oidcScopes.type)">{{ opt.name }}</option>
                     </select>
                 </div>
-                <div class="col-md-8 col-md-offset-4" ng-show="serviceFormCtrl.serviceData.oidc.scopes=='user_defined'">
+                <div class="col-md-8 col-md-offset-4" ng-show="serviceFormCtrl.serviceData.oidc.scopes.indexOf('user_defined') > -1">
                     <div class="checkbox">
                         <input type="text"
                                autocomplete="off"
@@ -52,7 +52,7 @@
                                id="oidcScopesUserDefined"
                                autofocus
                                placeholder="Enter User Defined values"
-                               ng-show="serviceFormCtrl.serviceData.oidc.scopes=='user_defined'"
+                               ng-show="serviceFormCtrl.serviceData.oidc.scopes.indexOf('user_defined') > -1"
                                ng-model="serviceFormCtrl.serviceData.oidc.scopes_userdefined"/>
                     </div>
                 </div>
