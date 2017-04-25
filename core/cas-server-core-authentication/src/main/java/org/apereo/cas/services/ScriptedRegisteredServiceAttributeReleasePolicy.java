@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.slf4j.Logger;
@@ -48,7 +49,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes,
+    protected Map<String, Object> getAttributesInternal(final Principal principal,
+                                                        final Map<String, Object> attributes,
                                                         final RegisteredService service) {
         try {
             if (StringUtils.isBlank(this.scriptFile)) {
