@@ -94,6 +94,11 @@
             <artifactId>cas-server-support-sleuth</artifactId>
             <version>${cas.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-eureka-client</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
     </dependencies>
 
     <properties>
