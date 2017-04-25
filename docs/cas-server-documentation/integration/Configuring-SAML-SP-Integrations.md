@@ -83,10 +83,10 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.gartner.com/">
 <img src="https://cloud.githubusercontent.com/assets/1205228/25349422/a29a98f6-28d6-11e7-9d10-e286d0080cbe.png" height="48" width="120"></a>
 
+<a href="Google-Apps-Integration.html">
+<img src="https://cloud.githubusercontent.com/assets/1205228/25385497/18e09c84-2979-11e7-94c1-5ad430b3d768.png" height="48" width="120"></a>
+
 </div>
-
-
-
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).
 
