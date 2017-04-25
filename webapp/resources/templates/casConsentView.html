@@ -50,7 +50,7 @@
             <div class="panel-body">
                 <div class="radio">
                     <label><input type="radio" name="optradio" value="always"><strong>Every Time</strong></label>
-                    <span class="help-block">Display the consent screen every I attempt to log into <span th:text="${service.id}"/></span>
+                    <span class="help-block">Show the consent screen every time I attempt to log into <span th:text="${service.id}"/></span>
                 </div>
                 <div class="radio">
                     <label><input type="radio" name="optradio" value="name" checked><strong>Attribute Name</strong></label>
@@ -65,8 +65,8 @@
                          Show the consent screen, if:
                         <ul>
                             <li>A new attribute is authorized for release to <span th:text="${service.id}"/>.</li>
-                            <li>An attribute is removed.</li>
-                            <li>An attribute value has changed.</li>
+                            <li>An attribute is removed from the attribute bundle previously released to <span th:text="${service.id}"/>.</li>
+                            <li>The value of an attribute authorized for release to <span th:text="${service.id}"/> has changed.</li>
                         </ul>
                     </span>
                 </div>
