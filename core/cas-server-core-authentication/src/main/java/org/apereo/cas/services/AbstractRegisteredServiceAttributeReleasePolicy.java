@@ -86,7 +86,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, p.getId());
 
         LOGGER.debug("Calling attribute policy [{}] to process attributes for [{}]", getClass().getSimpleName(), p.getId());
-        final Map<String, Object> policyAttributes = getAttributesInternal(principalAttributes, service);
+        final Map<String, Object> policyAttributes = getAttributesInternal(p, principalAttributes, service);
         LOGGER.debug("Attribute policy [{}] allows release of [{}] for [{}]", getClass().getSimpleName(), policyAttributes, p.getId());
 
         LOGGER.debug("Attempting to merge policy attributes and default attributes");
@@ -159,11 +159,13 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     /**
      * Gets the attributes internally from the implementation.
      *
+     * @param principal  the principal
      * @param attributes the principal attributes
      * @param service    the service
      * @return the attributes allowed for release
      */
-    protected abstract Map<String, Object> getAttributesInternal(Map<String, Object> attributes,
+    protected abstract Map<String, Object> getAttributesInternal(Principal principal,
+                                                                 Map<String, Object> attributes,
                                                                  RegisteredService service);
 
     @Override
