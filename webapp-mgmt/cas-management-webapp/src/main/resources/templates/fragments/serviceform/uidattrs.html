@@ -89,10 +89,10 @@
                     </div>
                 </div>
                 <div class="col-sm-8" ng-show="serviceFormCtrl.serviceData.userAttrProvider.canonicalization">
-                    <select class="form-control" id="canonicalizationType" ng-model="serviceFormCtrl.serviceData.userAttrProvider.canonicalizationValue">
+                    <select class="form-control" id="canonicalizationType" ng-model="serviceFormCtrl.serviceData.userAttrProvider.canonicalizationMode">
                         <option ng-repeat="opt in serviceFormCtrl.selectOptions.canonicalizationList"
                                 ng-attr-value="{{ opt.value }}"
-                                ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.serviceData.userAttrProvider.canonicalizationValue)">{{ opt.name }}</option>
+                                ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.serviceData.userAttrProvider.canonicalizationMode)">{{ opt.name }}</option>
                     </select>
                 </div>
             </div>
