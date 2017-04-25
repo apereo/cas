@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Specify the refresh internal in seconds. -->
+<Configuration monitorInterval="60" packages="org.apereo.cas.logging">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;}%n"/>
+        </Console>
+        <CasAppender name="casConsole">
+            <AppenderRef ref="console" />
+        </CasAppender>
+    </Appenders>
+    <Loggers>
+        <AsyncRoot level="warn">
+            <AppenderRef ref="casConsole"/>
+        </AsyncRoot>
+    </Loggers>
+</Configuration>
