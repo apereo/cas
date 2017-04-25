@@ -44,7 +44,7 @@ on hot-reloading of flow definition changes, including changes to dependent flow
 
 ### Extending Webflow
 
-If you want to learn how to modify and extend the CAS authentication flows, [please see this guide](Webfow-Customization-Extensions.html).
+If you want to learn how to modify and extend the CAS authentication flows, [please see this guide](Webflow-Customization-Extensions.html).
 
 ## Required Service for Authentication
 
