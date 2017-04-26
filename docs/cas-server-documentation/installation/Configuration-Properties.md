@@ -27,7 +27,7 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 
 ## General
 
-A number of CAS configuration options equally apply to a number of modules and features. To understand and take note of those options, please [review this guide](Configuration-Properties-Commons.html).
+A number of CAS configuration options equally apply to a number of modules and features. To understand and take note of those options, please [review this guide](Configuration-Properties-Common.html).
 
 ## Configuration Storage
 
