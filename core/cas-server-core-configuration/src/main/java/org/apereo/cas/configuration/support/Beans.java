@@ -7,7 +7,6 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import groovy.lang.GroovyClassLoader;
 import org.apache.commons.io.IOUtils;
@@ -154,10 +153,7 @@ public final class Beans {
      * Since the datasource beans are RefreshScope, they will be a proxied by Spring
      * and on some application servers there have been classloading issues. A workaround
      * for this is to use the dataSourceProxy parameter and then the dataSource will be
-     * wrapped in a Hikari pool. If that is an issue, don't do it. If container datasource
-     * doesn't work and you don't want to use Hikari for whatever reason, another option
-     * is to override the various DataSource Spring beans, but those bean names are not
-     * guaranteed to stay the same from release to release.
+     * wrapped in an application level class. If that is an issue, don't do it. 
      *
      * @param jpaProperties the jpa properties
      * @return the data source
@@ -179,10 +175,7 @@ public final class Beans {
                 if (!proxyDataSource) {
                     return containerDataSource;
                 } else {
-                    // wrapping datasource in hikari pool b/c of classloading issues on some appservers
-                    final HikariConfig config = new HikariConfig(new Properties());
-                    config.setDataSource(containerDataSource);
-                    return new HikariDataSource(config);
+                    return new DataSourceProxy(containerDataSource);
                 }
             } catch (final DataSourceLookupFailureException e) {
                 LOGGER.warn("Lookup of datasource [{}] failed due to {} "
