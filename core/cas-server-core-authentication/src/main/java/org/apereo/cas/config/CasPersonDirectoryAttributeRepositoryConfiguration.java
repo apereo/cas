@@ -59,7 +59,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "attributeRepository")
-    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
+    @Bean
     public IPersonAttributeDao attributeRepository() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
 

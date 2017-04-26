@@ -76,7 +76,7 @@ import java.util.regex.Pattern;
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class CasCoreAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuthenticationConfiguration.class);
-    
+
     private static final String BEAN_NAME_HTTP_CLIENT = "supportsTrustStoreSslSocketFactoryHttpClient";
 
     @Autowired
@@ -114,8 +114,8 @@ public class CasCoreAuthenticationConfiguration {
         return h;
     }
 
-    @Bean(name = {"authenticationPolicy", "defaultAuthenticationPolicy"})
-    public AuthenticationPolicy defaultAuthenticationPolicy() {
+    @Bean
+    public AuthenticationPolicy authenticationPolicy() {
         if (casProperties.getAuthn().getPolicy().getReq().isEnabled()) {
             final RequiredHandlerAuthenticationPolicy bean =
                     new RequiredHandlerAuthenticationPolicy(casProperties.getAuthn().getPolicy().getReq().getHandlerName());
@@ -176,8 +176,7 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                                                          final HttpClient httpClient) {
+    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
         final DefaultAuthenticationSystemSupport r = new DefaultAuthenticationSystemSupport();
         r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager(httpClient));
         r.setPrincipalElectionStrategy(defaultPrincipalElectionStrategy());
@@ -185,8 +184,7 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
-    public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                                                                    final HttpClient httpClient) {
+    public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
         final DefaultAuthenticationTransactionManager r = new DefaultAuthenticationTransactionManager();
         r.setAuthenticationManager(authenticationManager(httpClient));
         return r;
@@ -195,7 +193,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean(name = {"defaultPrincipalElectionStrategy", "principalElectionStrategy"})
     public PrincipalElectionStrategy defaultPrincipalElectionStrategy() {
         final DefaultPrincipalElectionStrategy s = new DefaultPrincipalElectionStrategy();
-        s.setPrincipalFactory(defaultPrincipalFactory());
+        s.setPrincipalFactory(principalFactory());
         return s;
     }
 
@@ -225,14 +223,13 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            @Qualifier(BEAN_NAME_HTTP_CLIENT)
-            final HttpClient httpClient) {
+            @Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
         final PolicyBasedAuthenticationManager p = new PolicyBasedAuthenticationManager();
 
         p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators());
         p.setHandlerResolverMap(authenticationHandlersResolvers(httpClient));
         p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
-        p.setAuthenticationPolicy(defaultAuthenticationPolicy());
+        p.setAuthenticationPolicy(authenticationPolicy());
         return p;
     }
 
@@ -266,13 +263,13 @@ public class CasCoreAuthenticationConfiguration {
         bean.setAttributeRepository(this.attributeRepository);
         bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
         bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
-        bean.setPrincipalFactory(defaultPrincipalFactory());
+        bean.setPrincipalFactory(principalFactory());
         return bean;
     }
 
     @ConditionalOnMissingBean(name = "principalFactory")
-    @Bean(name = {"defaultPrincipalFactory", "principalFactory"})
-    public PrincipalFactory defaultPrincipalFactory() {
+    @Bean
+    public PrincipalFactory principalFactory() {
         return new DefaultPrincipalFactory();
     }
 
@@ -310,8 +307,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     @Autowired
-    public AuthenticationHandler proxyAuthenticationHandler(@Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                                            final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) {
+    public AuthenticationHandler proxyAuthenticationHandler(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) {
         final HttpBasedServiceCredentialsAuthenticationHandler h =
                 new HttpBasedServiceCredentialsAuthenticationHandler();
         h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
@@ -322,8 +318,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
     @Bean
-    public Map authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                               final HttpClient httpClient) {
+    public Map authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
         final Map map = new HashMap<>();
         map.put(proxyAuthenticationHandler(httpClient), proxyPrincipalResolver());
 

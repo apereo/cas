@@ -35,10 +35,10 @@ public class LdapServiceRegistryConfiguration {
         return new DefaultLdapRegisteredServiceMapper();
     }
 
-    @Bean(name = {"ldapServiceRegistryDao", "serviceRegistryDao"})
+    @Bean
     @RefreshScope
     @Autowired
-    public ServiceRegistryDao ldapServiceRegistryDao(@Qualifier("ldapServiceRegistryMapper") final LdapRegisteredServiceMapper mapper) {
+    public ServiceRegistryDao serviceRegistryDao(@Qualifier("ldapServiceRegistryMapper") final LdapRegisteredServiceMapper mapper) {
         final LdapServiceRegistryDao r = new LdapServiceRegistryDao();
 
         final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(

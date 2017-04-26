@@ -82,6 +82,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+
 /**
  * This is {@link CasManagementWebAppConfiguration}.
  *
@@ -104,7 +105,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public Filter characterEncodingFilter() {
         return new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true);
@@ -118,18 +119,18 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "attributeRepository")
-    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao stubAttributeRepository() {
+    @Bean
+    public IPersonAttributeDao attributeRepository() {
         return Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
     }
-    
+
     @Bean
     public Client casClient() {
         final CasClient client = new CasClient(casProperties.getServer().getLoginUrl());
         client.setAuthorizationGenerator(authorizationGenerator());
         return client;
     }
-    
+
     @Bean
     public Config config() {
         final Config cfg = new Config(getDefaultServiceUrl(), casClient());
@@ -206,14 +207,15 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
-                auditablePrincipalResolver(), ImmutableList.of(slf4jAuditTrailManager()),
+                auditablePrincipalResolver(),
+                ImmutableList.of(auditTrailManager()),
                 auditActionResolverMap(),
                 auditResourceResolverMap());
     }
 
-    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
+    @Bean
     @RefreshScope
-    public AuditTrailManager slf4jAuditTrailManager() {
+    public AuditTrailManager auditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
 
@@ -234,7 +236,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public AuthorizationGenerator authorizationGenerator() {
         if (StringUtils.hasText(casProperties.getMgmt().getAuthzAttributes())) {
-            
+
             if ("*".equals(casProperties.getMgmt().getAuthzAttributes())) {
                 return commonProfile -> commonProfile.addRoles(
                         StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles())
@@ -242,7 +244,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             }
             return new FromAttributesAuthorizationGenerator(
                     StringUtils.commaDelimitedListToStringArray(casProperties.getMgmt().getAuthzAttributes()),
-                    new String[] {}
+                    new String[]{}
             );
         }
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
@@ -271,7 +273,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setParamName(this.casProperties.getLocale().getParamName());
         return bean;
     }
-    
+
     @Bean
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
@@ -334,7 +336,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public FormDataPopulator attributeFormDataPopulator() {
-        return new AttributeFormDataPopulator(stubAttributeRepository());
+        return new AttributeFormDataPopulator(attributeRepository());
     }
 
     @Bean
@@ -364,8 +366,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController(
-            @Qualifier("servicesManager")
-            final ServicesManager servicesManager) {
+            @Qualifier("servicesManager") final ServicesManager servicesManager) {
 
         final ManageRegisteredServicesMultiActionController c =
                 new ManageRegisteredServicesMultiActionController(
@@ -377,8 +378,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public RegisteredServiceSimpleFormController registeredServiceSimpleFormController(
-            @Qualifier("servicesManager")
-            final ServicesManager servicesManager) {
+            @Qualifier("servicesManager") final ServicesManager servicesManager) {
         final RegisteredServiceSimpleFormController c = new RegisteredServiceSimpleFormController(
                 servicesManager,
                 registeredServiceFactory()

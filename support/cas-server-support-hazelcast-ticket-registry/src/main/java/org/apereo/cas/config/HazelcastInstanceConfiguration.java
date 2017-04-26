@@ -19,7 +19,6 @@ import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -49,9 +48,9 @@ public class HazelcastInstanceConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-        
-    @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
-    public TicketRegistry hazelcastTicketRegistry() {
+
+    @Bean
+    public TicketRegistry ticketRegistry() {
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
                 casProperties.getTicket().getRegistry().getHazelcast().getMapName(),
                 casProperties.getTicket().getRegistry().getHazelcast().getPageSize());
@@ -59,10 +58,17 @@ public class HazelcastInstanceConfiguration {
                 casProperties.getTicket().getRegistry().getHazelcast().getCrypto()));
         return r;
     }
-    
-    @Bean
-    public HazelcastInstance hazelcast() {
-        return Hazelcast.newHazelcastInstance(getConfig());
+
+    private HazelcastInstance hazelcast() {
+        try {
+            Hazelcast.getAllHazelcastInstances().forEach(h -> System.out.println(h.getName()));
+
+            final Config cfg = getConfig();
+            return Hazelcast.getOrCreateHazelcastInstance(cfg);
+        } catch (final Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -73,7 +79,7 @@ public class HazelcastInstanceConfiguration {
      */
     private Config getConfig() {
         final HazelcastProperties.Cluster cluster = casProperties.getTicket().getRegistry().getHazelcast().getCluster();
-                
+
         final Config config;
         if (casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation() != null
                 && casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation().exists()) {
@@ -91,7 +97,7 @@ public class HazelcastInstanceConfiguration {
             //No config location, so do a default config programmatically with handful of properties exposed by CAS
             config = new Config();
             config.setProperty("hazelcast.prefer.ipv4.stack", String.valueOf(cluster.isIpv4Enabled()));
-            
+
             //TCP config
             final TcpIpConfig tcpIpConfig = new TcpIpConfig()
                     .setEnabled(cluster.isTcpipEnabled())
@@ -103,7 +109,7 @@ public class HazelcastInstanceConfiguration {
             if (cluster.isMulticastEnabled()) {
                 multicastConfig.setMulticastGroup(cluster.getMulticastGroup());
                 multicastConfig.setMulticastPort(cluster.getMulticastPort());
-                
+
                 final Set<String> trustedInterfaces = StringUtils.commaDelimitedListToSet(cluster.getMulticastTrustedInterfaces());
                 if (!trustedInterfaces.isEmpty()) {
                     multicastConfig.setTrustedInterfaces(trustedInterfaces);
@@ -116,7 +122,7 @@ public class HazelcastInstanceConfiguration {
             final JoinConfig joinConfig = new JoinConfig()
                     .setMulticastConfig(multicastConfig)
                     .setTcpIpConfig(tcpIpConfig);
-            
+
             //Network config
             final NetworkConfig networkConfig = new NetworkConfig()
                     .setPort(cluster.getPort())

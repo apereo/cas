@@ -42,9 +42,9 @@ public class CouchbaseServiceRegistryConfiguration {
         return factory;
     }
 
-    @Bean(name = {"couchbaseServiceRegistryDao", "serviceRegistryDao"})
+    @Bean
     @RefreshScope
-    public ServiceRegistryDao couchbaseServiceRegistryDao() {
+    public ServiceRegistryDao serviceRegistryDao() {
         final CouchbaseServiceRegistryDao c = new CouchbaseServiceRegistryDao();
         c.setCouchbaseClientFactory(serviceRegistryCouchbaseClientFactory());
         return c;

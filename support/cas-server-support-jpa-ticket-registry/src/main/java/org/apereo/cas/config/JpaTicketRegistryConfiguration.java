@@ -97,9 +97,9 @@ public class JpaTicketRegistryConfiguration {
     }
 
     
-    @Bean(name = {"jpaTicketRegistry", "ticketRegistry"})
+    @Bean
     @RefreshScope
-    public TicketRegistry jpaTicketRegistry() {
+    public TicketRegistry ticketRegistry() {
         final JpaTicketRegistry bean = new JpaTicketRegistry();
         bean.setLockTgt(casProperties.getTicket().getRegistry().getJpa().isJpaLockingTgtEnabled());
         bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(

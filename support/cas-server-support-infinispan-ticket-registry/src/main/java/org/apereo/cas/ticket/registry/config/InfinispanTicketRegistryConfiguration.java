@@ -11,6 +11,7 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -28,9 +29,9 @@ public class InfinispanTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-
-    @Bean(name = {"infinispanTicketRegistry", "ticketRegistry"})
-    public TicketRegistry infinispanTicketRegistry() {
+    @RefreshScope
+    @Bean
+    public TicketRegistry ticketRegistry() {
         final InfinispanProperties span = casProperties.getTicket().getRegistry().getInfinispan();
         final InfinispanTicketRegistry r = new InfinispanTicketRegistry();
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(span));
