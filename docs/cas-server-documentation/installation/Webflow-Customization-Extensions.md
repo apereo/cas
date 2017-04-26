@@ -18,7 +18,7 @@ The above flow configuration files present a minimal structure for what CAS need
 
 So in truth, what you see above is not necessarily all of what you may get.
 
-<div class="alert alert-warning"><strong>Live Happily</strong><p>It is best to <strong>AVOID</strong> overlaying modifying flow configuration files by hand manually. The flow configuration files are not considered public APIs, are not compiled and in most cases are no candidates for backward-compatibility. CAS attempts to automate all webflow changes dynamically where appropriate. Staying away from manual changes will only make your future upgrades easier. Only do so in very advanced cases and be SURE to know what you are doing!</p></div>
+<div class="alert alert-warning"><strong>Live Happily</strong><p>It is best to <strong>AVOID</strong> overlaying/modifying flow configuration files by hand manually. The flow configuration files are not considered public APIs, are not compiled and in most cases are no candidates for backward-compatibility. CAS attempts to automate all webflow changes dynamically where appropriate. Staying away from manual changes will only make your future upgrades easier. Only do so in very advanced cases and be SURE to know what you are doing!</p></div>
 
 ## Modifying Webflow
 
