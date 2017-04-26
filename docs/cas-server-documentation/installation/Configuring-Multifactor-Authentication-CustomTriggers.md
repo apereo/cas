@@ -58,10 +58,8 @@ public class CustomWebflowEventResolver extends AbstractCasWebflowEventResolver 
         final MultifactorAuthenticationProvider provider = ...
 
         if (yesWeDoingMfaBasedOnClientIpAddress()) {
-            final Map<String, Object> eventAttributes = buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-
+            final Map eventAttributes = buildEventAttributeMap(authentication.getPrincipal(), service, provider));
             final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, eventAttributes);
-
             return ImmutableSet.of(event);
         }
         LOGGER.warn("Not doing MFA, sorry.");
