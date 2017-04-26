@@ -197,11 +197,12 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     @Override
     public int hashCode() {
         return new HashCodeBuilder(13, 133)
-                .append(this.registeredServiceAttributeFilter)
-                .append(this.authorizedToReleaseCredentialPassword)
-                .append(this.authorizedToReleaseProxyGrantingTicket)
-                .append(this.principalAttributesRepository)
-                .append(this.excludeDefaultAttributes)
+                .append(getAttributeFilter())
+                .append(isAuthorizedToReleaseCredentialPassword())
+                .append(isAuthorizedToReleaseProxyGrantingTicket())
+                .append(getPrincipalAttributesRepository())
+                .append(isExcludeDefaultAttributes())
+                .append(getPrincipalIdAttribute())
                 .toHashCode();
     }
 
@@ -222,11 +223,12 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         final AbstractRegisteredServiceAttributeReleasePolicy that = (AbstractRegisteredServiceAttributeReleasePolicy) o;
         final EqualsBuilder builder = new EqualsBuilder();
         return builder
-                .append(this.registeredServiceAttributeFilter, that.registeredServiceAttributeFilter)
-                .append(this.authorizedToReleaseCredentialPassword, that.authorizedToReleaseCredentialPassword)
-                .append(this.authorizedToReleaseProxyGrantingTicket, that.authorizedToReleaseProxyGrantingTicket)
-                .append(this.principalAttributesRepository, that.principalAttributesRepository)
-                .append(this.excludeDefaultAttributes, that.excludeDefaultAttributes)
+                .append(getAttributeFilter(), that.getAttributeFilter())
+                .append(isAuthorizedToReleaseCredentialPassword(), that.isAuthorizedToReleaseCredentialPassword())
+                .append(isAuthorizedToReleaseProxyGrantingTicket(), that.isAuthorizedToReleaseProxyGrantingTicket())
+                .append(getPrincipalAttributesRepository(), that.getPrincipalAttributesRepository())
+                .append(isExcludeDefaultAttributes(), that.isExcludeDefaultAttributes())
+                .append(getPrincipalIdAttribute(), that.getPrincipalIdAttribute())
                 .isEquals();
     }
 
@@ -234,11 +236,12 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("attributeFilter", this.registeredServiceAttributeFilter)
-                .append("principalAttributesRepository", this.principalAttributesRepository)
-                .append("authorizedToReleaseCredentialPassword", this.authorizedToReleaseCredentialPassword)
-                .append("authorizedToReleaseProxyGrantingTicket", this.authorizedToReleaseProxyGrantingTicket)
-                .append("excludeDefaultAttributes", this.excludeDefaultAttributes)
+                .append("attributeFilter", getAttributeFilter())
+                .append("principalAttributesRepository", getPrincipalAttributesRepository())
+                .append("authorizedToReleaseCredentialPassword", isAuthorizedToReleaseCredentialPassword())
+                .append("authorizedToReleaseProxyGrantingTicket", isAuthorizedToReleaseProxyGrantingTicket())
+                .append("excludeDefaultAttributes", isExcludeDefaultAttributes())
+                .append("principalIdAttribute", getPrincipalIdAttribute())
                 .toString();
     }
 }
