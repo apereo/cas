@@ -396,7 +396,7 @@ The following fields are supported by this filter:
 |----------------------|--------------------------------------------------------------------------
 | `patterns`           | A map of attributes and their associated pattern tried against value(s).
 | `completeMatch`      | Indicates whether pattern-matching should execute over the entire value region.
-| `excludeUnmappedAttributes` | Indicates whether unmapped attributes should be removed from the final bundle.                
+| `excludeUnmappedAttributes` | Indicates whether unmapped attributes should be removed from the final bundle.
 
 
 ### Reverse Mapped Regex
@@ -422,6 +422,52 @@ Identical to the above filter, except that the filter only allows a selected set
       "excludeUnmappedAttributes": false,
       "completeMatch": false,
       "order": 0
+    },
+    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
+  }
+}
+```
+
+### Groovy
+
+Attribute value filtering may also be carried using an inline or external Groovy script.
+Scripts have to current resolved attributes via `attributes` and a logger object via `logger`.
+The result of the script must be a `Map<String, Object>`.
+
+#### Inlined Groovy
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 200,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "attributeFilter" : {
+      "@class" : "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter",
+      "script" : "groovy { return attributes }"
+    },
+    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
+  }
+}
+```
+
+#### External Groovy
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 200,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "attributeFilter" : {
+      "@class" : "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter",
+      "script" : "file:/etc/cas/filter-this.groovy}"
     },
     "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
   }
