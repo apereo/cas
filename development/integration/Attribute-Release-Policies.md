@@ -5,16 +5,16 @@ title: CAS - Attribute Release Policies
 
 # Attribute Release Policies
 
-The release policy decides how attributes are to be released for a given service. Each policy has
-the ability to apply an optional filter.
+The attribute release policy decides how attributes are selected and provided to a given application in the final CAS response. Additionally, each policy has the ability to apply an optional filter to weed out their attributets based on their values.
 
 The following settings are shared by all attribute release policies:
 
-| Name                                    | Value
-|-----------------------------------------|----------------------------------------------------------------
-| `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
+| Name                                     | Value
+|------------------------------------------|----------------------------------------------------------------
+| `authorizedToReleaseCredentialPassword`  | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
 | `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
-| `excludeDefaultAttributes` | Boolean to define whether this policy should exclude the default global bundle of attributes for release.
+| `excludeDefaultAttributes`               | Boolean to define whether this policy should exclude the default global bundle of attributes for release.
+| `principalIdAttribute`                   | An attribute name of your own choosing that will be stuffed into the final bundled of attributes, carrying the CAS authenticated principal identifier. By default, the principal id is *NOT* released as an attribute.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
 may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
@@ -396,7 +396,7 @@ The following fields are supported by this filter:
 |----------------------|--------------------------------------------------------------------------
 | `patterns`           | A map of attributes and their associated pattern tried against value(s).
 | `completeMatch`      | Indicates whether pattern-matching should execute over the entire value region.
-| `excludeUnmappedAttributes` | Indicates whether unmapped attributes should be removed from the final bundle.                
+| `excludeUnmappedAttributes` | Indicates whether unmapped attributes should be removed from the final bundle.
 
 
 ### Reverse Mapped Regex
@@ -422,6 +422,52 @@ Identical to the above filter, except that the filter only allows a selected set
       "excludeUnmappedAttributes": false,
       "completeMatch": false,
       "order": 0
+    },
+    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
+  }
+}
+```
+
+### Groovy
+
+Attribute value filtering may also be carried using an inline or external Groovy script.
+Scripts have to current resolved attributes via `attributes` and a logger object via `logger`.
+The result of the script must be a `Map<String, Object>`.
+
+#### Inlined Groovy
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 200,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "attributeFilter" : {
+      "@class" : "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter",
+      "script" : "groovy { return attributes }"
+    },
+    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
+  }
+}
+```
+
+#### External Groovy
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 200,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "attributeFilter" : {
+      "@class" : "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter",
+      "script" : "file:/etc/cas/filter-this.groovy}"
     },
     "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
   }

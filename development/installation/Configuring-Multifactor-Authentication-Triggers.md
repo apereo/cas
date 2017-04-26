@@ -161,3 +161,7 @@ The `entityId` parameter may be passed as such:
 ```bash
 https://.../cas/login?service=http://idp.example.org&entityId=the-entity-id-passed
 ```
+
+## Custom
+
+While support for triggers may seem extensive, there is always that edge use case that would have you trigger MFA based on a special set of requirements. To learn how to design your own triggers, [please see this guide](Configuring-Multifactor-Authentication-CustomTriggers.html).
