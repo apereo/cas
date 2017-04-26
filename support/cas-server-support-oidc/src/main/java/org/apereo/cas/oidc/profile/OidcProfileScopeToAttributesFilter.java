@@ -90,7 +90,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             }
 
             final Map<String, Object> attributes = new HashMap<>();
-            filterAttributesByScope(scopes, attributes, principal, oidcService);
+            filterAttributesByScope(scopes, attributes, principal, service, oidcService);
             return this.principalFactory.createPrincipal(profile.getId(), attributes);
         } else {
             return principal;
@@ -99,12 +99,14 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
     private void filterAttributesByScope(final Collection<String> stream,
                                          final Map<String, Object> attributes,
-                                         final Principal principal, final RegisteredService registeredService) {
+                                         final Principal principal,
+                                         final Service service,
+                                         final RegisteredService registeredService) {
         stream.stream().distinct()
                 .filter(s -> this.filters.containsKey(s))
                 .forEach(s -> {
                     final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
-                    attributes.putAll(policy.getAttributes(principal, registeredService));
+                    attributes.putAll(policy.getAttributes(principal, service, registeredService));
                 });
     }
 

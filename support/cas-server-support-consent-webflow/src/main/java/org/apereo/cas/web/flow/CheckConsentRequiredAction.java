@@ -63,7 +63,7 @@ public class CheckConsentRequiredAction extends AbstractAction {
         final RegisteredService registeredService = getRegisteredServiceForConsent(requestContext, service);
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
         final Map<String, Object> attributes =
-                registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(), registeredService);
+                registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(), service, registeredService);
         requestContext.getFlowScope().put("attributes", attributes);
         requestContext.getFlowScope().put("principal", authentication.getPrincipal().getId());
     }

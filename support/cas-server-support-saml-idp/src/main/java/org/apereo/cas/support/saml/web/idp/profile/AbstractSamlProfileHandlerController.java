@@ -517,7 +517,8 @@ public abstract class AbstractSamlProfileHandlerController {
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
         LOGGER.debug("Fetching saml metadata adaptor for [{}]", issuer);
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
-                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
+                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+                        registeredService, authnRequest);
 
         if (!adaptor.isPresent()) {
             LOGGER.warn("No metadata could be found for [{}]", issuer);
@@ -584,7 +585,7 @@ public abstract class AbstractSamlProfileHandlerController {
         LOGGER.debug("Preparing SAML response for [{}]", adaptor.get().getEntityId());
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
         final AuthnRequest authnRequest = authenticationContext.getKey();
-        this.responseBuilder.build(authnRequest, request, response, 
+        this.responseBuilder.build(authnRequest, request, response,
                 casAssertion, registeredService, facade, binding);
         LOGGER.info("Built the SAML response for [{}]", facade.getEntityId());
     }
