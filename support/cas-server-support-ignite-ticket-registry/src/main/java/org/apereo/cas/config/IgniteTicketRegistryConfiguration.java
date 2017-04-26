@@ -94,9 +94,9 @@ public class IgniteTicketRegistryConfiguration {
     }
 
 
-    @Bean(name = {"igniteTicketRegistry", "ticketRegistry"})
+    @Bean
     @RefreshScope
-    public TicketRegistry igniteTicketRegistry() {
+    public TicketRegistry ticketRegistry() {
         final IgniteTicketRegistry r = new IgniteTicketRegistry();
         r.setIgniteConfiguration(igniteConfiguration());
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(

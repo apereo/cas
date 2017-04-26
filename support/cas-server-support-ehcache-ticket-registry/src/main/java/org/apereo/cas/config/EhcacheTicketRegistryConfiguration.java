@@ -92,8 +92,8 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     @RefreshScope
-    @Bean(name = {"ehcacheTicketRegistry", "ticketRegistry"})
-    public TicketRegistry ehcacheTicketRegistry(@Qualifier("ehcacheTicketsCache")
+    @Bean
+    public TicketRegistry ticketRegistry(@Qualifier("ehcacheTicketsCache")
                                                 final Cache ehcacheTicketsCache) {
         final EhCacheTicketRegistry r = new EhCacheTicketRegistry(ehcacheTicketsCache);
         r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(

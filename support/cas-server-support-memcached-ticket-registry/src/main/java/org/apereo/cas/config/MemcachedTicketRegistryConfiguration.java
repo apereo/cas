@@ -63,8 +63,8 @@ public class MemcachedTicketRegistryConfiguration {
     }
 
     @Autowired
-    @Bean(name = {"memcachedTicketRegistry", "ticketRegistry"})
-    public TicketRegistry memcachedTicketRegistry(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) {
+    @Bean
+    public TicketRegistry ticketRegistry(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) {
         final MemCacheTicketRegistry registry = new MemCacheTicketRegistry(memcachedClientIF);
         registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
                 casProperties.getTicket().getRegistry().getMemcached().getCrypto()));
@@ -77,7 +77,7 @@ public class MemcachedTicketRegistryConfiguration {
         final MemcachedTicketRegistryCleaner c = new MemcachedTicketRegistryCleaner();
         c.setLockingStrategy(new NoOpLockingStrategy());
         c.setLogoutManager(logoutManager);
-        c.setTicketRegistry(memcachedTicketRegistry(memcachedClientIF));
+        c.setTicketRegistry(ticketRegistry(memcachedClientIF));
         return c;
     }
 

@@ -108,8 +108,8 @@ public class CasCoreServicesConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "serviceRegistryDao")
-    @Bean(name = {"serviceRegistryDao", "inMemoryServiceRegistryDao"})
-    public ServiceRegistryDao inMemoryServiceRegistryDao() {
+    @Bean
+    public ServiceRegistryDao serviceRegistryDao() {
         final InMemoryServiceRegistryDaoImpl impl = new InMemoryServiceRegistryDaoImpl();
         if (context.containsBean("inMemoryRegisteredServices")) {
             final List list = context.getBean("inMemoryRegisteredServices", List.class);

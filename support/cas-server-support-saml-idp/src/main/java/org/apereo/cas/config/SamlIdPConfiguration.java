@@ -89,7 +89,7 @@ public class SamlIdPConfiguration {
     @Autowired(required = false)
     @Qualifier("authenticationContextClassMappings")
     private Map authenticationContextClassMappings;
-        
+
     @Autowired(required = false)
     @Qualifier("overrideDataEncryptionAlgorithms")
     private List overrideDataEncryptionAlgorithms;
@@ -137,8 +137,7 @@ public class SamlIdPConfiguration {
      *
      * @return the saml idp single logout service logout url builder
      */
-    @Bean(name = {"defaultSingleLogoutServiceLogoutUrlBuilder",
-            "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
+    @Bean(name = {"defaultSingleLogoutServiceLogoutUrlBuilder", "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {
         final SamlIdPSingleLogoutServiceLogoutUrlBuilder b = new SamlIdPSingleLogoutServiceLogoutUrlBuilder();
         b.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
@@ -338,7 +337,7 @@ public class SamlIdPConfiguration {
         initControllerBean(c);
         return c;
     }
-    
+
     @Bean
     @RefreshScope
     public SSOPostProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
