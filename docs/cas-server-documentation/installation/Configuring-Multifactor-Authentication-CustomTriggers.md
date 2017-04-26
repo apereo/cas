@@ -9,20 +9,23 @@ To create your own custom multifactor authentication trigger, you will need to d
 
 A typical custom trigger, as an example, might be:
 
-> Activate MFA provider identified by `mfa-duo` if the client browser's IP address matches the pattern `123.+`.
+<blockquote>Activate MFA provider identified by `mfa-duo` if the client browser's IP address matches the pattern `123.+`.</blockquote>
 
 Note that:
 
-- You are really not doing anything *custom* per se. All CAS triggers behave in the same exact way when they attempt to resolve the next event.
-- As you will observe below, the event resolution machinety is completely oblivious to multifactor authentication; all it cares about is finding the next event in the chain in a very generic way. Our custom implementation of course wants to have the next event deal with some form of MFA via a provider, but in theory we could have resolved the next event to be `hello-world`.
+- You are really not doing anything *custom* per se. All built-in CAS triggers behave in the same exact way when they attempt to resolve the next event.
+- As you will observe below, the event resolution machinery is completely oblivious to multifactor authentication; all it cares about is finding the next event in the chain in a very generic way. Our custom implementation of course wants to have the next event deal with some form of MFA via a provider, but in theory we could have resolved the next event to be `hello-world`.
 
 ## Requirements
 
-You will need to have compile-time access to the following modules:
+You will need to have compile-time access to the following modules in the Overlay:
 
-```gradle
-org.apereo.cas:cas-server-core-webflow
-org.apereo.cas:cas-server-core-web
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-core-webflow</artifactId>
+  <version>${cas.version}</version>
+</dependency>
 ```
 
 These are modules that ship with CAS by default and thou shall mark them with a `compile` or `provided` scope in your build configuration.
