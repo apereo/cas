@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -24,5 +25,9 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
     public ConfigurableApplicationContext getConfigurableApplicationContext() {
         return (ConfigurableApplicationContext) CONTEXT;
+    }
+
+    public AutowireCapableBeanFactory getAutowireCapableBeanFactory() {
+        return getConfigurableApplicationContext().getAutowireCapableBeanFactory();
     }
 }

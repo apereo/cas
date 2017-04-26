@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,6 +21,8 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     private static final Logger LOGGER = LoggerFactory.getLogger(DenyAllAttributeReleasePolicy.class);
 
     public DenyAllAttributeReleasePolicy() {
+        setExcludeDefaultAttributes(true);
+        setPrincipalIdAttribute(null);
     }
 
     @Override
@@ -30,11 +33,21 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     }
 
     @Override
+    public boolean isExcludeDefaultAttributes() {
+        return true;
+    }
+
+    @Override
+    public String getPrincipalIdAttribute() {
+        return null;
+    }
+
+    @Override
     protected Map<String, Object> returnFinalAttributesCollection(final Map<String, Object> attributesToRelease,
                                                                   final RegisteredService service) {
         LOGGER.info("CAS will not authorize anything for release, given the service is denied access to all attributes. "
                 + "If there are any default attributes set to be released to all services, "
                 + "those are also skipped for [{}]", service);
-        return Collections.emptyMap();
+        return new HashMap<>();
     }
 }
