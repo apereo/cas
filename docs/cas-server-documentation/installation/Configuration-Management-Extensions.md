@@ -9,7 +9,7 @@ Being a [Spring Boot](https://github.com/spring-projects/spring-boot) applicatio
 
 ## Configuration Components
 
-This is the recoommended approach to create additional Spring bean, override existing ones and simply inject your own custom behavior into the CAS application runtime.
+This is the recoommended approach to create additional Spring beans, override existing ones and simply inject your own custom behavior into the CAS application runtime.
 
 <div class="alert alert-info"><strong>No XML</strong><p>You are still given the ability to configure and inject beans into the application context via XML configuration files. We STRONGLY recommend that you abandon that approach altogether.</p></div>
 
@@ -17,7 +17,7 @@ Given CAS’ adoption of Spring Boot, most if not all of the old XML configurati
 
 ### Design
 
-To design your own configuration class, take inspiration from the following sample
+To design your own configuration class, take inspiration from the following sample:
 
 ```java
 package org.apereo.cas.custom.config;
@@ -47,7 +47,7 @@ public class SomethingConfiguration {
 
 ### Register
 
-How are `@Configuration` components picked up? Each CAS module declares its set of configuration components as such, per guidelines laid out by Spring Boot:
+How are `@Configuration` components picked up? Each CAS module declares its set of configuration components as such, per guidelines [laid out by Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html):
 
 - Create a `src/main/resources/META-INF/spring.factories` file
 - Add the following into the file:
@@ -64,7 +64,7 @@ This is where `@Conditional` components come to aid. Most component/bean definit
 
 ## CAS Properties
 
-The [collection of CAS-provided settings](Configuration-Properties.html) are all encapsulated inside a `CasConfigurationProperties`. This is a parent class that brings all elements of the entire CAS platform together and binds values to the relevant Java classes inside in a very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)`. 
+The [collection of CAS-provided settings](Configuration-Properties.html) are all encapsulated inside a `CasConfigurationProperties` component. This is a parent class that brings all elements of the entire CAS platform together and binds values to the relevant fields inside in a very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
 
 <div class="alert alert-info"><strong>Prefix Notation</strong><p>Note that all CAS-provided settings exclusively begin with the prefix <code>cas</code>. Other frameworks and packages upon which CAS depends may present their own configuration naming scheme. Note the difference.</p></div>
 
