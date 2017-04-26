@@ -146,11 +146,10 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
                             registeredService, p.getId());
 
                     if (registeredService.getAttributeReleasePolicy() == null) {
-                        LOGGER.debug("No attribute release policy is defined for [{}]. Returning default principal attributes",
-                                service.getId());
+                        LOGGER.debug("No attribute release policy is defined for [{}]. Returning default principal attributes", service.getId());
                         return p.getAttributes();
                     }
-                    return registeredService.getAttributeReleasePolicy().getAttributes(p, registeredService);
+                    return registeredService.getAttributeReleasePolicy().getAttributes(p, service, registeredService);
                 }
             }
 
