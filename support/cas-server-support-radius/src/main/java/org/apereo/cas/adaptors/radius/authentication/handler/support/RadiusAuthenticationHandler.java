@@ -31,19 +31,19 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     /**
      * Array of RADIUS servers to authenticate against.
      */
-    private List<RadiusServer> servers;
+    private final List<RadiusServer> servers;
 
     /**
      * Determines whether to fail over to the next configured RadiusServer if
      * there was an exception.
      */
-    private boolean failoverOnException;
+    private final boolean failoverOnException;
 
     /**
      * Determines whether to fail over to the next configured RadiusServer if
      * there was an authentication failure.
      */
-    private boolean failoverOnAuthenticationFailure;
+    private final boolean failoverOnAuthenticationFailure;
 
     /**
      * Instantiates a new Radius authentication handler.

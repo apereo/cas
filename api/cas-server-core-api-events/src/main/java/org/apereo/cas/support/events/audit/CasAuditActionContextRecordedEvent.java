@@ -13,7 +13,7 @@ public class CasAuditActionContextRecordedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1262975970594313844L;
     
-    private AuditActionContext auditActionContext;
+    private final AuditActionContext auditActionContext;
 
     /**
      * Instantiates a new Cas audit action context recorded event.

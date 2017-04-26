@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 public class SessionMonitor implements Monitor<SessionStatus> {
 
     /** Ticket registry instance that exposes state info. */
-    private TicketRegistry registryState;
+    private final TicketRegistry registryState;
 
     /** Threshold above which warnings are issued for session count. */
     private int sessionCountWarnThreshold = -1;

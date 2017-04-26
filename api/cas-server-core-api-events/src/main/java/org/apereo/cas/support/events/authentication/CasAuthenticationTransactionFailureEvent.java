@@ -15,8 +15,8 @@ import java.util.Map;
 public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
     private static final long serialVersionUID = 8059647975948452375L;
 
-    private Map<String, Class<? extends Exception>> failures;
-    private Collection<Credential> credential;
+    private final Map<String, Class<? extends Exception>> failures;
+    private final Collection<Credential> credential;
 
     /**
      * Instantiates a new Abstract cas sso event.

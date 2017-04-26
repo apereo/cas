@@ -15,7 +15,7 @@ public class AuthyMultifactorWebflowConfigurer extends AbstractCasMultifactorWeb
     /** Webflow event id. */
     public static final String MFA_AUTHY_EVENT_ID = "mfa-authy";
     
-    private FlowDefinitionRegistry flowDefinitionRegistry;
+    private final FlowDefinitionRegistry flowDefinitionRegistry;
 
     public AuthyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                              final FlowDefinitionRegistry flowDefinitionRegistry) {

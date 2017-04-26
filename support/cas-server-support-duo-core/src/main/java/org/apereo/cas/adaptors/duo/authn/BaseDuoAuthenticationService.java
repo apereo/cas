@@ -39,7 +39,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
      */
     protected final MultifactorAuthenticationProperties.Duo duoProperties;
 
-    private transient HttpClient httpClient;
+    private final transient HttpClient httpClient;
 
     /**
      * Creates the duo authentication service.

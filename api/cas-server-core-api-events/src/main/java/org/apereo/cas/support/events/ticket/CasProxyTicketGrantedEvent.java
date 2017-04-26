@@ -16,8 +16,8 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 128616377249711105L;
 
-    private ProxyGrantingTicket proxyGrantingTicket;
-    private ProxyTicket proxyTicket;
+    private final ProxyGrantingTicket proxyGrantingTicket;
+    private final ProxyTicket proxyTicket;
 
     /**
      * Instantiates a new Cas proxy ticket granted event.
