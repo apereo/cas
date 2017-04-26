@@ -12,7 +12,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 public class CasAuthenticationTransactionStartedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = -1862937393590213811L;
 
-    private Credential credential;
+    private final Credential credential;
 
     /**
      * Instantiates a new Abstract cas sso event.

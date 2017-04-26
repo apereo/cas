@@ -61,13 +61,13 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     private ServicesManager servicesManager;
 
     @JsonProperty
-    private String publicKeyLocation;
+    private final String publicKeyLocation;
 
     @JsonProperty
-    private String privateKeyLocation;
+    private final String privateKeyLocation;
 
     @JsonProperty
-    private String keyAlgorithm;
+    private final String keyAlgorithm;
 
     @JsonProperty
     private GoogleSaml20ObjectBuilder samlObjectBuilder;
