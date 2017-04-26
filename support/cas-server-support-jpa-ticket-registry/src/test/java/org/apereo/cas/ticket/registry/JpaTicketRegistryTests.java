@@ -72,7 +72,7 @@ public class JpaTicketRegistryTests {
     private PlatformTransactionManager txManager;
 
     @Autowired
-    @Qualifier("jpaTicketRegistry")
+    @Qualifier("ticketRegistry")
     private TicketRegistry jpaTicketRegistry;
 
     @Test

@@ -34,7 +34,7 @@ public class InfinispanTicketRegistryTests {
     private static final String TGT_NAME = "TGT";
 
     @Autowired
-    @Qualifier("infinispanTicketRegistry")
+    @Qualifier("ticketRegistry")
     private TicketRegistry infinispanTicketRegistry;
 
     @Test
