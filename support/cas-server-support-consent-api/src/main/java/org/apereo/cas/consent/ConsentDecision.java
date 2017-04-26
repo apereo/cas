@@ -132,7 +132,8 @@ public class ConsentDecision {
         consent.setService(service.getId());
 
         final Map<String, Object> attributes =
-                registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(), registeredService);
+                registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal(),
+                        service, registeredService);
 
         final String names = DigestUtils.sha512(attributes.keySet().stream().collect(Collectors.joining("|")));
         consent.setAttributeNames(names);

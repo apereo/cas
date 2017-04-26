@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
@@ -89,7 +90,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     @Override
-    public Map<String, Object> getAttributes(final Principal principal, final RegisteredService service) {
+    public Map<String, Object> getAttributes(final Principal principal, final Service selectedService,
+                                             final RegisteredService service) {
         LOGGER.debug("Locating principal attributes for [{}]", principal.getId());
         final Map<String, Object> principalAttributes = getPrincipalAttributesRepository() == null
                 ? principal.getAttributes() : getPrincipalAttributesRepository().getAttributes(principal);

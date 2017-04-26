@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -89,7 +89,7 @@ public class AbstractRegisteredServiceTests {
         assertNotNull(new RegexRegisteredService());
         assertFalse(new RegexRegisteredService().equals(new Object()));
     }
-    
+
     private void prepareService() {
         this.r.setUsernameAttributeProvider(
                 new AnonymousRegisteredServiceUsernameAttributeProvider(
@@ -101,26 +101,28 @@ public class AbstractRegisteredServiceTests {
         this.r.setTheme(THEME);
         this.r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(ENABLED, SSO_ENABLED));
     }
-    
+
     @Test
     public void verifyServiceAttributeFilterAllAttributes() {
         prepareService();
         this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final Principal p = mock(Principal.class);
-        
+
         final Map<String, Object> map = new HashMap<>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
-        
+
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        
+
         final Map<String, Object> attr = this.r.getAttributeReleasePolicy()
-                .getAttributes(p, RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
+                .getAttributes(p,
+                        RegisteredServiceTestUtils.getService(),
+                        RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(attr.size(), map.size());
     }
-    
+
     @Test
     public void verifyServiceAttributeFilterAllowedAttributes() {
         prepareService();
@@ -128,43 +130,45 @@ public class AbstractRegisteredServiceTests {
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
         this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
-        
+
         final Map<String, Object> map = new HashMap<>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
-        
+
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        
+
         final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+                RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(attr.size(), 2);
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_3));
     }
-    
+
     @Test
     public void verifyServiceAttributeFilterMappedAttributes() {
         prepareService();
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
         final Map<String, String> mappedAttr = new HashMap<>();
         mappedAttr.put(ATTR_1, "newAttr1");
-        
+
         policy.setAllowedAttributes(mappedAttr);
-                
+
         this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
-        
+
         final Map<String, Object> map = new HashMap<>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
-        
+
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        
+
         final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+                RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey("newAttr1"));

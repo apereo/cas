@@ -166,11 +166,13 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
 
             LOGGER.debug("Attempting to authenticate ECP request for credential id [{}]", credential.getId());
             final Authentication authentication = authenticateEcpRequest(credential, authenticationContext);
-            LOGGER.debug("Authenticated [{}] successfully with authenticated principal [{}]", 
+            LOGGER.debug("Authenticated [{}] successfully with authenticated principal [{}]",
                     credential.getId(), authentication.getPrincipal());
 
             LOGGER.debug("Building ECP SAML response for [{}]", credential.getId());
-            final Assertion casAssertion = buildEcpCasAssertion(authentication, serviceRequest.getKey());
+            final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+            final Service service = webApplicationServiceFactory.createService(issuer);
+            final Assertion casAssertion = buildEcpCasAssertion(authentication, service, serviceRequest.getKey());
 
             LOGGER.debug("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
             buildSamlResponse(response, request, authenticationContext, casAssertion, binding);
@@ -225,13 +227,15 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * Build ecp cas assertion assertion.
      *
      * @param authentication    the authentication
+     * @param service           the service
      * @param registeredService the registered service
      * @return the assertion
      */
     protected Assertion buildEcpCasAssertion(final Authentication authentication,
+                                             final Service service,
                                              final RegisteredService registeredService) {
         final Map attributes = registeredService.getAttributeReleasePolicy()
-                .getAttributes(authentication.getPrincipal(), registeredService);
+                .getAttributes(authentication.getPrincipal(), service, registeredService);
         final AttributePrincipal principal = new AttributePrincipalImpl(
                 authentication.getPrincipal().getId(), attributes);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
