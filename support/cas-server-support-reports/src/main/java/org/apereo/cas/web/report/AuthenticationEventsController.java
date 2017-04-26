@@ -21,7 +21,7 @@ import java.util.Collection;
 @ConditionalOnClass(value = CasEventRepository.class)
 public class AuthenticationEventsController extends BaseCasMvcEndpoint {
 
-    private CasEventRepository eventRepository;
+    private final CasEventRepository eventRepository;
 
     public AuthenticationEventsController(final CasEventRepository eventRepository, final CasConfigurationProperties casProperties) {
         super("casauthnevents", "/authnEvents", casProperties.getMonitor().getEndpoints().getAuthenticationEvents(), casProperties);
