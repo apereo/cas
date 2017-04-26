@@ -17,10 +17,12 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -44,31 +46,41 @@ import java.util.Set;
  */
 @Configuration("hazelcastInstanceConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class HazelcastInstanceConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    /**
+     * Ticket registry ticket registry.
+     *
+     * @return the ticket registry
+     */
     @Bean
     public TicketRegistry ticketRegistry() {
+        final HazelcastProperties hazelcast = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
-                casProperties.getTicket().getRegistry().getHazelcast().getMapName(),
-                casProperties.getTicket().getRegistry().getHazelcast().getPageSize());
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
-                casProperties.getTicket().getRegistry().getHazelcast().getCrypto()));
+                hazelcast.getMapName(), hazelcast.getPageSize());
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hazelcast.getCrypto()));
         return r;
     }
 
-    private HazelcastInstance hazelcast() {
+    /**
+     * Hazelcast hazelcast instance.
+     *
+     * @return the hazelcast instance
+     */
+    @Bean
+    public HazelcastInstance hazelcast() {
         try {
-            Hazelcast.getAllHazelcastInstances().forEach(h -> System.out.println(h.getName()));
-
             final Config cfg = getConfig();
+            cfg.setClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             return Hazelcast.getOrCreateHazelcastInstance(cfg);
         } catch (final Throwable e) {
-            e.printStackTrace();
+            throw new BeanCreationException(e.getMessage(), e);
         }
-        return null;
     }
 
     /**
@@ -78,33 +90,30 @@ public class HazelcastInstanceConfiguration {
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
     private Config getConfig() {
-        final HazelcastProperties.Cluster cluster = casProperties.getTicket().getRegistry().getHazelcast().getCluster();
+        final HazelcastProperties hazelcast = casProperties.getTicket().getRegistry().getHazelcast();
+        final HazelcastProperties.Cluster cluster = hazelcast.getCluster();
 
         final Config config;
-        if (casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation() != null
-                && casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation().exists()) {
+        if (hazelcast.getConfigLocation() != null
+                && hazelcast.getConfigLocation().exists()) {
 
             try {
-                final URL configUrl = casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation().getURL();
-                config = new XmlConfigBuilder(casProperties.getTicket()
-                        .getRegistry().getHazelcast().getConfigLocation().getInputStream()).build();
+                final URL configUrl = hazelcast.getConfigLocation().getURL();
+                config = new XmlConfigBuilder(hazelcast.getConfigLocation().getInputStream()).build();
                 config.setConfigurationUrl(configUrl);
             } catch (final Exception e) {
                 throw Throwables.propagate(e);
             }
 
         } else {
-            //No config location, so do a default config programmatically with handful of properties exposed by CAS
             config = new Config();
             config.setProperty("hazelcast.prefer.ipv4.stack", String.valueOf(cluster.isIpv4Enabled()));
 
-            //TCP config
             final TcpIpConfig tcpIpConfig = new TcpIpConfig()
                     .setEnabled(cluster.isTcpipEnabled())
                     .setMembers(cluster.getMembers())
                     .setConnectionTimeoutSeconds(cluster.getTimeout());
 
-            //Multicast config
             final MulticastConfig multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
             if (cluster.isMulticastEnabled()) {
                 multicastConfig.setMulticastGroup(cluster.getMulticastGroup());
@@ -130,8 +139,7 @@ public class HazelcastInstanceConfiguration {
                     .setJoin(joinConfig);
 
             //Map config
-            final MapConfig mapConfig = new MapConfig().setName(casProperties.getTicket()
-                    .getRegistry().getHazelcast().getMapName())
+            final MapConfig mapConfig = new MapConfig().setName(hazelcast.getMapName())
                     .setMaxIdleSeconds(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds())
                     .setBackupCount(cluster.getBackupCount())
                     .setAsyncBackupCount(cluster.getAsyncBackupCount())
@@ -139,21 +147,17 @@ public class HazelcastInstanceConfiguration {
                             cluster.getEvictionPolicy()))
                     .setEvictionPercentage(cluster.getEvictionPercentage())
                     .setMaxSizeConfig(new MaxSizeConfig()
-                            .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(
-                                    cluster.getMaxSizePolicy()))
+                            .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
                             .setSize(cluster.getMaxHeapSizePercentage()));
 
             final Map<String, MapConfig> mapConfigs = new HashMap<>();
-            mapConfigs.put(casProperties.getTicket().getRegistry().getHazelcast().getMapName(), mapConfig);
+            mapConfigs.put(hazelcast.getMapName(), mapConfig);
 
             //Finally aggregate all those config into the main Config
             config.setMapConfigs(mapConfigs).setNetworkConfig(networkConfig);
         }
-        //Add additional default config properties regardless of the configuration source
         return config.setInstanceName(cluster.getInstanceName())
-                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP,
-                        cluster.getLoggingType())
-                .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP,
-                        String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
+                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
+                .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
     }
 }
