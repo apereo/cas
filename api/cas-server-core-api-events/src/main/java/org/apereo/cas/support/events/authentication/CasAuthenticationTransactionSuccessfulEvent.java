@@ -12,7 +12,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 public class CasAuthenticationTransactionSuccessfulEvent extends AbstractCasEvent {
     private static final long serialVersionUID = 8059647975948452375L;
 
-    private Credential credential;
+    private final Credential credential;
 
 
     /**
