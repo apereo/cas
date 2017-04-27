@@ -3,7 +3,7 @@ layout: default
 title: CAS - Design Authentication Strategies
 ---
 
-# Customm Authentication Strategies
+# Custom Authentication Strategies
 
 While authentication support in CAS for a variety of systems is somewhat comprehensive and complex, a common deployment use case is the task of designing custom authentication schemes. This document describes the necessary steps needed to design and register a custom authentication strategy (i.e. `AuthenticationHandler`) in CAS.
 
