@@ -23,6 +23,7 @@ MFA can be triggered for a specific application registered inside the CAS servic
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
+  "name": "test",
   "multifactorPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ]
@@ -126,6 +127,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
+  "name": "test",
   "multifactorPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
