@@ -33,6 +33,12 @@ public class YadisController {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    /**
+     * Generates the Yadis XML snippet.
+     *
+     * @param response the response
+     * @throws Exception the exception
+     */
     @GetMapping(path = "/yadis.xml")
     public void yadis(final HttpServletResponse response) throws Exception {
         final Resource template = this.resourceLoader.getResource("classpath:/yadis.template");

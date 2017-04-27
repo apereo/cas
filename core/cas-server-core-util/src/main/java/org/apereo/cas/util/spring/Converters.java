@@ -13,7 +13,11 @@ import java.time.ZonedDateTime;
 public class Converters {
 
     protected Converters() {}
-    
+
+    /**
+     * The Zoned date time to string converter
+     * turns a {@link ZonedDateTime} into a formatted string.
+     */
     public static class ZonedDateTimeToStringConverter implements Converter<ZonedDateTime, String> {
         @Override
         public String convert(final ZonedDateTime zonedDateTime) {
