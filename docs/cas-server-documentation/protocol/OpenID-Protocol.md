@@ -50,25 +50,6 @@ Register clients in the CAS service registry:
 }
 ```
 
-## OpenID v2.0
-
-To define the CAS server as an OpenID provider v2.0, add the `yadis.xml` file at the root of your CAS deployment. For example,
-if your deployment is available at `https://sso.example.org/cas`, then the `yadis.xml` file must be available at
-`https://sso.example.org/cas/yadis.xml`.
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)"
-           xmlns:openid="http://openid.net/xmlns/1.0">
-<XRD>
-    <Service priority="1">
-        <Type>http://specs.openid.net/auth/2.0/signon</Type>
-        <URI>https://sso.example.org/cas/login</URI>
-    </Service>
-</XRD>
-</xrds:XRDS>
-```
-
 # OpenID Provider Delegation
 
 Using the OpenID protocol, the CAS server can also be configured
