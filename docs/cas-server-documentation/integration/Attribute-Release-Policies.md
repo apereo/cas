@@ -430,11 +430,13 @@ Identical to the above filter, except that the filter only allows a selected set
 
 ### Groovy
 
-Attribute value filtering may also be carried using an inline or external Groovy script.
-Scripts have to current resolved attributes via `attributes` and a logger object via `logger`.
-The result of the script must be a `Map<String, Object>`.
+Attribute value filtering may also be carried out using an inline or external Groovy script.
+Scripts have access to the current resolved attributes via `attributes` and a `logger`.
+The returned result of the script must be a `Map<String, Object>`.
 
 #### Inlined Groovy
+
+An inline groovy filter allows you to embed the script directly in the service definition.
 
 ```json
 {
@@ -455,6 +457,8 @@ The result of the script must be a `Map<String, Object>`.
 ```
 
 #### External Groovy
+
+An external groovy filter allows you to define the script in file located outside of the CAS web application.
 
 ```json
 {
