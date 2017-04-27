@@ -145,15 +145,16 @@ public final class Beans {
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
      * of Hikari pool.
-     *
-     * If jpaProperties contains dataSourceName a lookup will be
+     * <p>
+     * If jpaProperties contains {@link AbstractJpaProperties#getDataSourceName()} a lookup will be
      * attempted. If the DataSource is not found via JNDI then CAS will attempt to
      * configure a Hikari connection pool.
-     *
-     * Since the datasource beans are RefreshScope, they will be a proxied by Spring
+     * <p>
+     * Since the datasource beans are {@link org.springframework.cloud.context.config.annotation.RefreshScope},
+     * they will be a proxied by Spring
      * and on some application servers there have been classloading issues. A workaround
-     * for this is to use the dataSourceProxy parameter and then the dataSource will be
-     * wrapped in an application level class. If that is an issue, don't do it. 
+     * for this is to use the {@link AbstractJpaProperties#isDataSourceProxy()} setting and then the dataSource will be
+     * wrapped in an application level class. If that is an issue, don't do it.
      *
      * @param jpaProperties the jpa properties
      * @return the data source
@@ -174,9 +175,8 @@ public final class Beans {
                 final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
                 if (!proxyDataSource) {
                     return containerDataSource;
-                } else {
-                    return new DataSourceProxy(containerDataSource);
                 }
+                return new DataSourceProxy(containerDataSource);
             } catch (final DataSourceLookupFailureException e) {
                 LOGGER.warn("Lookup of datasource [{}] failed due to {} "
                         + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
