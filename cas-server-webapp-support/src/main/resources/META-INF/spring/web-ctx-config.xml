@@ -17,7 +17,7 @@
         <mvc:path-matching path-helper="urlPathHelperWeb" trailing-slash="true" />
     </mvc:annotation-driven>
     <bean id="urlPathHelperWeb" class="org.springframework.web.util.UrlPathHelper"
-          p:alwaysUseFullPath="true" />
+          p:alwaysUseFullPath="false" />
     <mvc:interceptors>
         <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor"
               p:cacheSeconds="0"
