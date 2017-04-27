@@ -2127,21 +2127,33 @@ strategies when collecting principal attributes:
 To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
 
 ```properties
+# Activate MFA globally for all, regardless of other settings
 # cas.authn.mfa.globalProviderId=mfa-duo
 
+# Activate MFA globally based on authentication metadata attributes
 # cas.authn.mfa.globalAuthenticationAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.globalAuthenticationAttributeValueRegex=faculty|staff
 
+# Activate MFA globally based on principal attributes
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
 
+# Activate MFA based on a custom REST API/endpoint
 # cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
 
+# Activate MFA based on Internet2's Grouper
 # cas.authn.mfa.grouperGroupField=NAME|EXTENSION|DISPLAY_NAME|DISPLAY_EXTENSION
 
+# Activate MFA based on an optional request parameter
 # cas.authn.mfa.requestParameter=authn_method
+
+# Describe the global failure mode in case provider cannot be reached
 # cas.authn.mfa.globalFailureMode=CLOSED
+
+# Design the attribute chosen to communicate the authentication context
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
+
+# Identify the request content type for non-browser MFA requests
 # cas.authn.mfa.contentType=application/cas
 ```
 

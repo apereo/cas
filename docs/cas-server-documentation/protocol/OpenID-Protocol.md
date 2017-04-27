@@ -21,6 +21,9 @@ This is not recommended and you should think of a more elaborated way of providi
 <div class="alert alert-info"><strong>Pay Attention!</strong><p>OpenID protocol is <strong>NOT</strong> the same thing
 as the OpenId Connect protocol whose details are <a href="OIDC-Protocol.html">documented here</a>.</p></div>
 
+
+## Configuration
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -32,6 +35,20 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#openid-authentication).
+
+## Registere Clients
+
+Register clients in the CAS service registry:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://openid.example.org/myapp",
+  "name" : "openid",
+  "description" : "OpenID Sample Application",
+  "id" : 10
+}
+```
 
 ## OpenID v2.0
 
