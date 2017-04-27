@@ -13,6 +13,7 @@ import org.apereo.cas.support.openid.web.OpenIdProviderController;
 import org.apereo.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
 import org.apereo.cas.support.openid.web.mvc.OpenIdValidateController;
 import org.apereo.cas.support.openid.web.mvc.SmartOpenIdController;
+import org.apereo.cas.support.openid.web.mvc.YadisController;
 import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
@@ -83,11 +84,11 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("proxy20Handler")
     private ProxyHandler proxy20Handler;
-    
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -103,7 +104,7 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
     private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
-    
+
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
@@ -111,7 +112,7 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -120,7 +121,7 @@ public class OpenIdConfiguration {
     public AbstractDelegateController smartOpenIdAssociationController() {
         return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView);
     }
-    
+
     @RefreshScope
     @Bean
     public ServerManager serverManager() {
@@ -131,11 +132,18 @@ public class OpenIdConfiguration {
         LOGGER.info("Creating openid server manager with OP endpoint [{}]", casProperties.getServer().getLoginUrl());
         return manager;
     }
-    
+
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
         return new OpenIdServiceResponseBuilder(casProperties.getServer().getPrefix().concat("/openid"), serverManager(), centralAuthenticationService);
+    }
+
+
+    @Bean
+    @RefreshScope
+    public YadisController yadisController() {
+        return new YadisController();
     }
 
 
@@ -175,7 +183,7 @@ public class OpenIdConfiguration {
 
         final DelegatingController controller = new DelegatingController();
         controller.setDelegates(Arrays.asList(smartOpenIdAssociationController(), c));
-        
+
         final OpenIdPostUrlHandlerMapping m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);
         final Properties mappings = new Properties();
