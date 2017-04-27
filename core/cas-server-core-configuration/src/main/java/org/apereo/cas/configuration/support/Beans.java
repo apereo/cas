@@ -144,16 +144,24 @@ public final class Beans {
 
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
-     * of Hikari pool. If jpaProperties contains dataSourceName a lookup will be
-     * attempted If datasource not found via JNDI it will be
+     * of Hikari pool.
+     *
+     * If jpaProperties contains dataSourceName a lookup will be
+     * attempted. If the DataSource is not found via JNDI then CAS will attempt to
+     * configure a Hikari connection pool.
+     *
+     * Since the datasource beans are RefreshScope, they will be a proxied by Spring
+     * and on some application servers there have been classloading issues. A workaround
+     * for this is to use the dataSourceProxy parameter and then the dataSource will be
+     * wrapped in an application level class. If that is an issue, don't do it. 
      *
      * @param jpaProperties the jpa properties
      * @return the data source
      */
     public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
-        final HikariDataSource bean = new HikariDataSource();
-
         final String dataSourceName = jpaProperties.getDataSourceName();
+        final boolean proxyDataSource = jpaProperties.isDataSourceProxy();
+
         if (StringUtils.isNotBlank(dataSourceName)) {
             try {
                 final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
@@ -164,8 +172,11 @@ public final class Beans {
                   */
                 dsLookup.setResourceRef(false);
                 final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
-                bean.setDataSource(containerDataSource);
-                return bean;
+                if (!proxyDataSource) {
+                    return containerDataSource;
+                } else {
+                    return new DataSourceProxy(containerDataSource);
+                }
             } catch (final DataSourceLookupFailureException e) {
                 LOGGER.warn("Lookup of datasource [{}] failed due to {} "
                         + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
@@ -173,13 +184,14 @@ public final class Beans {
         }
 
         try {
+            final HikariDataSource bean = new HikariDataSource();
             if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
                 bean.setDriverClassName(jpaProperties.getDriverClass());
             }
             bean.setJdbcUrl(jpaProperties.getUrl());
             bean.setUsername(jpaProperties.getUser());
             bean.setPassword(jpaProperties.getPassword());
-
+            bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
             bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
@@ -189,7 +201,6 @@ public final class Beans {
             bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
             bean.setAutoCommit(jpaProperties.isAutocommit());
-            bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
             bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
             return bean;
         } catch (final Exception e) {
