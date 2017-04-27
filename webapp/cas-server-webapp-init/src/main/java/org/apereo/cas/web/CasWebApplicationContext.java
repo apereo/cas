@@ -26,4 +26,10 @@ public class CasWebApplicationContext extends AnnotationConfigEmbeddedWebApplica
         sch.setEmbeddedValueResolver(new CasConfigurationEmbeddedValueResolver(this));
         super.onRefresh();
     }
+
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }
