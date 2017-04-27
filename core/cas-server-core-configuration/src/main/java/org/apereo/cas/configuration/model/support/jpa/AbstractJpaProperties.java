@@ -32,6 +32,7 @@ public abstract class AbstractJpaProperties {
     private boolean failFast = true;
     private boolean isolateInternalQueries;
     private boolean autocommit;
+    private boolean dataSourceProxy;
 
     public String getDefaultCatalog() {
         return defaultCatalog;
@@ -167,5 +168,13 @@ public abstract class AbstractJpaProperties {
 
     public void setDataSourceName(final String dataSourceName) {
         this.dataSourceName = dataSourceName;
+    }
+
+    public boolean isDataSourceProxy() {
+        return dataSourceProxy;
+    }
+
+    public void setDataSourceProxy(final boolean dataSourceProxy) {
+        this.dataSourceProxy = dataSourceProxy;
     }
 }

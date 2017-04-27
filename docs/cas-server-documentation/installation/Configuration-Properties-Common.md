@@ -132,6 +132,10 @@ connection. When using a container configured data source, many of the pool rela
 If `dataSourceName` is specified but the JNDI lookup fails, a data source will be created with the configured 
 (or default) CAS pool parameters.
 
+If you experience classloading errors while trying to use a container datasource, you can try 
+setting the `dataSourceProxy` setting to true which will wrap the container datasource in
+a way that may resolve the error.
+
 The `dataSourceName` property can be either a JNDI name for the datasource or a resource name prefixed with 
 `java:/comp/env/`. If it is a resource name then you need an entry in a `web.xml` that you can add to your
 CAS overlay. It should contain an entry like this:
