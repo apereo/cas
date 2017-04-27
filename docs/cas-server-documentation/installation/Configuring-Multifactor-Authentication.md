@@ -139,12 +139,9 @@ Ranking of authentication methods is done per provider via specific properties f
 the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps
 and override others with a lower value.
 
-## Trusted Device/Browser
+## Trusted Devices/Browsers
 
-CAS is able to natively provide trusted device/browser features as part of any multifactor authentication flow. While certain providers
-tend to support this feature as well, this behavior is now put into CAS directly providing you with exact control over how devices/browsers
-are checked, how is that decision remembered for subsequent requests and how you might allow delegated management of those trusted decisions
-both for admins and end-users.
+CAS is able to natively provide trusted device/browser features as part of any multifactor authentication flow. While certain providers tend to support this feature as well, this behavior is now put into CAS directly providing you with exact control over how devices/browsers are checked, how is that decision remembered for subsequent requests and how you might allow delegated management of those trusted decisions both for admins and end-users.
 
 [See this guide for more info](Multifactor-TrustedDevice-Authentication.html).
 
