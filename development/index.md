@@ -21,9 +21,9 @@ providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc).
 * Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday, WebAdvisor](integration/Configuring-SAML-SP-Integrations.html), Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc.
 
-CAS provides a friendly open source community that actively supports and contributes to the project.
-While the project is rooted in higher-ed open source, it has grown to an international audience spanning
-Fortune 500 companies and small special-purpose installations.
+## Contribute
+
+To learn how to contribute to the project, [please see this guide](developer/Contributor-Guidelines.html).
 
 ## Getting Started
 
