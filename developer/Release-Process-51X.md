@@ -65,17 +65,7 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 - Close [the milestone](https://github.com/apereo/cas/milestones) for this release.
 - Find [the release](https://github.com/apereo/cas/releases) that is mapped to the released tag, update the description with the list of resolved/fixed issues and publish it as released. 
 - Mark the release as pre-release, when releasing RC versions of the project. 
-- Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists. A template follows:
-
-```bash
-CAS Community,
-
-CAS x.y.z is available for testing and evaluation. We encourage adopters to grab 
-this release from Maven Central, integrate into your environment, and provide feedback.
-
-Regards,
-John Smith
-```
+- Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists. 
 
 ## Update Overlays
 
