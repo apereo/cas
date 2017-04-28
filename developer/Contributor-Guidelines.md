@@ -11,6 +11,15 @@ We want to start off by saying thank you for using CAS. This project is a labor 
 that catch bugs, make performance improvements, and help with documentation. Every contribution is meaningful, so thank you 
 for participating. That being said, here are a few guidelines that we ask you to follow so we can successfully address your patch.
 
+## Be Not Afraid
+
+The goal of this guide is to, very simply put, help you learn how to catch fish. 
+
+Shed all of your fears of making a mistake as part of your contributions to the project. Practice makes perfect and
+we are all here to help you as much as we can so you can ultimately become an independent contributor to the project. It's OK
+to make mistakes and it does take some time, effort and energy to get better at it. So do not be discouraged, keep at it
+and if you find anything that is unclear along the way, do not hesitate to ask questions. 
+
 ## Getting Started
 
 All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
