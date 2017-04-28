@@ -12,15 +12,15 @@ members MUST take place on the [mailing list](/cas/Mailing-Lists.html).
 
 The current members of the PMC are:
 
-- Daniel Frett
-- Scott Battaglia
-- Andrew Petro
-- Bill Thompson
-- Robert Oschwald
-- Dmitriy Kopylenko
-- Marvin Addison
-- Jérôme Leleu
-- Misagh Moayyed
+- [Daniel Frett](https://github.com/frett)
+- [Scott Battaglia](https://github.com/battags)
+- [Andrew Petro](https://github.com/apetro)
+- [Bill Thompson](https://github.com/wgthom)
+- [Robert Oschwald](https://github.com/robertoschwald)
+- [Dmitriy Kopylenko](https://github.com/dima767)
+- [Marvin Addison](https://github.com/serac)
+- [Jérôme Leleu](https://github.com/leleuj)
+- [Misagh Moayyed](https://github.com/mmoayyed)
 - Ian Dolphin
 
 ## Structure
