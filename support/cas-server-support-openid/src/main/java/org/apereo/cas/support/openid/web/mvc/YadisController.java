@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -45,7 +44,7 @@ public class YadisController {
         try (StringWriter writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             final String yadis = writer.toString().replace("$casLoginUrl", casProperties.getServer().getLoginUrl());
-            response.setContentType(MediaType.TEXT_XML_VALUE);
+            response.setContentType("application/xrds+xml");
             final Writer respWriter = response.getWriter();
             respWriter.write(yadis);
             respWriter.flush();
