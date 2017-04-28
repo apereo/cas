@@ -23,7 +23,7 @@ providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U
 
 ## Contribute
 
-To learn how to contribute to the project, [please see this guide](developer/Contributor-Guidelines.html).
+To learn how to contribute to the project, [please see this guide](/cas/developer/Contributor-Guidelines.html).
 
 ## Getting Started
 
