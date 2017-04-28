@@ -1,7 +1,6 @@
 package org.apereo.cas.mgmt.services.web;
 
 import com.google.common.base.Throwables;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegisteredService;
