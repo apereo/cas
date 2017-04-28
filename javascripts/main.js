@@ -18,8 +18,13 @@ function generateNavigationBarAndCrumbs() {
 	var clz = ((i + 1) >= segments.length) ? 'breadcrumb-item active' : 'breadcrumb-item ';
 	clz += "capitalize";      
 	    
-	//var page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ").replace(/index/g, "");  
-	var page = document.title.replace("CAS -", "").trim();    
+	var page = null;
+	
+	if ((i + 1) >= segments.length) {
+		page = document.title.replace("CAS -", "").trim();
+	} else {
+		page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ").replace(/index/g, "");  
+	}
         crumbs += "<li class='" + clz + "'><a href='#'>" + page + "</a></li>";
     }
 
