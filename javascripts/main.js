@@ -18,7 +18,8 @@ function generateNavigationBarAndCrumbs() {
 	var clz = ((i + 1) >= segments.length) ? 'breadcrumb-item active' : 'breadcrumb-item ';
 	clz += "capitalize";      
 	    
-	var page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ").replace(/index/g, "");    
+	//var page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ").replace(/index/g, "");  
+	var page = document.title.replace("CAS -", "").trim();    
         crumbs += "<li class='" + clz + "'><a href='#'>" + page + "</a></li>";
     }
 
