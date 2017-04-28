@@ -95,6 +95,10 @@ This task is only relevant when dealing with major or minor GA releases.
 - Update `.travis.yml` of the release branch to ensure it's configured to build that branch.
 - Make sure shell scripts that are involved by the Travis CI process, particularly those that are in charge of publishing SNAPSHOTs are updated to point to the release branch.
 
+## Update Demos
+
+A number of CAS demos today run on Heroku and are tracked in dedicated branches inside the codebase. Take a pass and updated each, when relevant.
+
 ## Update Maintenance Policy
 
 Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. 
