@@ -60,13 +60,6 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
                             @RequestBody final RegisteredServiceEditBean.ServiceData service,
                             final BindingResult result) {
         try {
-            if (StringUtils.isNotBlank(service.getAssignedId())) {
-                final RegisteredService svc = this.servicesManager.findServiceBy(Long.parseLong(service.getAssignedId()));
-                if (svc != null) {
-                    this.servicesManager.delete(svc.getId());
-                }
-            }
-            
             final RegisteredService svcToUse = this.registeredServiceFactory.createRegisteredService(service);
             final RegisteredService newSvc = this.servicesManager.save(svcToUse);
             LOGGER.info("Saved changes to service [{}]", svcToUse.getId());
