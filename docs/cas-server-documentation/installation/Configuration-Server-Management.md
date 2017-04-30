@@ -95,6 +95,8 @@ The following endpoints are secured and exposed by the configuration server:
 |-----------------------------------|------------------------------------------
 | `/encrypt`                        | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`                        | Accepts a `POST` to decrypt CAS configuration settings.
+| `/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
+| `/env`                            | Accepts a `GET` and describes all configuration sources of the configurtion server.
 | `/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
 | `/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
 | `/bus/refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
@@ -106,15 +108,24 @@ Once you have the configuration server deployed, you can observe the collection 
 curl -u casuser:Mellon http://config.server.url:8888/casconfigserver/cas/native
 ```
 
+You can also observe the collection of property sources that provide settings to the configuration server:
+
+```bash
+curl -u casuser:Mellon http://localhost:8888/casconfigserver/env
+```
+
 #### Clients and Consumers
 
 To let the CAS server web application (or any other client for that matter) talk to the configuration server,
-the following settings need to be applied to CAS' own `src/main/resources/bootstrap.properties` file:
+the following settings need to be applied to CAS' own `src/main/resources/bootstrap.properties` file.
+The properties to configure the CAS server web application as the client of the configuration server
+must necessarily be read in before the rest of the application’s configuration is read from the configuration server, during the *bootstrap* phase.
 
 ```properties
 spring.cloud.config.uri=http://casuser:Mellon@localhost:8888/casconfigserver
 spring.cloud.config.profile=native
 spring.cloud.config.enabled=true
+spring.profiles.active=default
 ```
 
 Remember that configuration server serves property sources from `/{name}/{profile}/{label}` to applications,
@@ -132,6 +143,9 @@ it can be a git label, branch name or commit id. Label can also be provided as a
 in which case the items in the list are tried on-by-one until one succeeds. This can be useful when working on a feature
 branch, for instance, when you might want to align the config label with your branch,
 but make it optional (e.g. `spring.cloud.config.label=myfeature,develop`).
+
+To lean more about CAS allows you to reload configuration changes,
+please [review this guide](Configuration-Management-Reload.html).
 
 #### Profiles
 

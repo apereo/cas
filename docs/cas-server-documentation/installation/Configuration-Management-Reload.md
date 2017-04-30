@@ -48,3 +48,13 @@ Any changes you make to the externally-defined `[application|cas].[properties|ym
 If you are using the CAS admin screens to update and edit properties,
 the configuration state of the CAS server is refreshed seamlessly and automatically
 without your resorting to manual and forceful refresh.
+
+Clients of the configuration server (i.e. CAS server web application) do also expose a `/refresh` endpoint
+that allow one to refresh the configuration based on the current state of the configuration server and reconfigure
+the application runtime without the need to restart the JVM.
+
+```bash
+curl -X POST https://cas.server.url/cas/status/refresh
+```
+
+[See this guide](Monitoring-Statistics.html) to learn more about various monitoring endpoints, etc.
