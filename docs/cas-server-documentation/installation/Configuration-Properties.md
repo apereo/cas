@@ -2827,8 +2827,13 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 #    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
 #    email,email_verified,phone_number,phone_number_verified,address
 
+# Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
 # cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
+
+# Map fixed claims to CAS attributes
+# cas.authn.oidc.claimsMap.given_name=custom-given-name
+# cas.authn.oidc.claimsMap.preferred_username=global-user-attribute
 ```
 
 ## Pac4j Delegated AuthN
