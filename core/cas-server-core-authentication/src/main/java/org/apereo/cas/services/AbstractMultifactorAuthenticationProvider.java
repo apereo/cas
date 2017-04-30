@@ -123,7 +123,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
      *
      * @return the true/false
      */
-    protected abstract boolean isAvailable();
+    protected boolean isAvailable() { return true; }
 
     public void setBypassEvaluator(final MultifactorAuthenticationProviderBypass bypassEvaluator) {
         this.bypassEvaluator = bypassEvaluator;
