@@ -75,6 +75,7 @@ public class CasConfigurationEventListener {
     }
 
     private void rebind() {
+        LOGGER.info("Refreshing CAS configuration. Stand by...");
         if (configurationPropertiesEnvironmentManager != null) {
             configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
         } else {
