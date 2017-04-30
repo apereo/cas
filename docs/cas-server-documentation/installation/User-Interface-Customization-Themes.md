@@ -5,9 +5,9 @@ title: CAS - User Interface Customization
 
 # Views
 
-## Configuration
-
 CAS uses [Thymeleaf](http://www.thymeleaf.org/) to build and render views. Thymeleaf's main goal is to bring elegant natural templates to your development workflow — HTML pages that can be correctly displayed in browsers and also work as static prototypes, allowing for stronger collaboration in development teams.
+
+## Configuration
 
 CAS views are found at `src/main/resources/templates`, which translates to `classpath:/templates/` when deployed. While this is the default setting, you are also allowed options to move the directory to a location outside the main CAS web application, or if needed, deploy CAS with an entirely different set of views in one tier while still preserving the default look and feel for another deployment tier.
 
