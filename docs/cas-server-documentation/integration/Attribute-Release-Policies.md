@@ -12,7 +12,7 @@ The following settings are shared by all attribute release policies:
 | Name                                     | Value
 |------------------------------------------|----------------------------------------------------------------
 | `authorizedToReleaseCredentialPassword`  | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
-| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
+| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html).
 | `excludeDefaultAttributes`               | Boolean to define whether this policy should exclude the default global bundle of attributes for release.
 | `principalIdAttribute`                   | An attribute name of your own choosing that will be stuffed into the final bundle of attributes, carrying the CAS authenticated principal identifier. By default, the principal id is *NOT* released as an attribute.
 
