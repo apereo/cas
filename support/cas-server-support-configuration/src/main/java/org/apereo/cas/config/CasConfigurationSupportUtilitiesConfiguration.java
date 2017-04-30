@@ -1,3 +1,4 @@
+
 package org.apereo.cas.config;
 
 import com.google.common.base.Throwables;
@@ -30,10 +31,6 @@ public class CasConfigurationSupportUtilitiesConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("configurationPropertiesEnvironmentManager")
-    private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
     
     /**
      * The watch configuration.
@@ -44,6 +41,10 @@ public class CasConfigurationSupportUtilitiesConfiguration {
     public class CasCoreConfigurationWatchConfiguration {
         @Autowired
         private ApplicationEventPublisher eventPublisher;
+
+        @Autowired
+        @Qualifier("configurationPropertiesEnvironmentManager")
+        private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
         
         @PostConstruct
         public void init() {
