@@ -15,6 +15,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
@@ -86,6 +87,7 @@ import org.springframework.webflow.execution.Action;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -254,9 +256,15 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper() {
+        final Map<String, String> mappings = casProperties.getAuthn().getOidc().getClaimsMap();
+        return new OidcAttributeToScopeClaimMapper(mappings);
+    }
+
+    @Bean
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
         return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), servicesManager,
-                userDefinedScopeBasedAttributeReleasePolicies());
+                userDefinedScopeBasedAttributeReleasePolicies(), oidcAttributeToScopeClaimMapper());
     }
 
     @RefreshScope
@@ -298,8 +306,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") 
-                                                                       final OidcServerDiscoverySettings discoverySettings) {
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory")
+                                                                   final OidcServerDiscoverySettings discoverySettings) {
         return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
                 oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
@@ -331,8 +339,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @RefreshScope
     @Bean
-    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
-                                                                                     final AuthenticationSystemSupport authenticationSystemSupport) {
+    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
+                                                                             final AuthenticationSystemSupport authenticationSystemSupport) {
         final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
