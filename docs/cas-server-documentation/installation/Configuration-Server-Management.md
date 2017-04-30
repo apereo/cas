@@ -42,8 +42,8 @@ This allows you to, if needed, split your settings into multiple property files 
 to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`)
 
 <div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
-modify the built in <code>application.properties</code> file. This will only complicate and weaken your deployment.
-Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the default, override via <code>application.yml</code> or
+modify the built in <code>application.properties</code> or <code>bootstrap.properties</code> files. This will only complicate and weaken your deployment.
+Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, override via <code>application.yml</code> or
 use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
