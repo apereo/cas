@@ -30,6 +30,7 @@ The following multifactor providers are supported by CAS.
 | Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
 | Microsoft Azure       | `mfa-azure`     | [See this guide](MicrosoftAzure-Authentication.html).
 | FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
+| Custom                | Custom          | [See this guide](Custom-MFA-Authentication.html).
 
 
 ## Triggers
@@ -111,10 +112,10 @@ The following failure modes are supported:
 
 | Field                | Description
 |----------------------|----------------------------------
-| `CLOSED`                  | Authentication is blocked if the provider cannot be reached.
-| `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
-| `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
-| `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
+| `CLOSED`             | Authentication is blocked if the provider cannot be reached.
+| `OPEN`               | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
+| `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
+| `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
 
 A default failure mode can also be specified globally via CAS properties and may be overriden individually by CAS registered services.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).

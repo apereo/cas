@@ -9,11 +9,5 @@ import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
  * @since 5.0.0
  */
 public class AuthyMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
-
     private static final long serialVersionUID = 4789727148634156909L;
-
-    @Override
-    protected boolean isAvailable() {
-        return true;
-    }
 }
