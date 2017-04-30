@@ -30,6 +30,15 @@ public class OidcProperties {
     private List<String> subjectTypes = Arrays.asList("public");
 
     private Map<String, String> userDefinedScopes = new HashMap<>();
+    private Map<String, String> claimsMap = new HashMap<>();
+
+    public Map<String, String> getClaimsMap() {
+        return claimsMap;
+    }
+
+    public void setClaimsMap(final Map<String, String> claimsMap) {
+        this.claimsMap = claimsMap;
+    }
 
     public Map<String, String> getUserDefinedScopes() {
         return userDefinedScopes;
