@@ -2816,12 +2816,21 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 
 ```properties
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
+
+# Skew ID tokens in minutes
 # cas.authn.oidc.skew=5
+
 # cas.authn.oidc.jwksFile=file:/keystore.jwks
 # cas.authn.oidc.jwksCacheInMinutes=60
+
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
+
 # cas.authn.oidc.subjectTypes=public,pairwise
+
+# Supported scopes
 # cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
+
+# Supported claims
 # cas.authn.oidc.claims=sub,name,preferred_username,family_name, \
 #    given_name,middle_name,given_name,profile, \
 #    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
