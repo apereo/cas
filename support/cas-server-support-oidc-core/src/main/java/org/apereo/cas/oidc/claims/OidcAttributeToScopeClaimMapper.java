@@ -18,7 +18,7 @@ import java.util.Map;
 public class OidcAttributeToScopeClaimMapper {
 
     /**
-     * Map OIDC claim to an attribute
+     * Map OIDC claim to an attribute.
      */
     private Map<String, String> claimsToAttribute = new HashMap<>();
 
