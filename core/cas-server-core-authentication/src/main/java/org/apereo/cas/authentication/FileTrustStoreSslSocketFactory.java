@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.ssl.SSLContexts;
+import org.cryptacular.util.CertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -23,7 +24,9 @@ import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The SSL socket factory that loads the SSL context from a custom
@@ -200,7 +203,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
         private static final Logger LOGGER = LoggerFactory.getLogger(CompositeX509TrustManager.class);
 
-        private List<X509TrustManager> trustManagers;
+        private final List<X509TrustManager> trustManagers;
 
         /**
          * Instantiates a new Composite x 509 trust manager.
@@ -218,7 +221,9 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     trustManager.checkClientTrusted(chain, authType);
                     return true;
                 } catch (final CertificateException e) {
-                    LOGGER.debug(e.getMessage(), e);
+                    final String msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(c -> c.toString()).collect(Collectors.toSet()),
+                            authType, e.getMessage()), e);
                     return false;
                 }
             });
@@ -236,7 +241,9 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     trustManager.checkServerTrusted(chain, authType);
                     return true;
                 } catch (final CertificateException e) {
-                    LOGGER.warn(e.getMessage(), e);
+                    final String msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(c -> c.toString()).collect(Collectors.toSet()),
+                            authType, e.getMessage()), e);
                     return false;
                 }
             });
