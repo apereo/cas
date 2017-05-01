@@ -19,7 +19,7 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     /**
      * A HashMap to contain the tickets.
      */
-    private Map<String, Ticket> cache;
+    private final Map<String, Ticket> cache;
 
     /**
      * Instantiates a new default ticket registry.
@@ -66,8 +66,11 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
         if (ticketId == null) {
+            return null;
+        }
+        final String encTicketId = encodeTicketId(ticketId);
+        if (encTicketId == null) {
             return null;
         }
         return decodeTicket(this.cache.get(encTicketId));
@@ -75,11 +78,13 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
         if (ticketId == null) {
             return false;
         }
-
+        final String encTicketId = encodeTicketId(ticketId);
+        if (encTicketId == null) {
+            return false;
+        }
         return this.cache.remove(encTicketId) != null;
     }
 
