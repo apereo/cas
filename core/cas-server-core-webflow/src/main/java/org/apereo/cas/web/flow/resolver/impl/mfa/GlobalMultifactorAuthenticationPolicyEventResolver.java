@@ -38,7 +38,8 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
 
     public GlobalMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,
-                                                              final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                              final ServicesManager servicesManager,
+                                                              final TicketRegistrySupport ticketRegistrySupport,
                                                               final CookieGenerator warnCookieGenerator,
                                                               final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                               final MultifactorAuthenticationProviderSelector selector,
@@ -72,8 +73,6 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         }
 
         final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, globalProviderId);
-
-
         if (providerFound.isPresent()) {
             if (providerFound.get().isAvailable(service)) {
                 LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",

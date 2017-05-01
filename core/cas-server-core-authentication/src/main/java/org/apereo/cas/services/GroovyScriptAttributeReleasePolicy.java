@@ -1,13 +1,12 @@
 package org.apereo.cas.services;
 
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyObject;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.ScriptingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,19 +42,10 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     protected Map<String, Object> getAttributesInternal(final Principal principal,
                                                         final Map<String, Object> attributes,
                                                         final RegisteredService service) {
-        final ClassLoader parent = getClass().getClassLoader();
-        try (GroovyClassLoader loader = new GroovyClassLoader(parent)) {
-            final File groovyFile = ResourceUtils.getResourceFrom(this.groovyScript).getFile();
-            if (groovyFile.exists()) {
-                final Class<?> groovyClass = loader.parseClass(groovyFile);
-                final GroovyObject groovyObject = (GroovyObject) groovyClass.newInstance();
-                LOGGER.debug("Created groovy object instance from class [{}]", groovyFile.getCanonicalPath());
-                final Object[] args = {attributes, LOGGER};
-                LOGGER.debug("Executing groovy script's run method, with parameters [{}]", args);
-                final Map<String, Object> personAttributesMap = (Map<String, Object>) groovyObject.invokeMethod("run", args);
-                LOGGER.debug("Final set of attributes determined by the script are [{}]", personAttributesMap);
-                return personAttributesMap;
-            }
+        try {
+            final Object[] args = {attributes, LOGGER};
+            final Resource resource = ResourceUtils.getResourceFrom(this.groovyScript);
+            return ScriptingUtils.executeGroovyScript(resource, args, Map.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

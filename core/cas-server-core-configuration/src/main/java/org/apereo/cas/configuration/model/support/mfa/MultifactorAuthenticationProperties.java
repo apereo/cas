@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String restEndpoint;
 
+    private Resource groovyScript;
+    
     private String globalPrincipalAttributeNameTriggers;
     private String globalPrincipalAttributeValueRegex;
 
@@ -45,6 +48,14 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private GAuth gauth = new GAuth();
     private List<Duo> duo = new ArrayList<>();
     private Authy authy = new Authy();
+
+    public Resource getGroovyScript() {
+        return groovyScript;
+    }
+
+    public void setGroovyScript(final Resource groovyScript) {
+        this.groovyScript = groovyScript;
+    }
 
     public U2F getU2f() {
         return u2f;

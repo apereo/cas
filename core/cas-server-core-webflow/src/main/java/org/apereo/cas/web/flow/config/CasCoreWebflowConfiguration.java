@@ -20,17 +20,18 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AdaptiveMultifactorAuthenticationPolicyEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationAttemptWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RankedAuthenticationProviderWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.SelectiveAuthenticationProviderWebflowEventEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.GlobalMultifactorAuthenticationPolicyEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationAttemptWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.mfa.GroovyScriptMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.PrincipalAttributeMultifactorAuthenticationPolicyEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.RankedAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RegisteredServiceMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RequestParameterMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RestEndpointMultifactorAuthenticationPolicyEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.SelectiveAuthenticationProviderWebflowEventEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -98,9 +99,9 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
-        return new AdaptiveMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, 
+        return new AdaptiveMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, 
+                ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
                 selector, casProperties, geoLocationService);
     }
 
@@ -121,7 +122,7 @@ public class CasCoreWebflowConfiguration {
         return new AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService,
                 servicesManager,
                 ticketRegistrySupport, warnCookieGenerator,
-                authenticationRequestServiceSelectionStrategies, 
+                authenticationRequestServiceSelectionStrategies,
                 selector, casProperties);
     }
 
@@ -144,6 +145,7 @@ public class CasCoreWebflowConfiguration {
         r.addDelegate(globalAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(restEndpointAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(groovyScriptAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(authenticationAttributeAuthenticationPolicyWebflowEventResolver());
@@ -156,9 +158,9 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver restEndpointAuthenticationPolicyWebflowEventResolver() {
-        return new RestEndpointMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, 
+        return new RestEndpointMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, 
+                ticketRegistrySupport, warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies, selector, casProperties);
     }
 
@@ -166,7 +168,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
-        return new ServiceTicketRequestWebflowEventResolver(authenticationSystemSupport, 
+        return new ServiceTicketRequestWebflowEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager, ticketRegistrySupport,
                 warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector);
     }
@@ -175,9 +177,19 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver() {
-        return new GlobalMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, 
+        return new GlobalMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, 
+                ticketRegistrySupport, warnCookieGenerator,
+                authenticationRequestServiceSelectionStrategies, selector, casProperties);
+    }
+
+    @ConditionalOnMissingBean(name = "groovyScriptAuthenticationPolicyWebflowEventResolver")
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolver groovyScriptAuthenticationPolicyWebflowEventResolver() {
+        return new GroovyScriptMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
+                centralAuthenticationService, servicesManager,
+                ticketRegistrySupport, warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies, selector, casProperties);
     }
 
@@ -185,9 +197,9 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver() {
-        return new SelectiveAuthenticationProviderWebflowEventEventResolver(authenticationSystemSupport, 
+        return new SelectiveAuthenticationProviderWebflowEventEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, 
+                ticketRegistrySupport, warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies, selector);
     }
 
@@ -195,9 +207,9 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver() {
-        return new RequestParameterMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, 
+        return new RequestParameterMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, 
+                ticketRegistrySupport, warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies, selector, casProperties);
     }
 
@@ -206,7 +218,7 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver() {
         return new RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService,
-                servicesManager, ticketRegistrySupport, warnCookieGenerator, 
+                servicesManager, ticketRegistrySupport, warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies, selector);
     }
 
@@ -214,9 +226,9 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver() {
-        return new RegisteredServiceMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, 
+        return new RegisteredServiceMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, 
+                ticketRegistrySupport, warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies, selector);
     }
 
@@ -224,10 +236,10 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver() {
-        return new RankedAuthenticationProviderWebflowEventResolver(authenticationSystemSupport, 
+        return new RankedAuthenticationProviderWebflowEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, 
-                authenticationRequestServiceSelectionStrategies, 
+                ticketRegistrySupport, warnCookieGenerator,
+                authenticationRequestServiceSelectionStrategies,
                 selector, authenticationContextValidator,
                 initialAuthenticationAttemptWebflowEventResolver());
     }
