@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class CasLoggingConfiguration {
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setInitParameters(initParams);
         bean.setName("threadContextMDCServletFilter");
-        bean.setOrder(0);
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return bean;
     }
 }
