@@ -51,9 +51,9 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticket) {
         Assert.notNull(ticket, "ticket cannot be null");
-
+        final Ticket encTicket = encodeTicket(ticket);
         logger.debug("Added ticket [{}] to registry.", ticket.getId());
-        this.cache.put(ticket.getId(), ticket);
+        this.cache.put(encTicket.getId(), encTicket);
     }
 
     /**
@@ -62,7 +62,7 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     @PostConstruct
     public void init() {
         logger.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
-                    + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
+                + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
     }
 
     @Override
@@ -82,9 +82,9 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        return Collections.unmodifiableCollection(this.cache.values());
+        return decodeTickets(this.cache.values());
     }
-    
+
     @Override
     public void updateTicket(final Ticket ticket) {
         addTicket(ticket);

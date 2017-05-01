@@ -29,6 +29,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.Ordered;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,7 +83,8 @@ public class CasCoreAuditConfiguration {
         bean.setFilter(new ClientInfoThreadLocalFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setName("CAS Client Info Logging Filter");
-
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        
         final Map<String, String> initParams = new HashMap<>();
         if (StringUtils.isNotBlank(audit.getAlternateClientAddrHeaderName())) {
             initParams.put(ClientInfoThreadLocalFilter.CONST_IP_ADDRESS_HEADER, audit.getAlternateClientAddrHeaderName());
