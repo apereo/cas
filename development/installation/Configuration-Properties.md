@@ -2816,19 +2816,33 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 
 ```properties
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
+
+# Skew ID tokens in minutes
 # cas.authn.oidc.skew=5
+
 # cas.authn.oidc.jwksFile=file:/keystore.jwks
 # cas.authn.oidc.jwksCacheInMinutes=60
+
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
+
 # cas.authn.oidc.subjectTypes=public,pairwise
+
+# Supported scopes
 # cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
+
+# Supported claims
 # cas.authn.oidc.claims=sub,name,preferred_username,family_name, \
 #    given_name,middle_name,given_name,profile, \
 #    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
 #    email,email_verified,phone_number,phone_number_verified,address
 
+# Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
 # cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
+
+# Map fixed claims to CAS attributes
+# cas.authn.oidc.claimsMap.given_name=custom-given-name
+# cas.authn.oidc.claimsMap.preferred_username=global-user-attribute
 ```
 
 ## Pac4j Delegated AuthN
