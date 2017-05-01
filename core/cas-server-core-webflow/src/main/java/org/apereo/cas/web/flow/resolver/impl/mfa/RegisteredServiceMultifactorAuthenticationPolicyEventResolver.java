@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.resolver.impl;
+package org.apereo.cas.web.flow.resolver.impl.mfa;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
