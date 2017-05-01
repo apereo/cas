@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,17 +33,17 @@ public class CasLoggingConfiguration {
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
-    
+
     @Bean
     public FilterRegistrationBean threadContextMDCServletFilter() {
         final Map<String, String> initParams = new HashMap<>();
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new ThreadContextMDCServletFilter(ticketRegistrySupport, 
+        bean.setFilter(new ThreadContextMDCServletFilter(ticketRegistrySupport,
                 this.ticketGrantingTicketCookieGenerator));
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setInitParameters(initParams);
         bean.setName("threadContextMDCServletFilter");
-        bean.setOrder(0);
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return bean;
 
     }
