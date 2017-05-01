@@ -100,7 +100,26 @@ grouperClient.webService.password = password
 
 ## Groovy
 
+MFA can be triggered based on the results of a groovy script of your own design. The outcome of the script should determine the MFA provider id that CAS should attempt to activate.
 
+The outline of the groovy script is shown below as a sample:
+
+```groovy
+import java.util.*
+
+class SampleGroovyEventResolver {
+    def String run(final Object... args) {
+        def service = args[0]
+        def registeredService = args[1]
+        def authentication = args[2]
+        def logger = args[3]
+
+        ...
+
+        return "mfa-duo"
+    }
+}
+```
 
 ## REST
 
