@@ -76,7 +76,12 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        return this.cache.remove(ticketId) != null;
+        final String encTicketId = encodeTicketId(ticketId);
+        if (ticketId == null) {
+            return false;
+        }
+
+        return this.cache.remove(encTicketId) != null;
     }
 
 

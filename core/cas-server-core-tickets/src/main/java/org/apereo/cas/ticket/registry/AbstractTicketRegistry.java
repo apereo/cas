@@ -240,7 +240,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return null;
         }
 
-        logger.info("Attempting to decode {}", result);
+        logger.debug("Attempting to decode {}", result);
         final EncodedTicket encodedTicket = (EncodedTicket) result;
 
         final Ticket ticket = SerializationUtils.decodeAndSerializeObject(
