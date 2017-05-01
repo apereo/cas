@@ -13,7 +13,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
-import org.apereo.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -34,11 +33,13 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
 
     public BaseMultifactorAuthenticationProviderEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,
-                                                              final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                              final ServicesManager servicesManager,
+                                                              final TicketRegistrySupport ticketRegistrySupport,
                                                               final CookieGenerator warnCookieGenerator,
                                                               final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                               final MultifactorAuthenticationProviderSelector selector) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
+                ticketRegistrySupport, warnCookieGenerator,
                 authenticationSelectionStrategies, selector);
     }
 
@@ -46,7 +47,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final Collection<String> requestMfaMethod) {
         final Optional<MultifactorAuthenticationProvider> providerFound = providers.values()
-                .stream()
+                .stream()           
                 .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
                 .findFirst();
         if (providerFound.isPresent()) {
@@ -97,8 +98,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
      * @return the registered service
      */
     protected RegisteredService resolveRegisteredServiceInRequestContext(final RequestContext requestContext) {
-        final Service ctxService = WebUtils.getService(requestContext);
-        final Service resolvedService = resolveServiceFromAuthenticationRequest(ctxService);
+        final Service resolvedService = resolveServiceFromAuthenticationRequest(requestContext);
         final RegisteredService service = this.servicesManager.findServiceBy(resolvedService);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(resolvedService, service);
         return service;
