@@ -246,18 +246,21 @@ public class CasCoreWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "clearWebflowCredentialsAction")
+    @RefreshScope
     public Action clearWebflowCredentialsAction() {
         return new ClearWebflowCredentialAction();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "checkWebAuthenticationRequestAction")
+    @RefreshScope
     public Action checkWebAuthenticationRequestAction() {
         return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getContentType());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redirectToServiceAction")
+    @RefreshScope
     public Action redirectToServiceAction() {
         return new RedirectToServiceAction(responseBuilderLocator);
     }
