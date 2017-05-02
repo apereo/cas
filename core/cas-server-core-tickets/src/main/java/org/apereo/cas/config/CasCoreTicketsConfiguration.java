@@ -123,6 +123,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @ConditionalOnMissingBean(name = "ticketGrantingTicketUniqueIdGenerator")
     @Bean
+    @RefreshScope
     public UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.TicketGrantingTicketIdGenerator(
                 casProperties.getTicket().getTgt().getMaxLength(),
@@ -178,7 +179,6 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistry")
-    @RefreshScope
     @Bean
     public TicketRegistry ticketRegistry() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
@@ -213,6 +213,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @ConditionalOnMissingBean(name = "serviceTicketExpirationPolicy")
     @Bean
+    @RefreshScope
     public ExpirationPolicy serviceTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
                 casProperties.getTicket().getSt().getNumberOfUses(),
