@@ -40,6 +40,8 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String grouperGroupField;
 
+    private Resource providerSelectorGroovyScript;
+    
     private U2F u2f = new U2F();
     private Azure azure = new Azure();
     private Trusted trusted = new Trusted();
@@ -48,6 +50,14 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private GAuth gauth = new GAuth();
     private List<Duo> duo = new ArrayList<>();
     private Authy authy = new Authy();
+
+    public Resource getProviderSelectorGroovyScript() {
+        return providerSelectorGroovyScript;
+    }
+
+    public void setProviderSelectorGroovyScript(final Resource providerSelectorGroovyScript) {
+        this.providerSelectorGroovyScript = providerSelectorGroovyScript;
+    }
 
     public Resource getGroovyScript() {
         return groovyScript;

@@ -85,7 +85,8 @@ public class U2FConfiguration {
 
     @Autowired(required = false)
     @Qualifier("multifactorAuthenticationProviderSelector")
-    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector = new FirstMultifactorAuthenticationProviderSelector();
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
+            new FirstMultifactorAuthenticationProviderSelector();
 
     @Autowired
     @Qualifier("warnCookieGenerator")
