@@ -22,16 +22,25 @@ pip install virtualenv
 pip install locustio
 ```
 
-Download the Locust test script [from here](https://github.com/apereo/cas/blob/master/etc/loadtests/locustfile.py).
-
 Once you have the python modules installed in your `virtualenv`:
 
 ```bash
 virtualenv locusttests
 ```
 
-You may run the test script as such:
+Create a `credentials.csv` file that contains `username,password` entries used for load tests.
+
+```bash
+echo casuser,Mellon > credentials.csv
+```
+
+Download the Locust test script [from here](https://github.com/apereo/cas/blob/master/etc/loadtests/locustfile.py) and run it as such:
 
 ```bash
 locust -f locustfile.py --host=https://cas.example.org
+...
+[2017-05-02 16:31:49,742] test/INFO/locust.main: Starting web monitor at *:8089
+[2017-05-02 16:31:49,744] test/INFO/locust.main: Starting Locust 0.8a2
 ```
+
+Navigate to `http://localhost:8089` and proceed with starting the test swarm.
