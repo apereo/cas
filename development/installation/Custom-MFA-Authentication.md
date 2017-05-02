@@ -128,4 +128,4 @@ Do not forget to register the configuration class with CAS. [See this guide](Con
 
 ## Triggers
 
-The custom authentication webflow can be triggered using any of the [supported options(Configuring-Multifactor-Authentication-Triggers.html)
+The custom authentication webflow can be triggered using any of the [supported options](Configuring-Multifactor-Authentication-Triggers.html)

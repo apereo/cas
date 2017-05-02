@@ -2145,8 +2145,14 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
 
+# Activate MFA globally based on principal attributes and a groovy-based predicate
+# cas.authn.mfa.globalPrincipalAttributePredicate=file:/etc/cas/PredicateExample.groovy
+
 # Activate MFA based on a custom REST API/endpoint
 # cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
+
+# Activate MFA based on a Groovy script
+# cas.authn.mfa.groovyScript=file:/etc/cas/mfaGroovyTrigger.groovy
 
 # Activate MFA based on Internet2's Grouper
 # cas.authn.mfa.grouperGroupField=NAME|EXTENSION|DISPLAY_NAME|DISPLAY_EXTENSION
@@ -2162,6 +2168,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 # Identify the request content type for non-browser MFA requests
 # cas.authn.mfa.contentType=application/cas
+
+# Select MFA provider, if resolved more than one, via Groovy script
+# cas.authn.mfa.providerSelectorGroovyScript=file:/etc/cas/mfaGroovySelector.groovy
 ```
 
 ### Multifactor Trusted Device/Browser
