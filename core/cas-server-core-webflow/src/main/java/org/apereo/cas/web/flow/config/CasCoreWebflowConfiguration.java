@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.RedirectToServiceAction;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
+import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AdaptiveMultifactorAuthenticationPolicyEventResolver;
@@ -39,6 +40,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
@@ -130,6 +132,11 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector() {
+        final Resource script = casProperties.getAuthn().getMfa().getProviderSelectorGroovyScript();
+        if (script != null) {
+            return new GroovyScriptMultifactorAuthenticationProviderSelector(script);
+        }
+
         return new FirstMultifactorAuthenticationProviderSelector();
     }
 
