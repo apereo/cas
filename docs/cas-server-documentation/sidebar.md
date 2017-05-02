@@ -149,6 +149,7 @@ layout: null
 
 * [High Availability](#highavailability)
     *   [Overview](/$version/planning/High-Availability-Guide.html)
+    *   [Performance Testing](/$version/planning/High-Availability-Performance-Testing.html)
     *   [Service Discovery](/$version/installation/Service-Discovery-Guide.html)
     
 * [Protocols](#protocols)
