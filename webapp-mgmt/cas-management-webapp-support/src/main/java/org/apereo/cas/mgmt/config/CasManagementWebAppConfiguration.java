@@ -274,7 +274,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private String getDefaultServiceUrl() {
-        return casProperties.getMgmt().getServerName().concat(serverProperties.getContextPath()).concat("/callback");
+        return casProperties.getMgmt().getServerName().concat(serverProperties.getContextPath()).concat("/manage.html");
     }
 
     @Bean

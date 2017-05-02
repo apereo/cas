@@ -27,7 +27,7 @@ public class SamlMetadataController {
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataController.class);
-    private SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService;
+    private final SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService;
 
     /**
      * Instantiates a new Saml metadata controller.

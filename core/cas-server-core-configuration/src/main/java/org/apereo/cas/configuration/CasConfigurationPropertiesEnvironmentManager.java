@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.util.Assert;
 
 import java.io.File;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
 
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
-    
+
     @Autowired
     private Environment environment;
 
@@ -40,6 +41,15 @@ public class CasConfigurationPropertiesEnvironmentManager {
      */
     public File getStandaloneProfileConfigurationDirectory() {
         return environment.getProperty("cas.standalone.config", File.class, new File("/etc/cas/config"));
+    }
+
+    /**
+     * Gets standalone profile configuration file.
+     *
+     * @return the standalone profile configuration file
+     */
+    public File getStandaloneProfileConfigurationFile() {
+        return environment.getProperty("cas.standalone.config.file", File.class);
     }
 
     public String getApplicationName() {
@@ -72,12 +82,23 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * Rebind cas configuration properties.
      */
     public void rebindCasConfigurationProperties() {
+        rebindCasConfigurationProperties(this.binder);
+    }
+
+    /**
+     * Rebind cas configuration properties.
+     *
+     * @param binder the binder
+     */
+    public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder) {
+        Assert.notNull(binder, "Configuration binder cannot be null");
+        
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final Map<String, CasConfigurationProperties> map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
         final String name = map.keySet().iterator().next();
         LOGGER.debug("Reloading CAS configuration via [{}]", name);
         final Object e = applicationContext.getBean(name);
-        this.binder.postProcessBeforeInitialization(e, name);
+        binder.postProcessBeforeInitialization(e, name);
         final Object bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
         LOGGER.debug("Reloaded CAS configuration [{}]", name);

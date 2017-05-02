@@ -58,7 +58,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
         try {
             LOGGER.debug("Adding ticket [{}]", ticket);
-            final String redisKey = this.getTicketRedisKey(ticket.getId());
+            final String redisKey = RedisTicketRegistry.getTicketRedisKey(ticket.getId());
             // Encode first, then add
             final Ticket encodeTicket = this.encodeTicket(ticket);
             this.client.boundValueOps(redisKey)
@@ -72,7 +72,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Ticket getTicket(final String ticketId) {
         Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
         try {
-            final String redisKey = this.getTicketRedisKey(ticketId);
+            final String redisKey = RedisTicketRegistry.getTicketRedisKey(ticketId);
             final Ticket t = this.client.boundValueOps(redisKey).get();
             if (t != null) {
                 //Decoding add first
@@ -89,7 +89,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         Assert.notNull(this.client, NO_REDIS_CLIENT_IS_DEFINED);
 
         final Set<Ticket> tickets = new HashSet<>();
-        final Set<String> redisKeys = this.client.keys(this.getPatternTicketRedisKey());
+        final Set<String> redisKeys = this.client.keys(RedisTicketRegistry.getPatternTicketRedisKey());
         redisKeys.forEach(redisKey -> {
             final Ticket ticket = this.client.boundValueOps(redisKey).get();
             if (ticket == null) {
@@ -108,7 +108,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         try {
             LOGGER.debug("Updating ticket [{}]", ticket);
             final Ticket encodeTicket = this.encodeTicket(ticket);
-            final String redisKey = this.getTicketRedisKey(ticket.getId());
+            final String redisKey = RedisTicketRegistry.getTicketRedisKey(ticket.getId());
             this.client.boundValueOps(redisKey).set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {
@@ -132,12 +132,12 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     // Add a prefix as the key of redis
-    private String getTicketRedisKey(final String ticketId) {
+    private static String getTicketRedisKey(final String ticketId) {
         return CAS_TICKET_PREFIX + ticketId;
     }
 
     // pattern all ticket redisKey
-    private String getPatternTicketRedisKey() {
+    private static String getPatternTicketRedisKey() {
         return CAS_TICKET_PREFIX + "*";
     }
 }

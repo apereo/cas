@@ -13,7 +13,7 @@ public class CasAuthenticationPrincipalResolvedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1862937393594313844L;
     
-    private Principal principal;
+    private final Principal principal;
 
 
     /**

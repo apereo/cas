@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  * @since 5.1.0
  */
 public class AuthenticationRiskScore {
-    private BigDecimal score;
+    private final BigDecimal score;
 
     public AuthenticationRiskScore(final BigDecimal score) {
         this.score = score;

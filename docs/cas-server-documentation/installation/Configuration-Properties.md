@@ -10,8 +10,7 @@ line switches](Configuration-Management.html#overview). This section provides a 
 references to the underlying modules that consume them.
 
 <div class="alert alert-info"><strong>Be Selective</strong><p>
-This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings
-into your CAS configuration; rather pick only the properties that you need.</p></div>
+This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you need.</p></div>
 
 Note that property names can be specified
 in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property`
@@ -26,216 +25,9 @@ simply declaring and configuring properties listed below is sufficient. You shou
 explicitly massage a CAS XML configuration file to design an authentication handler,
 create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
 
-## Remember
+## General
 
-Take note of the following suggestions before you start with the configuration.
-
-### Naming Convention
-
-- Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`.
-All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas
-and syntax. **BE CAREFUL** with the distinction.
-
-- Unrecognized properties are generally ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
-misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
-ignored by CAS and likely the feature it controls will never be activated in the way you intend.
-
-### Indexed Settings
-
-CAS settings able to accept multiple values are typically documented with an index, such as `cas.some.setting[0]=value`.
-The index `[0]` is meant to be incremented by the adopter to allow for distinct multiple configuration blocks:
-
-```properties
-# cas.some.setting[0]=value1
-# cas.some.setting[1]=value2
-```
-
-### Trust But Verify
-
-If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
-Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
-
-<div class="alert alert-info"><strong>Keep It Simple</strong><p>If you do not know or cannot tell what a setting does, you do not need it.</p></div>
-
-### Time Unit of Measure
-
-All CAS settings that deal with time units, unless noted otherwise,
-should support the duration syntax for full clarity on unit of measure:
-
-```bash
-"PT20S"     -- parses as "20 seconds"
-"PT15M"     -- parses as "15 minutes"
-"PT10H"     -- parses as "10 hours"
-"P2D"       -- parses as "2 days"
-"P2DT3H4M"  -- parses as "2 days, 3 hours and 4 minutes"
-```
-
-The native numeric syntax is still supported though you will have to refer to the docs
-in each case to learn the exact unit of measure.
-
-### Authentication Credential Selection
-
-A number of authentication handlers are allowed to determine whether they can operate on the provided credential
-and as such lend themselves to be tried and tested during the authentication handler selection phase. The credential criteria
-may either be a regular expression pattern that is tested against the credential identifier, or it may be a fully qualified
-class name of your own design that looks similar to:
-
-```java
-import java.util.function.Predicate;
-import org.apereo.cas.authentication.Credential;
-
-public class PredicateExample implements Predicate<Credential> {
-    @Override
-    public boolean test(final Credential credential) {
-        // Examine the credential and return true/false
-    }
-}
-```
-
-### Password Encoding
-
-Certain aspects of CAS such as authentication handling support configuration of
-password encoding. Most options are based on Spring Security's [support for password encoding](http://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/password/PasswordEncoder.html).
-
-The following options are supported:
-
-| Type                    | Description                            
-|-------------------------|----------------------------------------------------------------------------------------------------
-| `NONE`                  | No password encoding (i.e. plain-text) takes place.     
-| `DEFAULT`               | Use the `DefaultPasswordEncoder` of CAS. For message-digest algorithms via `characterEncoding` and `encodingAlgorithm`.
-| `BCRYPT`                | Use the `BCryptPasswordEncoder` based on the `strength` provided and an optional `secret`.     
-| `SCRYPT`                | Use the `SCryptPasswordEncoder`.
-| `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.  
-| `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.  
-| `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
-
-### Authentication Principal Transformation
-
-Authentication handlers that generally deal with username-password credentials
-can be configured to transform the user id prior to executing the authentication sequence.
-The following options may be used:
-
-| Type                    | Description
-|-------------------------|----------------------------------------------------------
-| `NONE`                  | Do not apply any transformations.
-| `UPPERCASE`             | Convert the username to uppercase.
-| `LOWERCASE`             | Convert the username to lowercase.
-
-### Hibernate & JDBC
-
-Control global properties that are relevant to Hibernate,
-when CAS attempts to employ and utilize database resources,
-connections and queries.
-
-```properties
-# cas.jdbc.showSql=true
-# cas.jdbc.genDdl=true
-```
-
-### Container-based JDBC Connections
-
-If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)
-then you can set the `dataSourceName` property on any of the configuration items that require a database
-connection. When using a container configured data source, many of the pool related parameters will not be used.
-If `dataSourceName` is specified but the JNDI lookup fails, a data source will be created with the configured 
-(or default) CAS pool parameters.
-
-The `dataSourceName` property can be either a JNDI name for the datasource or a resource name prefixed with 
-`java:/comp/env/`. If it is a resource name then you need an entry in a `web.xml` that you can add to your
-CAS overlay. It should contain an entry like this:
-
-```xml
-    <resource-ref>
-        <res-ref-name>jdbc/casDataSource</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>
-```
-
-In Apache Tomcat a container datasource can be defined like this in the `context.xml`:
-
-```xml
-<Resource name="jdbc/casDataSource"
-    auth="Container"
-    type="javax.sql.DataSource"
-    driverClassName="org.postgresql.Driver"
-    url="jdbc:postgresql://casdb.example.com:5432/xyz_db"
-    username="cas"
-    password="xyz"
-    testWhileIdle="true"
-    testOnBorrow="true"
-    testOnReturn="false"
-    validationQuery="select 1"
-    validationInterval="30000"
-    timeBetweenEvictionRunsMillis="30000"
-    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-    minIdle="0"
-    maxIdle="5"
-    initialSize="0"
-    maxActive="20"
-    maxWait="10000" />
-```
-
-Or in Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file like this:
-
-```xml
-<?xml version="1.0"?>
-<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd">
-
-<Configure class="org.eclipse.jetty.webapp.WebAppContext">
-<New id="datasource.cas" class="org.eclipse.jetty.plus.jndi.Resource">
-    <Arg></Arg> <!-- empty scope arg is JVM scope -->
-    <Arg>jdbc/casDataSource</Arg> <!-- name that matches resource in web.xml-->
-    <Arg>
-        <New class="org.apache.commons.dbcp.BasicDataSource">
-            <Set name="driverClassName">oracle.jdbc.OracleDriver</Set>
-            <Set name="url">jdbc:oracle:thin:@//casdb.example.com:1521/ntrs"</Set>
-            <Set name="username">cas</Set>
-            <Set name="password">xyz</Set>
-            <Set name="validationQuery">select dummy from dual</Set>
-            <Set name="testOnBorrow">true</Set>
-            <Set name="testOnReturn">false</Set>
-            <Set name="testWhileIdle">false</Set>
-            <Set name="defaultAutoCommit">false</Set>
-            <Set name="initialSize">0</Set>
-            <Set name="maxActive">15</Set>
-            <Set name="minIdle">0</Set>
-            <Set name="maxIdle">5</Set>
-            <Set name="maxWait">2000</Set>
-        </New>
-    </Arg>
-</New>
-</Configure>
-```
-
-### Signing & Encryption
-
-A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to 
-manually and beforehand create the signing and encryption keys.
-
-Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) 
-of a cerain size for the key, you are to use the following set of commands to generate the token:
-
-```bash
-wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
-java -jar jwk-gen.jar -t oct -s [size]
-```
-
-### DDL Configuration
-
-Note that the default value for Hibernate's DDL setting is `create-drop`
-which may not be appropriate for use in production. Setting the value to
-`validate` may be more desirable, but any of the following options can be used:
-
-| Type                 | Description                            
-|----------------------|----------------------------------------------------------
-| `validate`           | Validate the schema, but make no changes to the database.
-| `update`             | Update the schema.
-| `create`             | Create the schema, destroying previous data.
-| `create-drop`        | Drop the schema at the end of the session.
-
-For more information on configuration of transaction levels and propagation behaviors,
-please review [this guide](http://docs.spring.io/spring-framework/docs/current/javadoc-api/).
+A number of CAS configuration options equally apply to a number of modules and features. To understand and take note of those options, please [review this guide](Configuration-Properties-Common.html).
 
 ## Configuration Storage
 
@@ -243,6 +35,9 @@ please review [this guide](http://docs.spring.io/spring-framework/docs/current/j
 
 CAS by default will attempt to locate settings and properties inside a given directory indicated 
 under the setting name `cas.standalone.config` and otherwise falls back to using `/etc/cas/config`.
+
+There also exists a `cas.standalone.config.file` which can be used to directly feed a collection of properties
+to CAS in form of a file or classpath resource. This is specially useful in cases where a bare CAS server is deployed in the cloud without the extra ceremony of a configuration server or an external directory for that matter and the deployer wishes to avoid overriding embedded configuration files.
 
 ### Spring Cloud
 
@@ -621,7 +416,7 @@ management.security.sessions=if_required
 
 # IP address may be enough to protect all endpoints.
 # If you wish to protect the admin pages via CAS itself, configure the rest.
-# cas.adminPagesSecurity.ip=a^
+# cas.adminPagesSecurity.ip=127\.0\.0\.1
 # cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
 # cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
 # cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
@@ -701,6 +496,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 
 # cas.monitor.endpoints.singleSignOnStatus.enabled=false
 # cas.monitor.endpoints.singleSignOnStatus.sensitive=true
+
+# cas.monitor.endpoints.springWebflowReport.enabled=false
+# cas.monitor.endpoints.springWebflowReport.sensitive=true
 ```
 
 ### Securing Endpoints With Spring Security
@@ -755,6 +553,7 @@ security.basic.realm=CAS
 # cas.adminPagesSecurity.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.adminPagesSecurity.jdbc.idleTimeout=5000
 # cas.adminPagesSecurity.jdbc.dataSourceName=
+# cas.adminPagesSecurity.jdbc.dataSourceProxy=false
 ```
 
 #### LDAP Authentication
@@ -1089,6 +888,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].pool.maxSize=18
 # cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
 # cas.authn.attributeRepository.jdbc[0].dataSourceName=
+# cas.authn.attributeRepository.jdbc[0].dataSourceProxy=false
 ```
 
 ### Grouper
@@ -1251,6 +1051,7 @@ same IP address.
 # cas.authn.throttle.jdbc.pool.maxSize=18
 # cas.authn.throttle.jdbc.pool.maxWait=2000
 # cas.authn.throttle.jdbc.dataSourceName=
+# cas.authn.throttle.jdbc.dataSourceProxy=false
 ```
 
 ## Adaptive Authentication
@@ -1513,6 +1314,7 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].name=
 # cas.authn.jdbc.query[0].order=0
 # cas.authn.jdbc.query[0].dataSourceName=
+# cas.authn.jdbc.query[0].dataSourceProxy=false
 
 # cas.authn.jdbc.query[0].fieldPassword=password
 # cas.authn.jdbc.query[0].fieldExpired=
@@ -1558,6 +1360,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].name=
 # cas.authn.jdbc.search[0].order=0
 # cas.authn.jdbc.search[0].dataSourceName=
+# cas.authn.jdbc.search[0].dataSourceProxy=false
 
 # cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
@@ -1595,6 +1398,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].name=
 # cas.authn.jdbc.bind[0].order=0
 # cas.authn.jdbc.bind[0].dataSourceName=
+# cas.authn.jdbc.bind[0].dataSourceProxy=false
 # cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
@@ -1646,6 +1450,7 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].name=
 # cas.authn.jdbc.encode[0].order=0
 # cas.authn.jdbc.encode[0].dataSourceName=
+# cas.authn.jdbc.encode[0].dataSourceProxy=false
 # cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
@@ -2329,22 +2134,43 @@ strategies when collecting principal attributes:
 To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
 
 ```properties
+# Activate MFA globally for all, regardless of other settings
 # cas.authn.mfa.globalProviderId=mfa-duo
 
+# Activate MFA globally based on authentication metadata attributes
 # cas.authn.mfa.globalAuthenticationAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.globalAuthenticationAttributeValueRegex=faculty|staff
 
+# Activate MFA globally based on principal attributes
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
 
+# Activate MFA globally based on principal attributes and a groovy-based predicate
+# cas.authn.mfa.globalPrincipalAttributePredicate=file:/etc/cas/PredicateExample.groovy
+
+# Activate MFA based on a custom REST API/endpoint
 # cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
 
+# Activate MFA based on a Groovy script
+# cas.authn.mfa.groovyScript=file:/etc/cas/mfaGroovyTrigger.groovy
+
+# Activate MFA based on Internet2's Grouper
 # cas.authn.mfa.grouperGroupField=NAME|EXTENSION|DISPLAY_NAME|DISPLAY_EXTENSION
 
+# Activate MFA based on an optional request parameter
 # cas.authn.mfa.requestParameter=authn_method
+
+# Describe the global failure mode in case provider cannot be reached
 # cas.authn.mfa.globalFailureMode=CLOSED
+
+# Design the attribute chosen to communicate the authentication context
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
+
+# Identify the request content type for non-browser MFA requests
 # cas.authn.mfa.contentType=application/cas
+
+# Select MFA provider, if resolved more than one, via Groovy script
+# cas.authn.mfa.providerSelectorGroovyScript=file:/etc/cas/mfaGroovySelector.groovy
 ```
 
 ### Multifactor Trusted Device/Browser
@@ -2386,6 +2212,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 # cas.authn.mfa.trusted.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.mfa.trusted.jpa.idleTimeout=5000
 # cas.authn.mfa.trusted.jpa.dataSourceName=
+# cas.authn.mfa.trusted.jpa.dataSourceProxy=false
 
 # cas.authn.mfa.trusted.jpa.pool.suspension=false
 # cas.authn.mfa.trusted.jpa.pool.minSize=6
@@ -2484,6 +2311,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.jpa.database.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.mfa.gauth.jpa.database.idleTimeout=5000
 # cas.authn.mfa.gauth.jpa.database.dataSourceName=
+# cas.authn.mfa.gauth.jpa.database.dataSourceProxy=false
 
 # cas.authn.mfa.gauth.jpa.database.pool.suspension=false
 # cas.authn.mfa.gauth.jpa.database.pool.minSize=6
@@ -2817,6 +2645,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.zendesk.nameIdAttribute=email
 ```
 
+### Gartner
+
+```properties
+# cas.samlSP.gartner.metadata=/path/to/gartner-metadata.xml
+# cas.samlSP.gartner.name=Gartner
+# cas.samlSP.gartner.description=Gartner Integration
+# cas.samlSP.gartner.attributes=urn:oid:2.5.4.42,urn:oid:2.5.4.4,urn:oid:0.9.2342.19200300.100.1.3
+```
+
 ### Arc GIS
 
 ```properties
@@ -2988,19 +2825,33 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 
 ```properties
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
+
+# Skew ID tokens in minutes
 # cas.authn.oidc.skew=5
+
 # cas.authn.oidc.jwksFile=file:/keystore.jwks
 # cas.authn.oidc.jwksCacheInMinutes=60
+
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
+
 # cas.authn.oidc.subjectTypes=public,pairwise
+
+# Supported scopes
 # cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
+
+# Supported claims
 # cas.authn.oidc.claims=sub,name,preferred_username,family_name, \
 #    given_name,middle_name,given_name,profile, \
 #    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
 #    email,email_verified,phone_number,phone_number_verified,address
 
+# Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
 # cas.authn.oidc.userDefinedScopes.scope2=cn,givenName,photos,customAttribute2
+
+# Map fixed claims to CAS attributes
+# cas.authn.oidc.claimsMap.given_name=custom-given-name
+# cas.authn.oidc.claimsMap.preferred_username=global-user-attribute
 ```
 
 ## Pac4j Delegated AuthN
@@ -3389,6 +3240,7 @@ Store audit logs inside a database.
 # cas.audit.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.audit.jdbc.idleTimeout=5000
 # cas.audit.jdbc.dataSourceName=
+# cas.audit.jdbc.dataSourceProxy=false
 
 # cas.audit.jdbc.pool.suspension=false
 # cas.audit.jdbc.pool.minSize=6
@@ -3464,6 +3316,7 @@ for authentication or attribute retrieval.
 # cas.monitor.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.monitor.jdbc.idleTimeout=5000
 # cas.monitor.jdbc.dataSourceName=
+# cas.monitor.jdbc.dataSourceProxy=false
 ```
 
 ### LDAP Connection Pool
@@ -3570,6 +3423,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.events.jpa.idleTimeout=5000
 # cas.events.jpa.dataSourceName=
+# cas.events.jpa.dataSourceProxy=false
 
 # cas.events.jpa.pool.suspension=false
 # cas.events.jpa.pool.minSize=6
@@ -3809,6 +3663,7 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.serviceRegistry.jpa.idleTimeout=5000
 # cas.serviceRegistry.jpa.dataSourceName=
+# cas.serviceRegistry.jpa.dataSourceProxy=false
 
 # cas.serviceRegistry.jpa.pool.suspension=false
 # cas.serviceRegistry.jpa.pool.minSize=6
@@ -3862,6 +3717,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.ticket.registry.jpa.idleTimeout=5000
 # cas.ticket.registry.jpa.dataSourceName=
+# cas.ticket.registry.jpa.dataSourceProxy=false
 
 # cas.ticket.registry.jpa.pool.suspension=false
 # cas.ticket.registry.jpa.pool.minSize=6
@@ -4251,6 +4107,8 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
 
 ```properties
+# server.contextPath=/cas-management
+
 # cas.mgmt.adminRoles[0]=ROLE_ADMIN
 # cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
 
@@ -4617,6 +4475,7 @@ The following LDAP types are supported:
 # cas.authn.pm.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.pm.jdbc.idleTimeout=5000
 # cas.authn.pm.jdbc.dataSourceName=
+# cas.authn.pm.jdbc.dataSourceProxy=false
 
 # cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.pm.jdbc.passwordEncoder.characterEncoding=

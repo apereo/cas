@@ -150,7 +150,7 @@ public final class EncodingUtils {
             final boolean verified = jws.verifySignature();
             if (verified) {
                 final String payload = jws.getPayload();
-                LOGGER.debug("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
+                LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
                 return EncodingUtils.decodeBase64(payload);
             }
             return null;

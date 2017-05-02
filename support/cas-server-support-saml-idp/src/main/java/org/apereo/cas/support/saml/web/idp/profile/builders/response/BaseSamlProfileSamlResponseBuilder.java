@@ -49,9 +49,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
+    private final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
 
-    private SamlObjectEncrypter samlObjectEncrypter;
+    private final SamlObjectEncrypter samlObjectEncrypter;
 
     public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                               final BaseSamlObjectSigner samlObjectSigner,

@@ -49,10 +49,10 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @Autowired
     private ConfigurableEnvironment environment;
 
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("configurationPropertiesEnvironmentManager")
     private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
-        
+
     private CasConfigurationProperties casProperties;
 
     public ConfigurationStateController(final CasConfigurationProperties casProperties) {

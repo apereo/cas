@@ -28,7 +28,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleMapsGeoLocationService.class);
 
-    private GeoApiContext context;
+    private final GeoApiContext context;
 
     public GoogleMapsGeoLocationService(final GoogleMapsProperties properties) {
         if (properties.isGoogleAppsEngine()) {
