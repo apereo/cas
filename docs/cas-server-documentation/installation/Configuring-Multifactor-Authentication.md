@@ -124,7 +124,24 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 In the event that multiple multifactor authentication providers are determined for a multifactor authentication transaction, by default CAS will attempt to sort the collection of providers based on their rank and will pick one with the highest priority. This use case may arise if multiple triggers are defined where each decides on a different multifactor authentication provider, or the same provider instance is configured multiple times with many instances.
 
-Provider selection may also be carried out using Groovy scripting strategies more dynamically. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+Provider selection may also be carried out using Groovy scripting strategies more dynamically. The following example should serve as an outline of how to select multifactor providers based on a Groovy script:
+
+```groovy
+import java.util.*
+
+class SampleGroovyProviderSelection {
+    def String run(final Object... args) {
+        def service = args[0]
+        def principal = args[1]
+        def providersCollection = args[2]
+        def logger = args[3]
+        ...
+        return "mfa-duo"
+    }
+}
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
 ## Ranking Providers
 
