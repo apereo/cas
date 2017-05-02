@@ -110,11 +110,11 @@ Load settings from a MongoDb instance.
 Load settings from an Apache ZooKeeper instance.
 
 ```properties
-spring.cloud.zookeeper.connectString=localhost:2181
-spring.cloud.zookeeper.enabled=true
-spring.cloud.zookeeper.config.enabled=true
-spring.cloud.zookeeper.maxRetries=10
-spring.cloud.zookeeper.config.root=cas/config
+# spring.cloud.zookeeper.connectString=localhost:2181
+# spring.cloud.zookeeper.enabled=true
+# spring.cloud.zookeeper.config.enabled=true
+# spring.cloud.zookeeper.maxRetries=10
+# spring.cloud.zookeeper.config.root=cas/config
 ```
 
 ### DynamoDb
@@ -151,10 +151,10 @@ secured, [please review this guide](Configuration-Properties-Security.html).
 ### Standalone
 
 ```properties
-cas.standalone.config.security.alg=PBEWithMD5AndTripleDES
-cas.standalone.config.security.provider=BC
-cas.standalone.config.security.iterations=
-cas.standalone.config.security.psw=
+# cas.standalone.config.security.alg=PBEWithMD5AndTripleDES
+# cas.standalone.config.security.provider=BC
+# cas.standalone.config.security.iterations=
+# cas.standalone.config.security.psw=
 ```
 
 The above settings may be passed to CAS using any of the [strategies outline here](Configuration-Management.html#overview),
