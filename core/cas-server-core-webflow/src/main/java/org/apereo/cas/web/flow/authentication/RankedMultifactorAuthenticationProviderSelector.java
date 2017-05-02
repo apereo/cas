@@ -13,14 +13,15 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * This is {@link FirstMultifactorAuthenticationProviderSelector}
- * that grabs onto the first authentication provider in the collection.
+ * This is {@link RankedMultifactorAuthenticationProviderSelector}
+ * that sorts providers based on their rank and picks the one with
+ * the highest priority.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class FirstMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FirstMultifactorAuthenticationProviderSelector.class);
+public class RankedMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RankedMultifactorAuthenticationProviderSelector.class);
 
     @Override
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,

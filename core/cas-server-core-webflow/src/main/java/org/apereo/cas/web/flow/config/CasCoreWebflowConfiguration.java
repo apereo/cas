@@ -16,7 +16,7 @@ import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.RedirectToServiceAction;
-import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
+import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -137,7 +137,7 @@ public class CasCoreWebflowConfiguration {
             return new GroovyScriptMultifactorAuthenticationProviderSelector(script);
         }
 
-        return new FirstMultifactorAuthenticationProviderSelector();
+        return new RankedMultifactorAuthenticationProviderSelector();
     }
 
     @ConditionalOnMissingBean(name = "initialAuthenticationAttemptWebflowEventResolver")
