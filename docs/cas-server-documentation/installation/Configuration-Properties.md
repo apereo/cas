@@ -2170,6 +2170,23 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.providerSelectorGroovyScript=file:/etc/cas/mfaGroovySelector.groovy
 ```
 
+The following example should serve as an outline of how to select multifactor providers based on a Groovy script:
+
+```groovy
+import java.util.*
+
+class SampleGroovyProviderSelection {
+    def String run(final Object... args) {
+        def service = args[0]
+        def principal = args[1]
+        def providersCollection = args[2]
+        def logger = args[3]
+        ...
+        return "mfa-duo"
+    }
+}
+```
+
 ### Multifactor Trusted Device/Browser
 
 To learn more about this topic, [please review this guide](Multifactor-TrustedDevice-Authentication.html).
