@@ -38,8 +38,11 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalAttributeMultifactorAuthenticationPolicyEventResolver.class);
 
-    private final String globalPrincipalAttributeValueRegex;
-    private final Set<String> attributeNames;
+    /** Principal attribute value regex. */
+    protected final String globalPrincipalAttributeValueRegex;
+
+    /** Principal attribute names. */
+    protected final Set<String> attributeNames;
 
     public PrincipalAttributeMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                           final CentralAuthenticationService centralAuthenticationService,
@@ -78,21 +81,68 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
             return null;
         }
 
+        return resolveMultifactorAuthenticationProvider(context, service, principal, providerMap);
+    }
+
+    /**
+     * Resolve multifactor authentication provider set.
+     *
+     * @param context     the context
+     * @param service     the service
+     * @param principal   the principal
+     * @param providerMap the provider map
+     * @return the set
+     */
+    protected Set<Event> resolveMultifactorAuthenticationProvider(final RequestContext context, final RegisteredService service,
+                                                                  final Principal principal,
+                                                                  final Map<String, MultifactorAuthenticationProvider> providerMap) {
         final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(providerMap.values());
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
-            final MultifactorAuthenticationProvider provider = providers.iterator().next();
-            LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
-            return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-                    input -> input != null && input.matches(globalPrincipalAttributeValueRegex));
+            return resolveSingleMultifactorProvider(context, service, principal, providers);
         }
 
+        return resolveMultifactorProviderViaPredicate(context, service, principal, providers);
+    }
+
+    /**
+     * Resolve multifactor provider by regex predicate set.
+     *
+     * @param context   the context
+     * @param service   the service
+     * @param principal the principal
+     * @param providers the providers
+     * @return the set
+     */
+    protected Set<Event> resolveMultifactorProviderViaPredicate(final RequestContext context,
+                                                                final RegisteredService service,
+                                                                final Principal principal,
+                                                                final Collection<MultifactorAuthenticationProvider> providers) {
         return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
                 input -> providers.stream()
                         .filter(provider -> input != null && provider.matches(input))
                         .count() > 0);
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+    /**
+     * Resolve single multifactor provider set.
+     *
+     * @param context   the context
+     * @param service   the service
+     * @param principal the principal
+     * @param providers the providers
+     * @return the set
+     */
+    protected Set<Event> resolveSingleMultifactorProvider(final RequestContext context, final RegisteredService service,
+                                                          final Principal principal,
+                                                          final Collection<MultifactorAuthenticationProvider> providers) {
+        final MultifactorAuthenticationProvider provider = providers.iterator().next();
+        LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
+        return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
+                input -> input != null && input.matches(globalPrincipalAttributeValueRegex));
+    }
+
+    @Audit(action = "AUTHENTICATION_EVENT",
+            actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {

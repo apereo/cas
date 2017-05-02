@@ -2145,6 +2145,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
 
+# Activate MFA globally based on principal attributes and a groovy-based predicate
+# cas.authn.mfa.globalPrincipalAttributePredicate=file:/etc/cas/PredicateExample.groovy
+
 # Activate MFA based on a custom REST API/endpoint
 # cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
 
@@ -2168,23 +2171,6 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 # Select MFA provider, if resolved more than one, via Groovy script
 # cas.authn.mfa.providerSelectorGroovyScript=file:/etc/cas/mfaGroovySelector.groovy
-```
-
-The following example should serve as an outline of how to select multifactor providers based on a Groovy script:
-
-```groovy
-import java.util.*
-
-class SampleGroovyProviderSelection {
-    def String run(final Object... args) {
-        def service = args[0]
-        def principal = args[1]
-        def providersCollection = args[2]
-        def logger = args[3]
-        ...
-        return "mfa-duo"
-    }
-}
 ```
 
 ### Multifactor Trusted Device/Browser
