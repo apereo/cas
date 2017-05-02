@@ -133,7 +133,7 @@ public class LdapAuthenticationConfiguration {
     }
 
 
-    private Predicate<LdapAuthenticationProperties> ldapInstanceConfigurationPredicate() {
+    private static Predicate<LdapAuthenticationProperties> ldapInstanceConfigurationPredicate() {
         return l -> {
             if (l.getType() == null) {
                 LOGGER.warn("Skipping ldap authentication entry since no type is defined");

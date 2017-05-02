@@ -33,7 +33,7 @@ public class X509CertificateCredential extends AbstractCredential {
     /**
      * The collection of certificates sent with the request.
      */
-    private X509Certificate[] certificates;
+    private final X509Certificate[] certificates;
 
     /**
      * The certificate that we actually use.

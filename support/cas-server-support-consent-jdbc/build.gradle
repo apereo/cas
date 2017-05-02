@@ -1,0 +1,8 @@
+description = "Apereo CAS Consent JDBC Support"
+dependencies {
+    compile project(":core:cas-server-core-web")
+    compile project(":support:cas-server-support-consent-api")
+    compile project(":core:cas-server-core-configuration")
+    implementation libraries.quartz
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+}

@@ -11,7 +11,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 public class FieldHelper {
-    private Map<String, Field> fieldCache = new HashMap<>();
+    private final Map<String, Field> fieldCache = new HashMap<>();
 
     /**
      * Gets the field value.

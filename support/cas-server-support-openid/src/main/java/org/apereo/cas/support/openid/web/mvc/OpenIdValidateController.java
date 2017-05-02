@@ -24,7 +24,6 @@ import java.util.Map;
  */
 public class OpenIdValidateController extends AbstractServiceValidateController {
 
-    private static final String VIEW_MODEL_KEY_PARAMETERS = "parameters";
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdValidateController.class);
 
     private final ServerManager serverManager;
@@ -47,10 +46,10 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
             if (message.isSignatureVerified()) {
                 LOGGER.debug("Signature verification request successful.");
-                return new ModelAndView(getSuccessView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
+                return new ModelAndView(getSuccessView(), parameters);
             }
             LOGGER.debug("Signature verification request unsuccessful.");
-            return new ModelAndView(getFailureView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
+            return new ModelAndView(getFailureView(), parameters);
         }
         // we should probably fail here(?),
         // since we only deal OpenId signature verification

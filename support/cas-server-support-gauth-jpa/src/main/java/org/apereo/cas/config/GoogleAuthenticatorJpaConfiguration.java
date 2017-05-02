@@ -74,7 +74,6 @@ public class GoogleAuthenticatorJpaConfiguration {
                                 dataSourceGoogleAuthenticator()),
                         casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
 
-        bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
     }
 

@@ -1,16 +1,13 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyObject;
-import org.apache.commons.collections.map.HashedMap;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ScriptingUtils;
 import org.apereo.services.persondir.support.BaseGroovyScriptDaoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,10 +39,10 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
     @Override
     public Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(final Map<String, List<Object>> attributes) {
         if (attributes.containsKey("username")) {
-            final List<Object> a = attributes.get("username");
-            if (!a.isEmpty()) {
+            final List<Object> username = attributes.get("username");
+            if (!username.isEmpty()) {
                 final Map<String, List<Object>> results = new HashMap<>();
-                final Map<String, Object> attrs = getAttributesForUser(a.get(0).toString());
+                final Map<String, Object> attrs = getAttributesForUser(username.get(0).toString());
                 LOGGER.debug("Groovy-based attributes found are [{}]", attrs);
                 attrs.forEach((k, v) -> {
                     final List<Object> values = new ArrayList<>(CollectionUtils.toCollection(v));
@@ -60,27 +57,12 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
 
     @Override
     public Map<String, Object> getAttributesForUser(final String uid) {
-        final Map<String, Object> finalAttributes = new HashedMap();
+        final Map<String, Object> finalAttributes = new HashMap<>();
         casProperties.getAuthn().getAttributeRepository().getGroovy().forEach(groovy -> {
-            final ClassLoader parent = getClass().getClassLoader();
-            try (GroovyClassLoader loader = new GroovyClassLoader(parent)) {
-                if (groovy.getConfig().getLocation() != null) {
-                    final File groovyFile = groovy.getConfig().getLocation().getFile();
-                    if (groovyFile.exists()) {
-                        final Class<?> groovyClass = loader.parseClass(groovyFile);
-                        LOGGER.debug("Loaded groovy class [{}] from script [{}]", groovyClass.getSimpleName(), groovyFile.getCanonicalPath());
-                        final GroovyObject groovyObject = (GroovyObject) groovyClass.newInstance();
-                        LOGGER.debug("Created groovy object instance from class [{}]", groovyFile.getCanonicalPath());
-                        final Object[] args = {uid, LOGGER, casProperties, applicationContext};
-                        LOGGER.debug("Executing groovy script's run method, with parameters [{}]", args);
-                        final Map<String, Object> personAttributesMap = (Map<String, Object>) groovyObject.invokeMethod("run", args);
-                        LOGGER.debug("Creating person attributes with the username [{}] and attributes [{}]", uid, personAttributesMap);
-                        finalAttributes.putAll(personAttributesMap);
-                    }
-                }
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+            final Object[] args = {uid, LOGGER, casProperties, applicationContext};
+            final Map<String, Object> personAttributesMap =
+                    ScriptingUtils.executeGroovyScript(groovy.getConfig().getLocation(), args, Map.class);
+            finalAttributes.putAll(personAttributesMap);
         });
 
         return finalAttributes;

@@ -8,5 +8,6 @@ dependencies {
     api libraries.jose4j
     api libraries.httpclient
     implementation libraries.bouncycastle
+    implementation libraries.groovy
 }
 

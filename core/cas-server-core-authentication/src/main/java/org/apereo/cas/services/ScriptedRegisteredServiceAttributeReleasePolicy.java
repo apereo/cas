@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.slf4j.Logger;
@@ -48,7 +49,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes,
+    protected Map<String, Object> getAttributesInternal(final Principal principal,
+                                                        final Map<String, Object> attributes,
                                                         final RegisteredService service) {
         try {
             if (StringUtils.isBlank(this.scriptFile)) {
@@ -65,7 +67,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
         return new HashMap<>();
     }
 
-    private Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes, final Matcher matcherInline) throws ScriptException {
+    private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes,
+                                                                           final Matcher matcherInline) throws ScriptException {
         final String script = matcherInline.group(1).trim();
         final ScriptEngine engine = new ScriptEngineManager().getEngineByName("groovy");
         if (engine == null) {

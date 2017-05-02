@@ -41,14 +41,14 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     private enum SsoSessionReportOptions {
         ALL("all"),
         PROXIED("proxied"),
         DIRECT("direct");
 
-        private String type;
+        private final String type;
 
         /**
          * Instantiates a new Sso session report options.
@@ -84,7 +84,7 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
         IS_PROXIED("is_proxied"),
         NUMBER_OF_USES("number_of_uses");
 
-        private String attributeKey;
+        private final String attributeKey;
 
         /**
          * Instantiates a new Sso session attribute keys.
