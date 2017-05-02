@@ -54,7 +54,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
             this.environment = environment;
         }
 
-        private String getSetting(final Environment environment, final String key) {
+        private static String getSetting(final Environment environment, final String key) {
             return environment.getProperty("cas.spring.cloud.jdbc." + key);
         }
 

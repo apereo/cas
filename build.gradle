@@ -54,7 +54,7 @@ buildscript {
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.gradle:build-scan-plugin:1.0"
         classpath "org.ajoberstar:grgit:1.7.2"
-        classpath "io.spring.gradle:dependency-management-plugin:1.0.1.RELEASE"
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.2.RELEASE"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
     }
@@ -226,8 +226,8 @@ subprojects {
     }
 
     checkstyle {
-        configFile new File(rootDir, "checkstyle-rules.xml")
-        configProperties = ["checkstyle.suppressions.file": new File(rootDir, "checkstyle-suppressions.xml")]
+        configFile new File(rootDir, "style/checkstyle-rules.xml")
+        configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
         ignoreFailures false
         showViolations true
         toolVersion "${checkstyleVersion}"
@@ -254,7 +254,7 @@ subprojects {
         reportsDir = file("$project.buildDir/findbugsReports")
         effort = "max"
         reportLevel = "low"
-        includeFilter = file("$rootProject.projectDir/findbugs-rules.xml")
+        includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
     }
 
     findbugsMain {

@@ -43,22 +43,17 @@ public class SingleSignOnSessionStatusController extends BaseCasMvcEndpoint {
     @ResponseBody
     public String getStatus(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        
+
+        response.setStatus(HttpStatus.OK.value());
         final String tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isBlank(tgtId)) {
-            response.setStatus(HttpStatus.GONE.value());
             return result(false);
         }
         final Authentication auth = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
-        if (auth == null) {
-            response.setStatus(HttpStatus.GONE.value());
-            return result(false);
-        }
-        response.setStatus(HttpStatus.OK.value());
-        return result(true);
+        return result(auth != null);
     }
 
-    private String result(final boolean res) {
+    private static String result(final boolean res) {
         return BooleanUtils.toStringYesNo(res);
     }
 }

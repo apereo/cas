@@ -58,7 +58,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         return serializeRelyingPartyToken(rpToken);
     }
 
-    private String serializeRelyingPartyToken(final Element rpToken) {
+    private static String serializeRelyingPartyToken(final Element rpToken) {
         try {
             final StringWriter sw = new StringWriter();
             final Transformer t = TransformerFactory.newInstance().newTransformer();
@@ -70,8 +70,8 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         }
     }
 
-    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
-                                                final Assertion assertion) {
+    private static void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
+                                                       final Assertion assertion) {
         try {
             final W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
             writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);

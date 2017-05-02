@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)"
+           xmlns:openid="http://openid.net/xmlns/1.0">
+<XRD>
+    <Service priority="1">
+        <Type>http://specs.openid.net/auth/2.0/signon</Type>
+        <URI>$casLoginUrl</URI>
+    </Service>
+</XRD>
+</xrds:XRDS>

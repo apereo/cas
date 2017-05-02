@@ -109,7 +109,7 @@ public class TerminateSessionAction extends AbstractAction {
         }
     }
 
-    private boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+    private static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
         return request.getParameterMap().containsKey("LogoutRequestConfirmed");
     }

@@ -14,7 +14,8 @@ public class YubiKeyMultifactorTrustWebflowConfigurer extends AbstractMultifacto
 
     private final FlowDefinitionRegistry flowDefinitionRegistry;
 
-    public YubiKeyMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean deviceRegistrationEnabled,
+    public YubiKeyMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                    final boolean deviceRegistrationEnabled,
                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled);
         flowDefinitionRegistry = loginFlowDefinitionRegistry;

@@ -113,7 +113,7 @@ public class DefaultCasEventListener {
         }
     }
 
-    private CasEvent prepareCasEvent(final AbstractCasEvent event) {
+    private static CasEvent prepareCasEvent(final AbstractCasEvent event) {
         final CasEvent dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());

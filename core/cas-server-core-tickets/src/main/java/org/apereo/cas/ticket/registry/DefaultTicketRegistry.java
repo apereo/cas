@@ -18,11 +18,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistry.class);
-    
+
     /**
      * A HashMap to contain the tickets.
      */
-    private Map<String, Ticket> cache;
+    private final Map<String, Ticket> cache;
 
     /**
      * Instantiates a new default ticket registry.
@@ -71,7 +71,11 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        return this.cache.remove(ticketId) != null;
+        final String encTicketId = encodeTicketId(ticketId);
+        if (encTicketId == null) {
+            return false;
+        }
+        return this.cache.remove(encTicketId) != null;
     }
 
     @Override

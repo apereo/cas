@@ -40,6 +40,8 @@ public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
                     CasWebflowConstants.TRANSITION_ID_WARN));
+            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+                    CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
             actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
 

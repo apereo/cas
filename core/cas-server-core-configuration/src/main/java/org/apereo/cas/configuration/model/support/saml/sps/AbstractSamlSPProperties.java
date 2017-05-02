@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.support.saml.sps;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link AbstractSamlSPProperties}.
@@ -67,6 +69,15 @@ public abstract class AbstractSamlSPProperties {
 
     public void setAttributes(final List<String> attributes) {
         this.attributes = attributes;
+    }
+
+    /**
+     * Sets attributes.
+     *
+     * @param attributes the attributes
+     */
+    public void setAttributes(final String... attributes) {
+        setAttributes(Stream.of(attributes).collect(Collectors.toList()));
     }
 
     public String getNameIdAttribute() {

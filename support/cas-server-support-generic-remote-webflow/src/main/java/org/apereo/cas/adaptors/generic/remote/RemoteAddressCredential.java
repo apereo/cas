@@ -16,7 +16,7 @@ public class RemoteAddressCredential extends AbstractCredential {
     /** Serialization version marker. */
     private static final long serialVersionUID = -3638145328441211073L;
 
-    private String remoteAddress;
+    private final String remoteAddress;
 
     /**
      * Instantiates a new remote address credential.

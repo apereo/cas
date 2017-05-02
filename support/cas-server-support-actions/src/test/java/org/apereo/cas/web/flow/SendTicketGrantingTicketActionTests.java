@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
@@ -49,7 +50,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
-    private SendTicketGrantingTicketAction action;
+    private Action action;
     
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")

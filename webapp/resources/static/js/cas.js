@@ -83,6 +83,20 @@ function disableEmptyInputFormSubmission() {
             $("#fm1 input[name=submit]").attr('disabled', 'true');
         }
     });
+
+    /**
+     * Handle auto-complete events to the extent possible.
+     */
+    setTimeout(function(){
+        var uid = $("#username").val();
+        if (uid != null && uid != "") {
+            $("#username").change();
+            $("#username").focus();
+            $("#fm1 input[name=submit]").removeAttr('disabled');
+        }
+
+    }, 100);
+
 }
 
 function resourceLoadedSuccessfully() {

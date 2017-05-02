@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleAccountsService> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceFactory.class);
 
-    private GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder;
+    private final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder;
 
     public GoogleAccountsServiceFactory(final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder) {
         this.googleSaml20ObjectBuilder = googleSaml20ObjectBuilder;

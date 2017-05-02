@@ -33,10 +33,10 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiTimeUseOrTimeoutExpirationPolicy.class);
 
-    @JsonProperty
+    @JsonProperty("timeToLive")
     private long timeToKillInSeconds;
 
-    @JsonProperty
+    @JsonProperty("numberOfUses")
     private int numberOfUses;
 
     /**
@@ -167,7 +167,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          */
         @JsonCreator
         public ServiceTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses,
-                                             @JsonProperty("timeToKillInSeconds")final long timeToKillInSeconds) {
+                                             @JsonProperty("timeToLive")final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }

@@ -197,7 +197,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param cert the cert
      * @return the url distribution points
      */
-    private URI[] getDistributionPoints(final X509Certificate cert) {
+    private static URI[] getDistributionPoints(final X509Certificate cert) {
         final List<DistributionPoint> points;
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
@@ -236,7 +236,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param list      the list
      * @param uriString the uri string
      */
-    private void addURL(final List<URI> list, final String uriString) {
+    private static void addURL(final List<URI> list, final String uriString) {
         try {
             URI uri;
             try {

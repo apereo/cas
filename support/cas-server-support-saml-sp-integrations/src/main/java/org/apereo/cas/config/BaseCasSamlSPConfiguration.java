@@ -42,7 +42,14 @@ public abstract class BaseCasSamlSPConfiguration {
     }
     
     protected abstract AbstractSamlSPProperties getServiceProvider();
-    
+
+    /**
+     * Finalize registered service.
+     * Template method to customize the service behavior
+     * and override default options.
+     *
+     * @param service the service
+     */
     protected void finalizeRegisteredService(final SamlRegisteredService service) {
     } 
 }

@@ -55,7 +55,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put(GIVEN_NAME, "John");
         this.givenAttributesMap.put("employeeId", "E1234");
         this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
-        this.givenAttributesMap.put("arrayAttribute", new String[] {"math", "science", "chemistry"});
+        this.givenAttributesMap.put("arrayAttribute", new String[]{"math", "science", "chemistry"});
         this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toSet()));
 
         final Map<String, String> mapAttributes = new HashMap<>();
@@ -86,7 +86,6 @@ public class RegisteredServiceRegexAttributeFilterTests {
         assertTrue(attrs.containsKey("memberOf"));
         assertTrue(attrs.containsKey("mapAttribute"));
 
-        @SuppressWarnings("unchecked")
         final Map<String, String> mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
         assertTrue(mapAttributes.containsKey(UID));
         assertTrue(mapAttributes.containsKey(FAMILY_NAME));
@@ -111,13 +110,14 @@ public class RegisteredServiceRegexAttributeFilterTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
 
-        final Map<String, Object> attr = policy.getAttributes(p, RegisteredServiceTestUtils.getRegisteredService("test"));
+        final Map<String, Object> attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
+                RegisteredServiceTestUtils.getRegisteredService("test"));
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey("attr3"));
 
         final byte[] data = SerializationUtils.serialize(policy);
         final ReturnAllowedAttributeReleasePolicy p2 =
-            SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
+                SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
         assertEquals(p2.getAttributeFilter(), policy.getAttributeFilter());
@@ -127,7 +127,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     public void verifySerialization() {
         final byte[] data = SerializationUtils.serialize(this.filter);
         final RegisteredServiceAttributeFilter secondFilter =
-            SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
+                SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
 

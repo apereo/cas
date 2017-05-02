@@ -33,9 +33,9 @@ import java.util.Optional;
 public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(RadiusTokenAuthenticationHandler.class);
     
-    private List<RadiusServer> servers;
-    private boolean failoverOnException;
-    private boolean failoverOnAuthenticationFailure;
+    private final List<RadiusServer> servers;
+    private final boolean failoverOnException;
+    private final boolean failoverOnAuthenticationFailure;
 
     public RadiusTokenAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                             final List<RadiusServer> servers,

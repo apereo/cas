@@ -106,7 +106,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             LOGGER.debug("Setting provided RequestId {} as InResponseTo", recipient);
             samlResponse.setInResponseTo(recipient);
         } else {
-            LOGGER.debug("No RequestId is provided. Skipping InResponseTo");
+            LOGGER.debug("No recipient is provided. Skipping InResponseTo");
         }
         return samlResponse;
     }

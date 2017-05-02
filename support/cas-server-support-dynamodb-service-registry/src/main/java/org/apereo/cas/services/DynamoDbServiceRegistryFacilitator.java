@@ -46,7 +46,7 @@ public class DynamoDbServiceRegistryFacilitator {
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbServiceRegistryFacilitator.class);
     private static final String TABLE_NAME = "DynamoDbCasServices";
 
-    private StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
+    private final StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
 
     private enum ColumnNames {
         ID("id"),

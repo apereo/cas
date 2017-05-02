@@ -140,8 +140,8 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         sanitizeAndTransformAttributeNames(attributes, registeredService);
     }
 
-    private void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
-                                                    final RegisteredService registeredService) {
+    private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
+                                                           final RegisteredService registeredService) {
         LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
 
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()

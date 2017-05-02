@@ -43,13 +43,15 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     @Override
     protected void prepareApprovalViewModel(final Map<String, Object> model, final J2EContext ctx, final OAuthRegisteredService svc) {
         super.prepareApprovalViewModel(model, ctx, svc);
-        final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) svc;
-        model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
-        model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
+        if (svc instanceof OidcRegisteredService) {
+            final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) svc;
+            model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
+            model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
 
-        final Set<String> supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getScopes());
-        supportedScopes.retainAll(oidcRegisteredService.getScopes());
-        supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
-        model.put("scopes", supportedScopes);
+            final Set<String> supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getScopes());
+            supportedScopes.retainAll(oidcRegisteredService.getScopes());
+            supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
+            model.put("scopes", supportedScopes);
+        }
     }
 }

@@ -49,7 +49,8 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     public InitialAuthenticationAttemptWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                             final CentralAuthenticationService centralAuthenticationService,
-                                                            final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                            final ServicesManager servicesManager,
+                                                            final TicketRegistrySupport ticketRegistrySupport,
                                                             final CookieGenerator warnCookieGenerator,
                                                             final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                             final MultifactorAuthenticationProviderSelector selector) {

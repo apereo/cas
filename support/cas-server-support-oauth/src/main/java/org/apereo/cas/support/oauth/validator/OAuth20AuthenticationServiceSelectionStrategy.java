@@ -52,7 +52,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
         return service;
     }
 
-    private Optional<NameValuePair> resolveClientIdFromService(final Service service) {
+    private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
             return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID)).findFirst();
@@ -62,7 +62,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
         return Optional.empty();
     }
 
-    private Optional<NameValuePair> resolveRedirectUri(final Service service) {
+    private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
             return builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI)).findFirst();

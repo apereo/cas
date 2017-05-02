@@ -36,8 +36,8 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      * @param webApplicationService the web application service
      * @return the service itself.
      */
-    private AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
-                                                                        final AbstractWebApplicationService webApplicationService) {
+    private static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
+                                                                               final AbstractWebApplicationService webApplicationService) {
         final String format = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_FORMAT) : null;
         try {
             if (StringUtils.isNotBlank(format)) {
@@ -57,8 +57,8 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      * @param serviceToUse the service to use
      * @return the simple web application service
      */
-    protected AbstractWebApplicationService newWebApplicationService(final HttpServletRequest request,
-                                                                     final String serviceToUse) {
+    protected static AbstractWebApplicationService newWebApplicationService(final HttpServletRequest request,
+                                                                            final String serviceToUse) {
         final String artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
         final String id = cleanupUrl(serviceToUse);
         final AbstractWebApplicationService newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);

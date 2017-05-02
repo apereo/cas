@@ -40,6 +40,16 @@ are considered in the following order:
 the CAS configuration, you should configure access
 to <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
+## Configuration Server
+
+CAS provides a built-in configuration server that is responsible for bootstrapping the configuration
+environment and loading of externalized settings in a distributed system. You may have a central
+place to manage external properties for CAS nodes across all environments. To learn more about how to manage the CAS configuration, please [review this guide](Configuration-Server-Management.html).
+
+## Extending CAS Configuration
+
+To learn more about how to extend and customize the CAS configuration, please [review this guide](Configuration-Management-Extensions.html).
+
 ## Auto Configuration Strategy
 
 To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
@@ -61,9 +71,4 @@ the auto-configuration strategy is ensure deployers aren't swimming in a sea of 
 configuring beans and such. CAS should take care of it all. If you find an instance where
 this claim does not hold, consider that a "bug" and file a feature request.</p></div>
 
-## Configuration Server
 
-CAS provides a built-in configuration server that is responsible for bootstrapping the configuration
-environment and loading of externalized settings in a distributed system. You may have a central
-place to manage external properties for CAS nodes across all environments. To learn more about how to manage the CAS configuration,
-please [review this guide](Configuration-Server-Management.html).

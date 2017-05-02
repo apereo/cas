@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
@@ -44,14 +45,18 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcProfileScopeToAttributesFilter.class);
 
     private Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
+    private Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
+
+    private final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper;
     private final PrincipalFactory principalFactory;
     private final ServicesManager servicesManager;
-    private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
 
     public OidcProfileScopeToAttributesFilter(final PrincipalFactory principalFactory,
                                               final ServicesManager servicesManager,
-                                              final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes) {
-        filters = new HashMap<>();
+                                              final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes,
+                                              final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper) {
+        this.attributeToScopeClaimMapper = attributeToScopeClaimMapper;
+        this.filters = new HashMap<>();
 
         final String packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
         final Reflections reflections =
@@ -79,28 +84,35 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                             final RegisteredService registeredService, final J2EContext context) {
         final Principal principal = super.filter(service, profile, registeredService, context);
 
-        final OidcRegisteredService oidcService = (OidcRegisteredService) registeredService;
-        final Collection<String> scopes = new ArrayList<>(OAuth20Utils.getRequestedScopes(context));
-        scopes.addAll(oidcService.getScopes());
+        if (registeredService instanceof OidcRegisteredService) {
+            final OidcRegisteredService oidcService = (OidcRegisteredService) registeredService;
+            final Collection<String> scopes = new ArrayList<>(OAuth20Utils.getRequestedScopes(context));
+            scopes.addAll(oidcService.getScopes());
 
-        if (!scopes.contains(OidcConstants.OPENID)) {
-            LOGGER.debug("Request does not indicate a scope [{}] that can identify OpenID Connect", scopes);
-            return principal;
+            if (!scopes.contains(OidcConstants.OPENID)) {
+                LOGGER.debug("Request does not indicate a scope [{}] that can identify OpenID Connect", scopes);
+                return principal;
+            }
+
+            final Map<String, Object> attributes = new HashMap<>();
+            filterAttributesByScope(scopes, attributes, principal, service, oidcService);
+            return this.principalFactory.createPrincipal(profile.getId(), attributes);
         }
-
-        final Map<String, Object> attributes = new HashMap<>();
-        filterAttributesByScope(scopes, attributes, principal, oidcService);
-        return this.principalFactory.createPrincipal(profile.getId(), attributes);
+        return principal;
     }
 
     private void filterAttributesByScope(final Collection<String> stream,
                                          final Map<String, Object> attributes,
-                                         final Principal principal, final RegisteredService registeredService) {
-        stream.stream().distinct()
+                                         final Principal principal,
+                                         final Service service,
+                                         final RegisteredService registeredService) {
+        stream.stream()
+                .distinct()
                 .filter(s -> this.filters.containsKey(s))
                 .forEach(s -> {
                     final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
-                    attributes.putAll(policy.getAttributes(principal, registeredService));
+                    policy.setAttributeToScopeClaimMapper(this.attributeToScopeClaimMapper);
+                    attributes.putAll(policy.getAttributes(principal, service, registeredService));
                 });
     }
 

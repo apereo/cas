@@ -6,6 +6,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Add all available attribute names to {@link FormData} for use by the edit service form.
@@ -31,8 +32,12 @@ public class AttributeFormDataPopulator implements FormDataPopulator {
 
     @Override
     public void populateFormData(final FormData formData) {
-        final List<String> possibleAttributeNames = new ArrayList<>(this.personAttributeDao.getPossibleUserAttributeNames());
-        Collections.sort(possibleAttributeNames);
+        final Set<String> possibleUserAttributeNames = this.personAttributeDao.getPossibleUserAttributeNames();
+        final List<String> possibleAttributeNames = new ArrayList<>();
+        if (possibleUserAttributeNames != null) {
+            possibleAttributeNames.addAll(possibleUserAttributeNames);
+            Collections.sort(possibleAttributeNames);
+        }
         formData.setAvailableAttributes(possibleAttributeNames);
     }
 }

@@ -21,18 +21,21 @@ import org.apereo.cas.web.report.MetricsController;
 import org.apereo.cas.web.report.PersonDirectoryAttributeResolutionController;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
+import org.apereo.cas.web.report.SpringWebflowReportController;
 import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.TrustedDevicesController;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -92,6 +95,8 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return new PersonDirectoryAttributeResolutionController(casProperties);
     }
 
+    @Profile("standalone")
+    @ConditionalOnBean(name = "configurationPropertiesEnvironmentManager")
     @Bean
     @RefreshScope
     public MvcEndpoint internalConfigController() {
@@ -123,11 +128,17 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
     }
 
+    @Bean
+    @RefreshScope
+    public MvcEndpoint swfReportController() {
+        return new SpringWebflowReportController(casProperties);
+    }
+
     @Autowired
     @Bean
     @RefreshScope
     public MvcEndpoint statisticsController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
-        return new StatisticsController(auditTrailManager, centralAuthenticationService, 
+        return new StatisticsController(auditTrailManager, centralAuthenticationService,
                 metricsRegistry, healthCheckRegistry, casProperties);
     }
 

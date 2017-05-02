@@ -36,15 +36,15 @@ public final class CollectionUtils {
             LOGGER.debug("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
-            LOGGER.debug("Converting multi-valued attribute [{}]", obj);
+            LOGGER.trace("Converting multi-valued attribute [{}]", obj);
         } else if (obj instanceof Map) {
             throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
         } else if (obj.getClass().isArray()) {
             Collections.addAll(c, obj);
-            LOGGER.debug("Converting array attribute [{}]", obj);
+            LOGGER.trace("Converting array attribute [{}]", obj);
         } else {
             c.add(obj);
-            LOGGER.debug("Converting attribute [{}]", obj);
+            LOGGER.trace("Converting attribute [{}]", obj);
         }
         return c;
     }

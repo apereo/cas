@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -31,14 +32,15 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseSamlRegisteredServiceAttributeReleasePolicy.class);
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attrs, final RegisteredService service) {
+    protected Map<String, Object> getAttributesInternal(final Principal principal,
+                                                        final Map<String, Object> attrs, final RegisteredService service) {
         if (service instanceof SamlRegisteredService) {
             final SamlRegisteredService saml = (SamlRegisteredService) service;
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
 
             if (request == null) {
                 LOGGER.warn("Could not locate the request context to process attributes");
-                return super.getAttributesInternal(attrs, service);
+                return super.getAttributesInternal(principal, attrs, service);
             }
 
             String entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
@@ -61,7 +63,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             final ApplicationContext ctx = ApplicationContextProvider.getApplicationContext();
             if (ctx == null) {
                 LOGGER.warn("Could not locate the application context to process attributes");
-                return super.getAttributesInternal(attrs, service);
+                return super.getAttributesInternal(principal, attrs, service);
             }
             final SamlRegisteredServiceCachingMetadataResolver resolver =
                     ctx.getBean("defaultSamlRegisteredServiceCachingMetadataResolver",
@@ -72,17 +74,17 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
 
             if (facade == null || !facade.isPresent()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);
-                return super.getAttributesInternal(attrs, service);
+                return super.getAttributesInternal(principal, attrs, service);
             }
 
             final EntityDescriptor input = facade.get().getEntityDescriptor();
             if (input == null) {
                 LOGGER.warn("Could not locate entity descriptor for [{}] to process attributes", entityId);
-                return super.getAttributesInternal(attrs, service);
+                return super.getAttributesInternal(principal, attrs, service);
             }
             return getAttributesForSamlRegisteredService(attrs, saml, ctx, resolver, facade.get(), input);
         }
-        return super.getAttributesInternal(attrs, service);
+        return super.getAttributesInternal(principal, attrs, service);
     }
 
     /**
