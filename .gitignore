@@ -38,3 +38,5 @@ reports
 *.asc
 *.css
 /.nb-gradle/
+etc/loadtests/loadtests/**
+etc/loadtests/__pycache__/**
