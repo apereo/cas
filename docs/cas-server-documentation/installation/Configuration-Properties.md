@@ -2148,6 +2148,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # Activate MFA based on a custom REST API/endpoint
 # cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
 
+# Activate MFA based on a Groovy script
+# cas.authn.mfa.groovyScript=file:/etc/cas/mfaGroovyTrigger.groovy
+
 # Activate MFA based on Internet2's Grouper
 # cas.authn.mfa.grouperGroupField=NAME|EXTENSION|DISPLAY_NAME|DISPLAY_EXTENSION
 
