@@ -19,7 +19,7 @@ import java.util.Collection;
  * @since 5.1.0
  */
 public class GroovyScriptMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FirstMultifactorAuthenticationProviderSelector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RankedMultifactorAuthenticationProviderSelector.class);
 
     private final Resource groovyScript;
 
