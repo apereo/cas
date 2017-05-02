@@ -2165,6 +2165,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 # Identify the request content type for non-browser MFA requests
 # cas.authn.mfa.contentType=application/cas
+
+# Select MFA provider, if resolved more than one, via Groovy script
+# cas.authn.mfa.providerSelectorGroovyScript=file:/etc/cas/mfaGroovySelector.groovy
 ```
 
 ### Multifactor Trusted Device/Browser
