@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,8 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attrs, final RegisteredService service) {
+    protected Map<String, Object> getAttributesInternal(final Principal principal,
+                                                        final Map<String, Object> attrs, final RegisteredService service) {
         return authorizeReleaseOfAllowedAttributes(attrs);
     }
 

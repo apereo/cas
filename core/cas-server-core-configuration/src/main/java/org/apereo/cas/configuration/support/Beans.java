@@ -8,6 +8,8 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import com.zaxxer.hikari.HikariDataSource;
+import groovy.lang.GroovyClassLoader;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -31,6 +33,7 @@ import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.codehaus.groovy.control.CompilerConfiguration;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.BindRequest;
@@ -88,6 +91,9 @@ import org.ldaptive.ssl.X509CredentialConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
@@ -101,6 +107,7 @@ import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
+import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -115,8 +122,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import javax.sql.DataSource;
 
 
 /**
@@ -139,16 +144,25 @@ public final class Beans {
 
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
-     * of Hikari pool. If jpaProperties contains dataSourceName a lookup will be
-     * attempted If datasource not found via JNDI it will be
+     * of Hikari pool.
+     * <p>
+     * If jpaProperties contains {@link AbstractJpaProperties#getDataSourceName()} a lookup will be
+     * attempted. If the DataSource is not found via JNDI then CAS will attempt to
+     * configure a Hikari connection pool.
+     * <p>
+     * Since the datasource beans are {@link org.springframework.cloud.context.config.annotation.RefreshScope},
+     * they will be a proxied by Spring
+     * and on some application servers there have been classloading issues. A workaround
+     * for this is to use the {@link AbstractJpaProperties#isDataSourceProxy()} setting and then the dataSource will be
+     * wrapped in an application level class. If that is an issue, don't do it.
      *
      * @param jpaProperties the jpa properties
      * @return the data source
      */
     public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
-        final HikariDataSource bean = new HikariDataSource();
-
         final String dataSourceName = jpaProperties.getDataSourceName();
+        final boolean proxyDataSource = jpaProperties.isDataSourceProxy();
+
         if (StringUtils.isNotBlank(dataSourceName)) {
             try {
                 final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
@@ -159,8 +173,10 @@ public final class Beans {
                   */
                 dsLookup.setResourceRef(false);
                 final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
-                bean.setDataSource(containerDataSource);
-                return bean;
+                if (!proxyDataSource) {
+                    return containerDataSource;
+                }
+                return new DataSourceProxy(containerDataSource);
             } catch (final DataSourceLookupFailureException e) {
                 LOGGER.warn("Lookup of datasource [{}] failed due to {} "
                         + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
@@ -168,13 +184,14 @@ public final class Beans {
         }
 
         try {
+            final HikariDataSource bean = new HikariDataSource();
             if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
                 bean.setDriverClassName(jpaProperties.getDriverClass());
             }
             bean.setJdbcUrl(jpaProperties.getUrl());
             bean.setUsername(jpaProperties.getUser());
             bean.setPassword(jpaProperties.getPassword());
-
+            bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
             bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
@@ -184,7 +201,6 @@ public final class Beans {
             bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
             bean.setAutoCommit(jpaProperties.isAutocommit());
-            bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
             bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
             return bean;
         } catch (final Exception e) {
@@ -250,6 +266,7 @@ public final class Beans {
             properties.put("hibernate.default_schema", jpaProperties.getDefaultSchema());
         }
         bean.setJpaProperties(properties);
+        bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
     }
 
@@ -697,7 +714,6 @@ public final class Beans {
         return cp;
     }
 
-
     /**
      * Gets credential selection predicate.
      *
@@ -709,6 +725,19 @@ public final class Beans {
             if (StringUtils.isBlank(selectionCriteria)) {
                 return credential -> true;
             }
+
+            if (selectionCriteria.endsWith(".groovy")) {
+                final ResourceLoader loader = new DefaultResourceLoader();
+                final Resource resource = loader.getResource(selectionCriteria);
+                if (resource != null) {
+                    final String script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+                    final GroovyClassLoader classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
+                            new CompilerConfiguration(), true);
+                    final Class<Predicate> clz = classLoader.parseClass(script);
+                    return clz.newInstance();
+                }
+            }
+
             final Class predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<org.apereo.cas.authentication.Credential>) predicateClazz.newInstance();
         } catch (final Exception e) {

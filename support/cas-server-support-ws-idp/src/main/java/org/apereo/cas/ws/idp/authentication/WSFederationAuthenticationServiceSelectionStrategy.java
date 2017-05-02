@@ -22,8 +22,8 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
     private static final long serialVersionUID = 8035218407906419228L;
     private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationAuthenticationServiceSelectionStrategy.class);
 
-    private int order = Ordered.HIGHEST_PRECEDENCE;
-    private ServiceFactory webApplicationServiceFactory;
+    private final int order = Ordered.HIGHEST_PRECEDENCE;
+    private final ServiceFactory webApplicationServiceFactory;
 
     public WSFederationAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory) {
         this.webApplicationServiceFactory = webApplicationServiceFactory;

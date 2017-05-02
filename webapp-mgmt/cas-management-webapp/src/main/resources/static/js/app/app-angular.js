@@ -637,7 +637,6 @@ if (array.length == 3) {
                 serviceTypeList: [
                     {name: 'CAS Client', value: 'cas'},
                     {name: 'OAuth Client', value: 'oauth'},
-                    {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
                     {name: 'SAML Client', value: 'saml'},
                     {name: 'OIDC Client', value: 'oidc'}
                 ],

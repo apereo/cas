@@ -91,8 +91,8 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         return true;
     }
 
-    private void updateAuthenticationToForgetBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
-                                                    final Principal principal) {
+    private static void updateAuthenticationToForgetBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
+                                                           final Principal principal) {
         LOGGER.debug("Bypass rules for service [{}] indicate the request may be ignored", principal.getId());
         final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
                 .addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE)
@@ -102,8 +102,8 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         authentication.updateAll(newAuthn);
     }
 
-    private void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
-                                                      final Principal principal) {
+    private static void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
+                                                             final Principal principal) {
         LOGGER.debug("Bypass rules for service [{}] indicate the request may NOT be ignored", principal.getId());
         final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
                 .addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE)

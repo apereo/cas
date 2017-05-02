@@ -61,7 +61,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
+        final Map<String, Object> attr = policy.getAttributes(p,
+                CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
     }
@@ -82,7 +84,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
+        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 2);
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_2));
@@ -106,7 +109,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
+        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
 
@@ -131,7 +135,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
+        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 2);
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_3));
@@ -153,7 +158,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
+        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), 0);
     }
 
@@ -170,7 +176,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
+        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), map.size());
 
         final byte[] data = SerializationUtils.serialize(policy);
@@ -202,7 +209,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         policy.setPrincipalAttributesRepository(repository);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getRegisteredService());
+        final Map<String, Object> attr = policy.getAttributes(p, CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attr.size(), attributes.size());
     }
 }

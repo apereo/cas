@@ -26,7 +26,10 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Properties;
 
-import static org.apache.cxf.fediz.core.FedizConstants.*;
+import static org.apache.cxf.fediz.core.FedizConstants.SAML2_METADATA_NS;
+import static org.apache.cxf.fediz.core.FedizConstants.SCHEMA_INSTANCE_NS;
+import static org.apache.cxf.fediz.core.FedizConstants.WS_ADDRESSING_NS;
+import static org.apache.cxf.fediz.core.FedizConstants.WS_FEDERATION_NS;
 
 /**
  * This is {@link WSFederationMetadataWriter}.
@@ -37,13 +40,16 @@ import static org.apache.cxf.fediz.core.FedizConstants.*;
 public class WSFederationMetadataWriter {
     private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationMetadataWriter.class);
 
+    protected WSFederationMetadataWriter() {
+    }
+
     /**
      * Produce metadata document.
      *
      * @param config the config
      * @return the document
      */
-    public Document produceMetadataDocument(final CasConfigurationProperties config) {
+    public static Document produceMetadataDocument(final CasConfigurationProperties config) {
         try {
             final WsFederationProperties.SecurityTokenService sts = config.getAuthn().getWsfedIdP().getSts();
             final Properties prop = CryptoUtils.getSecurityProperties(sts.getRealm().getKeystoreFile(), sts.getRealm().getKeystorePassword(),
@@ -89,10 +95,10 @@ public class WSFederationMetadataWriter {
         }
     }
 
-    private void writeFederationMetadata(final XMLStreamWriter writer,
-                                         final String idpEntityId,
-                                         final String ststUrl,
-                                         final Crypto crypto) throws Exception {
+    private static void writeFederationMetadata(final XMLStreamWriter writer,
+                                                final String idpEntityId,
+                                                final String ststUrl,
+                                                final Crypto crypto) throws Exception {
         writer.writeStartElement("md", "RoleDescriptor", WS_FEDERATION_NS);
         writer.writeAttribute(SCHEMA_INSTANCE_NS, "type", "fed:SecurityTokenServiceType");
         writer.writeAttribute("protocolSupportEnumeration", WS_FEDERATION_NS);

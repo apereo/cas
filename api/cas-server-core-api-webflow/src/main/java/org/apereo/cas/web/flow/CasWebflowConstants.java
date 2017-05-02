@@ -21,7 +21,7 @@ public interface CasWebflowConstants {
      * The state id 'verifyTrustedDevice'.
      */
     String STATE_ID_VERIFY_TRUSTED_DEVICE = "verifyTrustedDevice";
-    
+
     /**
      * The view id 'registerDeviceView'.
      */
@@ -41,17 +41,17 @@ public interface CasWebflowConstants {
      * The state id 'successWithWarnings'.
      */
     String STATE_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
-    
+
     /**
      * The transition state 'successWithWarnings'.
      */
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
-    
+
     /**
      * The decision state 'checkRegistrationRequired'.
      */
     String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
-    
+
     /**
      * The transition state 'yes'.
      */
@@ -80,7 +80,7 @@ public interface CasWebflowConstants {
      * The view state 'showAuthenticationWarningMessages'.
      */
     String VIEW_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
-    
+
     /**
      * The transition state 'authenticationFailure'.
      */
@@ -90,7 +90,7 @@ public interface CasWebflowConstants {
      * 'gateway' state id.
      */
     String STATE_ID_GATEWAY = "gateway";
-    
+
     /**
      * The transition state 'warn'.
      */
@@ -105,6 +105,11 @@ public interface CasWebflowConstants {
      * The transition state 'sendTicketGrantingTicket'.
      */
     String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
+
+    /**
+     * The state id 'sendTicketGrantingTicket'.
+     */
+    String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
      * The state 'initializeLoginForm'.
@@ -207,7 +212,7 @@ public interface CasWebflowConstants {
      * The view id 'casPostResponseView'.
      */
     String VIEW_ID_POST_RESPONSE = "casPostResponseView";
-    
+
     /**
      * The view id 'casGenericSuccessView'.
      */
@@ -237,7 +242,7 @@ public interface CasWebflowConstants {
      * View id 'casResetPasswordSentInstructions'.
      */
     String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
-    
+
     /**
      * Transition id 'resetPassword'.
      */

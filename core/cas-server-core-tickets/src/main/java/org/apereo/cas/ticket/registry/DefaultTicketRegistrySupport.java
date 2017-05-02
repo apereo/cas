@@ -17,7 +17,7 @@ import java.util.Map;
 @Transactional(transactionManager = "ticketTransactionManager")
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
-    private TicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
 
     public DefaultTicketRegistrySupport(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;

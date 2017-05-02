@@ -247,7 +247,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param publicKey    the public key
      * @return the response
      */
-    public String signSamlResponse(final String samlResponse, final PrivateKey privateKey, final PublicKey publicKey) {
+    public static String signSamlResponse(final String samlResponse, final PrivateKey privateKey, final PublicKey publicKey) {
         final Document doc = constructDocumentFromXml(samlResponse);
 
         if (doc != null) {
@@ -285,7 +285,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param pubKey  the pub key
      * @return the element
      */
-    private org.jdom.Element signSamlElement(final org.jdom.Element element, final PrivateKey privKey, final PublicKey pubKey) {
+    private static org.jdom.Element signSamlElement(final org.jdom.Element element, final PrivateKey privKey, final PublicKey pubKey) {
         try {
             final String providerName = System.getProperty("jsr105Provider", SIGNATURE_FACTORY_PROVIDER_CLASS);
 
@@ -372,7 +372,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param element the element
      * @return the org.w3c.dom. element
      */
-    private Element toDom(final org.jdom.Element element) {
+    private static Element toDom(final org.jdom.Element element) {
         return toDom(element.getDocument()).getDocumentElement();
     }
 
@@ -382,7 +382,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param doc the doc
      * @return the org.w3c.dom. document
      */
-    private org.w3c.dom.Document toDom(final Document doc) {
+    private static org.w3c.dom.Document toDom(final Document doc) {
         try {
             final XMLOutputter xmlOutputter = new XMLOutputter();
             final StringWriter elemStrWriter = new StringWriter();

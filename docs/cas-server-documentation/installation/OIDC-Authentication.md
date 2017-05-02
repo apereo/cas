@@ -119,12 +119,19 @@ You may chain various attribute release policies that authorize claim release ba
 }
 ```
 
+### Mapping Claims
+
+Claims associated with a scope (i.e. `given_name` for `profile`) are fixed in the [OpenID specification](http://openid.net/specs/openid-connect-basic-1_0.html). In the event that custom arbitrary attributes should be mapped to claims, mappings can be defined in CAS settings to link a CAS-defined attribute to a fixed given scope. For instance, CAS configuration may allow the value of the attribute `sys_given_name` to be mapped and assigned to the claim `given_name` without having an impact on the attribute resolution configuration and all other CAS-enabled applications. 
+
+If mapping is not defined, by default CAS attributes are expected to match claim names.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
+
 ### User-Defined Scopes
 
-Note that in addition to standard system scopes, you may define your own custom attributes. These 
-such as `displayName` above, get bundled into a `custom` scope which can be used and requested by services and clients.
+Note that in addition to standard system scopes, you may define your own custom scope with a number of attributes within. These such as `displayName` above, get bundled into a `custom` scope which can be used and requested by services and clients.
 
-If you however wish to define your custom scopes as an extention to what OpenID Connect defines
+If you however wish to define your custom scopes as an extension of what OpenID Connect defines
 such that you may bundle attributes together, then you need to first register your `scope`,
 define its attribute bundle and then use it a given service definition such as `eduPerson` above.
 Such user-defined scopes are also able to override the definition of system scopes.

@@ -22,6 +22,7 @@ layout: null
     *   [Configuration Server](/$version/installation/Configuration-Server-Management.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Configuration Security](/$version/installation/Configuration-Properties-Security.html)
+    *   [Configuration Extensions](/$version/installation/Configuration-Management-Extensions.html)
     *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
     *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
 
@@ -48,6 +49,7 @@ layout: null
         *   [Pac4J](/$version/installation/Pac4j-Authentication.html)
         *   [Whitelist](/$version/installation/Whitelist-Authentication.html)
         *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
+        *   [Custom](/$version/installation/Configuring-Custom-Authentication.html)
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
         *   [ADFS](/$version/integration/ADFS-Integration.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
@@ -61,6 +63,8 @@ layout: null
     *   [Attribute Release](/$version/integration/Attribute-Release.html)
         *   [Principal Id](/$version/integration/Attribute-Release-PrincipalId.html)
         *   [Release Policies](/$version/integration/Attribute-Release-Policies.html)
+        *   [Value Filters](/$version/integration/Attribute-Value-Release-Policies.html)
+        *   [Consent](/$version/integration/Attribute-Release-Consent.html)
         *   [Caching](/$version/integration/Attribute-Release-Caching.html)
         
 *   [Multifactor Authentication](#mfaauthn)
@@ -73,6 +77,7 @@ layout: null
         *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
         *   [Microsoft Azure](/$version/installation/MicrosoftAzure-Authentication.html)
         *   [FIDO U2F](/$version/installation/FIDO-U2F-Authentication.html)
+        *   [Custom](/$version/installation/Custom-MFA-Authentication.html)
     *   [Triggers](/$version/installation/Configuring-Multifactor-Authentication-Triggers.html)
     *   [Trusted Devices](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
     *   [Adaptive](/$version/installation/Configuring-Adaptive-Authentication.html)
@@ -139,6 +144,7 @@ layout: null
 *   [Webflow Management](#webflowmgmt)
     *   [Overview](/$version/installation/Webflow-Customization.html) 
     *   [Error Handling](/$version/installation/Webflow-Customization-Exceptions.html)
+    *   [Extending Webflow](/$version/installation/Webflow-Customization-Extensions.html) 
     *   [Session Persistence](/$version/installation/Webflow-Customization-Sessions.html)
 
 * [High Availability](#highavailability)

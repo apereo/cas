@@ -15,10 +15,6 @@ To run the Spring Boot Admin server, please use [this WAR overlay](https://githu
 
 To learn more about options, please [see this guide][bootadmindocs].
 
-Here is a sample screenshot of the CAS server reporting status to the Admin server:
-
-![image](https://cloud.githubusercontent.com/assets/1205228/25130035/eba2e902-2455-11e7-809f-8d71105bd6d8.png)
-
 ## CAS Server as Client
 
 Each individual CAS server is given the ability to auto-register itself with the admin server, provided configuration is made available to instruct the CAS server how to locate and connect to the admin server.

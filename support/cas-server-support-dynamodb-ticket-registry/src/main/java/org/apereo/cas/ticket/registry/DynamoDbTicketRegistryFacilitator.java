@@ -134,7 +134,7 @@ public class DynamoDbTicketRegistryFacilitator {
 
             tickets.addAll(result.getItems()
                     .stream()
-                    .map(this::deserializeTicket)
+                    .map(DynamoDbTicketRegistryFacilitator::deserializeTicket)
                     .collect(Collectors.toList()));
         });
         return tickets;
@@ -170,7 +170,7 @@ public class DynamoDbTicketRegistryFacilitator {
         return null;
     }
 
-    private Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
+    private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
         final ByteBuffer bb = returnItem.get(ColumnNames.ENCODED.getName()).getB();
         LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
         return SerializationUtils.deserialize(bb.array());

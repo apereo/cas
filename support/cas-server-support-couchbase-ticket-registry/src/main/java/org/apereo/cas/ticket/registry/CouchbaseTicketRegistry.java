@@ -208,7 +208,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         return getViewRowCountFromViewResultIterator(iterator);
     }
 
-    private int getViewRowCountFromViewResultIterator(final Iterator<ViewRow> iterator) {
+    private static int getViewRowCountFromViewResultIterator(final Iterator<ViewRow> iterator) {
         if (iterator.hasNext()) {
             final ViewRow res = iterator.next();
             final Integer count = (Integer) res.value();
@@ -236,7 +236,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      * @return the exp value
      * @see <a href="http://docs.couchbase.com/developer/java-2.0/documents-basics.html">Couchbase Docs</a>
      */
-    private int getTimeToLive(final Ticket ticket) {
+    private static int getTimeToLive(final Ticket ticket) {
         final int expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
         if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
             LOGGER.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "

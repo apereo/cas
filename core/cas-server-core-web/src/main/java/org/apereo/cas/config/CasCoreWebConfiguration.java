@@ -10,9 +10,9 @@ import org.apereo.cas.web.view.CasReloadableMessageBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.AbstractResourceBasedMessageSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class CasCoreWebConfiguration {
 
     @RefreshScope
     @Bean
-    public AbstractResourceBasedMessageSource messageSource() {
+    public HierarchicalMessageSource messageSource() {
         final CasReloadableMessageBundle bean = new CasReloadableMessageBundle();
         bean.setDefaultEncoding(casProperties.getMessageBundle().getEncoding());
         bean.setCacheSeconds(casProperties.getMessageBundle().getCacheSeconds());
