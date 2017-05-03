@@ -11,7 +11,7 @@ CAS provides enterprise single sign-on for the web and attempts to be a comprehe
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is 
 an open-source Java server component by the same name, hosted here. 
 
-## Contributions
+## Contributions [![Contributing Guide](https://img.shields.io/badge/contributing-guide-green.svg?style=flat)][contribute]
 
 - [How to contribute][contribute]
 
@@ -37,7 +37,7 @@ The following features are supported by the CAS project:
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot), 
 [Spring Cloud](http://projects.spring.io/spring-cloud/) and [Thymeleaf](http://thymeleaf.org).
 
-## Development [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) [![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC) [![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas)](https://cla-assistant.io/apereo/cas) [![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas)
+## Development [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) [![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC) [![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas)](https://cla-assistant.io/apereo/cas) [![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas) 
 
 To build the project locally, please follow [this guide](https://apereo.github.io/cas/developer/Build-Process.html).
 
