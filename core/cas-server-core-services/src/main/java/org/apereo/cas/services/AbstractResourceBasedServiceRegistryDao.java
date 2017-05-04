@@ -136,7 +136,11 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        return this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+        return this.serviceMap.values()
+                .stream()
+                .filter(r -> r.matches(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -185,7 +189,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        
+
         return new ArrayList(this.serviceMap.values());
     }
 

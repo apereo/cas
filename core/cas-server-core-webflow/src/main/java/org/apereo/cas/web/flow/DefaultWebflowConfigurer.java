@@ -99,7 +99,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final ActionState handler = createActionState(flow,
                 "handleAuthenticationFailure",
                 createEvaluateAction("authenticationExceptionHandler"));
-        createTransition(AccountDisabledException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED;
+        createTransition(AccountDisabledException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
         createTransition(AccountLockedException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED);
         createTransition(AccountPasswordMustChangeException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
         createTransition(CredentialExpiredException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
