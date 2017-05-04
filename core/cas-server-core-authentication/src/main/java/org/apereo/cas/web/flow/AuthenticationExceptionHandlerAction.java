@@ -1,12 +1,13 @@
 package org.apereo.cas.web.flow;
 
 
+import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
-import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
@@ -14,6 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -37,8 +42,7 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class AuthenticationExceptionHandler {
-
+public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
     private static final String UNKNOWN = "UNKNOWN";
 
@@ -49,7 +53,7 @@ public class AuthenticationExceptionHandler {
      */
     private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST = new LinkedHashSet<>();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationExceptionHandlerAction.class);
 
     /*
      * Order is important here; We want the account policy exceptions to be handled
@@ -57,7 +61,6 @@ public class AuthenticationExceptionHandler {
      * are defined, where one failed due to account policy restriction and one fails
      * due to a bad password, we want the error associated with the account policy
      * to be processed first, rather than presenting a more generic error associated
-     * with latter handlers.
      */
     static {
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountLockedException.class);
@@ -70,6 +73,7 @@ public class AuthenticationExceptionHandler {
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountNotFoundException.class);
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.FailedLoginException.class);
         DEFAULT_ERROR_LIST.add(UnauthorizedServiceForPrincipalException.class);
+        DEFAULT_ERROR_LIST.add(PrincipalException.class);
         DEFAULT_ERROR_LIST.add(UnsatisfiedAuthenticationPolicyException.class);
         DEFAULT_ERROR_LIST.add(UnauthorizedAuthenticationException.class);
     }
@@ -77,13 +81,22 @@ public class AuthenticationExceptionHandler {
     /**
      * Ordered list of error classes that this class knows how to handle.
      */
-
     private Set<Class<? extends Exception>> errors = DEFAULT_ERROR_LIST;
 
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
      */
     private String messageBundlePrefix = DEFAULT_MESSAGE_BUNDLE_PREFIX;
+
+    /**
+     * Gets predefined handled exceptions.
+     * with latter handlers.
+     *
+     * @return the predefined handled exceptions
+     */
+    public static Set<Class<? extends Exception>> getPredefinedHandledExceptions() {
+        return DEFAULT_ERROR_LIST;
+    }
 
     /**
      * Sets the list of custom exceptions that this class knows how to handle.
@@ -107,7 +120,7 @@ public class AuthenticationExceptionHandler {
                 .collect(Collectors.toList());
 
         if (nonNullErrors.isEmpty()) {
-            //Nothing custom provided, so just leave the default list of exceptions alone.
+            // Nothing custom provided, so just leave the default list of exceptions alone.
             return;
         }
         /*
@@ -199,11 +212,11 @@ public class AuthenticationExceptionHandler {
      * Maps an {@link AbstractTicketException} onto a state name equal to the simple class name of the exception with
      * highest precedence. Also sets an ERROR severity message in the message context with the error code found in
      * {@link AbstractTicketException#getCode()}. If no match is found,
-     * {@value AuthenticationExceptionHandler#UNKNOWN} is returned.
+     * {@value AuthenticationExceptionHandlerAction#UNKNOWN} is returned.
      *
      * @param e              Ticket exception to handle.
      * @param messageContext the spring message context
-     * @return Name of next flow state to transition to or {@value AuthenticationExceptionHandler#UNKNOWN}
+     * @return Name of next flow state to transition to or {@value AuthenticationExceptionHandlerAction#UNKNOWN}
      */
     protected String handleAbstractTicketException(final AbstractTicketException e, final MessageContext messageContext) {
         // find the first error in the error list that matches the AbstractTicketException
@@ -213,5 +226,13 @@ public class AuthenticationExceptionHandler {
 
         match.ifPresent(s -> messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build()));
         return match.orElse(UNKNOWN);
+    }
+
+
+    @Override
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
+        final String event = handle(requestContext.getAttributes().get("error", Exception.class),
+                requestContext.getMessageContext());
+        return new EventFactorySupport().event(this, event);
     }
 }
