@@ -13,20 +13,15 @@ Load testing is an important part of ensuring that the CAS server deployment is 
 
 ### Setup
 
-A fundamental feature of Locust is that you describe all your test in Python code. No need for clunky UIs or bloated XML, just plain code. For this to work, you will need to [download Python](https://www.python.org/downloads/).
-
-Download the Locust test suite [from here](https://github.com/apereo/cas/blob/master/etc/loadtests/locustfiles.tgz). Then configure a virtual environment and install modules:
+A fundamental feature of Locust is that you describe all your tests in Python code. No need for clunky UIs or bloated XML, just plain code. For this to work, you will need to [download Python](https://www.python.org/downloads/). Next download the Locust test suite [from here](https://github.com/apereo/cas/blob/master/etc/loadtests/locustfiles.tgz) and [configure a virtual environment](https://virtualenv.pypa.io/en/stable/) to install modules:
 
 ```bash
 pip install virtualenv
 virtualenv mylocustenv/
 
 # Use `requirements.py3.txt` for Python 3.x
-cd mylocustenv
 pip install -r requirements.txt
 ```
-
-For more info on virtual environments: https://virtualenv.pypa.io/en/stable/
 
 Install Locust via the following:
 
@@ -34,22 +29,16 @@ Install Locust via the following:
 pip install locustio
 ```
 
-Once you have the python modules installed in your `virtualenv`:
-
-```bash
-virtualenv locusttests
-```
-
 Create a `credentials.csv` file that contains `username,password` entries used for load tests.
 
 ```bash
-echo casuser,Mellon > credentials.csv
+echo casuser,Mellon > cas5/credentials.csv
 ```
 
- and run it as such:
+Run the script as such:
 
 ```bash
-locust -f locustfile.py --host=https://cas.example.org
+locust -f cas5/locustfile.py --host=https://cas.example.org
 ...
 [2017-05-02 16:31:49,742] test/INFO/locust.main: Starting web monitor at *:8089
 [2017-05-02 16:31:49,744] test/INFO/locust.main: Starting Locust 0.8a2

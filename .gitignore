@@ -39,4 +39,5 @@ reports
 *.css
 /.nb-gradle/
 etc/loadtests/loadtests/**
+etc/loadtests/locustfiles/**
 etc/loadtests/__pycache__/**
