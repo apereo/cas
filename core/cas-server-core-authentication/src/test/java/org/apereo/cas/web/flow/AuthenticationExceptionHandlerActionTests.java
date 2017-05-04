@@ -30,11 +30,11 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @RunWith(JUnit4.class)
-public class AuthenticationExceptionHandlerTests {
+public class AuthenticationExceptionHandlerActionTests {
  
     @Test
     public void handleAccountNotFoundExceptionByDefault() {
-        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
         final MessageContext ctx = mock(MessageContext.class);
         
         final Map<String, Class<? extends Exception>> map = new HashMap<>();
@@ -45,7 +45,7 @@ public class AuthenticationExceptionHandlerTests {
 
     @Test
     public void handleUnknownExceptionByDefault() {
-        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
         final MessageContext ctx = mock(MessageContext.class);
         
         final Map<String, Class<? extends Exception>> map = new HashMap<>();
@@ -56,7 +56,7 @@ public class AuthenticationExceptionHandlerTests {
 
     @Test
     public void handleUnknownTicketExceptionByDefault() {
-        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
         final MessageContext ctx = mock(MessageContext.class);
 
         final String id = handler.handle(new InvalidTicketException("TGT"), ctx);
@@ -66,7 +66,7 @@ public class AuthenticationExceptionHandlerTests {
 
     @Test
     public void correctHandlersOrder() {
-        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
         final MessageContext ctx = mock(MessageContext.class);
 
         final Map<String, Class<? extends Exception>> map = new HashMap<>();
@@ -79,7 +79,7 @@ public class AuthenticationExceptionHandlerTests {
 
     @Test
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {
-        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
         final MessageContext ctx = mock(MessageContext.class);
 
         final ContextualAuthenticationPolicy<?> policy = new TestContextualAuthenticationPolicy();
@@ -92,7 +92,7 @@ public class AuthenticationExceptionHandlerTests {
 
     @Test
     public void customExceptionsSetterWithNullDefaultValue(){
-        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
         assertFalse(handler.containsCustomErrors());
 
         final List<Class<? extends Exception>> nullCustomErrors = new ArrayList<>();
@@ -103,7 +103,7 @@ public class AuthenticationExceptionHandlerTests {
 
     @Test
     public void customExceptionsSetterWithTwoNewValues() {
-        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
         final List<Class<? extends Exception>> twoCustomErrors = new ArrayList<>();
         twoCustomErrors.add(GeneralSecurityException.class);
         twoCustomErrors.add(PreventedException.class);
@@ -111,7 +111,7 @@ public class AuthenticationExceptionHandlerTests {
         handler.setErrors(twoCustomErrors);
         assertTrue(handler.containsCustomErrors());
         assertTrue(handler.getErrors().containsAll(twoCustomErrors));
-        assertEquals(13, handler.getErrors().size());
+        assertEquals(14, handler.getErrors().size());
     }
 
     private static class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {

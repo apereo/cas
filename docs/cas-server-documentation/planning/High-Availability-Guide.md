@@ -259,12 +259,12 @@ content filters and CAS nodes, as well as primary authentication (e.g. LDAPS) an
 Any break in the privacy controls at any stage comprises the overall security of the system.
 
 
-### Upgrade/patches/security releases
+### Upgrades
 
-CAS server upgrades should be carried out through the recommended Maven overlay approach. Established as a best 
-practice, the CAS maven overlay approach allows one to seamlessly obtain the intended CAS server version from well 
+CAS server upgrades should be carried out through the recommended [WAR overlay approach](../installation/Maven-Overlay-Installation.html). Established as a best 
+practice, the overlay approach allows one to seamlessly obtain the intended CAS server version from well 
 known and public repositories while laying custom changes specific on top of the downloaded binary artifact.
-In the specifics of the Maven overlay approach, it may also be desirable to externalize the configuration 
+In the specifics of the overlay approach, it may also be desirable to externalize the configuration 
 outside of the `cas.war` so that the properties and logging configuration can vary across tiers for the same `cas.war` file. 
 That is, externalizing the environment-specific configuration allows the same `cas.war` to be promoted from server to server 
 and tier to tier, which increases the confidence that the web application that was tested and verified out of production will behave as tested in production.
