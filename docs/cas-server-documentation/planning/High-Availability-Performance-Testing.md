@@ -13,7 +13,7 @@ Load testing is an important part of ensuring that the CAS server deployment is 
 
 ### Setup
 
-A fundamental feature of Locust is that you describe all your tests in Python code. No need for clunky UIs or bloated XML, just plain code. For this to work, you will need to [download Python](https://www.python.org/downloads/). Next download the Locust test suite [from here](https://github.com/apereo/cas/blob/master/etc/loadtests/locustfiles.tgz) and [configure a virtual environment](https://virtualenv.pypa.io/en/stable/) to install modules:
+A fundamental feature of Locust is that you describe all your tests in Python code. No need for clunky UIs or bloated XML, just plain code. For this to work, you will need to [download Python](https://www.python.org/downloads/). Next download the Locust test suite [from here](https://github.com/apereo/cas/raw/master/etc/loadtests/locustfiles.tgz) and [configure a virtual environment](https://virtualenv.pypa.io/en/stable/) to install modules:
 
 ```bash
 pip install virtualenv
