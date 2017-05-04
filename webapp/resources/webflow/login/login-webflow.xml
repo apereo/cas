@@ -51,23 +51,7 @@
         </on-entry>
         <transition on="proceed" to="serviceCheck"/>
     </view-state>
-
-    <action-state id="handleAuthenticationFailure">
-        <evaluate expression="authenticationExceptionHandler.handle(currentEvent.attributes.error, messageContext)"/>
-        <transition on="AccountDisabledException" to="casAccountDisabledView"/>
-        <transition on="AccountLockedException" to="casAccountLockedView"/>
-        <transition on="AccountPasswordMustChangeException" to="casMustChangePassView"/>
-        <transition on="CredentialExpiredException" to="casExpiredPassView"/>
-        <transition on="InvalidLoginLocationException" to="casBadWorkstationView"/>
-        <transition on="InvalidLoginTimeException" to="casBadHoursView"/>
-        <transition on="FailedLoginException" to="initializeLoginForm"/>
-        <transition on="AccountNotFoundException" to="initializeLoginForm"/>
-        <transition on="UnauthorizedServiceForPrincipalException" to="initializeLoginForm" />
-        <transition on="UnsatisfiedAuthenticationPolicyException" to="initializeLoginForm"/>
-        <transition on="UnauthorizedAuthenticationException" to="casAuthenticationBlockedView"/>
-        <transition to="initializeLoginForm"/>
-    </action-state>
-
+    
     <action-state id="sendTicketGrantingTicket">
         <evaluate expression="sendTicketGrantingTicketAction"/>
         <transition on="success" to="serviceCheck"/>

@@ -136,7 +136,11 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        return this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+        return this.serviceMap.values()
+                .stream()
+                .filter(r -> r.matches(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -185,7 +189,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        
+
         return new ArrayList(this.serviceMap.values());
     }
 
@@ -225,7 +229,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
     public RegisteredService save(final RegisteredService service) {
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {
             LOGGER.debug("Service id not set. Calculating id based on system time...");
-            ((AbstractRegisteredService) service).setId(System.nanoTime());
+            ((AbstractRegisteredService) service).setId(System.currentTimeMillis());
         }
         final File f = makeFile(service);
         try (LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {
