@@ -33,8 +33,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
      */
     public static final String FLOW_VAR_ID_PASSWORD = "password";
 
-    private static final String CAS_MUST_CHANGE_PASS_VIEW = "casMustChangePassView";
-    private static final String CAS_EXPIRED_PASS_VIEW = "casExpiredPassView";
     private static final String PASSWORD_CHANGE_ACTION = "passwordChangeAction";
     private static final String SEND_PASSWORD_RESET_INSTRUCTIONS_ACTION = "sendInstructions";
 
@@ -42,7 +40,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     @Qualifier("initPasswordChangeAction")
     private Action passwordChangeAction;
 
-    public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+    public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
         super(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
@@ -50,20 +49,21 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
         if (flow != null) {
-            createViewState(flow, "casAuthenticationBlockedView", "casAuthenticationBlockedView");
-            createViewState(flow, "casBadWorkstationView", "casBadWorkstationView");
-            createViewState(flow, "casBadHoursView", "casBadHoursView");
-            createViewState(flow, "casAccountLockedView", "casAccountLockedView");
-            createViewState(flow, "casAccountDisabledView", "casAccountDisabledView");
-            createEndState(flow, "casPasswordUpdateSuccess", "casPasswordUpdateSuccessView");
+            createViewState(flow, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED);
+            createViewState(flow, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION);
+            createViewState(flow, CasWebflowConstants.VIEW_ID_INVALID_AUTHENTICATION_HOURS,
+                    CasWebflowConstants.VIEW_ID_INVALID_AUTHENTICATION_HOURS);
+            createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED, CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED);
+            createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
+            createEndState(flow, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
 
             if (casProperties.getAuthn().getPm().isEnabled()) {
-                configure(flow, CAS_MUST_CHANGE_PASS_VIEW);
-                configure(flow, CAS_EXPIRED_PASS_VIEW);
+                configure(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
+                configure(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
                 configurePasswordReset();
             } else {
-                createViewState(flow, CAS_MUST_CHANGE_PASS_VIEW, CAS_MUST_CHANGE_PASS_VIEW);
-                createViewState(flow, CAS_EXPIRED_PASS_VIEW, CAS_EXPIRED_PASS_VIEW);
+                createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
+                createViewState(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
             }
         }
     }
@@ -86,9 +86,10 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                     CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO);
 
             final Flow pswdFlow = buildFlow("classpath:/webflow/pswdreset/pswdreset-webflow.xml", FLOW_ID_PASSWORD_RESET);
-            createViewState(pswdFlow, "passwordResetErrorView", "casResetPasswordErrorView");
-            createEndState(pswdFlow, "casPasswordUpdateSuccess", "casPasswordUpdateSuccessView");
-            configure(pswdFlow, CAS_MUST_CHANGE_PASS_VIEW);
+            createViewState(pswdFlow, "passwordResetErrorView", CasWebflowConstants.VIEW_ID_PASSORD_RESET_ERROR);
+            createEndState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS,
+                    CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
+            configure(pswdFlow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
             loginFlowDefinitionRegistry.registerFlowDefinition(pswdFlow);
         }
     }
@@ -109,7 +110,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
         final ActionState pswChangeAction = createActionState(flow, PASSWORD_CHANGE_ACTION, createEvaluateAction(PASSWORD_CHANGE_ACTION));
         pswChangeAction.getTransitionSet().add(
-                createTransition(PasswordChangeAction.PASSWORD_UPDATE_SUCCESS, "casPasswordUpdateSuccess"));
+                createTransition(PasswordChangeAction.PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS));
         pswChangeAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, id));
     }
 }
