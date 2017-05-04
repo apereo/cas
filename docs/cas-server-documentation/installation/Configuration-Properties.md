@@ -276,6 +276,7 @@ yet wish to customize the connector configuration that is linked to the running 
 # cas.server.httpProxy.scheme=https
 # cas.server.httpProxy.redirectPort=
 # cas.server.httpProxy.proxyPort=
+# cas.server.httpProxy.attributes.attributeName=attributeValue
 ```
 
 #### HTTP
@@ -287,6 +288,7 @@ linked to the `server.port` setting.
 # cas.server.http.port=8080
 # cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
 # cas.server.http.enabled=true
+# cas.server.http.attributes.attributeName=attributeValue
 ```
 
 #### AJP
@@ -305,11 +307,12 @@ Enable AJP connections for the embedded Tomcat container,
 # cas.server.ajp.enableLookups=false
 # cas.server.ajp.redirectPort=-1
 # cas.server.ajp.allowTrace=false
+# cas.server.ajp.attributes.attributeName=attributeValue
 ```
 
 #### SSL Valve
 
-The Tomcat SSLValve is a way to get a client certificate from an SSL proxy (e.g. HAProxy or BigIP F5) 
+The Tomcat SSLValve is a way to get a client certificate from an SSL proxy (e.g. HAProxy or BigIP F5)
 running in front of Tomcat via an HTTP header. If you enable this, make sure your proxy is ensuring
 that this header doesn't originate with the client (e.g. the browser).
 
