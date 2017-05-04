@@ -37,18 +37,4 @@
                th:title="#{services.form.tooltip.attrRelease.releaseProxyTicket}"></i>
         </label>
     </div>
-
-
-    <div class="checkbox" ng-if="serviceFormCtrl.serviceData.type == 'saml'">
-        <label>
-            <input type="checkbox" value="1"
-                   ng-model="serviceFormCtrl.serviceData.attrRelease.releaseIncommon"
-                   ng-checked="serviceFormCtrl.serviceData.attrRelease.releaseIncommon"/>
-            <span th:remove="tag" th:text="#{services.form.label.attrRelease.releaseIncommon}"/>
-            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
-               data-toggle="tooltip"
-               data-placement="top"
-               th:title="#{services.form.tooltip.attrRelease.releaseIncommon}"></i>
-        </label>
-    </div>
 </div>
