@@ -1,7 +1,6 @@
 package org.apereo.cas.mgmt.services.web;
 
 import com.google.common.base.Throwables;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegisteredService;
@@ -60,13 +59,6 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
                             @RequestBody final RegisteredServiceEditBean.ServiceData service,
                             final BindingResult result) {
         try {
-            if (StringUtils.isNotBlank(service.getAssignedId())) {
-                final RegisteredService svc = this.servicesManager.findServiceBy(Long.parseLong(service.getAssignedId()));
-                if (svc != null) {
-                    this.servicesManager.delete(svc.getId());
-                }
-            }
-            
             final RegisteredService svcToUse = this.registeredServiceFactory.createRegisteredService(service);
             final RegisteredService newSvc = this.servicesManager.save(svcToUse);
             LOGGER.info("Saved changes to service [{}]", svcToUse.getId());
