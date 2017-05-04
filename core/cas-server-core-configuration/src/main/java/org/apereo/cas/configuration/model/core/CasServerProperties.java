@@ -5,6 +5,9 @@ import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * This is {@link CasServerProperties}.
  *
@@ -106,7 +109,16 @@ public class CasServerProperties {
         private int maxPostSize = 20971520;
         private int proxyPort = -1;
         private int redirectPort = -1;
+        private Map<String, Object> attributes = new LinkedHashMap<>();
 
+        public Map<String, Object> getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(final Map<String, Object> attributes) {
+            this.attributes = attributes;
+        }
+        
         public String getProtocol() {
             return protocol;
         }
@@ -251,6 +263,15 @@ public class CasServerProperties {
         private int redirectPort;
         private int proxyPort;
         private String protocol = "AJP/1.3";
+        private Map<String, Object> attributes = new LinkedHashMap<>();
+
+        public Map<String, Object> getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(final Map<String, Object> attributes) {
+            this.attributes = attributes;
+        }
 
         public String getProtocol() {
             return protocol;
@@ -305,6 +326,15 @@ public class CasServerProperties {
         private boolean enabled;
         private int port = 8080;
         private String protocol = "org.apache.coyote.http11.Http11NioProtocol";
+        private Map<String, Object> attributes = new LinkedHashMap<>();
+
+        public Map<String, Object> getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(final Map<String, Object> attributes) {
+            this.attributes = attributes;
+        }
 
         public String getProtocol() {
             return protocol;
