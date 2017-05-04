@@ -102,7 +102,7 @@ public class AuthenticationProperties {
     private TrustedAuthenticationProperties trusted = new TrustedAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private JaasAuthenticationProperties jaas = new JaasAuthenticationProperties();
+    private List<JaasAuthenticationProperties> jaas = new ArrayList<>();
 
     @NestedConfigurationProperty
     private JdbcAuthenticationProperties jdbc = new JdbcAuthenticationProperties();
@@ -243,11 +243,11 @@ public class AuthenticationProperties {
         this.shiro = shiro;
     }
 
-    public JaasAuthenticationProperties getJaas() {
+    public List<JaasAuthenticationProperties> getJaas() {
         return jaas;
     }
 
-    public void setJaas(final JaasAuthenticationProperties jaas) {
+    public void setJaas(final List<JaasAuthenticationProperties> jaas) {
         this.jaas = jaas;
     }
 
@@ -378,8 +378,7 @@ public class AuthenticationProperties {
     public void setTrusted(final TrustedAuthenticationProperties trusted) {
         this.trusted = trusted;
     }
-
-
+    
     public List<LdapAuthenticationProperties> getLdap() {
         return ldap;
     }

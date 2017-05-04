@@ -52,7 +52,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         LOGGER.debug("Registering metadata populator [{}] into the execution plan", populator);
         authenticationMetaDataPopulatorList.add(populator);
     }
-    
+
     @Override
     public void registerMetadataPopulators(final Collection<AuthenticationMetaDataPopulator> populators) {
         populators.forEach(this::registerMetadataPopulator);
@@ -77,5 +77,11 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     public PrincipalResolver getPrincipalResolverForAuthenticationTransaction(final AuthenticationHandler handler,
                                                                               final AuthenticationTransaction transaction) {
         return authenticationHandlerPrincipalResolverMap.get(handler);
+    }
+
+    @Override
+    public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
+                                                                    final PrincipalResolver principalResolver) {
+        handlers.forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
     }
 }
