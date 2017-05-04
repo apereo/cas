@@ -46,6 +46,14 @@ public interface AuthenticationEventExecutionPlan {
     void registerAuthenticationHandlerWithPrincipalResolver(Map<AuthenticationHandler, PrincipalResolver> plan);
 
     /**
+     * Register authentication handlers with principal resolver.
+     *
+     * @param handlers           the handlers
+     * @param principalResolver the principal resolver
+     */
+    void registerAuthenticationHandlerWithPrincipalResolvers(Collection<AuthenticationHandler> handlers, PrincipalResolver principalResolver);
+    
+    /**
      * Register authentication handler with principal resolver.
      *
      * @param handler           the handler

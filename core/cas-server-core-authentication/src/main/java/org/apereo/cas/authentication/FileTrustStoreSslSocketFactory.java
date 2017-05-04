@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.security.KeyStore;
 import java.security.Principal;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -222,7 +223,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     return true;
                 } catch (final CertificateException e) {
                     final String msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
-                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(c -> c.toString()).collect(Collectors.toSet()),
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
                             authType, e.getMessage()), e);
                     return false;
                 }
@@ -242,7 +243,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     return true;
                 } catch (final CertificateException e) {
                     final String msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
-                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(c -> c.toString()).collect(Collectors.toSet()),
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
                             authType, e.getMessage()), e);
                     return false;
                 }

@@ -110,11 +110,11 @@ Load settings from a MongoDb instance.
 Load settings from an Apache ZooKeeper instance.
 
 ```properties
-spring.cloud.zookeeper.connectString=localhost:2181
-spring.cloud.zookeeper.enabled=true
-spring.cloud.zookeeper.config.enabled=true
-spring.cloud.zookeeper.maxRetries=10
-spring.cloud.zookeeper.config.root=cas/config
+# spring.cloud.zookeeper.connectString=localhost:2181
+# spring.cloud.zookeeper.enabled=true
+# spring.cloud.zookeeper.config.enabled=true
+# spring.cloud.zookeeper.maxRetries=10
+# spring.cloud.zookeeper.config.root=cas/config
 ```
 
 ### DynamoDb
@@ -151,10 +151,10 @@ secured, [please review this guide](Configuration-Properties-Security.html).
 ### Standalone
 
 ```properties
-cas.standalone.config.security.alg=PBEWithMD5AndTripleDES
-cas.standalone.config.security.provider=BC
-cas.standalone.config.security.iterations=
-cas.standalone.config.security.psw=
+# cas.standalone.config.security.alg=PBEWithMD5AndTripleDES
+# cas.standalone.config.security.provider=BC
+# cas.standalone.config.security.iterations=
+# cas.standalone.config.security.psw=
 ```
 
 The above settings may be passed to CAS using any of the [strategies outline here](Configuration-Management.html#overview),
@@ -276,6 +276,7 @@ yet wish to customize the connector configuration that is linked to the running 
 # cas.server.httpProxy.scheme=https
 # cas.server.httpProxy.redirectPort=
 # cas.server.httpProxy.proxyPort=
+# cas.server.httpProxy.attributes.attributeName=attributeValue
 ```
 
 #### HTTP
@@ -287,6 +288,7 @@ linked to the `server.port` setting.
 # cas.server.http.port=8080
 # cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
 # cas.server.http.enabled=true
+# cas.server.http.attributes.attributeName=attributeValue
 ```
 
 #### AJP
@@ -305,11 +307,12 @@ Enable AJP connections for the embedded Tomcat container,
 # cas.server.ajp.enableLookups=false
 # cas.server.ajp.redirectPort=-1
 # cas.server.ajp.allowTrace=false
+# cas.server.ajp.attributes.attributeName=attributeValue
 ```
 
 #### SSL Valve
 
-The Tomcat SSLValve is a way to get a client certificate from an SSL proxy (e.g. HAProxy or BigIP F5) 
+The Tomcat SSLValve is a way to get a client certificate from an SSL proxy (e.g. HAProxy or BigIP F5)
 running in front of Tomcat via an HTTP header. If you enable this, make sure your proxy is ensuring
 that this header doesn't originate with the client (e.g. the browser).
 
@@ -1792,21 +1795,21 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 To learn more about this topic, [please review this guide](JAAS-Authentication.html).
 
 ```properties
-# cas.authn.jaas.realm=CAS
-# cas.authn.jaas.kerberosKdcSystemProperty=
-# cas.authn.jaas.kerberosRealmSystemProperty=
-# cas.authn.jaas.name=
-# cas.authn.jaas.credentialCriteria=
+# cas.authn.jaas[0].realm=CAS
+# cas.authn.jaas[0].kerberosKdcSystemProperty=
+# cas.authn.jaas[0].kerberosRealmSystemProperty=
+# cas.authn.jaas[0].name=
+# cas.authn.jaas[0].credentialCriteria=
 
-# cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.jaas.passwordEncoder.characterEncoding=
-# cas.authn.jaas.passwordEncoder.encodingAlgorithm=
-# cas.authn.jaas.passwordEncoder.secret=
-# cas.authn.jaas.passwordEncoder.strength=16
+# cas.authn.jaas[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
+# cas.authn.jaas[0].passwordEncoder.characterEncoding=
+# cas.authn.jaas[0].passwordEncoder.encodingAlgorithm=
+# cas.authn.jaas[0].passwordEncoder.secret=
+# cas.authn.jaas[0].passwordEncoder.strength=16
 
-# cas.authn.jaas.principalTransformation.suffix=
-# cas.authn.jaas.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.jaas.principalTransformation.prefix=
+# cas.authn.jaas[0].principalTransformation.suffix=
+# cas.authn.jaas[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jaas[0].principalTransformation.prefix=
 ```
 
 ## GUA Authentication
