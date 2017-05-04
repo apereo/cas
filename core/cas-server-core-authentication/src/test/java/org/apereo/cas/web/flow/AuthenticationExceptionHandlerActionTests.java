@@ -111,7 +111,7 @@ public class AuthenticationExceptionHandlerActionTests {
         handler.setErrors(twoCustomErrors);
         assertTrue(handler.containsCustomErrors());
         assertTrue(handler.getErrors().containsAll(twoCustomErrors));
-        assertEquals(13, handler.getErrors().size());
+        assertEquals(14, handler.getErrors().size());
     }
 
     private static class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {
