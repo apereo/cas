@@ -17,6 +17,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -195,6 +196,7 @@ public class CasJdbcConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "jdbcPrincipalFactory")
     public PrincipalFactory jdbcPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
