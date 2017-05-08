@@ -16,6 +16,7 @@ import org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,8 +55,9 @@ public class CasCoreConfiguration {
     @Autowired
     @Qualifier("defaultTicketFactory")
     private TicketFactory ticketFactory;
-        
+
     @Bean
+    @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
     public ContextualAuthenticationPolicyFactory authenticationPolicyFactory() {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
             return new RequiredHandlerAuthenticationPolicyFactory();
@@ -64,6 +66,7 @@ public class CasCoreConfiguration {
     }
     
     @Bean
+    @ConditionalOnMissingBean(name = "validationServiceSelectionStrategies")
     public List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies() {
         final List list = new ArrayList<>();
         list.add(defaultValidationServiceSelectionStrategy());
@@ -72,12 +75,14 @@ public class CasCoreConfiguration {
 
     @Bean
     @Scope(value = "prototype")
+    @ConditionalOnMissingBean(name = "defaultValidationServiceSelectionStrategy")
     public ValidationServiceSelectionStrategy defaultValidationServiceSelectionStrategy() {
         return new DefaultValidationServiceSelectionStrategy();
     }
     
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "centralAuthenticationService")
     public CentralAuthenticationService centralAuthenticationService(@Qualifier("validationServiceSelectionStrategies")
                                                                      final List validationServiceSelectionStrategies,
                                                                      @Qualifier("principalFactory")

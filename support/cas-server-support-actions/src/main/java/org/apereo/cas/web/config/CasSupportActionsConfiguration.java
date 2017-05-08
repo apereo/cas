@@ -29,6 +29,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.ApplicationLogoutController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -112,6 +113,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "authenticationViaFormAction")
     public Action authenticationViaFormAction() {
         final AbstractAuthenticationAction a = new AbstractAuthenticationAction() {};
         a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
@@ -121,11 +123,13 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "serviceAuthorizationCheck")
     public Action serviceAuthorizationCheck() {
         return new ServiceAuthorizationCheck(this.servicesManager);
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "sendTicketGrantingTicketAction")
     public Action sendTicketGrantingTicketAction() {
         final SendTicketGrantingTicketAction bean = new SendTicketGrantingTicketAction();
         bean.setCreateSsoSessionCookieOnRenewAuthentications(casProperties.getSso().isRenewedAuthn());
@@ -138,6 +142,7 @@ public class CasSupportActionsConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "logoutAction")
     public Action logoutAction() {
         final LogoutAction a = new LogoutAction();
 
@@ -147,6 +152,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "initializeLoginAction")
     public Action initializeLoginAction() {
         final InitializeLoginAction a = new InitializeLoginAction();
         a.setServicesManager(this.servicesManager);
@@ -155,6 +161,7 @@ public class CasSupportActionsConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "initialFlowSetupAction")
     public Action initialFlowSetupAction() {
         final InitialFlowSetupAction bean = new InitialFlowSetupAction();
         bean.setArgumentExtractors(this.argumentExtractors);
@@ -166,6 +173,7 @@ public class CasSupportActionsConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "initialAuthenticationRequestValidationAction")
     public Action initialAuthenticationRequestValidationAction() {
         final InitialAuthenticationRequestValidationAction a =
                 new InitialAuthenticationRequestValidationAction();
@@ -175,6 +183,7 @@ public class CasSupportActionsConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "genericSuccessViewAction")
     public Action genericSuccessViewAction() {
         final GenericSuccessViewAction a = new GenericSuccessViewAction(
                 this.centralAuthenticationService, this.servicesManager, this.webApplicationServiceFactory);
@@ -183,6 +192,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "generateServiceTicketAction")
     public Action generateServiceTicketAction() {
         final GenerateServiceTicketAction a = new GenerateServiceTicketAction();
         a.setCentralAuthenticationService(this.centralAuthenticationService);
@@ -193,16 +203,19 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "gatewayServicesManagementCheck")
     public Action gatewayServicesManagementCheck() {
         return new GatewayServicesManagementCheck(this.servicesManager);
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
     public Action frontChannelLogoutAction() {
         return new FrontChannelLogoutAction(this.logoutManager);
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "ticketGrantingTicketCheckAction")
     public Action ticketGrantingTicketCheckAction() {
         return new TicketGrantingTicketCheckAction(this.centralAuthenticationService);
     }
@@ -223,6 +236,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "serviceWarningAction")
     public Action serviceWarningAction() {
         final ServiceWarningAction a = new ServiceWarningAction();
         a.setCentralAuthenticationService(this.centralAuthenticationService);
