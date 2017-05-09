@@ -163,7 +163,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 }
 
                 proxy.getAttributes().forEach(connector::setAttribute);
-
                 LOGGER.info("Configured connector listening on port [{}]", tomcat.getPort());
             });
         } else {
