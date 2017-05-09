@@ -13,7 +13,7 @@
         <div class="app-launcher">
             <h1 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h1>
 
-            <div class="alert alert-warning" th:if="${dashboardEndpointsEnabled}">
+            <div class="alert alert-warning" th:if="${!dashboardEndpointsEnabled}">
                 <p>No dashboard functionality/endpoint is configured and accessible.
                     Unless you teach CAS otherwise, <strong>all endpoints are disabled by default.</strong>
                     Revisit the CAS configuration/documentation and explicitly enable access for desired endpoints and knobs.
