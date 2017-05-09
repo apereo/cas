@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Controller("v3ProxyValidateController")
 public class V3ProxyValidateController extends V3ServiceValidateController {
 
     /**

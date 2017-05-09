@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Controller("samlValidateController")
 public class SamlValidateController extends AbstractServiceValidateController {
 
     /**

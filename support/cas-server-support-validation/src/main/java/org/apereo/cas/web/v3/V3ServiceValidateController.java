@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Controller("v3ServiceValidateController")
 public class V3ServiceValidateController extends AbstractServiceValidateController {
 
     /**
