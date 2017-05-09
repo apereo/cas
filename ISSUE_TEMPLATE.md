@@ -13,7 +13,13 @@ In order to streamline the process of evaluating issues, we ask that you:
 - First, check with CAS' user mailing list and other support forums to see if the issue has been reported there and if there are any workarounds.
 - Cross check with the official CAS documentation to see if there are any missing steps in your configuration.
 - Check CAS' issue tracker to see if your issue has already been reported.
- 
+
+# Contribute
+
+If you have already identified an enhancement or a bug fix, it is STRONGLY recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues.
+The pull request IS the issue and it will be tracked and tagged as such. Do NOT log issues hoping for the issue to get resolved in the future by someone else. [Study the guide](CONTRIBUTING.md)
+and learn the skills to submit contributions, or reach out to a [commercial affiliate](https://www.apereo.org/content/commercial-affiliates) for assistance.
+
 # Remember
 
 - If you have a question about how to configure a feature in CAS, please use the CAS mailing lists instead or other support channels. 
