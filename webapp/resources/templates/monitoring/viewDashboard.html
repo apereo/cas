@@ -11,12 +11,12 @@
     <div class="viewDashboard">
 
         <div class="app-launcher">
-            <h2 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h2>
+            <h1 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h1>
 
             <div class="alert alert-warning" th:if="${dashboardEndpointsEnabled}">
                 <p>No dashboard functionality/endpoint is configured and accessible.
-                    Unless you teach CAS otherwise, all endpoints are disabled by default.
-                    Revisit the CAS configuration and explicitly enable access for desired endpoints and knobs.
+                    Unless you teach CAS otherwise, <strong>all endpoints are disabled by default.</strong>
+                    Revisit the CAS configuration/documentation and explicitly enable access for desired endpoints and knobs.
                 </p>
             </div>
 
