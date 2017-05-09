@@ -2146,6 +2146,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 # Activate MFA globally based on principal attributes
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
+
+# Specify the regular expression pattern to trigger multifactor when working with a single provider.
+# Comment out the setting when working with multiple multifactor providers
 # cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
 
 # Activate MFA globally based on principal attributes and a groovy-based predicate
