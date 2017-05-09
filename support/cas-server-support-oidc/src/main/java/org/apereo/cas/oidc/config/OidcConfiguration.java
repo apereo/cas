@@ -144,7 +144,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
+    @Qualifier("oauth20AuthenticationServiceSelectionStrategy")
     private AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy;
 
     @Autowired
