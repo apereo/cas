@@ -96,7 +96,6 @@ public class DashboardController extends BaseCasMvcEndpoint {
         model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("serverFunctionsEnabled", (Boolean) model.get("restartEndpointEnabled") || (Boolean) model.get("shutdownEndpointEnabled"));
 
-        model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
         model.put("autoConfigurationEndpointEnabled", autoConfigurationReportEndpoint.isEnabled());
         model.put("beansEndpointEnabled", beansEndpoint.isEnabled());
         model.put("mappingsEndpointEnabled", requestMappingEndpoint.isEnabled());
@@ -132,7 +131,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
         final boolean endpointAvailable = model.entrySet().stream()
                 .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));
         model.put("dashboardEndpointsEnabled", endpointAvailable);
-        
+        model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
         return new ModelAndView("monitoring/viewDashboard", model);
     }
 }
