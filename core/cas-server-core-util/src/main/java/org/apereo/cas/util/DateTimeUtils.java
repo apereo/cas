@@ -85,6 +85,26 @@ public final class DateTimeUtils {
     }
 
     /**
+     * Local date time of local date time.
+     *
+     * @param time the time
+     * @return the local date time
+     */
+    public static LocalDateTime localDateTimeOf(final long time) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.systemDefault());
+    }
+
+    /**
+     * Local date time of local date time.
+     *
+     * @param time the time
+     * @return the local date time
+     */
+    public static LocalDateTime localDateTimeOf(final Date time) {
+        return localDateTimeOf(time.getTime());
+    }
+
+    /**
      * Gets ZonedDateTime for ReadableInstant.
      *
      * @param time Time object to be converted.
