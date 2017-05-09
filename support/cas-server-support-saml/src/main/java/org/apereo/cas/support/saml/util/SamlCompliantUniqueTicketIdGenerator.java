@@ -27,13 +27,13 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
     private static final byte[] ENDPOINT_ID = {0, 1};
 
     /** SAML defines the source id as the server name. */
-    private byte[] sourceIdDigest;
+    private final byte[] sourceIdDigest;
 
     /** Flag to indicate SAML2 compliance. Default is SAML1.1. */
     private boolean saml2compliant;
 
     /** Random generator to construct the AssertionHandle. */
-    private SecureRandom random;
+    private final SecureRandom random;
 
     /**
      * Instantiates a new SAML compliant unique ticket id generator.
