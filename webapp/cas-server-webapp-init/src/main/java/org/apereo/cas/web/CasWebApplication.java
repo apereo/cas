@@ -59,7 +59,7 @@ public class CasWebApplication {
      */
     protected CasWebApplication() {
     }
-        
+
     /**
      * Main entry point of the CAS web application.
      *

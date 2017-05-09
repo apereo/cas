@@ -255,7 +255,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     private ExpirationPolicy buildTicketGrantingTicketExpirationPolicy() {
         final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
-        if (tgt.getMaxTimeToLiveInSeconds() < 0 && tgt.getTimeToKillInSeconds() < 0) {
+        if (tgt.getMaxTimeToLiveInSeconds() <= 0 && tgt.getTimeToKillInSeconds() <= 0) {
             LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");
             return new NeverExpiresExpirationPolicy();
         }

@@ -37,9 +37,11 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     private final boolean failoverOnException;
     private final boolean failoverOnAuthenticationFailure;
 
-    public RadiusTokenAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public RadiusTokenAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                            final PrincipalFactory principalFactory,
                                             final List<RadiusServer> servers,
-                                            final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
+                                            final boolean failoverOnException,
+                                            final boolean failoverOnAuthenticationFailure) {
         super(name, servicesManager, principalFactory, null);
         this.servers = servers;
         this.failoverOnException = failoverOnException;
@@ -66,7 +68,8 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
                     RadiusUtils.authenticate(username, password, this.servers,
                             this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
-                return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getValue().get()),
+                return createHandlerResult(credential,
+                        this.principalFactory.createPrincipal(username, result.getValue().get()),
                         new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);

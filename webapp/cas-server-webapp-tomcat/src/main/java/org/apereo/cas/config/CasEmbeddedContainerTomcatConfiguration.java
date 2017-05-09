@@ -130,7 +130,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
                 port = SocketUtils.findAvailableTcpPort();
             }
-            LOGGER.debug("Set embedded tomcat container HTTP port to [{}]", port);
+            LOGGER.info("Activated embedded tomcat container HTTP port to [{}]", port);
             connector.setPort(port);
 
             LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
