@@ -39,7 +39,9 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
+- sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 - sudo apt-get install -y nodejs
+- sudo apt-get update
 - sudo ./gradlew npmInstall gulpSetup --stacktrace
 install:
 - sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
