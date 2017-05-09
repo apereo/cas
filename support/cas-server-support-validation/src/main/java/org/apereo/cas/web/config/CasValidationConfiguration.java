@@ -115,6 +115,7 @@ public class CasValidationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "cas2ServiceSuccessView")
     public View cas2ServiceSuccessView() {
         return new Cas20ResponseView(true, protocolAttributeEncoder,
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
@@ -122,6 +123,7 @@ public class CasValidationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "cas3ServiceJsonView")
     public View cas3ServiceJsonView() {
         return new Cas30JsonResponseView(true, 
                 protocolAttributeEncoder,
@@ -131,6 +133,7 @@ public class CasValidationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "cas3ServiceSuccessView")
     public View cas3ServiceSuccessView() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final boolean isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
@@ -140,6 +143,7 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "v3ServiceValidateController")
     public V3ServiceValidateController v3ServiceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                                    @Qualifier("defaultAuthenticationSystemSupport")
                                                                    final AuthenticationSystemSupport authenticationSystemSupport) {
@@ -161,6 +165,7 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "v3ProxyValidateController")
     public V3ProxyValidateController v3ProxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                                @Qualifier("defaultAuthenticationSystemSupport")
                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
@@ -182,6 +187,7 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "proxyValidateController")
     public ProxyValidateController proxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                            @Qualifier("defaultAuthenticationSystemSupport")
                                                            final AuthenticationSystemSupport authenticationSystemSupport) {
@@ -203,6 +209,7 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "legacyValidateController")
     public LegacyValidateController legacyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                              @Qualifier("defaultAuthenticationSystemSupport")
                                                              final AuthenticationSystemSupport authenticationSystemSupport) {
@@ -223,12 +230,14 @@ public class CasValidationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "proxyController")
     public ProxyController proxyController() {
         return new ProxyController(centralAuthenticationService, webApplicationServiceFactory);
     }
 
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "serviceValidateController")
     public ServiceValidateController serviceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
                                                                @Qualifier("defaultAuthenticationSystemSupport")
                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
