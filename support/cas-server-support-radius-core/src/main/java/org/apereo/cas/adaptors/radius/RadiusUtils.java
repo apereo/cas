@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 public final class RadiusUtils {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RadiusUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RadiusUtils.class);
 
     private RadiusUtils() {
     }
