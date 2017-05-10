@@ -40,9 +40,9 @@ before_install:
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
 - sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-- sudo apt-get install -y nodejs
 - sudo apt-get update
-- sudo ./gradlew npmInstall gulpSetup --stacktrace
+- sudo apt-get install -y nodejs
+- sudo ./gradlew npmInstall gulpSetup --stacktrace -q
 install:
 - sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
 script:
