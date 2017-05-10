@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.*
+
 description = "Apereo CAS Core Web"
 dependencies {
     compile project(":api:cas-server-core-api-web")
@@ -9,4 +11,13 @@ dependencies {
     compileOnly project(":api:cas-server-core-api-webflow")
     implementation libraries.pac4j
     implementation libraries.thymeleaf
+}
+
+// Filter properties from gradle.properties into this sub-project's property file resources  
+def gradleProps = new Properties()
+file("../../gradle.properties").withInputStream { gradleProps.load(it) }
+processResources {
+    filesMatching("**/*.properties") {
+        expand(gradleProps)
+    }
 }

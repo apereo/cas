@@ -7,19 +7,20 @@
     <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">CAS &#8211; Central Authentication Service</title>
 
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
-    <link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{#{webjars.fontawesomemin.css}}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{#{webjars.bootstrapmin.css}}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{#{webjars.latomin.css}}"/>
 
     <link rel="stylesheet" th:href="@{${#themes.code('standard.custom.css.file')}}"/>
 
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
 
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.3.0/zxcvbn.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script type="text/javascript" th:src="@{#{webjars.zxcvbn.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.jquerymin.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.jquerycookie.js}}"></script>
     <script src="//www.google.com/recaptcha/api.js" async defer th:if="${recaptchaSiteKey}"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script th:src="@{#{webjars.bootstrapmin.js}}"></script>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
