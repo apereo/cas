@@ -10,7 +10,7 @@ function setConnected(connected) {
     if (!connected) {
         el.innerHTML = "Disconnected!";
     } else {
-        el.innerHTML = "Connected to CAS. Streaming logs based on [" + logConfigFileLocation + "]...";
+        el.innerHTML = "Connected to CAS. Streaming and tailing logs based on <kbd>[" + logConfigFileLocation + "]</kbd>...";
     }
 }
 
