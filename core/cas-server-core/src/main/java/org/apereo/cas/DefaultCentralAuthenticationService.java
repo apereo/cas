@@ -274,7 +274,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
-            LOGGER.info("Service ticket [{}] does not exist.", serviceTicketId);
+            LOGGER.warn("Service ticket [{}] does not exist.", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
 
