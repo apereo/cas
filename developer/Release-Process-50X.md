@@ -9,28 +9,30 @@ This page documents the steps that a release engineer should take for cutting a 
 
 ## Account Setup
 
-You will need to sign up for a [Sonatype account](http://central.sonatype.org/pages/ossrh-guide.html) and must ask to be authorized to publish releases to the `org.apereo` package.
+You will need to sign up for a [Sonatype account](http://central.sonatype.org/pages/ossrh-guide.html) and must ask 
+to be authorized to publish releases to the `org.apereo` package. Once you have, you may be asked to have one of the
+current project members *vouch* for you. 
 
 ## Environment Review
 
-- Set up your environment:
-	- Load your SSH key and ensure this SSH key is also referenced in Github.
-	- Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
-	- Load your `~/.gradle/gradle.properties` file with the following:
+- Load your SSH key and ensure this SSH key is also referenced in Github.
+- Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
+- Load your `~/.gradle/gradle.properties` file with the following *as an example*:
 
 ```bash
-signing.keyId=
-signing.password=
-signing.secretKeyRingFile=
+signing.keyId=7A24P9QB
+signing.password=P@$$w0rd
+signing.secretKeyRingFile=/Users/example/.gnupg/secring.gpg
 org.gradle.daemon=false
 ```
 
-- Checkout the CAS project: `git clone git@github.com:apereo/cas.git cas-server`
+- Checkout the CAS project: `git --depth=10 clone git@github.com:apereo/cas.git cas-server`
+- Make sure you have the [latest version of JDK 8](http://www.oracle.com/technetwork/java/javase/downloads) installed via `java -version`. 
 
 ## Preparing the Release
 
 - If necessary, create an appropriate branch for the next release. Generally, you should do this only for major or minor releases. (i.e. `4.2.x`, `5.0.x`)
-- In the project's `gradle.properties`, change the project version to the release version. (i.e. `4.2.0-RC1`)
+- In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`)
 - Build the project using the following command:
 
 ```bash
@@ -54,8 +56,8 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 
 ## Finalizing the Release
 
-- Create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v4.2.0-RC1`).
-- Switch to the release branch and in the project's `gradle.properties`, change the project version to the *next* development version (i.e. `4.3.0-SNAPSHOT`). 
+- Create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v5.0.0-RC1`).
+- Switch to the release branch and in the project's `gradle.properties`, change the project version to the *next* development version (i.e. `5.0.0-RC2-SNAPSHOT`). 
 - Push your changes to the upstream repository. 
 
 ## Housekeeping
@@ -73,12 +75,11 @@ this release from Maven Central, integrate into your environment, and provide fe
 
 Regards,
 John Smith
-
 ```
 
 ## Update Overlays
 
-Update the following overlay projects to point to the newly released CAS version. This task is only relevant when dealing with GA releases.
+Update the following overlay projects to point to the newly released CAS version. 
 
 - [CAS Webapp Maven Overlay](https://github.com/apereo/cas-overlay-template)
 - [CAS Webapp Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
@@ -87,9 +88,9 @@ Update the following overlay projects to point to the newly released CAS version
 
 ## Update Maintenance Policy
 
-Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. This task is only relevant when dealing with GA or minor releases.
+Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. This task is only relevant when dealing with major or minor releases.
 
 ## Docker Image (Optional)
 
-Release a new CAS [Docker image](https://github.com/apereo/cas/tree/dockerized-caswebapp).
+Release a new CAS [Docker image](https://github.com/apereo/cas-webapp-docker).
 This task is only relevant when dealing with GA releases.

@@ -13,7 +13,7 @@ requirements.
 
 ## Java
 
-CAS at its heart is a Java-based web application. Prior to deployment, you will need [Java](http://www.java.com) `v1.8` installed.
+CAS at its heart is a Java-based web application. Prior to deployment, you will need [JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) `v1.8` installed.
 
 ## Servlet Containers
 
@@ -32,13 +32,21 @@ benefits in the long run.
 You <b>DO NOT</b> need to have Maven or Gradle installed prior to the installation. They are provided to you automatically.
 </p></div>
 
+## Git (Optional)
+
+While not strictly a requirement, it's HIGHLY recommended that you have [Git](https://git-scm.com/downloads) installed for your CAS deployment,
+and manage all CAS artifacts, configuration files, build scripts and setting inside a source control repository.
+
+## OS
+
+No particular preference on the operating system, though Linux-based installs are typically more common than Windows.
+
 ## Internet Connectivity
 
-Internet connectivity is generally required for the build phase of any Maven-based project, including the recommended
-Maven WAR overlays used to install CAS. Maven resolves dependencies by searching online repositories containing
-artifacts (jar files in most cases) that are downloaded and installed locally. While it is possible to override this
-behavior by altering Maven configuration settings, it is considered advanced usage and not supported.
+Internet connectivity is generally required for the build phase of any Maven/Gradle based project, including the recommended WAR overlays used to install CAS. The build process resolves dependencies by searching online repositories containing artifacts (jar files in most cases) that are downloaded and installed locally.
 
-A common solution to overcoming lack of Internet connectivity on a CAS server is to build CAS on a dedicated build
-host with internet connectivity. The `cas.war` file produced by the build is subsequently copied to the CAS server
-for deployment.
+## Hardware
+
+Anecdotal community evidence seems to suggest that CAS deployments would perform well on a dual-core 2.00Ghz processor with 4GB of memory, at a minimum. Enough disk space (preferrably SSD) is also needed to house CAS-generated logs, if logs are kept on the server itself.
+
+Remember that the above requirements are simply *suggestions*. You may get by perfectly fine with more or less, depending on your deployment and request volume. Start with the bare minimum and be prepared to adjust and strengthen capacity on demand if needed.

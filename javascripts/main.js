@@ -5,6 +5,35 @@ function isDocumentationSiteViewedLocally() {
     return location.href.indexOf(CONST_SITE_TARGET_DIR) != -1;
 }
 
+function generateNavigationBarAndCrumbs() {
+    var crumbs = "<ol class='breadcrumb'>";
+
+    var activeVersion = getActiveDocumentationVersionInView(true);
+
+    var uri = new URI(document.location);
+    var segments = uri.segment();
+    
+
+    for (var i = 1; i < segments.length; i++) {
+	var clz = ((i + 1) >= segments.length) ? 'breadcrumb-item active' : 'breadcrumb-item ';
+	clz += "capitalize";      
+	    
+	var page = null;
+	
+	if ((i + 1) >= segments.length) {
+		page = document.title.replace("CAS -", "").trim();
+	} else {
+		page = segments[i].replace(".html", "").replace(/-/g, " ").replace(/_/g, " ").replace(/index/g, "");  
+	}
+        crumbs += "<li class='" + clz + "'><a href='#'>" + page + "</a></li>";
+    }
+
+    crumbs += "</ol>";
+
+    $("#docsNavBar").prepend(crumbs);
+
+}
+
 function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
     var currentVersion = CONST_CURRENT_VER;
     var href = location.href;
@@ -102,6 +131,8 @@ function hideDevelopmentVersionWarning() {
     var formattedVersion = getActiveDocumentationVersionInView(true);
     if (formattedVersion != CONST_CURRENT_VER || formattedVersion == "") {
         $("#dev-doc-info").hide();
+    } else {
+	$("#dev-doc-info").show();    
     }
 }
 
@@ -160,14 +191,18 @@ function generateToolbarIcons() {
         editLink = baseLink + "/edit/gh-pages/";
         historyLink = baseLink + "/commits/gh-pages/";
         deleteLink = baseLink + "/delete/gh-pages/";
-    } else if (activeVersion != CONST_CURRENT_VER) {
-        editLink = baseLink + "/edit/" + activeVersion + "/docs/cas-server-documentation/";
-        historyLink = baseLink + "/commits/" + activeVersion + "/docs/cas-server-documentation/";
-        deleteLink = baseLink + "/delete/" + activeVersion + "/docs/cas-server-documentation/";
     } else if (activeVersion == CONST_CURRENT_VER) {
         editLink = baseLink + "/edit/master/docs/cas-server-documentation/";
         historyLink = baseLink + "/commits/master/docs/cas-server-documentation/";
         deleteLink = baseLink + "/delete/master/docs/cas-server-documentation/";
+    } else if (activeVersion.indexOf("5.") != -1 || activeVersion.indexOf("6.") != -1) {
+        editLink = baseLink + "/edit/" + activeVersion + "/docs/cas-server-documentation/";
+        historyLink = baseLink + "/commits/" + activeVersion + "/docs/cas-server-documentation/";
+        deleteLink = baseLink + "/delete/" + activeVersion + "/docs/cas-server-documentation/";
+    } else if (activeVersion != CONST_CURRENT_VER) {
+        editLink = baseLink + "/edit/" + activeVersion + "/cas-server-documentation/";
+        historyLink = baseLink + "/commits/" + activeVersion + "/cas-server-documentation/";
+        deleteLink = baseLink + "/delete/" + activeVersion + "/cas-server-documentation/";
     }
 
     editLink += editablePage;
@@ -258,6 +293,61 @@ function ensureBootrapIsLoaded() {
     }
 }
 
+function generateDependencyLangFragments() {
+  $.each( $("div.language-xml.highlighter-rouge div.highlight pre"), function( i, val ) {
+
+      var text = $(val).text();
+      if (!text.trim().startsWith("<dependency>")) {
+          return;
+      }
+
+      var mavenXml = $(val).html();
+
+      xmlDoc = $.parseXML(text),
+      $xml = $( xmlDoc ),
+      $groupId = $xml.find("groupId");
+      $artifactId = $xml.find("artifactId");
+      
+      var gradleDep = "compile \"" + $groupId.text() + ":" + $artifactId.text() + ":${project.'cas.version'}\"";
+
+      var gradleFragment = "<table style='border-spacing: 0'> \
+	      <tbody>\
+	      <tr>\
+	      	<td class='gutter gl' style='text-align: right'><pre class='lineno'>1</pre></td>\
+	      	<td class='code'><pre>" + gradleDep + "</pre></td>\
+	      </tr> \
+	      </tbody> \
+	      </table>";
+
+      var parentTable = $(val).parent().parent().parent().parent().parent();
+
+      var mavenId = Math.floor((Math.random() * 10000) + 1);
+      var gradleId = Math.floor((Math.random() * 10000) + 1);
+      
+      var tabs = "<ul class='nav nav-pills'> \
+  <li class='nav-item'><a class='nav-link active' data-toggle='tab' href='#maven" + mavenId + "'>Maven</a></li> \
+  <li class='nav-item'><a class='nav-link' data-toggle='tab' href='#gradle" + gradleId + "'>Gradle</a></li> \
+  <li role='presentation' class='nav-item dropdown'> \
+      <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>More<span class='caret'></span></a> \
+      <div class='dropdown-menu'> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-overlay-template'>CAS Maven Overlay Project</a> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-gradle-overlay-template'>CAS Gradle Overlay Project</a> \
+          <a class='dropdown-item' href='https://github.com/apereo/cas-webapp-docker'>Deploy CAS via Docker</a> \
+      </div> \
+  </li> \
+  </ul> \
+  <div class='tab-content clearfix'> \
+    <div class='tab-pane fade in active language-xml highlighter-rouge highlight' id='maven" + mavenId + "'>" + parentTable.html() + "</div> \
+    <div class='tab-pane fade in language-groovy highlighter-rouge highlight' id='gradle" + gradleId + "'>" + gradleFragment + "</div> \
+  </div>";
+
+      var divHighlight = parentTable.parent();
+      
+      divHighlight.empty();
+      divHighlight.prepend(tabs);
+  });
+}
+
 function responsiveImages() {
     $('img').each(function() {
         $(this).addClass('img-fluid');
@@ -276,12 +366,14 @@ function copyButton() {
         $(this).append( btn );
     });
 }
+
 var clipboard = new Clipboard('.copy-button', {
     target: function(trigger) {
         var code = $(trigger).prev('table').find('td.code pre')[0];
         return code;
     }
 });
+
 clipboard.on('success', function(e) {
     e.clearSelection();
 });
@@ -290,8 +382,10 @@ $(function () {
     ensureBootrapIsLoaded();
     loadSidebarForActiveVersion();
     generateTableOfContentsForPage();
-
+    generateDependencyLangFragments();
     generateToolbarIcons();
+    generateNavigationBarAndCrumbs();
+	
     responsiveImages();
     responsiveTables();
 

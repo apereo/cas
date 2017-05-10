@@ -64,16 +64,19 @@ required. This simplifies the deployment configuration and is the recommended ap
 is sufficient to meet HA and scalability needs.
 
 #### Robustness
+
 Hardware component failure/recovery is a feature of the virtualized environment such that the loss of a CPU, 
 memory or power does not cause a failure of the CAS server.
 
 #### Zero downtime maintenance approach
+
 True zero downtime maintenance (i.e. no observable impact to end users) is not achievable with this configuration. 
 However, staging of maintenance and upgrades can be done without downtime by leveraging the cloning ability of most 
 VM infrastructures. Once the new CAS Server node is ready, a brief cutover can be implemented which will effectively 
-end all current SSO sessions. This could be done by scheduling restart of Tomcat during low traffic times, after the new cas.war has been deployed.
+end all current SSO sessions. This could be done by scheduling restart of Tomcat during low traffic times, after the new `cas.war` has been deployed.
 
 #### Scalability
+
 CAS itself has modest computing requirements such that any modern enterprise class server hardware is going to 
 be sufficient to handle 10,000s of users in typical deployment scenarios. In a recent client engagement load testing 
 a single node deployment yielded good results with CAS handling 200 concurrent users at 61 requests per second which 
@@ -83,6 +86,7 @@ VM environments should be able to scale the available CPU and memory to meet a w
 
 
 ### Multiple CAS Server Nodes
+
 A highly available CAS deployment is composed of two or more nodes behind a hardware load balancer in 
 either active/passive or active/active mode. In general the former offers simplicity with 
 adequate failover; the latter, improved resource usage and reduced service interruptions at the cost of additional complexity.
@@ -104,6 +108,7 @@ Multi-node CAS generally involves the following:
 
 
 #### Physical Architecture
+
 The physical architecture may be realized through VMs or physical hardware. It is important to note that 
 in a shared ticket state model (Active/Active mode), CAS server nodes need to be able to communicate tickets 
 state across all nodes and as such, firewall restrictions between such nodes needs to be relaxed enough to allow for ticket state replication.
@@ -113,14 +118,15 @@ by the load balancer and then routed to available CAS nodes.
 
 
 #### Robustness
+
 In the event of a CAS node failure, the work load and authentication requests can properly 
 be rerouted to another CAS node. It is possible that through the failover scenario, some state 
 may be lost depending on where the user is in the login flow and as such, once the rerouting of 
 the request has landed from the failed node to the clone, users may need be presented with the 
 CAS login screen again. This failure mode can be eliminated with Servlet session state replication.
 
-
 #### Zero downtime maintenance approach
+
 Maintenance work, such that it would include upgrades and application of patches to the 
 software may be carried out via two general approaches:
 
@@ -137,20 +143,22 @@ data from other nodes without any manual configuration or adjustment. See below 
 
 
 #### Scalability
+
 Scalability is simply achieved by adding new CAS nodes to the cluster.
 
-
 #### Active/Passive Mode
+
 In an active/passive load balanced configuration, 1 of N nodes serves all requests at any given time. This simplifies 
 ticket storage requirements since it is not necessary to share ticket state among several application nodes.
 
-In particular, the `DefaultTicketRegistry` component that stores tickets in memory is suitable for active/failover
+In particular, the default ticket registry component that stores tickets in memory is suitable for active/failover
 setups with the understanding that a node failure would result in ticket loss. It's worth repeating that ticket loss 
 results in graceful application failure where users simply re-authenticate to CAS to create new SSO sessions;
 CAS client sessions created under previous SSO sessions would suffer no interruption or loss of data.
 
 
 #### Active/Active Mode
+
 A load balancer in active/active mode serves requests to all N nodes simultaneously. The load balancer chooses a node 
 to serve a request based on a configured algorithm; typically least active or round robin. In this system architecture, 
 it is vitally important to use a ticket store where a ticket can be located regardless of which CAS node requests it.
@@ -171,15 +179,14 @@ The same strategy is then repeated for all other CAS nodes.
 
 There is a further consideration for active/active deployments: session affinity. Session affinity is a feature of
 most load balancer equipment where the device performs state management for incoming requests and routes a client to 
-the same node for subsequent requests for a period of time. This feature is recommended and required to avoid servlet 
-container session replication, which is generally more complex and less reliable. The core of this requirement is that 
-servlet container session storage is used to maintain state for the CAS login and logout Webflows. While it is possible 
-to achieve truly stateless active/active deployments by plugging in
-[client-based state management](https://github.com/serac/spring-webflow-client-repo) components, such configurations 
-at present have not been proven and are not recommended without careful planning and testing.
+the same node for subsequent requests for a period of time. This feature is no longer required by default
+as CAS is able to maintain state for the CAS login/logout webflows directly on the client-side. Additional
+options are however provided to allow for servlet container session storage to be used with replication options
+if necessary. See [this guide](../installation/Webflow-Customization-Sessions.html) to learn more.
 
 
 #### Avoid Round Robin DNS
+
 We _strongly_ recommend avoiding round robin DNS as a cost-effective alternative to a hardware load balancer.
 Client cache expiration policy is entirely uncontrollable, and typical cache expiration times are much longer than
 desirable periods for node failover. A [reverse proxy](http://httpd.apache.org/docs/current/mod/mod_proxy.html) or
@@ -187,6 +194,7 @@ desirable periods for node failover. A [reverse proxy](http://httpd.apache.org/d
 
 
 ### HA Ticket Registry
+
 The following ticket storage components provide the best tradeoff among ease of use, scalability, and
 fault tolerance and are suitable for both active/passive and active/active setups:
 
@@ -214,6 +222,7 @@ These sorts of cache systems do not require replication and generally provide fo
 durability.
 
 ##### Secure Cache Replication
+
 A number of cache-based ticket registries support secure replication of ticket data across the wire, 
 so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops. 
 [See this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info. 
@@ -250,12 +259,12 @@ content filters and CAS nodes, as well as primary authentication (e.g. LDAPS) an
 Any break in the privacy controls at any stage comprises the overall security of the system.
 
 
-### Upgrade/patches/security releases
+### Upgrades
 
-CAS server upgrades should be carried out through the recommended Maven overlay approach. Established as a best 
-practice, the CAS maven overlay approach allows one to seamlessly obtain the intended CAS server version from well 
+CAS server upgrades should be carried out through the recommended [WAR overlay approach](../installation/Maven-Overlay-Installation.html). Established as a best 
+practice, the overlay approach allows one to seamlessly obtain the intended CAS server version from well 
 known and public repositories while laying custom changes specific on top of the downloaded binary artifact.
-In the specifics of the Maven overlay approach, it may also be desirable to externalize the configuration 
+In the specifics of the overlay approach, it may also be desirable to externalize the configuration 
 outside of the `cas.war` so that the properties and logging configuration can vary across tiers for the same `cas.war` file. 
 That is, externalizing the environment-specific configuration allows the same `cas.war` to be promoted from server to server 
 and tier to tier, which increases the confidence that the web application that was tested and verified out of production will behave as tested in production.

@@ -10,6 +10,9 @@ accommodate and how lines of development are managed. CAS adopters can also expe
 for each release type. All new improvements, fixes, enhancements, and changes are weighed against 
 the release strategy for consideration in future release.
 
+The project release schedule is [available here](https://github.com/apereo/cas/milestones). The 
+[maintenance policy](Maintenance-Policy.html) is also available.
+
 ## SECURITY 
 
 Security releases are a critical minimal change on a release to address a serious confirmed 
@@ -26,7 +29,7 @@ Adopters can expect that major APIs, integration points, default behavior, and g
 configuration is mostly the same. CAS maven overlays should build with little to no changes, 
 unless required and highlighted in the release notes and change logs.
 
-## MINOR 
+## FEATURE 
 
 An *evolutionary* incremental improvement that includes all PATCH release improvements 
 along with fixes and enhancements that could not easily be accommodated without 
@@ -34,11 +37,11 @@ breaking backward compatibility or changing default behavior. (i.e. Transitionin
 Adopters can expect general improvements that require moderate changes in APIs, integration points, 
 default behavior, and general configuration. Overall the CAS server code along the MINOR 
 development line looks pretty much the same from release to release with clear moderate evolutionary 
-changes. MINOR releases may have a theme or focus that helps coordinate development. 
+changes. FEATURE releases may have a theme or focus that helps coordinate development. 
 CAS maven overlays may require minor to moderate changes, some APIs may have changed or 
 been deprecated, default behavior and configuration may have changed. 
-While implementation APIs may change, [CAS Core APIs](https://github.com/Jasig/cas/tree/master/cas-server-core-api) 
-will remain unchanged between MINOR versions.
+While implementation APIs may change, [CAS Core APIs](https://github.com/apereo/cas/tree/master/api) 
+will remain unchanged between FEATURE release versions.
 
 ## MAJOR 
  

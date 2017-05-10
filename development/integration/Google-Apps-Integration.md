@@ -4,8 +4,9 @@ title: CAS - Google Apps Integration
 ---
 
 # Overview
-Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an 
-integration point for external authentication services. 
+
+Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an
+integration point for external authentication services.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -19,13 +20,13 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Generate Public/Private Keys
 
-The first step is to generate DSA/RSA public and private keys. These are used to sign and read the Assertions. 
+The first step is to generate DSA/RSA public and private keys. These are used to sign and read the Assertions.
 After keys are created, the public key needs to be registered with Google.
 
 The keys will also need to be available to the CAS application (but not publicly available over the Internet)
-via the classpath though any location accessible by the user running the web server 
-instance and not served publicly to the Internet is acceptable.  Thus, inside `src/main/resources` is 
-nice because it is scoped to the web application but not normally served. `/etc/cas/` 
+via the classpath though any location accessible by the user running the web server
+instance and not served publicly to the Internet is acceptable.  Thus, inside `src/main/resources` is
+nice because it is scoped to the web application but not normally served. `/etc/cas/`
 is also fine as well and protects the key from being overwritten on deploy of a new CAS webapp version.
 
 ```bash
@@ -37,12 +38,23 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 
 The `x509.pem` file should be uploaded into Google Apps under Security/SSO.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#google-apps-authentication).
 
-Also, ensure that Google Apps is registered in your Service Registry, 
-by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
+## Register Google Apps
 
-## Configure Username Attribute 
+Ensure that Google Apps is registered in your [service registry](../installation/Service-Management.html).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://www.google.com/a/YourGoogleDomain/acs",
+  "name" : "googleApps",
+  "id" : 1000,
+  "evaluationOrder" : 10
+}
+```
+
+## Configure Username Attribute
 
 As an optional step, you can configure an alternate username to be send to Google in the SAML reply. This alternate user name
 can be specified in the CAS service registry via [username attribute providers](../installation/Service-Management.html)
@@ -50,7 +62,7 @@ for the registered Google Apps service.
 
 ## Configure Google
 
-You'll need to provide Google with the URL for your SAML-based SSO service, as well as the URL your users will 
+You'll need to provide Google with the URL for your SAML-based SSO service, as well as the URL your users will
 be redirected to when they log out of a hosted Google application.
 Use the following URLs when you are configuring for Google Apps:
 
@@ -60,5 +72,5 @@ Use the following URLs when you are configuring for Google Apps:
 
 ## Test
 
-Attempt to access a Google-hosted application, such as Google Calendar 
+Attempt to access a Google-hosted application, such as Google Calendar
 with the url: `https://calendar.google.com/a/YourGoogleDomain`

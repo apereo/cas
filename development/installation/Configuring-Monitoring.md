@@ -10,7 +10,9 @@ and other underlying connections to systems that are in use by CAS.
 
 ## Default
 
-The default monitors report back brief memory and ticket stats. There is nothing more for you to do. 
+The default monitors report back brief memory and ticket stats. There is nothing more for you to do.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#monitoring)
+and [this guide](Configuration-Properties.html#memory).
 
 ## Memcached
 
@@ -22,7 +24,7 @@ The default monitors report back brief memory and ticket stats. There is nothing
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#cache-monitors).
 
 ## Ehcache
 
@@ -34,7 +36,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#cache-monitors).
 
 
 ## Hazelcast
@@ -47,8 +49,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#cache-monitors).
 
 ## JDBC
 
@@ -60,6 +61,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 </dependency>
 ```
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-monitoring).
+
 ## LDAP
 
 ```xml
@@ -69,3 +72,5 @@ To see the relevant list of CAS properties, please [review this guide](Configura
     <version>${cas.version}</version>
 </dependency>
 ```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-connection-pool).

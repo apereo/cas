@@ -11,14 +11,14 @@ is a standalone web application.
 * The CAS server loads/relies on all these defined CAS services to process all incoming requests.
 
 <div class="alert alert-warning"><strong>Synchronized Configuration</strong><p>
-You MUST keep in mind that both applications (the CAS server and the services management webapp)
+You <strong>MUST</strong> keep in mind that both applications (the CAS server and the services management webapp)
 share the <strong>same</strong> service registry configuration for CAS services.
 </p></div>
 
-A sample Maven overlay for the services management webapp is provided
- here: [https://github.com/Apereo/cas-services-management-overlay](https://github.com/Apereo/cas-services-management-overlay)
- 
- To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+A sample overlay for the services management webapp is provided
+ here: [https://github.com/apereo/cas-services-management-overlay](https://github.com/apereo/cas-services-management-overlay)
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
 
 ## Services Registry
 
@@ -26,15 +26,17 @@ The [persistence storage](Service-Management.html) for services **MUST** be the 
 
 ## Authentication Method
 
-Access to the management webapp is by default configured to authenticate against a CAS server. 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+Access to the management webapp is by default configured to authenticate against a CAS server.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).
 
 ## Authorization
 
+Learn how to control access to the management web application.
+
 ### Static List of Users
 
-By default, access is limited to a static list of users whose credentials may be 
-specified in a `user-details.properties` file that should be available on the runtime classpath. 
+By default, access is limited to a static list of users whose credentials may be
+specified in a `user-details.properties` file that should be available on the runtime classpath.
 
 ### Attribute
 
@@ -53,4 +55,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#management-webapp).

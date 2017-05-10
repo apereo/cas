@@ -4,6 +4,7 @@ title: CAS - Infinispan Ticket Registry
 ---
 
 # Infinispan Ticket Registry
+
 Infinispan integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -14,9 +15,10 @@ Infinispan integration is enabled by including the following dependency in the W
 </dependency>
 ```
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#infinispan-ticket-registry).
 
 [Infinispan](http://infinispan.org/) is a distributed in-memory key/value data store with optional schema.
-It can be used both as an embedded Java library and as a language-independent service accessed remotely over a variety of protocols. 
+It can be used both as an embedded Java library and as a language-independent service accessed remotely over a variety of protocols.
 It offers advanced functionality such as transactions, events, querying and distributed processing.
 
 Cache instance can be integrated with
@@ -29,14 +31,14 @@ Cache instance can be integrated with
 - Spring Cache 3.x and 4.x
 - CDI
 - OSGi
-- Apache Spark
-- Apache Hadoop
+- [Apache Spark](https://github.com/infinispan/infinispan-spark)
+- [Apache Hadoop](https://github.com/infinispan/infinispan-hadoop)
 
 There are a variety of cache stores available to choose from, some of which are:
 
 - JPA/JDBC Store
-- Single File & Soft-Index 
-- REST 
+- Single File & Soft-Index
+- REST
 - Cassandra
 - Redis
 - HBase
@@ -45,7 +47,6 @@ There are a variety of cache stores available to choose from, some of which are:
 See the [full list of implementations](http://infinispan.org/cache-store-implementations/).
 
 ## Distributed Cache
-
 
 A sample `infinispan.xml` configuration file:
 

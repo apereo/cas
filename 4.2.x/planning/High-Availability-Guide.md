@@ -116,10 +116,12 @@ the CAS node that requests it. It should be clear why in-memory storage is not s
 
 The active-active architecture allows for a zero down-time transitions between CAS server versions at the time of upgrades. One CAS node instance can be taken offline, undergo maintenance, and then be put back into the production. The same strategy is then repeated for all other CAS nodes.
 
-There is a further consideration for active/active deployments: session affinity. Session affinity is a feature of
-most load balancer equipment where the device performs state management for incoming requests and routes a client to the same node for subsequent requests for a period of time. This feature is recommended and required to avoid servlet container session replication, which is generally more complex and less reliable. The core of this requirement is that servlet container session storage is used to maintain state for the CAS login and logout Webflows. While it is possible to achieve truly stateless active/active deployments by plugging in
-[client-based state management](https://github.com/serac/spring-webflow-client-repo) components, such configurations at present have not been proven and are not recommended without careful planning and testing.
 
+There is a further consideration for active/active deployments: session affinity. Session affinity is a feature of
+most load balancer equipment where the device performs state management for incoming requests and routes a client to 
+the same node for subsequent requests for a period of time. This feature is no longer required by default
+as CAS is able to maintain state for the CAS login/logout webflows directly on the client-side.
+See [this guide](../installation/Webflow-Customization.html) to learn more.
 
 #### Avoid Round Robin DNS
 We _strongly_ recommend avoiding round robin DNS as a cost-effective alternative to a hardware load balancer.

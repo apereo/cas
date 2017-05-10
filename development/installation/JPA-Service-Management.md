@@ -16,12 +16,13 @@ Support is enabled by adding the following module into the Maven overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-service-registry).
 
 ## Auto Initialization
 
-Upon startup and if the services registry database is blank, 
-the registry is able to auto initialize itself from default 
-JSON service definitions available to CAS. 
+Upon startup and if the services registry database is blank,
+the registry is able to auto initialize itself from default
+JSON service definitions available to CAS.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).

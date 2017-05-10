@@ -43,12 +43,13 @@ Platforms:
 
 Applications:
 
-* Outlook Web Application (ClearPass + .NET CAS Client)
+* Canvas
 * Atlassian Confluence
 * Atlassian JIRA
 * Drupal
 * Liferay
 * uPortal
+* ...
 
 When the term "CAS client" appears in this manual without further qualification, it refers to the integration
 components such as the Java CAS Client rather than to the application relying upon (a client of) the CAS server.
@@ -66,6 +67,7 @@ Supported protocols:
 * [OpenID Connect](../protocol/OIDC-Protocol.html)
 * [OpenID](../protocol/OpenID-Protocol.html)
 * [OAuth 2.0](../protocol/OAuth-Protocol.html)
+* [WS Federation](../protocol/WS-Federation-Protocol.html)
 
 
 ## Software Components
@@ -89,4 +91,7 @@ the core CAS codebase as well as for deployers; it's straightforward to customiz
 CAS and Spring API extension points. General knowledge of Spring is beneficial to understanding the interplay among
 some framework components, but it's not strictly required. 
 
-CAS is also heavily based on [Spring Boot](http://projects.spring.io/spring-boot/), which allows it to take an opinionated view of the Spring platform and third-party libraries to create a stand-alone web application without the hassle of XML configuration as much as possible. Spring Boot allows CAS to hide much of internal complexity of its components and their configuration and instead provides auto-configuration modules that simply and automatically configure the running application context without much server inteference. 
+CAS is also heavily based on [Spring Boot](http://projects.spring.io/spring-boot/), which allows it to take an opinionated view of 
+the Spring platform and third-party libraries to create a stand-alone web application without the hassle of XML configuration as much as possible.
+Spring Boot allows CAS to hide much of internal complexity of its components and their configuration and instead provides auto-configuration modules that simply 
+and automatically configure the running application context without much server interference. 

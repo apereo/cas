@@ -5,7 +5,7 @@ title: CAS - User Interface Customization
 
 # Views
 
-The views are found at `src/main/resources/templates`.
+The views are found at `src/main/resources/templates`. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#views).
 
 ## Warning Before Accessing Application
 
@@ -41,10 +41,10 @@ and will not generate the TGC that is designed to do so.
 ...
 ```
 
-## Default service
+## Default Service
 
 In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
 all other services, MUST be authorized and registered with CAS.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#views).

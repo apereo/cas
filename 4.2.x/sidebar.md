@@ -1,4 +1,5 @@
 ---
+layout: null
 ---
 
 * [Planning](#planning)
@@ -86,6 +87,7 @@
 
 * [Developer](#developer)
     *   [Javadocs](/$version/javadocs/index.html)
+    *   [PMC](/cas/developer/Project-Commitee.html)
     *   [Issue Tracker](https://github.com/apereo/cas/issues)
     *   [Contributor Guidelines](/cas/developer/Contributor-Guidelines.html)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)

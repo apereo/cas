@@ -3,24 +3,54 @@ layout: default
 title: CAS - User Interface Customization
 ---
 
-# Dynamic Themes
-With the introduction of [Service Management application](Service-Management.html), deployers are now able to switch the themes based on different services. For example, you may want to have different login screens (different styles) for staff applications and student applications. Or, you want to show two layouts for day time and night time. This document could help you go through the basic settings to achieve this.
+# Views
 
-## Themes
-CAS is configured to decorate views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default views for CAS but will simply apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
+CAS uses [Thymeleaf](http://www.thymeleaf.org/) to build and render views. Thymeleaf's main goal is to bring elegant natural templates to your development workflow — HTML pages that can be correctly displayed in browsers and also work as static prototypes, allowing for stronger collaboration in development teams.
 
-### Configuration
-- Add another theme properties file, which must be placed to the root of `src/main/resources` folder, name it as `theme_name.properties`. Contents of this file should match the `cas-theme-default.properties` file.
-- Add the location of related styling files, such as CSS and Javascript in the file above.
-- Specify the name of your theme for the service definition under the `theme` property.
+## Configuration
 
-## Themed Views
-CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted
-for a different type of audience are entirely different structurally that simply
-using a simple theme is not practical to augment the default views. In such cases, new view pages may be required.
+CAS views are found at `src/main/resources/templates`, which translates to `classpath:/templates/` when deployed. While this is the default setting, you are also allowed options to move the directory to a location outside the main CAS web application, or if needed, deploy CAS with an entirely different set of views in one tier while still preserving the default look and feel for another deployment tier.
 
-Views associated with a particular theme by default are expected to be found at: `src/main/resources/templates/<theme-id>`
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#views).
 
-### Configuration
-- Clone the default set of view pages into a new directory based on the theme id (i.e. `src/main/resources/templates/<theme-id>`).
-- Specify the name of your theme for the service definition under the `theme` property.
+## Warning Before Accessing Application
+
+CAS has the ability to warn the user before being redirected to the service. This allows users to be made aware whenever an application uses CAS to log them in.
+(If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.)
+Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
+
+```html
+...
+<input id="warn"
+       name="warn"
+       value="true"
+       tabindex="3"
+       th:accesskey="#{screen.welcome.label.warn.accesskey}"
+       type="checkbox" />
+<label for="warn" th:utext="#{screen.welcome.label.warn}"/>
+...
+```
+
+## "I am at a public workstation" authentication
+
+CAS has the ability to allow the user to opt-out of SSO, by indicating on the login page that the authentication
+is happening at a public workstation. By electing to do so, CAS will not honor the subsequent SSO session
+and will not generate the TGC that is designed to do so.
+
+```html
+...
+<input id="publicWorkstation"
+       name="publicWorkstation"
+       value="false" tabindex="4"
+       type="checkbox" />
+<label for="publicWorkstation" th:utext="#{screen.welcome.label.publicstation}"/>
+...
+```
+
+## Default Service
+
+In the event that no `service` is submitted to CAS, you may specify a default
+service url to which CAS will redirect. Note that this default service, much like
+all other services, MUST be authorized and registered with CAS.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#views).

@@ -1,4 +1,5 @@
 ---
+layout: null
 ---
 
 * [Planning](#planning)

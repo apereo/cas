@@ -14,13 +14,13 @@ Couchbase integration is enabled by including the following dependency in the WA
 </dependency>
 ```
 
-[Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on 
-[Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this registry is to leverage the capability of Couchbase 
+[Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on
+[Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this registry is to leverage the capability of Couchbase
 server to provide high availability to CAS.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#couchbase-service-registry).
 
 The Couchbase integration currently assumes that the service registries are stored
 in their own buckets. Optionally set passwords for the buckets, optionally setup
@@ -32,8 +32,22 @@ so in reality the bucket property must also be set.
 
 ## Auto Initialization
 
-Upon startup and if the services registry database is blank, 
-the registry is able to auto initialize itself from default 
+Upon startup and configuration permitting,
+the registry is able to auto initialize itself from default
 JSON service definitions available to CAS.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following
+levels:
+
+```xml
+...
+<AsyncLogger name="com.couchbase" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
+```

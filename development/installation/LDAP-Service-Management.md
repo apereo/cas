@@ -26,7 +26,7 @@ Support is enabled by adding the following module into the Maven overlay:
 The default mapper has support for the following optional items:
 
 | Field                             | Default Value
-|-----------------------------------+--------------------------------------------------+
+|-----------------------------------|---------------------------------------------------
 | `objectClass`                     | casRegisteredService
 | `serviceDefinitionAttribute`      | description
 | `idAttribute`                     | uid
@@ -35,12 +35,12 @@ Service definitions are by default stored inside the `serviceDefinitionAttribute
 JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html).
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-service-registry).
 
 ## Auto Initialization
 
-Upon startup and if the services registry database is blank, 
-the registry is able to auto initialize itself from default 
-JSON service definitions available to CAS. 
+Upon startup and configuration permitting,
+the registry is able to auto initialize itself from default
+JSON service definitions available to CAS.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).

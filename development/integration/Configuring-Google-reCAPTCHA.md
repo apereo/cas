@@ -18,4 +18,8 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#google-recaptcha-integration).
+
+## Internet Explorer
+
+Remember to disable Internet Explorer's "Compatibility View" mode. reCAPTCHA does not render correctly when that mode is turned on.

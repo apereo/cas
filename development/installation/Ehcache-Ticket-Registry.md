@@ -9,7 +9,7 @@ Ehcache integration is enabled by including the following dependency in the WAR 
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-ehcache</artifactId>
+     <artifactId>cas-server-support-ehcache-ticket-registry</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -19,8 +19,8 @@ This registry stores tickets in an [Ehcache](http://ehcache.org/) instance.
 
 ## Distributed Cache
 Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage
-subsystem. A single cache instance is created to house all types of tickets, and is synchronously replicated 
-across the cluster of nodes that are defined in the configuration. 
+subsystem. A single cache instance is created to house all types of tickets, and is synchronously replicated
+across the cluster of nodes that are defined in the configuration.
 
 
 ### RMI Replication
@@ -30,7 +30,7 @@ replication with Ehcache, [see this resource](http://ehcache.org/documentation/u
 
 #### Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ehcache-ticket-registry).
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows.
 
@@ -65,7 +65,7 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
 Ehcache manages the internal eviction policy of cached objects via the idle and alive settings.
 These settings control the general policy of the cache that is used to store various ticket types. In general,
 you need to ensure the cache is alive long enough to support the individual expiration policy of tickets, and let
-CAS clean the tickets as part of its own cleaner. 
+CAS clean the tickets as part of its own cleaner.
 
 
 ### Troubleshooting Guidelines

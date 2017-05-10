@@ -83,5 +83,6 @@ Update the following overlay projects to point to the newly released CAS version
 
 ## Docker Image
 
-Release a new CAS [Docker image](https://github.com/Apereo/cas/tree/dockerized-caswebapp).
+
+Release a new CAS [Docker image](https://github.com/apereo/cas-webapp-docker).
 This task is only relevant when dealing with GA releases.

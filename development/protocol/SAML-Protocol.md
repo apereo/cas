@@ -4,8 +4,26 @@ title: CAS - CAS SAML Protocol
 ---
 
 # SAML Protocol
-CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. 
+
+CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent.
 This document deals with CAS-specific concerns.
+
+## SAML2
+
+CAS provides support for [SAML2 Authentication](../installation/Configuring-SAML2-Authentication.html).
+
+## Google Apps
+
+CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html).
+
+## SAML 1.1
+
+CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
+
+- Support a method of [attribute release](../integration/Attribute-Release.html)
+- [Single Logout](../installation/Logout-Single-Signout.html)
+
+A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -17,31 +35,13 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-## SAML2
-
-CAS provides support for [SAML2 Authentication](../installation/Configuring-SAML2-Authentication.html). 
-
-## Google Apps
-
-CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html). 
-
-## SAML 1.1
-
-CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
-
-- Support a method of [attribute release](../integration/Attribute-Release.html)
-- [Single Logout](../installation/Logout-Single-Signout.html)
-
-A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
-
-
 ## Sample Request
 ```xml
 POST /cas/samlValidate?ticket=
 Host: cas.example.com
 Content-Length: 491
 Content-Type: text/xml
- 
+
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header/>
   <SOAP-ENV:Body>
@@ -58,6 +58,7 @@ Content-Type: text/xml
 
 
 ## Sample Response
+
 ```xml
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />
@@ -125,9 +126,9 @@ Content-Type: text/xml
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-core).
 
-You may also need to declare the following Maven repository in 
+You may also need to declare the following Maven repository in
 your CAS Overlay to be able to resolve dependencies:
 
 ```xml
@@ -140,6 +141,3 @@ your CAS Overlay to be able to resolve dependencies:
     ...
 </repositories>
 ```
-
-
-
