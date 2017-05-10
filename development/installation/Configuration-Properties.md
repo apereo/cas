@@ -1884,7 +1884,7 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the encryption key size setting.
+The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
 
 ## Stormpath Authentication
 
@@ -2146,6 +2146,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 # Activate MFA globally based on principal attributes
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
+
+# Specify the regular expression pattern to trigger multifactor when working with a single provider.
+# Comment out the setting when working with multiple multifactor providers
 # cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
 
 # Activate MFA globally based on principal attributes and a groovy-based predicate
@@ -3681,7 +3684,7 @@ To learn more about this topic, [please review this guide](Configuring-Ticketing
 ### Signing & Encryption
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the encryption key size setting.
+The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
 
 ### Cleaner
 
@@ -4223,7 +4226,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the encryption key size setting.
+The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
 
 ### Authentication Exceptions
 
