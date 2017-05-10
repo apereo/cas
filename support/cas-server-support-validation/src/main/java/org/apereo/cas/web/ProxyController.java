@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,8 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Controller("proxyController")
-public class ProxyController {
+public class ProxyController extends AbstractDelegateController {
 
     /**
      * View for if the creation of a "Proxy" Ticket Fails.
@@ -68,6 +66,13 @@ public class ProxyController {
                            final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         this.centralAuthenticationService = centralAuthenticationService;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
+    }
+
+    @Override
+    public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
+        final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
+        final Service targetService = getTargetService(request);
+        return StringUtils.hasText(proxyGrantingTicket) && targetService != null;
     }
 
     /**
@@ -111,8 +116,8 @@ public class ProxyController {
      * Generate error view stuffing the code and description
      * of the error into the model. View name is set to {@link #CONST_PROXY_FAILURE}.
      *
-     * @param code        the code
-     * @param args        the msg args
+     * @param code the code
+     * @param args the msg args
      * @return the model and view
      */
     private ModelAndView generateErrorView(final String code, final Object[] args, final HttpServletRequest request) {

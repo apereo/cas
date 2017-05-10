@@ -224,7 +224,7 @@ public class MonitorProperties {
 
         public Endpoints() {
             setSensitive(Boolean.TRUE);
-            setEnabled(Boolean.TRUE);
+            setEnabled(Boolean.FALSE);
         }
 
         public SpringWebflowReport getSpringWebflowReport() {

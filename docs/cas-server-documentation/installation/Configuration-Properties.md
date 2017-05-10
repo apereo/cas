@@ -1884,7 +1884,7 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the encryption key size setting.
+The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
 
 ## Stormpath Authentication
 
@@ -3684,7 +3684,7 @@ To learn more about this topic, [please review this guide](Configuring-Ticketing
 ### Signing & Encryption
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the encryption key size setting.
+The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
 
 ### Cleaner
 
@@ -4226,7 +4226,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the encryption key size setting.
+The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
 
 ### Authentication Exceptions
 
