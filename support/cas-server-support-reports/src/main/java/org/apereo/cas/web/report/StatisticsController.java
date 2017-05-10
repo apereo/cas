@@ -11,7 +11,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditPointRuntimeInfo;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,12 +26,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,81 +135,80 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping(value = "/getAuthnAudit/summary")
     @ResponseBody
-    public WebAsyncTask<Collection<List<AuthenticationAuditSummary>>> getAuthnAuditSummary(final HttpServletRequest request,
-                                                                                           final HttpServletResponse response,
-                                                                                           @RequestParam final long start,
-                                                                                           @RequestParam final String range,
-                                                                                           @RequestParam final String scale) throws Exception {
+    public WebAsyncTask<Collection<AuthenticationAuditSummary>> getAuthnAuditSummary(final HttpServletRequest request,
+                                                                                     final HttpServletResponse response,
+                                                                                     @RequestParam final long start,
+                                                                                     @RequestParam final String range,
+                                                                                     @RequestParam final String scale) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        final Callable<Collection<List<AuthenticationAuditSummary>>> asyncTask = () -> {
-            //final Set<AuditActionContext> audits = getAuthnAudit(request, response);
-
-            final Set<AuditActionContext> audits = new HashSet<>();
-            audits.add(new AuditActionContext("user", "CAS", "AUTHENTICATION_SUCCESS",
-                    "CAS", new Date(2017, 1, 14), null, null, (AuditPointRuntimeInfo) () -> "Dude"));
-            audits.add(new AuditActionContext("user", "CAS", "AUTHENTICATION_SUCCESS",
-                    "CAS", new Date(2017, 1, 18), null, null, (AuditPointRuntimeInfo) () -> "Dude"));
-            audits.add(new AuditActionContext("user", "CAS", "AUTHENTICATION_SUCCESS",
-                    "CAS", new Date(2017, 1, 28), null, null, (AuditPointRuntimeInfo) () -> "Dude"));
-            audits.add(new AuditActionContext("user", "CAS", "AUTHENTICATION_SUCCESS",
-                    "CAS", new Date(2017, 1, 17), null, null, (AuditPointRuntimeInfo) () -> "Dude"));
-            audits.add(new AuditActionContext("user", "CAS", "AUTHENTICATION_SUCCESS",
-                    "CAS", new Date(2017, 1, 9), null, null, (AuditPointRuntimeInfo) () -> "Dude"));
-            audits.add(new AuditActionContext("user", "CAS", "AUTHENTICATION_SUCCESS",
-                    "CAS", new Date(2017, 1, 15), null, null, (AuditPointRuntimeInfo) () -> "Dude"));
-            audits.add(new AuditActionContext("user", "CAS", "AUTHENTICATION_SUCCESS",
-                    "CAS", new Date(2017, 1, 30), null, null, (AuditPointRuntimeInfo) () -> "Dude"));
-
-
-            final LocalDateTime endDate = LocalDateTime.now().plus(Duration.parse(range));
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        final Callable<Collection<AuthenticationAuditSummary>> asyncTask = () -> {
+            final Set<AuditActionContext> audits = getAuthnAudit(request, response);
             final LocalDateTime startDate = DateTimeUtils.localDateTimeOf(start);
-            final Set<AuditActionContext> authnEvents = audits.stream()
+            final LocalDateTime endDate = startDate.plus(Duration.parse(range));
+
+            final List<AuditActionContext> authnEvents = audits.stream()
                     .filter(a -> {
                         final LocalDateTime actionTime = DateTimeUtils.localDateTimeOf(a.getWhenActionWasPerformed());
                         return (actionTime.isEqual(startDate) || actionTime.isAfter(startDate))
                                 && (actionTime.isEqual(endDate) || actionTime.isBefore(endDate))
-                                && a.getActionPerformed().matches("AUTHENTICATION_".concat("SUCCESS|FAILED"));
+                                && a.getActionPerformed().matches("AUTHENTICATION_(SUCCESS|FAILED)");
                     })
-                    .sorted(Comparator.comparing(o -> o.getWhenActionWasPerformed()))
-                    .collect(Collectors.toSet());
+                    .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed))
+                    .collect(Collectors.toList());
 
             final Duration steps = Duration.parse(scale);
-            final Map<Integer, String> buckets = new LinkedHashMap<>();
+            final Map<Integer, LocalDateTime> buckets = new LinkedHashMap<>();
 
             LocalDateTime dt = startDate;
             Integer index = 0;
             while (dt != null) {
-                buckets.put(index++, dt.toString());
+                buckets.put(index++, dt);
                 dt = dt.plus(steps);
                 if (dt.isAfter(endDate)) {
                     dt = null;
                 }
             }
 
-            final Map<LocalDateTime, List<AuthenticationAuditSummary>> summary = new LinkedHashMap<>();
-            authnEvents.forEach(event -> {
+            final Map<LocalDateTime, AuthenticationAuditSummary> summary = new LinkedHashMap<>();
+            boolean foundBucket = false;
+            for (final AuditActionContext event : authnEvents) {
+                foundBucket = false;
                 for (int i = 0; i < buckets.keySet().size(); i++) {
                     final LocalDateTime actionTime = DateTimeUtils.localDateTimeOf(event.getWhenActionWasPerformed());
-                    final LocalDateTime bucketDateTime = DateTimeUtils.localDateTimeOf(buckets.get(i));
+                    final LocalDateTime bucketDateTime = buckets.get(i);
                     if (actionTime.isEqual(bucketDateTime) || actionTime.isAfter(bucketDateTime)) {
-                        for (int j = i + 1; j < buckets.keySet().size(); j++) {
-                            final LocalDateTime nextBucketDateTime = DateTimeUtils.localDateTimeOf(buckets.get(j));
+                        for (int j = 0; j < buckets.keySet().size(); j++) {
+                            final LocalDateTime nextBucketDateTime = buckets.get(j);
                             if (actionTime.isBefore(nextBucketDateTime)) {
-                                if (summary.containsKey(bucketDateTime)) {
-                                    final List<AuthenticationAuditSummary> values = summary.get(bucketDateTime);
-                                    values.add(new AuthenticationAuditSummary(actionTime.toString()));
+                                final LocalDateTime bucketToUse = buckets.get(j - 1);
+                                final AuthenticationAuditSummary values;
+                                if (summary.containsKey(bucketToUse)) {
+                                    values = summary.get(bucketToUse);
                                 } else {
-                                    final List<AuthenticationAuditSummary> values = new ArrayList<>();
-                                    values.add(new AuthenticationAuditSummary(actionTime.toString()));
-                                    summary.put(bucketDateTime, values);
+                                    values = new AuthenticationAuditSummary(bucketToUse.toString());
+
                                 }
+                                if (event.getActionPerformed().contains("SUCCESS")) {
+                                    values.incrementSuccess();
+                                } else {
+                                    values.incrementFailure();
+                                }
+                                summary.put(bucketToUse, values);
+
+                                foundBucket = true;
+                                break;
                             }
+                        }
+                        if (foundBucket) {
+                            break;
                         }
                     }
                 }
-            });
-            final Collection<List<AuthenticationAuditSummary>> values = summary.values();
+            }
+            final Collection<AuthenticationAuditSummary> values = summary.values();
+            //values.removeIf(a -> a.isEmpty());
             return values;
         };
         return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
@@ -220,13 +216,36 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
 
     private static class AuthenticationAuditSummary {
         private final String time;
+        private long successes;
+        private long failures;
 
-        public AuthenticationAuditSummary(final String time) {
+        /**
+         * Instantiates a new Authentication audit summary.
+         *
+         * @param time the time
+         */
+        AuthenticationAuditSummary(final String time) {
             this.time = time;
         }
 
         public String getTime() {
             return time;
+        }
+
+        public long getSuccesses() {
+            return successes;
+        }
+
+        public long getFailures() {
+            return failures;
+        }
+
+        public void incrementSuccess() {
+            successes++;
+        }
+
+        public void incrementFailure() {
+            failures++;
         }
     }
 
