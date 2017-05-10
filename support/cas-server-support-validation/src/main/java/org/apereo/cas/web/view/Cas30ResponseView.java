@@ -122,7 +122,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
             values.forEach(value -> {
                 final StringBuilder builder = new StringBuilder();
                 builder.append("<cas:".concat(k).concat(">"));
-                builder.append(StringEscapeUtils.escapeXml10(value.toString().trim()));
+                builder.append(value != null ? StringEscapeUtils.escapeXml10(value.toString().trim()) : "");
                 builder.append("</cas:".concat(k).concat(">"));
                 formattedAttributes.add(builder.toString());
             });
