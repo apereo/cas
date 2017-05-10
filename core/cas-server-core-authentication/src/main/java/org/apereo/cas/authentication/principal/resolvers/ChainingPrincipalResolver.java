@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +57,10 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         this.chain = chain;
     }
 
+    public void setChain(final PrincipalResolver... chain) {
+        this.chain = Arrays.stream(chain).collect(Collectors.toList());
+    }
+    
     /**
      * {@inheritDoc}
      * Resolves a credential by delegating to each of the configured resolvers in sequence. Note that the
