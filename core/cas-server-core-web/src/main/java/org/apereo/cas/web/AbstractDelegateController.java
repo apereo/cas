@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Frederic Esnault
  * @since 4.2.0
  */
-@Controller
 public abstract class AbstractDelegateController implements ApplicationContextAware {
 
     /** Application context. */

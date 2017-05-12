@@ -58,6 +58,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Controller
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
     
     private ValidationSpecification validationSpecification;
