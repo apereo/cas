@@ -105,8 +105,7 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-
-
+    
     <repositories>
         <repository>
             <id>sonatype-releases</id>

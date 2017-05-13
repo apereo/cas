@@ -4,6 +4,70 @@ casSupportModuleArtifactId: "cas-server-support-"
 
 initializr:
   dependencies:
+    - name: CAS SMS Messaging
+      content:
+        - name: CAS Twillio SMS Messaging
+          id: ${casSupportModuleArtifactId}-sms-twillio
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-sms-twillio
+          version: ${casVersion}
+          description:
+        - name: CAS TextMagic SMS Messaging
+          id: ${casSupportModuleArtifactId}-sms-textmagic
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-sms-textmagic
+          version: ${casVersion}
+          description:
+        - name: CAS Clickatell SMS Messaging
+          id: ${casSupportModuleArtifactId}-sms-clickatell
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-sms-clickatell
+          version: ${casVersion}
+          description:
+    - name: CAS Graphical User Authentication
+      content:
+        - name: CAS Graphical User Authentication
+          id: ${casSupportModuleArtifactId}-gua
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-gua
+          version: ${casVersion}
+          description:
+          keywords:
+            - gua
+    - name: CAS Risk-based Multifactor Authentication
+      content:
+        - name: CAS Risk-based Multifactor Authentication 
+          id: ${casSupportModuleArtifactId}-electrofence
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-electrofence
+          version: ${casVersion}
+          description:
+    - name: CAS Multifactor Authentication Trusted Device/Browser
+      content:
+        - name: CAS Multifactor Authentication Trusted Device/Browser Core
+          id: ${casSupportModuleArtifactId}-trusted-mfa
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-trusted-mfa
+          version: ${casVersion}
+          description:
+        - name: CAS Multifactor Authentication Trusted Device/Browser JDBC
+          id: ${casSupportModuleArtifactId}-trusted-mfa-jdbc
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-trusted-mfa-jdbc
+          version: ${casVersion}
+          description:
+        - name: CAS Multifactor Authentication Trusted Device/Browser MongoDb
+          id: ${casSupportModuleArtifactId}-trusted-mfa-mongo
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-trusted-mfa-mongo
+          version: ${casVersion}
+          description:
+        - name: CAS Multifactor Authentication Trusted Device/Browser REST
+          id: ${casSupportModuleArtifactId}-trusted-mfa-rest
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-trusted-mfa-rest
+          version: ${casVersion}
+          description:
     - name: CAS Multifactor Authentication
       content:
         - name: CAS Duo Security Multifactor Authentication
@@ -12,48 +76,64 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-duo
           version: ${casVersion}
           description:
+          keywords:
+            - mfa
         - name: CAS YubiKey Multifactor Authentication
           id: ${casSupportModuleArtifactId}-yubikey
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-yubikey
           version: ${casVersion}
           description:
+          keywords:
+            - mfa
         - name: CAS Google Authenticator Multifactor Authentication
           id: ${casSupportModuleArtifactId}-gauth
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gauth
           version: ${casVersion}
           description:
+          keywords:
+            - mfa
         - name: CAS Google Authenticator MongoDb Multifactor Authentication
           id: ${casSupportModuleArtifactId}-gauth-mongo
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gauth-mongo
           version: ${casVersion}
           description:
+          keywords:
+            - mfa
         - name: CAS Google Authenticator JDBC/JPA Multifactor Authentication
           id: ${casSupportModuleArtifactId}-gauth-jpa
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gauth-jpa
           version: ${casVersion}
           description:
+          keywords:
+            - mfa
         - name: CAS Authy Multifactor Authentication
           id: ${casSupportModuleArtifactId}-authy
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-authy
           version: ${casVersion}
           description:
+          keywords:
+            - mfa
         - name: CAS Microsoft Azure Multifactor Authentication
           id: ${casSupportModuleArtifactId}-azure
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-azure
           version: ${casVersion}
           description:
+          keywords:
+            - mfa
         - name: CAS U2F FIDO Multifactor Authentication
           id: ${casSupportModuleArtifactId}-u2f
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-u2f
           version: ${casVersion}
           description:
+          keywords:
+            - mfa
     - name: CAS Surrogate Authentication
       content:
         - name: CAS Surrogate Authentication
