@@ -4,6 +4,28 @@ casSupportModuleArtifactId: "cas-server-support-"
 
 initializr:
   dependencies:
+    - name: CAS Throttling Authentication
+      content:
+        - name: CAS JDBC Throttling Authentication
+          id: ${casSupportModuleArtifactId}-throttle-jdbc
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-throttle-jdbc
+          version: ${casVersion}
+          description: CAS JDBC Throttling Authentication
+    - name: CAS Delegated Authentication
+      content:
+        - name: CAS Delegated Authentication
+          id: ${casSupportModuleArtifactId}-pac4j-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-pac4j-webflow
+          version: ${casVersion}
+          description: CAS Delegated Authentication
+        - name: CAS WsFederation (ADFS) Delegated Authentication
+          id: ${casSupportModuleArtifactId}-wsfederation-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-wsfederation-webflow
+          version: ${casVersion}
+          description: CAS WsFederation (ADFS) Delegated Authentication
     - name: CAS Authentication Methods
       content:
         - name: CAS LDAP Authentication
