@@ -4,6 +4,98 @@ casSupportModuleArtifactId: "cas-server-support-"
 
 initializr:
   dependencies:
+    - name: CAS Multifactor Authentication
+      content:
+        - name: CAS Duo Security Multifactor Authentication
+          id: ${casSupportModuleArtifactId}-duo
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-duo
+          version: ${casVersion}
+          description:
+        - name: CAS YubiKey Multifactor Authentication
+          id: ${casSupportModuleArtifactId}-yubikey
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-yubikey
+          version: ${casVersion}
+          description:
+        - name: CAS Google Authenticator Multifactor Authentication
+          id: ${casSupportModuleArtifactId}-gauth
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-gauth
+          version: ${casVersion}
+          description:
+        - name: CAS Google Authenticator MongoDb Multifactor Authentication
+          id: ${casSupportModuleArtifactId}-gauth-mongo
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-gauth-mongo
+          version: ${casVersion}
+          description:
+        - name: CAS Google Authenticator JDBC/JPA Multifactor Authentication
+          id: ${casSupportModuleArtifactId}-gauth-jpa
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-gauth-jpa
+          version: ${casVersion}
+          description:
+        - name: CAS Authy Multifactor Authentication
+          id: ${casSupportModuleArtifactId}-authy
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-authy
+          version: ${casVersion}
+          description:
+        - name: CAS Microsoft Azure Multifactor Authentication
+          id: ${casSupportModuleArtifactId}-azure
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-azure
+          version: ${casVersion}
+          description:
+        - name: CAS U2F FIDO Multifactor Authentication
+          id: ${casSupportModuleArtifactId}-u2f
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-u2f
+          version: ${casVersion}
+          description:
+    - name: CAS Surrogate Authentication
+      content:
+        - name: CAS Surrogate Authentication
+          id: ${casSupportModuleArtifactId}-surrogate-authentication
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-surrogate-authentication
+          version: ${casVersion}
+          description:
+    - name: CAS GeoTracking Authentication
+      content:
+        - name: CAS GoogleMaps GeoTracking Authentication
+          id: ${casSupportModuleArtifactId}-geolocation-googlemaps
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-geolocation-googlemaps
+          version: ${casVersion}
+          description:
+        - name: CAS MaxMind GeoTracking Authentication
+          id: ${casSupportModuleArtifactId}-geolocation-maxmind
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-geolocation-maxmind
+          version: ${casVersion}
+          description:
+    - name: CAS Authentication Events
+      content:
+        - name: CAS MongoDb Authentication Events
+          id: ${casSupportModuleArtifactId}-events-mongo
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-events-mongo
+          version: ${casVersion}
+          description:
+        - name: CAS JDBC/JPA Authentication Events
+          id: ${casSupportModuleArtifactId}-events-jpa
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-events-jpa
+          version: ${casVersion}
+          description:
+        - name: CAS Memory Authentication Events
+          id: ${casSupportModuleArtifactId}-events-memory
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-events-memory
+          version: ${casVersion}
+          description:
     - name: CAS Throttling Authentication
       content:
         - name: CAS JDBC Throttling Authentication
@@ -11,7 +103,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-throttle-jdbc
           version: ${casVersion}
-          description: CAS JDBC Throttling Authentication
+          description:
     - name: CAS Delegated Authentication
       content:
         - name: CAS Delegated Authentication
@@ -19,105 +111,111 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-pac4j-webflow
           version: ${casVersion}
-          description: CAS Delegated Authentication
+          description:
         - name: CAS WsFederation (ADFS) Delegated Authentication
           id: ${casSupportModuleArtifactId}-wsfederation-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-wsfederation-webflow
           version: ${casVersion}
-          description: CAS WsFederation (ADFS) Delegated Authentication
+          description:
     - name: CAS Authentication Methods
       content:
+        - name: CAS Radius Authentication
+          id: ${casSupportModuleArtifactId}-radius
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-radius
+          version: ${casVersion}
+          description:
         - name: CAS LDAP Authentication
           id: ${casSupportModuleArtifactId}-ldap
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ldap
           version: ${casVersion}
-          description: LDAP Authentication
+          description:
         - name: CAS JDBC Authentication
           id: ${casSupportModuleArtifactId}-jdbc
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-jdbc
           version: ${casVersion}
-          description: JDBC Authentication
+          description:
         - name: CAS X.509 Authentication
           id: ${casSupportModuleArtifactId}-x509-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-x509-webflow
           version: ${casVersion}
-          description: X.509 Authentication
+          description:
         - name: CAS SPNEGO Authentication
           id: ${casSupportModuleArtifactId}-spnego-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-spnego-webflow
           version: ${casVersion}
-          description: SPNEGO Authentication
+          description:
         - name: CAS Remote Address Authentication
           id: ${casSupportModuleArtifactId}-generic-remote-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic-remote-webflow
           version: ${casVersion}
-          description: CAS Remote Address Authentication
+          description:
         - name: CAS Trusted Authentication
           id: ${casSupportModuleArtifactId}-trusted-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-webflow
           version: ${casVersion}
-          description: CAS Trusted Authentication
+          description:
         - name: CAS Token (JWT) Authentication Core
           id: ${casSupportModuleArtifactId}-token
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-token
           version: ${casVersion}
-          description: CAS Token (JWT) Authentication Core
+          description:
         - name: CAS Token (JWT) Authentication Webflow
           id: ${casSupportModuleArtifactId}-token-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-token-webflow
           version: ${casVersion}
-          description: CAS Token (JWT) Authentication Webflow
+          description:
         - name: CAS MongoDb Authentication
           id: ${casSupportModuleArtifactId}-mongo
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-mongo
           version: ${casVersion}
-          description: MongoDb Authentication
+          description:
         - name: CAS Apache Shiro Authentication
           id: ${casSupportModuleArtifactId}-generic
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic
           version: ${casVersion}
-          description: CAS Apache Shiro Authentication
+          description:
         - name: CAS REST Authentication
           id: ${casSupportModuleArtifactId}-rest-authentication
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-rest-authentication
           version: ${casVersion}
-          description: CAS REST Authentication
+          description:
         - name: CAS Basic Authentication
           id: ${casSupportModuleArtifactId}-basic
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-basic
           version: ${casVersion}
-          description: CAS Basic Authentication
+          description:
         - name: CAS Digest Authentication
           id: ${casSupportModuleArtifactId}-digest-authentication
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-digest-authentication
           version: ${casVersion}
-          description: CAS Digest Authentication
+          description:
         - name: CAS Blacklist Authentication
           id: ${casSupportModuleArtifactId}-generic-blacklist
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic
           version: ${casVersion}
-          description: CAS Blacklist Authentication
+          description:
         - name: CAS File-based Authentication
           id: ${casSupportModuleArtifactId}-generic-file
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic
           version: ${casVersion}
-          description: CAS File-based Authentication
+          description:
     - name: CAS Web Applications
       content:
         - name: CAS Web Application
