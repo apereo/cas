@@ -1,0 +1,32 @@
+initializr:
+  javaVersions:
+    - id: 1.8
+  languages:
+    - name: Java
+      id: java
+  packagings:
+    - name: WAR
+      id: war
+  bootVersions:
+    - name: 1.5.3
+      id: 1.5.3.RELEASE
+      default: true
+  types:
+    - name: Maven Project
+      id: maven-project
+      description: Generate a Maven based CAS Overlay
+      sts-id: cas-maven-overlay.zip
+      tags:
+        build: maven
+        format: project
+      default: true
+      action: /cas-maven-overlay.zip
+    - name: Gradle Project
+      id: gradle-project
+      description: Generate a Gradle based CAS Overlay
+      sts-id: cas-gradle-overlay.zip
+      tags:
+        build: gradle
+        format: project
+      default: false
+      action: /cas-gradle-overlay.zip
