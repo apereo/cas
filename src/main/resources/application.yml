@@ -1,4 +1,127 @@
+casVersion: 5.1.0
+casModuleGroupId: "org.apereo.cas"
+casSupportModuleArtifactId: "cas-server-support-"
+
 initializr:
+  dependencies:
+    - name: CAS Authentication Methods
+      content:
+        - name: CAS LDAP Authentication
+          id: ${casSupportModuleArtifactId}-ldap
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-ldap
+          version: ${casVersion}
+          description: LDAP Authentication
+        - name: CAS JDBC Authentication
+          id: ${casSupportModuleArtifactId}-jdbc
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-jdbc
+          version: ${casVersion}
+          description: JDBC Authentication
+        - name: CAS X.509 Authentication
+          id: ${casSupportModuleArtifactId}-x509-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-x509-webflow
+          version: ${casVersion}
+          description: X.509 Authentication
+        - name: CAS SPNEGO Authentication
+          id: ${casSupportModuleArtifactId}-spnego-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-spnego-webflow
+          version: ${casVersion}
+          description: SPNEGO Authentication
+        - name: CAS Remote Address Authentication
+          id: ${casSupportModuleArtifactId}-generic-remote-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-generic-remote-webflow
+          version: ${casVersion}
+          description: CAS Remote Address Authentication
+        - name: CAS Trusted Authentication
+          id: ${casSupportModuleArtifactId}-trusted-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-trusted-webflow
+          version: ${casVersion}
+          description: CAS Trusted Authentication
+        - name: CAS Token (JWT) Authentication Core
+          id: ${casSupportModuleArtifactId}-token
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-token
+          version: ${casVersion}
+          description: CAS Token (JWT) Authentication Core
+        - name: CAS Token (JWT) Authentication Webflow
+          id: ${casSupportModuleArtifactId}-token-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-token-webflow
+          version: ${casVersion}
+          description: CAS Token (JWT) Authentication Webflow
+        - name: CAS MongoDb Authentication
+          id: ${casSupportModuleArtifactId}-mongo
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-mongo
+          version: ${casVersion}
+          description: MongoDb Authentication
+        - name: CAS Apache Shiro Authentication
+          id: ${casSupportModuleArtifactId}-generic
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-generic
+          version: ${casVersion}
+          description: CAS Apache Shiro Authentication
+        - name: CAS REST Authentication
+          id: ${casSupportModuleArtifactId}-rest-authentication
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-rest-authentication
+          version: ${casVersion}
+          description: CAS REST Authentication
+        - name: CAS Basic Authentication
+          id: ${casSupportModuleArtifactId}-basic
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-basic
+          version: ${casVersion}
+          description: CAS Basic Authentication
+        - name: CAS Digest Authentication
+          id: ${casSupportModuleArtifactId}-digest-authentication
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-digest-authentication
+          version: ${casVersion}
+          description: CAS Digest Authentication
+        - name: CAS Blacklist Authentication
+          id: ${casSupportModuleArtifactId}-generic-blacklist
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-generic
+          version: ${casVersion}
+          description: CAS Blacklist Authentication
+        - name: CAS File-based Authentication
+          id: ${casSupportModuleArtifactId}-generic-file
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-generic
+          version: ${casVersion}
+          description: CAS File-based Authentication
+    - name: CAS Web Applications
+      content:
+        - name: CAS Web Application
+          id: cas-server-webapp
+          groupId: ${casModuleGroupId}
+          artifactId: cas-server-webapp
+          version: ${casVersion}
+          description: CAS Server Vanilla Web Application
+        - name: CAS Web Application Tomcat
+          id: cas-server-webapp-tomcat
+          groupId: ${casModuleGroupId}
+          artifactId: cas-server-webapp-tomcat
+          version: ${casVersion}
+          description: CAS Server Web Application with Embedded Jetty
+        - name: CAS Web Application Jetty
+          id: cas-server-webapp-jetty
+          groupId: ${casModuleGroupId}
+          artifactId: cas-server-webapp-jetty
+          version: ${casVersion}
+          description: CAS Server Web Application with Embedded Undertow
+        - name: CAS Web Application Undertow
+          id: cas-server-webapp-undertow
+          groupId: ${casModuleGroupId}
+          artifactId: cas-server-webapp-undertow
+          version: ${casVersion}
+          description: CAS Server Web Application with Embedded Undertow
   javaVersions:
     - id: 1.8
   languages:
@@ -15,7 +138,7 @@ initializr:
     - name: Maven Project
       id: maven-project
       description: Generate a Maven based CAS Overlay
-      sts-id: cas-maven-overlay.zip
+      sts-id: starter.zip
       tags:
         build: maven
         format: project
@@ -30,3 +153,15 @@ initializr:
         format: project
       default: false
       action: /cas-gradle-overlay.zip
+  name:
+    value: "CAS WAR Overlay"
+  group-id:
+    value: "org.apereo.cas"
+  description:
+    value: >
+      Apereo CAS WAR Overlay allows you to download a pre-built vanilla CAS web application
+      server provided by the project itself and override/insert specific behavior into it.
+  package-name:
+    value: "org.apereo.cas"
+  artifact-id:
+    value: "cas-overlay"
