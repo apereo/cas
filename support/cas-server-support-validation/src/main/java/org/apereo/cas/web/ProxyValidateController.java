@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Controller("proxyValidateController")
 public class ProxyValidateController extends AbstractServiceValidateController {
     
     /**

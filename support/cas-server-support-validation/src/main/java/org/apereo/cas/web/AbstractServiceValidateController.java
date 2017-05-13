@@ -32,6 +32,7 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
@@ -57,6 +58,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Controller
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
     
     private ValidationSpecification validationSpecification;
