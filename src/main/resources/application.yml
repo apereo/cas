@@ -4,6 +4,72 @@ casSupportModuleArtifactId: "cas-server-support-"
 
 initializr:
   dependencies:
+    - name: CAS Audits
+      content:
+        - name: CAS Audit JDBC
+          id: ${casSupportModuleArtifactId}-audit-jdbc
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-audit-jdbc
+          version: ${casVersion}
+          description:
+    - name: CAS Logging
+      content:
+        - name: CAS Logging CloudWatch
+          id: cas-server-core-logging-config-cloudwatch
+          groupId: ${casModuleGroupId}
+          artifactId: cas-server-core-logging-config-cloudwatch
+          version: ${casVersion}
+          description:
+        - name: CAS Logging Sentry
+          id: ${casSupportModuleArtifactId}-sentry
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-sentry
+          version: ${casVersion}
+          description:
+    - name: CAS Service Registries
+      content:
+        - name: CAS DynamoDb Service Registry
+          id: ${casSupportModuleArtifactId}-dynamodb-service-registry
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-dynamodb-service-registry
+          version: ${casVersion}
+          description:
+        - name: CAS Couchbase Service Registry
+          id: ${casSupportModuleArtifactId}-couchbase-service-registry
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-couchbase-service-registry
+          version: ${casVersion}
+          description:
+        - name: CAS JPA Service Registry
+          id: ${casSupportModuleArtifactId}-jpa-service-registry
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-jpa-service-registry
+          version: ${casVersion}
+          description:
+        - name: CAS LDAP Service Registry
+          id: ${casSupportModuleArtifactId}-ldap-service-registry
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-ldap-service-registry
+          version: ${casVersion}
+          description:
+        - name: CAS MongoDb Service Registry
+          id: ${casSupportModuleArtifactId}-mongo-service-registry
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-mongo-service-registry
+          version: ${casVersion}
+          description:
+        - name: CAS YAML Service Registry
+          id: ${casSupportModuleArtifactId}-yaml-service-registry
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-yaml-service-registry
+          version: ${casVersion}
+          description:
+        - name: CAS JSON Service Registry
+          id: ${casSupportModuleArtifactId}-json-service-registry
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-json-service-registry
+          version: ${casVersion}
+          description:
     - name: CAS Ticket Registries
       content:
         - name: CAS Hazelcast Ticket Registry
@@ -130,6 +196,32 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-trusted-mfa-rest
           version: ${casVersion}
           description:
+    - name: CAS Service Access Strategies
+      content:
+        - name: CAS Grouper Service Access Strategies
+          id: ${casSupportModuleArtifactId}-grouper-access
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-grouper
+          version: ${casVersion}
+          description:
+    - name: CAS Multifactor Authentication Triggers
+      content:
+        - name: CAS Grouper Multifactor Authentication Trigger
+          id: ${casSupportModuleArtifactId}-grouper-mfa
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-grouper
+          version: ${casVersion}
+          description:
+          keywords:
+            - mfa
+        - name: CAS Shibboleth Multifactor Authentication Trigger
+          id: ${casSupportModuleArtifactId}-shibboleth
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-shibboleth
+          version: ${casVersion}
+          description:
+          keywords:
+            - mfa
     - name: CAS Multifactor Authentication
       content:
         - name: CAS Duo Security Multifactor Authentication
