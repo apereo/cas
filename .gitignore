@@ -14,4 +14,4 @@ bin/
 *.log
 .history
 .vscode
-.zip
+*.zip
