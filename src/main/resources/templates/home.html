@@ -4,25 +4,22 @@
     <title>Apereo CAS Initializr</title>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link href="//fonts.googleapis.com/css?family=Varela+Round|Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="{{#linkTo}}/css/spring.css{{/linkTo}}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 
-
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Apereo CAS Initializr</a>
+            <a class="navbar-brand" href="#">Apereo</a>
+            <img class="navbar-brand" src="https://apereo.github.io/cas/images/cas_logo.png" width="70px">
+            <a class="navbar-brand" href="#">Initializr</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
             <li><a href="https://github.com/apereo/cas">On Github</a></li>
             <li><a href="https://apereo.github.io/cas">Documentation</a></li>
             <li><a href="https://apereo.github.io/cas/Support.html">Support</a></li>
@@ -37,19 +34,19 @@
         <div class="container start-main">
             <div class="row form-inline text-center">
                 <div class="form-group project-choice">
-                    <h2>Generate a CAS Overlay
+                    <h1>Generate a CAS Overlay
                         <select tabindex="1" class="form-control" id="type" name="type">
                             {{#types.content}}
                             <option data-action="{{action}}" value="{{id}}"{{#default}} selected{{/default}}>{{name}}</option>
                             {{/types.content}}
                         </select>
-                        with Spring Boot
-                        <select tabindex="2" class="form-control" name="bootVersion" id="bootVersion">
+
+                        <select tabindex="2" class="form-control full hidden" name="bootVersion" id="bootVersion">
                             {{#bootVersions.content}}
                             <option value="{{id}}"{{#default}} selected{{/default}}>{{name}}</option>
                             {{/bootVersions.content}}
                         </select>
-                    </h2>
+                    </h1>
                 </div>
             </div>
 
@@ -79,7 +76,7 @@
             <input id="baseDir" name="baseDir" type="hidden" value="{{artifactId.content}}">
 
             <div>
-                <div class="col-sm-12 col-md-6" style="visibility: hidden">
+                <div class="col-sm-12 col-md-6 full hidden">
                     <h2>Overlay Project Metadata</h2>
                     <p>Artifact coordinates</p>
 
@@ -135,10 +132,6 @@
                         </select>
                     </div>
                 </div>
-            </div>
-
-            <div class="row tofullversion" style="visibility: hidden">
-                <p>Don't know what to look for? Want more options? <a href="#">Switch to the full version.</a></p>
             </div>
             <div class="row">
                 <div id="dependencies" class="full hidden">

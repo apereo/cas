@@ -14,13 +14,13 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-aup-webflow
           version: ${casVersion}
-          description:
+          description: Introduce Acceptable Usage Policy into the CAS Authentication Webflow
         - name: CAS Acceptable Usage Policy LDAP
           id: ${casSupportModuleArtifactId}-aup-ldap
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-aup-ldap
           version: ${casVersion}
-          description:
+          description: Acceptable Usage Policy requirements and decisions may be stored inside an LDAP directory.
     - name: CAS Spring Webflow Sessions
       content:
         - name: CAS Hazelcast Session Replication
@@ -28,19 +28,19 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-session-hazelcast
           version: ${casVersion}
-          description:
+          description: Enable server-side sessions for Spring Webflow, and replicate sessions via Hazelcast.
         - name: CAS Redis Session Replication
           id: cas-server-webapp-session-redis
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-session-redis
           version: ${casVersion}
-          description:
+          description: Enable server-side sessions for Spring Webflow, and replicate sessions via Redis.
         - name: CAS MongoDb Session Replication
           id: cas-server-webapp-session-mongo
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-session-mongo
           version: ${casVersion}
-          description:
+          description: Enable server-side sessions for Spring Webflow, and replicate sessions via MongoDb.
     - name: CAS Service Discovery
       content:
         - name: CAS Eureka Service Discovery Client
@@ -56,7 +56,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-bootadmin-client
           version: ${casVersion}
-          description:
+          description: Let CAS become a client of Spring Boot Administration for remote monitoring and tracking purposes.
         - name: CAS Memcached Monitor
           id: ${casSupportModuleArtifactId}-memcached-monitor
           groupId: ${casModuleGroupId}
@@ -152,13 +152,13 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-saml
           version: ${casVersion}
-          description:
+          description: Enable SAML 1.1 protocol support in CAS
         - name: CAS SAML2 Protocol Identity Provider
           id: ${casSupportModuleArtifactId}-saml-idp
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-saml-idp
           version: ${casVersion}
-          description:
+          description: Let CAS act as a SAML2 Identity Provider
         - name: CAS SAML2 MDUI
           id: ${casSupportModuleArtifactId}-saml-mdui
           groupId: ${casModuleGroupId}
@@ -184,7 +184,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-scim
           version: ${casVersion}
-          description:
+          description: Turn on JIT provisioning capabilities via SCIM during the authentication flow.
     - name: CAS reCAPTCHA Integration
       content:
         - name: CAS reCAPTCHA Integration
@@ -230,43 +230,43 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-dynamodb-service-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS registered service definitions inside DynamoDb.
         - name: CAS Couchbase Service Registry
           id: ${casSupportModuleArtifactId}-couchbase-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-couchbase-service-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS registered service definitions inside Couchbase.
         - name: CAS JPA Service Registry
           id: ${casSupportModuleArtifactId}-jpa-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-jpa-service-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS registered service definitions inside a relational database.
         - name: CAS LDAP Service Registry
           id: ${casSupportModuleArtifactId}-ldap-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ldap-service-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS registered service definitions inside an LDAP directory.
         - name: CAS MongoDb Service Registry
           id: ${casSupportModuleArtifactId}-mongo-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-mongo-service-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS registered service definitions inside MongoDb.
         - name: CAS YAML Service Registry
           id: ${casSupportModuleArtifactId}-yaml-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-yaml-service-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS registered service definitions as YAML files.
         - name: CAS JSON Service Registry
           id: ${casSupportModuleArtifactId}-json-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-json-service-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS registered service definitions as JSON files.
     - name: CAS Ticket Registries
       content:
         - name: CAS Hazelcast Ticket Registry
@@ -274,61 +274,61 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-hazelcast-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via Hazelcast.
         - name: CAS EhCache Ticket Registry
           id: ${casSupportModuleArtifactId}-ehcache-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ehcache-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via Ehcache.
         - name: CAS Memcached Ticket Registry
           id: ${casSupportModuleArtifactId}-memcached-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-memcached-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via Memcached.
         - name: CAS JPA Ticket Registry
           id: ${casSupportModuleArtifactId}-jpa-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-jpa-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via a relational database.
         - name: CAS Ignite Ticket Registry
           id: ${casSupportModuleArtifactId}-ignite-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ignite-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via Apache Ignite.
         - name: CAS Couchbase Ticket Registry
           id: ${casSupportModuleArtifactId}-couchbase-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-couchbase-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via Couchbase.
         - name: CAS Infinispan Ticket Registry
           id: ${casSupportModuleArtifactId}-infinispan-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-infinispan-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via Infinispan.
         - name: CAS Redis Ticket Registry
           id: ${casSupportModuleArtifactId}-redis-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-redis-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via Redis.
         - name: CAS MongoDb Ticket Registry
           id: ${casSupportModuleArtifactId}-mongo-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-mongo-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via MongoDb.
         - name: CAS DynamoDb Ticket Registry
           id: ${casSupportModuleArtifactId}-dynamodb-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-dynamodb-ticket-registry
           version: ${casVersion}
-          description:
+          description: Manage and store CAS tickets via DynamoDb.
     - name: CAS SMS Messaging
       content:
         - name: CAS Twillio SMS Messaging
@@ -336,19 +336,19 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-sms-twillio
           version: ${casVersion}
-          description:
+          description: Integrate with Twillio as an SMS Service Provider.
         - name: CAS TextMagic SMS Messaging
           id: ${casSupportModuleArtifactId}-sms-textmagic
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-sms-textmagic
           version: ${casVersion}
-          description:
+          description: Integrate with TextMagic as an SMS Service Provider.
         - name: CAS Clickatell SMS Messaging
           id: ${casSupportModuleArtifactId}-sms-clickatell
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-sms-clickatell
           version: ${casVersion}
-          description:
+          description: Integrate with Clickatell as an SMS Service Provider.
     - name: CAS Graphical User Authentication
       content:
         - name: CAS Graphical User Authentication
@@ -356,7 +356,9 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gua
           version: ${casVersion}
-          description:
+          description: >
+            Graphical user authentication, sometimes also known as ‘login images’ are a form of login verification (i.e. second factor) where a
+            site presents the user with an image previously selected by the user at the time the account is created.
           keywords:
             - gua
     - name: CAS Risk-based Multifactor Authentication
@@ -366,7 +368,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-electrofence
           version: ${casVersion}
-          description:
+          description: Let CAS calculate a risk score for authentication requests and block suspicious activity.
     - name: CAS Multifactor Authentication Trusted Device/Browser
       content:
         - name: CAS Multifactor Authentication Trusted Device/Browser Core
@@ -408,7 +410,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-grouper
           version: ${casVersion}
-          description:
+          description: Trigger multifactor authentication events based on Internet2 Grouper
           keywords:
             - mfa
         - name: CAS Shibboleth Multifactor Authentication Trigger
@@ -416,7 +418,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-shibboleth
           version: ${casVersion}
-          description:
+          description: Trigger multifactor authentication events for SAML2 service providers delegated to CAS via a Shibboleth IdP.
           keywords:
             - mfa
     - name: CAS Multifactor Authentication
@@ -426,7 +428,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-duo
           version: ${casVersion}
-          description:
+          description: Enable multifactor authentication via Duo Security.
           keywords:
             - mfa
         - name: CAS YubiKey Multifactor Authentication
@@ -434,7 +436,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-yubikey
           version: ${casVersion}
-          description:
+          description: Enable multifactor authentication via YubiKey.
           keywords:
             - mfa
         - name: CAS Google Authenticator Multifactor Authentication
@@ -442,7 +444,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gauth
           version: ${casVersion}
-          description:
+          description: Enable multifactor authentication via Google Authenticator.
           keywords:
             - mfa
         - name: CAS Google Authenticator MongoDb Multifactor Authentication
@@ -466,7 +468,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-authy
           version: ${casVersion}
-          description:
+          description: Enable multifactor authentication via Authy.
           keywords:
             - mfa
         - name: CAS Microsoft Azure Multifactor Authentication
@@ -474,7 +476,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-azure
           version: ${casVersion}
-          description:
+          description: Enable multifactor authentication via Microsoft Azure.
           keywords:
             - mfa
         - name: CAS U2F FIDO Multifactor Authentication
@@ -482,7 +484,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-u2f
           version: ${casVersion}
-          description:
+          description: Enable multifactor authentication via FIDO U2F.
           keywords:
             - mfa
     - name: CAS Surrogate Authentication
@@ -492,7 +494,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-surrogate-authentication
           version: ${casVersion}
-          description:
+          description: Surrogate authentication is the ability to authenticate on behalf of another user.
     - name: CAS GeoTracking Authentication
       content:
         - name: CAS GoogleMaps GeoTracking Authentication
