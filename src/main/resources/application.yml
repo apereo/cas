@@ -1,4 +1,3 @@
-
 casVersion: 5.1.0
 casModuleGroupId: "org.apereo.cas"
 casSupportModuleArtifactId: "cas-server-support-"
@@ -19,12 +18,14 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-aup-webflow
           version: ${casVersion}
+          bom: cas-bom
           description: Introduce Acceptable Usage Policy into the CAS Authentication Webflow
         - name: CAS Acceptable Usage Policy LDAP
           id: ${casSupportModuleArtifactId}-aup-ldap
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-aup-ldap
           version: ${casVersion}
+          bom: cas-bom
           description: Acceptable Usage Policy requirements and decisions may be stored inside an LDAP directory.
     - name: CAS Spring Webflow Sessions
       content:
@@ -33,18 +34,21 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-session-hazelcast
           version: ${casVersion}
+          bom: cas-bom
           description: Enable server-side sessions for Spring Webflow, and replicate sessions via Hazelcast.
         - name: CAS Redis Session Replication
           id: cas-server-webapp-session-redis
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-session-redis
           version: ${casVersion}
+          bom: cas-bom
           description: Enable server-side sessions for Spring Webflow, and replicate sessions via Redis.
         - name: CAS MongoDb Session Replication
           id: cas-server-webapp-session-mongo
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-session-mongo
           version: ${casVersion}
+          bom: cas-bom
           description: Enable server-side sessions for Spring Webflow, and replicate sessions via MongoDb.
     - name: CAS Service Discovery
       content:
@@ -53,6 +57,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-eureka-client
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Monitoring
       content:
@@ -61,36 +66,42 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-bootadmin-client
           version: ${casVersion}
+          bom: cas-bom
           description: Let CAS become a client of Spring Boot Administration for remote monitoring and tracking purposes.
         - name: CAS Memcached Monitor
           id: ${casSupportModuleArtifactId}-memcached-monitor
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-memcached-monitor
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS EhCache Monitor
           id: ${casSupportModuleArtifactId}-ehcache-monitor
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ehcache-monitor
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Hazelcast Monitor
           id: ${casSupportModuleArtifactId}-hazelcast-monitor
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-hazelcast-monitor
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS JDBC Monitor
           id: ${casSupportModuleArtifactId}-jdbc-monitor
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-jdbc-monitor
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS LDAP Monitor
           id: ${casSupportModuleArtifactId}-ldap-monitor
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ldap-monitor
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS OpenID Protocol
       content:
@@ -99,6 +110,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-openid-webflow
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS OAuth Protocol
       content:
@@ -107,6 +119,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-oauth-webflow
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS OpenID Connect Protocol
       content:
@@ -115,6 +128,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-oidc
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS WsFederation Protocol
       content:
@@ -123,12 +137,14 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ws-sts
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS WsFederation Protocol Identity Provider
           id: ${casSupportModuleArtifactId}-ws-idp
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ws-idp
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS REST Protocol
       content:
@@ -137,18 +153,21 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-rest
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Services REST Protocol
           id: ${casSupportModuleArtifactId}-rest-services
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-rest-services
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS REST Protocol via X.509
           id: ${casSupportModuleArtifactId}-rest-x509
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-rest-x509
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS SAML
       content:
@@ -157,30 +176,35 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-saml
           version: ${casVersion}
+          bom: cas-bom
           description: Enable SAML 1.1 protocol support in CAS
         - name: CAS SAML2 Protocol Identity Provider
           id: ${casSupportModuleArtifactId}-saml-idp
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-saml-idp
           version: ${casVersion}
+          bom: cas-bom
           description: Let CAS act as a SAML2 Identity Provider
         - name: CAS SAML2 MDUI
           id: ${casSupportModuleArtifactId}-saml-mdui
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-saml-mdui
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS SAML2 Google Apps Integration
           id: ${casSupportModuleArtifactId}-saml-googleapps
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-saml-googleapps
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS SAML2 SP Integrations
           id: ${casSupportModuleArtifactId}-saml-sp-integrations
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-saml-sp-integrations
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS SCIM Integration
       content:
@@ -189,6 +213,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-scim
           version: ${casVersion}
+          bom: cas-bom
           description: Turn on JIT provisioning capabilities via SCIM during the authentication flow.
     - name: CAS reCAPTCHA Integration
       content:
@@ -197,6 +222,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-captcha
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Groovy Shell
       content:
@@ -205,6 +231,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-shell
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Audits
       content:
@@ -213,6 +240,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-audit-jdbc
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Logging
       content:
@@ -221,12 +249,14 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: cas-server-core-logging-config-cloudwatch
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Logging Sentry
           id: ${casSupportModuleArtifactId}-sentry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-sentry
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Service Registries
       content:
@@ -235,42 +265,49 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-dynamodb-service-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS registered service definitions inside DynamoDb.
         - name: CAS Couchbase Service Registry
           id: ${casSupportModuleArtifactId}-couchbase-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-couchbase-service-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS registered service definitions inside Couchbase.
         - name: CAS JPA Service Registry
           id: ${casSupportModuleArtifactId}-jpa-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-jpa-service-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS registered service definitions inside a relational database.
         - name: CAS LDAP Service Registry
           id: ${casSupportModuleArtifactId}-ldap-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ldap-service-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS registered service definitions inside an LDAP directory.
         - name: CAS MongoDb Service Registry
           id: ${casSupportModuleArtifactId}-mongo-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-mongo-service-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS registered service definitions inside MongoDb.
         - name: CAS YAML Service Registry
           id: ${casSupportModuleArtifactId}-yaml-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-yaml-service-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS registered service definitions as YAML files.
         - name: CAS JSON Service Registry
           id: ${casSupportModuleArtifactId}-json-service-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-json-service-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS registered service definitions as JSON files.
     - name: CAS Ticket Registries
       content:
@@ -279,60 +316,70 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-hazelcast-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via Hazelcast.
         - name: CAS EhCache Ticket Registry
           id: ${casSupportModuleArtifactId}-ehcache-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ehcache-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via Ehcache.
         - name: CAS Memcached Ticket Registry
           id: ${casSupportModuleArtifactId}-memcached-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-memcached-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via Memcached.
         - name: CAS JPA Ticket Registry
           id: ${casSupportModuleArtifactId}-jpa-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-jpa-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via a relational database.
         - name: CAS Ignite Ticket Registry
           id: ${casSupportModuleArtifactId}-ignite-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ignite-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via Apache Ignite.
         - name: CAS Couchbase Ticket Registry
           id: ${casSupportModuleArtifactId}-couchbase-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-couchbase-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via Couchbase.
         - name: CAS Infinispan Ticket Registry
           id: ${casSupportModuleArtifactId}-infinispan-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-infinispan-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via Infinispan.
         - name: CAS Redis Ticket Registry
           id: ${casSupportModuleArtifactId}-redis-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-redis-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via Redis.
         - name: CAS MongoDb Ticket Registry
           id: ${casSupportModuleArtifactId}-mongo-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-mongo-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via MongoDb.
         - name: CAS DynamoDb Ticket Registry
           id: ${casSupportModuleArtifactId}-dynamodb-ticket-registry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-dynamodb-ticket-registry
           version: ${casVersion}
+          bom: cas-bom
           description: Manage and store CAS tickets via DynamoDb.
     - name: CAS SMS Messaging
       content:
@@ -341,18 +388,21 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-sms-twillio
           version: ${casVersion}
+          bom: cas-bom
           description: Integrate with Twillio as an SMS Service Provider.
         - name: CAS TextMagic SMS Messaging
           id: ${casSupportModuleArtifactId}-sms-textmagic
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-sms-textmagic
           version: ${casVersion}
+          bom: cas-bom
           description: Integrate with TextMagic as an SMS Service Provider.
         - name: CAS Clickatell SMS Messaging
           id: ${casSupportModuleArtifactId}-sms-clickatell
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-sms-clickatell
           version: ${casVersion}
+          bom: cas-bom
           description: Integrate with Clickatell as an SMS Service Provider.
     - name: CAS Graphical User Authentication
       content:
@@ -361,6 +411,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gua
           version: ${casVersion}
+          bom: cas-bom
           description: >
             Graphical user authentication, sometimes also known as ‘login images’ are a form of login verification (i.e. second factor) where a
             site presents the user with an image previously selected by the user at the time the account is created.
@@ -368,11 +419,12 @@ initializr:
             - gua
     - name: CAS Risk-based Multifactor Authentication
       content:
-        - name: CAS Risk-based Multifactor Authentication 
+        - name: CAS Risk-based Multifactor Authentication
           id: ${casSupportModuleArtifactId}-electrofence
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-electrofence
           version: ${casVersion}
+          bom: cas-bom
           description: Let CAS calculate a risk score for authentication requests and block suspicious activity.
     - name: CAS Multifactor Authentication Trusted Device/Browser
       content:
@@ -381,24 +433,28 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-mfa
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Multifactor Authentication Trusted Device/Browser JDBC
           id: ${casSupportModuleArtifactId}-trusted-mfa-jdbc
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-mfa-jdbc
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Multifactor Authentication Trusted Device/Browser MongoDb
           id: ${casSupportModuleArtifactId}-trusted-mfa-mongo
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-mfa-mongo
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Multifactor Authentication Trusted Device/Browser REST
           id: ${casSupportModuleArtifactId}-trusted-mfa-rest
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-mfa-rest
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Service Access Strategies
       content:
@@ -407,6 +463,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-grouper
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Multifactor Authentication Triggers
       content:
@@ -415,6 +472,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-grouper
           version: ${casVersion}
+          bom: cas-bom
           description: Trigger multifactor authentication events based on Internet2 Grouper
           keywords:
             - mfa
@@ -423,6 +481,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-shibboleth
           version: ${casVersion}
+          bom: cas-bom
           description: Trigger multifactor authentication events for SAML2 service providers delegated to CAS via a Shibboleth IdP.
           keywords:
             - mfa
@@ -433,6 +492,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-duo
           version: ${casVersion}
+          bom: cas-bom
           description: Enable multifactor authentication via Duo Security.
           keywords:
             - mfa
@@ -441,6 +501,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-yubikey
           version: ${casVersion}
+          bom: cas-bom
           description: Enable multifactor authentication via YubiKey.
           keywords:
             - mfa
@@ -449,6 +510,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gauth
           version: ${casVersion}
+          bom: cas-bom
           description: Enable multifactor authentication via Google Authenticator.
           keywords:
             - mfa
@@ -457,6 +519,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gauth-mongo
           version: ${casVersion}
+          bom: cas-bom
           description:
           keywords:
             - mfa
@@ -465,6 +528,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gauth-jpa
           version: ${casVersion}
+          bom: cas-bom
           description:
           keywords:
             - mfa
@@ -473,6 +537,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-authy
           version: ${casVersion}
+          bom: cas-bom
           description: Enable multifactor authentication via Authy.
           keywords:
             - mfa
@@ -481,6 +546,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-azure
           version: ${casVersion}
+          bom: cas-bom
           description: Enable multifactor authentication via Microsoft Azure.
           keywords:
             - mfa
@@ -489,6 +555,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-u2f
           version: ${casVersion}
+          bom: cas-bom
           description: Enable multifactor authentication via FIDO U2F.
           keywords:
             - mfa
@@ -499,6 +566,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-surrogate-authentication
           version: ${casVersion}
+          bom: cas-bom
           description: Surrogate authentication is the ability to authenticate on behalf of another user.
     - name: CAS GeoTracking Authentication
       content:
@@ -507,12 +575,14 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-geolocation-googlemaps
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS MaxMind GeoTracking Authentication
           id: ${casSupportModuleArtifactId}-geolocation-maxmind
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-geolocation-maxmind
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Authentication Events
       content:
@@ -521,18 +591,21 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-events-mongo
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS JDBC/JPA Authentication Events
           id: ${casSupportModuleArtifactId}-events-jpa
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-events-jpa
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Memory Authentication Events
           id: ${casSupportModuleArtifactId}-events-memory
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-events-memory
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Throttling Authentication
       content:
@@ -541,6 +614,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-throttle-jdbc
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Delegated Authentication
       content:
@@ -549,12 +623,14 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-pac4j-webflow
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS WsFederation (ADFS) Delegated Authentication
           id: ${casSupportModuleArtifactId}-wsfederation-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-wsfederation-webflow
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Authentication Methods
       content:
@@ -563,96 +639,112 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-radius
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS LDAP Authentication
           id: ${casSupportModuleArtifactId}-ldap
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ldap
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS JDBC Authentication
           id: ${casSupportModuleArtifactId}-jdbc
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-jdbc
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS X.509 Authentication
           id: ${casSupportModuleArtifactId}-x509-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-x509-webflow
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS SPNEGO Authentication
           id: ${casSupportModuleArtifactId}-spnego-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-spnego-webflow
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Remote Address Authentication
           id: ${casSupportModuleArtifactId}-generic-remote-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic-remote-webflow
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Trusted Authentication
           id: ${casSupportModuleArtifactId}-trusted-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-webflow
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Token (JWT) Authentication Core
           id: ${casSupportModuleArtifactId}-token
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-token
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Token (JWT) Authentication Webflow
           id: ${casSupportModuleArtifactId}-token-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-token-webflow
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS MongoDb Authentication
           id: ${casSupportModuleArtifactId}-mongo
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-mongo
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Apache Shiro Authentication
           id: ${casSupportModuleArtifactId}-generic
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS REST Authentication
           id: ${casSupportModuleArtifactId}-rest-authentication
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-rest-authentication
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Basic Authentication
           id: ${casSupportModuleArtifactId}-basic
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-basic
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Digest Authentication
           id: ${casSupportModuleArtifactId}-digest-authentication
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-digest-authentication
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS Blacklist Authentication
           id: ${casSupportModuleArtifactId}-generic-blacklist
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic
           version: ${casVersion}
+          bom: cas-bom
           description:
         - name: CAS File-based Authentication
           id: ${casSupportModuleArtifactId}-generic-file
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic
           version: ${casVersion}
+          bom: cas-bom
           description:
     - name: CAS Web Applications
       content:
@@ -661,6 +753,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp
           version: ${casVersion}
+          bom: cas-bom
           description: CAS Server Vanilla Web Application
           facets:
             - web
@@ -670,6 +763,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-tomcat
           version: ${casVersion}
+          bom: cas-bom
           description: CAS Server Web Application with Embedded Jetty
           facets:
             - web
@@ -679,6 +773,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-jetty
           version: ${casVersion}
+          bom: cas-bom
           description: CAS Server Web Application with Embedded Undertow
           facets:
             - web
@@ -688,6 +783,7 @@ initializr:
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-undertow
           version: ${casVersion}
+          bom: cas-bom
           description: CAS Server Web Application with Embedded Undertow
           facets:
             - web
