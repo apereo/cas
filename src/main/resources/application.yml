@@ -1,9 +1,206 @@
+
 casVersion: 5.1.0
 casModuleGroupId: "org.apereo.cas"
 casSupportModuleArtifactId: "cas-server-support-"
 
 initializr:
+  env:
+    google-analytics-tracking-code: UA-99132453-1
   dependencies:
+    - name: CAS Acceptable Usage Policy
+      content:
+        - name: CAS Acceptable Usage Policy
+          id: ${casSupportModuleArtifactId}-aup-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-aup-webflow
+          version: ${casVersion}
+          description:
+        - name: CAS Acceptable Usage Policy LDAP
+          id: ${casSupportModuleArtifactId}-aup-ldap
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-aup-ldap
+          version: ${casVersion}
+          description:
+    - name: CAS Spring Webflow Sessions
+      content:
+        - name: CAS Hazelcast Session Replication
+          id: cas-server-webapp-session-hazelcast
+          groupId: ${casModuleGroupId}
+          artifactId: cas-server-webapp-session-hazelcast
+          version: ${casVersion}
+          description:
+        - name: CAS Redis Session Replication
+          id: cas-server-webapp-session-redis
+          groupId: ${casModuleGroupId}
+          artifactId: cas-server-webapp-session-redis
+          version: ${casVersion}
+          description:
+        - name: CAS MongoDb Session Replication
+          id: cas-server-webapp-session-mongo
+          groupId: ${casModuleGroupId}
+          artifactId: cas-server-webapp-session-mongo
+          version: ${casVersion}
+          description:
+    - name: CAS Service Discovery
+      content:
+        - name: CAS Eureka Service Discovery Client
+          id: ${casSupportModuleArtifactId}-eureka-client
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-eureka-client
+          version: ${casVersion}
+          description:
+    - name: CAS Monitoring
+      content:
+        - name: CAS Spring Boot Administration Client
+          id: ${casSupportModuleArtifactId}-bootadmin-client
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-bootadmin-client
+          version: ${casVersion}
+          description:
+        - name: CAS Memcached Monitor
+          id: ${casSupportModuleArtifactId}-memcached-monitor
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-memcached-monitor
+          version: ${casVersion}
+          description:
+        - name: CAS EhCache Monitor
+          id: ${casSupportModuleArtifactId}-ehcache-monitor
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-ehcache-monitor
+          version: ${casVersion}
+          description:
+        - name: CAS Hazelcast Monitor
+          id: ${casSupportModuleArtifactId}-hazelcast-monitor
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-hazelcast-monitor
+          version: ${casVersion}
+          description:
+        - name: CAS JDBC Monitor
+          id: ${casSupportModuleArtifactId}-jdbc-monitor
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-jdbc-monitor
+          version: ${casVersion}
+          description:
+        - name: CAS LDAP Monitor
+          id: ${casSupportModuleArtifactId}-ldap-monitor
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-ldap-monitor
+          version: ${casVersion}
+          description:
+    - name: CAS OpenID Protocol
+      content:
+        - name: CAS OpenID Protocol
+          id: ${casSupportModuleArtifactId}-openid-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-openid-webflow
+          version: ${casVersion}
+          description:
+    - name: CAS OAuth Protocol
+      content:
+        - name: CAS OAuth Protocol
+          id: ${casSupportModuleArtifactId}-oauth-webflow
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-oauth-webflow
+          version: ${casVersion}
+          description:
+    - name: CAS OpenID Connect Protocol
+      content:
+        - name: CAS OpenID Connect Protocol
+          id: ${casSupportModuleArtifactId}-oidc
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-oidc
+          version: ${casVersion}
+          description:
+    - name: CAS WsFederation Protocol
+      content:
+        - name: CAS WsFederation Protocol Security Token Service
+          id: ${casSupportModuleArtifactId}-ws-sts
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-ws-sts
+          version: ${casVersion}
+          description:
+        - name: CAS WsFederation Protocol Identity Provider
+          id: ${casSupportModuleArtifactId}-ws-idp
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-ws-idp
+          version: ${casVersion}
+          description:
+    - name: CAS REST Protocol
+      content:
+        - name: CAS REST Protocol
+          id: ${casSupportModuleArtifactId}-rest
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-rest
+          version: ${casVersion}
+          description:
+        - name: CAS Services REST Protocol
+          id: ${casSupportModuleArtifactId}-rest-services
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-rest-services
+          version: ${casVersion}
+          description:
+        - name: CAS REST Protocol via X.509
+          id: ${casSupportModuleArtifactId}-rest-x509
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-rest-x509
+          version: ${casVersion}
+          description:
+    - name: CAS SAML
+      content:
+        - name: CAS SAML1.1 Protocol
+          id: ${casSupportModuleArtifactId}-saml
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-saml
+          version: ${casVersion}
+          description:
+        - name: CAS SAML2 Protocol Identity Provider
+          id: ${casSupportModuleArtifactId}-saml-idp
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-saml-idp
+          version: ${casVersion}
+          description:
+        - name: CAS SAML2 MDUI
+          id: ${casSupportModuleArtifactId}-saml-mdui
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-saml-mdui
+          version: ${casVersion}
+          description:
+        - name: CAS SAML2 Google Apps Integration
+          id: ${casSupportModuleArtifactId}-saml-googleapps
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-saml-googleapps
+          version: ${casVersion}
+          description:
+        - name: CAS SAML2 SP Integrations
+          id: ${casSupportModuleArtifactId}-saml-sp-integrations
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-saml-sp-integrations
+          version: ${casVersion}
+          description:
+    - name: CAS SCIM Integration
+      content:
+        - name: CAS SCIM Integration
+          id: ${casSupportModuleArtifactId}-scim
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-scim
+          version: ${casVersion}
+          description:
+    - name: CAS reCAPTCHA Integration
+      content:
+        - name: CAS reCAPTCHA Integration
+          id: ${casSupportModuleArtifactId}-captcha
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-captcha
+          version: ${casVersion}
+          description:
+    - name: CAS Groovy Shell
+      content:
+        - name: CAS Groovy Shell
+          id: ${casSupportModuleArtifactId}-shell
+          groupId: ${casModuleGroupId}
+          artifactId: ${casSupportModuleArtifactId}-shell
+          version: ${casVersion}
+          description:
     - name: CAS Audits
       content:
         - name: CAS Audit JDBC
@@ -514,8 +711,11 @@ initializr:
   description:
     value: >
       Apereo CAS WAR Overlay allows you to download a pre-built vanilla CAS web application
-      server provided by the project itself and override/insert specific behavior into it.
+      server provided and override/insert specific behavior into it.
   package-name:
     value: "org.apereo.cas"
   artifact-id:
     value: "cas-overlay"
+spring:
+  thymeleaf:
+    cache: false

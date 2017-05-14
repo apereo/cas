@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Apereo CAS Initializr</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//fonts.googleapis.com/css?family=Varela+Round|Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{#linkTo}}/css/spring.css{{/linkTo}}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Apereo CAS Initializr</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="https://github.com/apereo/cas">On Github</a></li>
+            <li><a href="https://apereo.github.io/cas">Documentation</a></li>
+            <li><a href="https://apereo.github.io/cas/Support.html">Support</a></li>
+            <li><a href="https://apereo.github.io/">Blog</a></li>
+            <li><a href="https://gitter.im/apereo/cas">Chatroom</a></li>
+        </ul>
+    </div>
+</nav>
+
+<form id="form" action="/starter.zip" method="get" role="form">
+    <div class="container-fluid">
+        <div class="container start-main">
+            <div class="row form-inline text-center">
+                <div class="form-group project-choice">
+                    <h2>Generate a CAS Overlay
+                        <select tabindex="1" class="form-control" id="type" name="type">
+                            {{#types.content}}
+                            <option data-action="{{action}}" value="{{id}}"{{#default}} selected{{/default}}>{{name}}</option>
+                            {{/types.content}}
+                        </select>
+                        with Spring Boot
+                        <select tabindex="2" class="form-control" name="bootVersion" id="bootVersion">
+                            {{#bootVersions.content}}
+                            <option value="{{id}}"{{#default}} selected{{/default}}>{{name}}</option>
+                            {{/bootVersions.content}}
+                        </select>
+                    </h2>
+                </div>
+            </div>
+
+            <div>
+                <h2>Modules</h2>
+                <p>Pick and choose CAS modules to include in the final CAS overlay.</p>
+
+                <div class="form-group">
+                    <input tabindex="11" id="autocomplete" class="form-control" type="text"
+                           placeholder="LDAP, JSON, Hazelcast, JDBC,..."
+                           name="autocomplete">
+                </div>
+                <div class="form-group">
+                    <div id="starters">
+                    </div>
+                </div>
+            </div>
+
+            <div align="center">
+                <span class="text-center">
+                    <button name="generate-project" type="submit" class="btn btn-lg btn-primary">
+                        Generate Project
+                    </button>
+                </span>
+            </div>
+            
+            <input id="baseDir" name="baseDir" type="hidden" value="{{artifactId.content}}">
+
+            <div>
+                <div class="col-sm-12 col-md-6" style="visibility: hidden">
+                    <h2>Overlay Project Metadata</h2>
+                    <p>Artifact coordinates</p>
+
+                    <div class="form-group groupid-form-group">
+                        <label for="groupId" class="control-label">{{groupId.title}}</label>
+                        <input tabindex="3" id="groupId" class="form-control" type="text" value="{{groupId.content}}"
+                               name="groupId">
+                    </div>
+                    <div class="form-group artifactid-form-group">
+                        <label for="artifactId" class="control-label">{{artifactId.title}}</label>
+                        <input tabindex="4" id="artifactId" class="form-control" type="text"
+                               value="{{artifactId.content}}"
+                               name="artifactId">
+                    </div>
+                    <div class="form-group full hidden name-form-group">
+                        <label for="name" class="control-label">{{name.title}}</label>
+                        <input tabindex="5" id="name" class="form-control" type="text" value="{{name.content}}"
+                               name="name">
+                    </div>
+                    <div class="form-group full hidden description-form-group">
+                        <label for="description" class="control-label">{{description.title}}</label>
+                        <input tabindex="6" id="description" class="form-control" type="text"
+                               value="{{description.content}}" name="description">
+                    </div>
+                    <div class="form-group full hidden packagename-form-group">
+                        <label for="packageName" class="control-label">{{packageName.title}}</label>
+                        <input tabindex="7" id="packageName" class="form-control" type="text"
+                               value="{{packageName.content}}"
+                               name="packageName">
+                    </div>
+                    <div class="form-group full hidden packaging-form-group">
+                        <label for="packaging" class="control-label">{{packagings.title}}</label>
+                        <select tabindex="8" class="form-control" id="packaging" name="packaging">
+                            {{#packagings.content}}
+                            <option value="{{id}}"{{#default}} selected{{/default}}>{{name}}</option>
+                            {{/packagings.content}}
+                        </select>
+                    </div>
+                    <div class="form-group full hidden javaversion-form-group">
+                        <label for="javaVersion" class="control-label">{{javaVersions.title}}</label>
+                        <select tabindex="9" class="form-control" name="javaVersion" id="javaVersion">
+                            {{#javaVersions.content}}
+                            <option value="{{id}}"{{#default}} selected{{/default}}>{{name}}</option>
+                            {{/javaVersions.content}}
+                        </select>
+                    </div>
+                    <div class="form-group full hidden language-form-group">
+                        <label for="language" class="control-label">{{languages.title}}</label>
+                        <select tabindex="10" class="form-control" name="language" id="language">
+                            {{#languages.content}}
+                            <option value="{{id}}"{{#default}} selected{{/default}}>{{name}}</option>
+                            {{/languages.content}}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row tofullversion" style="visibility: hidden">
+                <p>Don't know what to look for? Want more options? <a href="#">Switch to the full version.</a></p>
+            </div>
+            <div class="row">
+                <div id="dependencies" class="full hidden">
+                    {{#dependencies.content}}
+                    <div class="form-group col-sm-6">
+                        <h3>{{name}}</h3>
+                        {{#content}}
+                        <div class="checkbox" data-range="{{#versionRange}}{{versionRange}}{{/versionRange}}">
+                            <label>
+                                <input tabindex="13" type="checkbox" name="style" value="{{id}}">{{name}}
+                                <p class="help-block">{{#description}}{{.}}{{/description}}</p>
+                                {{#versionRequirement}}
+                                <p class="help-block version-requirement">requires Spring Boot {{.}}</p>
+                                {{/versionRequirement}}
+                            </label>
+                        </div>
+                        {{/content}}
+                    </div>
+                    {{/dependencies.content}}
+                </div>
+            </div>
+            <div class="row full hidden">
+                <p class="text-center">
+                    <button tabindex="14" name="generate-project" type="submit" class="btn btn-lg btn-primary"
+                            role="button">
+                        Generate Project
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="{{#linkTo}}/js/jquery-3.1.1.min.js{{/linkTo}}"></script>
+<script src="{{#linkTo}}/js/typeahead.bundle.min.js{{/linkTo}}"></script>
+<script src="{{#linkTo}}/js/mousetrap.min.js{{/linkTo}}"></script>
+<script src="{{#linkTo}}/js/start.js{{/linkTo}}"></script>
+{{#trackingCode}}
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', '{{.}}', 'auto');
+    ga('send', 'pageview');
+</script>
+{{/trackingCode}}
+</body>
+</html>
