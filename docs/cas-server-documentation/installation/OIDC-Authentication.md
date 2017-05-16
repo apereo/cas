@@ -35,7 +35,7 @@ The current implementation provides support for:
 |-----------------------------------------------|-------------------------------------------------------
 | `/cas/oidc/.well-known`                       | Discovery endpoint.
 | `/cas/oidc/.well-known/openid-configuration`  | Discovery endpoint.
-| `/cas/oidc/jwks`                              | Provides an aggregate of all keystores.
+| `/cas/oidc/jwks`                              | A read-only endpoint that contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/cas/oidc/authorize`                         | Authorization requests are handled here.
 | `/cas/oidc/profile`                           | User profile requests are handled here.
 | `/cas/oidc/accessToken`, `/cas/oidc/token`    | Produces authorized access tokens.
