@@ -26,7 +26,11 @@
     "gulp-autoprefixer": "^3.1.0"
   },
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "eslint": "^3.19.0",
+    "eslint-plugin-react": "^7.0.1",
+    "gulp": "^3.9.1",
+    "semistandard": "^11.0.0",
+    "standard": "^10.0.2"
   },
   "scripts": {
     "gulp": "gulp"
