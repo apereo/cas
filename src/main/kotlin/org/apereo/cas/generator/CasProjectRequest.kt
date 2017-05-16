@@ -21,6 +21,7 @@ open class CasProjectRequest(val casVersion: String) : ProjectRequest() {
         }
         props.put("cas.version", Supplier { this.casVersion })
         props.put("springboot.version", Supplier { this.bootVersion })
+        props.remove("springBootVersion")
     }
 
     override fun afterResolution(metadata: InitializrMetadata?) {

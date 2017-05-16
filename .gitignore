@@ -15,3 +15,5 @@ bin/
 .history
 .vscode
 *.zip
+
+initializr/initializr/tmp*

@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component
 open class CasWebApplicationDependencyProjectPostProcessor : ProjectRequestPostProcessorAdapter() {
     override fun postProcessBeforeResolution(request: ProjectRequest?, metadata: InitializrMetadata?) {
         super.postProcessBeforeResolution(request, metadata)
-
         val casRequest: CasProjectRequest = request as CasProjectRequest
         casRequest.addCasWebApplicationToProjectModel(metadata)
-
     }
 }

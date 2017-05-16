@@ -27,6 +27,15 @@ open class CasProjectGenerator : ProjectGenerator() {
             write(File(dir, "build.sh"), "maven/build.sh", model)
         }
 
+        if (isGradleBuild(request)) {
+            val cfg = File(dir, "cas")
+            cfg.mkdirs()
+            write(File(cfg, "build.gradle"), "gradle/cas/build.gradle", model)
+
+            write(File(dir, "settings.gradle"), "gradle/settings.gradle", model)
+            write(File(dir, "gradle.properties"), "gradle/gradle.properties", model)
+        }
+
         val cfg = File(dir, "etc/cas/config")
         cfg.mkdirs()
         
@@ -41,7 +50,7 @@ open class CasProjectGenerator : ProjectGenerator() {
         return "maven" == request?.build
     }
 
-    private fun isGradleBuild(request: ProjectRequest): Boolean {
-        return "gradle" == request.build
+    private fun isGradleBuild(request: ProjectRequest?): Boolean {
+        return "gradle" == request?.build
     }
 }

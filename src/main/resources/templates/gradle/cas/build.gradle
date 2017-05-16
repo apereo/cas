@@ -1,0 +1,84 @@
+apply plugin: 'org.springframework.boot'
+apply from: 'http://dl.bintray.com/scalding/generic/waroverlay.gradle'
+apply from: 'https://raw.githubusercontent.com/apereo/cas/{{casVersion}}/gradle/overrides.gradle'
+
+bootRepackage {
+    enabled = false
+}
+
+springBoot  {
+    mainClass = "org.springframework.boot.loader.WarLauncher"
+}
+
+bootRun {
+    addResources = true
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
+}
+
+dependencies {
+    compile "org.apereo.cas:cas-server-webapp:${project.'cas.version'}@war"
+}
+
+task copyConfig(type: Copy) {
+    println "Copying configuration to /etc/cas/config"
+    from "${project.rootDir}/etc/cas/config"
+    into '/etc/cas/config'
+}
+
+war {
+    dependsOn copyConfig
+    baseName 'cas'
+    includeWarJars = true
+    entryCompression = ZipEntryCompression.STORED
+    manifest {
+        from manifestFile()
+    }
+}
+
+task explodeWar(type: Copy) {
+    group = "build"
+    description = "Explode the cas.war"
+    from zipTree(project.war.outputs.files.singleFile)
+    into "${buildDir}/cas"
+}
+
+File manifestFile() {
+    def warfile = configurations.runtime.asFileTree.matching {
+        include '**/*.war'
+    }
+    def manifest = zipTree(warfile.singleFile).matching {
+        include '**/*.MF'
+    }
+    def dst = new File("${project.rootDir}/etc/cas/MANIFEST.MF")
+    dst.delete()
+    dst << manifest.singleFile.text
+    return dst
+}
+
+task generateKeys {
+    group = 'CAS'
+    description = 'generate keys for CAS. These keys can be added to your application.properties file'
+    doLast {
+        println 'Generating keys for CAS...'
+        ['cas.tgc.encryptionKey': 256, 'cas.tgc.signingKey': 512, 'cas.webflow.encryption.key': 96, 'cas.webflow.signing.key': 512].each { key, size ->
+            def octetKey = OctJwkGenerator.generateJwk(size)
+            def params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC)
+            println "${key}=${params.get('k')}"
+        }
+    }
+}
+
+task runit {
+    doLast{
+        javaexec {
+            main="-jar";
+            args = [ "build/libs/cas.war" ]
+        }
+    }
+}

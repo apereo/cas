@@ -847,16 +847,16 @@ initializr:
         build: maven
         format: project
       default: true
-      action: /cas-maven-overlay.zip
+      action: /starter.zip
     - name: Gradle Project
       id: gradle-project
       description: Generate a Gradle based CAS Overlay
-      sts-id: cas-gradle-overlay.zip
+      sts-id: starter.zip
       tags:
         build: gradle
         format: project
       default: false
-      action: /cas-gradle-overlay.zip
+      action: /starter.zip
   name:
     value: "CAS WAR Overlay"
   group-id:
