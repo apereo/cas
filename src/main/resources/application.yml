@@ -74,35 +74,35 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-memcached-monitor
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Monitor the internal state of a Memacached instance.
         - name: CAS EhCache Monitor
           id: ${casSupportModuleArtifactId}-ehcache-monitor
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ehcache-monitor
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Monitor the internal state of an EhCache instance.
         - name: CAS Hazelcast Monitor
           id: ${casSupportModuleArtifactId}-hazelcast-monitor
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-hazelcast-monitor
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Monitor the internal state of a Hazelcast instance.
         - name: CAS JDBC Monitor
           id: ${casSupportModuleArtifactId}-jdbc-monitor
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-jdbc-monitor
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Monitor the internal state of a JDBC connection.
         - name: CAS LDAP Monitor
           id: ${casSupportModuleArtifactId}-ldap-monitor
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ldap-monitor
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Monitor the internal state of an LDAP connection pool.
     - name: CAS OpenID Protocol
       content:
         - name: CAS OpenID Protocol
@@ -111,7 +111,7 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-openid-webflow
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to act as an OpenID identity provider.
     - name: CAS OAuth Protocol
       content:
         - name: CAS OAuth Protocol
@@ -120,7 +120,7 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-oauth-webflow
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to act as an OAuth2 identity provider.
     - name: CAS OpenID Connect Protocol
       content:
         - name: CAS OpenID Connect Protocol
@@ -129,7 +129,7 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-oidc
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to act as an OpenID Connect identity provider.
     - name: CAS WsFederation Protocol
       content:
         - name: CAS WsFederation Protocol Security Token Service
@@ -138,14 +138,15 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-ws-sts
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: >
+            Allow CAS to act as a security token service, used in conjunction with the WsFederation identity provider,
         - name: CAS WsFederation Protocol Identity Provider
           id: ${casSupportModuleArtifactId}-ws-idp
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ws-idp
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to act as a Ws-Fed identity provider.
     - name: CAS REST Protocol
       content:
         - name: CAS REST Protocol
@@ -154,21 +155,21 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-rest
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Enable the CAS REST API and protocol support.
         - name: CAS Services REST Protocol
           id: ${casSupportModuleArtifactId}-rest-services
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-rest-services
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Enable the CAS REST Services API to dynamically add services and applications to CAS.
         - name: CAS REST Protocol via X.509
           id: ${casSupportModuleArtifactId}-rest-x509
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-rest-x509
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow the CAS REST API to extract credentials from X.509.
     - name: CAS SAML
       content:
         - name: CAS SAML1.1 Protocol
@@ -241,7 +242,7 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-audit-jdbc
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Track CAS authentication audit logs inside a JDBC instance.
     - name: CAS Logging
       content:
         - name: CAS Logging CloudWatch
@@ -250,14 +251,14 @@ initializr:
           artifactId: cas-server-core-logging-config-cloudwatch
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Enable CAS logging support for AWS CloudWatch
         - name: CAS Logging Sentry
           id: ${casSupportModuleArtifactId}-sentry
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-sentry
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Enable CAS logging support for Sentry.
     - name: CAS Service Registries
       content:
         - name: CAS DynamoDb Service Registry
@@ -434,28 +435,28 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-trusted-mfa
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to remember/trust devices/browsers in multifactor authentication scenarios.
         - name: CAS Multifactor Authentication Trusted Device/Browser JDBC
           id: ${casSupportModuleArtifactId}-trusted-mfa-jdbc
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-mfa-jdbc
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Store trusted devices/browsers in multifactor authentication scenarios in a JDBC instance.
         - name: CAS Multifactor Authentication Trusted Device/Browser MongoDb
           id: ${casSupportModuleArtifactId}-trusted-mfa-mongo
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-mfa-mongo
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description:  Store trusted devices/browsers in multifactor authentication scenarios in a MongoDb instance.
         - name: CAS Multifactor Authentication Trusted Device/Browser REST
           id: ${casSupportModuleArtifactId}-trusted-mfa-rest
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-mfa-rest
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Store trusted devices/browsers in multifactor authentication scenarios via a REST API.
     - name: CAS Service Access Strategies
       content:
         - name: CAS Grouper Service Access Strategies
@@ -464,7 +465,7 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-grouper
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Control access to CAS services via Internet2's Grouper.
     - name: CAS Multifactor Authentication Triggers
       content:
         - name: CAS Grouper Multifactor Authentication Trigger
@@ -514,24 +515,27 @@ initializr:
           description: Enable multifactor authentication via Google Authenticator.
           keywords:
             - mfa
+            - gauth
         - name: CAS Google Authenticator MongoDb Multifactor Authentication
           id: ${casSupportModuleArtifactId}-gauth-mongo
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gauth-mongo
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Store google authenticator device registrations inside a MongoDb instance.
           keywords:
             - mfa
+            - gauth
         - name: CAS Google Authenticator JDBC/JPA Multifactor Authentication
           id: ${casSupportModuleArtifactId}-gauth-jpa
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-gauth-jpa
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Store google authenticator device registrations inside a JDBC instance.
           keywords:
             - mfa
+            - gauth
         - name: CAS Authy Multifactor Authentication
           id: ${casSupportModuleArtifactId}-authy
           groupId: ${casModuleGroupId}
@@ -576,14 +580,14 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-geolocation-googlemaps
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to geotrack authentication requests/events via GoogleMaps.
         - name: CAS MaxMind GeoTracking Authentication
           id: ${casSupportModuleArtifactId}-geolocation-maxmind
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-geolocation-maxmind
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to geotrack authentication requests/events via MaxMind.
     - name: CAS Authentication Events
       content:
         - name: CAS MongoDb Authentication Events
@@ -592,21 +596,21 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-events-mongo
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Track CAS authentication events via a MongoDb instance.
         - name: CAS JDBC/JPA Authentication Events
           id: ${casSupportModuleArtifactId}-events-jpa
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-events-jpa
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description:  Track CAS authentication events via a JDBC instance.
         - name: CAS Memory Authentication Events
           id: ${casSupportModuleArtifactId}-events-memory
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-events-memory
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Track CAS authentication events in memory.
     - name: CAS Throttling Authentication
       content:
         - name: CAS JDBC Throttling Authentication
@@ -615,7 +619,7 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-throttle-jdbc
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Throttle CAS authentication requests via a JDBC instance.
     - name: CAS Delegated Authentication
       content:
         - name: CAS Delegated Authentication
@@ -624,14 +628,17 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-pac4j-webflow
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Enable delegated authentication support to external identity providers.
+          keywords:
+            - delegation
+            - pac4j
         - name: CAS WsFederation (ADFS) Delegated Authentication
           id: ${casSupportModuleArtifactId}-wsfederation-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-wsfederation-webflow
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Enable delegated authentication support to an external ADFS instance.
     - name: CAS Authentication Methods
       content:
         - name: CAS Radius Authentication
@@ -640,21 +647,21 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-radius
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use RADIUS for primary authentication.
         - name: CAS LDAP Authentication
           id: ${casSupportModuleArtifactId}-ldap
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-ldap
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use LDAP for primary authentication.
         - name: CAS JDBC Authentication
           id: ${casSupportModuleArtifactId}-jdbc
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-jdbc
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use JDBC for primary authentication.
         - name: CAS X.509 Authentication
           id: ${casSupportModuleArtifactId}-x509-webflow
           groupId: ${casModuleGroupId}
@@ -668,84 +675,86 @@ initializr:
           artifactId: ${casSupportModuleArtifactId}-spnego-webflow
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use SPNEGO for primary authentication.
         - name: CAS Remote Address Authentication
           id: ${casSupportModuleArtifactId}-generic-remote-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic-remote-webflow
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use Remote-Address for primary authentication.
         - name: CAS Trusted Authentication
           id: ${casSupportModuleArtifactId}-trusted-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-trusted-webflow
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use Trusted Remote-User for primary authentication.
         - name: CAS Token (JWT) Authentication Core
           id: ${casSupportModuleArtifactId}-token
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-token
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description:  Allow CAS to issue JWTs for primary authentication.
         - name: CAS Token (JWT) Authentication Webflow
           id: ${casSupportModuleArtifactId}-token-webflow
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-token-webflow
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to accept JWTs for primary authentication.
         - name: CAS MongoDb Authentication
           id: ${casSupportModuleArtifactId}-mongo
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-mongo
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use MongoDb for primary authentication.
         - name: CAS Apache Shiro Authentication
           id: ${casSupportModuleArtifactId}-generic
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use Apache Shiro for primary authentication.
         - name: CAS REST Authentication
           id: ${casSupportModuleArtifactId}-rest-authentication
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-rest-authentication
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use REST for primary authentication.
         - name: CAS Basic Authentication
           id: ${casSupportModuleArtifactId}-basic
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-basic
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use Digest Auth for primary authentication.
         - name: CAS Digest Authentication
           id: ${casSupportModuleArtifactId}-digest-authentication
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-digest-authentication
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use Basic Auth for primary authentication.
         - name: CAS Blacklist Authentication
           id: ${casSupportModuleArtifactId}-generic-blacklist
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use blacklisted credentials for primary authentication.
         - name: CAS File-based Authentication
           id: ${casSupportModuleArtifactId}-generic-file
           groupId: ${casModuleGroupId}
           artifactId: ${casSupportModuleArtifactId}-generic
           version: ${casVersion}
           bom: cas-bom
-          description:
+          description: Allow CAS to use whitelisted credentials for primary authentication.
+          keywords:
+            - whitelist
     - name: CAS Web Applications
       content:
         - name: CAS Web Application

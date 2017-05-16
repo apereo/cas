@@ -34,7 +34,8 @@
         <div class="container start-main">
             <div class="row form-inline text-center">
                 <div class="form-group project-choice">
-                    <h1>Generate a CAS Overlay
+                    <h1>Generate a CAS <code>{{model.casVersion}}</code> Overlay
+
                         <select tabindex="1" class="form-control" id="type" name="type">
                             {{#types.content}}
                             <option data-action="{{action}}" value="{{id}}"{{#default}} selected{{/default}}>{{name}}</option>
@@ -56,7 +57,7 @@
 
                 <div class="form-group">
                     <input tabindex="11" id="autocomplete" class="form-control" type="text"
-                           placeholder="LDAP, JSON, Hazelcast, JDBC,..."
+                           placeholder="LDAP, JSON, Hazelcast, MFA,..."
                            name="autocomplete">
                 </div>
                 <div class="form-group">
