@@ -43,7 +43,7 @@ The following demos are provided by the Apereo CAS project:
 
 | Demo                    | Source Branch            | Location
 |-------------------------|--------------------------|----------------------------------------------------
-| [CAS Overlay Project Initializr](index.html)     | `heroku-casinitializr`       | [![](https://heroku-badge.herokuapp.com/?app=casinitializr)](https://casinitializr.herokuapp.com)
+| [CAS Overlay Project Initializr](installation/Maven-Overlay-Installation.html)     | `heroku-casinitializr`       | [![](https://heroku-badge.herokuapp.com/?app=casinitializr)](https://casinitializr.herokuapp.com)
 | [CAS Web Application Server](index.html)     | `heroku-caswebapp`       | [![](https://heroku-badge.herokuapp.com/?app=jasigcas&root=/cas/login)](https://jasigcas.herokuapp.com/cas)
 | [CAS Services Management Server](installation/Installing-ServicesMgmt-Webapp.html) | `heroku-mgmtwebapp`      | [![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt&root=/cas-management/login)](https://jasigcasmgmt.herokuapp.com/cas-management) 
 | [CAS Boot Administration Server](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [![](https://heroku-badge.herokuapp.com/?app=casbootadminserver&)](https://casbootadminserver.herokuapp.com/)
