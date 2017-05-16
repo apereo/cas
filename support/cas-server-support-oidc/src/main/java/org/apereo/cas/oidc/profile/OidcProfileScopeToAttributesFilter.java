@@ -6,11 +6,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -111,7 +111,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 .filter(s -> this.filters.containsKey(s))
                 .forEach(s -> {
                     final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
-                    policy.setAttributeToScopeClaimMapper(this.attributeToScopeClaimMapper);
                     attributes.putAll(policy.getAttributes(principal, service, registeredService));
                 });
     }

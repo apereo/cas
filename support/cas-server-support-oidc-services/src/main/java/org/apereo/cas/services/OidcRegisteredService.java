@@ -114,11 +114,14 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     /**
      * Indicates the service was dynamically registered.
      * Records the registration time automatically.
+     *
      * @param dynamicallyRegistered dynamically registered.
      */
     public void setDynamicallyRegistered(final boolean dynamicallyRegistered) {
+        if (dynamicallyRegistered && !this.dynamicallyRegistered && dynamicRegistrationDateTime == null) {
+            setDynamicRegistrationDateTime(ZonedDateTime.now());
+        }
         this.dynamicallyRegistered = dynamicallyRegistered;
-        setDynamicRegistrationDateTime(ZonedDateTime.now());
     }
 
     /**
