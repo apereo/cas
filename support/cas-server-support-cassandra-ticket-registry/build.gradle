@@ -1,0 +1,16 @@
+
+description = "Apereo CAS Cassandra ticket registry"
+dependencies {
+    compile project(":core:cas-server-core")
+    compile project(":core:cas-server-core-tickets")
+    compile project(":core:cas-server-core-configuration")
+
+    compile libraries.cassandra
+    compile libraries.spring
+    compile libraries.quartz
+    compile libraries.jodatime
+    compile libraries.log4j
+    compile libraries.jackson
+
+    testCompile libraries.tests
+}
