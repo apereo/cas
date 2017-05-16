@@ -32,9 +32,9 @@ open class CasProjectGenerator : ProjectGenerator() {
         git.add().addFilepattern(".").call()
         git.commit().setAll(true).setMessage("Initial project layout").call()
 
-        if (!request.gitRemote?.isEmpty()) {
+        if (!casRequest.gitRemote.isEmpty()) {
             val config = git.repository.config
-            config.setString("remote", "origin", "url", request.gitRemote)
+            config.setString("remote", "origin", "url", casRequest.gitRemote)
             config.save()
         }
 

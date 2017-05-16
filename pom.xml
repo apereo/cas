@@ -16,7 +16,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+        <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
     </properties>
 
     <pluginRepositories>
@@ -31,6 +31,9 @@
     </pluginRepositories>
 
     <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+        
         <plugins>
             <plugin>
                 <groupId>com.rimerosolutions.maven.plugins</groupId>
@@ -53,7 +56,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>org.apereo.cas.CasInitializrApplication</mainClass>
+                    <mainClass>org.apereo.cas.CasInitializrApplicationKt</mainClass>
                     <addResources>true</addResources>
                     <excludeDevtools>false</excludeDevtools>
                 </configuration>
@@ -62,7 +65,6 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
-
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -70,46 +72,40 @@
                             <goal>compile</goal>
                         </goals>
                     </execution>
-
-                    <execution>
-                        <id>test-compile</id>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
             </plugin>
             <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.5.0</version>
-                <executions>
-                    <execution>
-                        <id>cas-exec</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>rm</executable>
-                    <arguments>
-                        <argument>-Rf</argument>
-                        <argument>./target/cas-overlay-initializr.jar.original</argument>
-                        <argument>./target/classes</argument>
-                        <argument>./target/maven-archiver</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
-            -->
+           <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-compiler-plugin</artifactId>
+               <version>3.3</version>
+           </plugin>
+
+           <plugin>
+               <groupId>org.codehaus.mojo</groupId>
+               <artifactId>exec-maven-plugin</artifactId>
+               <version>1.5.0</version>
+               <executions>
+                   <execution>
+                       <id>cas-exec</id>
+                       <phase>install</phase>
+                       <goals>
+                           <goal>exec</goal>
+                       </goals>
+                       <inherited>false</inherited>
+                   </execution>
+               </executions>
+               <configuration>
+                   <executable>rm</executable>
+                   <arguments>
+                       <argument>-Rf</argument>
+                       <argument>./target/cas-overlay-initializr.jar.original</argument>
+                       <argument>./target/classes</argument>
+                       <argument>./target/maven-archiver</argument>
+                   </arguments>
+               </configuration>
+           </plugin>
+           -->
         </plugins>
         <finalName>cas-overlay-initializr</finalName>
     </build>
@@ -138,7 +134,7 @@
         </dependency>
 
     </dependencies>
-    
+
     <repositories>
         <repository>
             <id>sonatype-releases</id>
