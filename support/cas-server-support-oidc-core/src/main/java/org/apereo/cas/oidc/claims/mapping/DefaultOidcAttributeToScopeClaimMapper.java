@@ -1,10 +1,10 @@
-package org.apereo.cas.oidc.claims;
+package org.apereo.cas.oidc.claims.mapping;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link OidcAttributeToScopeClaimMapper}.
+ * This is {@link DefaultOidcAttributeToScopeClaimMapper}.
  * In order for attributes to be released when using a scope in OIDC, attributes need to mapped
  * in to the correct OIDC name (i.e. <code>given_name</code>) for those attributes.
  * The side effect is that the attribute will always be released as the mapped name
@@ -15,33 +15,23 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class OidcAttributeToScopeClaimMapper {
+public class DefaultOidcAttributeToScopeClaimMapper implements OidcAttributeToScopeClaimMapper {
 
     /**
      * Map OIDC claim to an attribute.
      */
     private Map<String, String> claimsToAttribute = new HashMap<>();
 
-    public OidcAttributeToScopeClaimMapper(final Map<String, String> claimsToAttribute) {
+    public DefaultOidcAttributeToScopeClaimMapper(final Map<String, String> claimsToAttribute) {
         this.claimsToAttribute = claimsToAttribute;
     }
 
-    /**
-     * Gets mapped attribute.
-     *
-     * @param claim the claim
-     * @return the mapped attribute
-     */
+    @Override
     public String getMappedAttribute(final String claim) {
         return claimsToAttribute.get(claim);
     }
 
-    /**
-     * Contains mapped attribute boolean.
-     *
-     * @param claim the claim
-     * @return the boolean
-     */
+    @Override
     public boolean containsMappedAttribute(final String claim) {
         return claimsToAttribute.containsKey(claim);
     }
