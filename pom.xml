@@ -102,7 +102,9 @@
                     <executable>rm</executable>
                     <arguments>
                         <argument>-Rf</argument>
-                        <argument>./target</argument>
+                        <argument>./target/cas-overlay-initializr.jar.original</argument>
+                        <argument>./target/classes</argument>
+                        <argument>./target/maven-archiver</argument>
                     </arguments>
                 </configuration>
             </plugin>
