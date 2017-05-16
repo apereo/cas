@@ -15,8 +15,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
+import org.apereo.cas.oidc.claims.mapping.DefaultOidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
@@ -258,7 +259,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper() {
         final Map<String, String> mappings = casProperties.getAuthn().getOidc().getClaimsMap();
-        return new OidcAttributeToScopeClaimMapper(mappings);
+        return new DefaultOidcAttributeToScopeClaimMapper(mappings);
     }
 
     @Bean
