@@ -2,9 +2,14 @@ package org.apereo.cas.generator
 
 import io.spring.initializr.generator.ProjectGenerator
 import io.spring.initializr.generator.ProjectRequest
+import org.eclipse.jgit.api.Git
+import org.springframework.beans.factory.annotation.Value
 import java.io.File
 
 open class CasProjectGenerator : ProjectGenerator() {
+    @Value(value = "\${initializr.artifact-id.value}")
+    lateinit var artifactId: String
+
     init {
         setTmpdir(System.getProperty("java.io.tmpdir"))
     }
@@ -15,6 +20,15 @@ open class CasProjectGenerator : ProjectGenerator() {
         val webapp = casRequest.getProjectCasWebApplicationDependency()
         model.put(TemplateModel.CAS_WEB_APP_DEPENDENCY, webapp)
         return model
+    }
+
+    override fun doGenerateProjectStructure(request: ProjectRequest?): File {
+        val root = super.doGenerateProjectStructure(request)
+        val git = Git.init().setDirectory(File(root, artifactId)).call()
+        git.add().addFilepattern(".").call()
+        git.commit().setAll(true).setMessage("Initial project layout").call()
+        git.status().call()
+        return root
     }
 
     override fun generateGitIgnore(dir: File?, request: ProjectRequest?) {
@@ -38,7 +52,7 @@ open class CasProjectGenerator : ProjectGenerator() {
 
         val cfg = File(dir, "etc/cas/config")
         cfg.mkdirs()
-        
+
         write(File(cfg, "application.yml"), "etc/cas/config/application.yml", model)
         write(File(cfg, "cas.properties"), "etc/cas/config/cas.properties", model)
         write(File(cfg, "log4j2.xml"), "etc/cas/config/log4j2.xml", model)
