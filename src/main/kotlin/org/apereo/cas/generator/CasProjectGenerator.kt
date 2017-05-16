@@ -12,18 +12,17 @@ open class CasProjectGenerator : ProjectGenerator() {
     override fun resolveModel(request: ProjectRequest?): MutableMap<String, Any> {
         val model = super.resolveModel(request)
         val casRequest: CasProjectRequest = request as CasProjectRequest
-
         val webapp = casRequest.getProjectCasWebApplicationDependency()
         model.put(TemplateModel.CAS_WEB_APP_DEPENDENCY, webapp)
-
         return model
     }
 
     override fun generateGitIgnore(dir: File?, request: ProjectRequest?) {
         super.generateGitIgnore(dir, request)
-
         val model = resolveModel(request)
-        write(File(dir, "README.md"), "README.md", model)
+        write(File(dir, "README.md"), "maven/README.md", model)
+        write(File(dir, "build.cmd"), "maven/README.md", model)
+        write(File(dir, "build.sh"), "maven/build.sh", model)
         write(File(dir, "LICENSE.txt"), "LICENSE.txt", model)
     }
 }
