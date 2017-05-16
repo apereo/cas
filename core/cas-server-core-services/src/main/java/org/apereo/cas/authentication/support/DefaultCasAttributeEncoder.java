@@ -136,7 +136,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
             logger.debug("Found {} attribute(s) that need to be sanitized/encoded.");
             attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
             attrs.forEach(p -> {
-                logger.debug("Sanitized attribute name to be {}", p.getFirst());
+                logger.warn("Sanitized attribute name to be [{}]", p.getFirst());
                 attributes.put(p.getFirst(), p.getSecond());
             });
         }

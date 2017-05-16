@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -81,51 +82,60 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         this.allowedAttributes.entrySet().stream()
                 .map(entry -> {
                     final String key = entry.getKey();
+                    LOGGER.debug("Attempting to map allowed attribute name [{}]", key);
                     return new Object[]{key, resolvedAttributes.get(key), entry};
                 })
-                .filter(entry -> entry[1] != null).forEach(entry -> {
-            final String mappedAttributeName = ((Map.Entry<String, String>) entry[2]).getValue();
-            final Matcher matcherInline = INLINE_GROOVY_PATTERN.matcher(mappedAttributeName);
-            final Matcher matcherFile = FILE_GROOVY_PATTERN.matcher(mappedAttributeName);
+                .forEach(entry -> {
+                    final String mappedAttributeName = ((Map.Entry<String, String>) entry[2]).getValue();
+                    final Matcher matcherInline = INLINE_GROOVY_PATTERN.matcher(mappedAttributeName);
+                    final Matcher matcherFile = FILE_GROOVY_PATTERN.matcher(mappedAttributeName);
 
-            if (matcherInline.find()) {
-                LOGGER.debug("Found inline groovy script to execute for attribute mapping {}", entry[0]);
-                final Object result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
-                if (result != null) {
-                    LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
-                    attributesToRelease.put(entry[0].toString(), result);
-                } else {
-                    LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
-                }
-            } else if (matcherFile.find()) {
-                try {
-                    LOGGER.debug("Found groovy script to execute for attribute mapping {}", entry[0]);
-                    final String script = FileUtils.readFileToString(new File(matcherFile.group(1)), StandardCharsets.UTF_8);
-                    final Object result = getGroovyAttributeValue(script, resolvedAttributes);
-                    if (result != null) {
-                        LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
-                        attributesToRelease.put(entry[0].toString(), result);
+                    if (matcherInline.find()) {
+                        LOGGER.debug("Found inline groovy script to execute for attribute mapping {}", entry[0]);
+                        final Object result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
+                        if (result != null) {
+                            LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
+                            attributesToRelease.put(entry[0].toString(), result);
+                        } else {
+                            LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
+                        }
+                    } else if (matcherFile.find()) {
+                        try {
+                            LOGGER.debug("Found groovy script to execute for attribute mapping {}", entry[0]);
+                            final String script = FileUtils.readFileToString(new File(matcherFile.group(1)), StandardCharsets.UTF_8);
+                            final Object result = getGroovyAttributeValue(script, resolvedAttributes);
+                            if (result != null) {
+                                LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
+                                attributesToRelease.put(entry[0].toString(), result);
+                            } else {
+                                LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
+                            }
+                        } catch (final IOException e) {
+                            LOGGER.error(e.getMessage(), e);
+                        }
                     } else {
-                        LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
+                        if (entry[1] != null) {
+                            LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
+                                    entry[0], mappedAttributeName);
+                            attributesToRelease.put(mappedAttributeName, entry[1]);
+                        } else {
+                            LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list",
+                                    mappedAttributeName, entry[0]);
+                        }
                     }
-                } catch (final IOException e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            } else {
-                LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
-                        entry[0], mappedAttributeName);
-                attributesToRelease.put(mappedAttributeName, entry[1]);
-            }
-        });
+                });
         return attributesToRelease;
     }
 
     private static Object getGroovyAttributeValue(final String groovyScript,
-                                           final Map<String, Object> resolvedAttributes) {
+                                                  final Map<String, Object> resolvedAttributes) {
         try {
             final Binding binding = new Binding();
             final GroovyShell shell = new GroovyShell(binding);
             binding.setVariable("attributes", resolvedAttributes);
+            binding.setVariable("logger", LOGGER);
+            LOGGER.debug("Executing groovy script [{}] with attributes binding of [{}]",
+                    StringUtils.abbreviate(groovyScript, groovyScript.length() / 2), resolvedAttributes);
             final Object res = shell.evaluate(groovyScript);
             return res;
         } catch (final Exception e) {
