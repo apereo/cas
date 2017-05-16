@@ -16,9 +16,9 @@ open class CasMainController(metadataProvider: InitializrMetadataProvider,
                              templateRenderer: TemplateRenderer,
                              resourceUrlProvider: ResourceUrlProvider,
                              projectGenerator: ProjectGenerator,
-                             dependencyMetadatProvider: DependencyMetadataProvider)
+                             dependencyMetadataProvider: DependencyMetadataProvider)
     : MainController(metadataProvider, templateRenderer, resourceUrlProvider,
-        projectGenerator, dependencyMetadatProvider) {
+        projectGenerator, dependencyMetadataProvider) {
 
     @Value(value = "\${casVersion}")
     lateinit var casVersion: String
