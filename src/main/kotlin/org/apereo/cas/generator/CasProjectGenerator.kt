@@ -20,9 +20,28 @@ open class CasProjectGenerator : ProjectGenerator() {
     override fun generateGitIgnore(dir: File?, request: ProjectRequest?) {
         super.generateGitIgnore(dir, request)
         val model = resolveModel(request)
-        write(File(dir, "README.md"), "maven/README.md", model)
-        write(File(dir, "build.cmd"), "maven/README.md", model)
-        write(File(dir, "build.sh"), "maven/build.sh", model)
+
+        if (isMavenBuild(request)) {
+            write(File(dir, "README.md"), "maven/README.md", model)
+            write(File(dir, "build.cmd"), "maven/build.cmd", model)
+            write(File(dir, "build.sh"), "maven/build.sh", model)
+        }
+
+        val cfg = File(dir, "etc/cas/config")
+        cfg.mkdirs()
+        
+        write(File(cfg, "application.yml"), "etc/cas/config/application.yml", model)
+        write(File(cfg, "cas.properties"), "etc/cas/config/cas.properties", model)
+        write(File(cfg, "log4j2.xml"), "etc/cas/config/log4j2.xml", model)
+
         write(File(dir, "LICENSE.txt"), "LICENSE.txt", model)
+    }
+
+    private fun isMavenBuild(request: ProjectRequest?): Boolean {
+        return "maven" == request?.build
+    }
+
+    private fun isGradleBuild(request: ProjectRequest): Boolean {
+        return "gradle" == request.build
     }
 }
