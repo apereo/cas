@@ -8,11 +8,19 @@ open class CasProjectRequest(val casVersion: String) : ProjectRequest() {
 
     override fun initializeProperties(metadata: InitializrMetadata?) {
         super.initializeProperties(metadata)
-        if ("gradle" == build) run {
-            buildProperties.gradle.put("casVersion", Supplier { this.casVersion })
+        val props = if ("gradle" == build) {
+            buildProperties.gradle
+        } else {
+            buildProperties.maven
         }
-        else {
-            buildProperties.maven.put("casVersion", Supplier { this.casVersion })
+        props.put("casVersion", Supplier { this.casVersion })
+        props.put("springBootVersion", Supplier { this.bootVersion })
+    }
+
+    override fun afterResolution(metadata: InitializrMetadata?) {
+        if (!hasWebFacet()) {
+            resolvedDependencies.add(metadata!!.dependencies.get("cas-server-webapp-tomcat"))
+            facets.add("web")
         }
     }
 }

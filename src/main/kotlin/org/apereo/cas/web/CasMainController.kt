@@ -23,7 +23,7 @@ open class CasMainController(metadataProvider: InitializrMetadataProvider,
     @Value(value = "\${casVersion}")
     lateinit var casVersion: String
 
-    @ModelAttribute(name = "model")
+    @ModelAttribute
     @Override
     override fun projectRequest(@RequestHeader headers: Map<String, String>): BasicProjectRequest {
         val request = CasProjectRequest(casVersion)
