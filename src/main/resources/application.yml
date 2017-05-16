@@ -10,6 +10,27 @@ initializr:
         groupId: ${casModuleGroupId}
         artifactId: cas-server-support-bom
         version: ${casVersion}
+    repositories:
+      sonatype-releases:
+        name: sonatype-releases
+        url: http://oss.sonatype.org/content/repositories/releases/
+        snapshotsEnabled: false
+      sonatype-snapshots:
+        name: sonatype-snapshots
+        url: http://oss.sonatype.org/content/repositories/snapshots/
+        snapshotsEnabled: true
+      shibboleth-releases:
+        name: shibboleth-releases
+        url: https://build.shibboleth.net/nexus/content/repositories/releases
+      shibboleth-releases:
+        name: shibboleth-releases
+        url: https://build.shibboleth.net/nexus/content/repositories/releases
+      duo-uniconiam:
+        name: duo-uniconiam
+        url: https://dl.bintray.com/uniconiam/maven
+      jitpack:
+        name: jitack
+        url: https://jitpack.io
   dependencies:
     - name: CAS Acceptable Usage Policy
       content:
@@ -761,41 +782,49 @@ initializr:
           id: cas-server-webapp
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp
+          scope: runtime
           version: ${casVersion}
           bom: cas-bom
           description: CAS Server Vanilla Web Application
           facets:
             - web
+            - webapp
           starter: true
         - name: CAS Web Application Tomcat
           id: cas-server-webapp-tomcat
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-tomcat
           version: ${casVersion}
+          scope: runtime
           bom: cas-bom
           description: CAS Server Web Application with Embedded Jetty
           facets:
             - web
+            - webapp
           starter: true
         - name: CAS Web Application Jetty
           id: cas-server-webapp-jetty
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-jetty
           version: ${casVersion}
+          scope: runtime
           bom: cas-bom
           description: CAS Server Web Application with Embedded Undertow
           facets:
             - web
+            - webapp
           starter: true
         - name: CAS Web Application Undertow
           id: cas-server-webapp-undertow
           groupId: ${casModuleGroupId}
           artifactId: cas-server-webapp-undertow
           version: ${casVersion}
+          scope: runtime
           bom: cas-bom
           description: CAS Server Web Application with Embedded Undertow
           facets:
             - web
+            - webapp
           starter: true
   javaVersions:
     - id: 1.8

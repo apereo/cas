@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>{{groupId}}</groupId>
+    <artifactId>{{artifactId}}</artifactId>
+    <version>{{version}}</version>
+    <packaging>{{packaging}}</packaging>
+
+    <name>{{name}}</name>
+    <description>{{description}}</description>
+    
+    <properties>
+        {{#buildPropertiesMaven}}
+        <{{key}}>{{#value}}{{.}}{{/value}}</{{key}}>
+        {{/buildPropertiesMaven}}
+        {{#buildPropertiesVersions}}
+        <{{key}}>{{#value}}{{.}}{{/value}}</{{key}}>
+        {{/buildPropertiesVersions}}
+    </properties>
+
+    <dependencies>
+        {{#compileDependencies}}
+        <dependency>
+            <groupId>{{groupId}}</groupId>
+            <artifactId>{{artifactId}}</artifactId>
+            {{#version}}
+            <version>{{version}}</version>
+            {{/version}}
+            {{#type}}
+            <type>{{type}}</type>
+            {{/type}}
+        </dependency>
+        {{/compileDependencies}}
+        {{#groovy}}
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+        </dependency>
+        {{/groovy}}
+        {{#kotlin}}
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            {{#isJava6}}
+            <artifactId>kotlin-stdlib</artifactId>
+            {{/isJava6}}
+            {{#isJava7}}
+            <artifactId>kotlin-stdlib-jre7</artifactId>
+            {{/isJava7}}
+            {{#isJava8}}
+            <artifactId>kotlin-stdlib-jre8</artifactId>
+            {{/isJava8}}
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        {{/kotlin}}
+
+        {{#runtimeDependencies}}
+        <dependency>
+            <groupId>{{groupId}}</groupId>
+            <artifactId>{{artifactId}}</artifactId>
+            {{#version}}
+            <version>{{version}}</version>
+            {{/version}}
+            <scope>runtime</scope>
+            {{#type}}
+            <type>{{type}}</type>
+            {{/type}}
+        </dependency>
+        {{/runtimeDependencies}}
+        {{#compileOnlyDependencies}}
+        <dependency>
+            <groupId>{{groupId}}</groupId>
+            <artifactId>{{artifactId}}</artifactId>
+            {{#version}}
+            <version>{{version}}</version>
+            {{/version}}
+            <optional>true</optional>
+            {{#type}}
+            <type>{{type}}</type>
+            {{/type}}
+        </dependency>
+        {{/compileOnlyDependencies}}
+        {{#providedDependencies}}
+        <dependency>
+            <groupId>{{groupId}}</groupId>
+            <artifactId>{{artifactId}}</artifactId>
+            {{#version}}
+            <version>{{version}}</version>
+            {{/version}}
+            <scope>provided</scope>
+            {{#type}}
+            <type>{{type}}</type>
+            {{/type}}
+        </dependency>
+        {{/providedDependencies}}
+
+        {{#testDependencies}}
+        <dependency>
+            <groupId>{{groupId}}</groupId>
+            <artifactId>{{artifactId}}</artifactId>
+            {{#version}}
+            <version>{{version}}</version>
+            {{/version}}
+            <scope>test</scope>
+            {{#type}}
+            <type>{{type}}</type>
+            {{/type}}
+        </dependency>
+        {{/testDependencies}}
+    </dependencies>
+{{#hasBoms}}
+
+    <dependencyManagement>
+        <dependencies>
+            {{#resolvedBoms}}
+            <dependency>
+                <groupId>{{groupId}}</groupId>
+                <artifactId>{{artifactId}}</artifactId>
+                <version>{{versionToken}}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            {{/resolvedBoms}}
+        </dependencies>
+    </dependencyManagement>
+{{/hasBoms}}
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.rimerosolutions.maven.plugins</groupId>
+                <artifactId>wrapper-maven-plugin</artifactId>
+                <version>0.0.4</version>
+                <configuration>
+                    <verifyDownload>true</verifyDownload>
+                    <checksumAlgorithm>MD5</checksumAlgorithm>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${springboot.version}</version>
+                <configuration>
+                    <mainClass>org.springframework.boot.loader.WarLauncher</mainClass>
+                    <addResources>true</addResources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <warName>cas</warName>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <recompressZippedFiles>false</recompressZippedFiles>
+                    <archive>
+                        <compress>false</compress>
+                        <manifestFile>${project.build.directory}/war/work/org.apereo.cas/{{casWebApplicationDependency}}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                    <overlays>
+                        <overlay>
+                            <groupId>org.apereo.cas</groupId>
+                            <artifactId>{{casWebApplicationDependency}}</artifactId>
+                        </overlay>
+                    </overlays>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+            </plugin>
+        </plugins>
+        <finalName>cas</finalName>
+    </build>
+{{#hasRepositories}}
+
+    <repositories>
+        {{#repositoryValues}}
+        <repository>
+            <id>{{key}}</id>
+            <name>{{value.name}}</name>
+            <url>{{value.url}}</url>
+            <snapshots>
+                <enabled>{{value.snapshotsEnabled}}</enabled>
+            </snapshots>
+        </repository>
+        {{/repositoryValues}}
+    </repositories>
+{{/hasRepositories}}
+{{^isRelease}}
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+{{/isRelease}}
+
+	
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <id>pgp</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.s4u.plugins</groupId>
+                        <artifactId>pgpverify-maven-plugin</artifactId>
+                        <version>1.1.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <pgpKeyServer>hkp://pool.sks-keyservers.net</pgpKeyServer>
+                            <pgpKeysCachePath>${settings.localRepository}/pgpkeys-cache</pgpKeysCachePath>
+                            <scope>test</scope>
+                            <verifyPomFiles>true</verifyPomFiles>
+                            <failNoSignature>false</failNoSignature>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>	
+
+</project>
