@@ -58,7 +58,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator("tgt", "", 2, 
                 false, null, false);
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
-
+        
         final List<ArgumentExtractor> argExtractors = Collections.singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
         final ServicesManager servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));

@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.oidc.claims.mapping.DefaultOidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
@@ -29,7 +28,7 @@ import java.util.TreeMap;
 public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
     private static final long serialVersionUID = -7302163334687300920L;
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseOidcScopeAttributeReleasePolicy.class);
-    
+
     private List<String> allowedAttributes;
 
     @JsonIgnore
@@ -107,7 +106,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper =
                 applicationContext.getBean("oidcAttributeToScopeClaimMapper", OidcAttributeToScopeClaimMapper.class);
-        
+
         LOGGER.debug("Attempting to process claim [{}]", claim);
 
         if (attributeToScopeClaimMapper.containsMappedAttribute(claim)) {
