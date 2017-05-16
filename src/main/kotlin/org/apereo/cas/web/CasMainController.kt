@@ -23,10 +23,13 @@ open class CasMainController(metadataProvider: InitializrMetadataProvider,
     @Value(value = "\${casVersion}")
     lateinit var casVersion: String
 
+    @Value(value = "\${gitRemote}")
+    lateinit var gitRemote: String
+
     @ModelAttribute
     @Override
     override fun projectRequest(@RequestHeader headers: Map<String, String>): BasicProjectRequest {
-        val request = CasProjectRequest(casVersion)
+        val request = CasProjectRequest(casVersion, gitRemote)
         request.parameters.putAll(headers)
         request.initialize(metadataProvider.get())
         return request

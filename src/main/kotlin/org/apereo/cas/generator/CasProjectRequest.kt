@@ -8,7 +8,7 @@ import java.util.function.Supplier
 const val DEPENDENCY_CAS_SERVER_WEBAPP_TOMCAT: String = "cas-server-webapp-tomcat"
 const val GROUP_ID_ORG_APEREO_CAS: String = "org.apereo.cas"
 
-open class CasProjectRequest(val casVersion: String) : ProjectRequest() {
+open class CasProjectRequest(var casVersion: String, var gitRemote: String) : ProjectRequest() {
 
     val projectModel: MutableMap<String, Any> = mutableMapOf()
 

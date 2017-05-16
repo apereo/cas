@@ -1,6 +1,7 @@
 casVersion: 5.1.0
 casModuleGroupId: "org.apereo.cas"
 casSupportModuleArtifactIdPrefix: "cas-server-support"
+gitRemote:
 
 initializr:
   env:

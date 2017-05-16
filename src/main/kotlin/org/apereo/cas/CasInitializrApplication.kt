@@ -7,7 +7,6 @@ import io.spring.initializr.metadata.*
 import io.spring.initializr.util.TemplateRenderer
 import io.spring.initializr.web.project.MainController
 import org.apereo.cas.generator.CasProjectGenerator
-import org.apereo.cas.processor.CasWebApplicationDependencyProjectPostProcessor
 import org.apereo.cas.web.CasMainController
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.SpringApplication

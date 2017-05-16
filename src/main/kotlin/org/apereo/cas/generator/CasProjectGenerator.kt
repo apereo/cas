@@ -6,6 +6,7 @@ import org.eclipse.jgit.api.Git
 import org.springframework.beans.factory.annotation.Value
 import java.io.File
 
+
 open class CasProjectGenerator : ProjectGenerator() {
     @Value(value = "\${initializr.artifact-id.value}")
     lateinit var artifactId: String
@@ -24,10 +25,19 @@ open class CasProjectGenerator : ProjectGenerator() {
 
     override fun doGenerateProjectStructure(request: ProjectRequest?): File {
         val root = super.doGenerateProjectStructure(request)
+
+        val casRequest: CasProjectRequest = request as CasProjectRequest
+
         val git = Git.init().setDirectory(File(root, artifactId)).call()
         git.add().addFilepattern(".").call()
         git.commit().setAll(true).setMessage("Initial project layout").call()
-        git.status().call()
+
+        if (!request.gitRemote?.isEmpty()) {
+            val config = git.repository.config
+            config.setString("remote", "origin", "url", request.gitRemote)
+            config.save()
+        }
+
         return root
     }
 
