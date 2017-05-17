@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo -e "Building branch: ${TRAVIS_BRANCH}"
 echo -e "Build directory: ${TRAVIS_BUILD_DIR}"
 echo -e "Build id: ${TRAVIS_BUILD_ID}"
