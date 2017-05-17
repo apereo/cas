@@ -1,6 +1,8 @@
 package org.apereo.cas.util;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.slf4j.Logger;
@@ -12,8 +14,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
-import java.util.Formatter;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link EncodingUtils}
@@ -36,10 +36,35 @@ public final class EncodingUtils {
      * @return the encoded string
      */
     public static String hexEncode(final byte[] data) {
-        final StringBuilder sb = new StringBuilder();
-        final Formatter f = new Formatter(sb);
-        IntStream.range(0, data.length).forEach(i -> f.format("%02x", data[i]));
-        return sb.toString();
+        return Hex.encodeHexString(data);
+    }
+
+    /**
+     * Hex decode string.
+     *
+     * @param data the data
+     * @return the string
+     */
+    public static String hexDecode(final String data) {
+        if (StringUtils.isNotBlank(data)) {
+            return hexDecode(data.toCharArray());
+        }
+        return null;
+    }
+
+    /**
+     * Hex decode string.
+     *
+     * @param data the data
+     * @return the string
+     */
+    public static String hexDecode(final char[] data) {
+        try {
+            final byte[] result = Hex.decodeHex(data);
+            return new String(result);
+        } catch (final Exception e) {
+            return null;
+        }
     }
 
     /**

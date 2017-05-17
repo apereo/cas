@@ -1,16 +1,15 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.util.EncodingUtils;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlAttributeEncoder}.
@@ -33,39 +32,28 @@ public class SamlAttributeEncoder {
     public Map<String, Object> encode(final AuthnRequest authnRequest, final Map<String, Object> attributes,
                                       final SamlRegisteredService service,
                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        final Map<String, Object> finalAttributes = new HashMap<>(attributes);
-        transformUniformResourceNames(finalAttributes);
-        transformMicrosoftSchemaAttributes(finalAttributes);
+        return decodeAttributes(attributes);
+    }
+
+    /**
+     * Decode attributes map.
+     *
+     * @param receivedAttributes the received attributes
+     * @return the map
+     */
+    protected Map<String, Object> decodeAttributes(final Map<String, Object> receivedAttributes) {
+        final Map<String, Object> finalAttributes = new HashMap<>(receivedAttributes.size());
+
+        receivedAttributes.forEach((k, v) -> {
+            final String attributeName = EncodingUtils.hexDecode(k);
+            if (StringUtils.isNotBlank(attributeName)) {
+                LOGGER.debug("Decoded SAML attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);
+                finalAttributes.put(attributeName, v);
+            } else {
+                LOGGER.debug("Unable to decode SAML attribute [{}]; accepting it verbatim", k, attributeName, v);
+                finalAttributes.put(k, v);
+            }
+        });
         return finalAttributes;
-    }
-
-    private static void transformUniformResourceNames(final Map<String, Object> attributes) {
-        final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
-                .filter(s -> s.toLowerCase().startsWith("urn_"))
-                .map(s -> Pair.of(s.replace('_', ':'), attributes.get(s)))
-                .collect(Collectors.toSet());
-        transformFilteredAttributes(attributes, attrs);
-    }
-
-    private static void transformMicrosoftSchemaAttributes(final Map<String, Object> attributes) {
-        final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
-                .filter(s -> s.toLowerCase().startsWith("http_//schemas.microsoft.com"))
-                .map(s -> Pair.of(s.replace('_', ':'), attributes.get(s)))
-                .collect(Collectors.toSet());
-        transformFilteredAttributes(attributes, attrs);
-    }
-
-    private static void transformFilteredAttributes(final Map<String, Object> attributes,
-                                                    final Set<Pair<String, Object>> attrs) {
-        if (!attrs.isEmpty()) {
-            LOGGER.debug("Found [{}] attribute(s) that will be transformed.", attrs);
-            attributes.entrySet().removeIf(s -> s.getKey().startsWith("urn_"));
-            attrs.forEach(p -> {
-                LOGGER.debug("Transformed attribute name to be [{}]", p.getKey());
-                attributes.put(p.getKey(), p.getValue());
-            });
-        } else {
-            LOGGER.debug("No attributes require special transformation.", attrs);
-        }
     }
 }
