@@ -33,8 +33,8 @@ The current implementation provides support for:
 
 | Field                                         | Description
 |-----------------------------------------------|-------------------------------------------------------
-| `/cas/oidc/.well-known`                       | Discovery endpoint.
-| `/cas/oidc/.well-known/openid-configuration`  | Discovery endpoint.
+| `/cas/oidc/.well-known`                       | The discovery endpoint is a static page that you/clients use to query for CAS OIDC configuration information and metadata. No session is required. CAS returns basic information about endpoints, supported scopes, etc used for OIDC authentication.
+| `/cas/oidc/.well-known/openid-configuration`  | Same as above.
 | `/cas/oidc/jwks`                              | A read-only endpoint that contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/cas/oidc/authorize`                         | Authorization requests are handled here.
 | `/cas/oidc/profile`                           | User profile requests are handled here.
