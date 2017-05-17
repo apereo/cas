@@ -50,7 +50,7 @@ public class SamlAttributeEncoder {
                 LOGGER.debug("Decoded SAML attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);
                 finalAttributes.put(attributeName, v);
             } else {
-                LOGGER.debug("Unable to decode SAML attribute [{}]; accepting it verbatim", k, attributeName, v);
+                LOGGER.debug("Unable to decode SAML attribute [{}]; accepting it verbatim", k);
                 finalAttributes.put(k, v);
             }
         });

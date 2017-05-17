@@ -36,7 +36,8 @@ public class MultifactorAuthenticationTrustStorageCleaner {
     public void clean() {
 
         if (!trustedProperties.getCleaner().isEnabled()) {
-            LOGGER.debug("{} is disabled. Expired records will not automatically be cleaned up by CAS");
+            LOGGER.debug("{} is disabled. Expired records will not automatically be cleaned up by CAS",
+                    getClass().getSimpleName());
             return;
         }
 

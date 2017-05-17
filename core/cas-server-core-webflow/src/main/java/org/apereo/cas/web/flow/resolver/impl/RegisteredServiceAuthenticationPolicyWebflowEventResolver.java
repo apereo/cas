@@ -37,7 +37,7 @@ public class RegisteredServiceAuthenticationPolicyWebflowEventResolver extends A
 
         if (StringUtils.isNotBlank(policy.getPrincipalAttributeNameTrigger())
                 || StringUtils.isNotBlank(policy.getPrincipalAttributeValueToMatch())) {
-            logger.debug("Authentication policy for {} has defined principal attribute triggers. Skipping...");
+            logger.debug("Authentication policy for {} has defined principal attribute triggers. Skipping...", service);
             return null;
         }
 

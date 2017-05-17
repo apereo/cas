@@ -135,7 +135,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
                 .map(s -> new Pair<>(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
                 .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
-            logger.warn("Found {} attribute(s) that need to be sanitized/encoded.");
+            logger.warn("Found {} attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
             attrs.forEach(p -> {
                 logger.warn("Sanitized attribute name to be [{}]", p.getFirst());
