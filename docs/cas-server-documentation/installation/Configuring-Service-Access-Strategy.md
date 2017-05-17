@@ -13,7 +13,7 @@ validated when an authentication request from the application arrives.
 
 ## Default Strategy
 
-The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service with the following properties:
+The default strategy allows one to configure a service with the following properties:
 
 | Field                             | Description
 |-----------------------------------|---------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ also must not have an attribute "role" whose value matches the pattern `deny.+`.
 
 ## Time-Based
 
-The `TimeBasedRegisteredServiceAccessStrategy` access strategy is an extension of the default which additionally,
+The time-based access strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
 | Field                             | Description
@@ -203,7 +203,7 @@ Service access is only allowed within `startingDateTime` and `endingDateTime`:
 
 ## Remote Endpoint
 
-The `RemoteEndpointServiceAccessStrategy` is an extension of the default which additionally,
+This strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
 | Field                             | Description
@@ -232,7 +232,7 @@ Remote endpoint access strategy authorizing service access based on response cod
 
 ## Grouper
 
-The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the WAR overlay:
+The grouper access strategy is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
