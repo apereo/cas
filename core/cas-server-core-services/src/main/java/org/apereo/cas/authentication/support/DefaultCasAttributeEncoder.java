@@ -5,8 +5,10 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.Pair;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -130,10 +132,10 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
 
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
                 .filter(s -> s.contains(":"))
-                .map(s -> new Pair<>(s.replace(':', '_'), attributes.get(s)))
+                .map(s -> new Pair<>(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
                 .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
-            logger.debug("Found {} attribute(s) that need to be sanitized/encoded.");
+            logger.warn("Found {} attribute(s) that need to be sanitized/encoded.");
             attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
             attrs.forEach(p -> {
                 logger.warn("Sanitized attribute name to be [{}]", p.getFirst());
