@@ -22,7 +22,7 @@ and if you find anything that is unclear along the way, do not hesitate to ask q
 
 ## Getting Started
 
-All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
+All CAS contributions SHOULD be made via GitHub pull requests, which requires that contributions are offered from
 a fork of the [apereo CAS repository](https://github.com/apereo/CAS):
 
 Refer to the GitHub [Fork a Repo](http://help.github.com/fork-a-repo/) page for help with forking.
