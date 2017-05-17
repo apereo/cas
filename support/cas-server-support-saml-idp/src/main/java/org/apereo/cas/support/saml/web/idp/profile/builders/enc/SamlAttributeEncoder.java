@@ -20,18 +20,33 @@ import java.util.stream.Collectors;
 public class SamlAttributeEncoder implements ProtocolAttributeEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlAttributeEncoder.class);
 
+    private static void transformMicrosoftSchemaAttributes(final Map<String, Object> attributes) {
+        final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
+                .filter(s -> s.toLowerCase().startsWith("http_//schemas.microsoft.com"))
+                .map(s -> Pair.of(s.replace('_', ':'), attributes.get(s)))
+                .collect(Collectors.toSet());
+        transformFilteredAttributes(attributes, attrs);
+    }
+
+
     private static void transformUniformResourceNames(final Map<String, Object> attributes) {
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
                 .filter(s -> s.toLowerCase().startsWith("urn_"))
                 .map(s -> Pair.of(s.replace('_', ':'), attributes.get(s)))
                 .collect(Collectors.toSet());
+        transformFilteredAttributes(attributes, attrs);
+    }
+
+    private static void transformFilteredAttributes(final Map<String, Object> attributes, final Set<Pair<String, Object>> attrs) {
         if (!attrs.isEmpty()) {
-            LOGGER.debug("Found [{}] URN attribute(s) that will be transformed.", attrs);
+            LOGGER.debug("Found [{}] attribute(s) that will be transformed.", attrs);
             attributes.entrySet().removeIf(s -> s.getKey().startsWith("urn_"));
             attrs.forEach(p -> {
                 LOGGER.debug("Transformed attribute name to be [{}]", p.getKey());
                 attributes.put(p.getKey(), p.getValue());
             });
+        } else {
+            LOGGER.debug("No attributes require special transformation.", attrs);
         }
     }
 
@@ -39,6 +54,7 @@ public class SamlAttributeEncoder implements ProtocolAttributeEncoder {
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
         final Map<String, Object> finalAttributes = new HashMap<>(attributes);
         transformUniformResourceNames(finalAttributes);
+        transformMicrosoftSchemaAttributes(finalAttributes);
         return finalAttributes;
     }
 }
