@@ -47,4 +47,6 @@ script:
 before_script:
  - export JAVA_OPTS="-Xmx2048m"
 before_install:
- - echo "Beginning to install"
+ - chmod -R 777 ./gradlew
+ - ./gradlew clean --parallel -q
+ 
