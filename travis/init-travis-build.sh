@@ -15,3 +15,22 @@ else
   echo -e "Secure environment variables are available...\n"
   #echo -e "GH_TOKEN -> ${GH_TOKEN}"
 fi
+
+echo -e "Setting build environment...\n"
+sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
+
+echo -e "Configuring Oracle JDK8 JCE...\n"
+sudo unzip -j -o ./etc/jce8.zip *.jar -d `jdk_switcher home oraclejdk8`/jre/lib/security
+sudo ls `jdk_switcher home oraclejdk8`/jre/lib/security
+sudo cp ./etc/java.security `jdk_switcher home oraclejdk8`/jre/lib/security
+
+echo -e "Configuring Gradle wrapper...\n"
+chmod -R 777 ./gradlew
+
+echo -e "Installing NPM and Gulp...\n"
+sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get update
+sudo apt-get install -y nodejs
+sudo ./gradlew npmInstall gulpSetup --stacktrace -q
+
+echo -e "Configured build environment\n"
