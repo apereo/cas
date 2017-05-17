@@ -33,13 +33,13 @@ before_script:
  - export JAVA_OPTS="-Xmx2048m"
 jobs:
   include:
-    - stage: init
+    - stage: Initialize
       script: ./travis/init-travis-build.sh
-    - stage: build
+    - stage: Build
       script: sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
-    - stage: test
+    - stage: Test
       script: travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
-    - stage: docs
+    - stage: Documenation
       script: ./travis/push-javadoc-to-gh-pages.sh
-    - stage: snapshots
+    - stage: Deploy
       script: travis_wait ./travis/deploy-to-sonatype.sh
