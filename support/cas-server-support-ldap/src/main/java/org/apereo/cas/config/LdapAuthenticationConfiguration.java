@@ -101,7 +101,7 @@ public class LdapAuthenticationConfiguration {
                     handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(l.getPrincipalTransformation()));
 
                     if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
-                        LOGGER.debug("Ldap authentication for {} is filtering credentials by {}", l.getCredentialCriteria());
+                        LOGGER.debug("Ldap authentication for {} is filtering credentials by {}", l.getLdapUrl(), l.getCredentialCriteria());
                         handler.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(l.getCredentialCriteria())
                                 .apply(credential.getId()));
                     }

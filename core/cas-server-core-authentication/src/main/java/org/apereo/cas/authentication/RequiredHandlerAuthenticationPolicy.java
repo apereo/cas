@@ -67,7 +67,8 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
                     .isPresent();
             
             if (!credsOk) {
-                LOGGER.warn("Required authentication handler {} is not present in the list of recorded successful authentications");
+                LOGGER.warn("Required authentication handler {} is not present in the list of recorded successful authentications",
+                        this.requiredHandlerName);
                 return false;
             }
         } 
