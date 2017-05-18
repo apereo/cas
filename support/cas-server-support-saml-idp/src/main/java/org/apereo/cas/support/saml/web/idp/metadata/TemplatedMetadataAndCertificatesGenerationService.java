@@ -50,17 +50,19 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
             final Resource metadataLocation = idp.getMetadata().getLocation();
 
             if (!metadataLocation.exists()) {
+                LOGGER.debug("Metadata directory [{}] does not exist. Creating...", metadataLocation);
                 if (!metadataLocation.getFile().mkdir()) {
                     throw new IllegalArgumentException("Metadata directory location " + metadataLocation + " cannot be located/created");
                 }
             }
             LOGGER.info("Metadata directory location is at [{}] with entityID [{}]", metadataLocation, idp.getEntityId());
+
+            performGenerationSteps();
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
-
-
+    
     /**
      * Is metadata missing?
      *
@@ -158,7 +160,7 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
         String signingKey = FileUtils.readFileToString(idp.getMetadata().getSigningCertFile().getFile(), StandardCharsets.UTF_8);
         signingKey = StringUtils.remove(signingKey, BEGIN_CERTIFICATE);
         signingKey = StringUtils.remove(signingKey, END_CERTIFICATE).trim();
-        
+
         String encryptionKey = FileUtils.readFileToString(idp.getMetadata().getEncryptionCertFile().getFile(), StandardCharsets.UTF_8);
         encryptionKey = StringUtils.remove(encryptionKey, BEGIN_CERTIFICATE);
         encryptionKey = StringUtils.remove(encryptionKey, END_CERTIFICATE).trim();
