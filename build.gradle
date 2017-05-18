@@ -177,8 +177,13 @@ subprojects {
             cacheChangingModulesFor 5, 'days'
         }
 
-        exclude(group: "ch.qos.logback", module: "logback-core")
-        exclude(group: "ch.qos.logback", module: "logback-classic")
+        if (!project.name.contains('cassandra-ticket-registry')) {
+            exclude(group: "ch.qos.logback", module: "logback-core")
+            exclude(group: "ch.qos.logback", module: "logback-classic")
+        }
+        if (project.name.contains('cassandra-ticket-registry')) {
+            exclude(group: "org.apache.logging.log4j", module:"log4j-slf4j-impl")
+        }
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")
     }
