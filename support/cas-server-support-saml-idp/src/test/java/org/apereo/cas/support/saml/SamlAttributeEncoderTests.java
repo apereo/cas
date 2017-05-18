@@ -9,6 +9,7 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
+import org.apereo.cas.util.EncodingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,19 +26,17 @@ public class SamlAttributeEncoderTests {
     public void ensureSamlUrnAttributesEncoded() {
         final SamlAttributeEncoder encoder = new SamlAttributeEncoder();
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("urn_oid_2.5.4.3", "testValue");
-        attributes.put("urn_mace_dir_attribute-def_displayName", "testDisplayName");
+        attributes.put(EncodingUtils.hexEncode("urn:oid:2.5.4.3"), "testValue");
         final Map<String, Object> result =
                 encoder.encodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"));
         assertTrue(result.containsKey("urn:oid:2.5.4.3"));
-        assertTrue(result.containsKey("urn:mace:dir:attribute-def:displayName"));
     }
 
     @Test
     public void ensureSamlMsftClaimsAttributesEncoded() {
         final SamlAttributeEncoder encoder = new SamlAttributeEncoder();
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("http_//schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname", "testValue");
+        attributes.put("http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname", "testValue");
         final Map<String, Object> result = encoder.encodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"));
         assertTrue(result.containsKey("http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname"));
     }
