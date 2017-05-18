@@ -58,6 +58,21 @@ public final class EncodingUtils {
      * @param data the data
      * @return the string
      */
+    public static String hexEncode(final String data) {
+        try {
+            final char[] result = Hex.encodeHex(data.getBytes(StandardCharsets.UTF_8));
+            return new String(result);
+        } catch (final Exception e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Hex encode string.
+     *
+     * @param data the data
+     * @return the string
+     */
     public static String hexEncode(final byte[] data) {
         try {
             final char[] result = Hex.encodeHex(data);
