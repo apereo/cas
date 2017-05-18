@@ -1,0 +1,17 @@
+# Ignore external libraries
+resources/static/js/duo/*.js
+resources/static/js/u2f/*
+
+# Ignore additional files for now until they can be cleaned up.
+resources/static/js/attrresolution.js
+resources/static/js/authnEvents.js
+resources/static/js/cas.js
+resources/static/js/consent.js
+resources/static/js/loggingDashboard.js
+resources/static/js/pm.js
+resources/static/js/sockjs.js
+resources/static/js/ssosessions.js
+resources/static/js/statisticsview.js
+resources/static/js/stomp.js
+resources/static/js/trustedDevices.js
+resources/static/js/viewConfig.js
