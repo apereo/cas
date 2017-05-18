@@ -6,6 +6,10 @@
     "plugins": [
         "react"
     ],
+    "globals": {
+        "$": false,
+        "urls": true
+    },
     "rules": {
         "indent": [
             "error",
