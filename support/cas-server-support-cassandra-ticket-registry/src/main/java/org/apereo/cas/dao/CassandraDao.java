@@ -70,23 +70,16 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
         this.session = cluster.connect();
 
-        this.selectTgtStmt = session.prepare("select ticket from " + tgtTable + " where id = ?")
+        this.selectTgtStmt = session.prepare("select ticket from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.insertTgtStmt = session.prepare("insert into " + tgtTable + " (id, ticket, ticket_granting_ticket_id) values (?, ?, ?) ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.insertTgtStmt = session.prepare("insert into " + tgtTable + " (id, ticket) values (?, ?) ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.deleteTgtStmt = session.prepare("delete from " + tgtTable + " where id = ?")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.updateTgtStmt = session.prepare("update " + tgtTable + " set ticket = ? where id = ? ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.deleteTgtStmt = session.prepare("delete from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.updateTgtStmt = session.prepare("update " + tgtTable + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
-        this.selectStStmt = session.prepare("select ticket from " + stTable + " where id = ?")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.insertStStmt = session.prepare("insert into " + stTable + " (id, ticket) values (?, ?) ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.deleteStStmt = session.prepare("delete from " + stTable + " where id = ?")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.updateStStmt = session.prepare("update " + stTable + " set ticket = ? where id = ? ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.selectStStmt = session.prepare("select ticket from " + stTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.insertStStmt = session.prepare("insert into " + stTable + " (id, ticket) values (?, ?) ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.deleteStStmt = session.prepare("delete from " + stTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.updateStStmt = session.prepare("update " + stTable + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
 
         this.insertExStmt = session.prepare("insert into " + expiryTable + " (expiry_type, date_bucket, id) values ('EX', ?, ?) ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
@@ -112,7 +105,8 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     @Override
     public void addTicketGrantingTicket(final Ticket ticket) {
         LOGGER.debug("INSERTING TICKET {}", ticket.getId());
-        session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serializeTGT(ticket)));
+        String parentTgtId = ticket.getGrantingTicket() == null ? null : ticket.getGrantingTicket().getId();
+        session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serializeTGT(ticket), parentTgtId));
         final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
         addTicketToExpiryBucket(ticket, calculateExpirationDate(tgt));
     }

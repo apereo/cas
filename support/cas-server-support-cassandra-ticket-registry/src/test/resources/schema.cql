@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS cas2.ticket_cleaner (
 
 CREATE TABLE IF NOT EXISTS cas2.ticketgrantingticket (
     id text PRIMARY KEY,
-    ticket text
+    ticket text,
+    ticket_granting_ticket_id text
 ) WITH default_time_to_live = 5184000;
 
 CREATE TABLE IF NOT EXISTS cas2.serviceticket (
