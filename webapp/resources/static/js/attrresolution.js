@@ -8,18 +8,20 @@ $(document).ready(function(){
         var uid = $('#uid').val();
         table = $('#attributesTable').DataTable();
         table.clear().draw();
+
+        var status = $('#status');
         
-        if (uid != null && uid != '') {
+        if (uid !== null && uid !== '') {
             resolveAttributes(uid);
-            $('#status').html('Resolved attributes for username <strong>' + uid + '</strong>.');
-            $('#status').removeClass('alert-danger');
-            $('#status').addClass('alert-info');
-            $('#status').show();
+            status.html('Resolved attributes for username <strong>' + uid + '</strong>.');
+            status.removeClass('alert-danger');
+            status.addClass('alert-info');
+            status.show();
         } else {
-            $('#status').html('No username is provided.');
-            $('#status').removeClass('alert-info');
-            $('#status').addClass('alert-danger');
-            $('#status').show();
+            status.html('No username is provided.');
+            status.removeClass('alert-info');
+            status.addClass('alert-danger');
+            status.show();
         }
     });
 
