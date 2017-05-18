@@ -16,6 +16,14 @@ javadoc {
     enabled false
 }
 
+npm_install.dependsOn(npm_cache_clean)
+
+task npmLint(type: NpmTask, dependsOn: 'npmInstall') {
+  args = ['run', 'lint', '--silent']
+}
+
+processResources.dependsOn 'npmLint'
+
 task gulpSetup(dependsOn: ["npmInstall", "installGulp"], description: "Install npm and Gulp") {}
 task gulpRun(dependsOn: gulp_default, description: "Runs Gulp default task") {}
 processResources.dependsOn gulpRun
