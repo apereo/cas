@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  *
  * @since 5.1.0
  */
-public class NoSqlTicketRegistryTests {
+public class CassandraTicketRegistryTests {
 
     @Rule
     public CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("schema.cql"), "cassandra.yaml", 120_000L);
@@ -30,7 +30,7 @@ public class NoSqlTicketRegistryTests {
 
     @Test
     public void shouldRetrieveATicket() throws Exception {
-        final NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao);
+        final CassandraTicketRegistry ticketRegistry = new CassandraTicketRegistry(dao);
         final String ticketId = "TGT-1234";
         final TicketGrantingTicketImpl ticket = TicketCreatorUtils.defaultTGT(ticketId);
         ticketRegistry.addTicket(ticket);
