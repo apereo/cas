@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
+import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -50,6 +50,7 @@ public final class TicketCreatorUtils {
         final Authentication defaultAuthentication = new DefaultAuthentication(ZonedDateTime.now(), credentials, NullPrincipal.getInstance(), new HashMap<>(),
                 successes, new HashMap<>());
         final int timeToKillInSeconds = 3000;
-        return new TicketGrantingTicketImpl(id, defaultAuthentication, new TimeoutExpirationPolicy(timeToKillInSeconds));
+        final int timeToLiveInSeconds = 3000;
+        return new TicketGrantingTicketImpl(id, defaultAuthentication, new TicketGrantingTicketExpirationPolicy(timeToLiveInSeconds, timeToKillInSeconds));
     }
 }
