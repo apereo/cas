@@ -1,4 +1,4 @@
-/* global logConfigFileLocation, SockJS, urls, Stomp */
+/* global logConfigFileLocation, SockJS, Stomp */
 showLogs('');
 var stompClient = null;
 
