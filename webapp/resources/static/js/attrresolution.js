@@ -1,5 +1,3 @@
-/* global $, urls */
-
 var table;
 
 $(document).ready(function(){
