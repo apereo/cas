@@ -47,6 +47,11 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long deleteAll() {
+        return 0;
+    }
+
+    @Override
     public boolean deleteSingleTicket(final String id) {
         LOGGER.debug("Deleting ticket {}", id);
         if (isTgt(id)) {
