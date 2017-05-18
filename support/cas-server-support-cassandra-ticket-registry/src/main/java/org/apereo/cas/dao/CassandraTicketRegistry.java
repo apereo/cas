@@ -14,13 +14,13 @@ import java.util.Collection;
  *
  * @since 5.1.0
  */
-public class NoSqlTicketRegistry extends AbstractTicketRegistry {
+public class CassandraTicketRegistry extends AbstractTicketRegistry {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NoSqlTicketRegistry.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CassandraTicketRegistry.class);
 
     private NoSqlTicketRegistryDao ticketRegistryDao;
 
-    public NoSqlTicketRegistry(final NoSqlTicketRegistryDao ticketRegistryDao) {
+    public CassandraTicketRegistry(final NoSqlTicketRegistryDao ticketRegistryDao) {
         this.ticketRegistryDao = ticketRegistryDao;
     }
 

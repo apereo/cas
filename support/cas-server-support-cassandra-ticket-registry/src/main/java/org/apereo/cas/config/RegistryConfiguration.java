@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.dao.CassandraDao;
 import org.apereo.cas.dao.CassandraTicketRegistryCleaner;
-import org.apereo.cas.dao.NoSqlTicketRegistry;
+import org.apereo.cas.dao.CassandraTicketRegistry;
 import org.apereo.cas.dao.NoSqlTicketRegistryDao;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.serializer.JacksonJsonSerializer;
@@ -38,7 +38,7 @@ public class RegistryConfiguration {
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})
     public TicketRegistry noSqlTicketRegistry(final NoSqlTicketRegistryDao cassandraDao) {
-        return new NoSqlTicketRegistry(cassandraDao);
+        return new CassandraTicketRegistry(cassandraDao);
     }
 
     @Bean(name = "ticketRegistryCleaner")

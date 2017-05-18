@@ -104,7 +104,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     @Override
     public void addTicketGrantingTicket(final Ticket ticket) {
-        LOGGER.debug("INSERTING TICKET {}", ticket.getId());
+        LOGGER.debug("Inserting ticket {}", ticket.getId());
         String parentTgtId = ticket.getGrantingTicket() == null ? null : ticket.getGrantingTicket().getId();
         session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serializeTGT(ticket), parentTgtId));
         final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
@@ -113,27 +113,27 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     @Override
     public void addServiceTicket(final Ticket ticket) {
-        LOGGER.debug("INSERTING TICKET {}", ticket.getId());
+        LOGGER.debug("Inserting ticket {}", ticket.getId());
         session.execute(this.insertStStmt.bind(ticket.getId(), serializer.serializeST(ticket)));
     }
 
     @Override
     public boolean deleteTicketGrantingTicket(final String id) {
-        LOGGER.debug("DELETING TICKET {}", id);
+        LOGGER.debug("Deleting ticket {}", id);
         session.execute(this.deleteTgtStmt.bind(id));
         return true;
     }
 
     @Override
     public boolean deleteServiceTicket(final String id) {
-        LOGGER.debug("DELETING TICKET {}", id);
+        LOGGER.debug("Deleting ticket {}", id);
         session.executeAsync(this.deleteStStmt.bind(id));
         return true;
     }
 
     @Override
     public TicketGrantingTicket getTicketGrantingTicket(final String id) {
-        LOGGER.debug("READING TICKET {}", id);
+        LOGGER.debug("Reading ticket {}", id);
         final Row row = session.execute(this.selectTgtStmt.bind(id)).one();
         if (row == null) {
             LOGGER.info("ticket {} not found", id);
@@ -144,7 +144,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     @Override
     public Ticket getServiceTicket(final String id) {
-        LOGGER.debug("READING TICKET {}", id);
+        LOGGER.debug("Reading ticket {}", id);
         final Row row = session.execute(this.selectStStmt.bind(id)).one();
         if (row == null) {
             LOGGER.info("ticket {} not found", id);
@@ -155,7 +155,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     @Override
     public void updateTicketGrantingTicket(final Ticket ticket) {
-        LOGGER.debug("UPDATING TICKET {}", ticket.getId());
+        LOGGER.debug("Updating ticket {}", ticket.getId());
         session.execute(this.updateTgtStmt.bind(serializer.serializeTGT(ticket), ticket.getId()));
         final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
         addTicketToExpiryBucket(ticket, calculateExpirationDate(tgt));
@@ -163,7 +163,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     @Override
     public void updateServiceTicket(final Ticket ticket) {
-        LOGGER.debug("UPDATING TICKET {}", ticket.getId());
+        LOGGER.debug("Updating ticket {}", ticket.getId());
         session.execute(this.updateStStmt.bind(serializer.serializeST(ticket), ticket.getId()));
     }
 
