@@ -13,8 +13,12 @@
             <p class="message" th:utext="${message.text}"/>
         </div>
         <section class="row btn-row">
-            <a class="btn btn-submit" th:href="@{/login(execution=${flowExecutionKey},_eventId=proceed)}">
-                <span th:text="#{screen.button.continue}"/></a>
+            <form method="post" id="form" class="fm-v clearfix" th:action="@{/login}" >
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="proceed"/>
+                <input class="btn btn-submit" name="continue" accesskey="l"
+                       th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
+            </form>
         </section>
     </div>
 </div>
