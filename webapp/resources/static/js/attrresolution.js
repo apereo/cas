@@ -4,7 +4,6 @@ var table;
 
 $(document).ready(function(){
     $('#fm1').on('submit', function(e){
-        console.log('submit');
         e.preventDefault();
         var uid = $('#uid').val();
         table = $('#attributesTable').DataTable();
