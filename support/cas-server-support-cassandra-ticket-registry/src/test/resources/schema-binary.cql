@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS cas_binary.ticket_cleaner (
 
 CREATE TABLE IF NOT EXISTS cas_binary.ticketgrantingticket (
     id text PRIMARY KEY,
-    ticket blob
+    ticket blob,
+    ticket_granting_ticket_id text
 ) WITH default_time_to_live = 5184000;
 
 CREATE TABLE IF NOT EXISTS cas_binary.serviceticket (
