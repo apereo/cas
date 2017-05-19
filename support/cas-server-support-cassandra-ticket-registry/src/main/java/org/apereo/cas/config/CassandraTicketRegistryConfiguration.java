@@ -23,21 +23,21 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration("ticketRegistryConfiguration")
 @EnableScheduling
 @EnableConfigurationProperties({CasConfigurationProperties.class, CassandraProperties.class})
-public class RegistryConfiguration {
+public class CassandraTicketRegistryConfiguration {
 
     @Autowired
     private CassandraProperties cassandraProperties;
 
     @Bean(name = "cassandraTicketRegistry")
-    public TicketRegistry noSqlTicketRegistry() {
+    public TicketRegistry cassandraTicketRegistry() {
         return new CassandraTicketRegistry<>(cassandraProperties.getContactPoints(), cassandraProperties.getUsername(), cassandraProperties.getPassword(),
                 new JacksonJsonSerializer(), String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
                 cassandraProperties.getExpiryTable(), cassandraProperties.getLastRunTable());
     }
 
     @Bean(name = "ticketRegistryCleaner")
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("cassandraTicketRegistry") final NoSqlTicketRegistryDao ticketRegistry,
-                                                       @Qualifier("logoutManager") final LogoutManager logoutManager) {
+    public TicketRegistryCleaner cassandraTicketRegistryCleaner(@Qualifier("cassandraTicketRegistry") final NoSqlTicketRegistryDao ticketRegistry,
+                                                                @Qualifier("logoutManager") final LogoutManager logoutManager) {
         return new CassandraTicketRegistryCleaner(ticketRegistry, logoutManager);
     }
 }
