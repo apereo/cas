@@ -24,7 +24,7 @@ public class CassandraBinaryTests {
 
     @Test
     public void shouldWorkWithABinarySerializer() throws Exception {
-        final CassandraDao<ByteBuffer> dao = new CassandraDao<>("localhost", "", "", new JacksonBinarySerializer(), ByteBuffer.class,
+        final CassandraTicketRegistry<ByteBuffer> dao = new CassandraTicketRegistry<>("localhost", "", "", new JacksonBinarySerializer(), ByteBuffer.class,
                 "cas_binary.ticketgrantingticket", "cas_binary.serviceticket", "cas_binary.ticket_cleaner", "cas_binary.ticket_cleaner_lastrun");
 
         final TicketGrantingTicketImpl tgt = TicketCreatorUtils.defaultTGT("id");

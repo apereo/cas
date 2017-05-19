@@ -15,8 +15,8 @@ public class CassandraTicketRegistryCleaner implements TicketRegistryCleaner {
     private final NoSqlTicketRegistryDao ticketRegistryDao;
     private final LogoutManager logoutManager;
 
-    public CassandraTicketRegistryCleaner(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao, final LogoutManager logoutManager) {
-        this.ticketRegistryDao = ticketRegistryDao;
+    public CassandraTicketRegistryCleaner(@Qualifier("cassandraTicketRegistry") final NoSqlTicketRegistryDao ticketRegistry, final LogoutManager logoutManager) {
+        this.ticketRegistryDao = ticketRegistry;
         this.logoutManager = logoutManager;
     }
 

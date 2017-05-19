@@ -25,11 +25,11 @@ public class CassandraJsonTests {
 
     @Rule
     public CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("schema.cql"), "cassandra.yaml", 120_000L);
-    private CassandraDao<String> dao;
+    private CassandraTicketRegistry<String> dao;
 
     @Before
     public void setUp() throws Exception {
-        dao = new CassandraDao<>("localhost", "", "", new JacksonJsonSerializer(), String.class, "cas2.ticketgrantingticket",
+        dao = new CassandraTicketRegistry<>("localhost", "", "", new JacksonJsonSerializer(), String.class, "cas2.ticketgrantingticket",
                 "cas2.serviceticket", "cas2.ticket_cleaner", "cas2.ticket_cleaner_lastrun");
     }
 

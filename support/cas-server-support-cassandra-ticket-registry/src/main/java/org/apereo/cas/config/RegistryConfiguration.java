@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.dao.CassandraDao;
 import org.apereo.cas.dao.CassandraTicketRegistryCleaner;
 import org.apereo.cas.dao.CassandraTicketRegistry;
 import org.apereo.cas.dao.NoSqlTicketRegistryDao;
@@ -29,21 +28,16 @@ public class RegistryConfiguration {
     @Autowired
     private CassandraProperties cassandraProperties;
 
-    @Bean(name = "cassandraDao")
-    public NoSqlTicketRegistryDao cassandraJsonDao() {
-        return new CassandraDao<>(cassandraProperties.getContactPoints(), cassandraProperties.getUsername(), cassandraProperties.getPassword(),
+    @Bean(name = "cassandraTicketRegistry")
+    public TicketRegistry noSqlTicketRegistry() {
+        return new CassandraTicketRegistry<>(cassandraProperties.getContactPoints(), cassandraProperties.getUsername(), cassandraProperties.getPassword(),
                 new JacksonJsonSerializer(), String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
                 cassandraProperties.getExpiryTable(), cassandraProperties.getLastRunTable());
     }
 
-    @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})
-    public TicketRegistry noSqlTicketRegistry(final NoSqlTicketRegistryDao cassandraDao) {
-        return new CassandraTicketRegistry(cassandraDao);
-    }
-
     @Bean(name = "ticketRegistryCleaner")
-    public TicketRegistryCleaner ticketRegistryCleaner(final NoSqlTicketRegistryDao cassandraDao,
+    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("cassandraTicketRegistry") final NoSqlTicketRegistryDao ticketRegistry,
                                                        @Qualifier("logoutManager") final LogoutManager logoutManager) {
-        return new CassandraTicketRegistryCleaner(cassandraDao, logoutManager);
+        return new CassandraTicketRegistryCleaner(ticketRegistry, logoutManager);
     }
 }
