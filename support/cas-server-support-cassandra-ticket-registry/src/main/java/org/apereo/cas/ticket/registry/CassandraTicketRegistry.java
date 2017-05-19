@@ -173,9 +173,8 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
 
         return LongStream.rangeClosed(lastRun, currentTime)
                 .mapToObj(time -> {
-                    final Stream<TicketGrantingTicket> expiredTGTsIn = getExpiredTGTsIn(time);
                     updateLastRunTimestamp(time);
-                    return expiredTGTsIn;
+                    return getExpiredTGTsIn(time);
                 })
                 .flatMap(Function.identity());
     }

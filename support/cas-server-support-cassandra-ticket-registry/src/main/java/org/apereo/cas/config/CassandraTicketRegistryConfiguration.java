@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.dao.CassandraTicketRegistryCleaner;
-import org.apereo.cas.dao.CassandraTicketRegistry;
-import org.apereo.cas.dao.NoSqlTicketRegistryDao;
+import org.apereo.cas.ticket.registry.CassandraTicketRegistryCleaner;
+import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
+import org.apereo.cas.ticket.registry.NoSqlTicketRegistryDao;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.serializer.JacksonJsonSerializer;
 import org.apereo.cas.ticket.registry.TicketRegistry;
