@@ -50,8 +50,6 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     private final PreparedStatement selectStStmt;
     private final PreparedStatement deleteStStmt;
 
-    private final PreparedStatement insertExStmt;
-    private final PreparedStatement deleteExStmt;
     private final PreparedStatement selectExStmt;
     private final PreparedStatement selectDateExStmt;
 
@@ -71,7 +69,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
         this.session = cluster.connect();
 
         this.selectTgtStmt = session.prepare("select ticket from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.insertTgtStmt = session.prepare("insert into " + tgtTable + " (id, ticket, ticket_granting_ticket_id) values (?, ?, ?) ")
+        this.insertTgtStmt = session.prepare("insert into " + tgtTable + " (id, ticket, ticket_granting_ticket_id, expiration_bucket) values (?, ?, ?, ?) ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         this.deleteTgtStmt = session.prepare("delete from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         this.updateTgtStmt = session.prepare("update " + tgtTable + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
@@ -81,13 +79,9 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
         this.deleteStStmt = session.prepare("delete from " + stTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
         this.updateStStmt = session.prepare("update " + stTable + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
 
-        this.insertExStmt = session.prepare("insert into " + expiryTable + " (expiry_type, date_bucket, id) values ('EX', ?, ?) ")
+        this.selectExStmt = session.prepare("select ticket from " + expiryTable + " where expiration_bucket = ? ")
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.deleteExStmt = session.prepare("delete from " + expiryTable + " where  expiry_type = 'EX' and date_bucket = ? ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.selectExStmt = session.prepare("select id from " + expiryTable + " where expiry_type = 'EX' and date_bucket = ? ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.selectDateExStmt = session.prepare("select date_bucket from " + expiryTable)
+        this.selectDateExStmt = session.prepare("select expiration_bucket from " + expiryTable)
                 .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         this.selectLrStmt = session.prepare("select last_run from " + lastRunTable + " where id = 'LASTRUN' ")
@@ -106,9 +100,8 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     public void addTicketGrantingTicket(final Ticket ticket) {
         LOGGER.debug("Inserting ticket {}", ticket.getId());
         String parentTgtId = ticket.getGrantingTicket() == null ? null : ticket.getGrantingTicket().getId();
-        session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serializeTGT(ticket), parentTgtId));
         final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
-        addTicketToExpiryBucket(ticket, calculateExpirationDate(tgt));
+        session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serializeTGT(ticket), parentTgtId, calculateExpirationDate(tgt) / TEN));
     }
 
     @Override
@@ -156,26 +149,14 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     @Override
     public void updateTicketGrantingTicket(final Ticket ticket) {
         LOGGER.debug("Updating ticket {}", ticket.getId());
-        session.execute(this.updateTgtStmt.bind(serializer.serializeTGT(ticket), ticket.getId()));
         final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
-        addTicketToExpiryBucket(ticket, calculateExpirationDate(tgt));
+        session.execute(this.updateTgtStmt.bind(serializer.serializeTGT(ticket), ticket.getId(), calculateExpirationDate(tgt) / TEN));
     }
 
     @Override
     public void updateServiceTicket(final Ticket ticket) {
         LOGGER.debug("Updating ticket {}", ticket.getId());
         session.execute(this.updateStStmt.bind(serializer.serializeST(ticket), ticket.getId()));
-    }
-
-    @Override
-    public void addTicketToExpiryBucket(final Ticket ticket, final long expirationTimeInSeconds) {
-        LOGGER.debug("adding to expiry bucket: Ticket: {}; expiry: {}", ticket.getId(), expirationTimeInSeconds / TEN);
-        session.execute(this.insertExStmt.bind(expirationTimeInSeconds / TEN, ticket.getId()));
-    }
-
-    @Override
-    public void removeRowFromTicketCleanerBucket(final long lastRun) {
-        session.executeAsync(deleteExStmt.bind(lastRun));
     }
 
     @Override
@@ -188,7 +169,6 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
         return LongStream.rangeClosed(lastRun, currentTime)
                 .mapToObj(time -> {
                     final Stream<TicketGrantingTicket> expiredTGTsIn = getExpiredTGTsIn(time);
-                    removeRowFromTicketCleanerBucket(time);
                     updateLastRunTimestamp(time);
                     return expiredTGTsIn;
                 })
@@ -217,8 +197,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     private Stream<TicketGrantingTicket> getExpiredTGTsIn(final long lastRunBucket) {
         return session.execute(this.selectExStmt.bind(lastRunBucket)).all()
                 .stream()
-                .map(row -> row.getString("id"))
-                .map(this::getTicketGrantingTicket)
+                .map(row -> serializer.deserializeTGT(row.get(FIRST_COLUMN_INDEX, typeToWriteToCassandra)))
                 .filter(Objects::nonNull)
                 .filter(Ticket::isExpired);
     }

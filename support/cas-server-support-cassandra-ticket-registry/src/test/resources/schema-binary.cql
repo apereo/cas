@@ -1,24 +1,25 @@
 CREATE KEYSPACE IF NOT EXISTS cas_binary WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}  AND durable_writes = true;
 
-CREATE TABLE IF NOT EXISTS cas_binary.ticket_cleaner (
-    expiry_type text,
-    date_bucket bigint,
-    id text,
-    PRIMARY KEY ((expiry_type, date_bucket), id)
-);
+USE cas_binary;
 
-CREATE TABLE IF NOT EXISTS cas_binary.ticketgrantingticket (
+CREATE TABLE IF NOT EXISTS ticketgrantingticket (
     id text PRIMARY KEY,
     ticket blob,
-    ticket_granting_ticket_id text
+    ticket_granting_ticket_id text,
+    expiration_bucket bigint
 ) WITH default_time_to_live = 5184000;
 
-CREATE TABLE IF NOT EXISTS cas_binary.serviceticket (
+CREATE MATERIALIZED VIEW IF NOT EXISTS ticket_cleaner AS
+SELECT expiration_bucket, ticket, id FROM ticketgrantingticket
+WHERE id IS NOT NULL AND expiration_bucket IS NOT NULL AND ticket IS NOT NULL
+PRIMARY KEY (expiration_bucket, id);
+
+CREATE TABLE IF NOT EXISTS serviceticket (
     id text PRIMARY KEY,
     ticket blob
 ) WITH default_time_to_live = 60;
 
-CREATE TABLE IF NOT EXISTS cas_binary.ticket_cleaner_lastrun (
+CREATE TABLE IF NOT EXISTS ticket_cleaner_lastrun (
     id text PRIMARY KEY,
     last_run bigint
 );
