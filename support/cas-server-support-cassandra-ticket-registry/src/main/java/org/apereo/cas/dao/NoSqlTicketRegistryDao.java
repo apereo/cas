@@ -73,19 +73,6 @@ public interface NoSqlTicketRegistryDao {
     void updateServiceTicket(Ticket ticket);
 
     /**
-     * Save ticket to the expire collection within the expirationTime bucket.
-     * @param ticket ticket to be saved
-     * @param expirationTime bucket in which the ticket will be saved
-     */
-    void addTicketToExpiryBucket(Ticket ticket, long expirationTime);
-
-    /**
-     * Remove bucket from expiry collection.
-     * @param lastRun bucket to be removed
-     */
-    void removeRowFromTicketCleanerBucket(long lastRun);
-
-    /**
      * Update the lastRunTimestamp.
      * @param timestamp new timestamp to replace the previous one
      */
