@@ -4,6 +4,7 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ProtocolVersion;
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import org.apereo.cas.TicketSerializer;
@@ -22,6 +23,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author David Rodriguez
@@ -56,6 +58,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
     private final PreparedStatement updateLrStmt;
 
     private final Session session;
+    private final int fetchSize = 1000;
 
     public CassandraTicketRegistry(final String contactPoints, final String username, final String password, final TicketSerializer<T> serializer,
                                    final Class<T> typeToWriteToCassandra, final String tgtTable, final String stTable, final String expiryTable,
@@ -240,11 +243,11 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
     }
 
     private Stream<TicketGrantingTicket> getExpiredTGTsIn(final long lastRunBucket) {
-        return session.execute(this.selectExStmt.bind(lastRunBucket)).all()
-                .stream()
+        ResultSet resultSet = session.execute(this.selectExStmt.bind(lastRunBucket));
+
+        return StreamSupport.stream(resultSet.spliterator(), false)
                 .map(row -> serializer.deserializeTGT(row.get(FIRST_COLUMN_INDEX, typeToWriteToCassandra)))
-                .filter(Objects::nonNull)
-                .filter(Ticket::isExpired);
+                .filter(ticket -> Objects.nonNull(ticket) && ticket.isExpired());
     }
 
     public long getLastRunTimestamp() {
