@@ -58,7 +58,6 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
     private final PreparedStatement updateLrStmt;
 
     private final Session session;
-    private final int fetchSize = 1000;
 
     public CassandraTicketRegistry(final String contactPoints, final String username, final String password, final TicketSerializer<T> serializer,
                                    final Class<T> typeToWriteToCassandra, final String tgtTable, final String stTable, final String expiryTable,
@@ -201,8 +200,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
 
     public boolean deleteTicketGrantingTicket(final String id) {
         LOGGER.debug("Deleting ticket {}", id);
-        session.execute(this.deleteTgtStmt.bind(id));
-        return true;
+        return session.execute(this.deleteTgtStmt.bind(id)).wasApplied();
     }
 
     public boolean deleteServiceTicket(final String id) {
