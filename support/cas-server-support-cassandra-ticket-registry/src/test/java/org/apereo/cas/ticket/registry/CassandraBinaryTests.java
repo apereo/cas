@@ -1,4 +1,4 @@
-package org.apereo.cas.dao;
+package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.serializer.JacksonBinarySerializer;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
