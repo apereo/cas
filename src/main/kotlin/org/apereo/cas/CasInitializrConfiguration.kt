@@ -8,6 +8,7 @@ import io.spring.initializr.util.TemplateRenderer
 import io.spring.initializr.web.project.MainController
 import org.apereo.cas.generator.CasProjectGenerator
 import org.apereo.cas.web.CasMainController
+import org.apereo.cas.web.CasPropertiesController
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean

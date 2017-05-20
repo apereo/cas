@@ -55,7 +55,7 @@
                 <h2>Project Details</h2>
                 <div class="form-group">
                     <label for="gitRemote" class="control-label">Git Repository</label>
-                    <input tabindex="4" id="gitRemote" class="form-control" type="text"
+                    <input tabindex="3" id="gitRemote" class="form-control" type="text"
                            placeholder="git@github.com:organization/casoverlay.git"
                            value="{{basicProjectRequest.gitRemote}}"
                            name="gitRemote">
@@ -68,7 +68,7 @@
                 <a href="https://apereo.github.io/cas">start here</a>.</p>
 
                 <div class="form-group">
-                    <input tabindex="11" id="autocomplete" class="form-control" type="text"
+                    <input tabindex="4" id="autocomplete" class="form-control" type="text"
                            placeholder="LDAP, JSON, Hazelcast, MongoDb, Duo,..."
                            name="autocomplete">
                 </div>
@@ -78,7 +78,22 @@
                 </div>
             </div>
 
+            <div>
+                <h2>Settings</h2>
+                <p>Choose CAS properties that are apply to the selected
+                    CAS modules and the overall deployment environment.</p>
 
+                <div class="form-group">
+                    <input tabindex="5" id="properties" class="form-control" type="text"
+                           placeholder="ldap, jdbc, ..."
+                           name="properties">
+                </div>
+                <div class="form-group">
+                    <div id="propertiesContainer">
+                    </div>
+                </div>
+            </div>
+            
 
             <div align="center">
                 <span class="text-center">
@@ -168,21 +183,16 @@
                     {{/dependencies.content}}
                 </div>
             </div>
-            <div class="row full hidden">
-                <p class="text-center">
-                    <button tabindex="14" name="generate-project" type="submit" class="btn btn-lg btn-primary"
-                            role="button">
-                        Generate Project
-                    </button>
-                </p>
-            </div>
         </div>
     </div>
 </form>
+
 <script src="{{#linkTo}}/js/jquery-3.1.1.min.js{{/linkTo}}"></script>
 <script src="{{#linkTo}}/js/typeahead.bundle.min.js{{/linkTo}}"></script>
 <script src="{{#linkTo}}/js/mousetrap.min.js{{/linkTo}}"></script>
 <script src="{{#linkTo}}/js/start.js{{/linkTo}}"></script>
+<script src="{{#linkTo}}/js/cas.js{{/linkTo}}"></script>
+
 {{#trackingCode}}
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

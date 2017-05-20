@@ -1,6 +1,11 @@
 casVersion: 5.1.0
+
+
+casServerConfigPropertiesEndpoint: "https://jasigcas.herokuapp.com/cas/status/configprops"
 casModuleGroupId: "org.apereo.cas"
 casSupportModuleArtifactIdPrefix: "cas-server-support"
+
+
 gitRemote:
 
 initializr:
