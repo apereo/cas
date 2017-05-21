@@ -25,7 +25,9 @@ open class CasPropertiesController {
         val casProperties = jsonUrl.readText()
         val map = JsonFlattener.flattenAsMap(casProperties)
         map
-                .filterKeys { it -> it.contains("].prefix") }
+                .filterKeys {
+                    it.endsWith("].prefix") || it.matches(Regex("^\\w+\\.prefix$"))
+                }
                 .onEach { key ->
                     val prefix = key.value as String
                     val childKeys = map

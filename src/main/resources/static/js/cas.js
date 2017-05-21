@@ -17,7 +17,7 @@ $(function () {
     };
 
 
-    var maxSuggestions = 10;
+    var maxSuggestions = 5;
     var propertiesContainer = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.nonword('name', 'description', 'keywords', 'group'),
         queryTokenizer: Bloodhound.tokenizers.nonword,
@@ -49,7 +49,7 @@ $(function () {
                 footer: function (search) {
                     if (search.suggestions && search.suggestions.length == maxSuggestions) {
                         return "<div class=\"tt-footer\">More matches, please refine your search</div>";
-                    }
+                    }    
                     else {
                         return "";
                     }
