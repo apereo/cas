@@ -31,10 +31,6 @@ You may need to add the following repositories to the WAR overlay:
     <id>duo</id>
     <url>https://dl.bintray.com/uniconiam/maven</url>
 </repository>
-<repository>
-    <id>dupclient</id>
-    <url>https://jitpack.io</url>
-</repository>
 ```
 
 ## Configuration
