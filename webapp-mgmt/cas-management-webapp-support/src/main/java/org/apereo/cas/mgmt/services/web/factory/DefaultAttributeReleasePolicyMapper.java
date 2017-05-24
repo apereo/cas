@@ -25,7 +25,6 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
