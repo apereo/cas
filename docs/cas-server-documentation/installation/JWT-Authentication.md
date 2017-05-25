@@ -9,6 +9,8 @@ title: CAS - JWT Authentication
 CAS provides support for token-based authentication on top of JWT, where an authentication request can be granted an SSO session based
 on a form of credentials that are JWTs.
 
+## JWT Service Tickets
+
 CAS may also be allowed to fully create signed/encrypted JWTs and pass them back to the application in form of service tickets.
 In this case, JWTs are entirely self-contained and contain the authenticated principal as well as all authorized attributes
 in form of JWT claims. To learn more about this functionality, [please review this guide](Configure-ServiceTicket-JWT.html).
