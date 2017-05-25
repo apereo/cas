@@ -12,7 +12,7 @@ import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
-import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -162,7 +162,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         }
 
         if (policy.getPolicies().isEmpty()) {
-            oidc.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
+            oidc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         } else {
             oidc.setAttributeReleasePolicy(policy);
         }
