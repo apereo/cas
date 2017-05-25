@@ -94,6 +94,8 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
+        LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
+        
         getAllowedAttributes()
                 .stream()
                 .map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
