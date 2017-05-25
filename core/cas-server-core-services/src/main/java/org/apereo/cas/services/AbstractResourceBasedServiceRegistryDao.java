@@ -170,20 +170,22 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
 
         final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
-        c.stream().filter(file -> file.length() > 0).forEach(file -> {
-            final RegisteredService service = load(file);
-            if (service == null) {
-                LOGGER.error("Could not load service definition from file [{}]", file);
-            } else {
-                if (temp.containsKey(service.getId())) {
-                    LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                                    + "This will overwrite previous service definitions and is likely a "
-                                    + "configuration problem. Make sure all services have a unique id and try again.",
-                            service.getServiceId(), service.getId());
-                }
-                temp.put(service.getId(), service);
-            }
-        });
+        c.stream()
+                .filter(file -> file.length() > 0)
+                .forEach(file -> {
+                    final RegisteredService service = load(file);
+                    if (service == null) {
+                        LOGGER.error("Could not load service definition from file [{}]", file);
+                    } else {
+                        if (temp.containsKey(service.getId())) {
+                            LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+                                            + "This will overwrite previous service definitions and is likely a "
+                                            + "configuration problem. Make sure all services have a unique id and try again.",
+                                    service.getServiceId(), service.getId());
+                        }
+                        temp.put(service.getId(), service);
+                    }
+                });
 
         this.serviceMap = temp.entrySet()
                 .stream()
@@ -223,8 +225,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         }
         return null;
     }
-
-
+    
     @Override
     public RegisteredService save(final RegisteredService service) {
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {
