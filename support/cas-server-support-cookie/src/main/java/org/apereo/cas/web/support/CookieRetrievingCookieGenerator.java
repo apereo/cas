@@ -65,7 +65,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         super();
         super.setCookieName(name);
         super.setCookiePath(path);
-        super.setCookieDomain(domain);
+        this.setCookieDomain(domain);
         super.setCookieMaxAge(maxAge);
         super.setCookieSecure(secure);
         this.casCookieValueManager = casCookieValueManager;
