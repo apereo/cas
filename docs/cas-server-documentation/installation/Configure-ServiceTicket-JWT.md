@@ -10,6 +10,8 @@ CAS may also be allowed to fully create signed/encrypted JWTs and pass them back
 JWTs are entirely self-contained and contain the authenticated principal as well as all authorized attributes
 in form of JWT claims.
 
+<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to use specific signing/encryption algorithms and methods. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
+
 ## Overview
 
 JWT-based service tickets are issued to application based on the same semantics defined by the [CAS Protocol](../protocol/CAS-Protocol.html).
