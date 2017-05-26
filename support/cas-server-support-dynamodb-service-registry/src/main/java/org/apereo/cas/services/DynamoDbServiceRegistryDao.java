@@ -8,7 +8,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class DynamoDbServiceRegistryDao implements ServiceRegistryDao {
+public class DynamoDbServiceRegistryDao extends AbstractServiceRegistryDao {
     private final DynamoDbServiceRegistryFacilitator dbTableService;
 
     public DynamoDbServiceRegistryDao(final DynamoDbServiceRegistryFacilitator dbTableService) {
