@@ -2,6 +2,8 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
@@ -57,6 +59,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService service = findServiceBy(id);
         if (service != null) {
+            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
             this.serviceRegistryDao.delete(service);
             this.services.remove(id);
             this.orderedServices.remove(service);
@@ -117,6 +120,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
+        publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
@@ -156,7 +160,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     public int count() {
         return services.size();
     }
-    
+
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
