@@ -16,7 +16,7 @@ import java.util.List;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerServiceReg", readOnly = false)
-public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
+public class JpaServiceRegistryDaoImpl extends AbstractServiceRegistryDao {
 
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;

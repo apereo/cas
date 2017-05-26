@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,6 +144,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
                     return r.getId();
                 }, r -> r, (r, s) -> s == null ? r : s));
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
+        publishEvent(new CasRegisteredServicesLoadedEvent(this, this.orderedServices));
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
     }
 

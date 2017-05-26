@@ -31,7 +31,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
+public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
 

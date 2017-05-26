@@ -6,14 +6,14 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 /**
  * This is {@link CasRegisteredServicePreDeleteEvent}, signaled
- * when a service is removed from the registry.
+ * when a service about to be removed from the registry.
  *
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 5.1.0
  */
 public class CasRegisteredServicePreDeleteEvent extends AbstractCasEvent {
 
-    private static final long serialVersionUID = -8963214046458085393L;
+    private static final long serialVersionUID = -8964760046458085393L;
     private RegisteredService registeredService;
 
     /**
