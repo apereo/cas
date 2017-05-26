@@ -6,14 +6,14 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 /**
  * This is {@link CasRegisteredServicePreSaveEvent} that is signaled
- * when a registered service is saved into the CAS registry.
+ * when a registered service about to be saved into the registry.
  *
  * @author Misagh Moayyed
- * @since 4.2.0
+ * @since 5.1.0
  */
 public class CasRegisteredServicePreSaveEvent extends AbstractCasEvent {
 
-    private static final long serialVersionUID = 291168299766263298L;
+    private static final long serialVersionUID = 290988299766263298L;
     private RegisteredService registeredService;
 
     /**

@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class MongoServiceRegistryDao implements ServiceRegistryDao {
+public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
 
@@ -57,7 +57,7 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     public MongoServiceRegistryDao() {
     }
-    
+
     @Override
     public boolean delete(final RegisteredService svc) {
         if (this.findServiceById(svc.getId()) != null) {
