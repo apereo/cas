@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -184,6 +185,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                                     service.getServiceId(), service.getId());
                         }
                         temp.put(service.getId(), service);
+                        publishEvent(new CasRegisteredServiceLoadedEvent(this, service));
                     }
                 });
 
@@ -225,7 +227,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         }
         return null;
     }
-    
+
     @Override
     public RegisteredService save(final RegisteredService service) {
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {

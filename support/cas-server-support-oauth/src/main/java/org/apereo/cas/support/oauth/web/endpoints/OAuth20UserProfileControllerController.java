@@ -17,6 +17,8 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.hjson.JsonValue;
+import org.hjson.Stringify;
 import org.pac4j.core.context.HttpConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +93,8 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
         updateAccessTokenUsage(accessTokenTicket);
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
         final String value = OAuth20Utils.jsonify(map);
-        LOGGER.debug("Final user profile is [{}]", value);
+        LOGGER.debug("Final user profile is [{}]",
+                JsonValue.readHjson(value).toString(Stringify.FORMATTED));
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
 

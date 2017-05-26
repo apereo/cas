@@ -119,7 +119,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         }
 
         final Object value = resolvedAttributes.get(claim);
-        LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, value);
+        LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
         return Pair.of(claim, value);
     }
 }
