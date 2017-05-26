@@ -27,9 +27,6 @@ Support is enabled by including the following to the overlay:
 </dependency>
 ```
 
-REST support is currently provided internally by
-the [Spring framework](http://spring.io/guides/gs/rest-service/).
-
 ## Request a Ticket Granting Ticket
 
 ```bash
@@ -66,6 +63,16 @@ service={form encoded parameter for the service url}
 200 OK
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ```
+
+## Validate Service Ticket
+
+Service ticket validation is handled through the [CAS Protocol](Cas-Protocol.html)
+via any of the validation endpoints such as `/p3/serviceValidate`. 
+
+```bash
+GET /cas/p3/serviceValidate?service={service url}&ticket={service ticket}
+``` 
+
 
 ### Unsuccessful Response
 
