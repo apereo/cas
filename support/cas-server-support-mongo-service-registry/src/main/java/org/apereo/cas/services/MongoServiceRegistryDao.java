@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -83,7 +84,9 @@ public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
 
     @Override
     public List<RegisteredService> load() {
-        return this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
+        final List<RegisteredService> list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
+        list.stream().forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+        return list;
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
 import com.google.common.base.Throwables;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +103,9 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
                     LOGGER.debug("Found service: [{}]", json);
 
                     final StringReader stringReader = new StringReader(json);
-                    services.add(this.registeredServiceJsonSerializer.from(stringReader));
+                    final RegisteredService service = this.registeredServiceJsonSerializer.from(stringReader);
+                    services.add(service);
+                    publishEvent(new CasRegisteredServiceLoadedEvent(this, service));
                 }
             }
             return services;

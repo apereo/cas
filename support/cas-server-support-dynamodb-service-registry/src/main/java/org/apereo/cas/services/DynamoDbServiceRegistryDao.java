@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+
 import java.util.List;
 
 /**
@@ -28,7 +30,9 @@ public class DynamoDbServiceRegistryDao extends AbstractServiceRegistryDao {
 
     @Override
     public List<RegisteredService> load() {
-        return dbTableService.getAll();
+        final List<RegisteredService> svc = dbTableService.getAll();
+        svc.stream().forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+        return svc;
     }
 
     @Override

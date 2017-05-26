@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServi
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.AbstractServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
@@ -139,7 +140,13 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
         try {
             final Response<SearchResult> response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                response.getResult().getEntries().stream().map(this.ldapServiceMapper::mapToRegisteredService).forEach(list::add);
+                response.getResult().getEntries()
+                        .stream()
+                        .map(this.ldapServiceMapper::mapToRegisteredService)
+                        .forEach(s -> {
+                            publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
+                            list.add(s);
+                        });
             }
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);

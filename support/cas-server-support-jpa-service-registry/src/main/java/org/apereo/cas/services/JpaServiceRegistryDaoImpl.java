@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,10 @@ public class JpaServiceRegistryDaoImpl extends AbstractServiceRegistryDao {
 
     @Override
     public List<RegisteredService> load() {
-        return this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class).getResultList();
+        final List<RegisteredService> list = this.entityManager
+                .createQuery("select r from AbstractRegisteredService r", RegisteredService.class).getResultList();
+        list.stream().forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+        return list;
     }
 
     @Override
