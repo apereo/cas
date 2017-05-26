@@ -12,7 +12,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class InMemoryServiceRegistry implements ServiceRegistryDao {
+public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();
 
