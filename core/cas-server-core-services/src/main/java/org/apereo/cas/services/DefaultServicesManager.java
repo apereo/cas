@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -142,7 +143,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
                 .collect(Collectors.toConcurrentMap(r -> {
                     LOGGER.debug("Adding registered service [{}]", r.getServiceId());
                     return r.getId();
-                }, r -> r, (r, s) -> s == null ? r : s));
+                }, Function.identity(), (r, s) -> s == null ? r : s));
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
         publishEvent(new CasRegisteredServicesLoadedEvent(this, this.orderedServices));
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
