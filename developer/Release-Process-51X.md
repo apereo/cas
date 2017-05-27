@@ -35,7 +35,8 @@ org.gradle.daemon=false
 ### Create Branch
 
 <div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases (i.e. <code>4.2.x</code>, <code>5.0.x</code>).
-If there already exists a remote branch for the version you are about to release, skip this step and move on to next section.</p></div>
+If there already exists a remote tracking branch for the version you are about to release, you should <code>git checkout</code> that branch, 
+skip this step and move on to next section.</p></div>
 
 #### Travis CI
 
