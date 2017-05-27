@@ -1,8 +1,6 @@
 package org.apereo.cas.oidc.profile;
 
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.slf4j.Logger;
@@ -12,7 +10,8 @@ import org.springframework.context.event.EventListener;
 /**
  * This is {@link OidcRegisteredServicePreProcessorEventListener}.
  * Tries to reconcile scopes into attribute release policies
- * for OIDC services when and as services are loaded. 
+ * for OIDC services when and as services are loaded.
+ *
  * @author Misagh Moayyed
  * @since 5.1.0
  */

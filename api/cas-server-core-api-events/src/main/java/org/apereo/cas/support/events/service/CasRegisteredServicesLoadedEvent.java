@@ -22,7 +22,7 @@ public class CasRegisteredServicesLoadedEvent extends AbstractCasEvent {
      * Instantiates a new cas sso event.
      *
      * @param source the source
-     * @param services
+     * @param services collection of loaded services
      */
     public CasRegisteredServicesLoadedEvent(final Object source, final Collection<RegisteredService> services) {
         super(source);
