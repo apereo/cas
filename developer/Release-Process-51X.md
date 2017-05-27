@@ -32,6 +32,9 @@ org.gradle.daemon=false
 
 ## Preparing the Release
 
+Apply the following steps to prepare the release environment. There are a few variations to take into account depending on whether
+a new release branch should be created. 
+
 ### Create Branch
 
 <div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases (i.e. <code>4.2.x</code>, <code>5.0.x</code>).
