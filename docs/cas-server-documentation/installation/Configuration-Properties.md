@@ -1884,7 +1884,7 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
+The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
 
 ## Stormpath Authentication
 
@@ -2196,7 +2196,7 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 
 ### Signing & Encryption
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ### JDBC Storage
@@ -3082,7 +3082,7 @@ To learn more about this topic, [please review this guide](WS-Federation-Protoco
 # cas.authn.wsfedIdP.sts.signingKey=
 ```
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## OAuth2
@@ -3153,7 +3153,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 
 ### Signing & Encryption
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## Logout
@@ -3193,7 +3193,7 @@ the last resort in getting an integration to work...maybe not even then.</p></di
 # cas.clearpass.cipherEnabled=true;
 ```
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## Message Bundles
@@ -3684,7 +3684,7 @@ To learn more about this topic, [please review this guide](Configuring-Ticketing
 ### Signing & Encryption
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
+The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
 
 ### Cleaner
 
@@ -4029,7 +4029,7 @@ when shared with client applications on outgoing calls.
 # cas.ticket.security.signingKey=
 ```
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## Service Tickets Behavior
@@ -4226,7 +4226,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
+The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
 
 ### Authentication Exceptions
 
@@ -4397,7 +4397,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.security.signingKey=
 ```
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 
