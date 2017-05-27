@@ -39,7 +39,7 @@ a new release branch should be created.
 
 <div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases (i.e. <code>4.2.x</code>, <code>5.0.x</code>).
 If there already exists a remote tracking branch for the version you are about to release, you should <code>git checkout</code> that branch, 
-skip this step and move on to next section.</p></div>
+skip this step and move on to next section to build and release.</p></div>
 
 #### Travis CI
 
@@ -86,9 +86,13 @@ If you did create a new release branch, you should also switch back to `master` 
 ## Housekeeping
 
 - Close [the milestone](https://github.com/apereo/cas/milestones) for this release.
-- Find [the release](https://github.com/apereo/cas/releases) that is mapped to the released tag, update the description with the list of resolved/fixed issues and publish it as released. 
+
+- Find [the release](https://github.com/apereo/cas/releases) that is mapped to the released tag and update the description.
+
+<div class="alert alert-info"><strong>Remember</strong><p>When updating the release description, try to be keep conosistent and follow the same layout as previous releases</p></div>
+
 - Mark the release as pre-release, when releasing RC versions of the project. 
-- Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists. 
+- Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists, linking to the new release page.
 
 ## Update Overlays
 
@@ -101,14 +105,7 @@ Update the following overlay projects to point to the newly released CAS version
 - [CAS Discovery Server Overlay](https://github.com/apereo/cas-discoveryserver-overlay)
 - [CAS Spring Boot Admin Server Overlay](https://github.com/apereo/cas-bootadmin-overlay)
 
-## Update Travis
-
-This task is only relevant when dealing with major or minor GA releases.
-
-- Update `.travis.yml` of the release branch to ensure it's configured to build that branch.
-- Make sure shell scripts that are involved by the Travis CI process, particularly those that are in charge of publishing SNAPSHOTs are updated to point to the release branch.
-
-## Update Demos
+## Update Demos (Optional)
 
 A number of CAS demos today run on Heroku and are tracked in dedicated branches inside the codebase. Take a pass and updated each, when relevant.
 
