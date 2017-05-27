@@ -34,7 +34,7 @@ git checkout master
 For brand new clones, the following task should only be run once:
 
 ```bash
-./gradlew npmInstall
+./gradlew npmInstall gulpSetup
 ```
 
 When done, you may build the codebase via the following command:
