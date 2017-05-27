@@ -1,3 +1,5 @@
+/* global d3 */
+/*eslint-disable no-unused-vars*/
 var Gauge = function (wrapper, percent, options) {
     if (!wrapper || !percent) {
         //console.error('wrapper and percentage are required.  Please check your code.');
@@ -13,11 +15,11 @@ var Gauge = function (wrapper, percent, options) {
         twoPi = 2 * Math.PI,
         progress = 0,
         total = 100,
-        formatPercent = d3.format(".0%");
+        formatPercent = d3.format('.0%');
 
     var colorScale = d3.scale.linear()
         .domain([0, 0.40, 0.50, 1])
-        .range(["green", "green", "goldenrod", "red"]);
+        .range(['green', 'green', 'goldenrod', 'red']);
 
     var arc = d3.svg.arc()
             .startAngle(0)
@@ -25,31 +27,31 @@ var Gauge = function (wrapper, percent, options) {
             .outerRadius(width * 0.5)
         ;
 
-    var svg = d3.select(wrapper).append("svg")
-        .attr("width", width)
-        .attr("height", height)
+    var svg = d3.select(wrapper).append('svg')
+        .attr('width', width)
+        .attr('height', height)
 
         .attr('fill', '#2E7AF9')
-        .append("g")
-        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+        .append('g')
+        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-    var meter = svg.append("g")
-        .attr("class", textClass);
+    var meter = svg.append('g')
+        .attr('class', textClass);
 
-    meter.append("path")
-        .attr("class", "background")
-        .attr("d", arc.endAngle(twoPi));
+    meter.append('path')
+        .attr('class', 'background')
+        .attr('d', arc.endAngle(twoPi));
 
-    var foreground = meter.append("path")
-        .attr("class", "foreground");
+    var foreground = meter.append('path')
+        .attr('class', 'foreground');
 
-    var text = meter.append("text")
-        .attr("text-anchor", "middle");
+    var text = meter.append('text')
+        .attr('text-anchor', 'middle');
 
-    var text2 = meter.append("text")
+    var text2 = meter.append('text')
         .attr('y', height * 0.15)
-        .attr("text-anchor", "middle")
-        .attr("class", "text2");
+        .attr('text-anchor', 'middle')
+        .attr('class', 'text2');
 
     text2.text(label);
 
@@ -57,13 +59,13 @@ var Gauge = function (wrapper, percent, options) {
         var i = d3.interpolate(progress, percentage);
 
         foreground.transition().duration(2000)
-            .tween("progress", function () {
+            .tween('progress', function () {
 
                 return function (t) {
                     progress = i(t);
 
                     foreground.style('fill', colorScale(progress));
-                    foreground.attr("d", arc.endAngle(twoPi * progress));
+                    foreground.attr('d', arc.endAngle(twoPi * progress));
                     text.text(formatPercent(progress));
                 };
             });
@@ -119,12 +121,6 @@ function upTime(countTo, el) {
 var analytics = document.getElementById('expiredSts');
 
 var casStatistics = function (urls, messages) {
-    if (messages) {
-        var messages = messages;
-    } else {
-        var messages;
-    }
-
     var timers = {
         memory: 5000,
         availability: 15000,
