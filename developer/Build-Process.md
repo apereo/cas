@@ -123,19 +123,21 @@ compile project(":support:cas-server-support-modulename")
 
 - Prepare the embedded container, as described below, to run and deploy the web application
 
-## Embedded Container
+## Embedded Containers
 
-The CAS project is pre-configured with an embedded Tomcat instance for both the server web application as well as the management web application.
+The CAS project comes with a number of built-in modules that are pre-configured with embedded servlet containers such as Apache Tomcat, Jetty, etc 
+for the server web application, the management web application and others.
 
 ### Configure SSL
 
-The `thekeystore` file must include the SSL private/public keys that are issued for your CAS server domain. You will need to use the `keytool` command of the JDK to create the keystore and the certificate. The following commands may serve as an example:
+The `thekeystore` file must include the SSL private/public keys that are issued for your CAS server domain. You will need to use the `keytool` command of the JDK to create the keystore and the certificate. 
+The following commands may serve as an example:
 
 ```bash
 keytool -genkey -alias cas -keyalg RSA -validity 999 -keystore /etc/cas/thekeystore
 ```
 
-Note that the validity parameter allows you to specify, in the number of days, how long the certificate should be valid for. The longer the time period, the less likely you are to need to recreate it. To recreate it, you'd need to delete the old one and then follow these instructions again.
+Note that the validity parameter allows you to specify, in the number of days, how long the certificate should be valid for. The longer the time period, the less likely you are to need to recreate it. To recreate it, you'd need to delete the old one and then follow these instructions again. You may also need to provide the *Subject Alternative Name* field, which can be done with `keytool` via `-ext san=dns:$REPLACE_WITH_FULL_MACHINE_NAME`.
 
 The response will look something like this:
 
@@ -166,7 +168,7 @@ Execute the following command:
 cd webapp/cas-server-webapp-tomcat
 
 # Or for the management-webapp:
-# cd webapp-mgmt/cas-management-webapp;
+# cd webapp-mgmt/cas-management-webapp
 
 ./gradlew build bootRun --parallel --offline
 ```
@@ -174,10 +176,9 @@ cd webapp/cas-server-webapp-tomcat
 The response will look something like this:
 
 ```bash
-INFO [org.apache.catalina.core.StandardService] - <Starting service Tomcat>
-INFO [org.apache.catalina.core.StandardEngine] - <Starting Servlet Engine: Apache Tomcat/x.y.z>
-INFO [org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/cas]] - <Initializing Spring embedded WebApplicationContext>
-INFO [org.apereo.cas.web.CasWebApplication] - <Started CasWebApplication in 21.485 seconds (JVM running for 22.895)>
+...
+2017-05-26 19:10:46,470 INFO [org.apereo.cas.web.CasWebApplication] - <Started CasWebApplication in 21.893 seconds (JVM running for 36.888)>
+...
 ```
 
 By default CAS will be available at `https://mymachine.domain.edu:8443/cas`
