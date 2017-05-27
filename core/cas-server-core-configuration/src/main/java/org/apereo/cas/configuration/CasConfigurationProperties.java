@@ -26,6 +26,7 @@ import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
+import org.apereo.cas.configuration.model.support.fortress.FortressProperties;
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
@@ -179,6 +180,9 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private WebflowProperties webflow = new WebflowProperties();
+    
+    @NestedConfigurationProperty
+    private FortressProperties fortressProperties = new FortressProperties();
 
     public ConsentProperties getConsent() {
         return consent;
@@ -514,5 +518,13 @@ public class CasConfigurationProperties {
 
     public void setClickatell(final ClickatellProperties clickatell) {
         this.clickatell = clickatell;
+    }
+    
+    public void setFotressProperties(final FortressProperties fortressProperties) {
+      this.fortressProperties = fortressProperties;
+    }
+    
+    public FortressProperties getFortressProperties() {
+      return fortressProperties;
     }
 }
