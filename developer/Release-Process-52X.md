@@ -126,4 +126,5 @@ This task is only relevant when dealing with major or minor releases.
 ## Docker Image (Optional)
 
 Release a new CAS [Docker image](https://github.com/apereo/cas-webapp-docker).
-This task is only relevant when dealing with GA releases.
+This task is only relevant when dealing with GA official releases, regardless of release calibre. All major/feature/patch releases
+qualify for a Docker release.
