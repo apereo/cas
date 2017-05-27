@@ -184,8 +184,19 @@ By default CAS will be available at `https://mymachine.domain.edu:8443/cas`
 
 ### Remote Debugging
 
-The Tomcat instance is pre-configured to listen to debugger requests on port `5000`. Create a remote debugger 
-configuration in your IDE that connects to this port and you will be able to step into the code.
+The embedded container instance is pre-configured to listen to debugger requests on port `5000` provided you specify the `enableRemoteDebugging` parameter. 
+For external container deployments, [such as Apache Tomcat](https://wiki.apache.org/tomcat/FAQ/Developing#Q1), 
+the following example shows what needs configuring in the `bin/startup.sh|bat` file:
+
+```bash
+export JPDA_ADDRESS=5000
+export JPDA_TRANSPORT=dt_socket
+bin/catalina.sh jpda start
+```
+
+When you're done, create a remote debugger configuration in your IDE that connects to this port and you will be able to step into the code.
+
+![image](https://cloud.githubusercontent.com/assets/1205228/26517058/d09a8288-4245-11e7-962e-004bfe174a0a.png)
 
 ### Dependency Updates
 
