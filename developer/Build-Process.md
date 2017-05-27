@@ -29,15 +29,26 @@ The following shell commands may be used to build the source:
 ```bash
 cd cas-server
 git checkout master
-./gradlew build install --parallel -x test -x javadoc -DskipCheckstyle=true -DskipFindbugs=true
+```
+
+For brand new clones, the following task should only be run once:
+
+```bash
+./gradlew npmInstall
+```
+
+When done, you may build the codebase via the following command:
+
+```bash
+./gradlew build install --parallel -x test -x javadoc -x check
 ```
 
 The following commandline boolean flags are supported by the build:
 
 | Flag                              | Description
-|-----------------------------------+----------------------------------------------------+
+|-----------------------------------+------------------------------------------------------------------+
 | `skipCheckstyle`                  | Skip running checkstyle checks.
-| `enableRemoteDebugging`           | Allows for remote debugging via a pre-definedd port.
+| `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
 | `skipFindbugs`                    | Skip running findbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `genConfigMetadata`               | Generate CAS configuration metadata for `@ConfigurationProperties` classes.
@@ -46,7 +57,9 @@ The following commandline boolean flags are supported by the build:
 | `enableKotlin`                    | Enable compilation of Kotlin's `.kt` files, if any. 
 
 
-Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`). Also, if you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster. Using the Gradle daemon also is a big help.
+- You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`).
+- If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
+- Using the Gradle daemon also is a big help. [It should be enabled by default](https://docs.gradle.org/current/userguide/gradle_daemon.html).
 
 ## Tasks
 
@@ -55,7 +68,8 @@ Available build tasks can be found using the command `./gradlew tasks`.
 ### Sass Compilation
 
 The build is automatically wired to compile `.scss` files into `.css` via a [Gulp](http://gulpjs.com/).
-To initialize the plugin once, you may need to invoke `sudo ./gradlew gulpSetup` once at the root directory. 
+To let this step successfully pass, you may need to install `gulp` and `npm`, which the build should automatically do.
+See the **Build** section for more info.
 
 ## IDE Setup
 
