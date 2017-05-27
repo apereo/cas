@@ -70,6 +70,8 @@ Release the project using the following commands:
 
 Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig.org/display/JCH/Deploying+Maven+Artifacts) via Sonatype OSS repository.  
 
+![image](https://cloud.githubusercontent.com/assets/1205228/26524038/d302b626-42db-11e7-9164-52d83bf4d3b0.png)
+
 - Log into [https://oss.sonatype.org](https://oss.sonatype.org).
 - Click on "Staged Repositories" on the left and find the CAS release artifacts at the bottom of the list.
 - "Close" the repository via the toolbar button and provide a description. This step may take a few minutes. Follow the activity and make sure all goes well.
