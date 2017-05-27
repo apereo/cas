@@ -37,7 +37,7 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Started to publish latest Javadoc to gh-pages...\n"
 
   echo -e "Invoking build to generate the project site...\n"
-  ./gradlew javadoc -q -Dorg.gradle.configureondemand=true -Dorg.gradle.workers.max=8 --parallel
+  ./gradlew javadoc -q --parallel
 
   echo -e "Copying the generated docs over...\n"
   cp -R build/javadoc $HOME/javadoc-latest
@@ -60,7 +60,7 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   # git gc --aggressive --prune=now
   
   echo -e "Configuring tracking branches for repository:\n"
-  for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do
+  for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v $casBranch`; do
      git branch --track ${branch##*/} $branch
   done
 
