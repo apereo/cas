@@ -54,6 +54,7 @@ Do not forget to commit all changes and push changes upstream, creatng a new rem
 In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`). Then build the project using the following command:
 
 ```bash
+./gradlew gulpSetup
 ./gradlew clean assemble install -x test --parallel -x check
 ```
 
@@ -70,9 +71,9 @@ Release the project using the following commands:
 Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig.org/display/JCH/Deploying+Maven+Artifacts) via Sonatype OSS repository.  
 
 - Log into [https://oss.sonatype.org](https://oss.sonatype.org).
-- Find the staged repository for CAS artifacts
-- "Close" the repository.
-- "Release" the repository.
+- Click on "Staged Repositories" on the left and find the CAS release artifacts at the bottom of the list.
+- "Close" the repository via the toolbar button and provide a description. This step may take a few minutes. Follow the activity and make sure all goes well.
+- "Release" the repository via the toolbar button and provide a description. The step is only enabled if the repository is successfully closed.
 
 ## Finalizing the Release
 
