@@ -47,14 +47,14 @@ skip this step and move on to next section.</p></div>
 - Change `travis/deploy-to-sonatype.sh` to point to the newly-created release branch.
 - Change `travis/push-javadoc-to-gh-pages.sh` to point to the newly-created release branch.
  
-Do not forget to commit all changes.
+Do not forget to commit all changes and push changes upstream, creatng a new remote branch to track the release.
 
 ### Build 
 
 In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`). Then build the project using the following command:
 
 ```bash
-./gradlew clean assemble install -x test --parallel -DskipCheckstyle=true -DskipFindbugs=true
+./gradlew clean assemble install -x test --parallel -x check
 ```
 
 ### Release
@@ -77,7 +77,10 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 ## Finalizing the Release
 
 - Create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v5.0.0-RC1`).
-- Switch to the release branch and in the project's `gradle.properties`, change the project version to the *next* development version (i.e. `5.0.0-RC2-SNAPSHOT`). 
+
+If you did create a new release branch, you should also switch back to `master` and follow these steps:
+
+- In the project's `gradle.properties`, change the project version to the *next* development version (i.e. `5.0.0-RC2-SNAPSHOT`). 
 - Push your changes to the upstream repository. 
 
 ## Housekeeping
