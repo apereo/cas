@@ -106,6 +106,12 @@ Update the following overlay projects to point to the newly released CAS version
 - [CAS Discovery Server Overlay](https://github.com/apereo/cas-discoveryserver-overlay)
 - [CAS Spring Boot Admin Server Overlay](https://github.com/apereo/cas-bootadmin-overlay)
 
+## Update Documentation
+
+If you did create a new release branch, you should also configure docs to point `current`
+to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
+
+
 ## Update Demos (Optional)
 
 A number of CAS demos today run on Heroku and are tracked in dedicated branches inside the codebase. Take a pass and updated each, when relevant.
