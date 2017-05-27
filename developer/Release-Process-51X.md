@@ -32,15 +32,30 @@ org.gradle.daemon=false
 
 ## Preparing the Release
 
-- If necessary, create an appropriate branch for the next release. Generally, you should do this only for major or minor releases. (i.e. `4.2.x`, `5.0.x`)
-- In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`)
-- Build the project using the following command:
+### Create Branch
+
+<div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases (i.e. <code>4.2.x</code>, <code>5.0.x</code>).
+If there already exists a remote branch for the version you are about to release, skip this step and move on to next section.</p></div>
+
+#### Travis CI
+
+- Change `.travis.yml` to *only* build the newly-created release branch.
+- Change `travis/deploy-to-sonatype.sh` to point to the newly-created release branch.
+- Change `travis/push-javadoc-to-gh-pages.sh` to point to the newly-created release branch.
+ 
+Do not forget to commit all changes.
+
+### Build 
+
+In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`). Then build the project using the following command:
 
 ```bash
 ./gradlew clean assemble install -x test --parallel -DskipCheckstyle=true -DskipFindbugs=true
 ```
 
-- Release the project using the following commands:
+### Release
+
+Release the project using the following commands:
 
 ```bash
 ./gradlew uploadArchives -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD>
