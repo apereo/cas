@@ -24,7 +24,6 @@ import org.apereo.cas.configuration.model.support.rest.RestAuthenticationPropert
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
-import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
@@ -137,10 +136,7 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private SpnegoProperties spnego = new SpnegoProperties();
-
-    @NestedConfigurationProperty
-    private StormpathProperties stormpath = new StormpathProperties();
-
+    
     @NestedConfigurationProperty
     private WsFederationDelegationProperties wsfed = new WsFederationDelegationProperties();
 
@@ -334,15 +330,7 @@ public class AuthenticationProperties {
     public void setSpnego(final SpnegoProperties spnego) {
         this.spnego = spnego;
     }
-
-    public StormpathProperties getStormpath() {
-        return stormpath;
-    }
-
-    public void setStormpath(final StormpathProperties stormpath) {
-        this.stormpath = stormpath;
-    }
-
+    
     public WsFederationDelegationProperties getWsfed() {
         return wsfed;
     }
