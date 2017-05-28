@@ -2378,6 +2378,11 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.trustedDeviceEnabled=true
 # cas.authn.mfa.yubikey.name=
 
+# cas.authn.mfa.yubikey.jsonFile=file:/etc/cas/deviceRegistrations.json
+
+# cas.authn.mfa.yubikey.allowedDevices.uid1=yubikeyPublicId1
+# cas.authn.mfa.yubikey.allowedDevices.uid2=yubikeyPublicId2
+
 # cas.authn.mfa.yubikey.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.yubikey.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.yubikey.bypass.authenticationAttributeName=bypass|skip
