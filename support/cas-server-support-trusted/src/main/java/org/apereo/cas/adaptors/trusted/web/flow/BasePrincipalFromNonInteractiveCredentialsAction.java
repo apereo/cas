@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
+import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -10,10 +12,10 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * This is {@link BasePrincipalFromNonInteractiveCredentialsAction}.
@@ -29,12 +31,16 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
      */
     protected final PrincipalFactory principalFactory;
 
+    private final RemoteRequestPrincipalAttributesExtractor principalAttributesExtractor;
+
     public BasePrincipalFromNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-                                                            final PrincipalFactory principalFactory) {
+                                                            final PrincipalFactory principalFactory,
+                                                            final RemoteRequestPrincipalAttributesExtractor extractor) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.principalFactory = principalFactory;
+        this.principalAttributesExtractor = extractor;
     }
 
     @Override
@@ -42,12 +48,15 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final String remoteUser = getRemotePrincipalId(request);
 
-        if (StringUtils.hasText(remoteUser)) {
-            LOGGER.debug("Remote User [{}] found in HttpServletRequest", remoteUser);
+        if (StringUtils.isNotBlank(remoteUser)) {
+            LOGGER.debug("User [{}] found in HttpServletRequest", remoteUser);
 
+            final Map<String, Object> attributes = principalAttributesExtractor.getAttributes(request);
+            LOGGER.debug("Attributes [{}] found in HttpServletRequest", attributes);
 
-            return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser));
+            return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser, attributes));
         }
+        LOGGER.debug("No User [{}] found in HttpServletRequest");
         return null;
     }
 
