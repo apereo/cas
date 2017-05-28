@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
+import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
@@ -23,9 +24,10 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction exten
     public PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialWebflowEventResolver,
                                                                          final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                                          final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-                                                                         final PrincipalFactory principalFactory) {
+                                                                         final PrincipalFactory principalFactory,
+                                                                         final RemoteRequestPrincipalAttributesExtractor extractor) {
         super(initialWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy, principalFactory);
+                adaptiveAuthenticationPolicy, principalFactory, extractor);
     }
 
     @Override
