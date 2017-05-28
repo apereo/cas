@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
@@ -44,6 +45,9 @@ import java.util.List;
  */
 public class AuthenticationProperties {
 
+    @NestedConfigurationProperty
+    private CloudDirectoryProperties cloudDirectory = new CloudDirectoryProperties();
+    
     @NestedConfigurationProperty
     private SurrogateAuthenticationProperties surrogate = new SurrogateAuthenticationProperties();
     
@@ -437,5 +441,13 @@ public class AuthenticationProperties {
 
     public void setGua(final GraphicalUserAuthenticationProperties gua) {
         this.gua = gua;
+    }
+
+    public CloudDirectoryProperties getCloudDirectory() {
+        return cloudDirectory;
+    }
+
+    public void setCloudDirectory(final CloudDirectoryProperties cloudDirectory) {
+        this.cloudDirectory = cloudDirectory;
     }
 }

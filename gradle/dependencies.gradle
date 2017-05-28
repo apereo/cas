@@ -403,7 +403,7 @@ ext.libraries = [
                 }
         ],
         awsclouddirectory           : [
-                dependencies.create("com.amazonaws:aws-java-sdk-directory:$amazonSdkVersion") {
+                dependencies.create("com.amazonaws:aws-java-sdk-clouddirectory:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")

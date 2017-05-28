@@ -134,7 +134,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
-    
+
     @NestedConfigurationProperty
     private ClearpassProperties clearpass = new ClearpassProperties();
 
@@ -515,4 +515,5 @@ public class CasConfigurationProperties {
     public void setClickatell(final ClickatellProperties clickatell) {
         this.clickatell = clickatell;
     }
+
 }
