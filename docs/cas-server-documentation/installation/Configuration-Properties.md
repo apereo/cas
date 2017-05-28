@@ -1889,6 +1889,41 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
 The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
 
+## Amazon Cloud Directory Authentication
+
+To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html).
+
+```properties
+# cas.authn.cloudDirectory.credentialAccessKey=
+# cas.authn.cloudDirectory.credentialSecretKey=
+
+# cas.authn.cloudDirectory.region=
+
+# cas.authn.cloudDirectory.profileName=
+# cas.authn.cloudDirectory.profilePath=
+
+# cas.authn.cloudDirectory.directoryArn=
+# cas.authn.cloudDirectory.schemaArn=
+# cas.authn.cloudDirectory.facetName=
+
+# cas.authn.cloudDirectory.usernameAttributeName=
+# cas.authn.cloudDirectory.passwordAttributeName=
+# cas.authn.cloudDirectory.usernameIndexPath=
+
+# cas.authn.cloudDirectory.name=
+# cas.authn.cloudDirectory.order=
+
+# cas.authn.cloudDirectory.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
+# cas.authn.cloudDirectory.passwordEncoder.characterEncoding=
+# cas.authn.cloudDirectory.passwordEncoder.encodingAlgorithm=
+# cas.authn.cloudDirectory.passwordEncoder.secret=
+# cas.authn.cloudDirectory.passwordEncoder.strength=16
+
+# cas.authn.cloudDirectory.principalTransformation.suffix=
+# cas.authn.cloudDirectory.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.cloudDirectory.principalTransformation.prefix=
+```
+
 ## Stormpath Authentication
 
 To learn more about this topic, [please review this guide](Stormpath-Authentication.html).

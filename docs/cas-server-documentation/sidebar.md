@@ -41,6 +41,7 @@ layout: null
         *   [Trusted](/$version/installation/Trusted-Authentication.html)
         *   [JWT](/$version/installation/JWT-Authentication.html)
         *   [Rest](/$version/installation/Rest-Authentication.html)
+        *   [AWS Cloud Directory](/$version/installation/AWS-CloudDirectory-Authentication.html)
         *   [Stormpath](/$version/installation/Stormpath-Authentication.html)
         *   [Basic](/$version/installation/Basic-Authentication.html)
         *   [Digest](/$version/installation/Digest-Authentication.html)
