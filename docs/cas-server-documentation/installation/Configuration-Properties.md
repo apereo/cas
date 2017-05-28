@@ -1668,6 +1668,9 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].passwordPolicy.displayWarningOnMatch=true
 # cas.authn.ldap[0].passwordPolicy.warnAll=true
 # cas.authn.ldap[0].passwordPolicy.warningDays=30
+
+# An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
+# cas.authn.ldap[0].passwordPolicy.customPolicyClass=com.example.MyAuthenticationResponseHandler
 ```
 
 ## REST Authentication
