@@ -7,6 +7,12 @@ title: CAS - Build Process
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
+## Development
+
+CAS development is powered by: <br/>
+
+<a href="http://www.jetbrains.com/idea/" target="_blank"><img src="../images/intellijidea.gif" width="100" height="100" valign="middle" style="vertical-align:middle"></a>
+
 ## Source Checkout
 
 The following shell commands may be used to grab the source from the repository:
