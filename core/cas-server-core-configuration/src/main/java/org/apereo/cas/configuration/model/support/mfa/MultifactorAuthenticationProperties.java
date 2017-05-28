@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -398,6 +399,9 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private Integer clientId;
         private String secretKey = StringUtils.EMPTY;
 
+        private Resource jsonFile;
+        private Map<String, String> allowedDevices;
+        
         private List<String> apiUrls = new ArrayList<>();
         private boolean trustedDeviceEnabled;
 
@@ -429,13 +433,28 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.secretKey = secretKey;
         }
 
-
         public List<String> getApiUrls() {
             return apiUrls;
         }
 
         public void setApiUrls(final List<String> apiUrls) {
             this.apiUrls = apiUrls;
+        }
+
+        public Resource getJsonFile() {
+            return jsonFile;
+        }
+
+        public void setJsonFile(final Resource jsonFile) {
+            this.jsonFile = jsonFile;
+        }
+
+        public Map<String, String> getAllowedDevices() {
+            return allowedDevices;
+        }
+
+        public void setAllowedDevices(final Map<String, String> allowedDevices) {
+            this.allowedDevices = allowedDevices;
         }
     }
 
