@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HealthCheckController extends BaseCasMvcEndpoint {
 
     private final Monitor<HealthStatus> healthCheckMonitor;
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     public HealthCheckController(final Monitor<HealthStatus> healthCheckMonitor, final CasConfigurationProperties casProperties) {
         super("status", StringUtils.EMPTY, casProperties.getMonitor().getEndpoints().getStatus(), casProperties);

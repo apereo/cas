@@ -125,6 +125,8 @@ public class DashboardController extends BaseCasMvcEndpoint {
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getHealthCheck(), casProperties));
         model.put("metricsEndpointEnabled",
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getMetrics(), casProperties));
+        model.put("servicesEndpointEnabled",
+                isEndpointCapable(casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties));
         model.put("attributeResolutionEndpointEnabled",
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties));
 
