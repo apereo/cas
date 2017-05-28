@@ -51,8 +51,8 @@ public class IgniteTicketRegistryConfiguration {
         final IgniteConfiguration config = new IgniteConfiguration();
         final TcpDiscoverySpi spi = new TcpDiscoverySpi();
 
-        spi.setHeartbeatFrequency(ignite.getHeartbeatFrequency());
         spi.setJoinTimeout(ignite.getJoinTimeout());
+        spi.setAckTimeout(ignite.getAckTimeout());
 
         if (!StringUtils.isEmpty(ignite.getLocalAddress())) {
             spi.setLocalAddress(ignite.getLocalAddress());
