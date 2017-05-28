@@ -98,6 +98,11 @@
                         <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.ssostatus}"></span>
                     </a>
                 </li>
+                <li th:if="${servicesEndpointEnabled}">
+                    <a th:href="@{/status/services}" class="casTooltip">Registered Services
+                        <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.services}"></span>
+                    </a>
+                </li>
                 <li th:if="${springWebflowEndpointEnabled}">
                     <a th:href="@{/status/swf}" class="casTooltip">Webflow Report
                         <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.swf}"></span>
