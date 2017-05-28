@@ -46,6 +46,7 @@ ext.libraries = [
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.ow2.asm", module: "asm")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     force = true
                 },
         ],
@@ -398,6 +399,16 @@ ext.libraries = [
                 },
                 dependencies.create("com.github.axet:wget:$axetWgetVersion") {
                     exclude(group: "com.thoughtworks.xstream", module: "xstream")
+                    force = true
+                }
+        ],
+        awsclouddirectory           : [
+                dependencies.create("com.amazonaws:aws-java-sdk-directory:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 }
         ],

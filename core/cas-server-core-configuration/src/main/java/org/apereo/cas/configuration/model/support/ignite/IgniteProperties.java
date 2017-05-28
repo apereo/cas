@@ -26,7 +26,7 @@ public class IgniteProperties {
     private String trustStoreFilePath;
     private String trustStorePassword;
     
-    private String heartbeatFrequency = "PT2S";
+    private String ackTimeout = "PT2S";
     private String joinTimeout = "PT1S";
     private String localAddress;
     private int localPort = -1;
@@ -38,12 +38,12 @@ public class IgniteProperties {
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
 
-    public long getHeartbeatFrequency() {
-        return Duration.parse(heartbeatFrequency).toMillis();
+    public long getAckTimeout() {
+        return Duration.parse(ackTimeout).toMillis();
     }
 
-    public void setHeartbeatFrequency(final String heartbeatFrequency) {
-        this.heartbeatFrequency = heartbeatFrequency;
+    public void setAckTimeout(final String ackTimeout) {
+        this.ackTimeout = ackTimeout;
     }
 
     public long getJoinTimeout() {
