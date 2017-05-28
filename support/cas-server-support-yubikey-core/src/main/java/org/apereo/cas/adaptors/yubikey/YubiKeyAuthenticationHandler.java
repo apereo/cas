@@ -58,12 +58,6 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
         super(name, servicesManager, principalFactory, null);
         this.registry = registry;
         this.client = YubicoClient.getClient(clientId, secretKey);
-
-        if (this.registry == null) {
-            LOGGER.warn("No YubiKey account registry is defined. All credentials are considered "
-                            + "eligible for YubiKey authentication. Consider providing an account registry implementation via [{}]",
-                    YubiKeyAccountRegistry.class.getName());
-        }
     }
 
     public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey) {
