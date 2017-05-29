@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import com.yubico.client.v2.YubicoClient;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 
@@ -22,8 +23,9 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String yubikeyPublicId) {
-        if (accountValidator.isValid(uid, yubikeyPublicId)) {
+    public boolean registerAccountFor(final String uid, final String token) {
+        if (accountValidator.isValid(uid, token)) {
+            final String yubikeyPublicId = YubicoClient.getPublicId(token);
             return registerAccount(uid, yubikeyPublicId);
         }
         return false;

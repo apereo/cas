@@ -32,9 +32,9 @@ public interface YubiKeyAccountRegistry {
     /**
      * Register account/device.
      *
-     * @param uid             the uid
-     * @param yubikeyPublicId the yubikey public id
+     * @param uid   the uid
+     * @param token the yubikey token
      * @return the boolean
      */
-    boolean registerAccountFor(String uid, String yubikeyPublicId);
+    boolean registerAccountFor(String uid, String token);
 }

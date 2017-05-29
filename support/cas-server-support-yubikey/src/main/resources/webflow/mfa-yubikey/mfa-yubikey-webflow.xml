@@ -40,6 +40,7 @@
     <action-state id="saveRegistration">
         <evaluate expression="yubiKeySaveAccountRegistrationAction" />
         <transition on="success" to="viewLoginFormYubiKey"/>
+        <transition on="error" to="initializeLoginForm" />
     </action-state>
 
     <action-state id="realSubmit">
