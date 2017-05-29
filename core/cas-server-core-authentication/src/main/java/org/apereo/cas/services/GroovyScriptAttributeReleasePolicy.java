@@ -26,7 +26,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     private String groovyScript;
 
     public GroovyScriptAttributeReleasePolicy() {
-        LOGGER.warn("[{}] is deprecated and will be removed in future CAS versions");
+        LOGGER.warn("[{}] is deprecated and will be removed in future CAS versions", getClass().getSimpleName());
     }
 
     public GroovyScriptAttributeReleasePolicy(final String groovyScript) {
