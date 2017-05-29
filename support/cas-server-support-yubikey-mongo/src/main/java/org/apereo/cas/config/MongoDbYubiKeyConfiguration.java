@@ -61,6 +61,10 @@ public class MongoDbYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        return new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator);
+        final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
+        return new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
+                mongoYubiKeyTemplate(),
+                yubi.getMongodb().getCollection(),
+                yubi.getMongodb().isDropCollection());
     }
 }

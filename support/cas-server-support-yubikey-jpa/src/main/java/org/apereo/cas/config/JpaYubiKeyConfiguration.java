@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
-import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
@@ -53,7 +53,7 @@ public class JpaYubiKeyConfiguration {
     }
 
     public String[] jpaYubiKeyPackagesToScan() {
-        return new String[]{JpaYubiKeyAccount.class.getPackage().getName()};
+        return new String[]{YubiKeyAccount.class.getPackage().getName()};
     }
 
     @Autowired
