@@ -15,13 +15,17 @@
             </div>
 
             <div class="row fl-controls-left">
-                <label for="password" class="fl-label" th:utext="#{screen.welcome.label.password}"/>
+                <label for="token" class="fl-label" th:utext="#{screen.welcome.label.password}"/>
 
                 <input type="password" class="required" id="token" size="25" tabindex="1"
                        th:field="*{token}"
                        th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
-                <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
-                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
+
+                <div>
+                    <br/>
+                    <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
+                           th:value="#{screen.welcome.button.login}" tabindex="2" type="submit"/>
+                </div>
             </div>
             <div class="row btn-row">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
