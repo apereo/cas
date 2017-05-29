@@ -53,12 +53,5 @@ The following demos are provided by the Apereo CAS project:
 
 Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.
 
-It is important to note that these are public demo sites, used by the project for basic showcases and integration tests. They are **NOT** set up for internal demos as they may go up and down as the project needs without notice. 
-
-If you have a need for a demo instance with a modified UI, that would be one you [set up for your deployment](installation/Maven-Overlay-Installation.html). 
-
-## Development
-
-CAS development is powered by: <br/>
-
-<a href="http://www.jetbrains.com/idea/" target="_blank"><img src="../images/intellijidea.gif" valign="middle" style="vertical-align:middle"></a>
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>It is important to note that these are public demo sites, used by the project for basic showcases 
+and integration tests. They are **NOT** set up for internal demos as they may go up and down as the project needs without notice. </p></div>
