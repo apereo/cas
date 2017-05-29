@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import com.yubico.client.v2.YubicoClient;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 
 import java.util.Map;
@@ -31,8 +32,12 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     }
 
     @Override
-    public boolean registerAccount(final String uid, final String yubikeyPublicId) {
-        devices.put(uid, yubikeyPublicId);
-        return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
+    public boolean registerAccountFor(final String uid, final String token) {
+        if (accountValidator.isValid(uid, token)) {
+            final String yubikeyPublicId = YubicoClient.getPublicId(token);
+            devices.put(uid, yubikeyPublicId);
+            return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
+        }
+        return false;
     }
 }
