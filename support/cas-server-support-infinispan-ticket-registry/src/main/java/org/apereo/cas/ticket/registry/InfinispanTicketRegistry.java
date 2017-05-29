@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanTicketRegistry.class);
     
-    private Cache<String, Ticket> cache;
+    private final Cache<String, Ticket> cache;
 
     /**
      * Instantiates a new Infinispan ticket registry.

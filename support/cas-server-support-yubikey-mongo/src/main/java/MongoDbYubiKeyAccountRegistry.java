@@ -1,3 +1,4 @@
+import com.yubico.client.v2.YubicoClient;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 
@@ -19,7 +20,10 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccount(final String uid, final String yubikeyPublicId) {
+    public boolean registerAccountFor(final String uid, final String token) {
+        if (accountValidator.isValid(uid, token)) {
+            final String yubikeyPublicId = YubicoClient.getPublicId(token);
+        }
         return false;
     }
 

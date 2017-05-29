@@ -23,7 +23,7 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccount(final String uid, final String yubikeyPublicId) {
+    public boolean registerAccountFor(final String uid, final String yubikeyPublicId) {
         return true;
     }
 }

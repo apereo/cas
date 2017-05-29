@@ -6,6 +6,7 @@ import com.yubico.client.v2.YubicoClient;
 import com.yubico.client.v2.exceptions.YubicoValidationFailure;
 import com.yubico.client.v2.exceptions.YubicoVerificationException;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -61,7 +62,8 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     }
 
     public YubiKeyAuthenticationHandler(final YubicoClient client) {
-        this(StringUtils.EMPTY, null, null, client, null);
+        this(StringUtils.EMPTY, null, null,
+                client, new OpenYubiKeyAccountRegistry());
     }
 
     @Override
