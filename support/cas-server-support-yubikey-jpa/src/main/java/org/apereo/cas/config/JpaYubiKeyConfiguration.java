@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.yubikey.JpaYubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccount;

@@ -1,6 +1,7 @@
-package org.apereo.cas.adaptors.yubikey;
+package org.apereo.cas.adaptors.yubikey.dao;
 
-import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccount;
+import com.yubico.client.v2.YubicoClient;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +19,11 @@ import javax.persistence.PersistenceContext;
  * @since 5.2.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(transactionManager = "transactionManagerYubiKey")
+@Transactional(transactionManager = "transactionManagerYubiKey", readOnly = false)
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaYubiKeyAccountRegistry.class);
 
-    private static final String SELECT_QUERY = "SELECT r from YubiKeyAccount r ";
+    private static final String SELECT_QUERY = "SELECT r from JpaYubiKeyAccount r ";
 
     @PersistenceContext(unitName = "yubiKeyEntityManagerFactory")
     private EntityManager entityManager;
@@ -35,30 +36,35 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public boolean isYubiKeyRegisteredFor(final String uid) {
         try {
             return this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
-                    JpaYubiKeyAccountRegistry.class)
+                    JpaYubiKeyAccount.class)
                     .setParameter("username", uid)
                     .getSingleResult() != null;
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}]", uid);
         } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
     }
 
     @Override
-    public boolean registerAccount(final String uid, final String yubikeyPublicId) {
-        final JpaYubiKeyAccount account = new JpaYubiKeyAccount();
-        account.setPublicId(yubikeyPublicId);
-        account.setUsername(uid);
-        return this.entityManager.merge(account) != null;
+    public boolean registerAccountFor(final String uid, final String token) {
+
+        if (accountValidator.isValid(uid, token)) {
+            final String yubikeyPublicId = YubicoClient.getPublicId(token);
+            final JpaYubiKeyAccount account = new JpaYubiKeyAccount();
+            account.setPublicId(yubikeyPublicId);
+            account.setUsername(uid);
+            return this.entityManager.merge(account) != null;
+        }
+        return false;
     }
 
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         try {
             return this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username and r.publicId = :publicId"),
-                    JpaYubiKeyAccountRegistry.class)
+                    JpaYubiKeyAccount.class)
                     .setParameter("username", uid)
                     .setParameter("publicId", yubikeyPublicId)
                     .getSingleResult() != null;
