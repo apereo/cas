@@ -30,9 +30,9 @@ public class DefaultYubiKeyAccountValidator implements YubiKeyAccountValidator {
                 final ResponseStatus status = response.getStatus();
                 if (status.compareTo(ResponseStatus.OK) == 0) {
                     LOGGER.debug("YubiKey response status [{}] at [{}]", status, response.getTimestamp());
-                } else {
-                    LOGGER.error("Failed to verify YubiKey token: [{}]", response);
+                    return true;
                 }
+                LOGGER.error("Failed to verify YubiKey token: [{}]", response);
             } else {
                 LOGGER.error("Invalid YubiKey token: [{}]", token);
             }
