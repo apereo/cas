@@ -1,6 +1,8 @@
 package org.apereo.cas.config.support.authentication;
 
+import com.yubico.client.v2.YubicoClient;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.adaptors.yubikey.DefaultYubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
@@ -12,6 +14,7 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountCheckRegistrationA
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -75,9 +78,10 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
         return new DefaultPrincipalFactory();
     }
 
-    @Bean
     @RefreshScope
-    public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
+    @Bean
+    @ConditionalOnMissingBean(name = "yubicoClient")
+    public YubicoClient yubicoClient() {
         final MultifactorAuthenticationProperties.YubiKey yubi = this.casProperties.getAuthn().getMfa().getYubikey();
 
         if (StringUtils.isBlank(yubi.getSecretKey())) {
@@ -86,14 +90,23 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
         if (yubi.getClientId() <= 0) {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
+
+        final YubicoClient client = YubicoClient.getClient(yubi.getClientId(), yubi.getSecretKey());
+        if (!yubi.getApiUrls().isEmpty()) {
+            final String[] urls = yubi.getApiUrls().toArray(new String[]{});
+            client.setWsapiUrls(urls);
+        }
+        return client;
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
+    public AuthenticationHandler yubikeyAuthenticationHandler() {
+        final MultifactorAuthenticationProperties.YubiKey yubi = this.casProperties.getAuthn().getMfa().getYubikey();
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getName(),
                 servicesManager, yubikeyPrincipalFactory(),
-                yubi.getClientId(), yubi.getSecretKey(), yubiKeyAccountRegistry());
-
-        if (!casProperties.getAuthn().getMfa().getYubikey().getApiUrls().isEmpty()) {
-            final String[] urls = yubi.getApiUrls().toArray(new String[]{});
-            handler.getClient().setWsapiUrls(urls);
-        }
+                yubicoClient(), yubiKeyAccountRegistry());
         return handler;
     }
 
@@ -113,7 +126,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubiKeyAccountValidator")
     public YubiKeyAccountValidator yubiKeyAccountValidator() {
-        return (uid, publicId) -> true;
+        return new DefaultYubiKeyAccountValidator(yubicoClient());
     }
 
     @Bean
@@ -142,7 +155,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
     @RefreshScope
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
         final YubiKeyMultifactorAuthenticationProvider p = new YubiKeyMultifactorAuthenticationProvider(
-                yubikeyAuthenticationHandler(),
+                yubicoClient(),
                 this.httpClient);
         p.setBypassEvaluator(yubikeyBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
