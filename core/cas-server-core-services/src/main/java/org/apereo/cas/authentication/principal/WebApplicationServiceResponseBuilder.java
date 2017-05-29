@@ -79,7 +79,7 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
 
     @Override
     public boolean supports(final WebApplicationService service) {
-        return service instanceof WebApplicationService;
+        return true;
     }
 
     @Override
