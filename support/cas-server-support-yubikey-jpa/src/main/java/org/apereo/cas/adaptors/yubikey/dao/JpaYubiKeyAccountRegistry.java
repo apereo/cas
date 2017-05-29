@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
 import com.yubico.client.v2.YubicoClient;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ import javax.persistence.PersistenceContext;
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaYubiKeyAccountRegistry.class);
 
-    private static final String SELECT_QUERY = "SELECT r from JpaYubiKeyAccount r ";
+    private static final String SELECT_QUERY = "SELECT r from YubiKeyAccount r ";
 
     @PersistenceContext(unitName = "yubiKeyEntityManagerFactory")
     private EntityManager entityManager;
@@ -31,12 +32,12 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public JpaYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator) {
         super(accountValidator);
     }
-
+    
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid) {
         try {
             return this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
-                    JpaYubiKeyAccount.class)
+                    YubiKeyAccount.class)
                     .setParameter("username", uid)
                     .getSingleResult() != null;
         } catch (final NoResultException e) {
@@ -52,7 +53,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
         if (accountValidator.isValid(uid, token)) {
             final String yubikeyPublicId = YubicoClient.getPublicId(token);
-            final JpaYubiKeyAccount account = new JpaYubiKeyAccount();
+            final YubiKeyAccount account = new YubiKeyAccount();
             account.setPublicId(yubikeyPublicId);
             account.setUsername(uid);
             return this.entityManager.merge(account) != null;
@@ -64,7 +65,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         try {
             return this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username and r.publicId = :publicId"),
-                    JpaYubiKeyAccount.class)
+                    YubiKeyAccount.class)
                     .setParameter("username", uid)
                     .setParameter("publicId", yubikeyPublicId)
                     .getSingleResult() != null;

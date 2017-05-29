@@ -21,5 +21,9 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
     public BaseYubiKeyAccountRegistry() {
         this(null);
     }
-    
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }
