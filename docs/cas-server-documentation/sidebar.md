@@ -39,6 +39,7 @@ layout: null
         *   [SPNEGO](/$version/installation/SPNEGO-Authentication.html)
         *   [Remote Address](/$version/installation/Remote-Address-Authentication.html)
         *   [Trusted](/$version/installation/Trusted-Authentication.html)
+        *   [Cassandra](/$version/installation/Cassandra-Authentication.html)
         *   [JWT](/$version/installation/JWT-Authentication.html)
         *   [Rest](/$version/installation/Rest-Authentication.html)
         *   [AWS Cloud Directory](/$version/installation/AWS-CloudDirectory-Authentication.html)

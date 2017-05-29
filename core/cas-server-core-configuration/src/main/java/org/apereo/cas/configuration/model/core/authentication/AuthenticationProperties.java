@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
@@ -44,6 +45,9 @@ import java.util.List;
  */
 public class AuthenticationProperties {
 
+    @NestedConfigurationProperty
+    private CassandraAuthenticationProperties cassandra = new CassandraAuthenticationProperties();
+    
     @NestedConfigurationProperty
     private CloudDirectoryProperties cloudDirectory = new CloudDirectoryProperties();
     
@@ -437,5 +441,13 @@ public class AuthenticationProperties {
 
     public void setCloudDirectory(final CloudDirectoryProperties cloudDirectory) {
         this.cloudDirectory = cloudDirectory;
+    }
+
+    public CassandraAuthenticationProperties getCassandra() {
+        return cassandra;
+    }
+
+    public void setCassandra(final CassandraAuthenticationProperties cassandra) {
+        this.cassandra = cassandra;
     }
 }
