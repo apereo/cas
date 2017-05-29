@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
+import com.yubico.client.v2.YubicoClient;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.util.ResourceUtils;
 import org.slf4j.Logger;
@@ -29,15 +30,19 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
     }
 
     @Override
-    public boolean registerAccount(final String uid, final String yubikeyPublicId) {
+    public boolean registerAccountFor(final String uid, final String token) {
         try {
-            final File file = jsonResource.getFile();
-            this.devices.put(uid, yubikeyPublicId);
-            MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
-            return true;
+            if (accountValidator.isValid(uid, token)) {
+                final String yubikeyPublicId = YubicoClient.getPublicId(token);
+                final File file = jsonResource.getFile();
+                this.devices.put(uid, yubikeyPublicId);
+                MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+                return true;
+            }
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
+        return false;
     }
 
     private static Map<String, String> getDevicesFromJsonResource(final Resource jsonResource) {
