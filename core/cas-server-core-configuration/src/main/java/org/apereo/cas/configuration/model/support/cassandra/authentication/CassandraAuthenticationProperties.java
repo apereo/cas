@@ -7,12 +7,30 @@ package org.apereo.cas.configuration.model.support.cassandra.authentication;
  * @since 5.2.0
  */
 public class CassandraAuthenticationProperties {
+    private String name;
+    private Integer order;
     private String username;
     private String password;
     private String keyspace;
     private String contactPoints;
     private String localDc;
     private String consistencyLevel;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(final Integer order) {
+        this.order = order;
+    }
 
     public String getUsername() {
         return username;
