@@ -56,7 +56,7 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
 
             return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser, attributes));
         }
-        LOGGER.debug("No User [{}] found in HttpServletRequest");
+        LOGGER.debug("No user found in HttpServletRequest");
         return null;
     }
 
