@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.yubikey.dao;
+package org.apereo.cas.adaptors.yubikey;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -10,14 +10,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * This is {@link JpaYubiKeyAccount}.
+ * This is {@link YubiKeyAccount}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Entity
 @Table(name = "YubiKeyAccount")
-public class JpaYubiKeyAccount {
+public class YubiKeyAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
