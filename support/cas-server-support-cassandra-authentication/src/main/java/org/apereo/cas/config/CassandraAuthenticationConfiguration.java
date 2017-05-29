@@ -1,8 +1,20 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CassandraAuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -13,8 +25,34 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("cassandraAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CassandraAuthenticationConfiguration {
+public class CassandraAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Bean
+    public PrincipalFactory cassandraPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
+    @Bean
+    @RefreshScope
+    public AuthenticationHandler cassandraAuthenticationHandler() {
+        final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
+        return new CassandraAuthenticationHandler(cassandra.getName(), servicesManager, cassandraPrincipalFactory(),
+                cassandra.getOrder());
+    }
+
+    @Override
+    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+        plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler(), personDirectoryPrincipalResolver);
+    }
 }
