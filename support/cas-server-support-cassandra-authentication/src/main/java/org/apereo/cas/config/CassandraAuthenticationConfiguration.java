@@ -4,6 +4,10 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CassandraAuthenticationHandler;
+import org.apereo.cas.authentication.CassandraRepository;
+import org.apereo.cas.authentication.CassandraSessionFactory;
+import org.apereo.cas.authentication.DefaultCassandraRepository;
+import org.apereo.cas.authentication.DefaultCassandraSessionFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -30,7 +34,7 @@ public class CassandraAuthenticationConfiguration implements AuthenticationEvent
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -45,10 +49,25 @@ public class CassandraAuthenticationConfiguration implements AuthenticationEvent
 
     @Bean
     @RefreshScope
+    public CassandraRepository cassandraRepository() {
+        final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
+        return new DefaultCassandraRepository(cassandra, cassandraSessionFactory());
+    }
+
+    @Bean
+    @RefreshScope
+    public CassandraSessionFactory cassandraSessionFactory() {
+        final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
+        return new DefaultCassandraSessionFactory(cassandra);
+    }
+
+    @Bean
+    @RefreshScope
     public AuthenticationHandler cassandraAuthenticationHandler() {
         final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
-        return new CassandraAuthenticationHandler(cassandra.getName(), servicesManager, cassandraPrincipalFactory(),
-                cassandra.getOrder());
+        return new CassandraAuthenticationHandler(cassandra.getName(), servicesManager,
+                cassandraPrincipalFactory(),
+                cassandra.getOrder(), cassandra, cassandraRepository());
     }
 
     @Override
