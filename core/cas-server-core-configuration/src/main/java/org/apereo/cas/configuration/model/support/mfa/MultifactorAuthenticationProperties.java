@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
@@ -405,6 +406,9 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private List<String> apiUrls = new ArrayList<>();
         private boolean trustedDeviceEnabled;
 
+        private Jpa jpa = new Jpa();
+        private Mongodb mongodb = new Mongodb();
+
         public YubiKey() {
             setId("mfa-yubikey");
         }
@@ -455,6 +459,31 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         public void setAllowedDevices(final Map<String, String> allowedDevices) {
             this.allowedDevices = allowedDevices;
+        }
+        
+        public Jpa getJpa() {
+            return jpa;
+        }
+
+        public void setJpa(final Jpa jpa) {
+            this.jpa = jpa;
+        }
+
+        public Mongodb getMongodb() {
+            return mongodb;
+        }
+
+        public void setMongodb(final Mongodb mongodb) {
+            this.mongodb = mongodb;
+        }
+
+        public static class Jpa extends AbstractJpaProperties {
+        }
+
+        public static class Mongodb extends AbstractMongoClientProperties {
+            public Mongodb() {
+                setCollection("MongoDbYubiKeyRepository");
+            }
         }
     }
 
