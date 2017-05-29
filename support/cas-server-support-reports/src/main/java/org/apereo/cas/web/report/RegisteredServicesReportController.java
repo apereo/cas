@@ -9,7 +9,6 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -44,6 +43,7 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
      *
      * @param request  the request
      * @param response the response
+     * @return the web async task
      * @throws Exception the exception
      */
     @GetMapping

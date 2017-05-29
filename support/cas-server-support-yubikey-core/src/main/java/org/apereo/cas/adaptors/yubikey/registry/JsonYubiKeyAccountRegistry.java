@@ -49,8 +49,8 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
         try {
             if (!ResourceUtils.doesResourceExist(jsonResource)) {
                 final boolean res = jsonResource.getFile().createNewFile();
-                if (!res) {
-                    LOGGER.warn("Could not auto-create JSON resource @ [{}]", jsonResource);
+                if (res) {
+                    LOGGER.debug("Created JSON resource @ [{}]", jsonResource);
                 }
             }
             if (ResourceUtils.doesResourceExist(jsonResource)) {

@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
@@ -354,7 +353,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.memory = memory;
         }
 
-        public static class Memory {
+        public static class Memory implements Serializable {
             private long expireRegistrations = 30;
             private TimeUnit expireRegistrationsTimeUnit = TimeUnit.SECONDS;
 
@@ -542,7 +541,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.client = client;
         }
 
-        public static class Server {
+        public static class Server implements Serializable {
             private String protocol = "EAP_MSCHAPv2";
             private int retries = 3;
             private String nasIdentifier;
@@ -628,7 +627,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         }
 
-        public static class Client {
+        public static class Client implements Serializable {
             private String inetAddress = "localhost";
             private String sharedSecret = "N0Sh@ar3d$ecReT";
             private int socketTimeout;
@@ -914,7 +913,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.cleaner = cleaner;
         }
 
-        public static class Rest {
+        public static class Rest implements Serializable {
             private String endpoint;
 
             public String getEndpoint() {
@@ -1138,7 +1137,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         public static class Json extends AbstractConfigProperties {
         }
 
-        public static class Rest {
+        public static class Rest implements Serializable {
             private String endpointUrl;
 
             public String getEndpointUrl() {
@@ -1167,7 +1166,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             }
         }
 
-        public static class Jpa {
+        public static class Jpa implements Serializable {
             private Database database = new Database();
 
             public Database getDatabase() {
