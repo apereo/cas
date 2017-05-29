@@ -14,14 +14,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 
 /**
- * This is {@link CasWebApplicationSecurityConfiguration}.
+ * This is {@link CasWebApplicationSpringSecurityConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casWebApplicationSecurityConfiguration")
+@Configuration("casWebApplicationSpringSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasWebApplicationSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
+public class CasWebApplicationSpringSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
