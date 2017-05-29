@@ -2378,11 +2378,6 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.trustedDeviceEnabled=true
 # cas.authn.mfa.yubikey.name=
 
-# cas.authn.mfa.yubikey.jsonFile=file:/etc/cas/deviceRegistrations.json
-
-# cas.authn.mfa.yubikey.allowedDevices.uid1=yubikeyPublicId1
-# cas.authn.mfa.yubikey.allowedDevices.uid2=yubikeyPublicId2
-
 # cas.authn.mfa.yubikey.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.yubikey.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.yubikey.bypass.authenticationAttributeName=bypass|skip
@@ -2390,6 +2385,54 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.yubikey.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.yubikey.bypass.credentialClassType=UsernamePassword.+
+```
+
+#### YubiKey JSON Device Store
+
+```properties
+# cas.authn.mfa.yubikey.jsonFile=file:/etc/cas/deviceRegistrations.json
+```
+
+#### YubiKey Whitelist Device Store
+
+```properties
+# cas.authn.mfa.yubikey.allowedDevices.uid1=yubikeyPublicId1
+# cas.authn.mfa.yubikey.allowedDevices.uid2=yubikeyPublicId2
+```
+
+### YubiKey JPA Device Store
+
+```properties
+# cas.authn.mfa.yubikey.jpa.healthQuery=
+# cas.authn.mfa.yubikey.jpa.isolateInternalQueries=false
+# cas.authn.mfa.yubikey.jpa.url=jdbc:hsqldb:mem:cas-yubikeymfa
+# cas.authn.mfa.yubikey.jpa.failFast=true
+# cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.mfa.yubikey.jpa.leakThreshold=10
+# cas.authn.mfa.yubikey.jpa.batchSize=1
+# cas.authn.mfa.yubikey.jpa.defaultCatalog=
+# cas.authn.mfa.yubikey.jpa.defaultSchema=
+# cas.authn.mfa.yubikey.jpa.user=sa
+# cas.authn.mfa.yubikey.jpa.ddlAuto=create-drop
+# cas.authn.mfa.yubikey.jpa.password=
+# cas.authn.mfa.yubikey.jpa.autocommit=false
+# cas.authn.mfa.yubikey.jpa.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.mfa.yubikey.jpa.idleTimeout=5000
+# cas.authn.mfa.yubikey.jpa.dataSourceName=
+# cas.authn.mfa.yubikey.jpa.dataSourceProxy=false
+
+# cas.authn.mfa.yubikey.jpa.pool.suspension=false
+# cas.authn.mfa.yubikey.jpa.pool.minSize=6
+# cas.authn.mfa.yubikey.jpa.pool.maxSize=18
+# cas.authn.mfa.yubikey.jpa.pool.maxWait=2000
+```
+
+### YubiKey MongoDb Device Store
+
+```properties
+# cas.authn.mfa.yubikey.mongodb.clientUri=
+# cas.authn.mfa.yubikey.mongodb.dropCollection=false
+# cas.authn.mfa.yubikey.mongodb.collection=MongoDbYubiKeyRepository
 ```
 
 ### Radius OTP

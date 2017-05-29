@@ -77,3 +77,21 @@ public class MyYubiKeyConfiguration {
   }
 }
 ```
+
+## Device Registrations
+
+In the event that a new YubiKey should be registered, it may be desirable to execute additional validation processes before the account is registered with the underlying store. By default, the device registration step only verifies the device token. If you wish to extend this behavior, you can design your own validator that cross-checks the account against alternative sources and databases for validity and authorization:
+
+```java
+package org.apereo.cas.support.yubikey;
+
+@Configuration("myYubiKeyConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MyYubiKeyConfiguration {
+
+  @Bean
+  public YubiKeyAccountValidator yubiKeyAccountValidator() {
+      ...
+  }
+}
+```
