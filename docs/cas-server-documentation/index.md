@@ -3,7 +3,7 @@ layout: default
 title: CAS - Home
 ---
 
-# Enterprise Single Sign-On
+# CAS Enterprise Single Sign-On
 
 * Spring Webflow/Spring Boot [Java server component](planning/Architecture.html).
 * [Pluggable authentication support](Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), 
@@ -11,11 +11,12 @@ title: CAS - Home
 [JAAS](installation/JAAS-Authentication.html), [JWT](installation/JWT-Authentication.html), 
 [RADIUS](installation/RADIUS-Authentication.html), [MongoDb](installation/MongoDb-Authentication.html), etc)
 * Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML](protocol/SAML-Protocol.html), [WS-Federation](protocol/WS-Federation-Protocol.html),
-[OAuth2](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html))
+[OAuth2](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
 * Support for [multifactor authentication](installation/Configuring-Multifactor-Authentication.html) via a variety of 
 providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U2F](installation/FIDO-U2F-Authentication.html), 
-[YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), etc)
+[YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [Microsoft Azure](installation/MicrosoftAzure-Authentication.html), etc)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, etc.
+* Built-in Support for [password management](installation/Password-Management.html).
 * [Monitor and track](installation/Monitoring-Statistics.html) application behavior, statistics and logs in real time.
 * Manage and register [client applications and services](installation/Service-Management.html) with specific authentication policies.
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc).

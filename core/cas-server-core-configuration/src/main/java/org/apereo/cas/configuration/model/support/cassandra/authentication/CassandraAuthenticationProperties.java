@@ -23,7 +23,7 @@ public class CassandraAuthenticationProperties {
     private String consistencyLevel = "LOCAL_QUORUM";
     private String serialConsistencyLevel = "LOCAL_SERIAL";
 
-    private int maxConnections = 1;
+    private int maxConnections = 10;
     private int coreConnections = 1;
     private int maxRequestsPerConnection = 1024;
     private int connectTimeoutMillis = 5000;
