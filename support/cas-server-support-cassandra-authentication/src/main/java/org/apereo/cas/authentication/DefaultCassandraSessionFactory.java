@@ -18,6 +18,9 @@ import org.apereo.cas.configuration.model.support.cassandra.authentication.Cassa
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -26,12 +29,12 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class DefaultCassandraSessionFactory implements CassandraSessionFactory {
+public class DefaultCassandraSessionFactory implements CassandraSessionFactory, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCassandraSessionFactory.class);
 
     private final Cluster cluster;
     private final Session session;
-    
+
     public DefaultCassandraSessionFactory(final CassandraAuthenticationProperties cassandra) {
         this.cluster = initializeCassandraCluster(cassandra);
         this.session = cluster.connect(cassandra.getKeyspace());
@@ -95,12 +98,32 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory {
         return cluster;
     }
 
-    public Cluster getCluster() {
-        return cluster;
-    }
-
     @Override
     public Session getSession() {
         return session;
+    }
+
+    /**
+     * Destroy.
+     */
+    @PreDestroy
+    public void destroy() {
+        try {
+            LOGGER.debug("Closing Cassandra session");
+            session.close();
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+        try {
+            LOGGER.debug("Closing Cassandra cluster");
+            cluster.close();
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        destroy();
     }
 }
