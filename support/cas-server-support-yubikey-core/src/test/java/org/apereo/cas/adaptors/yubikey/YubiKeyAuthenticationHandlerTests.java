@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -12,6 +13,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -66,7 +68,9 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkAccountNotFound() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler("", null, null, CLIENT_ID, SECRET_KEY, (uid, yubikeyPublicId) -> false);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler("",
+                null, null, CLIENT_ID, SECRET_KEY,
+                 new WhitelistYubiKeyAccountRegistry(new HashMap<>()));
         this.thrown.expect(AccountNotFoundException.class);
         handler.authenticate(new YubiKeyCredential(OTP));
     }

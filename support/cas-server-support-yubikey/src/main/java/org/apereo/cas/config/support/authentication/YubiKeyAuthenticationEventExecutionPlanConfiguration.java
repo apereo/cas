@@ -2,6 +2,7 @@ package org.apereo.cas.config.support.authentication;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.registry.JsonYubiKeyAccountRegistry;
@@ -22,6 +23,8 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,6 +41,8 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("yubikeyAuthenticationEventExecutionPlanConfiguration")
 public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(YubiKeyAuthenticationEventExecutionPlanConfiguration.class);
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -104,6 +109,12 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
         return new YubiKeyAccountSaveRegistrationAction(yubiKeyAccountRegistry());
     }
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "yubiKeyAccountValidator")
+    public YubiKeyAccountValidator yubiKeyAccountValidator() {
+        return (uid, publicId) -> true;
+    }
 
     @Bean
     @RefreshScope
@@ -112,11 +123,18 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
         final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
 
         if (yubi.getJsonFile() != null) {
-            return new JsonYubiKeyAccountRegistry(yubi.getJsonFile());
+            LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
+            return new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
         }
         if (yubi.getAllowedDevices() != null) {
-            return new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices());
+            LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
+                    yubi.getAllowedDevices().keySet());
+            return new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
         }
+
+        LOGGER.warn("All credentials are considered eligible for YubiKey authentication. "
+                        + "Consider providing an account registry implementation via [{}]",
+                YubiKeyAccountRegistry.class.getName());
         return new OpenYubiKeyAccountRegistry();
     }
 
