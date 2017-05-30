@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.cassandra;
 
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.policies.DefaultRetryPolicy;

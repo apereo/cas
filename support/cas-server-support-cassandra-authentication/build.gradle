@@ -5,6 +5,7 @@ dependencies {
     compile project(":core:cas-server-core-webflow")
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-util")
+    compile project(":support:cas-server-support-cassandra-core")
     implementation libraries.cassandra
     implementation libraries.httpclient
 }
