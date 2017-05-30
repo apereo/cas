@@ -1202,6 +1202,36 @@ Used to geo-profile authentication events.
 # cas.maxmind.countryDatabase=file:/etc/cas/maxmind/GeoLite2-Country.mmdb
 ```
 
+## Cassandra Authentication
+
+To learn more about this topic, [please review this guide](Cassandra-Authentication.html).
+
+```properties
+cas.authn.cassandra.usernameAttribute=
+cas.authn.cassandra.passwordAttribute=
+cas.authn.cassandra.tableName=
+cas.authn.cassandra.username=
+cas.authn.cassandra.password=
+
+cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
+cas.authn.cassandra.keyspace=
+cas.authn.cassandra.contactPoints=localhost1,localhost2
+cas.authn.cassandra.localDc=
+cas.authn.cassandra.shuffleReplicas=true
+cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
+cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
+cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+cas.authn.cassandra.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+cas.authn.cassandra.maxConnections=10
+cas.authn.cassandra.coreConnections=1
+cas.authn.cassandra.maxRequestsPerConnection=1024
+cas.authn.cassandra.connectTimeoutMillis=5000
+cas.authn.cassandra.readTimeoutMillis=5000
+cas.authn.cassandra.port=9042
+cas.authn.cassandra.name=
+cas.authn.cassandra.order=
+```
+
 ## Digest Authentication
 
 To learn more about this topic, [please review this guide](Digest-Authentication.html).
