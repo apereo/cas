@@ -5,6 +5,7 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
