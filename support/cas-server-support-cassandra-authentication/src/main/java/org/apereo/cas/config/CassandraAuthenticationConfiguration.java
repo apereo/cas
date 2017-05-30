@@ -5,12 +5,11 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CassandraAuthenticationHandler;
 import org.apereo.cas.authentication.CassandraRepository;
-import org.apereo.cas.authentication.CassandraSessionFactory;
 import org.apereo.cas.authentication.DefaultCassandraRepository;
-import org.apereo.cas.authentication.DefaultCassandraSessionFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -32,6 +31,10 @@ import org.springframework.context.annotation.Configuration;
 public class CassandraAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
     @Autowired
+    @Qualifier("cassandraSessionFactory")
+    private CassandraSessionFactory cassandraSessionFactory;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
@@ -51,15 +54,9 @@ public class CassandraAuthenticationConfiguration implements AuthenticationEvent
     @RefreshScope
     public CassandraRepository cassandraRepository() {
         final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
-        return new DefaultCassandraRepository(cassandra, cassandraSessionFactory());
+        return new DefaultCassandraRepository(cassandra, cassandraSessionFactory);
     }
 
-    @Bean
-    @RefreshScope
-    public CassandraSessionFactory cassandraSessionFactory() {
-        final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
-        return new DefaultCassandraSessionFactory(cassandra);
-    }
 
     @Bean
     @RefreshScope
