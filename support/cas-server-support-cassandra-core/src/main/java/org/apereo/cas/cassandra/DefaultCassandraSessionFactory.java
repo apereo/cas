@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.cassandra;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
@@ -14,7 +14,7 @@ import com.datastax.driver.core.policies.LoggingRetryPolicy;
 import com.datastax.driver.core.policies.RetryPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +35,12 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
     private final Cluster cluster;
     private final Session session;
 
-    public DefaultCassandraSessionFactory(final CassandraAuthenticationProperties cassandra) {
+    public DefaultCassandraSessionFactory(final BaseCassandraProperties cassandra) {
         this.cluster = initializeCassandraCluster(cassandra);
         this.session = cluster.connect(cassandra.getKeyspace());
     }
 
-    private static Cluster initializeCassandraCluster(final CassandraAuthenticationProperties cassandra) {
+    private static Cluster initializeCassandraCluster(final BaseCassandraProperties cassandra) {
         final Cluster cluster;
         final PoolingOptions poolingOptions = new PoolingOptions()
                 .setMaxRequestsPerConnection(HostDistance.LOCAL, cassandra.getMaxRequestsPerConnection())
@@ -81,18 +81,9 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
 
         if (LOGGER.isDebugEnabled()) {
             cluster.getMetadata().getAllHosts().forEach(clusterHost -> {
-                LOGGER.debug("Host [{}]:\n\n" +
-                                "\tDC: [{}]\n" +
-                                "\tRack: [{}] \n" +
-                                "\tVersion: [{}]\n" +
-                                "\tDistance: [{}]\n" +
-                                "\tUp?: [{}]\n",
-                        clusterHost.getAddress(),
-                        clusterHost.getDatacenter(),
-                        clusterHost.getRack(),
-                        clusterHost.getCassandraVersion(),
-                        loadBalancingPolicy.distance(clusterHost),
-                        clusterHost.isUp());
+                LOGGER.debug("Host [{}]:\n\n\tDC: [{}]\n\tRack: [{}]\n\tVersion: [{}]\n\tDistance: [{}]\n\tUp?: [{}]\n",
+                        clusterHost.getAddress(), clusterHost.getDatacenter(), clusterHost.getRack(),
+                        clusterHost.getCassandraVersion(), loadBalancingPolicy.distance(clusterHost), clusterHost.isUp());
             });
         }
         return cluster;
@@ -100,7 +91,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
 
     @Override
     public Session getSession() {
-        return session;
+        return this.session;
     }
 
     /**
