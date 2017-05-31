@@ -38,6 +38,9 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
         if (responseType == Response.ResponseType.REDIRECT) {
             return buildRedirect(finalService, parameters);
         }
+        if (responseType == Response.ResponseType.HEADER) {
+            return buildHeader(finalService, parameters);
+        }
 
         throw new IllegalArgumentException("Response type is valid. Only POST/REDIRECT are supported");
     }
