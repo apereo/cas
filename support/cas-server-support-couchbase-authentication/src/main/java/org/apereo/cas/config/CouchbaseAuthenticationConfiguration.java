@@ -51,7 +51,8 @@ public class CouchbaseAuthenticationConfiguration implements AuthenticationEvent
     @RefreshScope
     public AuthenticationHandler couchbaseAuthenticationHandler() {
         final CouchbaseAuthenticationProperties couchbase = casProperties.getAuthn().getCouchbase();
-        final CouchbaseAuthenticationHandler handler = new CouchbaseAuthenticationHandler(couchbase.getName(), servicesManager, couchbaseAuthenticationHandler());
+        final CouchbaseAuthenticationHandler handler = new CouchbaseAuthenticationHandler(couchbase.getName(), servicesManager,
+                couchbasePrincipalFactory(), couchbase.getOrder());
         handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
         handler.setPasswordEncoder(Beans.newPasswordEncoder(couchbase.getPasswordEncoder()));
         return handler;
