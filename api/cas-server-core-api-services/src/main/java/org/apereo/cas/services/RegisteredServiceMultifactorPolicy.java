@@ -35,7 +35,12 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
         /**
          * Do not check for failure at all.
          */
-        NONE
+        NONE,
+
+        /**
+         * The default one indicating that no failure mode is set at all.
+         */
+        NOT_SET
     }
 
     /**
