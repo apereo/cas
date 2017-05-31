@@ -125,6 +125,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 CasWebflowConstants.STATE_ID_REDIRECT,
                 createEvaluateAction("redirectToServiceAction"));
         createTransitionForState(redirectToView, Response.ResponseType.POST.name().toLowerCase(), CasWebflowConstants.STATE_ID_POST_VIEW);
+        createTransitionForState(redirectToView, Response.ResponseType.HEADER.name().toLowerCase(), CasWebflowConstants.STATE_ID_HEADER_VIEW);
         createTransitionForState(redirectToView, Response.ResponseType.REDIRECT.name().toLowerCase(), CasWebflowConstants.STATE_ID_REDIR_VIEW);
     }
 
@@ -172,6 +173,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createServiceErrorEndState(flow);
         createRedirectEndState(flow);
         createPostEndState(flow);
+        createHeaderEndState(flow);
         createGenericLoginSuccessEndState(flow);
         createServiceWarningViewState(flow);
     }
@@ -192,6 +194,11 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      */
     protected void createPostEndState(final Flow flow) {
         createEndState(flow, CasWebflowConstants.STATE_ID_POST_VIEW, CasWebflowConstants.VIEW_ID_POST_RESPONSE);
+    }
+
+    protected void createHeaderEndState(final Flow flow) {
+        final EndState endState = createEndState(flow, CasWebflowConstants.STATE_ID_HEADER_VIEW);
+        endState.setFinalResponseAction(createEvaluateAction("injectResponseHeadersAction"));
     }
 
     /**

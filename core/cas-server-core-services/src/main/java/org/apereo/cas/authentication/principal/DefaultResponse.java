@@ -60,6 +60,10 @@ public class DefaultResponse implements Response {
         return new DefaultResponse(ResponseType.POST, url, attributes);
     }
 
+    public static Response getHeaderResponse(final String url, final Map<String, String> attributes) {
+        return new DefaultResponse(ResponseType.POST, url, attributes);
+    }
+
     /**
      * Gets the redirect response.
      *
