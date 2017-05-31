@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.cassandra.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+
 /**
  * This is {@link CassandraAuthenticationProperties}.
  *
@@ -12,6 +15,26 @@ public class CassandraAuthenticationProperties extends BaseCassandraProperties {
     private String usernameAttribute;
     private String passwordAttribute;
     private String tableName;
+
+    private PasswordEncoderProperties passwordEncoder;
+    private PrincipalTransformationProperties principalTransformation;
+
+
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public PrincipalTransformationProperties getPrincipalTransformation() {
+        return principalTransformation;
+    }
+
+    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+        this.principalTransformation = principalTransformation;
+    }
 
     public String getTableName() {
         return tableName;
