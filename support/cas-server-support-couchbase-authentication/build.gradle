@@ -1,0 +1,7 @@
+description = "Apereo CAS Couchbase Authentication Support"
+dependencies {
+    compile project(":core:cas-server-core-util")
+    compile project(":support:cas-server-support-couchbase-core")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":api:cas-server-core-api")
+}
