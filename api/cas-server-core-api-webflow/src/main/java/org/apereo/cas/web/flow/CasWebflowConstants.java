@@ -153,6 +153,11 @@ public interface CasWebflowConstants {
     String STATE_ID_POST_VIEW = "postView";
 
     /**
+     * The state 'headerView'.
+     */
+    String STATE_ID_HEADER_VIEW = "headerView";
+
+    /**
      * The state 'showWarningView'.
      */
     String STATE_ID_SHOW_WARNING_VIEW = "showWarningView";
