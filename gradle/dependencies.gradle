@@ -927,7 +927,17 @@ ext.libraries = [
                 }
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
-
+        sqrlserver : [
+                dependencies.create("com.github.sqrlserverjava:sqrl-server-base:$sqrlVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.zxing", module: "core")
+                    force = true
+                },
+                dependencies.create("com.github.sqrlserverjava:sqrl-server-atmosphere:1.0.0") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         jcifs                   : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
                     exclude(group: "javax.servlet", module: "servlet-api")
