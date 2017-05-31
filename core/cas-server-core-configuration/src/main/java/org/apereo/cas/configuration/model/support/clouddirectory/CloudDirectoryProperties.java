@@ -29,9 +29,9 @@ public class CloudDirectoryProperties {
     private String passwordAttributeName;
     private String usernameIndexPath;
 
-    private PrincipalTransformationProperties principalTransformation;
     private String name;
     private PasswordEncoderProperties passwordEncoder;
+    private PrincipalTransformationProperties principalTransformation;
     private int order = Integer.MAX_VALUE;
 
     public PrincipalTransformationProperties getPrincipalTransformation() {
