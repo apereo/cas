@@ -43,6 +43,20 @@ import java.util.stream.StreamSupport;
  */
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     /**
+     * The all tickets view name.
+     */
+    public static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
+
+    /**
+     * All tickets view.
+     */
+    public static final View ALL_TICKETS_VIEW = DefaultView.create(
+            VIEW_NAME_ALL_TICKETS,
+            "function(d,m) {emit(m.id);}",
+            "_count");
+
+
+    /**
      * Views available.
      */
     public static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_TICKETS_VIEW});
@@ -56,11 +70,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     
     private static final long MAX_EXP_TIME_IN_DAYS = 30;
     private static final String END_TOKEN = "\u02ad";
-    private static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
-    private static final View ALL_TICKETS_VIEW = DefaultView.create(
-            VIEW_NAME_ALL_TICKETS,
-            "function(d,m) {emit(m.id);}",
-            "_count");
 
     private final CouchbaseClientFactory couchbase;
 
