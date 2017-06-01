@@ -15,6 +15,57 @@ public class CouchbaseAuthenticationProperties {
     private PasswordEncoderProperties passwordEncoder;
     private int order = Integer.MAX_VALUE;
 
+    private String nodeSet = "localhost:8091";
+    private String password;
+    private String bucket = "default";
+
+    private String usernameAttribute = "username";
+    private String passwordAttribute = "psw";
+
+    public String getBucket() {
+        return bucket;
+    }
+
+    public void setBucket(final String bucket) {
+        this.bucket = bucket;
+    }
+    
+    public String getUsernameAttribute() {
+        return usernameAttribute;
+    }
+
+    public void setUsernameAttribute(final String usernameAttribute) {
+        this.usernameAttribute = usernameAttribute;
+    }
+
+    public String getPasswordAttribute() {
+        return passwordAttribute;
+    }
+
+    public void setPasswordAttribute(final String passwordAttribute) {
+        this.passwordAttribute = passwordAttribute;
+    }
+
+    public void setOrder(final int order) {
+        this.order = order;
+    }
+
+    public String getNodeSet() {
+        return nodeSet;
+    }
+
+    public void setNodeSet(final String nodeSet) {
+        this.nodeSet = nodeSet;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(final String password) {
+        this.password = password;
+    }
+
     public PrincipalTransformationProperties getPrincipalTransformation() {
         return principalTransformation;
     }
@@ -30,7 +81,7 @@ public class CouchbaseAuthenticationProperties {
     public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
         this.principalTransformation = principalTransformation;
     }
-    
+
     public String getName() {
         return name;
     }

@@ -45,6 +45,7 @@ layout: null
             *   [JWT Service Tickets](/$version/installation/Configure-ServiceTicket-JWT.html) 
         *   [Rest](/$version/installation/Rest-Authentication.html)
         *   [AWS Cloud Directory](/$version/installation/AWS-CloudDirectory-Authentication.html)
+        *   [Couchbase](/$version/installation/Couchbase-Authentication.html)
         *   [Basic](/$version/installation/Basic-Authentication.html)
         *   [Digest](/$version/installation/Digest-Authentication.html)
         *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)

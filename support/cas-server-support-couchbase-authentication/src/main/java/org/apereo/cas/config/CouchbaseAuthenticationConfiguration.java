@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +19,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
+
+import java.util.Set;
 
 /**
  * This is {@link CouchbaseAuthenticationConfiguration}.
@@ -46,13 +50,23 @@ public class CouchbaseAuthenticationConfiguration implements AuthenticationEvent
         return new DefaultPrincipalFactory();
     }
 
-    @ConditionalOnMissingBean(name = "amazonCloudDirectory")
+    @ConditionalOnMissingBean(name = "authenticationCouchbaseClientFactory")
+    @RefreshScope
+    @Bean
+    public CouchbaseClientFactory authenticationCouchbaseClientFactory() {
+        final CouchbaseAuthenticationProperties couchbase = casProperties.getAuthn().getCouchbase();
+        final Set<String> nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
+        return new CouchbaseClientFactory(nodes, couchbase.getBucket(), couchbase.getPassword());
+    }
+
+    @ConditionalOnMissingBean(name = "couchbaseAuthenticationHandler")
     @Bean
     @RefreshScope
     public AuthenticationHandler couchbaseAuthenticationHandler() {
         final CouchbaseAuthenticationProperties couchbase = casProperties.getAuthn().getCouchbase();
-        final CouchbaseAuthenticationHandler handler = new CouchbaseAuthenticationHandler(couchbase.getName(), servicesManager,
-                couchbasePrincipalFactory(), couchbase.getOrder());
+        final CouchbaseAuthenticationHandler handler = new CouchbaseAuthenticationHandler(
+                servicesManager, couchbasePrincipalFactory(),
+                authenticationCouchbaseClientFactory(), couchbase);
         handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
         handler.setPasswordEncoder(Beans.newPasswordEncoder(couchbase.getPasswordEncoder()));
         return handler;

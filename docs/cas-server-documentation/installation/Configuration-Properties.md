@@ -1922,6 +1922,32 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
 The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
 
+## Couchbase Authentication
+
+To learn more about this topic, [please review this guide](Couchbase-Authentication.html).
+
+```properties
+
+# cas.authn.couchbase.nodeSet=localhost:8091
+# cas.authn.couchbase.password=
+# cas.authn.couchbase.bucket=default
+# cas.authn.couchbase.usernameAttribute=username
+# cas.authn.couchbase.passwordAttribute=psw
+
+# cas.authn.couchbase.name=
+# cas.authn.couchbase.order=
+
+# cas.authn.couchbase.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
+# cas.authn.couchbase.passwordEncoder.characterEncoding=
+# cas.authn.couchbase.passwordEncoder.encodingAlgorithm=
+# cas.authn.couchbase.passwordEncoder.secret=
+# cas.authn.couchbase.passwordEncoder.strength=16
+
+# cas.authn.couchbase.principalTransformation.suffix=
+# cas.authn.couchbase.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.couchbase.principalTransformation.prefix=
+```
+
 ## Amazon Cloud Directory Authentication
 
 To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html).
