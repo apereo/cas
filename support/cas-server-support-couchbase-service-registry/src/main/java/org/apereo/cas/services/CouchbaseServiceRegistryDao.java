@@ -34,6 +34,13 @@ import java.util.List;
  */
 public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
     /**
+     * All services view.
+     */
+    public static final View ALL_SERVICES_VIEW = DefaultView.create(
+            "all_services",
+            "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
+
+    /**
      * All views.
      */
     public static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_SERVICES_VIEW});
@@ -45,9 +52,6 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
 
-    private static final View ALL_SERVICES_VIEW = DefaultView.create(
-            "all_services",
-            "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
 
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
