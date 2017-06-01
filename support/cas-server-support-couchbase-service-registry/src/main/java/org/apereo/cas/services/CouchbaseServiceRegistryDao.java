@@ -51,8 +51,7 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
     public static final String UTIL_DOCUMENT = "utils";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
-
-
+    
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
