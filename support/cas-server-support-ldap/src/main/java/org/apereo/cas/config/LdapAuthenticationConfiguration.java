@@ -171,40 +171,35 @@ public class LdapAuthenticationConfiguration {
             } catch (final Exception e) {
                 LOGGER.warn("Unable to construct an instance of the password policy handler", e);
             }
-        } else if (cfg.getPasswordWarningNumberOfDays() > 0) {
-            LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]",
-                    l.getPasswordPolicy().getType());
-            switch (l.getPasswordPolicy().getType()) {
-                case AD:
-                    handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-                    Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
-                        LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
-                        attributes.put(a, a);
-                    });
-                    break;
-                case FreeIPA:
-                    Arrays.stream(FreeIPAAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
-                        LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
-                        attributes.put(a, a);
-                    });
-                    handlers.add(new FreeIPAAuthenticationResponseHandler(
-                            Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
-                    break;
-                case EDirectory:
-                    Arrays.stream(EDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
-                        LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
-                        attributes.put(a, a);
-                    });
-                    handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-                    break;
-                default:
-                    handlers.add(new PasswordPolicyAuthenticationResponseHandler());
-                    handlers.add(new PasswordExpirationAuthenticationResponseHandler());
-                    break;
-            }
-        } else {
-            LOGGER.debug("Password warning number of days is undefined; LDAP authentication may NOT support [{}] "
-                    + "to handle password policy authentication responses", (Object[]) AbstractLdapProperties.LdapType.values());
+        }
+        LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", l.getPasswordPolicy().getType());
+        switch (l.getPasswordPolicy().getType()) {
+            case AD:
+                handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
+                    attributes.put(a, a);
+                });
+                break;
+            case FreeIPA:
+                Arrays.stream(FreeIPAAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
+                    attributes.put(a, a);
+                });
+                handlers.add(new FreeIPAAuthenticationResponseHandler(
+                        Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
+                break;
+            case EDirectory:
+                Arrays.stream(EDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
+                    attributes.put(a, a);
+                });
+                handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                break;
+            default:
+                handlers.add(new PasswordPolicyAuthenticationResponseHandler());
+                handlers.add(new PasswordExpirationAuthenticationResponseHandler());
+                break;
         }
         authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(new AuthenticationResponseHandler[handlers.size()]));
 
