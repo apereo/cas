@@ -21,13 +21,14 @@ import java.util.Arrays;
 @Configuration("SqrlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SqrlConfiguration {
-
+    private static final int AES_KEY_SIZE = 16;
+    
     @Bean
     public SqrlConfig sqrlConfig() {
         try {
             final SqrlConfig c = new SqrlConfig();
             final byte[] key = DigestUtils.sha("thekey".getBytes("UTF-8"));
-            c.setAESKeyBytes(Arrays.copyOf(key, 16));
+            c.setAESKeyBytes(Arrays.copyOf(key, AES_KEY_SIZE));
             c.setBackchannelServletPath("/cas/sqlcallback");
             return c;
         } catch (final Exception e) {
