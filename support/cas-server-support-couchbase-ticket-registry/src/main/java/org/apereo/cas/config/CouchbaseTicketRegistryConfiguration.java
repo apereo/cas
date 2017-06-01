@@ -4,13 +4,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.CouchbaseTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -32,16 +30,14 @@ public class CouchbaseTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("logoutManager")
-    private LogoutManager logoutManager;
-
     @RefreshScope
     @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
         final CouchbaseTicketRegistryProperties cb = casProperties.getTicket().getRegistry().getCouchbase();
         final Set<String> nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
-        return new CouchbaseClientFactory(nodes, cb.getBucket(), cb.getPassword(), cb.getTimeout());
+        return new CouchbaseClientFactory(nodes, cb.getBucket(),
+                cb.getBucket(), cb.getTimeout(), CouchbaseTicketRegistry.UTIL_DOCUMENT,
+                CouchbaseTicketRegistry.ALL_VIEWS);
     }
 
     @RefreshScope

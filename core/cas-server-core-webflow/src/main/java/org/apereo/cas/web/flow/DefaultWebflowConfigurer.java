@@ -196,6 +196,11 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createEndState(flow, CasWebflowConstants.STATE_ID_POST_VIEW, CasWebflowConstants.VIEW_ID_POST_RESPONSE);
     }
 
+    /**
+     * Create header end state.
+     *
+     * @param flow the flow
+     */
     protected void createHeaderEndState(final Flow flow) {
         final EndState endState = createEndState(flow, CasWebflowConstants.STATE_ID_HEADER_VIEW);
         endState.setFinalResponseAction(createEvaluateAction("injectResponseHeadersAction"));

@@ -38,7 +38,10 @@ public class CouchbaseServiceRegistryConfiguration {
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
         final CouchbaseServiceRegistryProperties couchbase = casProperties.getServiceRegistry().getCouchbase();
         final Set<String> nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
-        return new CouchbaseClientFactory(nodes, couchbase.getBucket(), couchbase.getPassword(), couchbase.getTimeout());
+        return new CouchbaseClientFactory(nodes, couchbase.getBucket(),
+                couchbase.getPassword(), couchbase.getTimeout(),
+                CouchbaseServiceRegistryDao.UTIL_DOCUMENT,
+                CouchbaseServiceRegistryDao.ALL_VIEWS);
     }
 
     @Bean
