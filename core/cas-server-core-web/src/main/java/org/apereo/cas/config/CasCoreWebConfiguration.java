@@ -19,7 +19,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
 /**
@@ -36,23 +36,27 @@ public class CasCoreWebConfiguration {
     private CasConfigurationProperties casProperties;
 
     /**
-     * Get messages from one or more property files containing values
-     * that should be exposed to Thyme templates but don't need i18n.
-     * Implementors could add custom-common-messages.properties to their overlay and
-     * keys in that will take precedence over the internal common-messages.properties.
+     * Load property files containing non-i18n fallback values
+     * that should be exposed to Thyme templates.
+     * keys in properties files added last will take precedence over the
+     * internal cas_common_messages.properties. 
      * Keys in regular messages bundles will override any of the common messages.
      * @return PropertiesFactoryBean containing all common (non-i18n) messages
      */
     @Bean
     public PropertiesFactoryBean casCommonMessages() {
         final PropertiesFactoryBean properties = new PropertiesFactoryBean();
-        final Resource[] propertyResources = new Resource[] {
-            new ClassPathResource("/common-messages.properties"),
-            new ClassPathResource("/custom-common-messages.properties"),
-        };
-        properties.setLocations(propertyResources);
+        final List<Resource> resourceList = new ArrayList<>();
+        final DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
+        resourceList.add(resourceLoader.getResource("classpath:/cas_common_messages.properties"));
+        for (final String resourceName : casProperties.getMessageBundle().getCommonNames()) {
+            final Resource resource = resourceLoader.getResource(resourceName);
+            // resource existence unknown at this point, let PropertiesFactoryBean determine and log
+            resourceList.add(resource);
+        }
+        properties.setLocations(resourceList.toArray(new Resource[]{}));
         properties.setSingleton(true);
-        properties.setIgnoreResourceNotFound(false);
+        properties.setIgnoreResourceNotFound(true);
         return properties;
     }
 
