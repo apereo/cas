@@ -17,12 +17,14 @@ open class CasPropertiesController {
         return hashMapOf("dependencies" to getAllProperties())
     }
 
-    open fun getAllProperties(): List<CasProperty> {
+    open fun readProperties() : String {
         val jsonUrl = URL(casServerConfigPropertiesEndpoint)
+        return jsonUrl.readText()
+    }
 
+    open fun getAllProperties(): List<CasProperty> {
         val propertiesList = mutableListOf<CasProperty>()
-
-        val casProperties = jsonUrl.readText()
+        val casProperties = readProperties()
         val map = JsonFlattener.flattenAsMap(casProperties)
         map
                 .filterKeys {

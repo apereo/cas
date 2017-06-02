@@ -1,5 +1,7 @@
 (function () {
 
+
+
 }());
 
 $(function () {
@@ -31,6 +33,20 @@ $(function () {
         cache: false
     });
 
+    var addTag = function (suggestion) {
+        //alert(suggestion.id + " " + suggestion.name)
+        var row = "<tr>"
+            row += "<td style='vertical-align: middle'><button class='btn btn-reset'></button></td>"
+            row += "<td><input type='text' class='form-control' value='" + suggestion.name + "' /></td>"
+            row += "<td><input type='text' class='form-control' value='" + suggestion.value + "' /></td>"
+            row += "<td style='vertical-align: middle; text-align: justify' >" + suggestion.description + "</td>"
+        row += "</tr>"
+        $("#propertiesContainer tbody").append(row);
+    };
+    var removeTag = function (suggestion) {
+        //alert(suggestion.id)
+    };
+
     initializeCasSearchEngine(propertiesContainer);
 
     $('#properties').typeahead(
@@ -60,11 +76,11 @@ $(function () {
     $('#properties').bind('typeahead:select', function (ev, suggestion) {
         var alreadySelected = $("#propertiesContainer input[value='" + suggestion.id + "']").prop('checked');
         if (alreadySelected) {
-            //removeTag(suggestion.id);
+            removeTag(suggestion);
             //$("#dependencies input[value='" + suggestion.id + "']").prop('checked', false);
         }
         else {
-            //addTag(suggestion.id, suggestion.name);
+            addTag(suggestion);
             //$("#dependencies input[value='" + suggestion.id + "']").prop('checked', true);
         }
         $('#properties').typeahead('val', '');
