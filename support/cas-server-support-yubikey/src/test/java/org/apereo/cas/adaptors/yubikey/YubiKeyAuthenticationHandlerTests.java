@@ -47,7 +47,7 @@ public class YubiKeyAuthenticationHandlerTests {
     @Test
     public void checkDefaultAccountRegistry() {
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
-        assertNull(handler.getRegistry());
+        assertNotNull(handler.getRegistry());
     }
 
     @Test
