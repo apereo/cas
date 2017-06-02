@@ -50,10 +50,12 @@ public class CouchbaseClientFactory {
     /**
      * Instantiates a new Couchbase client factory.
      *
-     * @param nodes      cluster nodes
-     * @param bucketName getBucket name
-     * @param password   cluster password
-     * @param timeout    connection timeout
+     * @param nodes          cluster nodes
+     * @param bucketName     getBucket name
+     * @param bucketPassword the bucket password
+     * @param timeout        connection timeout
+     * @param documentName   the document name
+     * @param views          the views
      */
     public CouchbaseClientFactory(final Set<String> nodes, final String bucketName,
                                   final String bucketPassword, final long timeout,
@@ -69,6 +71,13 @@ public class CouchbaseClientFactory {
         this.views = views;
     }
 
+    /**
+     * Instantiates a new Couchbase client factory.
+     *
+     * @param nodes          the nodes
+     * @param bucketName     the bucket name
+     * @param bucketPassword the bucket password
+     */
     public CouchbaseClientFactory(final Set<String> nodes, final String bucketName, final String bucketPassword) {
         this(nodes, bucketName, bucketPassword, DEFAULT_TIMEOUT, null, null);
     }
