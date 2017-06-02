@@ -162,9 +162,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         if (object == this) {
             return true;
         }
-        if (!object.getClass().isAssignableFrom(this.getClass())) {
+        if (!(object instanceof Ticket)) {
             return false;
         }
+        
         final Ticket ticket = (Ticket) object;
 
         return new EqualsBuilder()
