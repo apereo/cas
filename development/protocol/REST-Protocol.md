@@ -189,11 +189,11 @@ receive tickets and validate them. The following Java REST client is available
 by [pac4j](https://github.com/pac4j/pac4j):
 
 ```java
-String casUrlPrefix = "http://localhost:8080/cas";
-CasRestAuthenticator authenticator = new CasRestAuthenticator(casUrlPrefix);
-CasRestFormClient client = new CasRestFormClient(authenticator);
+final String casUrlPrefix = "http://localhost:8080/cas";
+final CasRestAuthenticator authenticator = new CasRestAuthenticator(casUrlPrefix);
+final CasRestFormClient client = new CasRestFormClient(authenticator);
 
-// The request object must contain the CAS credentials
+// The request object must contain credentials used for CAS authentication
 final WebContext webContext = new J2EContext(request, response);
 final HttpTGTProfile profile = client.requestTicketGrantingTicket(context);
 final CasCredentials casCreds = client.requestServiceTicket("<SERVICE_URL>", profile);
