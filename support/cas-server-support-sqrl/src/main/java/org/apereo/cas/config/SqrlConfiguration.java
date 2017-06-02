@@ -38,8 +38,7 @@ public class SqrlConfiguration {
 
     @Bean
     public SqrlServerOperations sqrlServerOperations() {
-        final SqrlServerOperations c = new SqrlServerOperations(sqrlConfig());
-        return c;
+        return new SqrlServerOperations(sqrlConfig());
     }
 
     @Bean
