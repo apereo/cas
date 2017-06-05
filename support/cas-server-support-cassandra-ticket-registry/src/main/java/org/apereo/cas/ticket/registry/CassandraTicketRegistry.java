@@ -29,7 +29,7 @@ import java.util.stream.StreamSupport;
  *
  * @since 5.1.0
  */
-public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implements NoSqlTicketRegistryDao {
+public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implements CassandraTicketRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraTicketRegistry.class);
 
@@ -184,30 +184,31 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         return null;
     }
 
-    public void addTicketGrantingTicket(final Ticket ticket) {
-        LOGGER.debug("Inserting ticket {}", ticket.getId());
-        String parentTgtId = ticket.getGrantingTicket() == null ? null : ticket.getGrantingTicket().getId();
-        final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
-        session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serializeTGT(ticket), parentTgtId, calculateExpirationDate(tgt) / TEN));
-    }
-
-    public void addServiceTicket(final Ticket ticket) {
-        LOGGER.debug("Inserting ticket {}", ticket.getId());
-        session.execute(this.insertStStmt.bind(ticket.getId(), serializer.serializeST(ticket)));
-    }
-
+    @Override
     public boolean deleteTicketGrantingTicket(final String id) {
         LOGGER.debug("Deleting ticket {}", id);
         return session.execute(this.deleteTgtStmt.bind(id)).wasApplied();
     }
 
-    public boolean deleteServiceTicket(final String id) {
+    private void addTicketGrantingTicket(final Ticket ticket) {
+        LOGGER.debug("Inserting ticket {}", ticket.getId());
+        final String parentTgtId = ticket.getGrantingTicket() == null ? null : ticket.getGrantingTicket().getId();
+        final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
+        session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serializeTGT(ticket), parentTgtId, calculateExpirationDate(tgt) / TEN));
+    }
+
+    private void addServiceTicket(final Ticket ticket) {
+        LOGGER.debug("Inserting ticket {}", ticket.getId());
+        session.execute(this.insertStStmt.bind(ticket.getId(), serializer.serializeST(ticket)));
+    }
+
+    private boolean deleteServiceTicket(final String id) {
         LOGGER.debug("Deleting ticket {}", id);
         session.executeAsync(this.deleteStStmt.bind(id));
         return true;
     }
 
-    public TicketGrantingTicket getTicketGrantingTicket(final String id) {
+    private TicketGrantingTicket getTicketGrantingTicket(final String id) {
         LOGGER.debug("Reading ticket {}", id);
         final Row row = session.execute(this.selectTgtStmt.bind(id)).one();
         if (row == null) {
@@ -217,7 +218,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         return serializer.deserializeTGT(row.get(FIRST_COLUMN_INDEX, typeToWriteToCassandra));
     }
 
-    public Ticket getServiceTicket(final String id) {
+    private Ticket getServiceTicket(final String id) {
         LOGGER.debug("Reading ticket {}", id);
         final Row row = session.execute(this.selectStStmt.bind(id)).one();
         if (row == null) {
@@ -227,26 +228,24 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         return serializer.deserializeST(row.get(FIRST_COLUMN_INDEX, typeToWriteToCassandra));
     }
 
-    public void updateTicketGrantingTicket(final Ticket ticket) {
-        LOGGER.debug("Updating ticket {}", ticket.getId());
+    private void updateTicketGrantingTicket(final Ticket ticket) {
         final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
         session.execute(this.updateTgtStmt.bind(serializer.serializeTGT(ticket), ticket.getId(), calculateExpirationDate(tgt) / TEN));
     }
 
-    public void updateServiceTicket(final Ticket ticket) {
-        LOGGER.debug("Updating ticket {}", ticket.getId());
+    private void updateServiceTicket(final Ticket ticket) {
         session.execute(this.updateStStmt.bind(serializer.serializeST(ticket), ticket.getId()));
     }
 
     private Stream<TicketGrantingTicket> getExpiredTGTsIn(final long lastRunBucket) {
-        ResultSet resultSet = session.execute(this.selectExStmt.bind(lastRunBucket));
+        final ResultSet resultSet = session.execute(this.selectExStmt.bind(lastRunBucket));
 
         return StreamSupport.stream(resultSet.spliterator(), false)
                 .map(row -> serializer.deserializeTGT(row.get(FIRST_COLUMN_INDEX, typeToWriteToCassandra)))
                 .filter(ticket -> Objects.nonNull(ticket) && ticket.isExpired());
     }
 
-    public long getLastRunTimestamp() {
+    private long getLastRunTimestamp() {
         final Row row = session.execute(this.selectLrStmt.bind()).one();
         if (row == null) {
             final List<Row> all = session.execute(this.selectDateExStmt.bind()).all();
@@ -259,7 +258,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         }
     }
 
-    public void updateLastRunTimestamp(final long timestamp) {
+    private void updateLastRunTimestamp(final long timestamp) {
         session.execute(this.updateLrStmt.bind(timestamp));
     }
 

@@ -11,10 +11,11 @@ import org.springframework.scheduling.annotation.Scheduled;
  */
 public class CassandraTicketRegistryCleaner implements TicketRegistryCleaner {
 
-    private final NoSqlTicketRegistryDao ticketRegistryDao;
+    private final CassandraTicketRegistryDao ticketRegistryDao;
     private final LogoutManager logoutManager;
 
-    public CassandraTicketRegistryCleaner(@Qualifier("cassandraTicketRegistry") final NoSqlTicketRegistryDao ticketRegistry, final LogoutManager logoutManager) {
+    public CassandraTicketRegistryCleaner(@Qualifier("cassandraTicketRegistry") final CassandraTicketRegistryDao ticketRegistry,
+                                          final LogoutManager logoutManager) {
         this.ticketRegistryDao = ticketRegistry;
         this.logoutManager = logoutManager;
     }
