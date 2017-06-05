@@ -33,8 +33,8 @@ public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAu
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         LOGGER.debug("Trusting credential for: [{}]", credential);
-        return new DefaultHandlerResult(
-                this, (PrincipalBearingCredential) credential, this.principalFactory.createPrincipal(credential.getId()));
+        final PrincipalBearingCredential bearingCredential = (PrincipalBearingCredential) credential;
+        return new DefaultHandlerResult(this, bearingCredential, bearingCredential.getPrincipal());
     }
 
     @Override

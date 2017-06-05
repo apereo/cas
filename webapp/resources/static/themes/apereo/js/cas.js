@@ -1,7 +1,7 @@
 $(document).ready(function(){
     //focus username field
-    if ($(":focus").length === 0){
-      $("input:visible:enabled:first").focus();
+    if ($(':focus').length === 0){
+        $('input:visible:enabled:first').focus();
     }
 
     //flash error box

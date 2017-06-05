@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractResourceBasedServiceRegistryDao implements ResourceBasedServiceRegistryDao {
+public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractServiceRegistryDao implements ResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
 
@@ -170,20 +171,23 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
 
         final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
-        c.stream().filter(file -> file.length() > 0).forEach(file -> {
-            final RegisteredService service = load(file);
-            if (service == null) {
-                LOGGER.error("Could not load service definition from file [{}]", file);
-            } else {
-                if (temp.containsKey(service.getId())) {
-                    LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                                    + "This will overwrite previous service definitions and is likely a "
-                                    + "configuration problem. Make sure all services have a unique id and try again.",
-                            service.getServiceId(), service.getId());
-                }
-                temp.put(service.getId(), service);
-            }
-        });
+        c.stream()
+                .filter(file -> file.length() > 0)
+                .forEach(file -> {
+                    final RegisteredService service = load(file);
+                    if (service == null) {
+                        LOGGER.error("Could not load service definition from file [{}]", file);
+                    } else {
+                        if (temp.containsKey(service.getId())) {
+                            LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+                                            + "This will overwrite previous service definitions and is likely a "
+                                            + "configuration problem. Make sure all services have a unique id and try again.",
+                                    service.getServiceId(), service.getId());
+                        }
+                        temp.put(service.getId(), service);
+                        publishEvent(new CasRegisteredServiceLoadedEvent(this, service));
+                    }
+                });
 
         this.serviceMap = temp.entrySet()
                 .stream()
@@ -223,7 +227,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         }
         return null;
     }
-
 
     @Override
     public RegisteredService save(final RegisteredService service) {

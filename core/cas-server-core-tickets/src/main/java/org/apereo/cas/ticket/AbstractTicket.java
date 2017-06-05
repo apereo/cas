@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
@@ -151,6 +152,25 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(13, 133).append(this.getId()).toHashCode();
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof Ticket)) {
+            return false;
+        }
+        
+        final Ticket ticket = (Ticket) object;
+
+        return new EqualsBuilder()
+                .append(ticket.getId(), this.getId())
+                .isEquals();
     }
 
     @Override

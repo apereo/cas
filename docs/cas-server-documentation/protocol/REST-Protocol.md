@@ -27,9 +27,6 @@ Support is enabled by including the following to the overlay:
 </dependency>
 ```
 
-REST support is currently provided internally by
-the [Spring framework](http://spring.io/guides/gs/rest-service/).
-
 ## Request a Ticket Granting Ticket
 
 ```bash
@@ -66,6 +63,16 @@ service={form encoded parameter for the service url}
 200 OK
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ```
+
+## Validate Service Ticket
+
+Service ticket validation is handled through the [CAS Protocol](Cas-Protocol.html)
+via any of the validation endpoints such as `/p3/serviceValidate`. 
+
+```bash
+GET /cas/p3/serviceValidate?service={service url}&ticket={service ticket}
+``` 
+
 
 ### Unsuccessful Response
 
@@ -182,11 +189,11 @@ receive tickets and validate them. The following Java REST client is available
 by [pac4j](https://github.com/pac4j/pac4j):
 
 ```java
-String casUrlPrefix = "http://localhost:8080/cas";
-CasRestAuthenticator authenticator = new CasRestAuthenticator(casUrlPrefix);
-CasRestFormClient client = new CasRestFormClient(authenticator);
+final String casUrlPrefix = "http://localhost:8080/cas";
+final CasRestAuthenticator authenticator = new CasRestAuthenticator(casUrlPrefix);
+final CasRestFormClient client = new CasRestFormClient(authenticator);
 
-// The request object must contain the CAS credentials
+// The request object must contain credentials used for CAS authentication
 final WebContext webContext = new J2EContext(request, response);
 final HttpTGTProfile profile = client.requestTicketGrantingTicket(context);
 final CasCredentials casCreds = client.requestServiceTicket("<SERVICE_URL>", profile);

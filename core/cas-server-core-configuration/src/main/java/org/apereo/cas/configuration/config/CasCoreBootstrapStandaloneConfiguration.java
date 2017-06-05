@@ -109,10 +109,11 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
     }
 
     private void loadSettingsFromStandaloneConfigFile(final Properties props, final File configFile) {
-        try {
+        final Properties pp = new Properties();
+        
+        try (FileReader r = new FileReader(configFile)) {
             LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
-            final Properties pp = new Properties();
-            pp.load(new FileReader(configFile));
+            pp.load(r);
             LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), configFile);
             props.putAll(decryptProperties(pp));
         } catch (final Exception e) {

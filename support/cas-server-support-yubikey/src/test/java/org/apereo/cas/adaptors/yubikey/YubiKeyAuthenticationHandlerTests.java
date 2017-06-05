@@ -1,6 +1,10 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import com.yubico.client.v2.YubicoClient;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,12 +16,14 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link YubiKeyAuthenticationHandler}.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -37,16 +43,16 @@ public class YubiKeyAuthenticationHandlerTests {
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), ctx);
         RequestContextHolder.setRequestContext(ctx);
     }
-    
+
     @Test
     public void checkDefaultAccountRegistry() {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
-        assertNull(handler.getRegistry());
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
+        assertNotNull(handler.getRegistry());
     }
 
     @Test
     public void checkReplayedAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
 
         this.thrown.expect(FailedLoginException.class);
         this.thrown.expectMessage("Authentication failed with status: REPLAYED_OTP");
@@ -56,7 +62,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkBadConfigAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(123456, "123456");
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, "123456"));
 
         this.thrown.expect(AccountNotFoundException.class);
         this.thrown.expectMessage("OTP format is invalid");
@@ -66,7 +72,11 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkAccountNotFound() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler("", null, null, CLIENT_ID, SECRET_KEY, (uid, yubikeyPublicId) -> false);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
+                null, new DefaultPrincipalFactory(),
+                YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
+                new WhitelistYubiKeyAccountRegistry(new HashMap<>(),
+                        new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY))));
         this.thrown.expect(AccountNotFoundException.class);
         handler.authenticate(new YubiKeyCredential(OTP));
     }

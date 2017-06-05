@@ -1,0 +1,6 @@
+# Ignore external libraries
+resources/static/js/duo/*.js
+resources/static/js/u2f/*
+resources/static/js/sockjs.js
+resources/static/js/stomp.js
+

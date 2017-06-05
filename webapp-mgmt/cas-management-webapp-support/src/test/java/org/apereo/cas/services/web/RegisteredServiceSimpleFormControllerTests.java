@@ -27,6 +27,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,8 +56,10 @@ public class RegisteredServiceSimpleFormControllerTests {
     private DefaultServicesManager manager;
     private StubPersonAttributeDao repository;
     private DefaultRegisteredServiceFactory registeredServiceFactory;
-    private final DefaultAttributeReleasePolicyMapper policyMapper = new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
-            new DefaultPrincipalAttributesRepositoryMapper());
+    private final DefaultAttributeReleasePolicyMapper policyMapper =
+            new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
+                    new DefaultPrincipalAttributesRepositoryMapper(),
+                    new ArrayList<>());
 
     @Before
     public void setUp() throws Exception {

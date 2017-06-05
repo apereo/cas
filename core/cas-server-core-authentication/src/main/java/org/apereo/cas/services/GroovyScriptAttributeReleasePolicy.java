@@ -16,7 +16,9 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated As of 5.1, a better option would be to use {@link ScriptedRegisteredServiceAttributeReleasePolicy}.
  */
+@Deprecated
 public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroovyScriptAttributeReleasePolicy.class);
     private static final long serialVersionUID = 1703080077563402223L;
@@ -24,6 +26,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     private String groovyScript;
 
     public GroovyScriptAttributeReleasePolicy() {
+        LOGGER.warn("[{}] is deprecated and will be removed in future CAS versions", getClass().getSimpleName());
     }
 
     public GroovyScriptAttributeReleasePolicy(final String groovyScript) {

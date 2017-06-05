@@ -17,7 +17,10 @@ public interface Response extends Serializable {
         POST,
 
         /** The redirect. */
-        REDIRECT
+        REDIRECT,
+
+        /** Response is provided in form of headers. */
+        HEADER
     }
 
     /**

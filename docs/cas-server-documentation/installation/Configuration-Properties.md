@@ -502,6 +502,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 
 # cas.monitor.endpoints.springWebflowReport.enabled=false
 # cas.monitor.endpoints.springWebflowReport.sensitive=true
+
+# cas.monitor.endpoints.registeredServicesReport.enabled=false
+# cas.monitor.endpoints.registeredServicesReport.sensitive=true
 ```
 
 ### Securing Endpoints With Spring Security
@@ -1199,6 +1202,36 @@ Used to geo-profile authentication events.
 # cas.maxmind.countryDatabase=file:/etc/cas/maxmind/GeoLite2-Country.mmdb
 ```
 
+## Cassandra Authentication
+
+To learn more about this topic, [please review this guide](Cassandra-Authentication.html).
+
+```properties
+cas.authn.cassandra.usernameAttribute=
+cas.authn.cassandra.passwordAttribute=
+cas.authn.cassandra.tableName=
+cas.authn.cassandra.username=
+cas.authn.cassandra.password=
+
+cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
+cas.authn.cassandra.keyspace=
+cas.authn.cassandra.contactPoints=localhost1,localhost2
+cas.authn.cassandra.localDc=
+cas.authn.cassandra.shuffleReplicas=true
+cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
+cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
+cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+cas.authn.cassandra.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+cas.authn.cassandra.maxConnections=10
+cas.authn.cassandra.coreConnections=1
+cas.authn.cassandra.maxRequestsPerConnection=1024
+cas.authn.cassandra.connectTimeoutMillis=5000
+cas.authn.cassandra.readTimeoutMillis=5000
+cas.authn.cassandra.port=9042
+cas.authn.cassandra.name=
+cas.authn.cassandra.order=
+```
+
 ## Digest Authentication
 
 To learn more about this topic, [please review this guide](Digest-Authentication.html).
@@ -1668,6 +1701,9 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].passwordPolicy.displayWarningOnMatch=true
 # cas.authn.ldap[0].passwordPolicy.warnAll=true
 # cas.authn.ldap[0].passwordPolicy.warningDays=30
+
+# An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
+# cas.authn.ldap[0].passwordPolicy.customPolicyClass=com.example.MyAuthenticationResponseHandler
 ```
 
 ## REST Authentication
@@ -1879,12 +1915,73 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 # cas.authn.token.crypto.signing.key=
 # cas.authn.token.crypto.signing.keySize=512
 # cas.authn.token.crypto.encryption.key=
-# cas.authn.token.crypto.encryption.keySize=16
+# cas.authn.token.crypto.encryption.keySize=256
 # cas.authn.token.crypto.alg=AES
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
+The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
+
+## Couchbase Authentication
+
+To learn more about this topic, [please review this guide](Couchbase-Authentication.html).
+
+```properties
+
+# cas.authn.couchbase.nodeSet=localhost:8091
+# cas.authn.couchbase.password=
+# cas.authn.couchbase.bucket=default
+# cas.authn.couchbase.usernameAttribute=username
+# cas.authn.couchbase.passwordAttribute=psw
+
+# cas.authn.couchbase.name=
+# cas.authn.couchbase.order=
+
+# cas.authn.couchbase.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
+# cas.authn.couchbase.passwordEncoder.characterEncoding=
+# cas.authn.couchbase.passwordEncoder.encodingAlgorithm=
+# cas.authn.couchbase.passwordEncoder.secret=
+# cas.authn.couchbase.passwordEncoder.strength=16
+
+# cas.authn.couchbase.principalTransformation.suffix=
+# cas.authn.couchbase.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.couchbase.principalTransformation.prefix=
+```
+
+## Amazon Cloud Directory Authentication
+
+To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html).
+
+```properties
+# cas.authn.cloudDirectory.credentialAccessKey=
+# cas.authn.cloudDirectory.credentialSecretKey=
+
+# cas.authn.cloudDirectory.region=
+
+# cas.authn.cloudDirectory.profileName=
+# cas.authn.cloudDirectory.profilePath=
+
+# cas.authn.cloudDirectory.directoryArn=
+# cas.authn.cloudDirectory.schemaArn=
+# cas.authn.cloudDirectory.facetName=
+
+# cas.authn.cloudDirectory.usernameAttributeName=
+# cas.authn.cloudDirectory.passwordAttributeName=
+# cas.authn.cloudDirectory.usernameIndexPath=
+
+# cas.authn.cloudDirectory.name=
+# cas.authn.cloudDirectory.order=
+
+# cas.authn.cloudDirectory.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
+# cas.authn.cloudDirectory.passwordEncoder.characterEncoding=
+# cas.authn.cloudDirectory.passwordEncoder.encodingAlgorithm=
+# cas.authn.cloudDirectory.passwordEncoder.secret=
+# cas.authn.cloudDirectory.passwordEncoder.strength=16
+
+# cas.authn.cloudDirectory.principalTransformation.suffix=
+# cas.authn.cloudDirectory.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.cloudDirectory.principalTransformation.prefix=
+```
 
 ## Stormpath Authentication
 
@@ -2196,7 +2293,7 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 
 ### Signing & Encryption
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ### JDBC Storage
@@ -2344,6 +2441,54 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.yubikey.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.yubikey.bypass.credentialClassType=UsernamePassword.+
+```
+
+#### YubiKey JSON Device Store
+
+```properties
+# cas.authn.mfa.yubikey.jsonFile=file:/etc/cas/deviceRegistrations.json
+```
+
+#### YubiKey Whitelist Device Store
+
+```properties
+# cas.authn.mfa.yubikey.allowedDevices.uid1=yubikeyPublicId1
+# cas.authn.mfa.yubikey.allowedDevices.uid2=yubikeyPublicId2
+```
+
+### YubiKey JPA Device Store
+
+```properties
+# cas.authn.mfa.yubikey.jpa.healthQuery=
+# cas.authn.mfa.yubikey.jpa.isolateInternalQueries=false
+# cas.authn.mfa.yubikey.jpa.url=jdbc:hsqldb:mem:cas-yubikeymfa
+# cas.authn.mfa.yubikey.jpa.failFast=true
+# cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.mfa.yubikey.jpa.leakThreshold=10
+# cas.authn.mfa.yubikey.jpa.batchSize=1
+# cas.authn.mfa.yubikey.jpa.defaultCatalog=
+# cas.authn.mfa.yubikey.jpa.defaultSchema=
+# cas.authn.mfa.yubikey.jpa.user=sa
+# cas.authn.mfa.yubikey.jpa.ddlAuto=create-drop
+# cas.authn.mfa.yubikey.jpa.password=
+# cas.authn.mfa.yubikey.jpa.autocommit=false
+# cas.authn.mfa.yubikey.jpa.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.mfa.yubikey.jpa.idleTimeout=5000
+# cas.authn.mfa.yubikey.jpa.dataSourceName=
+# cas.authn.mfa.yubikey.jpa.dataSourceProxy=false
+
+# cas.authn.mfa.yubikey.jpa.pool.suspension=false
+# cas.authn.mfa.yubikey.jpa.pool.minSize=6
+# cas.authn.mfa.yubikey.jpa.pool.maxSize=18
+# cas.authn.mfa.yubikey.jpa.pool.maxWait=2000
+```
+
+### YubiKey MongoDb Device Store
+
+```properties
+# cas.authn.mfa.yubikey.mongodb.clientUri=
+# cas.authn.mfa.yubikey.mongodb.dropCollection=false
+# cas.authn.mfa.yubikey.mongodb.collection=MongoDbYubiKeyRepository
 ```
 
 ### Radius OTP
@@ -3082,7 +3227,7 @@ To learn more about this topic, [please review this guide](WS-Federation-Protoco
 # cas.authn.wsfedIdP.sts.signingKey=
 ```
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## OAuth2
@@ -3153,7 +3298,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 
 ### Signing & Encryption
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## Logout
@@ -3193,7 +3338,7 @@ the last resort in getting an integration to work...maybe not even then.</p></di
 # cas.clearpass.cipherEnabled=true;
 ```
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## Message Bundles
@@ -3684,7 +3829,7 @@ To learn more about this topic, [please review this guide](Configuring-Ticketing
 ### Signing & Encryption
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
+The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
 
 ### Cleaner
 
@@ -3874,7 +4019,7 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.trustStoreType=
 # cas.ticket.registry.ignite.igniteAddresses=localhost:47500
 # cas.ticket.registry.ignite.trustStoreFilePath=
-# cas.ticket.registry.ignite.heartbeatFrequency=2000
+# cas.ticket.registry.ignite.ackTimeout=2000
 # cas.ticket.registry.ignite.joinTimeout=1000
 # cas.ticket.registry.ignite.localAddress=
 # cas.ticket.registry.ignite.localPort=-1
@@ -4029,7 +4174,7 @@ when shared with client applications on outgoing calls.
 # cas.ticket.security.signingKey=
 ```
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 ## Service Tickets Behavior
@@ -4226,7 +4371,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
-The signing key [is a JWK](#signing--encryption) whose length is defined by the signing key size setting.
+The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
 
 ### Authentication Exceptions
 
@@ -4397,7 +4542,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.security.signingKey=
 ```
 
-The signing and encryption keys [are both JWKs](#signing--encryption) of size `512` and `256`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 
 

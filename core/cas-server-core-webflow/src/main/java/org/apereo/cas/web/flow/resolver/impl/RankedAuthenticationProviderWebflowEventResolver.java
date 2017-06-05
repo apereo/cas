@@ -55,7 +55,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         this.authenticationContextValidator = authenticationContextValidator;
         this.initialAuthenticationAttemptWebflowEventResolver = casDelegatingWebflowEventResolver;
     }
-
+    
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         final String tgt = WebUtils.getTicketGrantingTicketId(context);

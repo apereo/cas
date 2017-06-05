@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
+import org.apereo.cas.web.flow.InjectResponseHeadersAction;
 import org.apereo.cas.web.flow.RedirectToServiceAction;
 import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
@@ -295,5 +296,11 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public Action redirectToServiceAction() {
         return new RedirectToServiceAction(responseBuilderLocator);
+    }
+    @Bean
+    @ConditionalOnMissingBean(name = "injectResponseHeadersAction")
+    @RefreshScope
+    public Action injectResponseHeadersAction() {
+        return new InjectResponseHeadersAction(responseBuilderLocator);
     }
 }

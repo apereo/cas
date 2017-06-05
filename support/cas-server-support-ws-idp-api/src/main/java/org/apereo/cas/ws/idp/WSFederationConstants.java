@@ -11,7 +11,7 @@ public interface WSFederationConstants {
      * The default realm for the idp/sts.
      */
     String REALM_DEFAULT_URI = "urn:org:apereo:cas:ws:idp:realm-CAS";
-    
+
     /**
      * Track the security token issued in the CAS assertion.
      */
@@ -25,6 +25,15 @@ public interface WSFederationConstants {
      */
     String SECURITY_TOKEN_SERVICE_ENDPOINT = "TransportUT_Port";
 
+    /**
+     * SAML2 token type.
+     */
+    String WSS_SAML2_TOKEN_TYPE = "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0";
+
+    /**
+     * WS-trust namespace.
+     */
+    String WST_NS_05_12 = "http://docs.oasis-open.org/ws-sx/ws-trust/200512";
     /**
      * Public key namespace.
      */
@@ -116,7 +125,7 @@ public interface WSFederationConstants {
      * The STS parent endpoint.
      */
     String ENDPOINT_STS = "/ws/sts/";
-    
+
     /**
      * The location of WSDL service.
      */
