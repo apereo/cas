@@ -27,10 +27,10 @@ public class CassandraBinaryTests {
         final CassandraTicketRegistry<ByteBuffer> dao = new CassandraTicketRegistry<>("localhost", "", "", new JacksonBinarySerializer(), ByteBuffer.class,
                 "cas_binary.ticketgrantingticket", "cas_binary.serviceticket", "cas_binary.ticket_cleaner", "cas_binary.ticket_cleaner_lastrun");
 
-        final TicketGrantingTicketImpl tgt = TicketCreatorUtils.defaultTGT("id");
+        final TicketGrantingTicketImpl tgt = TicketCreatorUtils.defaultTGT("TGT-id");
 
         dao.addTicket(tgt);
 
-        assertEquals(tgt, dao.getTicket("id"));
+        assertEquals(tgt, dao.getTicket("TGT-id"));
     }
 }
