@@ -73,8 +73,8 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
         } catch (final JAXBException e) {
             final String errorMessage = "cannot marshalling session with value : " + fortressSession == null ? "null"
                     : fortressSession.toString();
-            LOG.trace(errorMessage);
-            throw new GeneralSecurityException(errorMessage);
+            LOG.warn(errorMessage);
+            throw new GeneralSecurityException(e);
         }
         LOG.trace(TRACE_FORTRESS_AUTH_SUCCESS);
         return createHandlerResult(usernamePasswordCredential, principalFactory.createPrincipal(username), null);
