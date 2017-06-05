@@ -55,4 +55,5 @@ dependencies {
     implementation libraries.thymeleaf
     implementation libraries.thymeleafdialect
     implementation libraries.thymeleafboot
+    implementation libraries.webjars
 }
