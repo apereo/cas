@@ -1,5 +1,25 @@
-<script src="//cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js"></script>
+<script th:src="@{#{webjars.headmin.js}}"></script>
 <script type="text/javascript" th:src="@{${#themes.code('cas.javascript.file')}}"></script>
 
+<script th:inline="javascript">
+head.ready(document, function () {
+    if (!window.jQuery) {
+    	var jqueryUrl = /*[[@{#{webjars.jquerymin.js}}]]*/; 
+        head.load(jqueryUrl, loadjQueryUI);
+    } else {
+        resourceLoadedSuccessfully();
+    }
+});
+
+function loadjQueryUI() {
+	var jqueryUrl = /*[[@{#{webjars.jqueryui.js}}]]*/; 
+	head.load(jqueryUrl, loadjQueryCookies);
+}
+
+function loadjQueryCookies() {
+	var jqueryUrl = /*[[@{#{webjars.jquerycookie.js}}]]*/; 
+	head.load(jqueryUrl, resourceLoadedSuccessfully);
+}
+</script>
 
 
