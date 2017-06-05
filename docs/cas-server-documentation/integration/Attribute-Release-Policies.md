@@ -184,6 +184,10 @@ Identical to inline groovy attribute definitions, except the groovy script can a
 
 ### Groovy Script
 
+<div class="alert alert-warning"><strong>Usage Warning!</strong>
+<p>Usage of this component is deprecated. Consider using alternatives.</p>
+</div>
+
 Let an external Groovy script decide how principal attributes should be released.
 
 ```json
@@ -200,27 +204,11 @@ Let an external Groovy script decide how principal attributes should be released
 }
 ```
 
-The script itself may be designed as:
+### Javascript/Python/Groovy Script
 
-```groovy
-import java.util.*
-
-class SampleGroovyPersonAttributeDao {
-    def Map<String, List<Object>> run(final Object... args) {
-        def currentAttributes = args[0]
-        def logger = args[1]
-
-        logger.debug("Current attributes received are {}", currentAttributes)
-        return[username:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
-    }
-}
-```
-
-### Javascript or Python Script
-
-Let an external javascript or python script decide how principal attributes should be released.
+Let an external javascript, groovy or python script decide how principal attributes should be released.
 This approach takes advantage of scripting functionality built into the Java platform.
-While Javascript and Groovy should be natively supported by CAS, python scripts may need
+While Javascript and Groovy should be natively supported by CAS, Python scripts may need
 to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
 
 ```json
@@ -237,10 +225,26 @@ to massage the CAS configuration to include the [Python modules](http://search.m
 }
 ```
 
-Similar to the above option, the scripts need to design a `run` function
+The scripts need to design a `run` function
 that receives a list of parameters. The collection of current attributes in process
 as well as a logger object are passed to this function. The result must produce a
 map whose `key`s are attributes names and whose `value`s are a list of attribute values.
+
+The script itself may be designed in Groovy as:
+
+```groovy
+import java.util.*
+
+class SampleGroovyPersonAttributeDao {
+    def Map<String, List<Object>> run(final Object... args) {
+        def currentAttributes = args[0]
+        def logger = args[1]
+
+        logger.debug("Current attributes received are {}", currentAttributes)
+        return[username:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+    }
+}
+```
 
 You are also allowed to stuff inlined groovy scripts into the `scriptFile` attribute. The script
 has access to the collection of resolved `attributes` as well as a `logger` object.

@@ -1,22 +1,23 @@
+/*eslint-disable no-unused-vars*/
 $('#myTabs a').click(function (e) {
-    e.preventDefault()
-    $(this).tab('show')
-})
+    e.preventDefault();
+    $(this).tab('show');
+});
 
 var revokeDevice = function (key) {
     $.ajax({
         type: 'post',
         url: urls.revokeRecord,
-        data: {"key": key},
-        success: function (data, status) {
+        data: {'key': key},
+        success: function () {
             var table = $('#trustedDevicesTable').DataTable();
             table
-                .rows($("#" + key).parents('tr'))
+                .rows($('#' + key).parents('tr'))
                 .remove()
                 .draw();
         },
-        error: function (xhr, status) {
-            console.log("Could not remove record");
+        error: function () {
+            //console.log('Could not remove record');
         }
     });
 };
@@ -30,13 +31,13 @@ var trustedDevices = (function () {
 
     var trustedDevicesTable = function (jsonData) {
         var t = $('#trustedDevicesTable').DataTable({
-            "order": [[2, "desc"]],
+            'order': [[2, 'desc']],
             columnDefs: [
-                {"width": "20%", "targets": 0},
-                {"width": "10%", "targets": 1},
-                {"width": "60%", "targets": 2},
-                {"width": "10%", "targets": 3},
-                {"width": "30%", "targets": 4}
+                {'width': '20%', 'targets': 0},
+                {'width': '10%', 'targets': 1},
+                {'width': '60%', 'targets': 2},
+                {'width': '10%', 'targets': 3},
+                {'width': '30%', 'targets': 4}
             ]
         });
         for (var i = 0; i < jsonData.length; i++) {
@@ -46,7 +47,7 @@ var trustedDevices = (function () {
                 rec.principal,
                 new Date(rec.date),
                 rec.geography,
-                "<button id='" + rec.key + "' class='btn btn-sm btn-danger' type='button' value='ALL' onclick='revokeDevice(\"" + rec.key + "\")'>Revoke</button>"
+                '<button id=\'' + rec.key + '\' class=\'btn btn-sm btn-danger\' type=\'button\' value=\'ALL\' onclick=\'revokeDevice("' + rec.key + '")\'>Revoke</button>'
             ]).draw(false);
         }
     };

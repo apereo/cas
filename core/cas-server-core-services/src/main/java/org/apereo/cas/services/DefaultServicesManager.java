@@ -2,7 +2,10 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -57,6 +61,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService service = findServiceBy(id);
         if (service != null) {
+            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
             this.serviceRegistryDao.delete(service);
             this.services.remove(id);
             this.orderedServices.remove(service);
@@ -117,6 +122,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
+        publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
@@ -137,8 +143,9 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
                 .collect(Collectors.toConcurrentMap(r -> {
                     LOGGER.debug("Adding registered service [{}]", r.getServiceId());
                     return r.getId();
-                }, r -> r, (r, s) -> s == null ? r : s));
+                }, Function.identity(), (r, s) -> s == null ? r : s));
         this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
+        publishEvent(new CasRegisteredServicesLoadedEvent(this, this.orderedServices));
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
     }
 
@@ -156,7 +163,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     public int count() {
         return services.size();
     }
-    
+
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);

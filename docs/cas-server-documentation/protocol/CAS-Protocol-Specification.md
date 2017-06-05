@@ -173,10 +173,12 @@ MUST be handled by `/login`.
     "true".
 
 -   `method` [OPTIONAL, CAS 3.0] - The `method` to be used when sending responses.
-    While native HTTP redirects (GET) may be utilized as the default method,
-    applications that require a POST response can use this parameter to indicate
-    the method type. It is up to the CAS server implementation to determine
-    whether or not POST responses are supported.
+    While native HTTP redirects (`GET`) may be utilized as the default method,
+    applications that require a `POST` response can use this parameter to indicate
+    the method type. A `HEADER` method may also be specified
+    to indicate the CAS final response such as `service` and `ticket`should be returned 
+    in form of HTTP response headers.  It is up to the CAS server implementation to determine
+    whether or not `POST` or `HEADER` responses are supported.
 
 <a name="head2.1.2"/>
 

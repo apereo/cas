@@ -1,13 +1,15 @@
 #!/bin/bash
 invokeJavadoc=false
 invokeDoc=false
+
+casBranch="master"
 branchVersion="development"
 
 # Only invoke the javadoc deployment process
 # for the first job in the build matrix, so as
 # to avoid multiple deployments.
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$casBranch" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1)
         echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
@@ -58,7 +60,7 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   # git gc --aggressive --prune=now
   
   echo -e "Configuring tracking branches for repository:\n"
-  for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do
+  for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v $casBranch`; do
      git branch --track ${branch##*/} $branch
   done
 
