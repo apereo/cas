@@ -35,11 +35,11 @@ public class CassandraJsonTests {
 
     @Test
     public void shouldWorkWithAStringSerializer() throws Exception {
-        final TicketGrantingTicketImpl tgt = TicketCreatorUtils.defaultTGT("id");
+        final TicketGrantingTicketImpl tgt = TicketCreatorUtils.defaultTGT("TGT-id");
 
         dao.addTicket(tgt);
 
-        assertEquals(tgt, dao.getTicket("id"));
+        assertEquals(tgt, dao.getTicket("TGT-id"));
     }
 
     @Ignore("To be completed")
