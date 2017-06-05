@@ -39,7 +39,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     /**
      * Factory to create the principal type.
      **/
-    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
      * The chain of delegate resolvers that are invoked in order.

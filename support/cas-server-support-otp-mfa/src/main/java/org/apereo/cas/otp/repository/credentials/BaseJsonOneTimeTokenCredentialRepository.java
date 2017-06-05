@@ -61,8 +61,10 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
             final OneTimeTokenAccount account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
 
             LOGGER.debug("Ensuring JSON repository file exists at [{}]", this.location.getFile());
-            this.location.getFile().createNewFile();
-
+            final boolean result = this.location.getFile().createNewFile();
+            if (result) {
+                LOGGER.debug("Created JSON repository file at [{}]", this.location.getFile());
+            }
             final TreeSet<OneTimeTokenAccount> c;
             if (this.location.getFile().length() > 0) {
                 LOGGER.debug("Reading JSON repository file at [{}]", this.location.getFile());

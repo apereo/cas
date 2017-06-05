@@ -38,7 +38,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
     @Override
     public Optional<String> resolve(final Collection<MultifactorAuthenticationProvider> providers,
-                                    final HttpServletRequest request, final RegisteredService service, final Principal principal) {
+                                    final HttpServletRequest request, final RegisteredService service,
+                                    final Principal principal) {
         Optional<String> provider = Optional.empty();
 
         // short-circuit if we don't have any available MFA providers
@@ -50,7 +51,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                 .collect(Collectors.toSet());
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
-        if (!provider.isPresent() && request != null) {
+        if (request != null) {
             provider = Optional.ofNullable(request.getParameter(requestParameter))
                     .filter(validProviderIds::contains);
         }

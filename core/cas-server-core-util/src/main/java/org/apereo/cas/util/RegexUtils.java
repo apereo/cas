@@ -74,7 +74,7 @@ public final class RegexUtils {
      */
     private static Pattern createPattern(final String pattern, final int flags) {
         if (pattern == null) {
-            LOGGER.debug("Pattern [{}] can't be null", pattern);
+            LOGGER.debug("Pattern cannot be null");
             return MATCH_NOTHING_PATTERN;
         }
         try {

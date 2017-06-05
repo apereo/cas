@@ -96,7 +96,7 @@ public class CasConfigurationJasyptDecryptor {
             if (StringUtils.isNotBlank(stringValue) && stringValue.startsWith(ENCRYPTED_VALUE_PREFIX)) {
                 try {
                     if (!this.decryptor.isInitialized()) {
-                        LOGGER.debug("Initializing decryptor...", key);
+                        LOGGER.debug("Initializing decryptor...");
                         this.decryptor.initialize();
                     }
                     final String encValue = stringValue.substring(ENCRYPTED_VALUE_PREFIX.length());
