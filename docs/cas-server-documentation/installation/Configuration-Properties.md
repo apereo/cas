@@ -3344,6 +3344,10 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 ## Message Bundles
 
 To learn more about this topic, [please review this guide](User-Interface-Customization-Localization.html).
+The baseNames are message bundle base names representing files that either end in .properties or _xx.properties where
+xx is a country locale code. 
+The commonNames are not actually message bundles but they are properties files that are merged together and contain
+keys that are only used if they are not found in the message bundles. Keys from the later files in the list will be preferred over keys from the earlier files. 
 
 ```properties
 # cas.messageBundle.encoding=UTF-8
@@ -3351,6 +3355,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.messageBundle.cacheSeconds=180
 # cas.messageBundle.useCodeMessage=true
 # cas.messageBundle.baseNames=classpath:custom_messages,classpath:messages
+# cas.messageBundle.commonNames=classpath:/common_messages.properties,file:/etc/cas/config/common_messages.properties
 ```
 
 ## Audits

@@ -9,9 +9,8 @@
 <body id="cas">
 <div id="container">
     <div layout:fragment="content">
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/cupertino/jquery-ui.css"/>
-        <link rel="stylesheet"
-              href="//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css"/>
+        <link rel="stylesheet" th:href="@{#{webjars.jqueryui.themes.cupertino.jquery-ui.css}}"/>
+        <link rel="stylesheet" th:href="@{#{webjars.datatables-plugins.jqueryui.css}}"/>
 
         <script type="text/javascript" th:inline="javascript">
             var urls = {

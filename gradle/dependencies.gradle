@@ -2487,5 +2487,78 @@ ext.libraries = [
                     exclude(group: "org.json", module: "json")
                     force = true
                 }
+        ],
+        webjars                : [
+                dependencies.create("org.webjars:headjs:$headjsVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:font-awesome:$fontAwesomeVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:jquery-ui:$jqueryUiVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:jquery:$jqueryVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:zxcvbn:$zxcvbnVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:bootstrap:$bootstrapVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:jquery-cookie:$jqueryCookieVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:lato:$latoVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:jquery-ui-themes:$jqueryUiThemesVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:datatables:$datatablesVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:datatables-plugins:$datatablesPluginsVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:d3js:$d3jsVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars.bower:bootstrap-select:$bootstrapSelectVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars.npm:angular:$angularJsVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars.npm:angular-route:$angularJsRouteVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:angular-ui:$angularUiVersion") {
+                    exclude(group: "org.webjars", module: "angularjs")
+                    force = true
+                },
+                dependencies.create("org.webjars.npm:angular-ui-sortable:$angularUiSortableVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:lodash:$lodashVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars.bower:ng-table:$ngtableVersion") {
+                    exclude(group: "org.webjars.bower", module: "angular")
+                    force = true
+                },
+                dependencies.create("org.webjars:momentjs:$momentVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:knockout:$knockoutVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:Eonasdan-bootstrap-datetimepicker:$datetimePickerVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:editable-table:$editableTableVersion") {
+                    force = true
+                }
         ]
 ]

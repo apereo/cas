@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.*
+
 description = "Apereo CAS Core Web"
 dependencies {
     compile project(":api:cas-server-core-api-web")
@@ -9,4 +11,30 @@ dependencies {
     compileOnly project(":api:cas-server-core-api-webflow")
     implementation libraries.pac4j
     implementation libraries.thymeleaf
+}
+
+// Filter properties from gradle.properties into this sub-project's property file resources  
+def gradleProps = new Properties()
+def gradlePropFile = file("../../gradle.properties")
+gradlePropFile.withInputStream { gradleProps.load(it) }
+
+processResources {
+    inputs.properties(gradleProps)
+    filesMatching("**/*.properties") {
+        expand(gradleProps)
+    }
+}
+
+// Manually deleting jar if we gradle.properties newer than jar
+// Probably a better way, but watch out for "tasks.jar.onlyIf" elsewhere in build scripts
+jar.dependsOn 'deleteJar'
+
+task deleteJar(type: Delete) {
+    def jarFile = file("build/libs/${project.name}-${project.version}.jar")
+    if (gradlePropFile.lastModified() > jarFile.lastModified()) { 
+        doLast {
+            println("Deleting files due to gradle.properties update")
+        }
+        delete jarFile
+    }
 }
