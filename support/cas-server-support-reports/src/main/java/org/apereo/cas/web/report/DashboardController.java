@@ -114,7 +114,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
         model.put("statisticsEndpointEnabled",
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getStatistics(), casProperties));
         model.put("singleSignOnStatusEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnReport(), casProperties));
+                isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnStatus(), casProperties));
         model.put("springWebflowEndpointEnabled",
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getSpringWebflowReport(), casProperties));
         model.put("auditLogEndpointEnabled",
@@ -125,6 +125,8 @@ public class DashboardController extends BaseCasMvcEndpoint {
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getHealthCheck(), casProperties));
         model.put("metricsEndpointEnabled",
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getMetrics(), casProperties));
+        model.put("servicesEndpointEnabled",
+                isEndpointCapable(casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties));
         model.put("attributeResolutionEndpointEnabled",
                 isEndpointCapable(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties));
 

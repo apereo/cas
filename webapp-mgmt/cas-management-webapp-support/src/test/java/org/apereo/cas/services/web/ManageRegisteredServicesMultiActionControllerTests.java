@@ -26,6 +26,7 @@ import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +49,10 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     private ManageRegisteredServicesMultiActionController controller;
     private DefaultRegisteredServiceFactory registeredServiceFactory;
     private DefaultServicesManager servicesManager;
-    private final DefaultAttributeReleasePolicyMapper policyMapper = new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
-            new DefaultPrincipalAttributesRepositoryMapper());
+    private final DefaultAttributeReleasePolicyMapper policyMapper =
+            new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
+                    new DefaultPrincipalAttributesRepositoryMapper(),
+                    new ArrayList<>());
 
     @Before
     public void setUp() throws Exception {
