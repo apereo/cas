@@ -78,6 +78,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
             LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
                     secretKeyToUse, ENCRYPTION_KEY_SIZE, getName());
+        } else {
+            LOGGER.debug("Located encryption key to use for [{}]", getName());
         }
 
         String signingKeyToUse = secretKeySigning;
@@ -86,6 +88,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             signingKeyToUse = EncodingUtils.generateJsonWebKey(SIGNING_KEY_SIZE);
             LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings.",
                     signingKeyToUse, SIGNING_KEY_SIZE, getName());
+        } else {
+            LOGGER.debug("Located signing key to use for [{}]", getName());
         }
 
 

@@ -3,7 +3,6 @@ package org.apereo.cas.ws.idp.services;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.wss4j.dom.WSConstants;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -23,8 +22,8 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = -3700571300568534062L;
 
     private String realm = WSFederationConstants.REALM_DEFAULT_URI;
-    private String protocol = WSConstants.WST_NS_05_12;
-    private String tokenType = WSConstants.WSS_SAML2_TOKEN_TYPE;
+    private String protocol = WSFederationConstants.WST_NS_05_12;
+        private String tokenType = WSFederationConstants.WSS_SAML2_TOKEN_TYPE;
     private String wsdlLocation;
     private String namespace = WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512;
     private String addressingNamespace = WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING;
