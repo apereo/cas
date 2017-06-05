@@ -1,19 +1,5 @@
-/* global head, trackGeoLocation, jqueryReady */
-head.ready(document, function () {
-    if (!window.jQuery) {
-        head.load('https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js', loadjQueryUI);
-    } else {
-        resourceLoadedSuccessfully();
-    }
-});
-
-function loadjQueryUI() {
-    head.load('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js', loadjQueryCookies);
-}
-
-function loadjQueryCookies() {
-    head.load('https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js', resourceLoadedSuccessfully);
-}
+/* global trackGeoLocation, jqueryReady */
+/* exported resourceLoadedSuccessfully */
 
 function requestGeoPosition() {
     // console.log('Requesting GeoLocation data from the browser...');
