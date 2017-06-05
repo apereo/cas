@@ -37,9 +37,9 @@ public class CassandraJsonTests {
     public void shouldWorkWithAStringSerializer() throws Exception {
         final TicketGrantingTicketImpl tgt = TicketCreatorUtils.defaultTGT("id");
 
-        dao.addTicketGrantingTicket(tgt);
+        dao.addTicket(tgt);
 
-        assertEquals(tgt, dao.getTicketGrantingTicket("id"));
+        assertEquals(tgt, dao.getTicket("id"));
     }
 
     @Ignore("To be completed")
@@ -50,9 +50,9 @@ public class CassandraJsonTests {
         final TicketGrantingTicketImpl secondExpired = TicketCreatorUtils.expiredTGT("expired2");
         final TicketGrantingTicketImpl notExpired = TicketCreatorUtils.defaultTGT("notExpired");
 
-        dao.addTicketGrantingTicket(firstExpired);
-        dao.addTicketGrantingTicket(secondExpired);
-        dao.addTicketGrantingTicket(notExpired);
+        dao.addTicket(firstExpired);
+        dao.addTicket(secondExpired);
+        dao.addTicket(notExpired);
 
         //when
         final Stream<TicketGrantingTicket> expiredTgts = dao.getExpiredTgts();

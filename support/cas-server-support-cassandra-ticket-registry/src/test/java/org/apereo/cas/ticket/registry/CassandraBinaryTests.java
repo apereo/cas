@@ -29,8 +29,8 @@ public class CassandraBinaryTests {
 
         final TicketGrantingTicketImpl tgt = TicketCreatorUtils.defaultTGT("id");
 
-        dao.addTicketGrantingTicket(tgt);
+        dao.addTicket(tgt);
 
-        assertEquals(tgt, dao.getTicketGrantingTicket("id"));
+        assertEquals(tgt, dao.getTicket("id"));
     }
 }
