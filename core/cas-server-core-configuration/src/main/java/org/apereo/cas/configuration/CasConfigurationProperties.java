@@ -135,7 +135,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
-    
+
     @NestedConfigurationProperty
     private ClearpassProperties clearpass = new ClearpassProperties();
 
@@ -180,7 +180,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private WebflowProperties webflow = new WebflowProperties();
-    
+
     @NestedConfigurationProperty
     private FortressProperties fortressProperties = new FortressProperties();
 
@@ -519,12 +519,12 @@ public class CasConfigurationProperties {
     public void setClickatell(final ClickatellProperties clickatell) {
         this.clickatell = clickatell;
     }
-    
+
     public void setFotressProperties(final FortressProperties fortressProperties) {
-      this.fortressProperties = fortressProperties;
+        this.fortressProperties = fortressProperties;
     }
-    
+
     public FortressProperties getFortressProperties() {
-      return fortressProperties;
+        return fortressProperties;
     }
 }

@@ -10,8 +10,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +40,7 @@ public class FortressAuthenticationConfiguration {
     }
 
     public AccessMgr fortressAccessManager() {
-        AccessMgrRestImpl accessMgrRestImpl = new AccessMgrRestImpl();
+        final AccessMgrRestImpl accessMgrRestImpl = new AccessMgrRestImpl();
         accessMgrRestImpl.setContextId(casProperties.getFortressProperties().getRbacContextId());
         return accessMgrRestImpl;
     }

@@ -34,45 +34,44 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
     @Qualifier("fortressAccessManager")
     private AccessMgr accessManager;
 
-    private JAXBContext jaxbContext;
     private Marshaller marshaller;
 
     public FortressAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                          final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
         try {
-            jaxbContext = JAXBContext.newInstance(Session.class);
+            final JAXBContext jaxbContext = JAXBContext.newInstance(Session.class);
             marshaller = jaxbContext.createMarshaller();
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             LOG.error(JAXB_EXCEPTION_MESSAGE, e);
         }
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential usernamePasswordCredential,
-                                                                 String originalPassword) throws GeneralSecurityException, PreventedException {
-        String username = usernamePasswordCredential.getUsername();
-        String password = usernamePasswordCredential.getPassword();
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential usernamePasswordCredential,
+                                                                 final String originalPassword) throws GeneralSecurityException, PreventedException {
+        final String username = usernamePasswordCredential.getUsername();
+        final String password = usernamePasswordCredential.getPassword();
         Session fortressSession = null;
         try {
             LOG.trace(TRACE_ATTEMPT_MESSAGE_TO_FORTRESS, new Object[]{username});
             fortressSession = accessManager.createSession(new User(username, password.toCharArray()), false);
             if (fortressSession != null) {
-                StringWriter writer = new StringWriter();
+                final StringWriter writer = new StringWriter();
                 marshaller.marshal(fortressSession, writer);
-                String fortressXmlSession = writer.toString();
+                final String fortressXmlSession = writer.toString();
                 LOG.trace(TRACE_FORTRESS_SESSION_RESPONSE, fortressXmlSession);
-                Map<String, Object> attributes = new HashMap<>();
+                final Map<String, Object> attributes = new HashMap<>();
                 attributes.put(FORTRESS_SESSION_KEY, fortressXmlSession);
                 return createHandlerResult(usernamePasswordCredential,
                         principalFactory.createPrincipal(username, attributes), null);
             }
-        } catch (org.apache.directory.fortress.core.SecurityException e) {
-            String errorMessage = "Fortress authentication failed for [" + username + "]";
+        } catch (final org.apache.directory.fortress.core.SecurityException e) {
+            final String errorMessage = "Fortress authentication failed for [" + username + "]";
             LOG.trace(errorMessage, e);
             throw new GeneralSecurityException(errorMessage);
-        } catch (JAXBException e) {
-            String errorMessage = "cannot marshalling session with value : " + fortressSession == null ? "null"
+        } catch (final JAXBException e) {
+            final String errorMessage = "cannot marshalling session with value : " + fortressSession == null ? "null"
                     : fortressSession.toString();
             LOG.trace(errorMessage);
             throw new GeneralSecurityException(errorMessage);
@@ -85,7 +84,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
         return accessManager;
     }
 
-    public void setAccessManager(AccessMgr accessManager) {
+    public void setAccessManager(final AccessMgr accessManager) {
         this.accessManager = accessManager;
     }
 }
