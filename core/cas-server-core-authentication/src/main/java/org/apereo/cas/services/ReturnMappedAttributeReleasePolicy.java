@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -89,9 +90,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         this.allowedAttributes.entrySet().stream()
                 .map(entry -> {
                     final String key = entry.getKey();
+                    LOGGER.debug("Attempting to map allowed attribute name [{}]", key);
                     return new Object[]{key, resolvedAttributes.get(key), entry};
                 })
-                .filter(entry -> entry[1] != null)
                 .forEach(entry -> {
                     final String mappedAttributeName = ((Map.Entry<String, String>) entry[2]).getValue();
                     final Matcher matcherInline = INLINE_GROOVY_PATTERN.matcher(mappedAttributeName);
@@ -102,9 +103,15 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                     } else if (matcherFile.find()) {
                         processFileBasedGroovyAttributes(resolvedAttributes, attributesToRelease, matcherFile, entry);
                     } else {
-                        LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
-                                entry[0], mappedAttributeName);
-                        attributesToRelease.put(mappedAttributeName, entry[1]);
+
+                        if (entry[1] != null) {
+                            LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
+                                    entry[0], mappedAttributeName);
+                            attributesToRelease.put(mappedAttributeName, entry[1]);
+                        } else {
+                            LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list",
+                                    mappedAttributeName, entry[0]);
+                        }
                     }
                 });
         return attributesToRelease;
@@ -147,6 +154,10 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             final Binding binding = new Binding();
             final GroovyShell shell = new GroovyShell(binding);
             binding.setVariable("attributes", resolvedAttributes);
+            binding.setVariable("logger", LOGGER);
+
+            LOGGER.debug("Executing groovy script [{}] with attributes binding of [{}]",
+                    StringUtils.abbreviate(groovyScript, groovyScript.length() / 2), resolvedAttributes);
             final Object res = shell.evaluate(groovyScript);
             return res;
         } catch (final Exception e) {

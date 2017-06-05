@@ -4,13 +4,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * Common properties for all jpa configs.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public abstract class AbstractJpaProperties {
+public abstract class AbstractJpaProperties implements Serializable {
 
     private String dialect = "org.hibernate.dialect.HSQLDialect";
     private String ddlAuto = "create-drop";

@@ -17,7 +17,7 @@ public class PasswordPolicyProperties {
     private Map<String, Class<LoginException>> policyAttributes = new LinkedCaseInsensitiveMap<>();
 
     private boolean enabled = true;
-    
+    private String customPolicyClass;
     private int loginFailures = 5;
     
     private String warningAttributeValue;
@@ -30,6 +30,14 @@ public class PasswordPolicyProperties {
 
     public AbstractLdapProperties.LdapType getType() {
         return type;
+    }
+
+    public String getCustomPolicyClass() {
+        return customPolicyClass;
+    }
+
+    public void setCustomPolicyClass(final String customPolicyClass) {
+        this.customPolicyClass = customPolicyClass;
     }
 
     public void setType(final AbstractLdapProperties.LdapType type) {

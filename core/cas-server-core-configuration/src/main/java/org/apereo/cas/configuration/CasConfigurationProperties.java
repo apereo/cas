@@ -527,4 +527,5 @@ public class CasConfigurationProperties {
     public FortressProperties getFortressProperties() {
         return fortressProperties;
     }
+
 }

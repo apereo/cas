@@ -1,8 +1,8 @@
 package org.apereo.cas.otp.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 
 /**
  * This is {@link OneTimeTokenAccountCheckRegistrationAction}.
@@ -36,8 +35,7 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final RequestContext context = RequestContextHolder.getRequestContext();
-        final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
+        final String uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
 
         final String secretKey = repository.getSecret(uid);
         if (StringUtils.isBlank(secretKey)) {
