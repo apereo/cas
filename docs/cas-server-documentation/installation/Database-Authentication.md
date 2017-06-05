@@ -10,7 +10,7 @@ Database authentication is enabled by including the following dependencies in th
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-jdbc</artifactId>
+    <artifactId>cas-server-support-jdbc-drivers</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
