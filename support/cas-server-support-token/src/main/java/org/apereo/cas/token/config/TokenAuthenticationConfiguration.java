@@ -21,6 +21,7 @@ import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
 import org.apereo.cas.token.webflow.TokenAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,6 +42,10 @@ public class TokenAuthenticationConfiguration {
     
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("casClientTicketValidator")
+    private AbstractUrlBasedTicketValidator casClientTicketValidator;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -66,7 +71,8 @@ public class TokenAuthenticationConfiguration {
     public ResponseBuilder webApplicationServiceResponseBuilder() {
         return new TokenWebApplicationServiceResponseBuilder(servicesManager,
                 tokenCipherExecutor(),
-                grantingTicketExpirationPolicy);
+                grantingTicketExpirationPolicy,
+                casClientTicketValidator);
     }
 
     @ConditionalOnMissingBean(name = "tokenPrincipalFactory")

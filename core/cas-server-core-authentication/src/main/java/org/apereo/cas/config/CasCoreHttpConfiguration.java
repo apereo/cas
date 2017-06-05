@@ -5,12 +5,13 @@ import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.ssl.SSLContexts;
-import org.apereo.cas.authentication.FileTrustStoreSslSocketFactory;
+import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -22,6 +23,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import java.security.KeyStore;
 
 /**
  * This is {@link CasCoreHttpConfiguration}.
@@ -41,11 +44,23 @@ public class CasCoreHttpConfiguration {
     @ConditionalOnMissingBean(name = "trustStoreSslSocketFactory")
     @Bean
     public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
-        final HttpClientProperties.Truststore client = casProperties.getHttpClient().getTruststore();
-        if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            return new FileTrustStoreSslSocketFactory(client.getFile(), client.getPsw());
+        return new SSLConnectionSocketFactory(sslContext());
+    }
+
+    @ConditionalOnMissingBean(name = "sslContext")
+    @Bean
+    public SSLContext sslContext() {
+        try {
+            final HttpClientProperties.Truststore client = casProperties.getHttpClient().getTruststore();
+            if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
+                final DefaultCasSslContext ctx =
+                        new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
+                return ctx.getSslContext();
+            }
+            return SSLContexts.createSystemDefault();
+        } catch (final Exception e) {
+            throw new BeanCreationException(e.getMessage(), e);
         }
-        return new SSLConnectionSocketFactory(SSLContexts.createSystemDefault());
     }
 
     @ConditionalOnMissingBean(name = "httpClient")

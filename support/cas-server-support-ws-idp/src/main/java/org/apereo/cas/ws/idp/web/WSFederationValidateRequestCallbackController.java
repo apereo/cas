@@ -25,8 +25,8 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.util.CommonUtils;
+import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,6 +47,7 @@ import java.util.Map;
 public class WSFederationValidateRequestCallbackController extends BaseWSFederationRequestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationValidateRequestCallbackController.class);
     private final WSFederationRelyingPartyTokenProducer relyingPartyTokenProducer;
+    private final AbstractUrlBasedTicketValidator ticketValidator;
 
     public WSFederationValidateRequestCallbackController(final ServicesManager servicesManager,
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -57,13 +58,15 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final SecurityTokenTicketFactory securityTokenTicketFactory,
                                                          final TicketRegistry ticketRegistry,
                                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                                         final TicketRegistrySupport ticketRegistrySupport) {
+                                                         final TicketRegistrySupport ticketRegistrySupport,
+                                                         final AbstractUrlBasedTicketValidator ticketValidator) {
         super(servicesManager,
                 webApplicationServiceFactory, casProperties,
                 serviceSelectionStrategy, httpClient, securityTokenTicketFactory,
                 ticketRegistry, ticketGrantingTicketCookieGenerator,
                 ticketRegistrySupport);
         this.relyingPartyTokenProducer = relyingPartyTokenProducer;
+        this.ticketValidator = ticketValidator;
     }
 
     /**
@@ -132,7 +135,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         final WSFederationRegisteredService service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
         return relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request, assertion);
     }
-    
+
 
     private static SecurityToken validateSecurityTokenInAssertion(final Assertion assertion, final HttpServletRequest request,
                                                                   final HttpServletResponse response) {
@@ -151,10 +154,9 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                           final HttpServletRequest request,
                                                           final WSFederationRequest fedRequest) throws Exception {
         final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
-        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(casProperties.getServer().getPrefix());
         final String serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.debug("Created service url for validation: [{}]", serviceUrl);
-        final Assertion assertion = validator.validate(ticket, serviceUrl);
+        final Assertion assertion = this.ticketValidator.validate(ticket, serviceUrl);
         LOGGER.debug("Located CAS assertion [{}]", assertion);
         return assertion;
     }

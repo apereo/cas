@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import com.google.common.base.Throwables;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +9,7 @@ import org.springframework.core.io.Resource;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
@@ -29,54 +29,20 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * The SSL socket factory that loads the SSL context from a custom
- * truststore file strictly used ssl handshakes for proxy authentication.
+ * This is {@link DefaultCasSslContext}.
  *
  * @author Misagh Moayyed
- * @since 4.1.0
+ * @since 5.2.0
  */
-public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
+public class DefaultCasSslContext {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileTrustStoreSslSocketFactory.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasSslContext.class);
     private static final String ALG_NAME_PKIX = "PKIX";
 
-    /**
-     * Instantiates a new trusted proxy authentication trust store ssl socket factory.
-     * Defaults to {@code TLSv1} and {@link SSLConnectionSocketFactory#BROWSER_COMPATIBLE_HOSTNAME_VERIFIER}
-     * for the supported protocols and hostname verification.
-     *
-     * @param trustStoreFile     the trust store file
-     * @param trustStorePassword the trust store password
-     */
-    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile, final String trustStorePassword) {
-        this(trustStoreFile, trustStorePassword, KeyStore.getDefaultType());
-    }
+    private final SSLContext sslContext;
 
-
-    /**
-     * Instantiates a new trusted proxy authentication trust store ssl socket factory.
-     *
-     * @param trustStoreFile     the trust store file
-     * @param trustStorePassword the trust store password
-     * @param trustStoreType     the trust store type
-     */
-    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile,
-                                          final String trustStorePassword,
-                                          final String trustStoreType) {
-        super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType));
-    }
-
-    /**
-     * Gets the trusted ssl context.
-     *
-     * @param trustStoreFile     the trust store file
-     * @param trustStorePassword the trust store password
-     * @param trustStoreType     the trust store type
-     * @return the trusted ssl context
-     */
-    private static SSLContext getTrustedSslContext(final Resource trustStoreFile, final String trustStorePassword,
-                                                   final String trustStoreType) {
+    public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword,
+                                final String trustStoreType) {
         try {
 
             final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
@@ -99,14 +65,29 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     new CompositeX509TrustManager(Arrays.asList(jvmTrustManager, customTrustManager))
             };
 
-            final SSLContext context = SSLContexts.custom().useProtocol("SSL").build();
-            context.init(keyManagers, trustManagers, null);
-            return context;
+            this.sslContext = SSLContexts.custom().useProtocol("SSL").build();
+            sslContext.init(keyManagers, trustManagers, null);
 
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
+    }
+
+    public SSLSocketFactory getSslSocketFactory() {
+        return this.sslContext.getSocketFactory();
+    }
+
+    /**
+     * Gets the trusted ssl context.
+     *
+     * @param trustStoreFile     the trust store file
+     * @param trustStorePassword the trust store password
+     * @param trustStoreType     the trust store type
+     * @return the trusted ssl context
+     */
+    public SSLContext getSslContext() {
+        return this.sslContext;
     }
 
     /**

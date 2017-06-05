@@ -3,9 +3,9 @@ package org.apereo.cas.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
@@ -22,6 +22,7 @@ import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
 import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
+import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,6 +45,10 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = {"classpath:META-INF/cxf/cxf.xml"})
 public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
+
+    @Autowired
+    @Qualifier("casClientTicketValidator")
+    private AbstractUrlBasedTicketValidator casClientTicketValidator;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -71,7 +76,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -96,13 +101,13 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Autowired
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
-            @Qualifier("wsFederationRelyingPartyTokenProducer")
-            final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
+            @Qualifier("wsFederationRelyingPartyTokenProducer") final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
         return new WSFederationValidateRequestCallbackController(servicesManager,
                 webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
                 wsFederationAuthenticationServiceSelectionStrategy(),
-                httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
-                ticketRegistrySupport);
+                httpClient, securityTokenTicketFactory, ticketRegistry,
+                ticketGrantingTicketCookieGenerator,
+                ticketRegistrySupport, casClientTicketValidator);
     }
 
     @Lazy

@@ -1,11 +1,14 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.authentication.FileTrustStoreSslSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+
+import java.security.KeyStore;
 
 import static org.junit.Assert.*;
 
@@ -21,11 +24,9 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     @Before
     public void prepareHttpClient() throws Exception {
-        final FileTrustStoreSslSocketFactory sslFactory = new FileTrustStoreSslSocketFactory(
-                TRUST_STORE, TRUST_STORE_PSW);
-
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
-        clientFactory.setSslSocketFactory(sslFactory);
+        clientFactory.setSslSocketFactory(new SSLConnectionSocketFactory(
+                new DefaultCasSslContext(TRUST_STORE, TRUST_STORE_PSW, KeyStore.getDefaultType()).getSslContext()));
         this.client = clientFactory.getObject();
     }
 

@@ -18,8 +18,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.DateTimeUtils;
+import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
@@ -43,12 +43,16 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
 
     private final ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
+    private final AbstractUrlBasedTicketValidator ticketValidator;
+
     public TokenWebApplicationServiceResponseBuilder(final ServicesManager servicesManager,
                                                      final CipherExecutor tokenCipherExecutor,
-                                                     final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
+                                                     final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
+                                                     final AbstractUrlBasedTicketValidator ticketValidator) {
         this.servicesManager = servicesManager;
         this.tokenCipherExecutor = tokenCipherExecutor;
         this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
+        this.ticketValidator = ticketValidator;
     }
 
     @Override
@@ -87,8 +91,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
     protected String generateToken(final Service service, final Map<String, String> parameters) {
         try {
             final String ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
-            final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(casProperties.getServer().getPrefix());
-            final Assertion assertion = validator.validate(ticketId, service.getId());
+            final Assertion assertion = this.ticketValidator.validate(ticketId, service.getId());
             final JWTClaimsSet.Builder claims =
                     new JWTClaimsSet.Builder()
                             .audience(service.getId())
