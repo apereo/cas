@@ -81,9 +81,6 @@ public class DefaultCasSslContext {
     /**
      * Gets the trusted ssl context.
      *
-     * @param trustStoreFile     the trust store file
-     * @param trustStorePassword the trust store password
-     * @param trustStoreType     the trust store type
      * @return the trusted ssl context
      */
     public SSLContext getSslContext() {
