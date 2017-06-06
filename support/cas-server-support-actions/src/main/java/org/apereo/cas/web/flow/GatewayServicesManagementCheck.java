@@ -21,7 +21,7 @@ public class GatewayServicesManagementCheck extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GatewayServicesManagementCheck.class);
     
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
     /**
      * Initialize the component with an instance of the services manager.

@@ -75,8 +75,11 @@ public class OidcIdTokenGeneratorService {
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) throws Exception {
 
-        final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) registeredService;
+        if (!(registeredService instanceof OidcRegisteredService)) {
+            throw new IllegalArgumentException("Registered service instance is not an OIDC service");
+        }
 
+        final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) registeredService;
         final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
         final Optional<UserProfile> profile = manager.get(true);

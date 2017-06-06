@@ -59,12 +59,20 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public void addTicket(final Ticket ticket) {
-        LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
+        final long ttl = ticket.getExpirationPolicy().getTimeToLive();
+        if (ttl < 0) {
+            throw new IllegalArgumentException("The expiration policy of ticket "
+                    + ticket.getId() + "is set to use a negative ttl");
+        }
+
+        LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
         final Ticket encTicket = encodeTicket(ticket);
 
         final TicketDefinition metadata = this.ticketCatalog.find(ticket);
         final IMap<String, Ticket> ticketMap = getTicketMapInstanceByMetadata(metadata);
-        ticketMap.set(encTicket.getId(), encTicket, ticket.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS);
+
+        ticketMap.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
+        LOGGER.debug("Added ticket [{}] with ttl [{}s]", encTicket.getId(), ttl);
     }
 
     private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {

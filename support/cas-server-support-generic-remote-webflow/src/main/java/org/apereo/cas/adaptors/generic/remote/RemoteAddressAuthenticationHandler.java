@@ -70,7 +70,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      * @param ip      The IP address to check.
      * @return A boolean value.
      */
-    private boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
+    private static boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
         LOGGER.debug("Checking IP address: [{}] in [{}] by [{}]", ip, network, netmask);
 
         final byte[] networkBytes = network.getAddress();

@@ -215,7 +215,6 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         modelBuilder.setStates(states);
 
-
         final FlowModelHolder holder = new DefaultFlowModelHolder(modelBuilder);
         final FlowBuilder flowBuilder = new FlowModelFlowBuilder(holder);
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);

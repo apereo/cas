@@ -26,7 +26,9 @@ public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
         p.setScriptFile("groovy { return attributes }");
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal("cas",
                 Collections.singletonMap("attribute", "value"));
-        final Map<String, Object> attrs = p.getAttributes(principal, CoreAuthenticationTestUtils.getRegisteredService());
+        final Map<String, Object> attrs = p.getAttributes(principal,
+                CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals(attrs.size(), principal.getAttributes().size());
     }
 }

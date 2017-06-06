@@ -5,10 +5,12 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,6 +28,9 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String restEndpoint;
 
+    private Resource groovyScript;
+
+    private Resource globalPrincipalAttributePredicate;
     private String globalPrincipalAttributeNameTriggers;
     private String globalPrincipalAttributeValueRegex;
 
@@ -37,6 +42,8 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String grouperGroupField;
 
+    private Resource providerSelectorGroovyScript;
+    
     private U2F u2f = new U2F();
     private Azure azure = new Azure();
     private Trusted trusted = new Trusted();
@@ -45,6 +52,30 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private GAuth gauth = new GAuth();
     private List<Duo> duo = new ArrayList<>();
     private Authy authy = new Authy();
+
+    public Resource getGlobalPrincipalAttributePredicate() {
+        return globalPrincipalAttributePredicate;
+    }
+
+    public void setGlobalPrincipalAttributePredicate(final Resource globalPrincipalAttributePredicate) {
+        this.globalPrincipalAttributePredicate = globalPrincipalAttributePredicate;
+    }
+
+    public Resource getProviderSelectorGroovyScript() {
+        return providerSelectorGroovyScript;
+    }
+
+    public void setProviderSelectorGroovyScript(final Resource providerSelectorGroovyScript) {
+        this.providerSelectorGroovyScript = providerSelectorGroovyScript;
+    }
+
+    public Resource getGroovyScript() {
+        return groovyScript;
+    }
+
+    public void setGroovyScript(final Resource groovyScript) {
+        this.groovyScript = groovyScript;
+    }
 
     public U2F getU2f() {
         return u2f;
@@ -322,7 +353,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.memory = memory;
         }
 
-        public static class Memory {
+        public static class Memory implements Serializable {
             private long expireRegistrations = 30;
             private TimeUnit expireRegistrationsTimeUnit = TimeUnit.SECONDS;
 
@@ -368,8 +399,14 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private Integer clientId;
         private String secretKey = StringUtils.EMPTY;
 
+        private Resource jsonFile;
+        private Map<String, String> allowedDevices;
+        
         private List<String> apiUrls = new ArrayList<>();
         private boolean trustedDeviceEnabled;
+
+        private Jpa jpa = new Jpa();
+        private Mongodb mongodb = new Mongodb();
 
         public YubiKey() {
             setId("mfa-yubikey");
@@ -399,13 +436,53 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.secretKey = secretKey;
         }
 
-
         public List<String> getApiUrls() {
             return apiUrls;
         }
 
         public void setApiUrls(final List<String> apiUrls) {
             this.apiUrls = apiUrls;
+        }
+
+        public Resource getJsonFile() {
+            return jsonFile;
+        }
+
+        public void setJsonFile(final Resource jsonFile) {
+            this.jsonFile = jsonFile;
+        }
+
+        public Map<String, String> getAllowedDevices() {
+            return allowedDevices;
+        }
+
+        public void setAllowedDevices(final Map<String, String> allowedDevices) {
+            this.allowedDevices = allowedDevices;
+        }
+        
+        public Jpa getJpa() {
+            return jpa;
+        }
+
+        public void setJpa(final Jpa jpa) {
+            this.jpa = jpa;
+        }
+
+        public Mongodb getMongodb() {
+            return mongodb;
+        }
+
+        public void setMongodb(final Mongodb mongodb) {
+            this.mongodb = mongodb;
+        }
+
+        public static class Jpa extends AbstractJpaProperties {
+        }
+
+        public static class Mongodb extends AbstractMongoClientProperties {
+            public Mongodb() {
+                setCollection("MongoDbYubiKeyRepository");
+            }
         }
     }
 
@@ -464,7 +541,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.client = client;
         }
 
-        public static class Server {
+        public static class Server implements Serializable {
             private String protocol = "EAP_MSCHAPv2";
             private int retries = 3;
             private String nasIdentifier;
@@ -550,7 +627,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         }
 
-        public static class Client {
+        public static class Client implements Serializable {
             private String inetAddress = "localhost";
             private String sharedSecret = "N0Sh@ar3d$ecReT";
             private int socketTimeout;
@@ -836,7 +913,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.cleaner = cleaner;
         }
 
-        public static class Rest {
+        public static class Rest implements Serializable {
             private String endpoint;
 
             public String getEndpoint() {
@@ -1060,7 +1137,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         public static class Json extends AbstractConfigProperties {
         }
 
-        public static class Rest {
+        public static class Rest implements Serializable {
             private String endpointUrl;
 
             public String getEndpointUrl() {
@@ -1089,7 +1166,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             }
         }
 
-        public static class Jpa {
+        public static class Jpa implements Serializable {
             private Database database = new Database();
 
             public Database getDatabase() {

@@ -14,9 +14,27 @@ public interface YubiKeyAccountRegistry {
     /**
      * Determines whether the registered
      * YubiKey public id is allowed for the {@code uid} received.
-     * @param uid user id
+     *
+     * @param uid             user id
      * @param yubikeyPublicId public id of the yubi id
      * @return true if the public id is allowed and registered for the uid.
      */
     boolean isYubiKeyRegisteredFor(String uid, String yubikeyPublicId);
+
+    /**
+     * Is yubi key registered for boolean.
+     *
+     * @param uid the uid
+     * @return the boolean
+     */
+    boolean isYubiKeyRegisteredFor(String uid);
+
+    /**
+     * Register account/device.
+     *
+     * @param uid   the uid
+     * @param token the yubikey token
+     * @return the boolean
+     */
+    boolean registerAccountFor(String uid, String token);
 }

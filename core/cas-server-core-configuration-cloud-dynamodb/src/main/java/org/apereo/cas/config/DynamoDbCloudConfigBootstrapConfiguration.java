@@ -75,22 +75,22 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         final Properties props = new Properties();
         result.getItems()
                 .stream()
-                .map(this::retrieveSetting)
+                .map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting)
                 .forEach(p -> props.put(p.getKey(), p.getValue()));
         return new PropertiesPropertySource(getClass().getSimpleName(), props);
     }
 
-    private Pair<String, Object> retrieveSetting(final Map<String, AttributeValue> entry) {
+    private static Pair<String, Object> retrieveSetting(final Map<String, AttributeValue> entry) {
         final String name = entry.get(ColumnNames.NAME).getS();
         final String value = entry.get(ColumnNames.VALUE).getS();
         return Pair.of(name, value);
     }
 
-    private String getSetting(final Environment environment, final String key) {
+    private static String getSetting(final Environment environment, final String key) {
         return environment.getProperty("cas.spring.cloud.dynamodb." + key);
     }
 
-    private AmazonDynamoDBClient getAmazonDynamoDbClient(final Environment environment) {
+    private static AmazonDynamoDBClient getAmazonDynamoDbClient(final Environment environment) {
         final ClientConfiguration cfg = new ClientConfiguration();
 
         try {
@@ -106,13 +106,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         final String secret = getSetting(environment, "credentialSecretKey");
         final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
 
-        final AmazonDynamoDBClient client;
-        if (credentials == null) {
-            client = new AmazonDynamoDBClient(cfg);
-        } else {
-            client = new AmazonDynamoDBClient(credentials, cfg);
-        }
-
+        final AmazonDynamoDBClient client = new AmazonDynamoDBClient(credentials, cfg);
         final String endpoint = getSetting(environment, "endpoint");
         if (StringUtils.isNotBlank(endpoint)) {
             client.setEndpoint(endpoint);
@@ -130,7 +124,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         return client;
     }
 
-    private void createSettingsTable(final AmazonDynamoDBClient amazonDynamoDBClient, final boolean deleteTables) {
+    private static void createSettingsTable(final AmazonDynamoDBClient amazonDynamoDBClient, final boolean deleteTables) {
         try {
             final CreateTableRequest request = new CreateTableRequest()
                     .withAttributeDefinitions(new AttributeDefinition(ColumnNames.ID.getName(), ScalarAttributeType.S))

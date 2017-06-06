@@ -21,7 +21,7 @@ public interface CasWebflowConstants {
      * The state id 'verifyTrustedDevice'.
      */
     String STATE_ID_VERIFY_TRUSTED_DEVICE = "verifyTrustedDevice";
-    
+
     /**
      * The view id 'registerDeviceView'.
      */
@@ -41,17 +41,17 @@ public interface CasWebflowConstants {
      * The state id 'successWithWarnings'.
      */
     String STATE_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
-    
+
     /**
      * The transition state 'successWithWarnings'.
      */
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
-    
+
     /**
      * The decision state 'checkRegistrationRequired'.
      */
     String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
-    
+
     /**
      * The transition state 'yes'.
      */
@@ -80,7 +80,7 @@ public interface CasWebflowConstants {
      * The view state 'showAuthenticationWarningMessages'.
      */
     String VIEW_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
-    
+
     /**
      * The transition state 'authenticationFailure'.
      */
@@ -90,7 +90,7 @@ public interface CasWebflowConstants {
      * 'gateway' state id.
      */
     String STATE_ID_GATEWAY = "gateway";
-    
+
     /**
      * The transition state 'warn'.
      */
@@ -105,6 +105,11 @@ public interface CasWebflowConstants {
      * The transition state 'sendTicketGrantingTicket'.
      */
     String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
+
+    /**
+     * The state id 'sendTicketGrantingTicket'.
+     */
+    String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
      * The state 'initializeLoginForm'.
@@ -146,6 +151,11 @@ public interface CasWebflowConstants {
      * The state 'postView'.
      */
     String STATE_ID_POST_VIEW = "postView";
+
+    /**
+     * The state 'headerView'.
+     */
+    String STATE_ID_HEADER_VIEW = "headerView";
 
     /**
      * The state 'showWarningView'.
@@ -207,7 +217,7 @@ public interface CasWebflowConstants {
      * The view id 'casPostResponseView'.
      */
     String VIEW_ID_POST_RESPONSE = "casPostResponseView";
-    
+
     /**
      * The view id 'casGenericSuccessView'.
      */
@@ -234,10 +244,56 @@ public interface CasWebflowConstants {
     String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
 
     /**
+     * View id 'casBadHoursView'.
+     */
+    String VIEW_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
+
+
+    /**
+     * View id 'casPasswordUpdateSuccessView'.
+     */
+    String VIEW_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccessView";
+
+    /**
+     * View id 'casAuthenticationBlockedView'.
+     */
+    String VIEW_ID_AUTHENTICATION_BLOCKED = "casAuthenticationBlockedView";
+
+    /**
+     * View id 'casResetPasswordErrorView'.
+     */
+    String VIEW_ID_PASSORD_RESET_ERROR = "casResetPasswordErrorView";
+
+    /**
+     * View id 'casBadWorkstationView'.
+     */
+    String VIEW_ID_INVALID_WORKSTATION = "casBadWorkstationView";
+
+    /**
+     * View id 'casAccountDisabledView'.
+     */
+    String VIEW_ID_ACCOUNT_DISABLED = "casAccountDisabledView";
+
+    /**
+     * View id 'casAccountLockedView'.
+     */
+    String VIEW_ID_ACCOUNT_LOCKED = "casAccountLockedView";
+
+    /**
+     * View id 'casMustChangePassView'.
+     */
+    String VIEW_ID_MUST_CHANGE_PASSWORD = "casMustChangePassView";
+
+    /**
+     * View id 'casExpiredPassView'.
+     */
+    String VIEW_ID_EXPIRED_PASSWORD = "casExpiredPassView";
+    
+    /**
      * View id 'casResetPasswordSentInstructions'.
      */
     String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
-    
+
     /**
      * Transition id 'resetPassword'.
      */
@@ -251,5 +307,11 @@ public interface CasWebflowConstants {
     /**
      * State id 'finishLogout'.
      */
-    String STATE_UD_FINISH_LOGOUT = "finishLogout";
+    String STATE_ID_FINISH_LOGOUT = "finishLogout";
+
+    /**
+     * State id 'casPasswordUpdateSuccess'.
+     */
+    String STATE_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccess";
+    
 }

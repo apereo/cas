@@ -21,6 +21,9 @@ This is not recommended and you should think of a more elaborated way of providi
 <div class="alert alert-info"><strong>Pay Attention!</strong><p>OpenID protocol is <strong>NOT</strong> the same thing
 as the OpenId Connect protocol whose details are <a href="OIDC-Protocol.html">documented here</a>.</p></div>
 
+
+## Configuration
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -33,23 +36,18 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#openid-authentication).
 
-## OpenID v2.0
+## Registere Clients
 
-To define the CAS server as an OpenID provider v2.0, add the `yadis.xml` file at the root of your CAS deployment. For example,
-if your deployment is available at `https://sso.example.org/cas`, then the `yadis.xml` file must be available at
-`https://sso.example.org/cas/yadis.xml`.
+Register clients in the CAS service registry:
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)"
-           xmlns:openid="http://openid.net/xmlns/1.0">
-<XRD>
-    <Service priority="1">
-        <Type>http://specs.openid.net/auth/2.0/signon</Type>
-        <URI>https://sso.example.org/cas/login</URI>
-    </Service>
-</XRD>
-</xrds:XRDS>
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://openid.example.org/myapp",
+  "name" : "openid",
+  "description" : "OpenID Sample Application",
+  "id" : 10
+}
 ```
 
 # OpenID Provider Delegation

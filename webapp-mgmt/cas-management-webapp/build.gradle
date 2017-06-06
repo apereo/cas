@@ -3,15 +3,26 @@ apply plugin: "org.springframework.boot"
 
 description = "Apereo CAS Management Web Application"
 
+if (Boolean.getBoolean("enableJRebelAgent")) {
+    war.dependsOn(generateRebel)
+}
+
 javadoc {
     enabled false
 }
 
 bootRun {
     addResources = true
+    def list = []
     if (Boolean.getBoolean("enableRemoteDebugging")) {
-        jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+        list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
     }
+    if (Boolean.getBoolean("enableJRebelAgent")) {
+        def lib = System.getProperty("JREBEL_LIB_PATH")
+        list.add("-agentpath:$lib")
+        list.add("-Drebel.remoting_plugin=true")
+    }
+    jvmArgs = list
 }
 
 springBoot {
@@ -44,4 +55,5 @@ dependencies {
     implementation libraries.thymeleaf
     implementation libraries.thymeleafdialect
     implementation libraries.thymeleafboot
+    implementation libraries.webjars
 }

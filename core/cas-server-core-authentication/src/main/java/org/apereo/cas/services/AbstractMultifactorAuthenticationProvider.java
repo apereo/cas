@@ -11,6 +11,9 @@ import org.springframework.webflow.execution.Event;
 
 import java.io.Serializable;
 
+import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
+import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET;
+
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
  * as the parent of all providers.
@@ -89,14 +92,14 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
-        RegisteredServiceMultifactorPolicy.FailureModes failureMode = RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
+        RegisteredServiceMultifactorPolicy.FailureModes failureMode = CLOSED;
         final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
-        if (policy != null) {
+        if (policy.getFailureMode() != NOT_SET) {
             failureMode = policy.getFailureMode();
-            LOGGER.debug("Multifactor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
+            LOGGER.debug("Multi-factor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
         } else if (StringUtils.isNotBlank(this.globalFailureMode)) {
             failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
-            LOGGER.debug("Using global multifactor failure mode for [{}] defined as [{}]", service.getServiceId(), failureMode);
+            LOGGER.debug("Using global multi-factor failure mode for [{}] defined as [{}]", service.getServiceId(), failureMode);
         }
 
         if (failureMode != RegisteredServiceMultifactorPolicy.FailureModes.NONE) {
@@ -123,7 +126,9 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
      *
      * @return the true/false
      */
-    protected abstract boolean isAvailable();
+    protected boolean isAvailable() {
+        return true;
+    }
 
     public void setBypassEvaluator(final MultifactorAuthenticationProviderBypass bypassEvaluator) {
         this.bypassEvaluator = bypassEvaluator;

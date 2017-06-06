@@ -61,6 +61,17 @@ public class DefaultResponse implements Response {
     }
 
     /**
+     * Gets header response.
+     *
+     * @param url        the url
+     * @param attributes the attributes
+     * @return the header response
+     */
+    public static Response getHeaderResponse(final String url, final Map<String, String> attributes) {
+        return new DefaultResponse(ResponseType.HEADER, url, attributes);
+    }
+
+    /**
      * Gets the redirect response.
      *
      * @param url        the url
@@ -70,10 +81,10 @@ public class DefaultResponse implements Response {
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
         final StringBuilder builder = new StringBuilder(parameters.size()
                 * CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
-        
+
         final String sanitizedUrl = sanitizeUrl(url);
         LOGGER.debug("Sanitized URL for redirect response is [{}]", sanitizedUrl);
-        
+
         final String[] fragmentSplit = sanitizedUrl.split("#");
 
         builder.append(fragmentSplit[0]);

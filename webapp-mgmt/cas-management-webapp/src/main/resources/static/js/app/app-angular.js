@@ -766,10 +766,10 @@ if (array.length == 3) {
             this.selectOptions = {
                 serviceTypeList: [
                     {name: 'CAS Client', value: 'cas'},
-                    {name: 'OAuth Client', value: 'oauth'},
+                    {name: 'OAuth2 Client', value: 'oauth'},
                     {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
-                    {name: 'SAML Client', value: 'saml'},
-                    {name: 'OIDC Client', value: 'oidc'},
+                    {name: 'SAML2 Service Provider', value: 'saml'},
+                    {name: 'OpenID Connect Client', value: 'oidc'},
                     {name: 'WS Federation', value: 'wsfed'}
                 ],
                 oidcScopes: [
@@ -779,6 +779,9 @@ if (array.length == 3) {
                     {name: 'Phone', value: 'phone'},
                     {name: 'Offline Access', value: 'offline_access'},
                     {name: 'User Defined', value: 'user_defined'}
+                    {name: 'OAuth2 Client', value: 'oauth'},
+                    {name: 'SAML2 Service Provider', value: 'saml'},
+                    {name: 'OpenID Connect Client', value: 'oidc'}
                 ],
                 logoutTypeList: [
                     {name: 'NONE', value: 'none'},

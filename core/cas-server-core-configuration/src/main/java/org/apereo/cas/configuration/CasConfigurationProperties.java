@@ -23,6 +23,7 @@ import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsPrope
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
+import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
@@ -52,6 +53,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @ConfigurationProperties(value = "cas")
 public class CasConfigurationProperties {
+
+    @NestedConfigurationProperty
+    private ConsentProperties consent = new ConsentProperties();
 
     @NestedConfigurationProperty
     private ScimProperties scim = new ScimProperties();
@@ -130,7 +134,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
-    
+
     @NestedConfigurationProperty
     private ClearpassProperties clearpass = new ClearpassProperties();
 
@@ -175,7 +179,15 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private WebflowProperties webflow = new WebflowProperties();
-    
+
+    public ConsentProperties getConsent() {
+        return consent;
+    }
+
+    public void setConsent(final ConsentProperties consent) {
+        this.consent = consent;
+    }
+
     public AuditProperties getAudit() {
         return audit;
     }
@@ -503,4 +515,5 @@ public class CasConfigurationProperties {
     public void setClickatell(final ClickatellProperties clickatell) {
         this.clickatell = clickatell;
     }
+
 }

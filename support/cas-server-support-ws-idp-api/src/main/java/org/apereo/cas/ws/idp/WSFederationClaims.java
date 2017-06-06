@@ -131,7 +131,7 @@ public enum WSFederationClaims {
     /**
      * The Uri.
      */
-    private String uri;
+    private final String uri;
 
     /**
      * Instantiates a new Claim type constants.

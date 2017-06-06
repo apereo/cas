@@ -55,7 +55,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     @Autowired
     private ResourceLoader resourceLoader;
-    
+
     @ConfigurationPropertiesBinding
     @Bean
     public Converter<String, List<Class<? extends Throwable>>> commaSeparatedStringToThrowablesCollection() {
@@ -87,6 +87,11 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         final Properties props = new Properties();
         loadEmbeddedYamlOverriddenProperties(props, environment);
 
+        final File configFile = configurationPropertiesEnvironmentManager().getStandaloneProfileConfigurationFile();
+        if (configFile != null) {
+            loadSettingsFromStandaloneConfigFile(props, configFile);
+        }
+
         final File config = configurationPropertiesEnvironmentManager().getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
         if (config.isDirectory() && config.exists()) {
@@ -101,6 +106,19 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
             LOGGER.info("Found and loaded [{}] setting(s) from [{}]", props.size(), config);
         }
         return new PropertiesPropertySource("standaloneCasConfigService", props);
+    }
+
+    private void loadSettingsFromStandaloneConfigFile(final Properties props, final File configFile) {
+        final Properties pp = new Properties();
+        
+        try (FileReader r = new FileReader(configFile)) {
+            LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
+            pp.load(r);
+            LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), configFile);
+            props.putAll(decryptProperties(pp));
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
     }
 
     private Map<Object, Object> decryptProperties(final Map<Object, Object> properties) {
@@ -128,14 +146,14 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         }));
     }
 
-    private Collection<File> scanForConfigurationFilesByPattern(final File config, final String regex) {
+    private static Collection<File> scanForConfigurationFilesByPattern(final File config, final String regex) {
         return FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
                 .stream()
                 .sorted(Comparator.comparing(File::getName))
                 .collect(Collectors.toList());
     }
 
-    private String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
+    private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
         final String propertyNames = profiles.stream().collect(Collectors.joining("|"));
         final String profiledProperties = profiles.stream()
                 .map(p -> String.format("application-%s", p))
@@ -153,7 +171,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         return profiles;
     }
 
-    private Map<Object, Object> loadYamlProperties(final Resource... resource) {
+    private static Map<Object, Object> loadYamlProperties(final Resource... resource) {
         final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
         factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
         factory.setResources(resource);

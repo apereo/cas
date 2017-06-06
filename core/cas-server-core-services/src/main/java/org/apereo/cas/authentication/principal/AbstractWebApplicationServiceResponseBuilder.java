@@ -5,7 +5,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -32,6 +31,18 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     }
 
     /**
+     * Build header response.
+     *
+     * @param service    the service
+     * @param parameters the parameters
+     * @return the response
+     */
+    protected Response buildHeader(final WebApplicationService service, final Map<String, String> parameters) {
+        return DefaultResponse.getHeaderResponse(service.getOriginalUrl(), parameters);
+    }
+
+
+    /**
      * Build post.
      *
      * @param service    the service
@@ -50,8 +61,19 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     protected Response.ResponseType getWebApplicationServiceResponseType() {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
         final String method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
-        return StringUtils.isNotBlank(method)
-                && HttpMethod.POST.name().equalsIgnoreCase(method) ? Response.ResponseType.POST : Response.ResponseType.REDIRECT;
+
+        if (StringUtils.isBlank(method)) {
+            return Response.ResponseType.REDIRECT;
+        }
+
+        if (StringUtils.equalsIgnoreCase(method, Response.ResponseType.HEADER.name())) {
+            return Response.ResponseType.HEADER;
+        }
+        if (StringUtils.equalsIgnoreCase(method, Response.ResponseType.POST.name())) {
+            return Response.ResponseType.POST;
+        }
+
+        return Response.ResponseType.REDIRECT;
     }
 
     @Override
