@@ -4168,6 +4168,32 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 # cas.ticket.registry.redis.crypto.alg=AES
 ```
 
+### Cassandra ticket registry
+To learn more about this topic, [please review this guide](Cassandra-Ticket-Registry.html).
+
+```properties
+## Nodes IPs
+# cas.ticket.registry.cassandra.contactPoints=127.0.0.1
+#
+## Username
+# cas.ticket.registry.cassandra.username=
+#
+## Password
+# cas.ticket.registry.cassandra.password=
+#
+## TicketGrantingTicket fully qualified table
+# cas.ticket.registry.cassandra.tgtTable=cas.ticketgrantingticket
+#
+## ServiceTicket fully qualified table
+# cas.ticket.registry.cassandra.stTable=cas.servicetable
+#
+## ServiceTicket fully qualified table
+# cas.ticket.registry.cassandra.expiryTable=cas.ticket_cleaner
+#
+## ServiceTicket fully qualified table
+# cas.ticket.registry.cassandra.lastRunTable=cas.ticket_cleaner_lastrun
+```
+
 ## Protocol Ticket Security
 
 Controls whether tickets issued by the CAS server should be secured via signing and encryption
@@ -4444,8 +4470,8 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 To learn more about this topic, [please review this guide](../protocol/REST-Protocol.html).
 
 ```properties
-# cas.rest.attributeName=
-# cas.rest.attributeValue=
+# cas.rest.contactPoints=
+# cas.rest.username=
 # cas.rest.throttler=neverThrottle
 ```
 
