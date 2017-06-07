@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * This is {@link CasCoreTicketsSchedulingConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.0
  */
 @Configuration("casCoreTicketsSchedulingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
