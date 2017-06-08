@@ -2573,11 +2573,7 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.u2f.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.u2f.bypass.credentialClassType=UsernamePassword.+
-```
 
-#### FIDO U2F Memory
-
-```properties
 # cas.authn.mfa.u2f.expireRegistrations=30
 # cas.authn.mfa.u2f.expireRegistrationsTimeUnit=SECONDS
 # cas.authn.mfa.u2f.expireDevices=30

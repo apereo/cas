@@ -1,0 +1,11 @@
+
+description = "Apereo CAS U2F FIDO Jpa Support"
+dependencies {
+    implementation libraries.yubicoapi
+    implementation libraries.u2flibserver
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-webflow")
+    compile project(":support:cas-server-support-u2f")
+}

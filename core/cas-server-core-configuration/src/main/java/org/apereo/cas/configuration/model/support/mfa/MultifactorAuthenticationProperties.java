@@ -340,9 +340,56 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private static final long serialVersionUID = 6151350313777066398L;
 
         private Memory memory = new Memory();
+        private Jpa jpa = new Jpa();
+
+        private long expireRegistrations = 30;
+        private TimeUnit expireRegistrationsTimeUnit = TimeUnit.SECONDS;
+
+        private long expireDevices = 30;
+        private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
         
         public U2F() {
             setId("mfa-u2f");
+        }
+
+        public long getExpireRegistrations() {
+            return expireRegistrations;
+        }
+
+        public void setExpireRegistrations(final long expireRegistrations) {
+            this.expireRegistrations = expireRegistrations;
+        }
+
+        public TimeUnit getExpireRegistrationsTimeUnit() {
+            return expireRegistrationsTimeUnit;
+        }
+
+        public void setExpireRegistrationsTimeUnit(final TimeUnit expireRegistrationsTimeUnit) {
+            this.expireRegistrationsTimeUnit = expireRegistrationsTimeUnit;
+        }
+
+        public long getExpireDevices() {
+            return expireDevices;
+        }
+
+        public void setExpireDevices(final long expireDevices) {
+            this.expireDevices = expireDevices;
+        }
+
+        public TimeUnit getExpireDevicesTimeUnit() {
+            return expireDevicesTimeUnit;
+        }
+
+        public void setExpireDevicesTimeUnit(final TimeUnit expireDevicesTimeUnit) {
+            this.expireDevicesTimeUnit = expireDevicesTimeUnit;
+        }
+
+        public Jpa getJpa() {
+            return jpa;
+        }
+
+        public void setJpa(final Jpa jpa) {
+            this.jpa = jpa;
         }
 
         public Memory getMemory() {
@@ -354,43 +401,10 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Memory implements Serializable {
-            private long expireRegistrations = 30;
-            private TimeUnit expireRegistrationsTimeUnit = TimeUnit.SECONDS;
-
-            private long expireDevices = 30;
-            private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
             
-            public long getExpireRegistrations() {
-                return expireRegistrations;
-            }
+        }
 
-            public void setExpireRegistrations(final long expireRegistrations) {
-                this.expireRegistrations = expireRegistrations;
-            }
-
-            public TimeUnit getExpireRegistrationsTimeUnit() {
-                return expireRegistrationsTimeUnit;
-            }
-
-            public void setExpireRegistrationsTimeUnit(final TimeUnit expireRegistrationsTimeUnit) {
-                this.expireRegistrationsTimeUnit = expireRegistrationsTimeUnit;
-            }
-
-            public long getExpireDevices() {
-                return expireDevices;
-            }
-
-            public void setExpireDevices(final long expireDevices) {
-                this.expireDevices = expireDevices;
-            }
-
-            public TimeUnit getExpireDevicesTimeUnit() {
-                return expireDevicesTimeUnit;
-            }
-
-            public void setExpireDevicesTimeUnit(final TimeUnit expireDevicesTimeUnit) {
-                this.expireDevicesTimeUnit = expireDevicesTimeUnit;
-            }
+        public static class Jpa extends AbstractJpaProperties {
         }
     }
 

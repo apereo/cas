@@ -2457,6 +2457,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "com.google.guava", module: "guava")
                     force = true
                 },
         duojava                 : [
@@ -2466,7 +2467,7 @@ ext.libraries = [
                 }
         ],
         duojavaauth             : [
-                dependencies.create("com.github.duosecurity:duo_client_java:master-SNAPSHOT") {
+                dependencies.create("com.github.duosecurity:duo_client_java:-SNAPSHOT") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-cli", module: "commons-cli")
                     exclude(group: "com.squareup.okhttp", module: "okhttp-urlconnection")
@@ -2558,6 +2559,9 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.webjars:editable-table:$editableTableVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:webjars-locator:0.30") {
                     force = true
                 }
         ]
