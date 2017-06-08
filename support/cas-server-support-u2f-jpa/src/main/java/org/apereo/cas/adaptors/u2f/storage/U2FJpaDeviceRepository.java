@@ -2,11 +2,15 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import com.google.common.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -19,6 +23,8 @@ import java.util.stream.Collectors;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerU2f")
 public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(U2FJpaDeviceRepository.class);
+
     private static final String SELECT_QUERY = "SELECT r from U2FJpaDeviceRegistration r ";
 
     @PersistenceContext(unitName = "u2fEntityManagerFactory")
@@ -30,17 +36,25 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
-        return this.entityManager.createQuery(
-                SELECT_QUERY.concat("where r.username = :username"), U2FJpaDeviceRegistration.class)
-                .getResultList()
-                .stream()
-                .map(r -> DeviceRegistration.fromJson(r.getRecord()))
-                .collect(Collectors.toList());
+        try {
+            return this.entityManager.createQuery(
+                    SELECT_QUERY.concat("where r.username = :username"), U2FJpaDeviceRegistration.class)
+                    .setParameter("username", username)
+                    .getResultList()
+                    .stream()
+                    .map(r -> DeviceRegistration.fromJson(r.getRecord()))
+                    .collect(Collectors.toList());
+        } catch (final NoResultException e) {
+            LOGGER.debug("No device registration was found for [{}]", username);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 
     @Override
     public void registerDevice(final String username, final DeviceRegistration registration) {
-        registerDevice(username, registration);
+        authenticateDevice(username, registration);
     }
 
     @Override
@@ -53,9 +67,6 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public boolean isDeviceRegisteredFor(final String username) {
-        return !this.entityManager.createQuery(
-                SELECT_QUERY.concat("where r.username = :username"), U2FJpaDeviceRegistration.class)
-                .getResultList()
-                .isEmpty();
+        return !getRegisteredDevices(username).isEmpty();
     }
 }
