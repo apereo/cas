@@ -37,7 +37,7 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
   <version>${cas.version}</version>
 </dependency>
 ```
-You may also need to declare the following Maven repository in
+For gradle you also need to declare the following Maven repository in
 your CAS overlay to be able to resolve dependencies:
 
 ```xml
