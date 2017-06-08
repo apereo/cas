@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import com.google.common.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
+import org.apereo.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -10,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -30,16 +33,25 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     @PersistenceContext(unitName = "u2fEntityManagerFactory")
     private EntityManager entityManager;
 
-    public U2FJpaDeviceRepository(final LoadingCache<String, String> requestStorage) {
+    private final long expirationTime;
+    private final TimeUnit expirationTimeUnit;
+
+    public U2FJpaDeviceRepository(final LoadingCache<String, String> requestStorage,
+                                  final long expirationTime, final TimeUnit expirationTimeUnit) {
         super(requestStorage);
+        this.expirationTime = expirationTime;
+        this.expirationTimeUnit = expirationTimeUnit;
     }
 
     @Override
     public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
         try {
+
+            final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             return this.entityManager.createQuery(
-                    SELECT_QUERY.concat("where r.username = :username"), U2FJpaDeviceRegistration.class)
+                    SELECT_QUERY.concat("where r.username = :username and r.date >= :expdate"), U2FJpaDeviceRegistration.class)
                     .setParameter("username", username)
+                    .setParameter("expdate", expirationDate)
                     .getResultList()
                     .stream()
                     .map(r -> DeviceRegistration.fromJson(r.getRecord()))

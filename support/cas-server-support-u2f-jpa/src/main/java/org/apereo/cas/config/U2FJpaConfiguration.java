@@ -26,8 +26,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link U2FJpaConfiguration}.
@@ -85,17 +83,6 @@ public class U2FJpaConfiguration {
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
         final MultifactorAuthenticationProperties.U2F u2f = casProperties.getAuthn().getMfa().getU2f();
-
-        final LoadingCache<String, Map<String, String>> userStorage =
-                CacheBuilder.newBuilder()
-                        .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
-                        .build(new CacheLoader<String, Map<String, String>>() {
-                            @Override
-                            public Map<String, String> load(final String key) throws Exception {
-                                return new HashMap<>();
-                            }
-                        });
-
         final LoadingCache<String, String> requestStorage =
                 CacheBuilder.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
@@ -105,7 +92,7 @@ public class U2FJpaConfiguration {
                                 return StringUtils.EMPTY;
                             }
                         });
-        return new U2FJpaDeviceRepository(requestStorage);
+        return new U2FJpaDeviceRepository(requestStorage, u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
     }
 
 }
