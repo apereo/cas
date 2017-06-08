@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.time.LocalDate;
 
 /**
  * This is {@link U2FJpaDeviceRegistration}.
@@ -28,12 +31,24 @@ public class U2FJpaDeviceRegistration {
     @Column(name = "record")
     private String record;
 
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate date;
+
     public String getRecord() {
         return record;
     }
 
     public void setRecord(final String record) {
         this.record = record;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(final LocalDate date) {
+        this.date = date;
     }
 
     public long getId() {
