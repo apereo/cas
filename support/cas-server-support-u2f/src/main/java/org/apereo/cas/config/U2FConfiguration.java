@@ -152,7 +152,7 @@ public class U2FConfiguration {
 
         final LoadingCache<String, Map<String, String>> userStorage =
                 CacheBuilder.newBuilder()
-                        .expireAfterWrite(u2f.getMemory().getExpireDevices(), u2f.getMemory().getExpireDevicesTimeUnit())
+                        .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
                         .build(new CacheLoader<String, Map<String, String>>() {
                             @Override
                             public Map<String, String> load(final String key) throws Exception {
@@ -162,7 +162,7 @@ public class U2FConfiguration {
 
         final LoadingCache<String, String> requestStorage =
                 CacheBuilder.newBuilder()
-                        .expireAfterWrite(u2f.getMemory().getExpireRegistrations(), u2f.getMemory().getExpireRegistrationsTimeUnit())
+                        .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                         .build(new CacheLoader<String, String>() {
                             @Override
                             public String load(final String key) throws Exception {
