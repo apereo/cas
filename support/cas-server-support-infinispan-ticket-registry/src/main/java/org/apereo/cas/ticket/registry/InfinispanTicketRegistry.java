@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanTicketRegistry.class);
-    
+
     private final Cache<String, Ticket> cache;
 
     /**
@@ -65,7 +65,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        this.cache.remove(ticketId);
+        this.cache.remove(encodeTicketId(ticketId));
         return getTicket(ticketId) == null;
     }
 
@@ -75,7 +75,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
         this.cache.clear();
         return size;
     }
-    
+
     /**
      * Retrieve all tickets from the registry.
      * <p>

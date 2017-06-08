@@ -86,8 +86,9 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
+    public boolean deleteSingleTicket(final String ticketIdToDelete) {
         Assert.notNull(this.client, NO_MEMCACHED_CLIENT_IS_DEFINED);
+        final String ticketId = encodeTicketId(ticketIdToDelete);
         try {
             if (this.client.delete(ticketId).get()) {
                 LOGGER.debug("Removed ticket [{}] from the cache", ticketId);
