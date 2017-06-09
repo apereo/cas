@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.TicketSerializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
@@ -29,9 +30,9 @@ public class CassandraTicketRegistryConfiguration {
     private CassandraProperties cassandraProperties;
 
     @Bean(name = "cassandraTicketRegistry")
-    public TicketRegistry cassandraTicketRegistry() {
+    public TicketRegistry cassandraTicketRegistry(@Qualifier("ticketSerializer") final TicketSerializer ticketSerializer) {
         return new CassandraTicketRegistry<>(cassandraProperties.getContactPoints(), cassandraProperties.getUsername(), cassandraProperties.getPassword(),
-                new JacksonJsonSerializer(), String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
+                ticketSerializer, String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
                 cassandraProperties.getExpiryTable(), cassandraProperties.getLastRunTable());
     }
 
@@ -39,5 +40,10 @@ public class CassandraTicketRegistryConfiguration {
     public TicketRegistryCleaner cassandraTicketRegistryCleaner(@Qualifier("cassandraTicketRegistry") final CassandraTicketRegistryDao ticketRegistry,
                                                                 @Qualifier("logoutManager") final LogoutManager logoutManager) {
         return new CassandraTicketRegistryCleaner(ticketRegistry, logoutManager);
+    }
+
+    @Bean(name = "ticketSerializer")
+    public TicketSerializer<String> ticketSerializer() {
+        return new JacksonJsonSerializer();
     }
 }
