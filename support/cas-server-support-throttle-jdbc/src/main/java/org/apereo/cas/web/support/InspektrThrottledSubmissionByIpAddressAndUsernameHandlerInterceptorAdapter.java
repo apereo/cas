@@ -34,7 +34,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 
-    private static final String INSPEKTR_ACTION = "THROTTLED_LOGIN_ATTEMPT";
+    private static final String INSPEKTR_ACTION_THROTTLED = "THROTTLED_LOGIN_ATTEMPT";
+    private static final String INSPEKTR_ACTION_FAILED = "FAILED_LOGIN_ATTEMPT";
     
     private AuditTrailManager auditTrailManager;
 
@@ -109,13 +110,18 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
-        recordThrottle(request);
+    	super.recordSubmissionFailure(request);
+    	recordAnyAction(request, INSPEKTR_ACTION_FAILED, "recordSubmissionFailure()");
     }
 
     @Override
     protected void recordThrottle(final HttpServletRequest request) {
+        super.recordThrottle(request);
+        recordAnyAction(request, INSPEKTR_ACTION_THROTTLED, "recordThrottle()");
+    }
+    
+    protected void recordAnyAction(final HttpServletRequest request, final String actionName, final String methodName) {
         if (this.dataSource != null && this.jdbcTemplate != null) {
-            super.recordThrottle(request);
             final String userToUse = constructUsername(request, getUsernameParameter());
             final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
             final AuditPointRuntimeInfo auditPointRuntimeInfo = new AuditPointRuntimeInfo() {
@@ -123,13 +129,13 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
                 @Override
                 public String asString() {
-                    return String.format("%s.recordThrottle()", this.getClass().getName());
+                    return String.format("%s.%s", this.getClass().getName(), methodName);
                 }
             };
             final AuditActionContext context = new AuditActionContext(
                     userToUse,
                     userToUse,
-                    INSPEKTR_ACTION,
+                    actionName,
                     this.applicationCode,
                     DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
                     clientInfo.getClientIpAddress(),
@@ -141,7 +147,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                     this.getName());
         }
     }
-
+    
     public void setApplicationCode(final String applicationCode) {
         this.applicationCode = applicationCode;
     }
