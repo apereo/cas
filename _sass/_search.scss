@@ -1,0 +1,13 @@
+.search-form {
+  margin-bottom: 1em;
+}
+
+.search-results {
+  margin-bottom: 2em;
+}
+
+@media (min-width: 48em) {
+  .search-form {
+    margin: 1em 0;
+  }
+}
