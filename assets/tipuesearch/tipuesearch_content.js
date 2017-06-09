@@ -84,7 +84,7 @@ var tipuesearch = {"pages": [
     "title": {{ document.title | smartify | strip_html | normalize_whitespace | jsonify }},
     "text": {{ document.content | strip_html | normalize_whitespace | jsonify }},
     "tags": {{ taxonomies | join: " " | normalize_whitespace | jsonify }},
-    "url": '/cas' + {{ document.url | relative_url | jsonify }}
+    "url": {{ document.url | relative_url | jsonify }}
   }{% unless forloop.last %},{% endunless %}
 {% endfor %}
 ]};
