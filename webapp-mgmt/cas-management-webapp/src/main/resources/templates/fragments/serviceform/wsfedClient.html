@@ -1,0 +1,54 @@
+<div class="oauth-only-options-container"
+     ng-show="serviceFormCtrl.serviceData.type=='wsfed'"
+     ng-controller="oauthController as oauth">
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span th:remove="tag" th:text="#{services.form.header.wsfedOptions}"/>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <!-- WS Federation Realm -->
+            <div class="form-group">
+                <label class="col-sm-4" for="wsfedRealm">
+                    <span th:remove="tag" th:text="#{services.form.label.wsfed.realm}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.wsfed.realm}"></i>
+                </label>
+
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <input type="text" autocomplete="off" class="form-control" id="wsfedRealm"
+                               ng-model="serviceFormCtrl.serviceData.wsfed.realm"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WS Federation appliesTo -->
+            <div class="form-group">
+                <label class="col-sm-4" for="wsfedAppliesTo">
+                    <span th:remove="tag" th:text="#{services.form.label.wsfed.appliesTo}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.wsfed.appliesTo}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <input class="form-control" autocomplete="off" id="wsfedAppliesTo" type="text"
+                               ng-model="serviceFormCtrl.serviceData.wsfed.appliesTo"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

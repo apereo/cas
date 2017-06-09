@@ -2573,15 +2573,38 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.u2f.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.u2f.bypass.credentialClassType=UsernamePassword.+
-```
 
-#### FIDO U2F Memory
-
-```properties
 # cas.authn.mfa.u2f.expireRegistrations=30
 # cas.authn.mfa.u2f.expireRegistrationsTimeUnit=SECONDS
 # cas.authn.mfa.u2f.expireDevices=30
 # cas.authn.mfa.u2f.expireDevicesTimeUnit=DAYS
+```
+
+#### FIDO U2F JPA
+
+```properties
+# cas.authn.mfa.u2f.jpa.healthQuery=
+# cas.authn.mfa.u2f.jpa.isolateInternalQueries=false
+# cas.authn.mfa.u2f.jpa.url=jdbc:hsqldb:mem:cas-u2f
+# cas.authn.mfa.u2f.jpa.failFast=true
+# cas.authn.mfa.u2f.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.mfa.u2f.jpa.leakThreshold=10
+# cas.authn.mfa.u2f.jpa.batchSize=1
+# cas.authn.mfa.u2f.jpa.defaultCatalog=
+# cas.authn.mfa.u2f.jpa.defaultSchema=
+# cas.authn.mfa.u2f.jpa.user=sa
+# cas.authn.mfa.u2f.jpa.ddlAuto=create-drop
+# cas.authn.mfa.u2f.jpa.password=
+# cas.authn.mfa.u2f.jpa.autocommit=false
+# cas.authn.mfa.u2f.jpa.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.mfa.u2f.jpa.idleTimeout=5000
+# cas.authn.mfa.u2f.jpa.dataSourceName=
+# cas.authn.mfa.u2f.jpa.dataSourceProxy=false
+
+# cas.authn.mfa.u2f.jpa.pool.suspension=false
+# cas.authn.mfa.u2f.jpa.pool.minSize=6
+# cas.authn.mfa.u2f.jpa.pool.maxSize=18
+# cas.authn.mfa.u2f.jpa.pool.maxWait=2000
 ```
 
 ### Microsoft Azure

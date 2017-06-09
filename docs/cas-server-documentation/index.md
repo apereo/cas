@@ -55,4 +55,4 @@ The following demos are provided by the Apereo CAS project:
 Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>It is important to note that these are public demo sites, used by the project for basic showcases 
-and integration tests. They are **NOT** set up for internal demos as they may go up and down as the project needs without notice. </p></div>
+and integration tests. They are <strong>NOT</strong> set up for internal demos as they may go up and down as the project needs without notice. </p></div>

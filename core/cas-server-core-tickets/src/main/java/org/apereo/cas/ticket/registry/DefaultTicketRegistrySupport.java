@@ -26,7 +26,7 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     @Override
     public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) throws RuntimeException {
         final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-        return tgt == null ? null : tgt.getAuthentication();
+        return tgt == null || tgt.isExpired() ? null : tgt.getAuthentication();
     }
 
     @Override

@@ -84,7 +84,7 @@ Support is enabled by including the following module in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#admin-status-endpoints-with-spring-security).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#securing-endpoints-with-spring-security).
 
 ## Monitors
 

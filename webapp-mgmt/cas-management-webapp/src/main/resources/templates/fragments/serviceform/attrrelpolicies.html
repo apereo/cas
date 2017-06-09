@@ -53,6 +53,23 @@
                        ng-disabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
                 <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.returnMapped}" />
             </label>
+
+            <!-- Filter Policies Radio Button - Pattern Matching -->
+            <label class="radio-inline" ng-show="serviceFormCtrl.serviceData.type=='saml'">
+                <input type="radio" name="policiesReturnMapped" id="policiesPatternMatching" value="matching"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'matching'"
+                       ng-disabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.patternMatching}" />
+            </label>
+
+            <!-- Filter Policies Radio Button - Release InCommon -->
+            <label class="radio-inline" ng-show="serviceFormCtrl.serviceData.type == 'saml'">
+                <input type="radio" name="policiesReleaseInCommon" id="policiesReleaseInCommon" value="incommon"
+                       ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type"
+                       ng-checked="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'incommon'"/>
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.releaseIncommon}"/>
+            </label>
         </div>
 
 
@@ -137,5 +154,18 @@
             </table>
         </div>
 
+        <!-- Attribute Release Policies Pattern Matching-->
+        <div class="form-group" ng-show="serviceFormCtrl.serviceData.type=='saml' && serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'matching'">
+            <label class="col-sm-4" for="attPatternMatching">
+                <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.patternMatching}"/>
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.attrRelease.policies.patternMatching}"></i>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="attPatternMatching" ng-model="serviceFormCtrl.serviceData.attrRelease.attrPatternMatching"/>
+            </div>
+        </div>
     </div>
 </div>

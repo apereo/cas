@@ -289,6 +289,16 @@ if (array.length == 3) {
     ]);
 
 
+  app.controller('oauthController', [
+    '$scope',
+    function($scope) {
+        this.handleUserDefinedScope = function(value) {
+            if (value == 'user_defined') {
+                // Do nothing for now
+            }
+        };
+  }]);
+
     /**
      * Rejected Attributes controller
      */
@@ -596,6 +606,120 @@ if (array.length == 3) {
 
     }
 
+    app.controller("nameidController", nameidController);
+
+    function nameidController($scope, NgTableParams) {
+        var self = this;
+
+        self.tmpRowData;
+
+        var dataList = [];
+
+        var originalData = angular.copy(dataList);
+
+        self.tableParams = new NgTableParams({}, {
+            filterDelay: 0,
+            dataset: angular.copy(dataList),
+            counts: []
+        });
+
+        self.cancel = cancel;
+        self.del = del;
+        self.save = save;
+        self.editRow = editRow;
+        self.addRow = addRow;
+        self.cancelAdd = cancelAdd;
+        self.toggleAddRow = toggleAddRow;
+        self.populateInputField = populateInputField;
+
+        function cancel(row, rowForm) {
+            self.tmpRowData = {};
+            row.isEditing = false;
+            rowForm.$setPristine();
+        }
+
+        function populateInputField(row, rowForm, item) {
+              event.stopPropagation();
+              event.preventDefault();
+            if (row.isEditing) {
+                self.tmpRowData.value = item;
+                row.value = item;
+                rowForm.$setDirty()
+            } else {
+                row.value = item;
+            }
+
+            $('.dropdown-toggle').dropdown('toggle');
+        }
+
+        function del(row) {
+            _.remove(self.tableParams.settings().dataset, function (item) {
+                return row === item;
+            });
+
+            self.tableParams.reload().then(function (data) {
+                if (data.length === 0 && self.tableParams.total() > 0) {
+                    self.tableParams.page(self.tableParams.page() - 1);
+                    self.tableParams.reload();
+                }
+            });
+        }
+
+        function resetRow(row, rowForm){
+            row.isEditing = false;
+            rowForm.$setPristine();
+            self.tableTracker.untrack(row);
+            return _.findWhere(originalData, function(r){
+                return r.id === row.id;
+            });
+        }
+
+
+        function save(row, tmpData, rowForm) {
+            angular.extend(row, tmpData);
+            row.isEditing = false;
+            rowForm.$setPristine();
+        }
+
+        function toggleAddRow( row ) {}
+
+        function editRow( row, rowForm) {
+            self.tmpRowData = angular.copy( row );
+            row.isEditing = true;
+        }
+
+      function addRow(row, rowForm) {
+        self.tmpRowData = angular.copy( row );
+
+        self.tableParams.settings().dataset.push( self.tmpRowData );
+        var syncData = angular.copy(self.tableParams.settings().dataset).map(function(obj) {
+          delete obj.$$hashKey;
+          delete obj.isAdding;
+          obj.value = obj.value;
+          delete obj.value;
+          return obj;
+        });
+
+        $scope.$parent.serviceFormCtrl.serviceData.saml.nameIdProperties = syncData;
+
+        row.name = '';
+        row.value = '';
+        row.isAdding = false;
+
+        self.tableParams.reload();
+
+      }
+
+        function cancelAdd(row, rowForm) {
+            // Clean up?
+            // console.log('cancelAdd');
+            row.name = '';
+            row.value = '';
+            row.isAdding = false;
+        }
+
+    }
+
 
 // Service Form: Add/Edit Service View
     app.controller('ServiceFormController', [
@@ -633,9 +757,28 @@ if (array.length == 3) {
             this.radioWatchBypass = true;
             this.showOAuthSecret = false;
 
+            this.roles = [
+              {id: 1, text: 'guest'},
+              {id: 2, text: 'user'},
+              {id: 3, text: 'customer'},
+              {id: 4, text: 'admin'}
+            ];
             this.selectOptions = {
                 serviceTypeList: [
                     {name: 'CAS Client', value: 'cas'},
+                    {name: 'OAuth2 Client', value: 'oauth'},
+                    {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
+                    {name: 'SAML2 Service Provider', value: 'saml'},
+                    {name: 'OpenID Connect Client', value: 'oidc'},
+                    {name: 'WS Federation', value: 'wsfed'}
+                ],
+                oidcScopes: [
+                    {name: 'Profile', value: 'profile'},
+                    {name: 'Email', value: 'email'},
+                    {name: 'Address', value: 'address'},
+                    {name: 'Phone', value: 'phone'},
+                    {name: 'Offline Access', value: 'offline_access'},
+                    {name: 'User Defined', value: 'user_defined'}
                     {name: 'OAuth2 Client', value: 'oauth'},
                     {name: 'SAML2 Service Provider', value: 'saml'},
                     {name: 'OpenID Connect Client', value: 'oidc'}
@@ -683,6 +826,40 @@ if (array.length == 3) {
                 samlDirectionList: [
                     {name: 'INCLUDE', value: 'INCLUDE'},
                     {name: 'EXCLUDE', value: 'EXCLUDE'}
+                ],
+                canonicalizationList : [
+                  {name: 'NONE', value: 'NONE'},
+                  {name: 'UPPER', value: 'UPPER'},
+                  {name: 'LOWER', value: 'LOWER'}
+                ],
+                nameIdList : [
+                  {name: 'BASIC', value: 'Basic'},
+                  {name: 'URI', value: 'URI'},
+                  {name: 'UNSPECIFIED', value: 'UNSPECIFIED'}
+                ],
+                wsfedClaimList: [
+                  {name: "EMAIL_ADDRESS_2005", value: "EMAIL_ADDRESS_2006"},
+                  {name: "EMAIL_ADDRESS", value: "EMAIL_ADDRESS"},
+                  {name: "GIVEN_NAME", value: "GIVEN_NAME"},
+                  {name: "NAME", value: "NAME"},
+                  {name: "USER_PRINCIPAL_NAME_2005", value: "USER_PRINCIPAL_NAME_2006"},
+                  {name: "USER_PRINCIPAL_NAME", value: "USER_PRINCIPAL_NAME"},
+                  {name: "COMMON_NAME", value: "COMMON_NAME"},
+                  {name: "GROUP", value: "GROUP"},
+                  {name: "MS_ROLE", value: "MS_ROLE"},
+                  {name: "ROLE", value: "ROLE"},
+                  {name: "SURNAME", value: "SURNAME"},
+                  {name: "PRIVATE_ID", value: "PRIVATE_ID"},
+                  {name: "NAME_IDENTIFIER", value: "NAME_IDENTIFIER"},
+                  {name: "AUTHENTICATION_METHOD", value: "AUTHENTICATION_METHOD"},
+                  {name: "DENY_ONLY_GROUP_SID", value: "DENY_ONLY_GROUP_SID"},
+                  {name: "DENY_ONLY_PRIMARY_SID", value: "DENY_ONLY_PRIMARY_SID"},
+                  {name: "DENY_ONLY_PRIMARY_GROUP_SID", value: "DENY_ONLY_PRIMARY_GROUP_SID"},
+                  {name: "GROUP_SID", value: "GROUP_SID"},
+                  {name: "PRIMARY_GROUP_SID", value: "PRIMARY_GROUP_SID"},
+                  {name: "PRIMARY_SID", value: "PRIMARY_SID"},
+                  {name: "WINDOWS_ACCOUNT_NAME", value: "WINDOWS_ACCOUNT_NAME"},
+                  {name: "PUID", value: "PUID"}
                 ]
             };
 
@@ -828,7 +1005,7 @@ if (array.length == 3) {
                     logoutType: serviceForm.selectOptions.logoutTypeList[0].value,
                     attrRelease: {
                         attrOption: 'DEFAULT',
-                        attrPolicy: {type: 'all'},
+                        attrPolicy: [],
                         cachedTimeUnit: serviceForm.selectOptions.timeUnitsList[0].value,
                         mergingStrategy: serviceForm.selectOptions.mergeStrategyList[0].value
                     },
@@ -867,6 +1044,7 @@ if (array.length == 3) {
 
                 $http.get(appContext + '/getService?id=' + serviceId)
                     .then(function (response) {
+                        console.log('response', response);
                         if (response.status != 200) {
                             delayedAlert('notloaded', 'danger', data);
                             serviceForm.newService();
@@ -914,6 +1092,8 @@ if (array.length == 3) {
                 // console.log('serviceDataTransformation');
                 var data = serviceForm.serviceData;
 
+                // console.log('data', data, dir);
+
                 // Logic safeties
                 serviceForm.formData.availableAttributes = serviceForm.formData.availableAttributes || [];
                 data.supportAccess.requiredAttr = data.supportAccess.requiredAttr || {};
@@ -942,23 +1122,64 @@ if (array.length == 3) {
                         data.userAttrProvider.value = data.userAttrProvider.valueAttr;
                 }
 
+                var tmpData = {allowed: null, attributes: null, mapped: null, scriptFile: null, type: data.attrRelease.attrPolicy.type};
+
                 switch (data.attrRelease.attrPolicy.type) {
                     case 'mapped':
-                        if (dir == 'load')
-                            data.attrRelease.attrPolicy.mapped = data.attrRelease.attrPolicy.attributes;
-                        else
-                            data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.mapped || {};
+                        if (dir == 'load') {
+                          tmpData.mapped = data.attrRelease.attrPolicy.attributes;
+                          data.attrRelease.attrPolicy.mapped = data.attrRelease.attrPolicy.attributes;
+                        } else {
+                          tmpData.attributes = data.attrRelease.attrPolicy.mapped || {};
+                          data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.mapped || {};
+                        }
                         break;
                     case 'allowed':
-                        if (dir == 'load')
-                            data.attrRelease.attrPolicy.allowed = data.attrRelease.attrPolicy.attributes;
-                        else
-                            data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.allowed || [];
+                        if (dir == 'load') {
+                          tmpData.allowed = data.attrRelease.attrPolicy.attributes;
+                          data.attrRelease.attrPolicy.allowed = data.attrRelease.attrPolicy.attributes;
+                        } else {
+                          tmpData.attributes = data.attrRelease.attrPolicy.allowed || [];
+                          data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.allowed || [];
+                        }
                         break;
                     default:
                         data.attrRelease.attrPolicy.value = null;
                         break;
                 }
+// console.log(tmpData);
+/*
+
+              // console.log('type', data.attrRelease.attrPolicy.type);
+
+              switch (data.attrRelease.attrPolicy.type) {
+                case 'mapped':
+                  if (dir == 'load')
+
+                  data.attrRelease.attrPolicy.mapped = data.attrRelease.attrPolicy.attributes;
+                else
+
+                  data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.mapped || {};
+                  break;
+                case 'allowed':
+                  if (dir == 'load')
+                    data.attrRelease.attrPolicy.allowed = data.attrRelease.attrPolicy.attributes;
+                  else
+                    data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.allowed || [];
+                  break;
+                default:
+                  data.attrRelease.attrPolicy.value = null;
+                  break;
+              }
+*/
+
+
+
+
+
+
+                data.attrRelease.attrPolicy = [];
+                data.attrRelease.attrPolicy.push(tmpData);
 
                 serviceForm.serviceData = data;
 
@@ -1206,6 +1427,7 @@ if (array.length == 3) {
 /**
  * End tracking directives
  */
+
 
 /*
 
