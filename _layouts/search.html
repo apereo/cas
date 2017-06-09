@@ -12,7 +12,6 @@
 
     <link rel="stylesheet" href="{{ site.baseurl}}/assets/tipuesearch/css/normalize.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="{{ "/cas/assets/tipuesearch/tipuesearch_content.js" | relative_url }}"></script>
 
     {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
