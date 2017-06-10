@@ -87,7 +87,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     public void clean() {
         try {
             final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-            LOGGER.warn("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
+            LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
             this.entityManager.createQuery(
                     DELETE_QUERY.concat("where r.date <= :expdate"))
                     .setParameter("expdate", expirationDate)
