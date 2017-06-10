@@ -23,12 +23,16 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Registration
 
-Device registration flows are baked into CAS automatically.
+U2F device registration flows are baked into CAS automatically.
 
 ### Default
 
-By default, an account registry implementation is included that collects user device registrations and saves them into memory.
+By default, a repository implementation is included that collects user device registrations and saves them into memory.
 This option should only be used for demo and testing purposes.
+
+### JSON
+
+A simple device repository implementation that collects user device registrations and saves them into a JSON file whose path is taught to CAS via settings. This is a very modest option and should mostly be used for demo and testing purposes.
 
 ### JPA
 
