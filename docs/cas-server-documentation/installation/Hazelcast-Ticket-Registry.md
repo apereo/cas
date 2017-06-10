@@ -27,6 +27,7 @@ Support is enabled by the following module:
 </dependency>
 ```
 
+
 ## Configuration
 
 This module has a configuration strategy which by default auto-configures a hazelcast instance used by the ticket registry
