@@ -6,7 +6,6 @@ package org.apereo.cas.configuration.model.support.analytics;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class GoogleAnalyticsProperties {
 
     private String googleAnalyticsTrackingId;
