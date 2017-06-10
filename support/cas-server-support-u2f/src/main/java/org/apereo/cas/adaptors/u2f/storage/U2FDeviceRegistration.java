@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,14 +13,15 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 
 /**
- * This is {@link U2FJpaDeviceRegistration}.
+ * This is {@link U2FDeviceRegistration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Entity
-@Table(name = "U2FJpaDeviceRegistration")
-public class U2FJpaDeviceRegistration {
+@Table(name = "U2FDeviceRegistration")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+public class U2FDeviceRegistration {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = Integer.MAX_VALUE;

@@ -80,5 +80,8 @@ public interface U2FDeviceRepository {
      */
     void requestDeviceAuthentication(String requestId, String username, String registrationJsonData);
 
-
+    /**
+     * Clean up repository to remove expired records.
+     */
+    void clean();
 }
