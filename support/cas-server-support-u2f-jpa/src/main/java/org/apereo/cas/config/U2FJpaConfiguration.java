@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
-import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRegistration;
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -54,7 +54,7 @@ public class U2FJpaConfiguration {
     }
 
     public String[] jpaU2fPackagesToScan() {
-        return new String[]{U2FJpaDeviceRegistration.class.getPackage().getName()};
+        return new String[]{U2FDeviceRegistration.class.getPackage().getName()};
     }
 
     @Lazy
