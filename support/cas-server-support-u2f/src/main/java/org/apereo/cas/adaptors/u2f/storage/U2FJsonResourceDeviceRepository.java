@@ -159,11 +159,17 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
             final Map<String, List<U2FDeviceRegistration>> devices = readDevicesFromJsonResource();
             if (!devices.isEmpty()) {
                 final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_SERVICES);
+                LOGGER.debug("Located [{}] devices in repository", devs.size());
+
                 final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);
                 final List<U2FDeviceRegistration> list = devs.stream()
                         .filter(d -> d.getDate().isEqual(expirationDate) || d.getDate().isAfter(expirationDate))
                         .collect(Collectors.toList());
+
+                LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());
                 writeDevicesBackToJsonResource(list);
+                LOGGER.debug("Saved [{}] device(s) into repository [{}]", list.size(), jsonResource);
             }
 
         } catch (final Exception e) {
