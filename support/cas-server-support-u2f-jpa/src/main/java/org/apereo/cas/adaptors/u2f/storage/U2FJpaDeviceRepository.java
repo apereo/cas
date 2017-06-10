@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(U2FJpaDeviceRepository.class);
 
-    private static final String DELETE_QUERY = "DELETE r from U2FDeviceRegistration r ";
+    private static final String DELETE_QUERY = "DELETE from U2FDeviceRegistration r ";
     private static final String SELECT_QUERY = "SELECT r from U2FDeviceRegistration r ";
 
     @PersistenceContext(unitName = "u2fEntityManagerFactory")
@@ -87,8 +87,9 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     public void clean() {
         try {
             final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            LOGGER.warn("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
             this.entityManager.createQuery(
-                    DELETE_QUERY.concat("where r.date >= :expdate"), U2FDeviceRegistration.class)
+                    DELETE_QUERY.concat("where r.date <= :expdate"))
                     .setParameter("expdate", expirationDate)
                     .executeUpdate();
         } catch (final Exception e) {

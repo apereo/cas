@@ -164,7 +164,7 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
                 final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
                 LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);
                 final List<U2FDeviceRegistration> list = devs.stream()
-                        .filter(d -> d.getDate().isEqual(expirationDate) || d.getDate().isAfter(expirationDate))
+                        .filter(d -> d.getDate().isEqual(expirationDate) || d.getDate().isBefore(expirationDate))
                         .collect(Collectors.toList());
 
                 LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());

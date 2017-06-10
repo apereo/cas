@@ -212,7 +212,7 @@ public class U2FConfiguration {
         }
 
         @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.startDelay:PT20S}",
-                fixedDelayString = "${cas.authn.mfa.u2f.cleaner.repeatInterval:PT15S}")
+                fixedDelayString = "${cas.authn.mfa.u2f.cleaner.repeatInterval:PT15M}")
         public void run() {
             LOGGER.debug("Starting to clean expired U2F devices from repository");
             this.repository.clean();
