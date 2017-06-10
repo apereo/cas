@@ -43,7 +43,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private String grouperGroupField;
 
     private Resource providerSelectorGroovyScript;
-    
+
     private U2F u2f = new U2F();
     private Azure azure = new Azure();
     private Trusted trusted = new Trusted();
@@ -347,9 +347,28 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         private long expireDevices = 30;
         private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
-        
+
+        private Json json = new Json();
+        private Cleaner cleaner = new Cleaner();
+
         public U2F() {
             setId("mfa-u2f");
+        }
+
+        public Cleaner getCleaner() {
+            return cleaner;
+        }
+
+        public void setCleaner(final Cleaner cleaner) {
+            this.cleaner = cleaner;
+        }
+
+        public Json getJson() {
+            return json;
+        }
+
+        public void setJson(final Json json) {
+            this.json = json;
         }
 
         public long getExpireRegistrations() {
@@ -384,6 +403,9 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.expireDevicesTimeUnit = expireDevicesTimeUnit;
         }
 
+        public static class Json extends AbstractConfigProperties {
+        }
+
         public Jpa getJpa() {
             return jpa;
         }
@@ -401,10 +423,40 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
 
         public static class Memory implements Serializable {
-            
+
         }
 
         public static class Jpa extends AbstractJpaProperties {
+        }
+
+        public static class Cleaner {
+            private boolean enabled = true;
+            private String startDelay = "PT10S";
+            private String repeatInterval = "PT1M";
+
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            public void setEnabled(final boolean enabled) {
+                this.enabled = enabled;
+            }
+
+            public long getStartDelay() {
+                return Beans.newDuration(startDelay).toMillis();
+            }
+
+            public void setStartDelay(final String startDelay) {
+                this.startDelay = startDelay;
+            }
+
+            public long getRepeatInterval() {
+                return Beans.newDuration(repeatInterval).toMillis();
+            }
+
+            public void setRepeatInterval(final String repeatInterval) {
+                this.repeatInterval = repeatInterval;
+            }
         }
     }
 
@@ -415,7 +467,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         private Resource jsonFile;
         private Map<String, String> allowedDevices;
-        
+
         private List<String> apiUrls = new ArrayList<>();
         private boolean trustedDeviceEnabled;
 
@@ -473,7 +525,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         public void setAllowedDevices(final Map<String, String> allowedDevices) {
             this.allowedDevices = allowedDevices;
         }
-        
+
         public Jpa getJpa() {
             return jpa;
         }
@@ -1228,4 +1280,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
             }
         }
     }
+
+
 }
