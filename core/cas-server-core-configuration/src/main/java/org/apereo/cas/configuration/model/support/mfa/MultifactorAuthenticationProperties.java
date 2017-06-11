@@ -52,6 +52,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private GAuth gauth = new GAuth();
     private List<Duo> duo = new ArrayList<>();
     private Authy authy = new Authy();
+    private Swivel swivel = new Swivel();
 
     public Resource getGlobalPrincipalAttributePredicate() {
         return globalPrincipalAttributePredicate;
@@ -75,6 +76,14 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     public void setGroovyScript(final Resource groovyScript) {
         this.groovyScript = groovyScript;
+    }
+
+    public Swivel getSwivel() {
+        return swivel;
+    }
+
+    public void setSwivel(final Swivel swivel) {
+        this.swivel = swivel;
     }
 
     public U2F getU2f() {
@@ -1281,5 +1290,35 @@ public class MultifactorAuthenticationProperties implements Serializable {
         }
     }
 
+    public static class Swivel extends BaseProvider {
+        private static final long serialVersionUID = -7409451053833491119L;
 
+        private String swivelUrl;
+        private String sharedSecret;
+        private boolean ignoreSslErrors;
+
+        public String getSwivelUrl() {
+            return swivelUrl;
+        }
+
+        public void setSwivelUrl(final String swivelUrl) {
+            this.swivelUrl = swivelUrl;
+        }
+
+        public String getSharedSecret() {
+            return sharedSecret;
+        }
+
+        public void setSharedSecret(final String sharedSecret) {
+            this.sharedSecret = sharedSecret;
+        }
+
+        public boolean isIgnoreSslErrors() {
+            return ignoreSslErrors;
+        }
+
+        public void setIgnoreSslErrors(final boolean ignoreSslErrors) {
+            this.ignoreSslErrors = ignoreSslErrors;
+        }
+    }
 }
