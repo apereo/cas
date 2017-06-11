@@ -62,6 +62,10 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     private HandlerResult sendAuthenticationRequestToSwivel(final SwivelCredential swivelCredential,
                                                             final String uid) throws FailedLoginException {
+        if (StringUtils.isBlank(swivelProperties.getSwivelUrl()) || StringUtils.isBlank(swivelProperties.getSharedSecret())) {
+            throw new FailedLoginException("Swivel url/shared secret is not specified and cannot be blank.");
+        }
+
         /**
          * Create a new session with the Swivel server. We do not support
          * the user having a password on his/her Swivel account, just the
