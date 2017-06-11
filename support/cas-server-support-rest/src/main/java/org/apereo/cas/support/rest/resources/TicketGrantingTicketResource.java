@@ -1,22 +1,16 @@
-package org.apereo.cas.support.rest;
+package org.apereo.cas.support.rest.resources;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.support.rest.BadRequestException;
+import org.apereo.cas.support.rest.CredentialFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,9 +47,9 @@ import java.util.stream.Collectors;
  * @since 4.1.0
  */
 @RestController("ticketResourceRestController")
-public class TicketsResource {
+public class TicketGrantingTicketResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
     private static final String DOCTYPE_AND_TITLE = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>";
     private static final String CLOSE_TITLE_AND_OPEN_FORM = "</title></head><body><h1>TGT Created</h1><form action=\"";
     private static final String TGT_CREATED_TITLE_CONTENT = HttpStatus.CREATED.toString() + ' ' + HttpStatus.CREATED.getReasonPhrase();
@@ -68,18 +61,14 @@ public class TicketsResource {
     private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final CredentialFactory credentialFactory;
-    private final ServiceFactory webApplicationServiceFactory;
-    private final TicketRegistrySupport ticketRegistrySupport;
 
     private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
-    public TicketsResource(final AuthenticationSystemSupport authenticationSystemSupport, final CredentialFactory credentialFactory,
-                           final TicketRegistrySupport ticketRegistrySupport, final ServiceFactory webApplicationServiceFactory,
-                           final CentralAuthenticationService centralAuthenticationService) {
+    public TicketGrantingTicketResource(final AuthenticationSystemSupport authenticationSystemSupport,
+                                        final CredentialFactory credentialFactory,
+                                        final CentralAuthenticationService centralAuthenticationService) {
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.credentialFactory = credentialFactory;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
@@ -130,56 +119,6 @@ public class TicketsResource {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (final Throwable e) {
-            LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Determine the status of a given ticket id, whether it's valid, exists, expired, etc.
-     *
-     * @param id ticket id
-     * @return {@link ResponseEntity} representing RESTful response
-     */
-    @GetMapping(value = "/v1/tickets/{id:.+}")
-    public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
-        try {
-            this.centralAuthenticationService.getTicket(id);
-            return new ResponseEntity<>(id, HttpStatus.OK);
-        } catch (final InvalidTicketException e) {
-            return new ResponseEntity<>("Ticket could not be found", HttpStatus.NOT_FOUND);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Create new service ticket.
-     *
-     * @param requestBody service application/x-www-form-urlencoded value
-     * @param tgtId       ticket granting ticket id URI path param
-     * @return {@link ResponseEntity} representing RESTful response
-     */
-    @PostMapping(value = "/v1/tickets/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                      @PathVariable("tgtId") final String tgtId) {
-        try {
-            final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
-            final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(
-                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
-
-            final Service service = this.webApplicationServiceFactory.createService(serviceId);
-            final AuthenticationResult authenticationResult =
-                    builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build(service);
-
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(tgtId,
-                    service, authenticationResult);
-            return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
-
-        } catch (final InvalidTicketException e) {
-            return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
-        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
