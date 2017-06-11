@@ -60,11 +60,11 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
         final RequestContext context = RequestContextHolder.getRequestContext();
         if (context == null) {
-            new IllegalArgumentException("No request context could be found to locate an authentication event");
+            throw new IllegalArgumentException("No request context could be found to locate an authentication event");
         }
         final Authentication authentication = WebUtils.getAuthentication(context);
         if (authentication == null) {
-            new IllegalArgumentException("Request context has no reference to an authentication event to locate a principal");
+            throw new IllegalArgumentException("Request context has no reference to an authentication event to locate a principal");
         }
         final String uid = authentication.getPrincipal().getId();
 
