@@ -5,9 +5,11 @@ import org.apereo.cas.adaptors.swivel.web.flow.SwivelAuthenticationWebflowAction
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorWebflowConfigurer;
+import org.apereo.cas.adaptors.swivel.web.flow.rest.SwivelTuringImageGeneratorController;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -108,6 +110,12 @@ public class SwivelConfiguration {
                 warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies,
                 multifactorAuthenticationProviderSelector);
+    }
+
+    @Bean
+    public SwivelTuringImageGeneratorController swivelTuringImageGeneratorController() {
+        final MultifactorAuthenticationProperties.Swivel swivel = this.casProperties.getAuthn().getMfa().getSwivel();
+        return new SwivelTuringImageGeneratorController(swivel);
     }
 
     @Bean

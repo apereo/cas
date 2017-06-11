@@ -1293,9 +1293,18 @@ public class MultifactorAuthenticationProperties implements Serializable {
     public static class Swivel extends BaseProvider {
         private static final long serialVersionUID = -7409451053833491119L;
 
+        private String swivelTuringImageUrl;
         private String swivelUrl;
         private String sharedSecret;
         private boolean ignoreSslErrors;
+
+        public String getSwivelTuringImageUrl() {
+            return swivelTuringImageUrl;
+        }
+
+        public void setSwivelTuringImageUrl(final String swivelTuringImageUrl) {
+            this.swivelTuringImageUrl = swivelTuringImageUrl;
+        }
 
         public String getSwivelUrl() {
             return swivelUrl;
