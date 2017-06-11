@@ -63,7 +63,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
             final Ticket ticket = encodeTicket(ticketToAdd);
             LOGGER.debug("Adding ticket [{}]", ticket);
             final int timeout = getTimeout(ticketToAdd);
-            if (!this.client.add(ticket.getId(), getTimeout(ticketToAdd), ticket).get()) {
+            if (!this.client.set(ticket.getId(), getTimeout(ticketToAdd), ticket).get()) {
                 LOGGER.error("Failed to add [{}] without timeout [{}]", ticketToAdd, timeout);
             }
             // Sanity check to ensure ticket can retrieved

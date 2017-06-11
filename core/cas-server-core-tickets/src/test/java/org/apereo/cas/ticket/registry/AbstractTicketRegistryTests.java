@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -75,6 +76,13 @@ public abstract class AbstractTicketRegistryTests {
      * @throws Exception the exception
      */
     public abstract TicketRegistry getNewTicketRegistry() throws Exception;
+
+    /**
+     * Determine whether the tested registry is able to iterate its tickets.
+     */
+    protected boolean isIterableRegistry() {
+        return true;
+    }
 
     /**
      * Method to add a TicketGrantingTicket to the ticket cache. This should add
@@ -189,6 +197,7 @@ public abstract class AbstractTicketRegistryTests {
 
     @Test
     public void verifyDeleteAllExistingTickets() {
+        Assume.assumeTrue(isIterableRegistry());
         try {
             for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
                 this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
@@ -220,7 +229,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertSame(0, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX + "1"));
+            assertSame(0, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX + "NON-EXISTING-SUFFIX"));
         } catch (final Exception e) {
             fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
@@ -249,6 +258,7 @@ public abstract class AbstractTicketRegistryTests {
 
     @Test
     public void verifyGetTicketsFromRegistryEqualToTicketsAdded() {
+        Assume.assumeTrue(isIterableRegistry());
         final Collection<Ticket> tickets = new ArrayList<>();
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
