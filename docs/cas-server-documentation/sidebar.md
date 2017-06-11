@@ -98,6 +98,7 @@ layout: null
 
 * [Ticketing](#ticketingconfig)
     *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)
+    *   [JWT Service Tickets](/$version/installation/Configure-ServiceTicket-JWT.html) 
     *   [Expiration Policies](/$version/installation/Configuring-Ticket-Expiration-Policy.html)
     *   [Storage](#ticketingstorage)
         *   [Hazelcast](/$version/installation/Hazelcast-Ticket-Registry.html)
