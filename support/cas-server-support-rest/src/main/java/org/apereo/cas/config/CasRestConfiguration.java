@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.rest.CredentialFactory;
 import org.apereo.cas.support.rest.DefaultCredentialFactory;
-import org.apereo.cas.support.rest.TicketsResource;
+import org.apereo.cas.support.rest.resources.ServiceTicketResource;
+import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
+import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -65,9 +67,20 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public TicketsResource ticketResourceRestController() {
-        return new TicketsResource(authenticationSystemSupport, credentialFactory, ticketRegistrySupport,
+    public TicketStatusResource ticketStatusResource() {
+        return new TicketStatusResource(centralAuthenticationService);
+    }
+
+    @Bean
+    public ServiceTicketResource serviceTicketResource() {
+        return new ServiceTicketResource(authenticationSystemSupport, ticketRegistrySupport,
                 webApplicationServiceFactory, centralAuthenticationService);
+    }
+
+    @Bean
+    public TicketGrantingTicketResource ticketResourceRestController() {
+        return new TicketGrantingTicketResource(authenticationSystemSupport,
+                credentialFactory, centralAuthenticationService);
     }
 
     @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
