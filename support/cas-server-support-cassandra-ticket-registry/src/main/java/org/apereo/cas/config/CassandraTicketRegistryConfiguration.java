@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.TicketSerializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistryDao;
@@ -30,9 +31,10 @@ public class CassandraTicketRegistryConfiguration {
     private CassandraProperties cassandraProperties;
 
     @Bean(name = "cassandraTicketRegistry")
-    public TicketRegistry cassandraTicketRegistry(@Qualifier("ticketSerializer") final TicketSerializer ticketSerializer) {
-        return new CassandraTicketRegistry<>(cassandraProperties.getContactPoints(), cassandraProperties.getUsername(), cassandraProperties.getPassword(),
-                ticketSerializer, String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
+    public TicketRegistry cassandraTicketRegistry(@Qualifier("ticketSerializer") final TicketSerializer ticketSerializer,
+                                                  @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+        return new CassandraTicketRegistry<>(ticketCatalog, cassandraProperties.getContactPoints(), cassandraProperties.getUsername(),
+                cassandraProperties.getPassword(), ticketSerializer, String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
                 cassandraProperties.getExpiryTable(), cassandraProperties.getLastRunTable());
     }
 
