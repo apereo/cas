@@ -81,6 +81,7 @@ layout: null
         *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
         *   [Microsoft Azure](/$version/installation/MicrosoftAzure-Authentication.html)
         *   [FIDO U2F](/$version/installation/FIDO-U2F-Authentication.html)
+        *   [Swivel Secure](/$version/installation/SwivelSecure-Authentication.html)
         *   [Custom](/$version/installation/Custom-MFA-Authentication.html)
     *   [Triggers](/$version/installation/Configuring-Multifactor-Authentication-Triggers.html)
     *   [Trusted Devices](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
