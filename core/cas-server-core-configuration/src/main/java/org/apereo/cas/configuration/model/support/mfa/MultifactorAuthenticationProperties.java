@@ -1298,6 +1298,10 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String sharedSecret;
         private boolean ignoreSslErrors;
 
+        public Swivel() {
+            setId("mfa-swivel");
+        }
+
         public String getSwivelTuringImageUrl() {
             return swivelTuringImageUrl;
         }
