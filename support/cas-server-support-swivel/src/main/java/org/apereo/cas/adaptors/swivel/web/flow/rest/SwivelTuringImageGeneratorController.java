@@ -15,10 +15,10 @@ import java.io.OutputStream;
 import java.net.URL;
 
 /**
- * This is {@link OneTimeTokenQRGeneratorController}.
+ * This is {@link SwivelTuringImageGeneratorController}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.2.0
  */
 @RestController
 public class SwivelTuringImageGeneratorController {
