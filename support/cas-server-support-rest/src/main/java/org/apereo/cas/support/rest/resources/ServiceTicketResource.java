@@ -8,8 +8,8 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.support.rest.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +46,17 @@ public class ServiceTicketResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServiceFactory webApplicationServiceFactory;
     private final TicketRegistrySupport ticketRegistrySupport;
+    private final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
 
     public ServiceTicketResource(final AuthenticationSystemSupport authenticationSystemSupport,
                                  final TicketRegistrySupport ticketRegistrySupport, final ServiceFactory webApplicationServiceFactory,
-                                 final CentralAuthenticationService centralAuthenticationService) {
+                                 final CentralAuthenticationService centralAuthenticationService,
+                                 final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory) {
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.ticketRegistrySupport = ticketRegistrySupport;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.centralAuthenticationService = centralAuthenticationService;
+        this.serviceTicketResourceEntityResponseFactory = serviceTicketResourceEntityResponseFactory;
     }
 
     /**
@@ -68,16 +71,14 @@ public class ServiceTicketResource {
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
-            final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(
-                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
+            final AuthenticationResultBuilder builder =
+                    new DefaultAuthenticationResultBuilder(this.authenticationSystemSupport.getPrincipalElectionStrategy());
 
             final Service service = this.webApplicationServiceFactory.createService(serviceId);
             final AuthenticationResult authenticationResult =
                     builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build(service);
 
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(tgtId,
-                    service, authenticationResult);
-            return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
+            return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
 
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);

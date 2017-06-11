@@ -64,7 +64,8 @@ public class ServiceTicketResourceTests {
         this.serviceTicketResource = new ServiceTicketResource(
                 new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
                         new DefaultPrincipalElectionStrategy()),
-                ticketSupport, new WebApplicationServiceFactory(), casMock);
+                ticketSupport, new WebApplicationServiceFactory(), casMock,
+                new DefaultServiceTicketResourceEntityResponseFactory(casMock));
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.serviceTicketResource)
                 .defaultRequest(get("/")
