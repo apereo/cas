@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.rest.CredentialFactory;
 import org.apereo.cas.support.rest.DefaultCredentialFactory;
+import org.apereo.cas.support.rest.DefaultServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.support.rest.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
@@ -74,7 +76,14 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public ServiceTicketResource serviceTicketResource() {
         return new ServiceTicketResource(authenticationSystemSupport, ticketRegistrySupport,
-                webApplicationServiceFactory, centralAuthenticationService);
+                webApplicationServiceFactory, centralAuthenticationService,
+                serviceTicketResourceEntityResponseFactory());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "serviceTicketResourceEntityResponseFactory")
+    public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory() {
+        return new DefaultServiceTicketResourceEntityResponseFactory(centralAuthenticationService);
     }
 
     @Bean
