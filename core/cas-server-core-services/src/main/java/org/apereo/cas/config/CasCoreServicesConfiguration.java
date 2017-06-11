@@ -82,7 +82,7 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
-        return new DefaultWebApplicationResponseBuilderLocator();
+        return new DefaultWebApplicationResponseBuilderLocator(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
