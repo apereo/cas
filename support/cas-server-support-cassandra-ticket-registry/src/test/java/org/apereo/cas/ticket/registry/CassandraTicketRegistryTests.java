@@ -1,5 +1,21 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CassandraTicketRegistryConfiguration;
+import org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.serializer.JacksonJsonSerializer;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.utils.TicketCreatorUtils;
@@ -8,6 +24,12 @@ import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
@@ -16,24 +38,37 @@ import static org.junit.Assert.*;
  *
  * @since 5.1.0
  */
-public class CassandraTicketRegistryTests {
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {
+        CassandraTicketRegistryConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CassandraTicketRegistryTicketCatalogConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreServicesConfiguration.class,
+})
+public class CassandraTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Rule
     public CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("schema.cql"), "cassandra.yaml", 120_000L);
-    private CassandraTicketRegistry<String> ticketRegistry;
 
-    @Before
-    public void setUp() throws Exception {
-        ticketRegistry = new CassandraTicketRegistry<>("localhost", "", "", new JacksonJsonSerializer(), String.class, "cas2.ticketgrantingticket",
-                "cas2.serviceticket", "cas2.ticket_cleaner", "cas2.ticket_cleaner_lastrun");
-    }
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
 
-    @Test
-    public void shouldRetrieveATicket() throws Exception {
-        final String ticketId = "TGT-1234";
-        final TicketGrantingTicketImpl ticket = TicketCreatorUtils.defaultTGT(ticketId);
-        ticketRegistry.addTicket(ticket);
-
-        assertEquals(ticket, ticketRegistry.getTicket(ticketId));
+    @Override
+    public TicketRegistry getNewTicketRegistry() throws Exception {
+        return ticketRegistry;
     }
 }

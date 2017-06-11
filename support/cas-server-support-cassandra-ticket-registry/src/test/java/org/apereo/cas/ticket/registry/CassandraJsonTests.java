@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.serializer.JacksonJsonSerializer;
+import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.utils.TicketCreatorUtils;
@@ -29,7 +30,9 @@ public class CassandraJsonTests {
 
     @Before
     public void setUp() throws Exception {
-        dao = new CassandraTicketRegistry<>("localhost", "", "", new JacksonJsonSerializer(), String.class, "cas2.ticketgrantingticket",
+        DefaultTicketCatalog ticketCatalog = new DefaultTicketCatalog();
+        ticketCatalog.register(new Ti);
+        dao = new CassandraTicketRegistry<>(ticketCatalog, "localhost", "", "", new JacksonJsonSerializer(), String.class, "cas2.ticketgrantingticket",
                 "cas2.serviceticket", "cas2.ticket_cleaner", "cas2.ticket_cleaner_lastrun");
     }
 

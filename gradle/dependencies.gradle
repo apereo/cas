@@ -1013,10 +1013,15 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.cassandraunit:cassandra-unit:$cassandraUnitVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.xerial.snappy", module: "snappy-java")
+                    exclude(group: "com.googlecode.json-simple", module: "json-simple")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "io.netty", module: "netty-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.yaml", module: "snakeyaml")
+                    exclude(group: "org.antlr", module: "antlr-runtime")
                     exclude(group: "org.apache.ant", module: "ant")
                     exclude(group: "org.apache.thrift", module: "libthrift")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
