@@ -34,7 +34,8 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        this.cache.put(ticket.getId(), ticket);
+        final Ticket encodedTicket = encodeTicket(ticket);
+        this.cache.put(encodedTicket.getId(), encodedTicket);
         return ticket;
     }
 
@@ -42,15 +43,15 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
 
-        final long idleTime = ticket.getExpirationPolicy().getTimeToIdle() <= 0
-                ? ticket.getExpirationPolicy().getTimeToLive()
-                : ticket.getExpirationPolicy().getTimeToIdle();
+        final long idleTime = ticketToAdd.getExpirationPolicy().getTimeToIdle() <= 0
+                ? ticketToAdd.getExpirationPolicy().getTimeToLive()
+                : ticketToAdd.getExpirationPolicy().getTimeToIdle();
 
         LOGGER.debug("Adding ticket [{}] to cache store to live [{}] seconds and stay idle for [{}]",
-                ticket.getId(), ticket.getExpirationPolicy().getTimeToLive(), idleTime);
+                ticketToAdd.getId(), ticketToAdd.getExpirationPolicy().getTimeToLive(), idleTime);
 
         this.cache.put(ticket.getId(), ticket,
-                ticket.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS,
+                ticketToAdd.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS,
                 idleTime, TimeUnit.SECONDS);
     }
 
@@ -60,7 +61,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
         if (ticketId == null) {
             return null;
         }
-        return Ticket.class.cast(cache.get(encTicketId));
+        return decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
     }
 
     @Override

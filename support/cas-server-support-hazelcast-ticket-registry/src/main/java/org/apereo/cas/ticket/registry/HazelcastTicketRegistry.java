@@ -127,7 +127,6 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
                 final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(t);
                 tickets.addAll(map.values().stream().limit(this.pageSize).collect(Collectors.toList()));
             });
-            return tickets;
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
