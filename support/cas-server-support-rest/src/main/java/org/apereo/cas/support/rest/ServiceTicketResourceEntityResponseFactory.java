@@ -2,7 +2,6 @@ package org.apereo.cas.support.rest;
 
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.springframework.http.ResponseEntity;
 
 /**

@@ -13,6 +13,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("tokenAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TokenCoreConfiguration {
-
-
 }
