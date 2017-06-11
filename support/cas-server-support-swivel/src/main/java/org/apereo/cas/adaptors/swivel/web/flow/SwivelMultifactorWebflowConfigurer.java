@@ -15,7 +15,7 @@ public class SwivelMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
     /**
      * Webflow event id.
      */
-    public static final String MFA_SWIVEL_EVENT_ID = "mfa-gauth";
+    public static final String MFA_SWIVEL_EVENT_ID = "mfa-swivel";
 
     private final FlowDefinitionRegistry flowDefinitionRegistry;
 
