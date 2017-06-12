@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link CassandraTicketRegistryTicketCatalogConfiguration}.
  *
  * @author David Rodriguez
- * @since 5.1.0
+ * @since 5.2.0
  */
 @Configuration("hazelcastTicketRegistryTicketMetadataCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

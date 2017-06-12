@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 /**
  * @author David Rodriguez
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
 public class CassandraJsonTests {
 
@@ -30,8 +30,7 @@ public class CassandraJsonTests {
 
     @Before
     public void setUp() throws Exception {
-        DefaultTicketCatalog ticketCatalog = new DefaultTicketCatalog();
-        ticketCatalog.register(new Ti);
+        final DefaultTicketCatalog ticketCatalog = new DefaultTicketCatalog();
         dao = new CassandraTicketRegistry<>(ticketCatalog, "localhost", "", "", new JacksonJsonSerializer(), String.class, "cas2.ticketgrantingticket",
                 "cas2.serviceticket", "cas2.ticket_cleaner", "cas2.ticket_cleaner_lastrun");
     }

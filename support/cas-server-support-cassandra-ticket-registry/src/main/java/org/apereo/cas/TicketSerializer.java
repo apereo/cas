@@ -14,7 +14,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
  * @param <T> should be something that can be written
  * to Cassandra like {@link String}
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
 public interface TicketSerializer<T> {
 

@@ -8,7 +8,6 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import org.apereo.cas.TicketSerializer;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -29,7 +28,7 @@ import java.util.stream.StreamSupport;
 /**
  * @author David Rodriguez
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
 public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implements CassandraTicketRegistryDao {
 
@@ -104,12 +103,12 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
     public void addTicket(final Ticket ticket) {
         final String ticketId = ticket.getId();
         LOGGER.debug("Inserting ticket {}", ticketId);
-        TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
-        String storageName = ticketDefinition.getProperties().getStorageName();
+        final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
+        final String storageName = ticketDefinition.getProperties().getStorageName();
 
-        if (storageName.equals("ticketGrantingTicket")) {
+        if ("ticketGrantingTicket".equals(storageName)) {
             addTicketGrantingTicket(ticket);
-        } else if (storageName.equals("serviceTicket")) {
+        } else if ("serviceTicket".equals(storageName)) {
             addServiceTicket(ticket);
         } else {
             LOGGER.error("Inserting unknown ticket type {}", ticket.getClass().getName());
@@ -132,17 +131,17 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-//        Function<String, Boolean> deleteTgt = this::deleteTicketGrantingTicket;
-//        Function<String, Boolean> deleteSt = this::deleteServiceTicket;
-//
-//        return applyForGivenType(ticketId, deleteTgt, deleteSt);
+        //        Function<String, Boolean> deleteTgt = this::deleteTicketGrantingTicket;
+        //        Function<String, Boolean> deleteSt = this::deleteServiceTicket;
+        //
+        //        return applyForGivenType(ticketId, deleteTgt, deleteSt);
 
         LOGGER.debug("Deleting ticket {}", ticketId);
-        TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
-        String storageName = ticketDefinition.getProperties().getStorageName();
-        if (storageName.equals("ticketGrantingTicket")) {
+        final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
+        final String storageName = ticketDefinition.getProperties().getStorageName();
+        if ("ticketGrantingTicket".equals(storageName)) {
             return deleteTicketGrantingTicket(ticketId);
-        } else if (storageName.equals("serviceTickets")) {
+        } else if ("serviceTickets".equals(storageName)) {
             return deleteServiceTicket(ticketId);
         } else {
             LOGGER.error("Deleting unknown ticket type {}", ticketId);
@@ -150,28 +149,28 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         }
     }
 
-//    private boolean applyForGivenType(final String ticketId, final Function<String, Boolean> tgtAction, final Function<String, Boolean> stAction) {
-//        LOGGER.debug("Deleting ticket {}", ticketId);
-//        TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
-//        String storageName = ticketDefinition.getProperties().getStorageName();
-//        if (storageName.equals("ticketGrantingTicket")) {
-//            return tgtAction.apply(ticketId);
-//        } else if (storageName.equals("serviceTickets")) {
-//            return stAction.apply(ticketId);
-//        } else {
-//            LOGGER.error("Deleting unknown ticket type {}", ticketId);
-//            return false;
-//        }
-//    }
+    //    private boolean applyForGivenType(final String ticketId, final Function<String, Boolean> tgtAction, final Function<String, Boolean> stAction) {
+    //        LOGGER.debug("Deleting ticket {}", ticketId);
+    //        final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
+    //        final String storageName = ticketDefinition.getProperties().getStorageName();
+    //        if (storageName.equals("ticketGrantingTicket")) {
+    //            return tgtAction.apply(ticketId);
+    //        } else if (storageName.equals("serviceTickets")) {
+    //            return stAction.apply(ticketId);
+    //        } else {
+    //            LOGGER.error("Deleting unknown ticket type {}", ticketId);
+    //            return false;
+    //        }
+    //    }
 
     @Override
     public Ticket getTicket(final String ticketId) {
         LOGGER.debug("Querying ticket {}", ticketId);
-        TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
-        String storageName = ticketDefinition.getProperties().getStorageName();
-        if (storageName.equals("ticketGrantingTicket")) {
+        final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
+        final String storageName = ticketDefinition.getProperties().getStorageName();
+        if ("ticketGrantingTicket".equals(storageName)) {
             return getTicketGrantingTicket(ticketId);
-        } else if (storageName.equals("serviceTickets")) {
+        } else if ("serviceTickets".equals(storageName)) {
             return getServiceTicket(ticketId);
         } else {
             LOGGER.error("Requesting unknown ticket type {}", ticketId);
@@ -183,11 +182,11 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
     public Ticket updateTicket(final Ticket ticket) {
         final String ticketId = ticket.getId();
         LOGGER.debug("Updating ticket {}", ticketId);
-        TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
-        String storageName = ticketDefinition.getProperties().getStorageName();
-        if (storageName.equals("ticketGrantingTicket")) {
+        final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
+        final String storageName = ticketDefinition.getProperties().getStorageName();
+        if ("ticketGrantingTicket".equals(storageName)) {
             updateTicketGrantingTicket(ticket);
-        } else if (storageName.equals("serviceTickets")) {
+        } else if ("serviceTickets".equals(storageName)) {
             updateServiceTicket(ticket);
         } else {
             LOGGER.error("Updating unknown ticket type {}", ticket.getClass().getName());

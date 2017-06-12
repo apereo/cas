@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 /**
  * @author David Rodriguez
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
 public class JacksonBinarySerializer implements TicketSerializer<ByteBuffer> {
 

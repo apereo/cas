@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 /**
  * @author David Rodriguez
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
 public interface CassandraTicketRegistryDao {
 

@@ -20,9 +20,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * @author David Rodriguez
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
-@Configuration("ticketRegistryConfiguration")
+@Configuration("cassandraTicketRegistryConfiguration")
 @EnableScheduling
 @EnableConfigurationProperties({CasConfigurationProperties.class, CassandraProperties.class})
 public class CassandraTicketRegistryConfiguration {
@@ -30,7 +30,7 @@ public class CassandraTicketRegistryConfiguration {
     @Autowired
     private CassandraProperties cassandraProperties;
 
-    @Bean(name = "cassandraTicketRegistry")
+    @Bean(name = {"ticketRegistry", "cassandraTicketRegistry"})
     public TicketRegistry cassandraTicketRegistry(@Qualifier("ticketSerializer") final TicketSerializer ticketSerializer,
                                                   @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         return new CassandraTicketRegistry<>(ticketCatalog, cassandraProperties.getContactPoints(), cassandraProperties.getUsername(),

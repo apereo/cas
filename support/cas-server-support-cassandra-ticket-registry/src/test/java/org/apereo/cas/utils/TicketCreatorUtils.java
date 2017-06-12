@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * @author David Rodriguez
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
 public final class TicketCreatorUtils {
 

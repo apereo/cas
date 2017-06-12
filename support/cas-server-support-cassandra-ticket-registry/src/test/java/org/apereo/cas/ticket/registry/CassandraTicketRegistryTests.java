@@ -16,14 +16,9 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CassandraTicketRegistryConfiguration;
 import org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration;
-import org.apereo.cas.serializer.JacksonJsonSerializer;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.utils.TicketCreatorUtils;
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,12 +26,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
-
 /**
  * @author David Rodriguez
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
@@ -56,7 +49,7 @@ import static org.junit.Assert.*;
         RefreshAutoConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreServicesConfiguration.class,
+        CasCoreServicesConfiguration.class
 })
 public class CassandraTicketRegistryTests extends AbstractTicketRegistryTests {
 
