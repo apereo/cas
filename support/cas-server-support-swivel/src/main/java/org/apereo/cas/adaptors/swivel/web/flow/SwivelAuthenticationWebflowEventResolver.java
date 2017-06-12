@@ -15,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link AuthyAuthenticationWebflowEventResolver}.
+ * This is {@link SwivelAuthenticationWebflowEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
