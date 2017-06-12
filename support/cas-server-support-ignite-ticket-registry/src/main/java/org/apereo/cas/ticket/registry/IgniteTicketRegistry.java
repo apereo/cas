@@ -42,14 +42,14 @@ import static java.util.stream.Collectors.toList;
  */
 public class IgniteTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(IgniteTicketRegistry.class);
-    
+
     private final IgniteConfiguration igniteConfiguration;
     private final IgniteProperties properties;
 
     private IgniteCache<String, Ticket> ticketIgniteCache;
 
     private Ignite ignite;
-    
+
     private boolean supportRegistryState = true;
 
     /**
@@ -64,8 +64,8 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticketToAdd) {
-        final Ticket ticket = encodeTicket(ticketToAdd);
+    public void addTicket(final Ticket ticket) {
+        final Ticket encodedTicket = encodeTicket(ticket);
         LOGGER.debug("Adding ticket [{}] to the cache [{}]", ticket.getId(), this.ticketIgniteCache.getName());
         this.ticketIgniteCache.withExpiryPolicy(new ExpiryPolicy() {
             @Override
@@ -85,7 +85,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
             public Duration getExpiryForUpdate() {
                 return new Duration(TimeUnit.SECONDS, ticket.getExpirationPolicy().getTimeToLive());
             }
-        }).put(ticket.getId(), ticket);
+        }).put(encodedTicket.getId(), encodedTicket);
     }
 
     @Override
@@ -94,12 +94,12 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         this.ticketIgniteCache.removeAll();
         return size;
     }
-    
+
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
         if (ticket != null) {
-            return this.ticketIgniteCache.remove(ticket.getId());
+            return this.ticketIgniteCache.remove(encodeTicketId(ticket.getId()));
         }
         return true;
     }

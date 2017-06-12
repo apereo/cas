@@ -17,17 +17,20 @@ import java.net.Socket;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * This is {@link AbstractMemcachedTests}.
+ * This is {@link MemCacheTestUtils}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public abstract class AbstractMemcachedTests {
+public final class MemCacheTestUtils {
 
     private static final int PORT = 14938;
 
     private static MemcachedExecutable MEMCACHED_EXECUTABLE;
     private static MemcachedProcess MEMCACHED;
+
+    private MemCacheTestUtils() {
+    }
 
     public static void bootstrap() {
         try {
@@ -36,7 +39,7 @@ public abstract class AbstractMemcachedTests {
             MEMCACHED_EXECUTABLE = runtime.prepare(new MemcachedConfig(Version.V1_4_22, PORT));
             MEMCACHED = MEMCACHED_EXECUTABLE.start();
         } catch (final Exception e) {
-            getLogger(AbstractMemcachedTests.class).warn("Aborting since no memcached server could be started.", e);
+            getLogger(MemCacheTestUtils.class).warn("Aborting since no memcached server could be started.", e);
         }
     }
 
@@ -49,7 +52,7 @@ public abstract class AbstractMemcachedTests {
         }
     }
 
-    public boolean isMemcachedListening() {
+    public static boolean isMemcachedListening() {
         try (Socket socket = new Socket("memcached-14938.c10.us-east-1-3.ec2.cloud.redislabs.com", PORT)) {
             return true;
         } catch (final Exception e) {
