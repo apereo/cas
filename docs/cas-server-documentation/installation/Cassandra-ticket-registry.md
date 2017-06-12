@@ -100,7 +100,11 @@ The ticket cleaner will check the last bucket period, and retrieve all the ticke
 ### Object Serialization
 Our Cassandra ticket registry implementation can store tickets as String or bytes of data, so CAS tickets must be serialized to a byte array prior to storage. 
 CAS ships with two custom serialization components `JacksonBinarySerializer` and `JacksonJsonSerializer`. By default `JacksonJsonSerializer` is used, but you 
-can use the other passing it to `CassandraDao`. 
+can use the other passing it to `CassandraTicketRegistry`.
+Considerations to choose a serializer:
+- this two implementations could have different performance
+- objects serialized using `JacksonJsonSerializer` could be read as they are stored as a JSON string in Cassandra 
+- objects serialized using `JacksonBinarySerializer` could not be read as they are stored as a BLOB object in Cassandra 
 
 
 ### Multi datacenter replication
