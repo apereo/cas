@@ -104,8 +104,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
-    	super.recordSubmissionFailure(request);
-    	recordAnyAction(request, INSPEKTR_ACTION_FAILED, "recordSubmissionFailure()");
+        super.recordSubmissionFailure(request);
+        recordAnyAction(request, INSPEKTR_ACTION_FAILED, "recordSubmissionFailure()");
     }
 
     @Override
@@ -113,7 +113,14 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         super.recordThrottle(request);
         recordAnyAction(request, INSPEKTR_ACTION_THROTTLED, "recordThrottle()");
     }
-    
+
+    /**
+     * Records an audit action.
+     * 
+     * @param request The current HTTP request.
+     * @param actionName Name of the action to be recorded.
+     * @param methodName Name of the method where the action occurred.
+     */
     protected void recordAnyAction(final HttpServletRequest request, final String actionName, final String methodName) {
         if (this.dataSource != null && this.jdbcTemplate != null) {
             final String userToUse = constructUsername(request, getUsernameParameter());
