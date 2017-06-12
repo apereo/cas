@@ -25,6 +25,9 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration.ST_TABLE;
+import static org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration.TGT_TABLE;
+
 /**
  * @author David Rodriguez
  *
@@ -106,9 +109,9 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
 
-        if ("ticketGrantingTicket".equals(storageName)) {
+        if (TGT_TABLE.equals(storageName)) {
             addTicketGrantingTicket(ticket);
-        } else if ("serviceTicket".equals(storageName)) {
+        } else if (ST_TABLE.equals(storageName)) {
             addServiceTicket(ticket);
         } else {
             LOGGER.error("Inserting unknown ticket type {}", ticket.getClass().getName());
@@ -139,9 +142,9 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         LOGGER.debug("Deleting ticket {}", ticketId);
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
-        if ("ticketGrantingTicket".equals(storageName)) {
+        if (TGT_TABLE.equals(storageName)) {
             return deleteTicketGrantingTicket(ticketId);
-        } else if ("serviceTickets".equals(storageName)) {
+        } else if (ST_TABLE.equals(storageName)) {
             return deleteServiceTicket(ticketId);
         } else {
             LOGGER.error("Deleting unknown ticket type {}", ticketId);
@@ -168,9 +171,9 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         LOGGER.debug("Querying ticket {}", ticketId);
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
-        if ("ticketGrantingTicket".equals(storageName)) {
+        if (TGT_TABLE.equals(storageName)) {
             return getTicketGrantingTicket(ticketId);
-        } else if ("serviceTickets".equals(storageName)) {
+        } else if (ST_TABLE.equals(storageName)) {
             return getServiceTicket(ticketId);
         } else {
             LOGGER.error("Requesting unknown ticket type {}", ticketId);
@@ -184,9 +187,9 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
         LOGGER.debug("Updating ticket {}", ticketId);
         final TicketDefinition ticketDefinition = ticketCatalog.find(ticketId);
         final String storageName = ticketDefinition.getProperties().getStorageName();
-        if ("ticketGrantingTicket".equals(storageName)) {
+        if (TGT_TABLE.equals(storageName)) {
             updateTicketGrantingTicket(ticket);
-        } else if ("serviceTickets".equals(storageName)) {
+        } else if (ST_TABLE.equals(storageName)) {
             updateServiceTicket(ticket);
         } else {
             LOGGER.error("Updating unknown ticket type {}", ticket.getClass().getName());

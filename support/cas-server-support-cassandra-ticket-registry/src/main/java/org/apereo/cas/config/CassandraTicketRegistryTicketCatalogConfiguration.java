@@ -16,6 +16,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CassandraTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
 
+    public static final String TGT_TABLE = "ticketGrantingTicket";
+    public static final String ST_TABLE = "serviceTicket";
+
     @Override
     protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         setServiceTicketDefinitionProperties(metadata);
@@ -41,10 +44,10 @@ public class CassandraTicketRegistryTicketCatalogConfiguration extends CasCoreTi
     }
 
     private void setTicketGrantingTicketProperties(final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("ticketGrantingTicket");
+        metadata.getProperties().setStorageName(TGT_TABLE);
     }
 
     private void setServiceTicketDefinitionProperties(final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("serviceTicket");
+        metadata.getProperties().setStorageName(ST_TABLE);
     }
 }
