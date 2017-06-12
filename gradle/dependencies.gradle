@@ -1064,6 +1064,7 @@ ext.libraries = [
                     exclude(group: "com.googlecode.json-simple", module: "json-simple")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "io.netty", module: "netty-codec")
+                    exclude(group: "io.netty", module: "netty-handler")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.yaml", module: "snakeyaml")
