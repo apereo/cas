@@ -20,7 +20,7 @@ one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include resour
 process is successfully execute, the location and names of the overridden artifacts locally must **EXACTLY** match that of those provided by the project
 inside the originally downloaded archive.
 
-It goes without saying that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
+It should be obvious that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
 
 1. There is no need to download/build from the source.
 2. Upgrades are tremendously easier in most cases by simply adjusting the build script to download the newer CAS release.
