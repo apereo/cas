@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -25,7 +26,9 @@ public class CassandraTicketRegistryCleaner implements TicketRegistryCleaner {
     @Override
     public void clean() {
         ticketRegistryDao.getExpiredTgts().forEach(ticket -> {
-            logoutManager.performLogout(ticket);
+            if (ticket instanceof TicketGrantingTicket) {
+                logoutManager.performLogout((TicketGrantingTicket) ticket);
+            }
             ticketRegistryDao.deleteTicketGrantingTicket(ticket.getId());
         });
     }

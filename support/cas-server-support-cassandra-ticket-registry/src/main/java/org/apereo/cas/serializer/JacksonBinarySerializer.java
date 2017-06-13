@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apereo.cas.TicketSerializer;
-import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -36,7 +34,7 @@ public class JacksonBinarySerializer implements TicketSerializer<ByteBuffer> {
     }
 
     @Override
-    public ByteBuffer serializeTGT(final Ticket ticket) {
+    public ByteBuffer serialize(final Ticket ticket) {
         byte[] serialized;
         try {
             serialized = mapper.writeValueAsBytes(ticket);
@@ -48,33 +46,11 @@ public class JacksonBinarySerializer implements TicketSerializer<ByteBuffer> {
     }
 
     @Override
-    public ByteBuffer serializeST(final Ticket ticket) {
-        byte[] serialized;
-        try {
-            serialized = mapper.writeValueAsBytes(ticket);
-        } catch (final JsonProcessingException e) {
-            LOGGER.info("Error writing ticket {}: {}", ticket.getId(), e);
-            serialized = new byte[]{};
-        }
-        return ByteBuffer.wrap(serialized);
-    }
-
-    @Override
-    public TicketGrantingTicket deserializeTGT(final ByteBuffer ticket) {
+    public TicketGrantingTicket deserialize(final ByteBuffer ticket, final Class<? extends Ticket> ticketClass) {
         try {
             return mapper.readValue(ticket.array(), TicketGrantingTicketImpl.class);
         } catch (final IOException e) {
             LOGGER.info("Error reading TGT: ", e);
-            return null;
-        }
-    }
-
-    @Override
-    public ServiceTicket deserializeST(final ByteBuffer ticket) {
-        try {
-            return mapper.readValue(ticket.array(), ServiceTicketImpl.class);
-        } catch (final IOException e) {
-            LOGGER.info("Error reading ST: ", e);
             return null;
         }
     }

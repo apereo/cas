@@ -2,7 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.serializer.JacksonJsonSerializer;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.utils.TicketCreatorUtils;
 import org.cassandraunit.CassandraCQLUnit;
@@ -57,7 +57,7 @@ public class CassandraJsonTests {
         dao.addTicket(notExpired);
 
         //when
-        final Stream<TicketGrantingTicket> expiredTgts = dao.getExpiredTgts();
+        final Stream<Ticket> expiredTgts = dao.getExpiredTgts();
 
         //then
         final long expiredTgtsInserted = 2;

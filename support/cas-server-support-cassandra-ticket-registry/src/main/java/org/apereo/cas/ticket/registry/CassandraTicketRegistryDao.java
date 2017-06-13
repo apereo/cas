@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.stream.Stream;
@@ -25,5 +26,5 @@ public interface CassandraTicketRegistryDao {
      *
      * @return {@link Stream}
      */
-    Stream<TicketGrantingTicket> getExpiredTgts();
+    Stream<Ticket> getExpiredTgts();
 }
