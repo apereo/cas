@@ -5,7 +5,7 @@ title: CAS - Surrogate Authentication
 
 # Surrogate Authentication
 
-Surrogate authentication is the ability to authenticate on behalf of another user. The two actors in this case are:
+Surrogate authentication (impersonation) is the ability to authenticate on behalf of another user. The two actors in this case are:
 
 1. The primary admin user whose credentials are verified upon authentication.
 2. The surrogate user, selected by the admin, to which CAS will switch after credential verification and is one that is linked to the single sign-on session.
