@@ -1,15 +1,18 @@
 package org.apereo.cas.ticket.registry;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import redis.embedded.RedisServer;
 
 /**
@@ -18,7 +21,7 @@ import redis.embedded.RedisServer;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RunWith(SpringRunner.class)
+@RunWith(Parameterized.class)
 @SpringBootTest(classes = {RedisTicketRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations={"classpath:/redis.properties"})
 public class RedisTicketRegistryTests extends AbstractTicketRegistryTests {
@@ -28,6 +31,15 @@ public class RedisTicketRegistryTests extends AbstractTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
+
+    public RedisTicketRegistryTests(final boolean useEncryption) {
+        super(useEncryption);
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() throws Exception {
+        return Arrays.asList(false, true);
+    }
 
     @BeforeClass
     public static void startRedis() throws Exception {
