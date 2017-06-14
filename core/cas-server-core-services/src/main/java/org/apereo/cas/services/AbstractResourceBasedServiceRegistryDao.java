@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -39,9 +41,11 @@ import java.util.stream.Collectors;
 public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractServiceRegistryDao implements ResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
+    private static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE = service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+            + "This will overwrite previous service definitions and is likely a configuration problem. Make sure all services have a unique id and try again.",
+            service.getServiceId(), service.getId());
     private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
-        LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. This will overwrite previous service definitions and is likely a configuration "
-                        + "problem. Make sure all services have a unique id and try again.", s2.getServiceId(), s2.getId());
+        LOG_SERVICE_DUPLICATE.accept(s2);
         return s1;
     };
 
@@ -110,7 +114,35 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
             LOGGER.info("Watching service registry directory at [{}]", configDirectory);
 
-            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, eventPublisher);
+            final Consumer<File> onCreate = file -> {
+                final RegisteredService service = load(file);
+                if (service != null) {
+                    if (findServiceById(service.getId()) != null) {
+                        LOG_SERVICE_DUPLICATE.accept(service);
+                    }
+                    update(service);
+                    publishEvent(new CasRegisteredServicesRefreshEvent(this));
+                }
+            };
+            final Consumer<File> onDelete = file -> {
+                load();
+                publishEvent(new CasRegisteredServicesRefreshEvent(this));
+            };
+            final Consumer<File> onModify = file -> {
+                final RegisteredService newService = load(file);
+                if (newService != null) {
+                    final RegisteredService oldService = findServiceById(newService.getId());
+
+                    if (!newService.equals(oldService)) {
+                        update(newService);
+                        publishEvent(new CasRegisteredServicesRefreshEvent(this));
+                    } else {
+                        LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
+                                + "in the event processing pipeline", newService.getId(), file.getName());
+                    }
+                }
+            };
+            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(serviceRegistryDirectory, onCreate, onModify, onDelete);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
             this.serviceRegistryWatcherThread.start();
