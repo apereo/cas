@@ -22,7 +22,12 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
-public class PathWatcher  implements Runnable, Closeable {
+/**
+ * @author David Rodriguez
+ *
+ * @since 5.2.0
+ */
+public class PathWatcher implements Runnable, Closeable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PathWatcher.class);
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};

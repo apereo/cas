@@ -2,7 +2,6 @@ package org.apereo.cas.util.function;
 
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -13,8 +12,7 @@ import java.util.function.Supplier;
  * <p>There is no requirement that a new or distinct result be returned each
  * time the supplier is invoked.
  *
- * <p>This is a <a href="package-summary.html">functional interface</a>
- * whose functional method is {@link #get()}.
+ * @author David Rodriguez
  *
  * @param <T> the type of results supplied by this supplier
  *
@@ -22,6 +20,13 @@ import java.util.function.Supplier;
  */
 public interface ComposableSupplier<T> extends Supplier<T> {
 
+    /**
+     * Pass the supplied result to the Consumer.
+     *
+     * @param after Consumer that will receive the supplied result
+     *
+     * @return after consumer with the supplied result passed in
+     */
     default Consumer<T> andThen(Consumer<T> after) {
         Objects.requireNonNull(after);
         return (T t) -> after.accept(get());

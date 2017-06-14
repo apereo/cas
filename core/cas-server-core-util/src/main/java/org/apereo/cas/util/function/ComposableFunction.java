@@ -10,15 +10,22 @@ import java.util.function.Function;
  *
  * PLEASE REMOVE THIS IF IT'S ADDED TO THE JDK
  *
- * <p>This is a <a href="package-summary.html">functional interface</a>
- * whose functional method is {@link #apply(Object)}.
+ * @author David Rodriguez
  *
  * @param <T> the type of the input to the function
  * @param <R> the type of the result of the function
  *
  * @since 5.2.0
- */public interface ComposableFunction<T, R> extends Function<T, R> {
+ */
+public interface ComposableFunction<T, R> extends Function<T, R> {
 
+    /**
+     * Chain this funcion with a Consumer that expects the same type.
+     *
+     * @param after Consumer that will receive the output of the function
+     *
+     * @return after consumer with the output of the function passed in
+     */
     default Consumer<T> andThen(Consumer<R> after) {
         Objects.requireNonNull(after);
         return (T t) -> after.accept(apply(t));
