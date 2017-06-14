@@ -22,11 +22,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Watchable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +39,11 @@ import java.util.stream.Collectors;
 public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractServiceRegistryDao implements ResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
+    private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
+        LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. This will overwrite previous service definitions and is likely a configuration "
+                        + "problem. Make sure all services have a unique id and try again.", s2.getServiceId(), s2.getId());
+        return s1;
+    };
 
     /**
      * The Service registry directory.
@@ -137,8 +143,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        return this.serviceMap.values()
-                .stream()
+        return this.serviceMap.values().stream()
                 .filter(r -> r.matches(id))
                 .findFirst()
                 .orElse(null);
@@ -168,33 +173,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     @Override
     public synchronized List<RegisteredService> load() {
-        final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
+        this.serviceMap = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true).stream()
+                .map(this::load)
+                .filter(Objects::nonNull)
+                .sorted()
+                .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
+                .collect(Collectors.toMap(RegisteredService::getId, e -> e, LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
 
-        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
-        c.stream()
-                .filter(file -> file.length() > 0)
-                .forEach(file -> {
-                    final RegisteredService service = load(file);
-                    if (service == null) {
-                        LOGGER.error("Could not load service definition from file [{}]", file);
-                    } else {
-                        if (temp.containsKey(service.getId())) {
-                            LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                                            + "This will overwrite previous service definitions and is likely a "
-                                            + "configuration problem. Make sure all services have a unique id and try again.",
-                                    service.getServiceId(), service.getId());
-                        }
-                        temp.put(service.getId(), service);
-                        publishEvent(new CasRegisteredServiceLoadedEvent(this, service));
-                    }
-                });
-
-        this.serviceMap = temp.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-
-        return new ArrayList(this.serviceMap.values());
+        return new ArrayList<>(this.serviceMap.values());
     }
 
     /**
@@ -248,7 +234,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         }
         return findServiceById(service.getId());
     }
-
 
     /**
      * Creates a file for a registered service.
