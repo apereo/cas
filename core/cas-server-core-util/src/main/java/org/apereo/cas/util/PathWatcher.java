@@ -1,4 +1,4 @@
-package org.apereo.cas.services;
+package org.apereo.cas.util;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
@@ -18,18 +18,13 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
-import static java.nio.file.StandardWatchEventKinds.*;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
-/**
- * This is {@link ServiceRegistryConfigWatcher} that watches the json config directory
- * for changes and promptly attempts to reload the CAS service registry configuration.
- *
- * @author Misagh Moayyed
- * @since 4.1.0
- */
-class ServiceRegistryConfigWatcher implements Runnable, Closeable {
+public class PathWatcher  implements Runnable, Closeable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryConfigWatcher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PathWatcher.class);
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -49,7 +44,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
      * @param onModify action triggered when a file is modified
      * @param onDelete action triggered when a file is deleted
      */
-    ServiceRegistryConfigWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete) {
+    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete) {
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
