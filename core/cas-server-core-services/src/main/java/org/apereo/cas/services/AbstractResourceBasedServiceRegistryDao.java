@@ -41,8 +41,9 @@ import java.util.stream.Collectors;
 public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractServiceRegistryDao implements ResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
-    private static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE = service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. This will overwrite previous service definitions and is likely a configuration "
-            + "problem. Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
+    private static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE = service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+            + "This will overwrite previous service definitions and is likely a configuration problem. Make sure all services have a unique id and try again.",
+            service.getServiceId(), service.getId());
     private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
         LOG_SERVICE_DUPLICATE.accept(s2);
         return s1;
@@ -113,7 +114,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
             LOGGER.info("Watching service registry directory at [{}]", configDirectory);
 
-            final Consumer<File> onCreate = file ->  {
+            final Consumer<File> onCreate = file -> {
                     final RegisteredService service = load(file);
                     if (service != null) {
                         if (findServiceById(service.getId()) != null) {
@@ -123,11 +124,11 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                         publishEvent(new CasRegisteredServicesRefreshEvent(this));
                     }
             };
-            final Consumer<File> onDelete = file ->  {
+            final Consumer<File> onDelete = file -> {
                 load();
                 publishEvent(new CasRegisteredServicesRefreshEvent(this));
             };
-            final Consumer<File> onModify = file ->  {
+            final Consumer<File> onModify = file -> {
                 final RegisteredService newService = load(file);
                 if (newService != null) {
                     final RegisteredService oldService = findServiceById(newService.getId());
