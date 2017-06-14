@@ -23,12 +23,19 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Registration
 
-Device registration flows are baked into CAS automatically.
+U2F device registration flows are baked into CAS automatically. A background *cleaner* process is also automatically scheduled to scan the repository periodically and remove expired device registration records based on configured parameters.
+
+<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated 
+CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 
 ### Default
 
-By default, an account registry implementation is included that collects user device registrations and saves them into memory.
+By default, a repository implementation is included that collects user device registrations and saves them into memory.
 This option should only be used for demo and testing purposes.
+
+### JSON
+
+A simple device repository implementation that collects user device registrations and saves them into a JSON file whose path is taught to CAS via settings. This is a very modest option and should mostly be used for demo and testing purposes. Needless to say, this JSON resource acts as a database that must be available to all CAS server nodes in the cluster.
 
 ### JPA
 

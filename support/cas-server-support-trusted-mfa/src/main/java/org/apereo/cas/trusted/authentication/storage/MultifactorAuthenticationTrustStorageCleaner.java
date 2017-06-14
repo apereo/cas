@@ -19,7 +19,7 @@ import java.time.LocalDate;
  * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
+@Transactional(transactionManager = "transactionManagerU2f")
 public class MultifactorAuthenticationTrustStorageCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationTrustStorageCleaner.class);

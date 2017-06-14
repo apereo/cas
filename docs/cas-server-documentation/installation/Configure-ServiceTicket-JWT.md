@@ -34,7 +34,7 @@ JWT support is enabled by including the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-token</artifactId>
+     <artifactId>cas-server-support-token-tickets</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

@@ -306,6 +306,7 @@ subprojects {
         compileJava.dependsOn(processResources)
     }
 
+    generateRebel.enabled = Boolean.getBoolean("enableJRebelAgent")
     if (Boolean.getBoolean("enableJRebelAgent")) {
         jar.dependsOn(generateRebel)
     }

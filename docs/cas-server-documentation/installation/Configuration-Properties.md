@@ -2580,6 +2580,20 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.expireDevicesTimeUnit=DAYS
 ```
 
+### FIDO U2F JSON
+
+```properties
+# cas.authn.mfa.u2f.json.config.location=file:///etc/cas/config/u2fdevices.json
+```
+
+### FIDO U2F Cleaner
+
+```properties
+# cas.authn.mfa.u2f.cleaner.enabled=true
+# cas.authn.mfa.u2f.cleaner.startDelay=PT10S
+# cas.authn.mfa.u2f.cleaner.repeatInterval=PT60S
+```
+
 #### FIDO U2F JPA
 
 ```properties
@@ -2605,6 +2619,27 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.jpa.pool.minSize=6
 # cas.authn.mfa.u2f.jpa.pool.maxSize=18
 # cas.authn.mfa.u2f.jpa.pool.maxWait=2000
+```
+
+### Swivel Secure
+
+To learn more about this topic, [please review this guide](SwivelSecure-Authentication.html).
+
+```properties
+# cas.authn.mfa.swivel.swivelTuringImageUrl=https://turing.example.edu/TURingImage
+# cas.authn.mfa.swivel.swivelUrl=https://swivel.example.org/pinsafe
+# cas.authn.mfa.swivel.sharedSecret=Th3Sh@r3d$ecret
+# cas.authn.mfa.swivel.ignoreSslErrors=false
+# cas.authn.mfa.swivel.rank=0
+# cas.authn.mfa.swivel.name=
+
+# cas.authn.mfa.swivel.bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.swivel.bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.swivel.bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.swivel.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.swivel.bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.swivel.bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.swivel.bypass.credentialClassType=UsernamePassword.+
 ```
 
 ### Microsoft Azure
