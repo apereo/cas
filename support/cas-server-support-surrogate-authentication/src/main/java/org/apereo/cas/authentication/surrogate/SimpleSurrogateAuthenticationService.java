@@ -17,6 +17,8 @@ public class SimpleSurrogateAuthenticationService implements SurrogateAuthentica
 
     /**
      * Instantiates a new simple surrogate username password service.
+     *
+     * @param eligibleAccounts the eligible accounts
      */
     public SimpleSurrogateAuthenticationService(final Map<String, Set> eligibleAccounts) {
         this.eligibleAccounts = eligibleAccounts;

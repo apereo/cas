@@ -28,7 +28,8 @@ import java.util.stream.Collectors;
 public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(U2FJpaDeviceRepository.class);
 
-    private static final String SELECT_QUERY = "SELECT r from U2FJpaDeviceRegistration r ";
+    private static final String DELETE_QUERY = "DELETE from U2FDeviceRegistration r ";
+    private static final String SELECT_QUERY = "SELECT r from U2FDeviceRegistration r ";
 
     @PersistenceContext(unitName = "u2fEntityManagerFactory")
     private EntityManager entityManager;
@@ -46,10 +47,9 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
         try {
-
             final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             return this.entityManager.createQuery(
-                    SELECT_QUERY.concat("where r.username = :username and r.date >= :expdate"), U2FJpaDeviceRegistration.class)
+                    SELECT_QUERY.concat("where r.username = :username and r.date >= :expdate"), U2FDeviceRegistration.class)
                     .setParameter("username", username)
                     .setParameter("expdate", expirationDate)
                     .getResultList()
@@ -71,14 +71,29 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        final U2FJpaDeviceRegistration jpa = new U2FJpaDeviceRegistration();
+        final U2FDeviceRegistration jpa = new U2FDeviceRegistration();
         jpa.setUsername(username);
         jpa.setRecord(registration.toJson());
+        jpa.setDate(LocalDate.now());
         this.entityManager.merge(jpa);
     }
 
     @Override
     public boolean isDeviceRegisteredFor(final String username) {
         return !getRegisteredDevices(username).isEmpty();
+    }
+
+    @Override
+    public void clean() {
+        try {
+            final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
+            this.entityManager.createQuery(
+                    DELETE_QUERY.concat("where r.date <= :expdate"))
+                    .setParameter("expdate", expirationDate)
+                    .executeUpdate();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }
