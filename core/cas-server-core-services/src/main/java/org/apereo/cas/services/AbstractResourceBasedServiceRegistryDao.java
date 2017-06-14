@@ -115,14 +115,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
             LOGGER.info("Watching service registry directory at [{}]", configDirectory);
 
             final Consumer<File> onCreate = file -> {
-                    final RegisteredService service = load(file);
-                    if (service != null) {
-                        if (findServiceById(service.getId()) != null) {
-                            LOG_SERVICE_DUPLICATE.accept(service);
-                        }
-                        update(service);
-                        publishEvent(new CasRegisteredServicesRefreshEvent(this));
+                final RegisteredService service = load(file);
+                if (service != null) {
+                    if (findServiceById(service.getId()) != null) {
+                        LOG_SERVICE_DUPLICATE.accept(service);
                     }
+                    update(service);
+                    publishEvent(new CasRegisteredServicesRefreshEvent(this));
+                }
             };
             final Consumer<File> onDelete = file -> {
                 load();
