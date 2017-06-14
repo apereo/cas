@@ -1,6 +1,6 @@
 #!/bin/bash
 
-branchVersion="5.1.x"
+branchVersion="master"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchVersion" ]; then
 	echo -e "Starting to deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
