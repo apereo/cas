@@ -18,6 +18,13 @@ javadoc {
 
 npm_install.dependsOn(npm_cache_clean)
 
+// run npm install
+gulp_default.dependsOn 'npmInstall'
+
+// run gulp install
+gulp_default.dependsOn 'installGulp'
+
+
 task npmLint(type: NpmTask, dependsOn: 'npmInstall', description: "Lint the JavaScript files") {
   args = ['run', 'lint', '--silent']
 }
@@ -58,7 +65,7 @@ bootRun {
 
     addResources = true
     systemProperties = System.properties
-    
+
     def list = []
     if (Boolean.getBoolean("enableRemoteDebugging")) {
         list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
@@ -111,10 +118,10 @@ dependencies {
     compile project(":support:cas-server-support-themes")
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
-    
+
     compile project(":webapp:cas-server-webapp-config")
     compile project(":webapp:cas-server-webapp-init")
-    
+
     implementation libraries.pac4j
     implementation libraries.thymeleaf
     implementation libraries.groovy
