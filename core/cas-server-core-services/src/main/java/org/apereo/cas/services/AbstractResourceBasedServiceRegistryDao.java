@@ -51,6 +51,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         LOG_SERVICE_DUPLICATE.accept(s2);
         return s1;
     };
+    private static final int INTERVAL = 0;
 
     /**
      * The Service registry directory.
@@ -148,7 +149,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                     }
                 }
             };
-            this.serviceRegistryConfigWatcher = new PathWatcher(serviceRegistryDirectory, onCreate, onModify, onDelete);
+            this.serviceRegistryConfigWatcher = new PathWatcher(serviceRegistryDirectory, onCreate, onModify, onDelete, INTERVAL);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
             this.serviceRegistryWatcherThread.start();

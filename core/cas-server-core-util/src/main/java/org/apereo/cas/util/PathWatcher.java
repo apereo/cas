@@ -40,6 +40,7 @@ public class PathWatcher implements Runnable, Closeable {
     private final Consumer<File> onCreate;
     private final Consumer<File> onModify;
     private final Consumer<File> onDelete;
+    private long interval;
 
     /**
      * Instantiates a new Json service registry config watcher.
@@ -48,11 +49,14 @@ public class PathWatcher implements Runnable, Closeable {
      * @param onCreate action triggered when a new file is created
      * @param onModify action triggered when a file is modified
      * @param onDelete action triggered when a file is deleted
+     * @param interval milliseconds interval to limit monitoring
      */
-    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete) {
+    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete,
+                       final long interval) {
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
+        this.interval = interval;
         try {
             this.watcher = watchablePath.getFileSystem().newWatchService();
             LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
@@ -65,12 +69,16 @@ public class PathWatcher implements Runnable, Closeable {
     @Override
     public void run() {
         if (this.running.compareAndSet(false, true)) {
+            long lastModified = System.currentTimeMillis();
             while (this.running.get()) {
                 // wait for key to be signaled
                 WatchKey key = null;
                 try {
                     key = this.watcher.take();
-                    handleEvent(key);
+                    if (System.currentTimeMillis() - lastModified >= interval) {
+                        handleEvent(key);
+                        lastModified = System.currentTimeMillis();
+                    }
                 } catch (final InterruptedException e) {
                     return;
                 } finally {
@@ -86,7 +94,6 @@ public class PathWatcher implements Runnable, Closeable {
                 }
             }
         }
-
     }
 
     /**

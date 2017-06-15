@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 public class CasConfigurationSupportUtilitiesConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationSupportUtilitiesConfiguration.class);
+    private static final int INTERVAL = 5_000;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -73,7 +74,8 @@ public class CasConfigurationSupportUtilitiesConfiguration {
                     new Thread(new PathWatcher(config.toPath(),
                             createConfigurationCreatedEvent.andThen(publish),
                             createConfigurationModifiedEvent.andThen(publish),
-                            createConfigurationDeletedEvent.andThen(publish)))
+                            createConfigurationDeletedEvent.andThen(publish),
+                            INTERVAL))
                         .start();
                 } else {
                     LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", config);
