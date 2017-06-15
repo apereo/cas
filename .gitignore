@@ -10,6 +10,7 @@ overlays/
 .gradle/
 build/
 bin/
+lib/
 *.iml
 *.log
 .history

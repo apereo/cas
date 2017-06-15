@@ -12,7 +12,7 @@
         <springboot.version>1.5.3.RELEASE</springboot.version>
         <springinitializr.version>0.4.0.BUILD-SNAPSHOT</springinitializr.version>
         <jgit.version>4.7.0.201704051617-r</jgit.version>
-        <kotlin.version>1.1.2-2</kotlin.version>
+        <kotlin.version>1.1.2-5</kotlin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
