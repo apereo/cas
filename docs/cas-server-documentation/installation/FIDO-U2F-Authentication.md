@@ -25,7 +25,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 U2F device registration flows are baked into CAS automatically. A background *cleaner* process is also automatically scheduled to scan the repository periodically and remove expired device registration records based on configured parameters.
 
-<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated CAS nodes and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</div>
+<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated 
+CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 
 ### Default
 
