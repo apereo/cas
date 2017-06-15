@@ -239,8 +239,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
                     if(saml.getClientName() != null) {
                         client.setName(saml.getClientName());
-                    }
-                    else if (count > 0) {
+                    } else if (count > 0) {
                         client.setName(client.getClass().getSimpleName() + count);
                     }
 
