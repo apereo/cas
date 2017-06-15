@@ -1,28 +1,19 @@
 package org.apereo.cas.token.authentication.principal;
 
 import com.google.common.base.Throwables;
-import com.nimbusds.jwt.JWTClaimsSet;
-import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.token.TokenConstants;
-import org.apereo.cas.util.DateTimeUtils;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
-import org.jasig.cas.client.validation.Assertion;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apereo.cas.token.TokenTicketBuilder;
 
-import java.time.ZonedDateTime;
 import java.util.Map;
 
 /**
@@ -34,25 +25,13 @@ import java.util.Map;
 public class TokenWebApplicationServiceResponseBuilder extends WebApplicationServiceResponseBuilder {
     private static final long serialVersionUID = -2863268279032438778L;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     private final ServicesManager servicesManager;
-
-    private final CipherExecutor<String, String> tokenCipherExecutor;
-
-    private final ExpirationPolicy ticketGrantingTicketExpirationPolicy;
-
-    private final AbstractUrlBasedTicketValidator ticketValidator;
+    private final TokenTicketBuilder tokenTicketBuilder;
 
     public TokenWebApplicationServiceResponseBuilder(final ServicesManager servicesManager,
-                                                     final CipherExecutor tokenCipherExecutor,
-                                                     final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
-                                                     final AbstractUrlBasedTicketValidator ticketValidator) {
+                                                     final TokenTicketBuilder tokenTicketBuilder) {
         this.servicesManager = servicesManager;
-        this.tokenCipherExecutor = tokenCipherExecutor;
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-        this.ticketValidator = ticketValidator;
+        this.tokenTicketBuilder = tokenTicketBuilder;
     }
 
     @Override
@@ -91,26 +70,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
     protected String generateToken(final Service service, final Map<String, String> parameters) {
         try {
             final String ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
-            final Assertion assertion = this.ticketValidator.validate(ticketId, service.getId());
-            final JWTClaimsSet.Builder claims =
-                    new JWTClaimsSet.Builder()
-                            .audience(service.getId())
-                            .issuer(casProperties.getServer().getPrefix())
-                            .jwtID(ticketId)
-                            .issueTime(assertion.getAuthenticationDate())
-                            .subject(assertion.getPrincipal().getName());
-            assertion.getAttributes().forEach(claims::claim);
-            assertion.getPrincipal().getAttributes().forEach(claims::claim);
-
-            if (assertion.getValidUntilDate() != null) {
-                claims.expirationTime(assertion.getValidUntilDate());
-            } else {
-                final ZonedDateTime dt = ZonedDateTime.now().plusSeconds(ticketGrantingTicketExpirationPolicy.getTimeToLive());
-                claims.expirationTime(DateTimeUtils.dateOf(dt));
-            }
-            final JWTClaimsSet claimsSet = claims.build();
-            final JSONObject object = claimsSet.toJSONObject();
-            return tokenCipherExecutor.encode(object.toJSONString());
+            return this.tokenTicketBuilder.build(ticketId, service);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
