@@ -76,8 +76,7 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public ServiceTicketResource serviceTicketResource() {
         return new ServiceTicketResource(authenticationSystemSupport, ticketRegistrySupport,
-                webApplicationServiceFactory, centralAuthenticationService,
-                serviceTicketResourceEntityResponseFactory());
+                webApplicationServiceFactory, serviceTicketResourceEntityResponseFactory());
     }
 
     @Bean

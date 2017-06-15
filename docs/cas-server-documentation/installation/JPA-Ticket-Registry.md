@@ -13,7 +13,7 @@ the back-end persistence choice for ticket registry state management is a fairly
 process. Unless you are already outfitted with clustered database technology and the resources to manage it,
 the complexity is likely not worth the trouble.</p></div>
 
-Support is enabled by adding the following module into the Maven overlay:
+Support is enabled by adding the following module into the overlay:
 
 ```xml
 <dependency>

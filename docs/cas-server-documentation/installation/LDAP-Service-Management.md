@@ -11,7 +11,7 @@ in order to configure settings for retrieval, search and persistence of service 
 By default, entries are assigned the `objectclass` `casRegisteredService`
 attribute and are looked up by the `uid` attribute.
 
-Support is enabled by adding the following module into the Maven overlay:
+Support is enabled by adding the following module into the overlay:
 
 ```xml
 <dependency>

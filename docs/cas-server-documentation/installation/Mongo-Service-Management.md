@@ -6,7 +6,7 @@ title: CAS - Mongo Service Registry
 # Mongo Service Registry
 
 This registry uses a [MongoDb](https://www.mongodb.org/) instance to load and persist service definitions.
-Support is enabled by adding the following module into the Maven overlay:
+Support is enabled by adding the following module into the overlay:
 
 ```xml
 <dependency>
