@@ -6,7 +6,7 @@ title: CAS - JPA Service Registry
 # JPA Service Registry
 Stores registered service data in a database.
 
-Support is enabled by adding the following module into the Maven overlay:
+Support is enabled by adding the following module into the overlay:
 
 ```xml
 <dependency>
