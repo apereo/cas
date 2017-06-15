@@ -33,5 +33,5 @@ public interface TicketSerializer<T> {
      *
      * @return ticket deserialized
      */
-    Ticket deserialize(T ticket, final Class<? extends Ticket> ticketClass);
+    Ticket deserialize(T ticket, Class<? extends Ticket> ticketClass);
 }

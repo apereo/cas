@@ -1063,6 +1063,7 @@ ext.libraries = [
                     exclude(group: "org.xerial.snappy", module: "snappy-java")
                     exclude(group: "com.googlecode.json-simple", module: "json-simple")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.github.ben-manes.caffeine", module: "caffeine")
                     exclude(group: "io.netty", module: "netty-codec")
                     exclude(group: "io.netty", module: "netty-handler")
                     exclude(group: "org.slf4j", module: "slf4j-api")
