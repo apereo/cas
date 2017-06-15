@@ -42,20 +42,18 @@ public class ServiceTicketResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceTicketResource.class);
 
-    private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServiceFactory webApplicationServiceFactory;
     private final TicketRegistrySupport ticketRegistrySupport;
     private final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
 
     public ServiceTicketResource(final AuthenticationSystemSupport authenticationSystemSupport,
-                                 final TicketRegistrySupport ticketRegistrySupport, final ServiceFactory webApplicationServiceFactory,
-                                 final CentralAuthenticationService centralAuthenticationService,
+                                 final TicketRegistrySupport ticketRegistrySupport,
+                                 final ServiceFactory webApplicationServiceFactory,
                                  final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory) {
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.ticketRegistrySupport = ticketRegistrySupport;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.centralAuthenticationService = centralAuthenticationService;
         this.serviceTicketResourceEntityResponseFactory = serviceTicketResourceEntityResponseFactory;
     }
 
