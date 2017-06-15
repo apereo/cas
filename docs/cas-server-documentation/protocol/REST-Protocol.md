@@ -64,6 +64,21 @@ service={form encoded parameter for the service url}
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ```
 
+### JWT Service Tickets
+
+Service tickets created by the REST protocol may be issued as JWTs instead. See [this guide](../installation/Configure-ServiceTicket-JWT.html) to learn more.
+
+Support is enabled by including the following in your maven overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-rest-tokens</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+
 ## Validate Service Ticket
 
 Service ticket validation is handled through the [CAS Protocol](Cas-Protocol.html)
