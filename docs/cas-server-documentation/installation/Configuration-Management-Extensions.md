@@ -9,7 +9,7 @@ Being a [Spring Boot](https://github.com/spring-projects/spring-boot) applicatio
 
 ## Configuration Components
 
-This is the recoommended approach to create additional Spring beans, override existing ones and simply inject your own custom behavior into the CAS application runtime.
+This is the recommended approach to create additional Spring beans, override existing ones and simply inject your own custom behavior into the CAS application runtime.
 
 <div class="alert alert-info"><strong>No XML</strong><p>You are still given the ability to configure and inject beans into the application context via XML configuration files. We STRONGLY recommend that you abandon that approach altogether.</p></div>
 
