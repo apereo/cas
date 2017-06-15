@@ -4,12 +4,13 @@ title: CAS - JSON Service Registry
 ---
 
 # JSON Service Registry
+
 This registry reads services definitions from JSON configuration files at the application context initialization time.
 JSON files are
 expected to be found inside a configured directory location and this registry will recursively look through
 the directory structure to find relevant JSON files.
 
-Support is enabled by adding the following module into the Maven overlay:
+Support is enabled by adding the following module into the overlay:
 
 ```xml
 <dependency>
