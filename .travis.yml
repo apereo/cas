@@ -44,9 +44,9 @@ before_install:
 - sudo apt-get install -y nodejs
 - sudo ./gradlew npmInstall gulpSetup --stacktrace -q
 install:
-- sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace
+- sudo ./gradlew clean checkstyleMain bootRepackage install --parallel -x test --stacktrace --build-cache
 script:
-- travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
+- travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel --build-cache
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
