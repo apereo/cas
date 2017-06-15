@@ -40,6 +40,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     private static final String LOCALHOST_IP = "127.0.0.1";
     private static final String TEST_STRING = "test";
     private static final String SUCCESS = "success";
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;

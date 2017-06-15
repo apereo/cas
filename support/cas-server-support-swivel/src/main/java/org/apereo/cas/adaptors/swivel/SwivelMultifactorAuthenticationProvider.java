@@ -11,8 +11,14 @@ import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
     private static final long serialVersionUID = 498455080794156917L;
 
+    private final SwivelAuthenticationHandler handler;
+
+    public SwivelMultifactorAuthenticationProvider(final SwivelAuthenticationHandler handler) {
+        this.handler = handler;
+    }
+
     @Override
     protected boolean isAvailable() {
-        return true;
+        return this.handler.canPing();
     }
 }
