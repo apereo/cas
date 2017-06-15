@@ -503,13 +503,13 @@ public class Pac4jProperties {
             this.serviceProviderMetadataPath = serviceProviderMetadataPath;
         }
 
-		public String getClientName() {
-			return clientName;
-		}
+	public String getClientName() {
+		return clientName;
+	}
 
-		public void setClientName(String clientName) {
-			this.clientName = clientName;
-		}
+	public void setClientName(final String clientName) {
+		this.clientName = clientName;
+	}
     }
 
     public static class Cas {
