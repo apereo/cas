@@ -67,7 +67,8 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration implements Auth
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider swivelAuthenticationProvider() {
-        final SwivelMultifactorAuthenticationProvider p = new SwivelMultifactorAuthenticationProvider();
+        final SwivelMultifactorAuthenticationProvider p =
+                new SwivelMultifactorAuthenticationProvider(swivelAuthenticationHandler());
         p.setBypassEvaluator(swivelBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getSwivel().getRank());
