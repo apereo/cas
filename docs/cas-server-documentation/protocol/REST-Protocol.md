@@ -68,7 +68,7 @@ ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 
 Service tickets created by the REST protocol may be issued as JWTs instead. See [this guide](../installation/Configure-ServiceTicket-JWT.html) to learn more.
 
-Support is enabled by including the following in your maven overlay:
+Support is enabled by including the following in your overlay:
 
 ```xml
 <dependency>
@@ -125,7 +125,7 @@ GET /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 
 ## Add Service
 
-Support is enabled by including the following in your maven overlay:
+Support is enabled by including the following in your overlay:
 
 ```xml
 <dependency>
@@ -173,7 +173,7 @@ provides a tremendously convenient target for claiming user identities. To secur
 configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn
 have strict security limitations and logging.</p></div>
 
-Support is enabled by including the following in your maven overlay:
+Support is enabled by including the following in your overlay:
 
 ```xml
 <dependency>
