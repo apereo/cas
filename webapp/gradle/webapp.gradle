@@ -124,3 +124,5 @@ dependencies {
     runtime libraries.webjars
     compile libraries.springcloudconfigclient
 }
+
+clean.delete << file("${project(":webapp").projectDir}/node_modules")
