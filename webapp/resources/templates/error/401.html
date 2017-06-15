@@ -14,14 +14,14 @@
 <body id="cas">
 <div layout:fragment="content">
     <div class="alert alert-danger">
-        <h2 class="prompt">Access Denied</h2>
+        <h2 class="prompt" th:utext="#{screen.error.page.accessdenied" />
         <div class="prompt">
             <p/>
-            <p>We are sorry. You do not have permission to view this page.</p>
+            <p th:utext="#{screen.page.error.permissiondenied}" />
             <br/>
 
             <br/>
-            <p><a th:href="@{/login}">Login again</a>. </p>
+            <p><a th:href="@{/login}" th:utext="#{screen.error.loginagain}" /></p>
 
         </div>
     </div>
