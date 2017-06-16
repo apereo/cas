@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -96,15 +97,21 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
         updateAccessTokenUsage(accessTokenTicket);
 
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
-
-        final Service service = accessTokenTicket.getService();
-        final OAuthRegisteredService registeredService = (OAuthRegisteredService) servicesManager.findServiceBy(service);
-        map.put(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        map.put(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        finalizeProfileResponse(accessTokenTicket, map);
 
         final String value = OAuth20Utils.jsonify(map);
         LOGGER.debug("Final user profile is [{}]", JsonValue.readHjson(value).toString(Stringify.FORMATTED));
         return new ResponseEntity<>(value, HttpStatus.OK);
+    }
+
+    private void finalizeProfileResponse(final AccessToken accessTokenTicket, final Map<String, Object> map) {
+        final Service service = accessTokenTicket.getService();
+        final RegisteredService registeredService = servicesManager.findServiceBy(service);
+        if (registeredService instanceof OAuthRegisteredService) {
+            final OAuthRegisteredService oauth = (OAuthRegisteredService) registeredService;
+            map.put(OAuth20Constants.CLIENT_ID, oauth.getClientId());
+            map.put(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        }
     }
 
     private void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
