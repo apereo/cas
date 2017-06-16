@@ -59,7 +59,7 @@ The `password` grant type allows the OAuth client to directly send the user's cr
 
 - `/cas/oauth2.0/accessToken?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token.
 
-You must also need to pass along a `service` or `X-service` header value that identifies the target application url. The header value
+You may also pass along a `service` or `X-service` header value that identifies the target application url. The header value
 must match the OAuth service definition in the registry that is linked to the client id.
 
 ### Refresh Token

@@ -1,14 +1,18 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -91,11 +95,23 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
         updateAccessTokenUsage(accessTokenTicket);
+
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
+        finalizeProfileResponse(accessTokenTicket, map);
+
         final String value = OAuth20Utils.jsonify(map);
-        LOGGER.debug("Final user profile is [{}]",
-                JsonValue.readHjson(value).toString(Stringify.FORMATTED));
+        LOGGER.debug("Final user profile is [{}]", JsonValue.readHjson(value).toString(Stringify.FORMATTED));
         return new ResponseEntity<>(value, HttpStatus.OK);
+    }
+
+    private void finalizeProfileResponse(final AccessToken accessTokenTicket, final Map<String, Object> map) {
+        final Service service = accessTokenTicket.getService();
+        final RegisteredService registeredService = servicesManager.findServiceBy(service);
+        if (registeredService instanceof OAuthRegisteredService) {
+            final OAuthRegisteredService oauth = (OAuthRegisteredService) registeredService;
+            map.put(OAuth20Constants.CLIENT_ID, oauth.getClientId());
+            map.put(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        }
     }
 
     private void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
