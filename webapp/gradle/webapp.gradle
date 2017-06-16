@@ -25,13 +25,17 @@ gulp_default.dependsOn 'npmInstall'
 gulp_default.dependsOn 'installGulp'
 
 
-task npmLint(type: NpmTask, dependsOn: 'npmInstall', description: "Lint the JavaScript files") {
+task npmLint(group: 'UI', type: NpmTask, dependsOn: 'npmInstall', description: "Lint the JavaScript files") {
   args = ['run', 'lint', '--silent']
 }
 
+
 processResources.dependsOn 'npmLint'
+
 task gulpSetup(dependsOn: ["npmInstall", "installGulp"], description: "Install npm and Gulp") {}
+
 task gulpRun(dependsOn: gulp_default, description: "Runs Gulp default task") {}
+
 processResources.dependsOn gulpRun
 
 if (Boolean.getBoolean("enableJRebelAgent")) {
