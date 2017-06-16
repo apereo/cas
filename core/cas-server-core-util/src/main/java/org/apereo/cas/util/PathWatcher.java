@@ -49,6 +49,18 @@ public class PathWatcher implements Runnable, Closeable {
      * @param onCreate action triggered when a new file is created
      * @param onModify action triggered when a file is modified
      * @param onDelete action triggered when a file is deleted
+     */
+    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete) {
+        this(watchablePath, onCreate, onModify, onDelete, 0);
+    }
+
+    /**
+     * Instantiates a new Json service registry config watcher.
+     *
+     * @param watchablePath path that will be watched
+     * @param onCreate action triggered when a new file is created
+     * @param onModify action triggered when a file is modified
+     * @param onDelete action triggered when a file is deleted
      * @param interval milliseconds interval to limit monitoring
      */
     public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete,
