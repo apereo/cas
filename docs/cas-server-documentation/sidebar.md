@@ -39,9 +39,13 @@ layout: null
         *   [SPNEGO](/$version/installation/SPNEGO-Authentication.html)
         *   [Remote Address](/$version/installation/Remote-Address-Authentication.html)
         *   [Trusted](/$version/installation/Trusted-Authentication.html)
-        *   [JWT](/$version/installation/JWT-Authentication.html)
+        *   [Cassandra](/$version/installation/Cassandra-Authentication.html)
+        *   [JWT](#jwtauthn)
+            *   [Overview](/$version/installation/JWT-Authentication.html)
+            *   [JWT Service Tickets](/$version/installation/Configure-ServiceTicket-JWT.html) 
         *   [Rest](/$version/installation/Rest-Authentication.html)
-        *   [Stormpath](/$version/installation/Stormpath-Authentication.html)
+        *   [AWS Cloud Directory](/$version/installation/AWS-CloudDirectory-Authentication.html)
+        *   [Couchbase](/$version/installation/Couchbase-Authentication.html)
         *   [Basic](/$version/installation/Basic-Authentication.html)
         *   [Digest](/$version/installation/Digest-Authentication.html)
         *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)
@@ -63,6 +67,7 @@ layout: null
     *   [Attribute Release](/$version/integration/Attribute-Release.html)
         *   [Principal Id](/$version/integration/Attribute-Release-PrincipalId.html)
         *   [Release Policies](/$version/integration/Attribute-Release-Policies.html)
+        *   [Value Filters](/$version/integration/Attribute-Value-Release-Policies.html)
         *   [Consent](/$version/integration/Attribute-Release-Consent.html)
         *   [Caching](/$version/integration/Attribute-Release-Caching.html)
         
@@ -76,6 +81,8 @@ layout: null
         *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
         *   [Microsoft Azure](/$version/installation/MicrosoftAzure-Authentication.html)
         *   [FIDO U2F](/$version/installation/FIDO-U2F-Authentication.html)
+        *   [Swivel Secure](/$version/installation/SwivelSecure-Authentication.html)
+        *   [Custom](/$version/installation/Custom-MFA-Authentication.html)
     *   [Triggers](/$version/installation/Configuring-Multifactor-Authentication-Triggers.html)
     *   [Trusted Devices](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
     *   [Adaptive](/$version/installation/Configuring-Adaptive-Authentication.html)
@@ -91,6 +98,7 @@ layout: null
 
 * [Ticketing](#ticketingconfig)
     *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)
+    *   [JWT Service Tickets](/$version/installation/Configure-ServiceTicket-JWT.html) 
     *   [Expiration Policies](/$version/installation/Configuring-Ticket-Expiration-Policy.html)
     *   [Storage](#ticketingstorage)
         *   [Hazelcast](/$version/installation/Hazelcast-Ticket-Registry.html)
@@ -147,6 +155,7 @@ layout: null
 
 * [High Availability](#highavailability)
     *   [Overview](/$version/planning/High-Availability-Guide.html)
+    *   [Performance Testing](/$version/planning/High-Availability-Performance-Testing.html)
     *   [Service Discovery](/$version/installation/Service-Discovery-Guide.html)
     
 * [Protocols](#protocols)

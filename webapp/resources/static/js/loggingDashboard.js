@@ -1,4 +1,5 @@
-showLogs("")
+/* global logConfigFileLocation, SockJS, Stomp */
+showLogs('');
 var stompClient = null;
 
 function setConnected(connected) {
@@ -8,20 +9,20 @@ function setConnected(connected) {
     el.class = connected ? 'alert alert-info' : 'alert alert-danger';
 
     if (!connected) {
-        el.innerHTML = "Disconnected!";
+        el.innerHTML = 'Disconnected!';
     } else {
-        el.innerHTML = "Connected to CAS. Streaming logs based on [" + logConfigFileLocation + "]...";
+        el.innerHTML = 'Connected to CAS. Streaming and tailing logs based on <kbd>[' + logConfigFileLocation + ']</kbd>...';
     }
 }
 
 function connect() {
-    $("#logoutputarea").empty();
+    $('#logoutputarea').empty();
     var socket = new SockJS(urls.logOutput);
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
+    stompClient.connect({}, function () {
         setConnected(true);
         stompClient.subscribe('/logs/logoutput', function (msg) {
-            if (msg != null && msg.body != "") {
+            if (msg != null && msg.body != '') {
                 showLogs(msg.body);
             }
         });
@@ -29,8 +30,8 @@ function connect() {
 }
 
 function disconnect() {
-    $("#logoutputarea").empty();
-    $("#logoutputarea").attr('readonly', 'readonly');
+    $('#logoutputarea').empty();
+    $('#logoutputarea').attr('readonly', 'readonly');
 
     if (stompClient != null) {
         stompClient.disconnect();
@@ -43,9 +44,9 @@ function getLogs() {
 }
 
 function showLogs(message) {
-    if (message != "") {
-        $("#logoutputarea").val($("#logoutputarea").val() + "\n" + message);
-        $("#logoutputarea").scrollTop(document.getElementById("logoutputarea").scrollHeight)
+    if (message != '') {
+        $('#logoutputarea').val($('#logoutputarea').val() + '\n' + message);
+        $('#logoutputarea').scrollTop(document.getElementById('logoutputarea').scrollHeight);
     }
 }
 
@@ -59,15 +60,15 @@ setInterval(function () {
  *
  ***************/
 $('#myTabs a').click(function (e) {
-    e.preventDefault()
-    $(this).tab('show')
-})
+    e.preventDefault();
+    $(this).tab('show');
+});
 
 var alertHandler = (function () {
     var alertContainer = $('#alert-container');
     var create = function (message, state) {
         //console.log('create the alert');
-        alertContainer.html('<div class="alert alert-' + state + ' alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>' + message + '</span></div>')
+        alertContainer.html('<div class="alert alert-' + state + ' alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>' + message + '</span></div>');
 
         alertContainer.delay(2000).fadeOut('slow');
     };
@@ -83,7 +84,7 @@ var alertHandler = (function () {
         show: function (msg, state) {
             create(msg, state);
         }
-    }
+    };
 })();
 
 var loggingDashboard = (function () {
@@ -106,30 +107,30 @@ var loggingDashboard = (function () {
 
     var loggerTableAudit = function (jsonData) {
         var t = $('#auditLogTable').DataTable({
-            "order": [[3, "desc"]],
+            'order': [[3, 'desc']],
             retrieve: true,
             columnDefs: [
         
-                {"width": "5%", "targets": 0},
-                {"width": "100%", "targets": 1},
+                {'width': '5%', 'targets': 0},
+                {'width': '100%', 'targets': 1},
                 {
-                    "targets": 2,
-                    render: function (data, type, full, meta) {
+                    'targets': 2,
+                    render: function (data) {
                         var dd = data.toLowerCase();
-                        if (dd.indexOf("created") != -1) {
+                        if (dd.indexOf('created') != -1) {
                             return '<span class="glyphicon glyphicon-plus" aria-hidden="true">&nbsp;</span>' + data;
                         }
-                        if (dd.indexOf("validated") != -1) {
+                        if (dd.indexOf('validated') != -1) {
                             return '<span class="glyphicon glyphicon-ok" aria-hidden="true">&nbsp;</span>' + data;
                         }
-                        if (dd.indexOf("destroyed") != -1 || dd.indexOf("deleted") != -1) {
+                        if (dd.indexOf('destroyed') != -1 || dd.indexOf('deleted') != -1) {
                             return '<span class="glyphicon glyphicon-minus" aria-hidden="true">&nbsp;</span>' + data;
                         }
 
-                        if (dd.indexOf("success") != -1) {
+                        if (dd.indexOf('success') != -1) {
                             return '<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true">&nbsp;</span>' + data;
                         }
-                        if (dd.indexOf("failed") != -1) {
+                        if (dd.indexOf('failed') != -1) {
                             return '<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true">&nbsp;</span>' + data;
                         }
                         
@@ -153,36 +154,36 @@ var loggingDashboard = (function () {
 
     var loggerTable = function () {
         $('#loggersTable').DataTable({
-            "order": [[1, "desc"]],
+            'order': [[1, 'desc']],
             data: json.loggers,
-            "drawCallback": function (settings) {
+            'drawCallback': function () {
                 var api = this.api();
 
                 if (api.page.info().pages > 1) {
-                    $('#' + $.fn.dataTable.tables()[0].id + '_paginate')[0].style.display = "block";
+                    $('#' + $.fn.dataTable.tables()[0].id + '_paginate')[0].style.display = 'block';
                 } else {
-                    $('#' + $.fn.dataTable.tables()[0].id + '_paginate')[0].style.display = "none";
+                    $('#' + $.fn.dataTable.tables()[0].id + '_paginate')[0].style.display = 'none';
                 }
             },
-            "initComplete": function (settings, data) {
+            'initComplete': function (settings) {
                 if (!settings.aoData || settings.aoData.length == 0) {
                     $('#loadingMessage').addClass('hidden');
                     $('#errorLoadingData').removeClass('hidden');
                 } else {
                     $('#loadingMessage').addClass('hidden');
                     $('#errorLoadingData').addClass('hidden');
-                    $("#loggingDashboard .tabsContainer").removeClass('hidden');
+                    $('#loggingDashboard .tabsContainer').removeClass('hidden');
                 }
             },
-            "processing": true,
+            'processing': true,
             columnDefs: [
                 {
-                    "targets": 0,
-                    "className": 'details-control',
-                    "orderable": false,
-                    "data": 'appenders',
-                    "defaultContent": '',
-                    render: function (data, type, full, meta) {
+                    'targets': 0,
+                    'className': 'details-control',
+                    'orderable': false,
+                    'data': 'appenders',
+                    'defaultContent': '',
+                    render: function (data) {
                         if (data.length > 0) {
                             return '<span></span>';
                         } else {
@@ -199,7 +200,7 @@ var loggingDashboard = (function () {
                     targets: 2,
                     data: 'additive',
                     className: 'additive col-xs-2',
-                    render: function (data, type, full, meta) {
+                    render: function (data) {
                         if (data) {
                             return '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
                         } else {
@@ -225,7 +226,7 @@ var loggingDashboard = (function () {
         });
     };
 
-    var toggleSwitch = function (data, type, full, meta) {
+    var toggleSwitch = function (data, type, full) {
         // Todo: Add additional colors for the other options
         //console.log('toggleSwitch data',data);
         //console.log('type',type);
@@ -235,17 +236,17 @@ var loggingDashboard = (function () {
         var btnColor;
 
         switch (data.toLowerCase()) {
-            case 'error':
-                btnColor = 'danger';
-                break;
-            case 'info':
-                btnColor = 'info';
-                break;
-            case 'warn':
-                btnColor = 'warning';
-                break;
-            default:
-                btnColor = 'default';
+        case 'error':
+            btnColor = 'danger';
+            break;
+        case 'info':
+            btnColor = 'info';
+            break;
+        case 'warn':
+            btnColor = 'warning';
+            break;
+        default:
+            btnColor = 'default';
         }
         var btnGroup = '<div class="btn-group btn-block" data-logger="' + full + '"><button class="btn btn-sm btn-block bg-' + btnColor + ' dropdown-toggle" name="recordinput" data-toggle="dropdown">' + data + ' <span class="caret"></span></button>' +
             '<ul class="dropdown-menu">';
@@ -306,7 +307,7 @@ var loggingDashboard = (function () {
         if ( newLevel != data.level) {
             var cell = table.cell($(el).closest('td')[0]);
 
-            var jqxhr = $.post(urls.updateLevel, {
+            $.post(urls.updateLevel, {
                 loggerName: data.name,
                 loggerLevel: newLevel,
                 additive: data.additive
@@ -320,18 +321,21 @@ var loggingDashboard = (function () {
     };
 
     // initialization *******
-    (function init() {
-        getData();
-        addEventHandlers();
-        getAuditData();
-    })();
+    (function init() {})();
 
     return {
+        init: function() {
+            getData();
+            addEventHandlers();
+            getAuditData();
+        },
         getJson: function () {
             return json;
         },
         showLoggersTable: function () {
             loggerTable();
         }
-    }
+    };
 })();
+
+loggingDashboard.init();

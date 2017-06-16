@@ -107,9 +107,8 @@ Deploying into an external Apache Tomcat instance may require the below special 
 
 #### Async Support
 
-You must ensure Apache Tomcat is configured correctly to support asynchronous requests.
-This is typically handled by setting `<async-supported>true</async-supported>`
-inside the container's main `web.xml` file.
+
+In the event that an external servlet container is used, you MAY need to make sure it's configured correctly to support asynchronous requests in the event you get related errors and your container requires this. This is typically handled by setting `<async-supported>true</async-supported>` inside the container's main `web.xml`  file.
 
 #### Async Logging
 

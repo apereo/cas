@@ -12,7 +12,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
 
     private static final long serialVersionUID = 4789727148634156909L;
     
-    private RadiusTokenAuthenticationHandler radiusAuthenticationHandler;
+    private final RadiusTokenAuthenticationHandler radiusAuthenticationHandler;
 
     public RadiusMultifactorAuthenticationProvider(final RadiusTokenAuthenticationHandler radiusAuthenticationHandler) {
         this.radiusAuthenticationHandler = radiusAuthenticationHandler;

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title>WAH WAH WAH</title>
+    <title>Error Page Not Found</title>
     <style>
-        @import 'https://fonts.googleapis.com/css?family=Gloria+Hallelujah';
-
+        <link rel="stylesheet" th:href="@{#{webjars.fontawesome.css}}" />
         .prompt {
-            font-family: 'Gloria Hallelujah', cursive;
+            font-family: Verdana, sans-serif;
         }
     </style>
 </head>
@@ -15,19 +14,12 @@
 <body id="cas">
 <div layout:fragment="content">
     <div class="alert alert-info">
-        <h2 class="prompt">THESE ARE NOT THE PAGES YOU ARE LOOKING FOR!</h2>
+        <h2 class="prompt" th:utext="#{screen.error.page.notfound}" />
         <div class="prompt">
             <p/>
-            <p>Really? 404? In this day and age? <strong>REALLY?!</strong></p>
+            <p th:utext="#{screen.error.page.doesnotexist}" />
             <br/>
-            <p>Boy, you must feel so ashamed.</p>
-            <br/>
-            <p>Were you just making up urls or what? I mean, we've seen some pretend urls in our day,
-                but COME ON! It's like you're not even trying.</p>
-
-            <br/>
-            <p>In closing, <a th:href="@{/login}">go away</a>. </p>
-            
+            <p><a th:href="@{/login}" th:utex="#{screen.error.page.loginagain" /></p>
         </div>
     </div>
 </div>

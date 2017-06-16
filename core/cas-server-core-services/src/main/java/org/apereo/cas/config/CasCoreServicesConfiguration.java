@@ -82,7 +82,7 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
-        return new DefaultWebApplicationResponseBuilderLocator();
+        return new DefaultWebApplicationResponseBuilderLocator(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
@@ -135,6 +135,7 @@ public class CasCoreServicesConfiguration {
         final List<RegisteredService> services = new ArrayList<>();
         if (applicationContext.containsBean("inMemoryRegisteredServices")) {
             services.addAll(applicationContext.getBean("inMemoryRegisteredServices", List.class));
+            LOGGER.debug("Found a list of registered services in the application context. Registering services [{}]", services);
         }
         return new InMemoryServiceRegistry(services);
     }

@@ -32,7 +32,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTicketRegistry.class);
-    
+
     /**
      * The cipher executor for ticket objects.
      */
@@ -154,16 +154,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
 
         return count.intValue();
-    }
-
-    /**
-     * Delete a single ticket instance from the store.
-     *
-     * @param ticketId the ticket id
-     * @return true/false
-     */
-    public boolean deleteSingleTicket(final Ticket ticketId) {
-        return deleteSingleTicket(ticketId.getId());
     }
 
     /**

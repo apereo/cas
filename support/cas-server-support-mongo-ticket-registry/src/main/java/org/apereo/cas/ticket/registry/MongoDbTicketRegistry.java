@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbTicketRegistry.class);
-    
+
     private final String collectionName;
 
     private final boolean dropCollection;
@@ -126,7 +126,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
+    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+        final String ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         try {
             this.mongoTemplate.remove(new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId)), this.collectionName);

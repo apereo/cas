@@ -25,6 +25,8 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
+
 /**
  * Utility class to assist with resource operations.
  *
@@ -32,7 +34,11 @@ import java.util.zip.ZipEntry;
  * @since 5.0.0
  */
 public final class ResourceUtils {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceUtils.class);
+
+    // This constant covers both http and https
+    private static final String HTTP_URL_PREFIX = "http";
 
     private ResourceUtils() {
     }
@@ -46,10 +52,10 @@ public final class ResourceUtils {
      */
     public static AbstractResource getRawResourceFrom(final String location) throws IOException {
         final AbstractResource metadataLocationResource;
-        if (location.toLowerCase().startsWith("http")) {
+        if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
             metadataLocationResource = new UrlResource(location);
-        } else if (location.toLowerCase().startsWith("classpath")) {
-            metadataLocationResource = new ClassPathResource(location);
+        } else if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
+            metadataLocationResource = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         } else {
             metadataLocationResource = new FileSystemResource(location);
         }

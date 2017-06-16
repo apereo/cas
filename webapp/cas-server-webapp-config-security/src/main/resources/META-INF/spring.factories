@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.apereo.cas.config.CasWebApplicationSecurityConfiguration
+  org.apereo.cas.config.CasWebApplicationSpringSecurityConfiguration

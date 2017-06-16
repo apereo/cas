@@ -77,7 +77,10 @@ public class OAuth20Validator {
         final String registeredServiceId = registeredService.getServiceId();
         LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
-            LOGGER.error("Unsupported [{}]: [{}] for registeredServiceId: [{}]", OAuth20Constants.REDIRECT_URI, redirectUri, registeredServiceId);
+            LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
+                    + "Service is considered unauthorized. Verify the service definition in the registry is correct "
+                    + "and does in fact match the client [{}]",
+                    OAuth20Constants.REDIRECT_URI, redirectUri, registeredServiceId, redirectUri);
             return false;
         }
         return true;

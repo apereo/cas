@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Frederic Esnault
  * @since 4.2.0
  */
+@Controller
 public abstract class AbstractDelegateController implements ApplicationContextAware {
 
     /** Application context. */

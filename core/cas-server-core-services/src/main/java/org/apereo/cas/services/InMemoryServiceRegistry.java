@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,7 +13,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class InMemoryServiceRegistry implements ServiceRegistryDao {
+public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();
 
@@ -30,7 +31,7 @@ public class InMemoryServiceRegistry implements ServiceRegistryDao {
     public InMemoryServiceRegistry(final List<RegisteredService> registeredServices) {
         this.registeredServices = registeredServices;
     }
-    
+
     @Override
     public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
@@ -48,6 +49,7 @@ public class InMemoryServiceRegistry implements ServiceRegistryDao {
 
     @Override
     public List<RegisteredService> load() {
+        this.registeredServices.stream().forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return this.registeredServices;
     }
 

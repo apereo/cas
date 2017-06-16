@@ -25,7 +25,8 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
-    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
+    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, final String collectionName,
+                                     final boolean dropCollection) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
 

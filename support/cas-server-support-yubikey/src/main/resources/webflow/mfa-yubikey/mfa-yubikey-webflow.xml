@@ -11,9 +11,22 @@
 
     <action-state id="initializeLoginForm">
         <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="accountRegistrationCheck"/>
+    </action-state>
+
+    <action-state id="accountRegistrationCheck">
+        <evaluate expression="yubiKeyAccountRegistrationAction" />
+        <transition on="register" to="viewRegistration"/>
         <transition on="success" to="viewLoginFormYubiKey"/>
     </action-state>
 
+    <view-state id="viewRegistration" view="casYubiKeyRegistrationView">
+        <on-entry>
+            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
+        </on-entry>
+        <transition on="submit" to="saveRegistration"/>
+    </view-state>
+    
     <view-state id="viewLoginFormYubiKey" view="casYubiKeyLoginView" model="credential">
         <binder>
             <binding property="token" required="true"/>
@@ -22,8 +35,13 @@
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
         <transition on="submit" bind="true" validate="false" to="realSubmit"/>
-
     </view-state>
+
+    <action-state id="saveRegistration">
+        <evaluate expression="yubiKeySaveAccountRegistrationAction" />
+        <transition on="success" to="viewLoginFormYubiKey"/>
+        <transition on="error" to="initializeLoginForm" />
+    </action-state>
 
     <action-state id="realSubmit">
         <evaluate expression="yubikeyAuthenticationWebflowAction" />

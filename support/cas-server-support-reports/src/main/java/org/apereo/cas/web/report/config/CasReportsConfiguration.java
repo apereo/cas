@@ -8,6 +8,7 @@ import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -19,6 +20,7 @@ import org.apereo.cas.web.report.LoggingConfigController;
 import org.apereo.cas.web.report.LoggingOutputSocketMessagingController;
 import org.apereo.cas.web.report.MetricsController;
 import org.apereo.cas.web.report.PersonDirectoryAttributeResolutionController;
+import org.apereo.cas.web.report.RegisteredServicesReportController;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
 import org.apereo.cas.web.report.SpringWebflowReportController;
@@ -28,12 +30,14 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -55,6 +59,10 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
@@ -93,6 +101,8 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return new PersonDirectoryAttributeResolutionController(casProperties);
     }
 
+    @Profile("standalone")
+    @ConditionalOnBean(name = "configurationPropertiesEnvironmentManager")
     @Bean
     @RefreshScope
     public MvcEndpoint internalConfigController() {
@@ -109,6 +119,13 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @RefreshScope
     public MvcEndpoint singleSignOnSessionsReportController() {
         return new SingleSignOnSessionsReportController(centralAuthenticationService, casProperties);
+    }
+
+    
+    @Bean
+    @RefreshScope
+    public MvcEndpoint registeredServicesReportController() {
+        return new RegisteredServicesReportController(casProperties, servicesManager);
     }
 
     @Bean
@@ -134,7 +151,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Bean
     @RefreshScope
     public MvcEndpoint statisticsController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
-        return new StatisticsController(auditTrailManager, centralAuthenticationService, 
+        return new StatisticsController(auditTrailManager, centralAuthenticationService,
                 metricsRegistry, healthCheckRegistry, casProperties);
     }
 

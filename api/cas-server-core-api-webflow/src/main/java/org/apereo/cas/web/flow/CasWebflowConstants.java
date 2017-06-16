@@ -153,6 +153,11 @@ public interface CasWebflowConstants {
     String STATE_ID_POST_VIEW = "postView";
 
     /**
+     * The state 'headerView'.
+     */
+    String STATE_ID_HEADER_VIEW = "headerView";
+
+    /**
      * The state 'showWarningView'.
      */
     String STATE_ID_SHOW_WARNING_VIEW = "showWarningView";
@@ -239,6 +244,52 @@ public interface CasWebflowConstants {
     String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
 
     /**
+     * View id 'casBadHoursView'.
+     */
+    String VIEW_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
+
+
+    /**
+     * View id 'casPasswordUpdateSuccessView'.
+     */
+    String VIEW_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccessView";
+
+    /**
+     * View id 'casAuthenticationBlockedView'.
+     */
+    String VIEW_ID_AUTHENTICATION_BLOCKED = "casAuthenticationBlockedView";
+
+    /**
+     * View id 'casResetPasswordErrorView'.
+     */
+    String VIEW_ID_PASSORD_RESET_ERROR = "casResetPasswordErrorView";
+
+    /**
+     * View id 'casBadWorkstationView'.
+     */
+    String VIEW_ID_INVALID_WORKSTATION = "casBadWorkstationView";
+
+    /**
+     * View id 'casAccountDisabledView'.
+     */
+    String VIEW_ID_ACCOUNT_DISABLED = "casAccountDisabledView";
+
+    /**
+     * View id 'casAccountLockedView'.
+     */
+    String VIEW_ID_ACCOUNT_LOCKED = "casAccountLockedView";
+
+    /**
+     * View id 'casMustChangePassView'.
+     */
+    String VIEW_ID_MUST_CHANGE_PASSWORD = "casMustChangePassView";
+
+    /**
+     * View id 'casExpiredPassView'.
+     */
+    String VIEW_ID_EXPIRED_PASSWORD = "casExpiredPassView";
+    
+    /**
      * View id 'casResetPasswordSentInstructions'.
      */
     String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
@@ -256,5 +307,11 @@ public interface CasWebflowConstants {
     /**
      * State id 'finishLogout'.
      */
-    String STATE_UD_FINISH_LOGOUT = "finishLogout";
+    String STATE_ID_FINISH_LOGOUT = "finishLogout";
+
+    /**
+     * State id 'casPasswordUpdateSuccess'.
+     */
+    String STATE_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccess";
+    
 }

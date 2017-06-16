@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
     <title th:text="#{cas.oauth.confirm.pagetitle}"></title>
@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <div th:if="${scopes}">
+        <div th:unless="${#sets.isEmpty(scopes)}">
             <p th:text="#{screen.oidc.confirm.asksinfo}"/>
 
             <span th:each="scope : ${scopes}">
@@ -41,8 +41,9 @@
                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                 <a th:href="${service.privacyUrl}" th:utext="#{screen.oidc.confirm.privacyurl(${serviceName})}"/>
             </div>
+            <br/>
         </div>
-        <br/>
+
 
         <strong>
             <h4 th:text="#{screen.oauth.confirm.message(${serviceName})}"/>

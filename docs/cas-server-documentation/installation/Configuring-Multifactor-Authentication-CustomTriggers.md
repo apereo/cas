@@ -9,7 +9,7 @@ To create your own custom multifactor authentication trigger, you will need to d
 
 A typical custom trigger, as an example, might be:
 
-<blockquote>Activate MFA provider identified by `mfa-duo` if the client browser's IP address matches the pattern `123.+`.</blockquote>
+- Activate MFA provider identified by `mfa-duo` if the client browser's IP address matches the pattern `123.+`.
 
 Note that:
 

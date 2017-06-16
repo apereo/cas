@@ -33,6 +33,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
 
 import java.time.Period;
 import java.util.Arrays;
@@ -57,6 +58,9 @@ public class LdapAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
@@ -93,13 +97,13 @@ public class LdapAuthenticationConfiguration {
                             attributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 
                     LOGGER.debug("Creating ldap authentication handler for [{}]", l.getLdapUrl());
-                    final LdapAuthenticationHandler handler = new LdapAuthenticationHandler(l.getName(), 
+                    final LdapAuthenticationHandler handler = new LdapAuthenticationHandler(l.getName(),
                             servicesManager, ldapPrincipalFactory(),
                             l.getOrder(), authenticator);
 
-                    final List<String> additionalAttrs = l.getAdditionalAttributes();
+                    final List<String> additionalAttributes = l.getAdditionalAttributes();
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
-                        additionalAttrs.add(l.getPrincipalAttributeId());
+                        additionalAttributes.add(l.getPrincipalAttributeId());
                     }
                     handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
                     handler.setAllowMissingPrincipalAttributeValue(l.isAllowMissingPrincipalAttributeValue());
@@ -107,11 +111,11 @@ public class LdapAuthenticationConfiguration {
                     handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(l.getPrincipalTransformation()));
 
                     if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
-                        LOGGER.debug("Ldap authentication for [{}] is filtering credentials by [{}]", l.getLdapUrl(), l.getCredentialCriteria());
+                        LOGGER.debug("Ldap authentication for [{}] is filtering credentials by [{}]",
+                                l.getLdapUrl(), l.getCredentialCriteria());
                         handler.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(l.getCredentialCriteria()));
                     }
 
-                    handler.setPrincipalAttributeMap(attributes);
                     if (StringUtils.isBlank(l.getPrincipalAttributeId())) {
                         LOGGER.debug("No principal id attribute is found for ldap authentication via [{}]", l.getLdapUrl());
                     } else {
@@ -122,8 +126,10 @@ public class LdapAuthenticationConfiguration {
 
                     if (l.getPasswordPolicy().isEnabled()) {
                         LOGGER.debug("Password policy is enabled for [{}]. Constructing password policy configuration", l.getLdapUrl());
-                        handler.setPasswordPolicyConfiguration(createLdapPasswordPolicyConfiguration(l, authenticator));
+                        handler.setPasswordPolicyConfiguration(createLdapPasswordPolicyConfiguration(l, authenticator, attributes));
                     }
+
+                    handler.setPrincipalAttributeMap(attributes);
 
                     LOGGER.debug("Initializing ldap authentication handler for [{}]", l.getLdapUrl());
                     handler.initialize();
@@ -136,52 +142,70 @@ public class LdapAuthenticationConfiguration {
     private static Predicate<LdapAuthenticationProperties> ldapInstanceConfigurationPredicate() {
         return l -> {
             if (l.getType() == null) {
-                LOGGER.warn("Skipping ldap authentication entry since no type is defined");
+                LOGGER.warn("Skipping LDAP authentication entry since no type is defined");
                 return false;
             }
             if (StringUtils.isBlank(l.getLdapUrl())) {
-                LOGGER.warn("Skipping ldap authentication entry since no ldap url is defined");
+                LOGGER.warn("Skipping LDAP authentication entry since no ldap url is defined");
                 return false;
             }
             return true;
         };
     }
 
-    private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
-                                                                                         final Authenticator authenticator) {
+    private LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
+                                                                                  final Authenticator authenticator,
+                                                                                  final Map<String, String> attributes) {
         final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
-        if (cfg.getPasswordWarningNumberOfDays() > 0) {
-            LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", l.getPasswordPolicy().getType());
-            switch (l.getPasswordPolicy().getType()) {
-                case AD:
-                    handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-                    break;
-                case FreeIPA:
-                    handlers.add(new FreeIPAAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
-                    break;
-                case EDirectory:
-                    handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-                    break;
-                default:
-                    handlers.add(new PasswordPolicyAuthenticationResponseHandler());
-                    handlers.add(new PasswordExpirationAuthenticationResponseHandler());
-                    break;
+
+        final String customPolicyClass = l.getPasswordPolicy().getCustomPolicyClass();
+        if (StringUtils.isNotBlank(customPolicyClass)) {
+            try {
+                LOGGER.debug("Configuration indicates use of a custom password policy handler [{}]",
+                        customPolicyClass);
+                final Class<AuthenticationResponseHandler> clazz = (Class<AuthenticationResponseHandler>)
+                        Class.forName(customPolicyClass);
+                handlers.add(clazz.newInstance());
+            } catch (final Exception e) {
+                LOGGER.warn("Unable to construct an instance of the password policy handler", e);
             }
-        } else {
-            LOGGER.debug("Password warning number of days is undefined; LDAP authentication may NOT support "
-                    + "EDirectory, AD and FreeIPA to handle password policy authentication responses");
         }
-        authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(
-                new AuthenticationResponseHandler[handlers.size()]));
+        LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", l.getPasswordPolicy().getType());
+        switch (l.getPasswordPolicy().getType()) {
+            case AD:
+                handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
+                    attributes.put(a, a);
+                });
+                break;
+            case FreeIPA:
+                Arrays.stream(FreeIPAAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
+                    attributes.put(a, a);
+                });
+                handlers.add(new FreeIPAAuthenticationResponseHandler(
+                        Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
+                break;
+            case EDirectory:
+                Arrays.stream(EDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
+                    attributes.put(a, a);
+                });
+                handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                break;
+            default:
+                handlers.add(new PasswordPolicyAuthenticationResponseHandler());
+                handlers.add(new PasswordExpirationAuthenticationResponseHandler());
+                break;
+        }
+        authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(new AuthenticationResponseHandler[handlers.size()]));
 
         LOGGER.debug("LDAP authentication response handlers configured are: [{}]", handlers);
 
         if (StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeName())
                 && StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeValue())) {
-
-            LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute [{}] and value [{}]",
-                    l.getPasswordPolicy().getWarningAttributeName(), l.getPasswordPolicy().getWarningAttributeValue());
 
             final OptionalWarningAccountStateHandler accountHandler = new OptionalWarningAccountStateHandler();
             accountHandler.setDisplayWarningOnMatch(l.getPasswordPolicy().isDisplayWarningOnMatch());
@@ -189,6 +213,8 @@ public class LdapAuthenticationConfiguration {
             accountHandler.setWarningAttributeValue(l.getPasswordPolicy().getWarningAttributeValue());
             accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
             cfg.setAccountStateHandler(accountHandler);
+            LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute [{}] and value [{}]",
+                    l.getPasswordPolicy().getWarningAttributeName(), l.getPasswordPolicy().getWarningAttributeValue());
         } else {
             final DefaultAccountStateHandler accountHandler = new DefaultAccountStateHandler();
             accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
@@ -220,7 +246,7 @@ public class LdapAuthenticationConfiguration {
                 } else {
                     LOGGER.debug("Attribute repository sources are not available for principal resolution so principal resolver will echo "
                             + "back the principal resolved during LDAP authentication directly.");
-                    resolver.setChain(Arrays.asList(new EchoingPrincipalResolver()));
+                    resolver.setChain(new EchoingPrincipalResolver());
                 }
                 LOGGER.info("Ldap authentication for [{}] is to chain principal resolvers via [{}] for attribute resolution",
                         handler.getName(), resolver);

@@ -2,13 +2,15 @@ package org.apereo.cas.configuration.model.support.mongo;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * This is {@link AbstractMongoClientProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractMongoClientProperties {
+public abstract class AbstractMongoClientProperties implements Serializable {
     private String clientUri = StringUtils.EMPTY;
     private String collection = StringUtils.EMPTY;
     private boolean dropCollection;

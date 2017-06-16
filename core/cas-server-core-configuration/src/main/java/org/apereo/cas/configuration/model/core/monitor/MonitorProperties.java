@@ -221,10 +221,20 @@ public class MonitorProperties {
         private Status status = new Status();
         private SingleSignOnStatus singleSignOnStatus = new SingleSignOnStatus();
         private SpringWebflowReport springWebflowReport = new SpringWebflowReport();
+         private RegisteredServicesReport registeredServicesReport = new RegisteredServicesReport();
 
+         
         public Endpoints() {
             setSensitive(Boolean.TRUE);
-            setEnabled(Boolean.TRUE);
+            setEnabled(Boolean.FALSE);
+        }
+
+        public RegisteredServicesReport getRegisteredServicesReport() {
+            return registeredServicesReport;
+        }
+
+        public void setRegisteredServicesReport(final RegisteredServicesReport registeredServicesReport) {
+            this.registeredServicesReport = registeredServicesReport;
         }
 
         public SpringWebflowReport getSpringWebflowReport() {
@@ -379,6 +389,9 @@ public class MonitorProperties {
         }
 
         public class SpringWebflowReport extends BaseEndpoint {
+        }
+
+        public class RegisteredServicesReport extends BaseEndpoint {
         }
     }
 }

@@ -100,7 +100,7 @@ public class AdminPagesSecurityProperties {
         this.ldap = ldap;
     }
 
-    public class Jaas {
+    public static class Jaas {
         private Resource loginConfig;
         private boolean refreshConfigurationOnStartup = true;
         private String loginContextName;
@@ -130,7 +130,7 @@ public class AdminPagesSecurityProperties {
         }
     }
     
-    public class Ldap extends AbstractLdapAuthenticationProperties {
+    public static class Ldap extends AbstractLdapAuthenticationProperties {
         @NestedConfigurationProperty
         private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 
@@ -150,7 +150,7 @@ public class AdminPagesSecurityProperties {
         }
     }
 
-    public class Jdbc extends AbstractJpaProperties {
+    public static class Jdbc extends AbstractJpaProperties {
         private String rolePrefix;
         private String query;
 

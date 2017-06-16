@@ -165,7 +165,8 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                final Object handler, final ModelAndView modelAndView) throws Exception {
             if (StringUtils.isNotBlank(request.getQueryString())
-                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
+                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)
+                    && modelAndView != null) {
                 final RedirectView v = new RedirectView(request.getRequestURL().toString());
                 v.setExposeModelAttributes(false);
                 v.setExposePathVariables(false);

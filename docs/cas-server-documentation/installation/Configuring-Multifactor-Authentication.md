@@ -30,6 +30,8 @@ The following multifactor providers are supported by CAS.
 | Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
 | Microsoft Azure       | `mfa-azure`     | [See this guide](MicrosoftAzure-Authentication.html).
 | FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
+| Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
+| Custom                | Custom          | [See this guide](Custom-MFA-Authentication.html).
 
 
 ## Triggers
@@ -111,12 +113,35 @@ The following failure modes are supported:
 
 | Field                | Description
 |----------------------|----------------------------------
-| `CLOSED`                  | Authentication is blocked if the provider cannot be reached.
-| `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
-| `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
-| `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
+| `CLOSED`             | Authentication is blocked if the provider cannot be reached.
+| `OPEN`               | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
+| `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
+| `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
 
 A default failure mode can also be specified globally via CAS properties and may be overriden individually by CAS registered services.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+
+## Multiple Provider Selection
+
+In the event that multiple multifactor authentication providers are determined for a multifactor authentication transaction, by default CAS will attempt to sort the collection of providers based on their rank and will pick one with the highest priority. This use case may arise if multiple triggers are defined where each decides on a different multifactor authentication provider, or the same provider instance is configured multiple times with many instances.
+
+Provider selection may also be carried out using Groovy scripting strategies more dynamically. The following example should serve as an outline of how to select multifactor providers based on a Groovy script:
+
+```groovy
+import java.util.*
+
+class SampleGroovyProviderSelection {
+    def String run(final Object... args) {
+        def service = args[0]
+        def principal = args[1]
+        def providersCollection = args[2]
+        def logger = args[3]
+        ...
+        return "mfa-duo"
+    }
+}
+```
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
 ## Ranking Providers
@@ -127,8 +152,7 @@ request attempts to exercise that SSO session with a different and often competi
 from the authentication level CAS has already established. Concretely, examples may be:
 
 - CAS has achieved an SSO session, but a separate request now requires step-up authentication with DuoSecurity.
-- CAS has achieved an SSO session with an authentication level satisfied by DuoSecurity, but a separate request now requires step-up
-authentication with YubiKey.
+- CAS has achieved an SSO session with an authentication level satisfied by DuoSecurity, but a separate request now requires step-up authentication with YubiKey.
 
 In certain scenarios, CAS will attempt to rank authentication levels and compare them with each other. If CAS already has achieved a level
 that is higher than what the incoming request requires, no step-up authentication will be performed. If the opposite is true, CAS will

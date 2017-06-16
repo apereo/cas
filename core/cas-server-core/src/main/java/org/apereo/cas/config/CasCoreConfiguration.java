@@ -61,6 +61,7 @@ public class CasCoreConfiguration {
     private TicketFactory ticketFactory;
 
     @Bean
+    @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
     public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
             return new RequiredHandlerAuthenticationPolicyFactory();
@@ -83,6 +84,7 @@ public class CasCoreConfiguration {
 
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "centralAuthenticationService")
     public CentralAuthenticationService centralAuthenticationService(
             @Qualifier("authenticationServiceSelectionPlan")
             final AuthenticationServiceSelectionPlan selectionStrategies,

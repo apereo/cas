@@ -20,11 +20,14 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreEventsConfigEnvironmentConfiguration {
 
+    @Autowired(required = false)
+    @Qualifier("configurationPropertiesEnvironmentManager")
+    private CasConfigurationPropertiesEnvironmentManager manager;
+
     @ConditionalOnMissingBean(name = "casConfigurationEventListener")
     @Bean
     @Autowired
-    public CasConfigurationEventListener casConfigurationEventListener(@Qualifier("configurationPropertiesEnvironmentManager")
-                                                                           final CasConfigurationPropertiesEnvironmentManager manager) {
+    public CasConfigurationEventListener casConfigurationEventListener() {
         return new CasConfigurationEventListener(manager);
     }
 

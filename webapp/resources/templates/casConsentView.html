@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
     <title th:text="#{screen.consent.title}"></title>
     
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css"/>
-    <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" th:href="@{#{webjars.datatables.bootstrapmin.css}}" />
+    <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
+    <script th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
+    <link rel="stylesheet" th:href="@{#{webjars.bootstrap-selectmin.css}}">
+    <script th:src="@{#{webjars.bootstrap-selectmin.js}}"></script>
 
     <script th:inline="javascript">
         /*<![CDATA[*/

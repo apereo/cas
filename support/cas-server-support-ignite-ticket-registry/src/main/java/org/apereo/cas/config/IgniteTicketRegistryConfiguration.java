@@ -50,21 +50,20 @@ public class IgniteTicketRegistryConfiguration {
 
         final IgniteConfiguration config = new IgniteConfiguration();
         final TcpDiscoverySpi spi = new TcpDiscoverySpi();
-
-        spi.setHeartbeatFrequency(ignite.getHeartbeatFrequency());
-        spi.setJoinTimeout(ignite.getJoinTimeout());
-
+        
         if (!StringUtils.isEmpty(ignite.getLocalAddress())) {
             spi.setLocalAddress(ignite.getLocalAddress());
         }
         if (ignite.getLocalPort() != -1) {
             spi.setLocalPort(ignite.getLocalPort());
         }
+        spi.setJoinTimeout(ignite.getJoinTimeout());
+        spi.setAckTimeout(ignite.getAckTimeout());
         spi.setNetworkTimeout(ignite.getNetworkTimeout());
         spi.setSocketTimeout(ignite.getSocketTimeout());
         spi.setThreadPriority(ignite.getThreadPriority());
         spi.setForceServerMode(ignite.isForceServerMode());
-
+        
         final TcpDiscoveryVmIpFinder finder = new TcpDiscoveryVmIpFinder();
         finder.setAddresses(StringUtils.commaDelimitedListToSet(ignite.getIgniteAddresses()));
         spi.setIpFinder(finder);

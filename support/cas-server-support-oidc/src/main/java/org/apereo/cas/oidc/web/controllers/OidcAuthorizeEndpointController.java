@@ -13,11 +13,10 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -85,13 +84,6 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         }
 
         return super.handleRequest(request, response);
-    }
-
-    @Override
-    protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
-        final OAuthRegisteredService service = super.getRegisteredServiceByClientId(clientId);
-        scopeToAttributesFilter.reconcile(service);
-        return service;
     }
 
     @Override

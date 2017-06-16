@@ -3,7 +3,6 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -118,25 +117,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     public boolean isValidFor(final Service serviceToValidate) {
         update();
         return serviceToValidate.matches(this.service);
-    }
-
-    @Override
-    public boolean equals(final Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof ServiceTicket)) {
-            return false;
-        }
-
-        final Ticket ticket = (Ticket) object;
-
-        return new EqualsBuilder()
-                .append(ticket.getId(), this.getId())
-                .isEquals();
     }
 
     @Override

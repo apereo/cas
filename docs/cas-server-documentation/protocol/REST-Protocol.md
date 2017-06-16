@@ -27,9 +27,6 @@ Support is enabled by including the following to the overlay:
 </dependency>
 ```
 
-REST support is currently provided internally by
-the [Spring framework](http://spring.io/guides/gs/rest-service/).
-
 ## Request a Ticket Granting Ticket
 
 ```bash
@@ -67,6 +64,31 @@ service={form encoded parameter for the service url}
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ```
 
+### JWT Service Tickets
+
+Service tickets created by the REST protocol may be issued as JWTs instead. See [this guide](../installation/Configure-ServiceTicket-JWT.html) to learn more.
+
+Support is enabled by including the following in your overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-rest-tokens</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+
+## Validate Service Ticket
+
+Service ticket validation is handled through the [CAS Protocol](Cas-Protocol.html)
+via any of the validation endpoints such as `/p3/serviceValidate`. 
+
+```bash
+GET /cas/p3/serviceValidate?service={service url}&ticket={service ticket}
+``` 
+
+
 ### Unsuccessful Response
 
 CAS will send a 400 Bad Request. If an incorrect media type is
@@ -103,7 +125,7 @@ GET /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 
 ## Add Service
 
-Support is enabled by including the following in your maven overlay:
+Support is enabled by including the following in your overlay:
 
 ```xml
 <dependency>
@@ -151,7 +173,7 @@ provides a tremendously convenient target for claiming user identities. To secur
 configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn
 have strict security limitations and logging.</p></div>
 
-Support is enabled by including the following in your maven overlay:
+Support is enabled by including the following in your overlay:
 
 ```xml
 <dependency>
@@ -182,11 +204,11 @@ receive tickets and validate them. The following Java REST client is available
 by [pac4j](https://github.com/pac4j/pac4j):
 
 ```java
-String casUrlPrefix = "http://localhost:8080/cas";
-CasRestAuthenticator authenticator = new CasRestAuthenticator(casUrlPrefix);
-CasRestFormClient client = new CasRestFormClient(authenticator);
+final String casUrlPrefix = "http://localhost:8080/cas";
+final CasRestAuthenticator authenticator = new CasRestAuthenticator(casUrlPrefix);
+final CasRestFormClient client = new CasRestFormClient(authenticator);
 
-// The request object must contain the CAS credentials
+// The request object must contain credentials used for CAS authentication
 final WebContext webContext = new J2EContext(request, response);
 final HttpTGTProfile profile = client.requestTicketGrantingTicket(context);
 final CasCredentials casCreds = client.requestServiceTicket("<SERVICE_URL>", profile);

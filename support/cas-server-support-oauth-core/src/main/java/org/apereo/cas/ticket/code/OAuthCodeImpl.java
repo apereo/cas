@@ -1,17 +1,14 @@
 package org.apereo.cas.ticket.code;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -28,8 +25,8 @@ import javax.persistence.Table;
  * @since 5.0.0
  */
 @Entity
-@Table(name="OAUTH_TOKENS")
-@DiscriminatorColumn(name="TYPE")
+@Table(name = "OAUTH_TOKENS")
+@DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(OAuthCode.PREFIX)
 public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
@@ -41,15 +38,19 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     @JsonProperty("grantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
-    
-    /** The service this ticket is valid for. */
+
+    /**
+     * The service this ticket is valid for.
+     */
     @Lob
-    @Column(name="SERVICE", nullable=false)
+    @Column(name = "SERVICE", nullable = false)
     private Service service;
 
-    /** The authenticated object for which this ticket was generated for. */
+    /**
+     * The authenticated object for which this ticket was generated for.
+     */
     @Lob
-    @Column(name="AUTHENTICATION", nullable=false, length = 1000000)
+    @Column(name = "AUTHENTICATION", nullable = false, length = 1000000)
     private Authentication authentication;
 
     /**
@@ -94,25 +95,6 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     public boolean isValidFor(final Service serviceToValidate) {
         update();
         return serviceToValidate.matches(this.service);
-    }
-
-    @Override
-    public boolean equals(final Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof OAuthCode)) {
-            return false;
-        }
-
-        final Ticket ticket = (Ticket) object;
-
-        return new EqualsBuilder()
-                .append(ticket.getId(), this.getId())
-                .isEquals();
     }
 
     @Override

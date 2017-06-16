@@ -6,6 +6,7 @@ import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.event.EventListener;
@@ -21,6 +22,9 @@ import java.util.Collections;
  */
 public class CasConfigurationEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationEventListener.class);
+
+    @Autowired
+    private ConfigurationPropertiesBindingPostProcessor binder;
 
     @Autowired(required = false)
     private ContextRefresher contextRefresher;
@@ -39,7 +43,7 @@ public class CasConfigurationEventListener {
     @EventListener
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
         LOGGER.debug("Received event [{}]", event);
-        configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
+        rebind();
     }
 
     /**
@@ -63,10 +67,19 @@ public class CasConfigurationEventListener {
             } catch (final Throwable e) {
                 LOGGER.trace(e.getMessage(), e);
             } finally {
-                configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
+                rebind();
                 LOGGER.info("CAS finished rebinding configuration with new settings [{}]",
                         ObjectUtils.defaultIfNull(keys, Collections.emptyList()));
             }
+        }
+    }
+
+    private void rebind() {
+        LOGGER.info("Refreshing CAS configuration. Stand by...");
+        if (configurationPropertiesEnvironmentManager != null) {
+            configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
+        } else {
+            CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.binder);
         }
     }
 }

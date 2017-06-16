@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlRegisteredServiceTests;
 import org.junit.runner.RunWith;
@@ -13,7 +14,8 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        SamlRegisteredServiceTests.class, SamlIdPConfigurationTests.class
+        SamlRegisteredServiceTests.class, SamlIdPConfigurationTests.class,
+        SamlAttributeEncoderTests.class
 })
 public class AllTestsSuite {
 }

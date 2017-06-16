@@ -4,7 +4,6 @@ dependencies {
     compile project(":core:cas-server-core-authentication")
     compile project(":support:cas-server-support-pac4j-authentication")
     implementation libraries.pac4j
-    
     implementation libraries.mongo
 
     testImplementation project(":core:cas-server-core-services")

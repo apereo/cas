@@ -59,12 +59,20 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public void addTicket(final Ticket ticket) {
-        LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
+        final long ttl = ticket.getExpirationPolicy().getTimeToLive();
+        if (ttl < 0) {
+            throw new IllegalArgumentException("The expiration policy of ticket "
+                    + ticket.getId() + "is set to use a negative ttl");
+        }
+
+        LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
         final Ticket encTicket = encodeTicket(ticket);
 
         final TicketDefinition metadata = this.ticketCatalog.find(ticket);
         final IMap<String, Ticket> ticketMap = getTicketMapInstanceByMetadata(metadata);
-        ticketMap.set(encTicket.getId(), encTicket, ticket.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS);
+
+        ticketMap.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
+        LOGGER.debug("Added ticket [{}] with ttl [{}s]", encTicket.getId(), ttl);
     }
 
     private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
@@ -119,7 +127,6 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
                 final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(t);
                 tickets.addAll(map.values().stream().limit(this.pageSize).collect(Collectors.toList()));
             });
-            return tickets;
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
@@ -147,7 +154,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     private IMap<String, Ticket> getTicketMapInstance(final String mapName) {
         try {
             final IMap<String, Ticket> inst = hazelcastInstance.getMap(mapName);
-            LOGGER.debug("Located Hazelcast map instance [{}] for [{}]", inst, mapName);
+            LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

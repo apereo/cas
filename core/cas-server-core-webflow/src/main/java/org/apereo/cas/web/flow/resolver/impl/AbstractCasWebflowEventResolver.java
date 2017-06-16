@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
-    
+
     private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
 
@@ -209,7 +209,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         final Authentication authentication = authenticationResult.getAuthentication();
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         final TicketGrantingTicket tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
-        
+
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
@@ -221,7 +221,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 
-    private TicketGrantingTicket createOrUpdateTicketGrantingTicket(final AuthenticationResult authenticationResult, 
+    private TicketGrantingTicket createOrUpdateTicketGrantingTicket(final AuthenticationResult authenticationResult,
                                                                     final Authentication authentication, final String ticketGrantingTicket) {
         final TicketGrantingTicket tgt;
         if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
@@ -374,7 +374,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
                         return Collections.singleton(event);
-                    } 
+                    }
                     LOGGER.debug("Provider [{}] could not be verified", provider);
                 } else {
                     LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
@@ -522,6 +522,17 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     protected Service resolveServiceFromAuthenticationRequest(final Service service) {
         return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
+    }
+
+    /**
+     * Resolve service from authentication request service.
+     *
+     * @param context the context
+     * @return the service
+     */
+    protected Service resolveServiceFromAuthenticationRequest(final RequestContext context) {
+        final Service ctxService = WebUtils.getService(context);
+        return resolveServiceFromAuthenticationRequest(ctxService);
     }
 
     /**

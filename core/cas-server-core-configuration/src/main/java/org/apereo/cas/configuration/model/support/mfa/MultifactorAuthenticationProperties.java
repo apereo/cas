@@ -5,10 +5,12 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,6 +28,9 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String restEndpoint;
 
+    private Resource groovyScript;
+
+    private Resource globalPrincipalAttributePredicate;
     private String globalPrincipalAttributeNameTriggers;
     private String globalPrincipalAttributeValueRegex;
 
@@ -37,6 +42,8 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     private String grouperGroupField;
 
+    private Resource providerSelectorGroovyScript;
+
     private U2F u2f = new U2F();
     private Azure azure = new Azure();
     private Trusted trusted = new Trusted();
@@ -45,6 +52,39 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private GAuth gauth = new GAuth();
     private List<Duo> duo = new ArrayList<>();
     private Authy authy = new Authy();
+    private Swivel swivel = new Swivel();
+
+    public Resource getGlobalPrincipalAttributePredicate() {
+        return globalPrincipalAttributePredicate;
+    }
+
+    public void setGlobalPrincipalAttributePredicate(final Resource globalPrincipalAttributePredicate) {
+        this.globalPrincipalAttributePredicate = globalPrincipalAttributePredicate;
+    }
+
+    public Resource getProviderSelectorGroovyScript() {
+        return providerSelectorGroovyScript;
+    }
+
+    public void setProviderSelectorGroovyScript(final Resource providerSelectorGroovyScript) {
+        this.providerSelectorGroovyScript = providerSelectorGroovyScript;
+    }
+
+    public Resource getGroovyScript() {
+        return groovyScript;
+    }
+
+    public void setGroovyScript(final Resource groovyScript) {
+        this.groovyScript = groovyScript;
+    }
+
+    public Swivel getSwivel() {
+        return swivel;
+    }
+
+    public void setSwivel(final Swivel swivel) {
+        this.swivel = swivel;
+    }
 
     public U2F getU2f() {
         return u2f;
@@ -309,9 +349,78 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private static final long serialVersionUID = 6151350313777066398L;
 
         private Memory memory = new Memory();
-        
+        private Jpa jpa = new Jpa();
+
+        private long expireRegistrations = 30;
+        private TimeUnit expireRegistrationsTimeUnit = TimeUnit.SECONDS;
+
+        private long expireDevices = 30;
+        private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
+
+        private Json json = new Json();
+        private Cleaner cleaner = new Cleaner();
+
         public U2F() {
             setId("mfa-u2f");
+        }
+
+        public Cleaner getCleaner() {
+            return cleaner;
+        }
+
+        public void setCleaner(final Cleaner cleaner) {
+            this.cleaner = cleaner;
+        }
+
+        public Json getJson() {
+            return json;
+        }
+
+        public void setJson(final Json json) {
+            this.json = json;
+        }
+
+        public long getExpireRegistrations() {
+            return expireRegistrations;
+        }
+
+        public void setExpireRegistrations(final long expireRegistrations) {
+            this.expireRegistrations = expireRegistrations;
+        }
+
+        public TimeUnit getExpireRegistrationsTimeUnit() {
+            return expireRegistrationsTimeUnit;
+        }
+
+        public void setExpireRegistrationsTimeUnit(final TimeUnit expireRegistrationsTimeUnit) {
+            this.expireRegistrationsTimeUnit = expireRegistrationsTimeUnit;
+        }
+
+        public long getExpireDevices() {
+            return expireDevices;
+        }
+
+        public void setExpireDevices(final long expireDevices) {
+            this.expireDevices = expireDevices;
+        }
+
+        public TimeUnit getExpireDevicesTimeUnit() {
+            return expireDevicesTimeUnit;
+        }
+
+        public void setExpireDevicesTimeUnit(final TimeUnit expireDevicesTimeUnit) {
+            this.expireDevicesTimeUnit = expireDevicesTimeUnit;
+        }
+
+        public static class Json extends AbstractConfigProperties {
+        }
+
+        public Jpa getJpa() {
+            return jpa;
+        }
+
+        public void setJpa(final Jpa jpa) {
+            this.jpa = jpa;
         }
 
         public Memory getMemory() {
@@ -322,43 +431,40 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.memory = memory;
         }
 
-        public static class Memory {
-            private long expireRegistrations = 30;
-            private TimeUnit expireRegistrationsTimeUnit = TimeUnit.SECONDS;
+        public static class Memory implements Serializable {
 
-            private long expireDevices = 30;
-            private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
-            
-            public long getExpireRegistrations() {
-                return expireRegistrations;
+        }
+
+        public static class Jpa extends AbstractJpaProperties {
+        }
+
+        public static class Cleaner {
+            private boolean enabled = true;
+            private String startDelay = "PT10S";
+            private String repeatInterval = "PT1M";
+
+            public boolean isEnabled() {
+                return enabled;
             }
 
-            public void setExpireRegistrations(final long expireRegistrations) {
-                this.expireRegistrations = expireRegistrations;
+            public void setEnabled(final boolean enabled) {
+                this.enabled = enabled;
             }
 
-            public TimeUnit getExpireRegistrationsTimeUnit() {
-                return expireRegistrationsTimeUnit;
+            public long getStartDelay() {
+                return Beans.newDuration(startDelay).toMillis();
             }
 
-            public void setExpireRegistrationsTimeUnit(final TimeUnit expireRegistrationsTimeUnit) {
-                this.expireRegistrationsTimeUnit = expireRegistrationsTimeUnit;
+            public void setStartDelay(final String startDelay) {
+                this.startDelay = startDelay;
             }
 
-            public long getExpireDevices() {
-                return expireDevices;
+            public long getRepeatInterval() {
+                return Beans.newDuration(repeatInterval).toMillis();
             }
 
-            public void setExpireDevices(final long expireDevices) {
-                this.expireDevices = expireDevices;
-            }
-
-            public TimeUnit getExpireDevicesTimeUnit() {
-                return expireDevicesTimeUnit;
-            }
-
-            public void setExpireDevicesTimeUnit(final TimeUnit expireDevicesTimeUnit) {
-                this.expireDevicesTimeUnit = expireDevicesTimeUnit;
+            public void setRepeatInterval(final String repeatInterval) {
+                this.repeatInterval = repeatInterval;
             }
         }
     }
@@ -368,8 +474,14 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private Integer clientId;
         private String secretKey = StringUtils.EMPTY;
 
+        private Resource jsonFile;
+        private Map<String, String> allowedDevices;
+
         private List<String> apiUrls = new ArrayList<>();
         private boolean trustedDeviceEnabled;
+
+        private Jpa jpa = new Jpa();
+        private Mongodb mongodb = new Mongodb();
 
         public YubiKey() {
             setId("mfa-yubikey");
@@ -399,13 +511,53 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.secretKey = secretKey;
         }
 
-
         public List<String> getApiUrls() {
             return apiUrls;
         }
 
         public void setApiUrls(final List<String> apiUrls) {
             this.apiUrls = apiUrls;
+        }
+
+        public Resource getJsonFile() {
+            return jsonFile;
+        }
+
+        public void setJsonFile(final Resource jsonFile) {
+            this.jsonFile = jsonFile;
+        }
+
+        public Map<String, String> getAllowedDevices() {
+            return allowedDevices;
+        }
+
+        public void setAllowedDevices(final Map<String, String> allowedDevices) {
+            this.allowedDevices = allowedDevices;
+        }
+
+        public Jpa getJpa() {
+            return jpa;
+        }
+
+        public void setJpa(final Jpa jpa) {
+            this.jpa = jpa;
+        }
+
+        public Mongodb getMongodb() {
+            return mongodb;
+        }
+
+        public void setMongodb(final Mongodb mongodb) {
+            this.mongodb = mongodb;
+        }
+
+        public static class Jpa extends AbstractJpaProperties {
+        }
+
+        public static class Mongodb extends AbstractMongoClientProperties {
+            public Mongodb() {
+                setCollection("MongoDbYubiKeyRepository");
+            }
         }
     }
 
@@ -464,7 +616,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.client = client;
         }
 
-        public static class Server {
+        public static class Server implements Serializable {
             private String protocol = "EAP_MSCHAPv2";
             private int retries = 3;
             private String nasIdentifier;
@@ -550,7 +702,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
         }
 
-        public static class Client {
+        public static class Client implements Serializable {
             private String inetAddress = "localhost";
             private String sharedSecret = "N0Sh@ar3d$ecReT";
             private int socketTimeout;
@@ -836,7 +988,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.cleaner = cleaner;
         }
 
-        public static class Rest {
+        public static class Rest implements Serializable {
             private String endpoint;
 
             public String getEndpoint() {
@@ -1060,7 +1212,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         public static class Json extends AbstractConfigProperties {
         }
 
-        public static class Rest {
+        public static class Rest implements Serializable {
             private String endpointUrl;
 
             public String getEndpointUrl() {
@@ -1089,7 +1241,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             }
         }
 
-        public static class Jpa {
+        public static class Jpa implements Serializable {
             private Database database = new Database();
 
             public Database getDatabase() {
@@ -1135,6 +1287,51 @@ public class MultifactorAuthenticationProperties implements Serializable {
             public void setRepeatInterval(final String repeatInterval) {
                 this.repeatInterval = repeatInterval;
             }
+        }
+    }
+
+    public static class Swivel extends BaseProvider {
+        private static final long serialVersionUID = -7409451053833491119L;
+
+        private String swivelTuringImageUrl;
+        private String swivelUrl;
+        private String sharedSecret;
+        private boolean ignoreSslErrors;
+
+        public Swivel() {
+            setId("mfa-swivel");
+        }
+
+        public String getSwivelTuringImageUrl() {
+            return swivelTuringImageUrl;
+        }
+
+        public void setSwivelTuringImageUrl(final String swivelTuringImageUrl) {
+            this.swivelTuringImageUrl = swivelTuringImageUrl;
+        }
+
+        public String getSwivelUrl() {
+            return swivelUrl;
+        }
+
+        public void setSwivelUrl(final String swivelUrl) {
+            this.swivelUrl = swivelUrl;
+        }
+
+        public String getSharedSecret() {
+            return sharedSecret;
+        }
+
+        public void setSharedSecret(final String sharedSecret) {
+            this.sharedSecret = sharedSecret;
+        }
+
+        public boolean isIgnoreSslErrors() {
+            return ignoreSslErrors;
+        }
+
+        public void setIgnoreSslErrors(final boolean ignoreSslErrors) {
+            this.ignoreSslErrors = ignoreSslErrors;
         }
     }
 }

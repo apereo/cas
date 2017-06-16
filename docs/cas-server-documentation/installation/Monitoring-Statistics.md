@@ -16,7 +16,8 @@ The following endpoints are available and secured by CAS:
 | `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
 | `/status/logging`                 | Monitor CAS logs in a streaming fashion and review the audit log.
 | `/status/config`                  | Visual representation of application properties and configuration.
-| `/status/ssosessions`             | Report of active SSO sessions and authentications. Examine attributes, services and log users out.
+| `/status/ssosessions`             | Reports active SSO sessions. Examine attributes, services and log users out.
+| `/status/services`                | Reports the collection of [applications registered with CAS](Service-Management.html).
 | `/status/trustedDevs`             | Reports on the [registered trusted devices/browsers](Multifactor-TrustedDevice-Authentication.html).
 | `/status/authnEvents`             | When enabled, reports on the [events captured by CAS](Configuring-Authentication-Events.html).
 | `/status/attrresolution`          | Examine resolution of user attributes via [CAS attribute resolution](../integration/Attribute-Resolution.html).
@@ -83,7 +84,7 @@ Support is enabled by including the following module in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#admin-status-endpoints-with-spring-security).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#securing-endpoints-with-spring-security).
 
 ## Monitors
 

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
@@ -27,6 +28,8 @@ import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.mgmt.web.CasManagementRootController;
 import org.apereo.cas.mgmt.web.CasManagementSecurityInterceptor;
+import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -65,11 +68,14 @@ import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasManagementWebAppConfiguration}.
@@ -227,7 +233,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public AttributeReleasePolicyMapper defaultAttributeReleasePolicyMapper() {
-        return new DefaultAttributeReleasePolicyMapper(defaultAttributeFilterMapper(), defaultPrincipalAttributesRepositoryMapper());
+        return new DefaultAttributeReleasePolicyMapper(defaultAttributeFilterMapper(),
+                defaultPrincipalAttributesRepositoryMapper(),
+                userDefinedScopeBasedAttributeReleasePolicies());
     }
 
     @Bean
@@ -274,7 +282,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private String getDefaultServiceUrl() {
-        return casProperties.getMgmt().getServerName().concat(serverProperties.getContextPath()).concat("/callback");
+        return casProperties.getMgmt().getServerName().concat(serverProperties.getContextPath()).concat("/manage.html");
     }
 
     @Bean
@@ -282,6 +290,17 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new ArrayList();
     }
 
+    @RefreshScope
+    @Bean
+    public Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
+        final OidcProperties oidc = casProperties.getAuthn().getOidc();
+        return oidc.getUserDefinedScopes().entrySet()
+                .stream()
+                .map(k-> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), Arrays.asList(k.getValue().split(","))))
+                .collect(Collectors.toSet());
+    }
+
+    
     @Bean
     public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap() {
         return new HashMap<>();

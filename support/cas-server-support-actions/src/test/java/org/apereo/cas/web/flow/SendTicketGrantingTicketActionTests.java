@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
@@ -39,6 +40,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     private static final String LOCALHOST_IP = "127.0.0.1";
     private static final String TEST_STRING = "test";
     private static final String SUCCESS = "success";
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -49,7 +51,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
-    private SendTicketGrantingTicketAction action;
+    private Action action;
     
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")

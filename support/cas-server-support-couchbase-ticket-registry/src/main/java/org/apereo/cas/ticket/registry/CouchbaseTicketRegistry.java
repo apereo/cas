@@ -42,17 +42,34 @@ import java.util.stream.StreamSupport;
  * @since 4.2.0
  */
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseTicketRegistry.class);
-    
-    private static final long MAX_EXP_TIME_IN_DAYS = 30;
-    private static final String END_TOKEN = "\u02ad";
-    private static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
-    private static final View ALL_TICKETS_VIEW = DefaultView.create(
+    /**
+     * The all tickets view name.
+     */
+    public static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
+
+    /**
+     * All tickets view.
+     */
+    public static final View ALL_TICKETS_VIEW = DefaultView.create(
             VIEW_NAME_ALL_TICKETS,
             "function(d,m) {emit(m.id);}",
             "_count");
-    private static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_TICKETS_VIEW});
-    private static final String UTIL_DOCUMENT = "statistics";
+
+
+    /**
+     * Views available.
+     */
+    public static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_TICKETS_VIEW});
+
+    /**
+     * "statistics" document.
+     */
+    public static final String UTIL_DOCUMENT = "statistics";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseTicketRegistry.class);
+
+    private static final long MAX_EXP_TIME_IN_DAYS = 30;
+    private static final String END_TOKEN = "\u02ad";
 
     private final CouchbaseClientFactory couchbase;
 
@@ -62,12 +79,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         LOGGER.info("Setting up Couchbase Ticket Registry instance");
         System.setProperty("com.couchbase.queryEnabled", Boolean.toString(isQueryEnabled));
         LOGGER.debug("Setting up indexes on document [{}] and views [{}]", UTIL_DOCUMENT, ALL_VIEWS);
-        this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
-
-        LOGGER.info("Initializing Couchbase...");
-        this.couchbase.initialize();
-        LOGGER.info("Initialized Couchbase bucket [{}]", this.couchbase.bucket().name());
-
+        LOGGER.info("Initialized Couchbase getBucket [{}]", this.couchbase.getBucket().name());
     }
 
     @Override
@@ -76,8 +88,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticket), ticket);
 
-            LOGGER.debug("Upserting document [{}] into couchbase bucket [{}]", document.id(), this.couchbase.bucket().name());
-            this.couchbase.bucket().upsert(document);
+            LOGGER.debug("Upserting document [{}] into couchbase getBucket [{}]", document.id(), this.couchbase.getBucket().name());
+            this.couchbase.getBucket().upsert(document);
         } catch (final Exception e) {
             LOGGER.error("Failed updating [{}]: [{}]", ticket, e);
         }
@@ -90,8 +102,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, this.couchbase.bucket().name());
-            this.couchbase.bucket().upsert(document);
+            LOGGER.debug("Created document for ticket [{}]. Upserting into getBucket [{}]", ticketToAdd, this.couchbase.getBucket().name());
+            this.couchbase.getBucket().upsert(document);
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]: [{}]", ticketToAdd, e);
         }
@@ -107,7 +119,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
                 return null;
             }
 
-            final SerializableDocument document = this.couchbase.bucket().get(encTicketId, SerializableDocument.class);
+            final SerializableDocument document = this.couchbase.getBucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
                 LOGGER.debug("Got ticket [{}] from the registry.", t);
@@ -151,10 +163,11 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
+    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+        final String ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         try {
-            return this.couchbase.bucket().remove(ticketId) != null;
+            return this.couchbase.getBucket().remove(ticketId) != null;
         } catch (final Exception e) {
             LOGGER.error("Failed deleting [{}]: [{}]", ticketId, e);
             return false;
@@ -180,26 +193,26 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
                 + getViewRowCountFromViewResultIterator(refreshTokenIt);
 
         Stream<ViewRow> tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(grantingTicketsIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
 
         tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(serviceTicketsIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
 
         tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(proxyTicketsIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
 
         tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(proxyGrantingTicketsIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
 
         tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(accessTokenIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
 
         tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(oauthcodeIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
 
         tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(refreshTokenIt, Spliterator.ORDERED), true);
-        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
-        
+        tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
+
         return count;
     }
 
@@ -222,7 +235,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private ViewResult getViewResultIteratorForPrefixedTickets(final String prefix) {
         LOGGER.debug("Running query on document [{}] and view [{}] with prefix [{}]",
                 UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
-        return this.couchbase.bucket().query(
+        return this.couchbase.getBucket().query(
                 ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
                         .startKey(prefix)
                         .endKey(prefix + END_TOKEN)

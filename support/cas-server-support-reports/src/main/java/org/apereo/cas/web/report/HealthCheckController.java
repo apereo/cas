@@ -6,6 +6,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
+import org.apereo.cas.util.CasVersion;
+import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.JsonUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HealthCheckController extends BaseCasMvcEndpoint {
 
     private final Monitor<HealthStatus> healthCheckMonitor;
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     public HealthCheckController(final Monitor<HealthStatus> healthCheckMonitor, final CasConfigurationProperties casProperties) {
         super("status", StringUtils.EMPTY, casProperties.getMonitor().getEndpoints().getStatus(), casProperties);
@@ -51,7 +53,7 @@ public class HealthCheckController extends BaseCasMvcEndpoint {
     protected WebAsyncTask<HealthStatus> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         ensureEndpointAccessIsAuthorized(request, response);
-        
+
         final Callable<HealthStatus> asyncTask = () -> {
             final HealthStatus healthStatus = healthCheckMonitor.observe();
             response.setStatus(healthStatus.getCode().value());
@@ -72,6 +74,15 @@ public class HealthCheckController extends BaseCasMvcEndpoint {
                         sb.append(" - ").append(status.getDescription());
                     }
                 });
+                sb.append("\n\nHost:\t\t").append(
+                        StringUtils.isBlank(casProperties.getHost().getName())
+                                ? InetAddressUtils.getCasServerHostName()
+                                : casProperties.getHost().getName()
+                );
+
+                sb.append("\nServer:\t\t").append(casProperties.getServer().getName());
+                sb.append("\nVersion:\t").append(CasVersion.getVersion());
+                
                 response.setContentType(MediaType.TEXT_PLAIN_VALUE);
                 try (Writer writer = response.getWriter()) {
                     IOUtils.copy(new ByteArrayInputStream(sb.toString().getBytes(response.getCharacterEncoding())),

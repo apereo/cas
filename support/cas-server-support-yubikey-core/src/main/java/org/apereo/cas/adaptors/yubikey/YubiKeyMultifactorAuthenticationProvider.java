@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import com.yubico.client.v2.YubicoClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.util.EncodingUtils;
@@ -18,23 +19,23 @@ import java.net.URL;
  */
 public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(YubiKeyMultifactorAuthenticationProvider.class);
-    
+
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private final YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler;
+    private final YubicoClient client;
 
     private final HttpClient httpClient;
 
-    public YubiKeyMultifactorAuthenticationProvider(final YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler,
+    public YubiKeyMultifactorAuthenticationProvider(final YubicoClient client,
                                                     final HttpClient httpClient) {
-        this.yubiKeyAuthenticationHandler = yubiKeyAuthenticationHandler;
+        this.client = client;
         this.httpClient = httpClient;
     }
 
     @Override
     protected boolean isAvailable() {
         try {
-            final String[] endpoints = this.yubiKeyAuthenticationHandler.getClient().getWsapiUrls();
+            final String[] endpoints = client.getWsapiUrls();
             for (final String endpoint : endpoints) {
                 LOGGER.debug("Pinging YubiKey API endpoint at [{}]", endpoint);
                 final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));

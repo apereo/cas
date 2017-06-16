@@ -7,20 +7,20 @@
         <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
         <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Central Authentication Service</title>
     
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
-        <link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+        <link rel="stylesheet" th:href="@{#{webjars.fontawesomemin.css}}"/>
+        <link type="text/css" rel="stylesheet" th:href="@{#{webjars.bootstrapmin.css}}"/>
         <link rel="stylesheet" th:href="@{${#themes.code('admin.custom.css.file')}}" />
         
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-    
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script type="text/javascript" th:src="@{#{webjars.jquerymin.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.jquerycookie.js}}"></script>
 
-        <link rel="stylesheet" href="//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css" />
-        <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
-        <script src="//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
-        <script src="//cdn.rawgit.com/mindmup/editable-table/master/mindmup-editabletable.js"></script>
+        <script th:src="@{#{webjars.bootstrapmin.js}}"></script>
+
+        <link rel="stylesheet" th:href="@{#{webjars.datatables.bootstrapmin.css}}" />
+        <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
+        <script th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
+        <script th:src="@{#{webjars.mindmup.editable-table.js}}"></script>
         
         <script th:inline="javascript">
             /*<![CDATA[*/

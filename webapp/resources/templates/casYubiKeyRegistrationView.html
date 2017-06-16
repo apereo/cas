@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{cas.mfa.yubikey.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+
+    <div class="box fl-panel" id="login">
+        <form method="post" id="yubiKeyForm" class="fm-v clearfix">
+            <div class="alert alert-info">
+                <p th:text="#{cas.mfa.yubikey.register}"/>
+            </div>
+            <div class="row fl-controls-left">
+                <label for="token" class="fl-label" th:utext="#{cas.mfa.yubikey.label.token}"/>
+                <input type="password" class="required" id="token" th:name="token"
+                       size="25" tabindex="1"
+                       autocomplete="off"/>
+                <div>
+                    <br/>
+                    <input class="btn btn-submit" name="_eventId_submit" accesskey="s"
+                           th:value="#{screen.welcome.button.register}" tabindex="2" type="submit"/>
+                </div>
+            </div>
+            <div class="row btn-row">
+
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

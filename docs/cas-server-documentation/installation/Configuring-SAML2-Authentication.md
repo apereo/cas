@@ -9,10 +9,7 @@ CAS can act as a SAML2 identity provider accepting authentication requests and p
 
 If you intend to allow CAS to delegate authentication to an external SAML2 identity provider, you need to [review this guide](../integration/Delegate-Authentication.html).
 
-<div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on
-SAML2 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure about the
-concepts referred to on this page,
-please start with reviewing the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
+<div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure about the concepts referred to on this page, please start with reviewing the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
 
 ## SAML Endpoints
 
@@ -57,16 +54,16 @@ Here is a generated metadata file as an example:
         </Extensions>
         <KeyDescriptor use="signing">
             <ds:KeyInfo>
-                    <ds:X509Data>
-                        <ds:X509Certificate>...</ds:X509Certificate>
-                    </ds:X509Data>
+              <ds:X509Data>
+                  <ds:X509Certificate>...</ds:X509Certificate>
+              </ds:X509Data>
             </ds:KeyInfo>
         </KeyDescriptor>
         <KeyDescriptor use="encryption">
             <ds:KeyInfo>
-                    <ds:X509Data>
-                        <ds:X509Certificate>...</ds:X509Certificate>
-                    </ds:X509Data>
+              <ds:X509Data>
+                  <ds:X509Certificate>...</ds:X509Certificate>
+              </ds:X509Data>
             </ds:KeyInfo>
         </KeyDescriptor>
 
@@ -75,7 +72,6 @@ Here is a generated metadata file as an example:
 
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
                              Location="https://HOST_NAME/cas/idp/profile/SAML2/POST/SLO"/>
-
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
                              Location="https://HOST_NAME/cas/idp/profile/SAML2/POST/SSO"/>
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
@@ -86,15 +82,14 @@ Here is a generated metadata file as an example:
 
 ### Server Configuration
 
-<div class="alert alert-info"><strong>Server Configuration</strong><p>If you have deployed CAS in an external application server/servlet container
-(i.e. Apache Tomcat) you will need to make sure
-that the server is adjusted to handle large-enough <code>HttpHeaderSize</code> and <code>HttpPostSize</code> values (i.e. 2097152).
-The embedded container that ships with CAS handles this automatically.</p></div>
+<div class="alert alert-info"><strong>Server Configuration</strong><p>If you have deployed CAS in an external application server/servlet container (i.e. Apache Tomcat) you will need to make sure that the server is adjusted to handle large-enough <code>HttpHeaderSize</code> and <code>HttpPostSize</code> values (i.e. 2097152). The embedded container that ships with CAS handles this automatically.</p></div>
+
+### Mapping Endpoints
 
 Note that CAS metadata endpoints for various bindings are typically available under `/cas/idp/...`. If you
 mean you use an existing metadata file whose binding endpoints begin with `/idp/...`, you may need to deploy
 CAS at the root context path so it's able to respond to those requests. (i.e. `https://sso.example.org/cas/login` becomes
-`https://sso.example.org/login`).
+`https://sso.example.org/login`). Alternatively, you may try to use URL-rewriting route requests from `/idp/` to `/cas/idp/`,etc.
 
 ## SP Metadata
 

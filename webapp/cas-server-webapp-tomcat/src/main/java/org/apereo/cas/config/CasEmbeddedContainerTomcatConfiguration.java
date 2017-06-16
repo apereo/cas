@@ -5,6 +5,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.valves.ExtendedAccessLogValve;
+import org.apache.catalina.valves.SSLValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http2.Http2Protocol;
@@ -34,7 +35,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import org.apache.catalina.valves.SSLValve;
 
 /**
  * This is {@link CasEmbeddedContainerTomcatConfiguration}.
@@ -130,11 +130,13 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
                 port = SocketUtils.findAvailableTcpPort();
             }
-            LOGGER.debug("Set embedded tomcat container HTTP port to [{}]", port);
+            LOGGER.info("Activated embedded tomcat container HTTP port to [{}]", port);
             connector.setPort(port);
 
             LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
             connector.addUpgradeProtocol(new Http2Protocol());
+
+            http.getAttributes().forEach(connector::setAttribute);
             tomcat.addAdditionalTomcatConnectors(connector);
         }
     }
@@ -159,6 +161,8 @@ public class CasEmbeddedContainerTomcatConfiguration {
                     LOGGER.debug("Setting HTTP proxying proxy port to [{}]", proxy.getProxyPort());
                     connector.setProxyPort(proxy.getProxyPort());
                 }
+
+                proxy.getAttributes().forEach(connector::setAttribute);
                 LOGGER.info("Configured connector listening on port [{}]", tomcat.getPort());
             });
         } else {
@@ -194,6 +198,9 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 LOGGER.debug("Set AJP redirect port to [{}]", ajp.getRedirectPort());
                 ajpConnector.setRedirectPort(ajp.getRedirectPort());
             }
+
+            ajp.getAttributes().forEach(ajpConnector::setAttribute);
+
             tomcat.addAdditionalTomcatConnectors(ajpConnector);
         }
     }

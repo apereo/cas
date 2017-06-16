@@ -49,7 +49,7 @@ public class CasManagementSecurityInterceptor extends SecurityInterceptor {
     /**
      * The Cas management security logic.
      */
-    public class CasManagementSecurityLogic extends DefaultSecurityLogic {
+    public static class CasManagementSecurityLogic extends DefaultSecurityLogic {
         @Override
         protected HttpAction forbidden(final WebContext context, final List currentClients, final List list, final String authorizers) {
             return HttpAction.redirect("Authorization failed", context, "authorizationFailure");

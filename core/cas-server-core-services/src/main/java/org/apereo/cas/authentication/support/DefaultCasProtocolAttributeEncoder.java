@@ -7,10 +7,12 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -146,10 +148,10 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
                 .filter(s -> s.contains(":"))
-                .map(s -> Pair.of(s.replace(':', '_'), attributes.get(s)))
+                .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
                 .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
-            LOGGER.debug("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
+            LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
             attrs.forEach(p -> {
                 LOGGER.debug("Sanitized attribute name to be [{}]", p.getKey());

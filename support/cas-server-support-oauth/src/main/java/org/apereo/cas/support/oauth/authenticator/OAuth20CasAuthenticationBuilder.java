@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.CredentialMetaData;
@@ -23,10 +25,12 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.HashSet;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * This is {@link OAuth20CasAuthenticationBuilder}.
@@ -102,12 +106,9 @@ public class OAuth20CasAuthenticationBuilder {
                                 final OAuthRegisteredService registeredService,
                                 final J2EContext context,
                                 final Service service) {
-        final Principal newPrincipal =
-                this.scopeToAttributesFilter.filter(service,
-                        this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes()),
-                        registeredService,
-                        context);
 
+        final Map<String, Object> profileAttributes = getPrincipalAttributesFromProfile(profile);
+        final Principal newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
         final String authenticator = profile.getClass().getCanonicalName();
@@ -118,14 +119,14 @@ public class OAuth20CasAuthenticationBuilder {
         final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
-        /** 
+        /**
          * pac4j UserProfile.getPermissions() and getRoles() returns UnmodifiableSet which Jackson Serializer
-         * happily serializes to json but unable to deserialize.
+         * happily serializes to json but is unable to deserialize.
          * We have to wrap it to HashSet to avoid such problem
          */
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
-                .addAttribute("permissions", new HashSet(profile.getPermissions()))
-                .addAttribute("roles", new HashSet(profile.getRoles()))
+                .addAttribute("permissions", new HashSet<>(profile.getPermissions()))
+                .addAttribute("roles", new HashSet<>(profile.getRoles()))
                 .addAttribute(OAuth20Constants.STATE, state)
                 .addAttribute(OAuth20Constants.NONCE, nonce)
                 .addCredential(metadata)
@@ -133,17 +134,33 @@ public class OAuth20CasAuthenticationBuilder {
                 .setAuthenticationDate(ZonedDateTime.now())
                 .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
 
-        // Add "other" profile attributes as authentication attributes.
-        if (casProperties.getAuthn().getOauth().getAccessToken().isReleaseProtocolAttributes()) {
-            profile.getAttributes().forEach((k, v) -> {
-                if (!newPrincipal.getAttributes().containsKey(k)) {
-                    LOGGER.debug("Added attribute [{}] with value [{}] to the authentication", k, v);
-                    bldr.addAttribute(k, v);
-                } else {
-                    LOGGER.debug("Skipped over attribute [{}] since it's already contained by the principal", k);
-                }
-            });
-        }
+        collectionAuthenticationAttributesIfNecessary(profile, bldr);
         return bldr.build();
+    }
+
+    private Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
+        final Map<String, Object> profileAttributes = new HashMap<>(profile.getAttributes());
+        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
+        profileAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
+        profileAttributes.remove(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
+        profileAttributes.remove(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS);
+        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        return profileAttributes;
+    }
+
+    private void collectionAuthenticationAttributesIfNecessary(final UserProfile profile, final AuthenticationBuilder bldr) {
+        if (casProperties.getAuthn().getOauth().getAccessToken().isReleaseProtocolAttributes()) {
+            addAuthenticationAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, bldr, profile);
+            addAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, bldr, profile);
+            addAuthenticationAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, bldr, profile);
+            addAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, bldr, profile);
+            addAuthenticationAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, bldr, profile);
+        }
+    }
+
+    private static void addAuthenticationAttribute(final String name, final AuthenticationBuilder bldr,
+                                                   final UserProfile profile) {
+        bldr.addAttribute(name, profile.getAttribute(name));
+        LOGGER.debug("Added attribute [{}] to the authentication", name);
     }
 }

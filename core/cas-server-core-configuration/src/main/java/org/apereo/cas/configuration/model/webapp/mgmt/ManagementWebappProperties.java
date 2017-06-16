@@ -72,7 +72,7 @@ public class ManagementWebappProperties {
         this.defaultLocale = defaultLocale;
     }
 
-    public class Ldap extends AbstractLdapProperties {
+    public static class Ldap extends AbstractLdapProperties {
         @NestedConfigurationProperty
         private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 

@@ -2,13 +2,15 @@ package org.apereo.cas.configuration.model.support;
 
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * This is {@link ConnectionPoolingProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ConnectionPoolingProperties {
+public class ConnectionPoolingProperties implements Serializable {
     private int minSize = 6;
     private int maxSize = 18;
     private String maxWait = "PT2S";

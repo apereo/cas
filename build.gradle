@@ -42,14 +42,14 @@ buildscript {
         jcenter()
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "https://repo.spring.io/plugins-release" }
         maven { url "https://repo.spring.io/milestone" }
         maven { url "https://repo.spring.io/snapshot" }
     }
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:7.3.5"
+        classpath "com.netflix.nebula:gradle-lint-plugin:7.4.0"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.gradle:build-scan-plugin:1.0"
@@ -57,9 +57,9 @@ buildscript {
         classpath "io.spring.gradle:dependency-management-plugin:1.0.2.RELEASE"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
+        classpath "org.zeroturnaround:gradle-jrebel-plugin:1.1.5"
     }
 }
-
 
 allprojects {
     apply plugin: "idea"
@@ -68,8 +68,7 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
-
-
+    
     if (project.name == "cas-server-support-bom") {
         logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
     } else {
@@ -82,7 +81,7 @@ allprojects {
         required = isArtifactSigningRequired
         sign configurations.archives
     }
-
+        
     idea {
         module {
             downloadSources = false
@@ -93,7 +92,7 @@ allprojects {
             }
         }
     }
-
+    
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
@@ -104,16 +103,19 @@ allprojects {
 }
 
 subprojects {
-    task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") {
+    task allDependenciesInsight(type: DependencyInsightReportTask,
+                                description: "Produce insight information for all dependencies") {
         doLast {}
     }
-    task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {
+    task allDependencies(type: DependencyReportTask,
+                         description: "Display a graph of all project dependencies") {
         doLast {}
     }
     if (Boolean.getBoolean("enableKotlin")) {
         apply plugin: "kotlin"
     }
     apply plugin: "java-library"
+    apply plugin: "rebel"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
     apply plugin: "project-report"
@@ -132,10 +134,10 @@ subprojects {
         maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
-        maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "https://repo.maven.apache.org/maven2" }
         maven { url "https://jitpack.io" }
-        maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
-        maven { url "http://files.couchbase.com/maven2" }
+        maven { url "https://developer.jasig.org/repo/content/groups/m2-legacy/" }
+        maven { url "https://files.couchbase.com/maven2" }
         maven { url "https://repo.spring.io/milestone" }
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/libs-snapshot" }
@@ -302,6 +304,11 @@ subprojects {
 
     if (Boolean.getBoolean("genConfigMetadata")) {
         compileJava.dependsOn(processResources)
+    }
+
+    generateRebel.enabled = Boolean.getBoolean("enableJRebelAgent")
+    if (Boolean.getBoolean("enableJRebelAgent")) {
+        jar.dependsOn(generateRebel)
     }
 }
 

@@ -31,6 +31,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Event;
 
 import java.util.Collections;
@@ -84,6 +85,7 @@ public class CasCoreAuditConfiguration {
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setName("CAS Client Info Logging Filter");
         bean.setAsyncSupported(true);
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
 
         final Map<String, String> initParams = new HashMap<>();
         if (StringUtils.isNotBlank(audit.getAlternateClientAddrHeaderName())) {

@@ -9,7 +9,14 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceAttributeReleaseP
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceAttributeReleasePolicyViewBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
@@ -20,6 +27,8 @@ import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -33,10 +42,14 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
 
     private final AttributeFilterMapper attributeFilterMapper;
     private final PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper;
+    private final Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies;
 
-    public DefaultAttributeReleasePolicyMapper(final AttributeFilterMapper attributeFilterMapper, final PrincipalAttributesRepositoryMapper mapper) {
+    public DefaultAttributeReleasePolicyMapper(final AttributeFilterMapper attributeFilterMapper,
+                                               final PrincipalAttributesRepositoryMapper mapper,
+                                               final Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies) {
         this.attributeFilterMapper = attributeFilterMapper;
         this.principalAttributesRepositoryMapper = mapper;
+        this.userDefinedScopeBasedAttributeReleasePolicies = userDefinedScopeBasedAttributeReleasePolicies;
     }
 
     /**
@@ -60,6 +73,7 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
             this.principalAttributesRepositoryMapper.mapPrincipalRepository(attrPolicy.getPrincipalAttributesRepository(), bean);
 
             final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
+
             if (attrPolicy instanceof ScriptedRegisteredServiceAttributeReleasePolicy) {
                 final ScriptedRegisteredServiceAttributeReleasePolicy policyS = (ScriptedRegisteredServiceAttributeReleasePolicy) attrPolicy;
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.SCRIPT.toString());
@@ -128,7 +142,9 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
 
         final AbstractRegisteredServiceAttributeReleasePolicy policy;
 
-        if (StringUtils.equalsIgnoreCase(policyType,
+        if ("oidc".equals(data.getType())) {
+            return chainScopes(data.getOidc().getScopes());
+        } else if (StringUtils.equalsIgnoreCase(policyType,
                 AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.SCRIPT.toString())) {
             policy = new ScriptedRegisteredServiceAttributeReleasePolicy(policyBean.getScriptFile());
 
@@ -164,6 +180,42 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
                 .toPrincipalRepository(data);
         if (principalRepository != null) {
             policy.setPrincipalAttributesRepository(principalRepository);
+        }
+
+        return policy;
+    }
+
+    private RegisteredServiceAttributeReleasePolicy chainScopes(final String scopes) {
+        final List<String> scopeList = Arrays.asList(scopes.split(","));
+        final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
+        
+        scopeList.forEach(s -> {
+            switch (s.trim().toLowerCase()) {
+                case OidcConstants.EMAIL:
+                    policy.getPolicies().add(new OidcEmailScopeAttributeReleasePolicy());
+                    break;
+                case OidcConstants.ADDRESS:
+                    policy.getPolicies().add(new OidcAddressScopeAttributeReleasePolicy());
+                    break;
+                case OidcConstants.PROFILE:
+                    policy.getPolicies().add(new OidcProfileScopeAttributeReleasePolicy());
+                    break;
+                case OidcConstants.PHONE:
+                    policy.getPolicies().add(new OidcPhoneScopeAttributeReleasePolicy());
+                    break;
+                default:
+                    final BaseOidcScopeAttributeReleasePolicy userPolicy = userDefinedScopeBasedAttributeReleasePolicies.stream()
+                            .filter(t -> t.getScopeName().equals(s.trim()))
+                            .findFirst()
+                            .orElse(null);
+                    if (userPolicy != null) {
+                        policy.getPolicies().add(userPolicy);
+                    }
+            }
+        });
+
+        if (policy.getPolicies().isEmpty()) {
+            return new DenyAllAttributeReleasePolicy();
         }
 
         return policy;

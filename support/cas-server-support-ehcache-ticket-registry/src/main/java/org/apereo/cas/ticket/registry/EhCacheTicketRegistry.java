@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
  */
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(EhCacheTicketRegistry.class);
-    
+
     private Cache ehcacheTicketsCache;
-    
+
     /**
      * Instantiates a new EhCache ticket registry.
      *
@@ -58,7 +58,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
         final Element element = new Element(ticket.getId(), ticket);
-        
+
         int idleValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
         if (idleValue <= 0) {
             idleValue = ticketToAdd.getExpirationPolicy().getTimeToLive().intValue();
@@ -93,7 +93,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
             return true;
         }
 
-        if (this.ehcacheTicketsCache.remove(ticket.getId())) {
+        if (this.ehcacheTicketsCache.remove(encodeTicketId(ticket.getId()))) {
             LOGGER.debug("Ticket [{}] is removed", ticket.getId());
         }
         return true;
@@ -123,14 +123,14 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         final CacheConfiguration config = new CacheConfiguration();
         config.setTimeToIdleSeconds(ticket.getExpirationPolicy().getTimeToIdle());
         config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToLive());
-        
+
         if (element.isExpired(config) || ticket.isExpired()) {
             LOGGER.debug("Ticket [{}] has expired", ticket.getId());
             this.ehcacheTicketsCache.evictExpiredElements();
             this.ehcacheTicketsCache.flush();
             return null;
         }
-        
+
         return ticket;
     }
 
@@ -146,7 +146,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         addTicket(ticket);
         return ticket;
     }
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

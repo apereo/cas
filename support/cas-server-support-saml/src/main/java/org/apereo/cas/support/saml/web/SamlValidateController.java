@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.web.AbstractServiceValidateController;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Controller("samlValidateController")
 public class SamlValidateController extends AbstractServiceValidateController {
 
     /**

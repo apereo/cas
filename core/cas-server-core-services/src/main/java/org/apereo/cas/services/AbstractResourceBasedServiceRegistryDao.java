@@ -2,6 +2,8 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -21,11 +23,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Watchable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -34,9 +38,16 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractResourceBasedServiceRegistryDao implements ResourceBasedServiceRegistryDao {
+public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractServiceRegistryDao implements ResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
+    private static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE = service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+            + "This will overwrite previous service definitions and is likely a configuration problem. Make sure all services have a unique id and try again.",
+            service.getServiceId(), service.getId());
+    private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
+        LOG_SERVICE_DUPLICATE.accept(s2);
+        return s1;
+    };
 
     /**
      * The Service registry directory.
@@ -103,7 +114,35 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
             LOGGER.info("Watching service registry directory at [{}]", configDirectory);
 
-            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, eventPublisher);
+            final Consumer<File> onCreate = file -> {
+                final RegisteredService service = load(file);
+                if (service != null) {
+                    if (findServiceById(service.getId()) != null) {
+                        LOG_SERVICE_DUPLICATE.accept(service);
+                    }
+                    update(service);
+                    publishEvent(new CasRegisteredServicesRefreshEvent(this));
+                }
+            };
+            final Consumer<File> onDelete = file -> {
+                load();
+                publishEvent(new CasRegisteredServicesRefreshEvent(this));
+            };
+            final Consumer<File> onModify = file -> {
+                final RegisteredService newService = load(file);
+                if (newService != null) {
+                    final RegisteredService oldService = findServiceById(newService.getId());
+
+                    if (!newService.equals(oldService)) {
+                        update(newService);
+                        publishEvent(new CasRegisteredServicesRefreshEvent(this));
+                    } else {
+                        LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
+                                + "in the event processing pipeline", newService.getId(), file.getName());
+                    }
+                }
+            };
+            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(serviceRegistryDirectory, onCreate, onModify, onDelete);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
             this.serviceRegistryWatcherThread.start();
@@ -136,7 +175,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        return this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+        return this.serviceMap.values().stream()
+                .filter(r -> r.matches(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -163,30 +205,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
     @Override
     public synchronized List<RegisteredService> load() {
-        final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
+        this.serviceMap = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true).stream()
+                .map(this::load)
+                .filter(Objects::nonNull)
+                .sorted()
+                .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
+                .collect(Collectors.toMap(RegisteredService::getId, e -> e, LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
 
-        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
-        c.stream().filter(file -> file.length() > 0).forEach(file -> {
-            final RegisteredService service = load(file);
-            if (service == null) {
-                LOGGER.error("Could not load service definition from file [{}]", file);
-            } else {
-                if (temp.containsKey(service.getId())) {
-                    LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                                    + "This will overwrite previous service definitions and is likely a "
-                                    + "configuration problem. Make sure all services have a unique id and try again.",
-                            service.getServiceId(), service.getId());
-                }
-                temp.put(service.getId(), service);
-            }
-        });
-
-        this.serviceMap = temp.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        
-        return new ArrayList(this.serviceMap.values());
+        return new ArrayList<>(this.serviceMap.values());
     }
 
     /**
@@ -220,12 +246,11 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         return null;
     }
 
-
     @Override
     public RegisteredService save(final RegisteredService service) {
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {
             LOGGER.debug("Service id not set. Calculating id based on system time...");
-            ((AbstractRegisteredService) service).setId(System.nanoTime());
+            ((AbstractRegisteredService) service).setId(System.currentTimeMillis());
         }
         final File f = makeFile(service);
         try (LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {
@@ -241,7 +266,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         }
         return findServiceById(service.getId());
     }
-
 
     /**
      * Creates a file for a registered service.

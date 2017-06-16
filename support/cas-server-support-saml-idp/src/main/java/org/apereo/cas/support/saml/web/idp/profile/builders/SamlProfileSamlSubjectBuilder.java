@@ -7,10 +7,13 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.client.validation.Assertion;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,10 +28,11 @@ import java.time.ZonedDateTime;
  */
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
     private static final long serialVersionUID = 4782621942035583007L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSamlSubjectBuilder.class);
 
     private SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
 
-    private int skewAllowance;
+    private final int skewAllowance;
 
     public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean, final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
                                          final int skewAllowance) {
@@ -38,7 +42,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
     }
 
     @Override
-    public Subject build(final AuthnRequest authnRequest, final HttpServletRequest request, 
+    public Subject build(final AuthnRequest authnRequest, final HttpServletRequest request,
                          final HttpServletResponse response,
                          final Assertion assertion, final SamlRegisteredService service,
                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -53,7 +57,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final SamlRegisteredService service,
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                  final String binding) throws SamlException {
-        final NameID nameID = this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, 
+        final NameID nameID = this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response,
                 assertion, service, adaptor, binding);
         final ZonedDateTime validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
 
@@ -62,9 +66,18 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             throw new IllegalArgumentException("Failed to locate the assertion consumer service url");
         }
 
-        final String location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
+        String location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
+        if (StringUtils.isBlank(location)) {
+            final AssertionConsumerService assertionService = adaptor.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
+            location = StringUtils.isBlank(acs.getResponseLocation()) ? assertionService.getLocation() : assertionService.getResponseLocation();
+        }
+
+        if (StringUtils.isBlank(location)) {
+            LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());
+        }
         final Subject subject = newSubject(nameID.getFormat(), nameID.getValue(),
                 location, validFromDate.plusSeconds(this.skewAllowance), authnRequest.getID());
+        LOGGER.debug("Created SAML subject [{}]", subject);
         subject.setNameID(nameID);
         return subject;
     }

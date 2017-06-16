@@ -23,7 +23,7 @@ import java.util.Set;
  * @since 4.2
  */
 @Entity
-@Table(name="RegexRegisteredServiceProperty")
+@Table(name = "RegexRegisteredServiceProperty")
 public class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
     private static final long serialVersionUID = 1349556364689133211L;
 
@@ -68,6 +68,15 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
             return;
         }
         getValues().addAll(values);
+    }
+
+    /**
+     * Add value.
+     *
+     * @param value the value
+     */
+    public void addValue(final String value) {
+        getValues().add(value);
     }
 
     @Override

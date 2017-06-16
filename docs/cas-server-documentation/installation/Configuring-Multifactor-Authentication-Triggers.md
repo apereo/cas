@@ -8,6 +8,25 @@ title: CAS - Multifactor Authentication Triggers
 The following triggers can be used to activate and instruct CAS to navigate to a multifactor authentication flow.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
+The execution order of multifactor authentication triggers is outlined below:
+
+1. Adaptive
+2. Global
+3. Opt-In Request Parameter
+4. REST Endpoint
+5. Groovy Script
+6. Principal Attribute Per Application
+7. Global Principal Attribute Predicate
+8. Global Principal Attribute
+9. Global Authentication Attribute
+10. Applications
+11. Grouper
+12. Other
+
+Each trigger should properly try to ignore the authentication request, if applicable confguration is not found for its activation and execution.
+
+Also note that various CAS modules present and inject their own *internal triggers* into the CAS application runtime in order to translate protocol-specific authentication requests into multifactor authentication flows.
+
 ## Global
 
 MFA can be triggered for all applications and users regardless of individual settings.
@@ -40,10 +59,43 @@ MFA can be triggered for all users/subjects carrying a specific attribute that m
 to know what provider to next activate.
 
 - Trigger MFA based on a principal attribute(s) whose value(s) **EXACTLY** matches an MFA provider.
-This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning
-provider ids to attributes as values.
+This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning provider ids to attributes as values.
 
 Needless to say, the attributes need to have been resolved for the principal prior to this step.
+
+## Global Principal Attribute Predicate
+
+This is a more generic variant of the above trigger. It may be useful in cases where there is more than one provider configured and available in the application runtime and you need to design a strategy to dynamically decide on the provider that should be activated for the request.
+
+The decision is handed off to a `Predicate` implementation that define in a Groovy script whose location is taught to CAS.
+
+The Groovy script predicate may be designed as such:
+
+```groovy
+import org.apereo.cas.authentication.*
+import java.util.function.*
+import org.apereo.cas.services.*
+
+class PredicateExample implements Predicate<MultifactorAuthenticationProvider> {
+
+    def service
+    def principal
+    def providers
+    def logger
+
+    public PredicateExample(service, principal, providers, logger) {
+        this.service = service
+        this.principal = principal
+        this.providers = providers
+        this.logger = logger
+    }
+
+    @Override
+    boolean test(final MultifactorAuthenticationProvider p) {
+        ...
+    }
+}
+```
 
 ## Global Authentication Attribute
 
@@ -98,11 +150,35 @@ grouperClient.webService.login = banderson
 grouperClient.webService.password = password
 ```
 
+## Groovy
+
+MFA can be triggered based on the results of a groovy script of your own design. The outcome of the script should determine the MFA provider id that CAS should attempt to activate.
+
+The outline of the groovy script is shown below as a sample:
+
+```groovy
+import java.util.*
+
+class SampleGroovyEventResolver {
+    def String run(final Object... args) {
+        def service = args[0]
+        def registeredService = args[1]
+        def authentication = args[2]
+        def logger = args[3]
+
+        ...
+
+        return "mfa-duo"
+    }
+}
+```
+
 ## REST
 
 MFA can be triggered based on the results of a remote REST endpoint of your design. If the endpoint is configured,
-CAS shall issue a `POST`, providing the principal id. The body of the response in the event of a successful `200`
-status code is expected to be the MFA provider id which CAS should activate.
+CAS shall issue a `POST`, providing the principal and the service url.
+
+The body of the response in the event of a successful `200` status code is expected to be the MFA provider id which CAS should activate.
 
 ## Opt-In Request Parameter
 

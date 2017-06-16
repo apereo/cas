@@ -1,4 +1,6 @@
-<div class="oauth-only-options-container" ng-show="serviceFormCtrl.serviceData.type=='oauth' || serviceFormCtrl.serviceData.type=='oidc'">
+<div class="oauth-only-options-container"
+     ng-show="serviceFormCtrl.serviceData.type=='oauth' || serviceFormCtrl.serviceData.type=='oidc'"
+     ng-controller="oauthController as oauth">
     <div class="panel panel-warning">
         <div class="panel-heading">
             <h3 class="panel-title">
@@ -35,9 +37,24 @@
                 </label>
 
                 <div class="col-sm-8">
-                    <input type="text" autocomplete="off" class="form-control" id="scopes"
-                           ng-model="serviceFormCtrl.serviceData.oidc.scopes"/>
-
+                    <select class="form-control" id="scopes" multiple
+                            ng-model="serviceFormCtrl.serviceData.oidc.scopes">
+                        <option ng-repeat="opt in serviceFormCtrl.selectOptions.oidcScopes"
+                                ng-attr-value="{{ opt.value }}"
+                                ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.oidcScopes.type)">{{ opt.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-8 col-md-offset-4" ng-show="serviceFormCtrl.serviceData.oidc.scopes.indexOf('user_defined') > -1">
+                    <div class="checkbox">
+                        <input type="text"
+                               autocomplete="off"
+                               class="form-control"
+                               id="oidcScopesUserDefined"
+                               autofocus
+                               placeholder="Enter User Defined values"
+                               ng-show="serviceFormCtrl.serviceData.oidc.scopes.indexOf('user_defined') > -1"
+                               ng-model="serviceFormCtrl.serviceData.oidc.scopes_userdefined"/>
+                    </div>
                 </div>
             </div>
 

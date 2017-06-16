@@ -106,13 +106,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         final String secret = getSetting(environment, "credentialSecretKey");
         final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
 
-        final AmazonDynamoDBClient client;
-        if (credentials == null) {
-            client = new AmazonDynamoDBClient(cfg);
-        } else {
-            client = new AmazonDynamoDBClient(credentials, cfg);
-        }
-
+        final AmazonDynamoDBClient client = new AmazonDynamoDBClient(credentials, cfg);
         final String endpoint = getSetting(environment, "endpoint");
         if (StringUtils.isNotBlank(endpoint)) {
             client.setEndpoint(endpoint);

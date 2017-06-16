@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
     <title th:text="#{screen.badhours.heading}"></title>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
-        
+
         function showErrorDetails() {
-            $("#errorMsg").remove();
+            $("#errorMsg").hide();
             $("#errorDetails").empty();
-            $("#errorDetails").append("<p><pre>" + /*[[${trace}]]*/ + "</pre></p>");
+            $("#errorDetails").append("<p><pre style='white-space: pre-wrap;'>" + /*[[${trace}]]*/ +"</pre></p>");
         }
         /*]]>*/
     </script>
@@ -19,14 +19,13 @@
 <body id="cas">
 <div layout:fragment="content">
     <div class="alert alert-danger">
-        <h2 th:utext="#{screen.unavailable.heading(${status},${error})}" />
-        <p th:utext="#{screen.unavailable.message}" />
-        <p id="errorMsg">
-        <pre th:text="${'Error: ' + message}" />
-        </p>
+        <h2 th:utext="#{screen.unavailable.heading(${status},${error})}"/>
+        <p th:utext="#{screen.unavailable.message}"/>
+        <pre id="errorMsg" style="white-space: pre-wrap;" th:text="${'Error: ' + message}"/>
         <p id="errorDetails">
-            <button type="button" class="btn btn-shutdown" 
-                    onclick="showErrorDetails();">View Details</button>
+            <button type="button" class="btn btn-shutdown"
+                    onclick="showErrorDetails();">View Details
+            </button>
         </p>
     </div>
 </div>

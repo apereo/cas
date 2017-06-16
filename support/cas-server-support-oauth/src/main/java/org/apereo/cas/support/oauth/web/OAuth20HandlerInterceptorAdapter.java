@@ -46,7 +46,8 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return the boolean
      */
     protected boolean isAccessTokenRequestRequest(final String requestPath) {
-        return doesUriMatchPattern(requestPath, OAuth20Constants.ACCESS_TOKEN_URL);
+        return doesUriMatchPattern(requestPath, OAuth20Constants.ACCESS_TOKEN_URL)
+                || doesUriMatchPattern(requestPath, OAuth20Constants.TOKEN_URL);
     }
 
     /**

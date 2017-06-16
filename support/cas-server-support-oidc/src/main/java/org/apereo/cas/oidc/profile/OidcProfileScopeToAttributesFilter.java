@@ -10,6 +10,7 @@ import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -44,14 +45,18 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcProfileScopeToAttributesFilter.class);
 
     private Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
+    private Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
+
+    private final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper;
     private final PrincipalFactory principalFactory;
     private final ServicesManager servicesManager;
-    private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
 
     public OidcProfileScopeToAttributesFilter(final PrincipalFactory principalFactory,
                                               final ServicesManager servicesManager,
-                                              final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes) {
-        filters = new HashMap<>();
+                                              final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes,
+                                              final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper) {
+        this.attributeToScopeClaimMapper = attributeToScopeClaimMapper;
+        this.filters = new HashMap<>();
 
         final String packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
         final Reflections reflections =
@@ -92,9 +97,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             final Map<String, Object> attributes = new HashMap<>();
             filterAttributesByScope(scopes, attributes, principal, service, oidcService);
             return this.principalFactory.createPrincipal(profile.getId(), attributes);
-        } else {
-            return principal;
         }
+        return principal;
     }
 
     private void filterAttributesByScope(final Collection<String> stream,
@@ -102,7 +106,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                          final Principal principal,
                                          final Service service,
                                          final RegisteredService registeredService) {
-        stream.stream().distinct()
+        stream.stream()
+                .distinct()
                 .filter(s -> this.filters.containsKey(s))
                 .forEach(s -> {
                     final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
@@ -117,50 +122,82 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             return;
         }
 
+        LOGGER.debug("Reconciling scopes and claims for [{}]", service.getServiceId());
+
         final List<String> otherScopes = new ArrayList<>();
         final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
         final OidcRegisteredService oidc = OidcRegisteredService.class.cast(service);
 
         oidc.getScopes().forEach(s -> {
+
+            LOGGER.debug("Reviewing scope [{}] for [{}]", s, service.getServiceId());
+
             switch (s.trim().toLowerCase()) {
                 case OidcConstants.EMAIL:
+                    LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s, OidcEmailScopeAttributeReleasePolicy.class.getSimpleName());
                     policy.getPolicies().add(new OidcEmailScopeAttributeReleasePolicy());
                     break;
                 case OidcConstants.ADDRESS:
+                    LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
+                            OidcAddressScopeAttributeReleasePolicy.class.getSimpleName());
                     policy.getPolicies().add(new OidcAddressScopeAttributeReleasePolicy());
                     break;
                 case OidcConstants.PROFILE:
+                    LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
+                            OidcProfileScopeAttributeReleasePolicy.class.getSimpleName());
                     policy.getPolicies().add(new OidcProfileScopeAttributeReleasePolicy());
                     break;
                 case OidcConstants.PHONE:
+                    LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
+                            OidcProfileScopeAttributeReleasePolicy.class.getSimpleName());
                     policy.getPolicies().add(new OidcPhoneScopeAttributeReleasePolicy());
                     break;
                 case OidcConstants.OFFLINE_ACCESS:
+                    LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", s, service.getId());
                     oidc.setGenerateRefreshToken(true);
                     break;
                 case OidcCustomScopeAttributeReleasePolicy.SCOPE_CUSTOM:
+                    LOGGER.debug("Found custom scope [{}] for service [{}]", s, service.getId());
                     otherScopes.add(s.trim());
                     break;
                 default:
+                    LOGGER.debug("[{}] appears to be a user-defined scope and does not match any of the predefined standard scopes. "
+                            + "Checking [{}] against user-defined scopes provided as [{}]", s, s, userScopes);
+
                     final BaseOidcScopeAttributeReleasePolicy userPolicy = userScopes.stream()
                             .filter(t -> t.getScopeName().equals(s.trim()))
                             .findFirst()
                             .orElse(null);
                     if (userPolicy != null) {
+                        LOGGER.debug("Mapped user-defined scope [{}] to attribute release policy [{}]", s, userPolicy);
                         policy.getPolicies().add(userPolicy);
                     }
             }
         });
         otherScopes.remove(OidcConstants.OPENID);
         if (!otherScopes.isEmpty()) {
+            LOGGER.debug("Mapped scopes [{}] to attribute release policy [{}]", otherScopes,
+                    OidcCustomScopeAttributeReleasePolicy.class.getSimpleName());
             policy.getPolicies().add(new OidcCustomScopeAttributeReleasePolicy(otherScopes));
         }
 
         if (policy.getPolicies().isEmpty()) {
+            LOGGER.warn("No attribute release policy could be determined based on given scopes. "
+                    + "No claims/attributes will be released to [{}]", service.getId());
             oidc.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         } else {
             oidc.setAttributeReleasePolicy(policy);
         }
-        this.servicesManager.save(oidc);
+
+        LOGGER.debug("Scope/claim reconciliation for service [{}] resulted in the following attribute release policy [{}]",
+                service.getServiceId(), oidc.getAttributeReleasePolicy());
+
+        if (!oidc.equals(service)) {
+            LOGGER.debug("Saving scope/claim reconciliation results for service [{}] into registry", service.getServiceId());
+            this.servicesManager.save(oidc);
+            LOGGER.debug("Saved service [{}] into registry", service.getServiceId());
+        } else {
+            LOGGER.debug("No changes detected in service [{}] after scope/claim reconciliation", service.getId());
+        }
     }
 }
