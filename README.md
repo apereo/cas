@@ -8,7 +8,7 @@ a CAS WAR Overlay through a web UI.
 # Run
 
 ```bash
-./mvnw clean package
+./mvnw clean spring-boot:run
 ```
 
 Navigate to `http://localhost:8080`
