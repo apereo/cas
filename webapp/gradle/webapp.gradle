@@ -43,7 +43,10 @@ if (Boolean.getBoolean("enableJRebelAgent")) {
 }
 
 node {
+    version = '7.10.0'
+    npmVersion = '4.2.0'
     nodeModulesDir = project(":webapp").projectDir
+    download = true
 }
 
 gulp {
