@@ -41,8 +41,6 @@ public class EhcacheProperties {
     
     private String cacheManagerName = "ticketRegistryCacheManager";
 
-    private String cacheName = "org.apereo.cas.ticket.TicketCache";
-
     private int diskExpiryThreadIntervalSeconds;
     
     private boolean eternal;
@@ -54,11 +52,7 @@ public class EhcacheProperties {
     private int maxElementsOnDisk;
     
     private String memoryStoreEvictionPolicy = "LRU";
-    
-    private int cacheTimeToIdle;
-    
-    private int cacheTimeToLive = Integer.MAX_VALUE;
-    
+
     private String persistence = "NONE";
 
     @NestedConfigurationProperty
@@ -168,14 +162,6 @@ public class EhcacheProperties {
         this.cacheManagerName = cacheManagerName;
     }
 
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public void setCacheName(final String cacheName) {
-        this.cacheName = cacheName;
-    }
-
     public int getDiskExpiryThreadIntervalSeconds() {
         return diskExpiryThreadIntervalSeconds;
     }
@@ -216,22 +202,6 @@ public class EhcacheProperties {
         this.memoryStoreEvictionPolicy = memoryStoreEvictionPolicy;
     }
     
-    public int getCacheTimeToIdle() {
-        return cacheTimeToIdle;
-    }
-
-    public void setCacheTimeToIdle(final int cacheTimeToIdle) {
-        this.cacheTimeToIdle = cacheTimeToIdle;
-    }
-
-    public int getCacheTimeToLive() {
-        return cacheTimeToLive;
-    }
-
-    public void setCacheTimeToLive(final int cacheTimeToLive) {
-        this.cacheTimeToLive = cacheTimeToLive;
-    }
-
     public int getMaxElementsInCache() {
         return maxElementsInCache;
     }
