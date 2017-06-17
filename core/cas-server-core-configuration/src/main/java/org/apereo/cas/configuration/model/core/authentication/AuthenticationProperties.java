@@ -146,7 +146,7 @@ public class AuthenticationProperties {
     private SpnegoProperties spnego = new SpnegoProperties();
     
     @NestedConfigurationProperty
-    private WsFederationDelegationProperties wsfed = new WsFederationDelegationProperties();
+    private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
 
     @NestedConfigurationProperty
     private WsFederationProperties wsfedIdP = new WsFederationProperties();
@@ -339,11 +339,11 @@ public class AuthenticationProperties {
         this.spnego = spnego;
     }
     
-    public WsFederationDelegationProperties getWsfed() {
+    public List<WsFederationDelegationProperties> getWsfed() {
         return wsfed;
     }
 
-    public void setWsfed(final WsFederationDelegationProperties wsfed) {
+    public void setWsfed(final List<WsFederationDelegationProperties> wsfed) {
         this.wsfed = wsfed;
     }
 
