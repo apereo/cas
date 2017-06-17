@@ -72,7 +72,6 @@ import static org.junit.Assert.*;
         CasPersonDirectoryConfiguration.class,
         HazelcastTicketRegistryTicketCatalogConfiguration.class,
         CasCoreTicketCatalogConfiguration.class})
-@Ignore
 public class HazelcastTicketRegistryReplicationTests {
     private static final String TGT_ID = "TGT";
     private static final String ST_ID_1 = "ST1";
