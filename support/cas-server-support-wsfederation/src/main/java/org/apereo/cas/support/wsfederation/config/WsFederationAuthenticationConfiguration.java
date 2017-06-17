@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
+import java.util.Collection;
+
 /**
  * This is {@link WsFederationAuthenticationConfiguration}.
  *
@@ -53,11 +55,12 @@ public class WsFederationAuthenticationConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public Action wsFederationAction(@Qualifier("wsFedConfig") final WsFederationConfiguration wsFedConfig) {
+    public Action wsFederationAction(@Qualifier("wsFederationConfigurations")
+                                     final Collection<WsFederationConfiguration> wsFederationConfigurations) {
         return new WsFederationAction(authenticationSystemSupport,
                 centralAuthenticationService,
-                wsFedConfig, 
-                wsFederationHelper(), 
+                wsFederationConfigurations,
+                wsFederationHelper(),
                 servicesManager);
     }
 }
