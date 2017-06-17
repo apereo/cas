@@ -2197,6 +2197,7 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     force = true
                 }
         ],
