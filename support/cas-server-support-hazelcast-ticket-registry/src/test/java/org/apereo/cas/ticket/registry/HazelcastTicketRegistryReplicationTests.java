@@ -29,6 +29,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.SchedulingUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,7 @@ import static org.junit.Assert.*;
         CasPersonDirectoryConfiguration.class,
         HazelcastTicketRegistryTicketCatalogConfiguration.class,
         CasCoreTicketCatalogConfiguration.class})
+@Ignore
 public class HazelcastTicketRegistryReplicationTests {
     private static final String TGT_ID = "TGT";
     private static final String ST_ID_1 = "ST1";

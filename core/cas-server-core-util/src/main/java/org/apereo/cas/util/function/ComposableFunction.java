@@ -8,7 +8,7 @@ import java.util.function.Function;
  * Represents a function that accepts one argument and produces a result and
  * could be with a Consumer of the resulting type.
  *
- * PLEASE REMOVE THIS IF IT'S ADDED TO THE JDK
+ * TODO: REMOVE THIS IF IT'S ADDED TO THE JDK
  *
  * @author David Rodriguez
  *
