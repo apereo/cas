@@ -35,6 +35,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        return new WsFederationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, casProperties.getAuthn().getWsfed().isAutoRedirect());
+        final boolean redirect = casProperties.getAuthn().getWsfed().size() == 1 ? true : false;
+        return new WsFederationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, redirect);
     }
 }
