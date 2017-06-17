@@ -70,7 +70,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         }
 
         final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED
-                                 && response.getStatus() != HttpStatus.SC_OK;
+                                 && response.getStatus() != HttpStatus.SC_OK
+                                 && response.getStatus() != HttpStatus.SC_MOVED_TEMPORARILY;
 
         if (recordEvent) {
             logger.debug("Recording submission failure for {}", request.getRequestURI());
