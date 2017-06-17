@@ -236,9 +236,13 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
                     final SAML2Client client = new SAML2Client(cfg);
                     
                     final int count = index.intValue();
-                    if (count > 0) {
+
+                    if (saml.getClientName() != null) {
+                        client.setName(saml.getClientName());
+                    } else if (count > 0) {
                         client.setName(client.getClass().getSimpleName() + count);
                     }
+
                     index.incrementAndGet();
                     LOGGER.debug("Created client [{}]", client);
                     properties.add(client);
