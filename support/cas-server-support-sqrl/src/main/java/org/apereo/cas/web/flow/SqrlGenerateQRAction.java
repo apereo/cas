@@ -52,11 +52,10 @@ public class SqrlGenerateQRAction extends AbstractAction {
                     .append(EncodingUtils.encodeBase64(imageInByteArray))
                     .toString();
             final int pageRefreshSeconds = sqrlConfig.getNutValidityInSeconds() / 2;
-            request.setAttribute("sqrlRefreshSeconds", Integer.toString(pageRefreshSeconds));
-            request.setAttribute("sqrlQrImage", b64);
-            request.setAttribute("sqrlUrl", pageData.getUrl());
-            request.setAttribute("sqrlQrDescription", "Click or scan to login with SQRL");
-            request.setAttribute("sqrlCorrelator", pageData.getCorrelator());
+            requestContext.getFlowScope().put("sqrlRefreshSeconds", Integer.toString(pageRefreshSeconds));
+            requestContext.getFlowScope().put("sqrlQrImage", b64);
+            requestContext.getFlowScope().put("sqrlUrl", pageData.getUrl());
+            requestContext.getFlowScope().put("sqrlCorrelator", pageData.getCorrelator());
         }
         return null;
     }

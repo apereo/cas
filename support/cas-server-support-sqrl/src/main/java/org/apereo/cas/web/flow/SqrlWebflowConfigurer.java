@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
@@ -17,6 +18,10 @@ public class SqrlWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() throws Exception {
-        
+        final Flow flow = getLoginFlow();
+
+        if (flow != null) {
+            flow.getStartActionList().add(createEvaluateAction("sqrlGenerateQRAction"));
+        }
     }
 }
