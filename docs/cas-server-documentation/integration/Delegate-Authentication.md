@@ -3,11 +3,7 @@ layout: default
 title: CAS - Delegate Authentication
 ---
 
-<p align="center">
-  <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="150" />
-</p>
-
-# Delegate Authentication
+# Delegated Authentication
 
 CAS can act as a client using the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
 
