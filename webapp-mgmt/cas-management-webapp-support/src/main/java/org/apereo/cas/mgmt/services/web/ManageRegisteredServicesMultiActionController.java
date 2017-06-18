@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -156,10 +155,10 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     @GetMapping(value = "/getServices")
     public void getServices(final HttpServletResponse response) {
         ensureDefaultServiceExists();
+        final List<RegisteredServiceViewBean> serviceBeans = this.servicesManager.getAllServices().stream()
+                .map(this.registeredServiceFactory::createServiceViewBean)
+                .collect(Collectors.toList());
         final Map<String, Object> model = new HashMap<>();
-        final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
-        final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
-        serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
         model.put("services", serviceBeans);
         model.put(STATUS, HttpServletResponse.SC_OK);
         JsonUtils.render(model, response);

@@ -8,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Return only the collection of allowed attributes out of what's resolved
@@ -67,15 +67,12 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     protected Map<String, Object> authorizeReleaseOfAllowedAttributes(final Map<String, Object> attrs) {
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
-        final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
-        getAllowedAttributes().stream()
-                .map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null)
-                .forEach(attribute -> {
-                    LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
-                    attributesToRelease.put((String) attribute[0], attribute[1]);
-                });
-        return attributesToRelease;
+        return getAllowedAttributes().stream()
+                .map(attr -> new Object[]{attr, resolvedAttributes.get(attr)})
+                .filter(pair -> pair[1] != null)
+                .peek(attribute -> LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]))
+                .collect(Collectors.toMap(attributes -> (String) attributes[0], attributes -> attributes[1]));
     }
 
 

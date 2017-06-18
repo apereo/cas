@@ -51,8 +51,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingMetadataResolverCacheLoader} that uses Guava's cache loading strategy
@@ -301,18 +303,21 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
 
     private static void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
-            final List<QName> roles = new ArrayList<>();
             final Set<String> rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
-            rolesSet.stream().forEach(s -> {
-                if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    LOGGER.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                    roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                }
-                if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    LOGGER.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                    roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                }
-            });
+            final List<QName> roles = rolesSet.stream()
+                    .map(s -> {
+                        if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                            LOGGER.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                            return SPSSODescriptor.DEFAULT_ELEMENT_NAME;
+                        }
+                        if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                            LOGGER.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                            return IDPSSODescriptor.DEFAULT_ELEMENT_NAME;
+                        }
+                        return null;
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
             final EntityRoleFilter filter = new EntityRoleFilter(roles);
             filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
@@ -321,7 +326,6 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             LOGGER.debug("Added entity role filter with roles [{}]", roles);
         }
     }
-
 
     private static void buildPredicateFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection())

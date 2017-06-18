@@ -178,8 +178,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             buildSamlResponse(response, request, authenticationContext, casAssertion, binding);
         } catch (final AuthenticationException e) {
             LOGGER.error(e.getMessage(), e);
-            final String error = e.getHandlerErrors().values()
-                    .stream()
+            final String error = e.getHandlerErrors().values().stream()
                     .map(Class::getSimpleName)
                     .collect(Collectors.joining(","));
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, error));

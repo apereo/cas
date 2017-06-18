@@ -84,8 +84,7 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
             final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
             final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
-            this.servicesManager.getAllServices()
-                    .stream()
+            this.servicesManager.getAllServices().stream()
                     .filter(s -> s instanceof OidcRegisteredService && StringUtils.isNotBlank(((OidcRegisteredService) s).getJwks()))
                     .forEach(
                             Unchecked.consumer(s -> {

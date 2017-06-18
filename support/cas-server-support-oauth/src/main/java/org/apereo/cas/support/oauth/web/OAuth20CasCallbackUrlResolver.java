@@ -26,8 +26,8 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     
     private static Optional<URIBuilder.BasicNameValuePair> getQueryParameter(final WebContext context, final String name) {
         final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
-        return builderContext.getQueryParams()
-                .stream().filter(p -> p.getName().equalsIgnoreCase(name))
+        return builderContext.getQueryParams().stream()
+                .filter(p -> p.getName().equalsIgnoreCase(name))
                 .findFirst();
     }
 

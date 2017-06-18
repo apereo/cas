@@ -42,8 +42,7 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
 
     private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction, final AuthenticationBuilder builder,
                                                     final WSFederationRegisteredService rp, final SecurityTokenServiceClient sts) {
-        final UsernamePasswordCredential up = transaction.getCredentials()
-                .stream()
+        final UsernamePasswordCredential up = transaction.getCredentials().stream()
                 .filter(UsernamePasswordCredential.class::isInstance)
                 .map(UsernamePasswordCredential.class::cast)
                 .findFirst()

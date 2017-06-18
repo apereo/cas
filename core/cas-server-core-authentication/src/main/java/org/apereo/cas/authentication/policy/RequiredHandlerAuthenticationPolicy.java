@@ -62,11 +62,8 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
 
         LOGGER.debug("Examining authentication successes for authentication handler [{}]", this.requiredHandlerName);
         if (StringUtils.isNotBlank(this.requiredHandlerName)) {
-            credsOk = authn.getSuccesses().keySet()
-                    .stream()
-                    .filter(s -> s.equalsIgnoreCase(this.requiredHandlerName))
-                    .findAny()
-                    .isPresent();
+            credsOk = authn.getSuccesses().keySet().stream()
+                    .anyMatch(s -> s.equalsIgnoreCase(this.requiredHandlerName));
 
             if (!credsOk) {
                 LOGGER.warn("Required authentication handler [{}] is not present in the list of recorded successful authentications",

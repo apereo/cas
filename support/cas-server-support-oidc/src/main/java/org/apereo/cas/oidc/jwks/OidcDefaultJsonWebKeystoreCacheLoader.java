@@ -58,10 +58,12 @@ public class OidcDefaultJsonWebKeystoreCacheLoader extends CacheLoader<String, O
                     LOGGER.warn("No JSON web keys could be found");
                     return Optional.empty();
                 }
-                final long badKeysCount = jsonWebKeySet.getJsonWebKeys().stream().filter(k ->
-                        StringUtils.isBlank(k.getAlgorithm())
-                                && StringUtils.isBlank(k.getKeyId())
-                                && StringUtils.isBlank(k.getKeyType())).count();
+                final long badKeysCount = jsonWebKeySet.getJsonWebKeys().stream()
+                        .filter(k ->
+                                StringUtils.isBlank(k.getAlgorithm())
+                                        && StringUtils.isBlank(k.getKeyId())
+                                        && StringUtils.isBlank(k.getKeyType()))
+                        .count();
 
                 if (badKeysCount == jsonWebKeySet.getJsonWebKeys().size()) {
                     LOGGER.warn("No valid JSON web keys could be found");

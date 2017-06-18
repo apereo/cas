@@ -20,11 +20,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Controller that exposes the CAS internal state and beans
@@ -97,31 +98,21 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
      */
     @GetMapping("/getConfiguration")
     @ResponseBody
-    public Map getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
+    public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Pattern pattern = RegexUtils.createPattern("(configService:|applicationConfig:).+(application|cas).+");
 
         if (environmentEndpoint.isEnabled()) {
-            final Map results = new TreeMap();
-            final Map<String, Object> environmentSettings = environmentEndpoint.invoke();
-            environmentSettings.entrySet()
-                    .stream()
+            return environmentEndpoint.invoke().entrySet().stream()
                     .filter(entry -> pattern.matcher(entry.getKey()).matches())
-                    .forEach(entry -> {
-                        final Map<String, Object> keys = (Map<String, Object>) entry.getValue();
-                        keys.keySet().forEach(key -> {
-                            if (!results.containsKey(key)) {
-                                final String propHolder = String.format("${%s}", key);
-                                final String value = this.environment.resolvePlaceholders(propHolder);
-                                results.put(key, environmentEndpoint.sanitize(key, value));
-                            }
-                        });
-                    });
-
-            return results;
+                    .map(entry -> ((Map<String, Object>) entry.getValue()).entrySet())
+                    .flatMap(Collection::stream)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toMap(key -> key,
+                            key -> environmentEndpoint.sanitize(key, this.environment.resolvePlaceholders(String.format("${%s}", key)))));
         }
 
-        return new LinkedHashMap();
+        return Collections.emptyMap();
     }
 
     /**

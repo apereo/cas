@@ -109,10 +109,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         stream.stream()
                 .distinct()
                 .filter(s -> this.filters.containsKey(s))
-                .forEach(s -> {
-                    final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
-                    attributes.putAll(policy.getAttributes(principal, service, registeredService));
-                });
+                .map(s -> filters.get(s))
+                .forEach(policy -> attributes.putAll(policy.getAttributes(principal, service, registeredService)));
     }
 
     @Override
@@ -164,14 +162,13 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                     LOGGER.debug("[{}] appears to be a user-defined scope and does not match any of the predefined standard scopes. "
                             + "Checking [{}] against user-defined scopes provided as [{}]", s, s, userScopes);
 
-                    final BaseOidcScopeAttributeReleasePolicy userPolicy = userScopes.stream()
+                    userScopes.stream()
                             .filter(t -> t.getScopeName().equals(s.trim()))
                             .findFirst()
-                            .orElse(null);
-                    if (userPolicy != null) {
-                        LOGGER.debug("Mapped user-defined scope [{}] to attribute release policy [{}]", s, userPolicy);
-                        policy.getPolicies().add(userPolicy);
-                    }
+                            .ifPresent(userPolicy -> {
+                                LOGGER.debug("Mapped user-defined scope [{}] to attribute release policy [{}]", s, userPolicy);
+                                policy.getPolicies().add(userPolicy);
+                            });
             }
         });
         otherScopes.remove(OidcConstants.OPENID);

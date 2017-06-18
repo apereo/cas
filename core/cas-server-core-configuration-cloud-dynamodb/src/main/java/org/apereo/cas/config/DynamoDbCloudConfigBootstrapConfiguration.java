@@ -16,7 +16,6 @@ import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.google.common.base.Throwables;
@@ -69,12 +68,9 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
         final ScanRequest scan = new ScanRequest(TABLE_NAME);
         LOGGER.debug("Scanning table with request [{}]", scan);
-        final ScanResult result = amazonDynamoDBClient.scan(scan);
-        LOGGER.debug("Scanned table with result [{}]", scan);
 
         final Properties props = new Properties();
-        result.getItems()
-                .stream()
+        amazonDynamoDBClient.scan(scan).getItems().stream()
                 .map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting)
                 .forEach(p -> props.put(p.getKey(), p.getValue()));
         return new PropertiesPropertySource(getClass().getSimpleName(), props);

@@ -89,10 +89,7 @@ public final class SamlIdPUtils {
                                                                          final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
-            final List<MetadataResolver> resolvers;
-            final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
-
-            resolvers = registeredServices.stream()
+            final List<MetadataResolver> resolvers = registeredServices.stream()
                     .filter(SamlRegisteredService.class::isInstance)
                     .map(SamlRegisteredService.class::cast)
                     .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
@@ -102,6 +99,7 @@ public final class SamlIdPUtils {
                     .collect(Collectors.toList());
 
             LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
+            final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
             chainingMetadataResolver.setResolvers(resolvers);
             chainingMetadataResolver.setId(entityID);
             chainingMetadataResolver.initialize();

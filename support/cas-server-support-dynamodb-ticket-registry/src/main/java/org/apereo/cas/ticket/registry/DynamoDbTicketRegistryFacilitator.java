@@ -29,10 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -124,20 +124,13 @@ public class DynamoDbTicketRegistryFacilitator {
      * @return the all
      */
     public Collection<Ticket> getAll() {
-        final Collection<Ticket> tickets = new ArrayList<>();
-        final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-        metadata.forEach(r -> {
-            final ScanRequest scan = new ScanRequest(r.getProperties().getStorageName());
-            LOGGER.debug("Scanning table with request [{}]", scan);
-            final ScanResult result = this.amazonDynamoDBClient.scan(scan);
-            LOGGER.debug("Scanned table with result [{}]", scan);
-
-            tickets.addAll(result.getItems()
-                    .stream()
-                    .map(DynamoDbTicketRegistryFacilitator::deserializeTicket)
-                    .collect(Collectors.toList()));
-        });
-        return tickets;
+        return this.ticketCatalog.findAll().stream()
+                .map(r -> new ScanRequest(r.getProperties().getStorageName()))
+                .map(amazonDynamoDBClient::scan)
+                .map(ScanResult::getItems)
+                .flatMap(List::stream)
+                .map(DynamoDbTicketRegistryFacilitator::deserializeTicket)
+                .collect(Collectors.toList());
     }
 
     /**

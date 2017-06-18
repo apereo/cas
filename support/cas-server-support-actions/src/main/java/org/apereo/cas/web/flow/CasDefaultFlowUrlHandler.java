@@ -8,6 +8,7 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -59,8 +60,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
         final String queryString = flowParams.entrySet().stream()
                 .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
-                .reduce((param1, param2) -> param1 + '&' + param2)
-                .orElse(StringUtils.EMPTY);
+                .collect(Collectors.joining("&"));
 
         builder.append(queryString);
         return builder.toString();

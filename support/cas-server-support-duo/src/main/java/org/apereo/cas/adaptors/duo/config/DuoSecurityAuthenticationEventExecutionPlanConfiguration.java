@@ -80,8 +80,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     public VariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider() {
         final DefaultVariegatedMultifactorAuthenticationProvider provider = new DefaultVariegatedMultifactorAuthenticationProvider();
 
-        casProperties.getAuthn().getMfa().getDuo()
-                .stream()
+        casProperties.getAuthn().getMfa().getDuo().stream()
                 .filter(duo -> StringUtils.isNotBlank(duo.getDuoApiHost())
                         && StringUtils.isNotBlank(duo.getDuoIntegrationKey())
                         && StringUtils.isNotBlank(duo.getDuoSecretKey())

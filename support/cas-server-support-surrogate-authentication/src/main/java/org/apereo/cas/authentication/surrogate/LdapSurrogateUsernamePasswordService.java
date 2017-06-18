@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -60,7 +60,6 @@ public class LdapSurrogateUsernamePasswordService implements SurrogateAuthentica
 
     @Override
     public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
-        final Collection<String> eligible = new LinkedHashSet<>();
         try {
             final SearchFilter filter = Beans.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), Arrays.asList(username));
             LOGGER.debug("Using search filter: [{}]", filter);
@@ -70,27 +69,25 @@ public class LdapSurrogateUsernamePasswordService implements SurrogateAuthentica
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (!LdapUtils.containsResultEntry(response)) {
-                return eligible;
+                return Collections.emptySet();
             }
 
             final LdapEntry ldapEntry = response.getResult().getEntry();
             final LdapAttribute attribute = ldapEntry.getAttribute(ldapProperties.getMemberAttributeName());
             if (attribute == null || attribute.getStringValues().isEmpty()) {
-                return eligible;
+                return Collections.emptySet();
             }
 
             final Pattern pattern = RegexUtils.createPattern(ldapProperties.getMemberAttributeValueRegex());
-            eligible.addAll(
-                    attribute.getStringValues()
-                            .stream()
+            return attribute.getStringValues().stream()
                             .map(pattern::matcher)
                             .filter(Matcher::matches)
                             .map(p -> p.group(1))
-                            .collect(Collectors.toList()));
+                            .collect(Collectors.toList());
 
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return eligible;
+        return Collections.emptySet();
     }
 }

@@ -13,8 +13,8 @@ import org.springframework.core.io.Resource;
 
 import javax.mail.AuthenticationFailedException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,29 +66,23 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
 
             if (!this.jsonResource.getFile().exists() || this.jsonResource.getFile().length() <= 0) {
                 LOGGER.debug("JSON resource [{}] does not exist or is empty", jsonResource);
-                return new ArrayList<>();
+                return Collections.emptyList();
             }
-
 
             final Map<String, List<U2FDeviceRegistration>> devices = readDevicesFromJsonResource();
 
             if (!devices.isEmpty()) {
-                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_SERVICES);
                 final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-                final List<U2FDeviceRegistration> list = devs
-                        .stream()
+                return devices.get(MAP_KEY_SERVICES).stream()
                         .filter(d -> d.getUsername().equals(username)
                                 && (d.getDate().isEqual(expirationDate) || d.getDate().isAfter(expirationDate)))
-                        .collect(Collectors.toList());
-
-                return list.stream()
                         .map(d -> DeviceRegistration.fromJson(d.getRecord()))
                         .collect(Collectors.toList());
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     private Map<String, List<U2FDeviceRegistration>> readDevicesFromJsonResource() throws java.io.IOException {
@@ -97,12 +91,10 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
                 });
     }
 
-
     @Override
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
         try {
-            final Collection<DeviceRegistration> devices = getRegisteredDevices(username);
-            final boolean matched = devices.stream().anyMatch(d -> d.equals(registration));
+            final boolean matched = getRegisteredDevices(username).stream().anyMatch(d -> d.equals(registration));
             if (!matched) {
                 throw new AuthenticationFailedException("Failed to authenticate U2F device because "
                         + "no matching record was found. Is device registered?");
@@ -113,8 +105,7 @@ public class U2FJsonResourceDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     private static List<U2FDeviceRegistration> getU2fDeviceRegistrations(final String username, final Collection<DeviceRegistration> devices) {
-        return devices
-                .stream()
+        return devices.stream()
                 .map(d -> {
                     final U2FDeviceRegistration current = new U2FDeviceRegistration();
                     current.setUsername(username);

@@ -151,8 +151,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param attributes person attributes
      * @return principal attributes
      */
-    protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(
-            final Map<String, List<Object>> attributes) {
+    protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
         return attributes.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
                         entry -> entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
@@ -164,19 +163,20 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return person attributes
      */
     private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
-        final Map<String, List<Object>> convertedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         final Map<String, Object> principalAttributes = p.getAttributes();
 
-        principalAttributes.entrySet().stream().forEach(entry -> {
-            final Object values = entry.getValue();
-            final String key = entry.getKey();
-            if (values instanceof List) {
-                convertedAttributes.put(key, (List) values);
-            } else {
-                convertedAttributes.put(key, Collections.singletonList(values));
-            }
-        });
-        return convertedAttributes;
+        return principalAttributes.entrySet().stream().collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> {
+                    final Object values = entry.getValue();
+                    if (values instanceof List) {
+                        return (List) values;
+                    } else {
+                        return Collections.singletonList(values);
+                    }
+                },
+                (e1, e2) -> e1,
+                () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER)));
     }
 
     /**

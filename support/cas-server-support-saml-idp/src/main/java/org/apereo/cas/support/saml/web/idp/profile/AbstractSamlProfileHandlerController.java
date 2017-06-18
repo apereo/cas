@@ -58,6 +58,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * A parent controller to handle SAML requests.
@@ -423,24 +424,17 @@ public abstract class AbstractSamlProfileHandlerController {
             return initialUrl;
         }
 
-        final TreeMap<String, String> mappings = new TreeMap();
-        this.authenticationContextClassMappings.stream().map(s -> {
-            final String[] bits = s.split("->");
-            return Pair.of(bits[0], bits[1]);
-        }).forEach(p -> mappings.put(p.getKey(), p.getValue()));
+        // PLEASE REVIEW: Could this mappings Map could be computed when object is created?
+        final TreeMap<String, String> mappings = this.authenticationContextClassMappings.stream()
+                .map(s -> s.split("->"))
+                .collect(Collectors.toMap((String[] p) -> p[0], (String[] p) -> p[1], (s, s2) -> s, TreeMap::new));
 
-        final Optional<AuthnContextClassRef> p =
-                authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs().stream().filter(ref -> {
-                    final String clazz = ref.getAuthnContextClassRef();
-                    return mappings.containsKey(clazz);
-                }).findFirst();
-
-        if (p.isPresent()) {
-            final String mappedClazz = mappings.get(p.get().getAuthnContextClassRef());
-            return initialUrl + '&' + this.authenticationContextRequestParameter + '=' + mappedClazz;
-        }
-
-        return initialUrl;
+        return authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs().stream()
+                .filter(ref -> mappings.containsKey(ref.getAuthnContextClassRef()))
+                .map(AuthnContextClassRef::getAuthnContextClassRef)
+                .findFirst()
+                .map(s -> initialUrl + '&' + this.authenticationContextRequestParameter + '=' + mappings.get(s))
+                .orElse(initialUrl);
     }
 
     /**

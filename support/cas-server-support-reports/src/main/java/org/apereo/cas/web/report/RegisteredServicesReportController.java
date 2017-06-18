@@ -50,8 +50,7 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
     @ResponseBody
     public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
-        final Callable<Map<String, Object>> asyncTask = () -> this.servicesManager.getAllServices()
-                .stream()
+        final Callable<Map<String, Object>> asyncTask = () -> this.servicesManager.getAllServices().stream()
                 .collect(Collectors.toMap(RegisteredService::getName, Function.identity()));
         return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
     }

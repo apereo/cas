@@ -122,11 +122,10 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     public Collection<Ticket> getTickets() {
         final Collection<Ticket> tickets = new HashSet<>();
         try {
-            final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-            metadata.forEach(t -> {
-                final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(t);
-                tickets.addAll(map.values().stream().limit(this.pageSize).collect(Collectors.toList()));
-            });
+            this.ticketCatalog.findAll()
+                    .stream()
+                    .map(this::getTicketMapInstanceByMetadata)
+                    .forEach(map -> tickets.addAll(map.values().stream().limit(this.pageSize).collect(Collectors.toList())));
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }

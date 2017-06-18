@@ -68,8 +68,7 @@ public class DefaultLogoutManager implements LogoutManager {
     }
 
     private void performLogoutForTicket(final TicketGrantingTicket ticket, final List<LogoutRequest> logoutRequests) {
-        ticket.getServices().entrySet()
-                .stream()
+        ticket.getServices().entrySet().stream()
                 .filter(entry -> entry.getValue() instanceof WebApplicationService)
                 .forEach(entry -> {
                     final Service service = entry.getValue();

@@ -147,8 +147,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
     }
 
     private static Collection<File> scanForConfigurationFilesByPattern(final File config, final String regex) {
-        return FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
-                .stream()
+        return FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE).stream()
                 .sorted(Comparator.comparing(File::getName))
                 .collect(Collectors.toList());
     }

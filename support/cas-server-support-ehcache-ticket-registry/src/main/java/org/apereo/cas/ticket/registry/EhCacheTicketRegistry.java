@@ -156,12 +156,10 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public Collection<Ticket> getTickets() {
         final Collection<Element> tickets = new HashSet<>();
         try {
-            final Collection<TicketDefinition> metadata = this.ticketCatalog.findAll();
-            metadata.forEach(t -> {
-                final Ehcache map = getTicketCacheFor(t);
-                final Collection<Element> cacheTickets = map.getAll(map.getKeysWithExpiryCheck()).values();
-                tickets.addAll(cacheTickets);
-            });
+            this.ticketCatalog.findAll().stream()
+                    .map(this::getTicketCacheFor)
+                    .map(map -> map.getAll(map.getKeysWithExpiryCheck()).values())
+                    .forEach(tickets::addAll);
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }

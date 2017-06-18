@@ -76,15 +76,11 @@ public class OidcAuthorizationRequestSupport {
      */
     public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
         final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
-        final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                .stream().filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
-                .findFirst();
 
-        if (parameter.isPresent()) {
-            final long maxAge = NumberUtils.toLong(parameter.get().getValue(), -1);
-            return Optional.of(maxAge);
-        }
-        return Optional.empty();
+        return builderContext.getQueryParams().stream()
+                .filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
+                .map(p -> NumberUtils.toLong(p.getValue(), -1))
+                .findFirst();
     }
 
     /**

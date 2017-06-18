@@ -38,9 +38,7 @@ public class ShibbolethPersonAttributeDao extends BasePersonAttributeDao {
 
         try {
             this.attributeResolver.resolveAttributes(attributeResolutionContext);
-            final Map<String, List<Object>> attributes = attributeResolutionContext.getResolvedIdPAttributes()
-                    .entrySet()
-                    .stream()
+            final Map<String, List<Object>> attributes = attributeResolutionContext.getResolvedIdPAttributes().entrySet().stream()
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             p -> p.getValue().getValues().stream().map(IdPAttributeValue::getValue).collect(Collectors.toList()))

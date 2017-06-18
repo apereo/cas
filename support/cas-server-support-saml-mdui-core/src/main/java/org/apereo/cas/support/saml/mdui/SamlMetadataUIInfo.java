@@ -9,6 +9,7 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,12 +86,11 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     @Override
     public Collection<Logo> getLogoUrls() {
-        final List<Logo> list = new ArrayList<>();
         if (this.uiInfo != null) {
-            list.addAll(this.uiInfo.getLogos().stream().map(l -> new Logo(l.getURL(), l.getHeight(),
-                    l.getWidth())).collect(Collectors.toList()));
+            return this.uiInfo.getLogos().stream()
+                    .map(l -> new Logo(l.getURL(), l.getHeight(), l.getWidth())).collect(Collectors.toList());
         }
-        return list;
+        return Collections.emptyList();
     }
 
     /**

@@ -31,8 +31,7 @@ public class OidcRegisteredServicePreProcessorEventListener {
      */
     @EventListener
     public void handleRegisteredServicesLoadedEvent(final CasRegisteredServicesLoadedEvent event) {
-        event.getServices()
-                .stream()
+        event.getServices().stream()
                 .filter(s -> s instanceof OidcRegisteredService)
                 .forEach(s -> {
                     LOGGER.debug("Attempting to reconcile scopes and attributes for service [{}] of type [{}]",

@@ -120,8 +120,7 @@ public class X509AuthenticationConfiguration {
     @Bean
     public RevocationChecker resourceCrlRevocationChecker() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        final Set<Resource> x509CrlResources = x509.getCrlResources()
-                .stream()
+        final Set<Resource> x509CrlResources = x509.getCrlResources().stream()
                 .map(s -> this.resourceLoader.getResource(s))
                 .collect(Collectors.toSet());
 

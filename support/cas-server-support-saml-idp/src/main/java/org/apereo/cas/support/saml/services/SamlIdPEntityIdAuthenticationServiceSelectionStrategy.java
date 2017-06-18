@@ -53,10 +53,8 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
      * @return the entity id as parameter
      */
     protected static Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
-        final URIBuilder builder = new URIBuilder(service.getId());
-        final Optional<URIBuilder.BasicNameValuePair> param = builder.getQueryParams().stream()
+        return new URIBuilder(service.getId()).getQueryParams().stream()
                 .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
-        return param;
     }
 
     @Override
