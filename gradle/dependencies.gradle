@@ -368,8 +368,24 @@ ext.libraries = [
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "dom4j", module: "dom4j")
+                    exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
+                    force = true
+                },
+                dependencies.create("dom4j:dom4j:$dom4jVersion") {
+                    exclude(group: "xml-apis", module: "xml-apis")
+                    force = true
+                },
+                dependencies.create("org.hibernate:hibernate-hikaricp:$hibernateVersion") {
+                    exclude(group: "org.javassist", module: "javassist")
+                    exclude(group: "dom4j", module: "dom4j")
+                    exclude(group: "xml-apis", module: "xml-apis")
+                    exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "com.zaxxer", module: "HikariCP")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.jboss.logging", module: "jboss-logging")
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-entitymanager:$hibernateVersion") {
@@ -383,10 +399,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "com.fasterxml", module: "classmate")
-                    force = true
-                },
-                dependencies.create("dom4j:dom4j:$dom4jVersion") {
-                    exclude(group: "xml-apis", module: "xml-apis")
                     force = true
                 },
                 dependencies.create("com.zaxxer:HikariCP:$hikariVersion") {
