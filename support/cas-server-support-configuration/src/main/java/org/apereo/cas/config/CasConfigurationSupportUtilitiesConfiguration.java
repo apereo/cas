@@ -58,7 +58,6 @@ public class CasConfigurationSupportUtilitiesConfiguration {
         @Qualifier("configurationPropertiesEnvironmentManager")
         private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
-        // PLEASE REVIEW: make sense to this publisher to live in a where ApplicationEventPublisher lives?? and just reference to it
         private Consumer<AbstractCasEvent> publish = event -> eventPublisher.publishEvent(event);
 
         @PostConstruct
