@@ -431,8 +431,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
         final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        return oidc.getUserDefinedScopes().entrySet()
-                .stream()
+        return oidc.getUserDefinedScopes().entrySet().stream()
                 .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), Arrays.asList(k.getValue().split(","))))
                 .collect(Collectors.toSet());
     }

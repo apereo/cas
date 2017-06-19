@@ -38,7 +38,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -283,11 +282,11 @@ public final class LdapUtils {
                                                  final Map<String, Set<String>> attributes) {
         try (Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
-            final List<AttributeModification> mods = attributes.entrySet()
-                    .stream().map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
-                            new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{})))).collect(Collectors.toList());
-            final ModifyRequest request = new ModifyRequest(currentDn,
-                    mods.toArray(new AttributeModification[]{}));
+            final AttributeModification[] mods = attributes.entrySet().stream()
+                    .map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
+                            new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{}))))
+                    .toArray(AttributeModification[]::new);
+            final ModifyRequest request = new ModifyRequest(currentDn, mods);
             request.setReferralHandler(new ModifyReferralHandler());
             operation.execute(request);
             return true;

@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,18 +113,15 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the all
      */
     public List<RegisteredService> getAll() {
-        final List<RegisteredService> services = new ArrayList<>();
         final ScanRequest scan = new ScanRequest(TABLE_NAME);
         LOGGER.debug("Scanning table with request [{}]", scan);
         final ScanResult result = this.amazonDynamoDBClient.scan(scan);
         LOGGER.debug("Scanned table with result [{}]", scan);
 
-        services.addAll(result.getItems()
-                .stream()
+        return result.getItems().stream()
                 .map(this::deserializeServiceFromBinaryBlob)
-                .sorted((o1, o2) -> Integer.valueOf(o1.getEvaluationOrder()).compareTo(o2.getEvaluationOrder()))
-                .collect(Collectors.toList()));
-        return services;
+                .sorted(Comparator.comparingInt(RegisteredService::getEvaluationOrder))
+                .collect(Collectors.toList());
     }
 
     /**

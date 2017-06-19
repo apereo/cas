@@ -42,7 +42,6 @@ import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -241,8 +240,7 @@ public class JpaLockingStrategyTests {
 
     private static void testConcurrency(final ExecutorService executor,
                                         final Collection<LockingStrategy> locks) throws Exception {
-        final List<Locker> lockers = new ArrayList<>(locks.size());
-        lockers.addAll(locks.stream().map(Locker::new).collect(Collectors.toList()));
+        final List<Locker> lockers = locks.stream().map(Locker::new).collect(Collectors.toList());
 
         final long lockCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
@@ -253,9 +251,7 @@ public class JpaLockingStrategyTests {
         }).count();
         assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
 
-        final List<Releaser> releasers = new ArrayList<>(locks.size());
-
-        releasers.addAll(locks.stream().map(Releaser::new).collect(Collectors.toList()));
+        final List<Releaser> releasers = locks.stream().map(Releaser::new).collect(Collectors.toList());
         final long releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
                 return result.get();

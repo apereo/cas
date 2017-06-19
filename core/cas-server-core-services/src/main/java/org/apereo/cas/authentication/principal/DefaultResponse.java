@@ -88,8 +88,7 @@ public class DefaultResponse implements Response {
         final String[] fragmentSplit = sanitizedUrl.split("#");
 
         builder.append(fragmentSplit[0]);
-        final String params = parameters.entrySet()
-                .stream()
+        final String params = parameters.entrySet().stream()
                 .filter(entry -> entry.getValue() != null).map(entry -> {
                     String param;
                     try {

@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -195,13 +194,12 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @return the supported name formats
      */
     public List<String> getSupportedNameIdFormats() {
-        final List<String> nameIdFormats = new ArrayList<>();
         final List<XMLObject> children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
-            nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
-                    .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList()));
+            return children.stream().filter(NameIDFormat.class::isInstance)
+                    .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList());
         }
-        return nameIdFormats;
+        return Collections.emptyList();
     }
 
     private List<AssertionConsumerService> getAssertionConsumerServices() {

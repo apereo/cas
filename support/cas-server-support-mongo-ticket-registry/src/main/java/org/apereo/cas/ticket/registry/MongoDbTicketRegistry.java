@@ -111,8 +111,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<TicketHolder> c = this.mongoTemplate.findAll(TicketHolder.class, this.collectionName);
-        return c.stream().map(MongoDbTicketRegistry::deserializeTicketFromMongoDocument).collect(Collectors.toSet());
+        return this.mongoTemplate.findAll(TicketHolder.class, this.collectionName).stream()
+                .map(MongoDbTicketRegistry::deserializeTicketFromMongoDocument)
+                .collect(Collectors.toSet());
     }
 
     @Override

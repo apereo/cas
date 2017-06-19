@@ -184,7 +184,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
             loggerMap.put("appenders", appenders);
             configuredLoggers.add(loggerMap);
         });
-        final Map<String, Object> responseMap = new HashMap<>();
+        final Map<String, Object> responseMap = new HashMap<>(1);
         responseMap.put("loggers", configuredLoggers);
         return responseMap;
     }
@@ -238,10 +238,9 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
 
         Assert.notNull(this.loggerContext);
 
-        final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
-        loggerConfigs.stream().
-                filter(cfg -> cfg.getName().equals(loggerName))
-                .forEachOrdered(cfg -> {
+        getLoggerConfigurations().stream()
+                .filter(cfg -> cfg.getName().equals(loggerName))
+                .forEach(cfg -> {
                     cfg.setLevel(Level.getLevel(loggerLevel));
                     cfg.setAdditive(additive);
                 });

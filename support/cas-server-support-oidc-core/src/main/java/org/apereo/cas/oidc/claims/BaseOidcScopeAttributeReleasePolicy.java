@@ -14,10 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseOidcScopeAttributeReleasePolicy}.
@@ -93,15 +93,12 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
                                                         final RegisteredService service) {
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
-        final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
-        
-        getAllowedAttributes()
-                .stream()
+
+        return getAllowedAttributes().stream()
                 .map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
                 .filter(p -> p.getValue() != null)
-                .forEach(p -> attributesToRelease.put(p.getKey(), p.getValue()));
-        return attributesToRelease;
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     private Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, Object> resolvedAttributes) {

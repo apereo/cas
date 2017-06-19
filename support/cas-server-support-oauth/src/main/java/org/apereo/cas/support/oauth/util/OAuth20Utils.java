@@ -5,12 +5,11 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
@@ -26,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -94,8 +92,7 @@ public final class OAuth20Utils {
      * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
      */
     public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager, final String clientId) {
-        final Collection<RegisteredService> services = servicesManager.getAllServices();
-        return (OAuthRegisteredService) services.stream()
+        return (OAuthRegisteredService) servicesManager.getAllServices().stream()
                 .filter(OAuthRegisteredService.class::isInstance)
                 .filter(s -> OAuthRegisteredService.class.cast(s).getClientId().equals(clientId))
                 .findFirst()
@@ -113,11 +110,10 @@ public final class OAuth20Utils {
         return attributes.stream()
                 .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
                 .map(m -> {
-                    final String[] values = context.getParameterValues(m);
-                    final Collection<String> valuesSet = new LinkedHashSet<>();
-                    if (values != null && values.length > 0) {
-                        Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
-                    }
+                    final Collection<String> valuesSet = Arrays.stream(context.getParameterValues(m))
+                            .map(v -> v.split(" "))
+                            .flatMap(Arrays::stream)
+                            .collect(Collectors.toSet());
                     return Pair.of(m, valuesSet);
                 })
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));

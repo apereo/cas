@@ -35,14 +35,12 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type) {
-        final Collection<CasEvent> events = load();
-        return events.stream().filter(event -> event.getType().equals(type)).collect(Collectors.toSet());
+        return load().stream().filter(event -> event.getType().equals(type)).collect(Collectors.toSet());
     }
 
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
-        return getEventsForPrincipal(principal)
-                .stream()
+        return getEventsForPrincipal(principal).stream()
                 .filter(event -> event.getType().equals(type))
                 .collect(Collectors.toSet());
     }
@@ -61,24 +59,21 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
-        return getEventsOfTypeForPrincipal(type, principal)
-                .stream()
+        return getEventsOfTypeForPrincipal(type, principal).stream()
                 .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
-        return getEventsOfType(type)
-                .stream()
+        return getEventsOfType(type).stream()
                 .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
-        return getEventsForPrincipal(id)
-                .stream()
+        return getEventsForPrincipal(id).stream()
                 .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
                 .collect(Collectors.toSet());
     }

@@ -59,8 +59,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     protected static Optional<String> getEntityIdAsParameter(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
-            final Optional<NameValuePair> param = builder.getQueryParams()
-                    .stream()
+            final Optional<NameValuePair> param = builder.getQueryParams().stream()
                     .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
                     .findFirst();
 

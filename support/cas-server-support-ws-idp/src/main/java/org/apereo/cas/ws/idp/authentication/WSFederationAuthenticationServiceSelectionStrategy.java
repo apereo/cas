@@ -47,11 +47,9 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
     private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
-            final Optional param = builder.getQueryParams()
-                    .stream()
+            return builder.getQueryParams().stream()
                     .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
                     .findFirst();
-            return param;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -61,11 +59,9 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
     private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
-            final Optional param = builder.getQueryParams()
-                    .stream()
+            return builder.getQueryParams().stream()
                     .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
                     .findFirst();
-            return param;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

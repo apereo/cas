@@ -27,8 +27,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public TicketDefinition find(final String ticketId) {
-        final TicketDefinition defn = ticketMetadataMap.values()
-                .stream()
+        final TicketDefinition defn = ticketMetadataMap.values().stream()
                 .filter(md -> ticketId.startsWith(md.getPrefix()))
                 .findFirst()
                 .orElse(null);
@@ -72,11 +71,10 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public Collection<TicketDefinition> find(final Class<Ticket> ticketClass) {
-        final List list = ticketMetadataMap.values()
-                .stream()
+        final List<TicketDefinition> list = ticketMetadataMap.values().stream()
                 .filter(t -> t.getImplementationClass().isInstance(ticketClass))
+                .sorted()
                 .collect(Collectors.toList());
-        OrderComparator.sort(list);
         LOGGER.debug("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
         return list;
     }

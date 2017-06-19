@@ -140,10 +140,7 @@ public class ConsentDecision {
 
         final String values = DigestUtils.sha512(attributes.values().stream()
                 .map(CollectionUtils::toCollection)
-                .map(c -> {
-                    final String value = c.stream().map(Object::toString).collect(Collectors.joining());
-                    return value;
-                })
+                .map(c -> c.stream().map(Object::toString).collect(Collectors.joining()))
                 .collect(Collectors.joining("|")));
         consent.setAttributeValues(values);
 

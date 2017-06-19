@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -84,9 +83,8 @@ public final class LdapTestUtils {
     public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) throws Exception {
         try {
             for (final LdapEntry entry : entries) {
-                final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
-                attrs.addAll(entry.getAttributes().stream()
-                        .map(a -> new Attribute(a.getName(), a.getStringValues())).collect(Collectors.toList()));
+                final Collection<Attribute> attrs = entry.getAttributes().stream()
+                        .map(a -> new Attribute(a.getName(), a.getStringValues())).collect(Collectors.toList());
 
                 final AddRequest ad = new AddRequest(entry.getDn(), attrs);
                 connection.add(ad);

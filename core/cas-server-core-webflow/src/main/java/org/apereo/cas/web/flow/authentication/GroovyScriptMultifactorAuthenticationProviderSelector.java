@@ -35,8 +35,7 @@ public class GroovyScriptMultifactorAuthenticationProviderSelector implements Mu
         if (StringUtils.isBlank(provider)) {
             throw new IllegalArgumentException("Multifactor provider selection via Groovy cannot use blank");
         }
-        return providers
-                .stream()
+        return providers.stream()
                 .filter(p -> p.getId().equals(provider))
                 .findFirst()
                 .get();

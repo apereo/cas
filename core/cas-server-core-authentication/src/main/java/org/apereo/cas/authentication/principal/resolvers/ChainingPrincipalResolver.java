@@ -14,12 +14,12 @@ import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -72,37 +72,24 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public Principal resolve(final Credential credential, final Principal principal, final AuthenticationHandler handler) {
-        final List<Principal> principals = new ArrayList<>();
-        chain.stream()
+        final List<Principal> nonNullPrincipals = chain.stream()
                 .filter(resolver -> resolver.supports(credential))
-                .forEach(resolver -> {
-                    LOGGER.debug("Invoking principal resolver [{}]", resolver);
-                    final Principal p = resolver.resolve(credential, principal, handler);
-                    if (p != null) {
-                        principals.add(p);
-                    }
-                });
+                .map(resolver -> resolver.resolve(credential, principal, handler))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
-        if (principals.isEmpty()) {
+        if (nonNullPrincipals.isEmpty()) {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
             return NullPrincipal.getInstance();
         }
 
-        final Map<String, Object> attributes = new HashMap<>();
-        principals.forEach(p -> {
-            if (p != null) {
-                LOGGER.debug("Resolved principal [{}]", p);
-                if (p.getAttributes() != null && !p.getAttributes().isEmpty()) {
-                    LOGGER.debug("Adding attributes [{}] for the final principal", p.getAttributes());
-                    attributes.putAll(p.getAttributes());
-                }
-            }
-        });
+        final Map<String, Object> attributes = nonNullPrincipals.stream()
+                .filter(p -> p.getAttributes() != null && !p.getAttributes().isEmpty())
+                .map(p -> p.getAttributes().entrySet())
+                .flatMap(Set::stream)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2));
 
-        final long count = principals.stream()
-                .map(p -> p.getId().trim().toLowerCase())
-                .distinct()
-                .collect(Collectors.toSet()).size();
+        final long count = nonNullPrincipals.stream().distinct().count();
 
         if (count > 1) {
             throw new PrincipalException("Resolved principals by the chain are not unique because principal resolvers have produced CAS principals "
@@ -110,7 +97,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                     Collections.emptyMap(),
                     Collections.emptyMap());
         }
-        final String principalId = principal != null ? principal.getId() : principals.iterator().next().getId();
+        final String principalId = principal != null ? principal.getId() : nonNullPrincipals.iterator().next().getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;

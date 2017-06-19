@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -40,8 +39,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
                 return null;
             }
 
-            final Collection<OneTimeTokenAccount> c = this.serializer.from(this.location.getFile());
-            return c.stream()
+            return this.serializer.from(this.location.getFile()).stream()
                     .filter(a -> StringUtils.isNotBlank(a.getUsername()) && a.getUsername().equals(username))
                     .map(OneTimeTokenAccount::getSecretKey)
                     .findAny()

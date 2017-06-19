@@ -20,12 +20,8 @@ public class ShibbolethServiceProviderRequestPrincipalAttributesExtractor implem
 
     @Override
     public Map<String, Object> getAttributes(final HttpServletRequest request) {
-        return Collections.list(request
-                .getHeaderNames())
-                .stream()
-                .filter(t -> t.startsWith(PREFIX))
-                .filter(t -> !t.startsWith(PREFIX + "Shib-"))
-                .filter(t -> StringUtils.isNotBlank(request.getHeader(t)))
+        return Collections.list(request.getHeaderNames()).stream()
+                .filter(t -> t.startsWith(PREFIX) && !t.startsWith(PREFIX + "Shib-") && StringUtils.isNotBlank(request.getHeader(t)))
                 .map(t -> StringUtils.removeAll(t, PREFIX))
                 .collect(Collectors.toMap(Function.identity(),
                         t -> Arrays.asList(request.getHeader(PREFIX + t).split("(?<!\\\\);"))));

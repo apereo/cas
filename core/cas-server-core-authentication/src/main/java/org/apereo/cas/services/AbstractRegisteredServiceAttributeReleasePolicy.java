@@ -14,9 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Abstract release policy for attributes, provides common shared settings such as loggers and attribute filter config.
@@ -182,17 +184,13 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             final Set<String> defaultAttrs = props.getAuthn().getAttributeRepository().getDefaultAttributesToRelease();
             LOGGER.debug("Default attributes for release are: [{}]", defaultAttrs);
 
-            final Map<String, Object> defaultAttributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-            defaultAttrs.stream().forEach(key -> {
-                if (attributes.containsKey(key)) {
-                    LOGGER.debug("Found and added default attribute for release: [{}]", key);
-                    defaultAttributesToRelease.put(key, attributes.get(key));
-                }
-            });
-            return defaultAttributesToRelease;
+            return defaultAttrs.stream()
+                    .filter(attributes::containsKey)
+                    .peek(key -> LOGGER.debug("Found and added default attribute for release: [{}]", key))
+                    .collect(Collectors.toMap(key -> key, attributes::get, (s1, s2) -> s1, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER)));
         }
 
-        return new TreeMap<>();
+        return Collections.emptyMap();
     }
 
     /**

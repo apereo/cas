@@ -66,8 +66,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      * Clean tickets.
      */
     protected void cleanInternal() {
-        final Collection<Ticket> ticketsToRemove = ticketRegistry.getTickets()
-                .stream()
+        final Collection<Ticket> ticketsToRemove = ticketRegistry.getTickets().stream()
                 .filter(Ticket::isExpired)
                 .collect(Collectors.toSet());
         LOGGER.debug("[{}] expired tickets found.", ticketsToRemove.size());

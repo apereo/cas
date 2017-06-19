@@ -76,10 +76,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             final Predicate<MultifactorAuthenticationProvider> predicate = ctor.newInstance(args);
 
             return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-                    input -> providers.stream()
-                            .filter(predicate)
-                            .findFirst()
-                            .isPresent());
+                    input -> providers.stream().anyMatch(predicate));
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

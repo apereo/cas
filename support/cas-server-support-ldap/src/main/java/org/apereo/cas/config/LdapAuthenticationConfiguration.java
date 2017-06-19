@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -82,12 +83,9 @@ public class LdapAuthenticationConfiguration {
 
     @Bean
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers() {
-        final Collection<AuthenticationHandler> handlers = new HashSet<>();
-
-        casProperties.getAuthn().getLdap()
-                .stream()
+        return casProperties.getAuthn().getLdap().stream()
                 .filter(ldapInstanceConfigurationPredicate())
-                .forEach(l -> {
+                .map(l -> {
                     final Map<String, String> attributes = Beans.transformPrincipalAttributesListIntoMap(l.getPrincipalAttributeList());
                     LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, l.getLdapUrl());
 
@@ -133,9 +131,9 @@ public class LdapAuthenticationConfiguration {
 
                     LOGGER.debug("Initializing ldap authentication handler for [{}]", l.getLdapUrl());
                     handler.initialize();
-                    handlers.add(handler);
-                });
-        return handlers;
+                    return handler;
+                })
+                .collect(Collectors.toSet());
     }
 
 

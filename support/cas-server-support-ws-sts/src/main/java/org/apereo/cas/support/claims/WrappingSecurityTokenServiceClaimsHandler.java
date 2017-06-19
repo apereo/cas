@@ -34,8 +34,7 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
 
     @Override
     public List<URI> getSupportedClaimTypes() {
-        return WSFederationClaims.ALL_CLAIMS
-                .stream()
+        return WSFederationClaims.ALL_CLAIMS.stream()
                 .map(c -> UriBuilder.fromUri(c.getUri()).build())
                 .collect(Collectors.toList());
     }

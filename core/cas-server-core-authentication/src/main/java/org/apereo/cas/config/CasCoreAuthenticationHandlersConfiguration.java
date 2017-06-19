@@ -148,8 +148,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @RefreshScope
         @Bean
         public List<AuthenticationHandler> jaasAuthenticationHandlers() {
-            return casProperties.getAuthn().getJaas()
-                    .stream()
+            return casProperties.getAuthn().getJaas().stream()
                     .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                     .map(jaas -> {
                         final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(),

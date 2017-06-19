@@ -54,8 +54,7 @@ public class LogoutAction extends AbstractLogoutAction {
         boolean needFrontSlo = false;
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
         if (logoutRequests != null) {
-            needFrontSlo = logoutRequests
-                    .stream()
+            needFrontSlo = logoutRequests.stream()
                     .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED);
         }
 

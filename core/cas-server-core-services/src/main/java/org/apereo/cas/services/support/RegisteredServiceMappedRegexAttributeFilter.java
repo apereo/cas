@@ -44,8 +44,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<>();
-        givenAttributes.entrySet()
-                .stream()
+        givenAttributes.entrySet().stream()
                 .filter(entry -> {
                     final String attributeName = entry.getKey();
                     final Object attributeValue = entry.getValue();

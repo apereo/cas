@@ -137,20 +137,17 @@ public class DefaultCasSslContext {
                     .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
-
         @Override
         public String chooseServerAlias(final String keyType, final Principal[] issuers, final Socket socket) {
             return this.keyManagers.stream().map(keyManager -> keyManager.chooseServerAlias(keyType, issuers, socket))
                     .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
-
         @Override
         public PrivateKey getPrivateKey(final String alias) {
             return this.keyManagers.stream().map(keyManager -> keyManager.getPrivateKey(alias))
                     .filter(Objects::nonNull).findFirst().orElse(null);
         }
-
 
         @Override
         public X509Certificate[] getCertificateChain(final String alias) {

@@ -23,7 +23,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -246,16 +245,15 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the map of attributes to return
      */
     private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
-        final Set<Map.Entry<String, Object>> entries = attributes.entrySet();
-        return entries.stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-            final Object value = entry.getValue();
-            if (value instanceof Collection || value instanceof Map || value instanceof Object[]
-                    || value instanceof Iterator || value instanceof Enumeration) {
-                return value;
-            }
-            return Collections.singleton(value);
-
-        }));
+        return attributes.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                    final Object value = entry.getValue();
+                    if (value instanceof Collection || value instanceof Map || value instanceof Object[]
+                            || value instanceof Iterator || value instanceof Enumeration) {
+                        return value;
+                    }
+                    return Collections.singleton(value);
+                }));
     }
 
     /**

@@ -46,16 +46,14 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
     @Override
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final Collection<String> requestMfaMethod) {
-        final Optional<MultifactorAuthenticationProvider> providerFound = providers.values()
-                .stream()           
+        final Optional<MultifactorAuthenticationProvider> providerFound = providers.values().stream()
                 .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
                 .findFirst();
         if (providerFound.isPresent()) {
             final MultifactorAuthenticationProvider provider = providerFound.get();
             if (provider instanceof VariegatedMultifactorAuthenticationProvider) {
                 final VariegatedMultifactorAuthenticationProvider multi = VariegatedMultifactorAuthenticationProvider.class.cast(provider);
-                return multi.getProviders()
-                        .stream()
+                return multi.getProviders().stream()
                         .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
                         .findFirst();
             }

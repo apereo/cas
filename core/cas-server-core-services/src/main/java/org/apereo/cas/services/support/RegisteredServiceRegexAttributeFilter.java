@@ -78,8 +78,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     @SuppressWarnings("unchecked")
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<>();
-        givenAttributes.entrySet()
-                .stream()
+        givenAttributes.entrySet().stream()
                 .filter(entry -> {
                     final String attributeName = entry.getKey();
                     final Object attributeValue = entry.getValue();
@@ -118,8 +117,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
                     }
                 });
 
-        LOGGER.debug("Received [{}] attributes. Filtered and released [{}]", givenAttributes.size(),
-                attributesToRelease.size());
+        LOGGER.debug("Received [{}] attributes. Filtered and released [{}]", givenAttributes.size(), attributesToRelease.size());
         return attributesToRelease;
     }
 
@@ -139,12 +137,9 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @return the map
      */
     private Map<String, String> filterAttributes(final Map<String, String> valuesToFilter) {
-        return valuesToFilter.entrySet()
-                .stream()
-                .filter(entry -> patternMatchesAttributeValue(entry.getValue())).map(entry -> {
-                    logReleasedAttributeEntry(entry.getKey(), entry.getValue());
-                    return entry;
-                })
+        return valuesToFilter.entrySet().stream()
+                .filter(entry -> patternMatchesAttributeValue(entry.getValue()))
+                .peek(entry -> logReleasedAttributeEntry(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> valuesToFilter.get(entry.getKey()), (e, f) -> f == null ? e : f));
     }
 
@@ -166,10 +161,10 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @return the string[]
      */
     private List filterAttributes(final Collection<String> valuesToFilter, final String attributeName) {
-        return valuesToFilter.stream().filter(this::patternMatchesAttributeValue).map(attributeValue -> {
-            logReleasedAttributeEntry(attributeName, attributeValue);
-            return attributeValue;
-        }).collect(Collectors.toList());
+        return valuesToFilter.stream()
+                .filter(this::patternMatchesAttributeValue)
+                .peek(attributeValue -> logReleasedAttributeEntry(attributeName, attributeValue))
+                .collect(Collectors.toList());
     }
 
     /**

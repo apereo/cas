@@ -205,8 +205,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
     private void configureCasClient(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
-        casProperties.getAuthn().getPac4j().getCas()
-                .stream()
+        casProperties.getAuthn().getPac4j().getCas().stream()
                 .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
                 .forEach(cas -> {
                     final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), cas.getProtocol());
@@ -223,8 +222,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
     private void configureSamlClient(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
-        casProperties.getAuthn().getPac4j().getSaml()
-                .stream()
+        casProperties.getAuthn().getPac4j().getSaml().stream()
                 .filter(saml -> StringUtils.isNotBlank(saml.getKeystorePath()) && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath()))
                 .forEach(saml -> {
                     final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(saml.getKeystorePath(), saml.getKeystorePassword(),
@@ -251,8 +249,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
     private void configureOAuth20Client(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
-        casProperties.getAuthn().getPac4j().getOauth2()
-                .stream()
+        casProperties.getAuthn().getPac4j().getOauth2().stream()
                 .filter(oauth -> StringUtils.isNotBlank(oauth.getId()) && StringUtils.isNotBlank(oauth.getSecret()))
                 .forEach(oauth -> {
                     final GenericOAuth20Client client = new GenericOAuth20Client();
@@ -278,8 +275,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
     private void configureOidcClient(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
-        casProperties.getAuthn().getPac4j().getOidc()
-                .stream()
+        casProperties.getAuthn().getPac4j().getOidc().stream()
                 .filter(oidc -> StringUtils.isNotBlank(oidc.getId()) && StringUtils.isNotBlank(oidc.getSecret()))
                 .forEach(oidc -> {
 

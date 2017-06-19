@@ -30,9 +30,8 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public List<DeviceRegistration> getRegisteredDevices(final String username) {
-        final List<DeviceRegistration> registrations = userStorage.getUnchecked(username).values()
-                .stream().map(DeviceRegistration::fromJson).collect(Collectors.toList());
-        return registrations;
+        return userStorage.getUnchecked(username).values().stream()
+                .map(DeviceRegistration::fromJson).collect(Collectors.toList());
     }
     
     @Override

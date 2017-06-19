@@ -140,8 +140,7 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
         try {
             final Response<SearchResult> response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                response.getResult().getEntries()
-                        .stream()
+                response.getResult().getEntries().stream()
                         .map(this.ldapServiceMapper::mapToRegisteredService)
                         .forEach(s -> {
                             publishEvent(new CasRegisteredServiceLoadedEvent(this, s));

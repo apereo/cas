@@ -22,7 +22,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -63,9 +62,10 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         String acr = request.getParameter(OAuth20Constants.ACR_VALUES);
         if (StringUtils.isBlank(acr)) {
             final URIBuilder builderContext = new URIBuilder(StringUtils.trimToEmpty(context.getFlowExecutionUrl()));
-            final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                    .stream().filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
+            final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams().stream()
+                    .filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
                     .findFirst();
+
             if (parameter.isPresent()) {
                 acr = parameter.get().getValue();
             }
@@ -87,9 +87,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
             throw new AuthenticationException();
         }
 
-        final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
-        final Optional<MultifactorAuthenticationProvider> provider = flattenedProviders
-                .stream()
+        final Optional<MultifactorAuthenticationProvider> provider = flattenProviders(providerMap.values()).stream()
                 .filter(v -> values.contains(v.getId())).findAny();
 
         if (provider.isPresent()) {
