@@ -1,4 +1,4 @@
-package org.apereo.cas.services;
+package org.apereo.cas.util;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
@@ -18,18 +18,18 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
-import static java.nio.file.StandardWatchEventKinds.*;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
- * This is {@link ServiceRegistryConfigWatcher} that watches the json config directory
- * for changes and promptly attempts to reload the CAS service registry configuration.
+ * @author David Rodriguez
  *
- * @author Misagh Moayyed
- * @since 4.1.0
+ * @since 5.2.0
  */
-class ServiceRegistryConfigWatcher implements Runnable, Closeable {
+public class PathWatcher implements Runnable, Closeable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryConfigWatcher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PathWatcher.class);
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -40,6 +40,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
     private final Consumer<File> onCreate;
     private final Consumer<File> onModify;
     private final Consumer<File> onDelete;
+    private long interval;
 
     /**
      * Instantiates a new Json service registry config watcher.
@@ -49,10 +50,25 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
      * @param onModify action triggered when a file is modified
      * @param onDelete action triggered when a file is deleted
      */
-    ServiceRegistryConfigWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete) {
+    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete) {
+        this(watchablePath, onCreate, onModify, onDelete, 0);
+    }
+
+    /**
+     * Instantiates a new Json service registry config watcher.
+     *
+     * @param watchablePath path that will be watched
+     * @param onCreate action triggered when a new file is created
+     * @param onModify action triggered when a file is modified
+     * @param onDelete action triggered when a file is deleted
+     * @param interval milliseconds interval to limit monitoring
+     */
+    public PathWatcher(final Path watchablePath, final Consumer<File> onCreate, final Consumer<File> onModify, final Consumer<File> onDelete,
+                       final long interval) {
         this.onCreate = onCreate;
         this.onModify = onModify;
         this.onDelete = onDelete;
+        this.interval = interval;
         try {
             this.watcher = watchablePath.getFileSystem().newWatchService();
             LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
@@ -65,12 +81,16 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
     @Override
     public void run() {
         if (this.running.compareAndSet(false, true)) {
+            long lastModified = System.currentTimeMillis();
             while (this.running.get()) {
                 // wait for key to be signaled
                 WatchKey key = null;
                 try {
                     key = this.watcher.take();
-                    handleEvent(key);
+                    if (System.currentTimeMillis() - lastModified >= interval) {
+                        handleEvent(key);
+                        lastModified = System.currentTimeMillis();
+                    }
                 } catch (final InterruptedException e) {
                     return;
                 } finally {
@@ -86,7 +106,6 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
                 }
             }
         }
-
     }
 
     /**

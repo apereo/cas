@@ -2,9 +2,12 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
+import org.apereo.cas.util.PathWatcher;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.ComposableSupplier;
 import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -54,6 +57,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      */
     protected Path serviceRegistryDirectory;
 
+
+    private Consumer<AbstractCasEvent> publish = this::publishEvent;
+    private ComposableSupplier<AbstractCasEvent> createServiceRefreshEvent = () -> new CasRegisteredServicesRefreshEvent(this);
+
     /**
      * Map of service ID to registered service.
      */
@@ -66,7 +73,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     private Thread serviceRegistryWatcherThread;
 
-    private ServiceRegistryConfigWatcher serviceRegistryConfigWatcher;
+    private PathWatcher serviceRegistryConfigWatcher;
 
     /**
      * Instantiates a new service registry dao.
@@ -121,12 +128,12 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                         LOG_SERVICE_DUPLICATE.accept(service);
                     }
                     update(service);
-                    publishEvent(new CasRegisteredServicesRefreshEvent(this));
+                    createServiceRefreshEvent.andThen(publish);
                 }
             };
             final Consumer<File> onDelete = file -> {
                 load();
-                publishEvent(new CasRegisteredServicesRefreshEvent(this));
+                createServiceRefreshEvent.andThen(publish);
             };
             final Consumer<File> onModify = file -> {
                 final RegisteredService newService = load(file);
@@ -135,14 +142,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
                     if (!newService.equals(oldService)) {
                         update(newService);
-                        publishEvent(new CasRegisteredServicesRefreshEvent(this));
+                        createServiceRefreshEvent.andThen(publish);
                     } else {
                         LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
                                 + "in the event processing pipeline", newService.getId(), file.getName());
                     }
                 }
             };
-            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(serviceRegistryDirectory, onCreate, onModify, onDelete);
+            this.serviceRegistryConfigWatcher = new PathWatcher(serviceRegistryDirectory, onCreate, onModify, onDelete);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
             this.serviceRegistryWatcherThread.start();
