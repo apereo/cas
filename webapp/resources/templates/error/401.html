@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title>WAH WAH WAH</title>
+    <title>Error - 401</title>
+    <link rel="stylesheet" th:href="@{#{webjars.fontawesome.css}}" />
     <style>
-        @import 'https://fonts.googleapis.com/css?family=Gloria+Hallelujah';
-
         .prompt {
-            font-family: 'Gloria Hallelujah', cursive;
+            font-family: Verdana, sans-serif;
         }
     </style>
 </head>
@@ -15,18 +14,14 @@
 <body id="cas">
 <div layout:fragment="content">
     <div class="alert alert-danger">
-        <h2 class="prompt">YOU DID NOT SAY THE MAGIC WORD!</h2>
+        <h2 class="prompt" th:utext="#{screen.error.page.accessdenied}" />
         <div class="prompt">
             <p/>
-            <p>We are sorry. You do not have permission to view this page.</p>
+            <p th:utext="#{screen.error.page.permissiondenied}" />
             <br/>
-            <p>Maybe you're just unfortunate today. Maybe it's just not your day. Maybe you're just not feeling well. Maybe. So much 
-                uncertainty, so much doubt. But you know, in these times of anguish and confusion, one thing is for certain:</p>
-            <br/>
-            <p>You are not getting in.</p>
 
             <br/>
-            <p>In closing, <a th:href="@{/login}">go away</a>. </p>
+            <p><a th:href="@{/login}" th:utext="#{screen.error.page.loginagain}" /></p>
 
         </div>
     </div>

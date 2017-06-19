@@ -37,7 +37,8 @@ public final class ResourceUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceUtils.class);
 
-    private static final String HTTP_URL_PREFIX = "http:";
+    // This constant covers both http and https
+    private static final String HTTP_URL_PREFIX = "http";
 
     private ResourceUtils() {
     }

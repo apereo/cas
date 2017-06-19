@@ -67,4 +67,5 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
         this.basenames = basenames;
         super.setBasenames(basenames);
     }
+
 }

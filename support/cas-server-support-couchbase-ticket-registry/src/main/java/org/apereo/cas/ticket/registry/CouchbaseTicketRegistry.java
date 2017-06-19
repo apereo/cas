@@ -67,7 +67,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     public static final String UTIL_DOCUMENT = "statistics";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseTicketRegistry.class);
-    
+
     private static final long MAX_EXP_TIME_IN_DAYS = 30;
     private static final String END_TOKEN = "\u02ad";
 
@@ -163,7 +163,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public boolean deleteSingleTicket(final String ticketId) {
+    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+        final String ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         try {
             return this.couchbase.getBucket().remove(ticketId) != null;
@@ -211,7 +212,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
         tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(refreshTokenIt, Spliterator.ORDERED), true);
         tickets.forEach(t -> this.couchbase.getBucket().remove(t.document()));
-        
+
         return count;
     }
 

@@ -1,5 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -18,6 +21,7 @@ import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -26,7 +30,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * This is {@link MongoDbTicketRegistryTests}.
@@ -34,7 +37,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(SpringRunner.class)
+@RunWith(Parameterized.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
         CasCoreUtilConfiguration.class,
         AopAutoConfiguration.class,
@@ -62,11 +65,21 @@ public class MongoDbTicketRegistryTests extends AbstractTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    public MongoDbTicketRegistryTests(final boolean useEncryption) {
+        super(useEncryption);
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() throws Exception {
+        // FIXME Encryption in MongoDb registry is missing / broken
+        return Arrays.asList(false/*, true */);
+    }
+
     @Before
     public void before() {
         ticketRegistry.getTickets().forEach(t -> this.ticketRegistry.deleteTicket(t.getId()));
     }
-    
+
     @Override
     public TicketRegistry getNewTicketRegistry() throws Exception {
         return this.ticketRegistry;

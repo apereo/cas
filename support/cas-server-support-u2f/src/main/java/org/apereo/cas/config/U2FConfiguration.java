@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepository;
+import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepository;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAuthenticationWebflowAction;
@@ -16,6 +17,7 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
@@ -24,13 +26,18 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -49,6 +56,7 @@ import java.util.Map;
 @Configuration("u2fConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(U2FConfiguration.class);
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -66,7 +74,7 @@ public class U2FConfiguration {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -145,24 +153,29 @@ public class U2FConfiguration {
                 multifactorAuthenticationProviderSelector);
     }
 
+    @ConditionalOnMissingBean(name = "transactionManagerU2f")
+    @Bean
+    public PlatformTransactionManager transactionManagerU2f() {
+        return new PseudoPlatformTransactionManager();
+    }
+
+    @ConditionalOnMissingBean(name = "u2fDeviceRepositoryCleanerScheduler")
+    @Bean
+    @Autowired
+    @ConditionalOnProperty(prefix = "authn.mfa.u2f.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public U2FDeviceRepositoryCleanerScheduler u2fDeviceRepositoryCleanerScheduler(
+            @Qualifier("u2fDeviceRepository") final U2FDeviceRepository storage) {
+        return new U2FDeviceRepositoryCleanerScheduler(storage);
+    }
+
     @ConditionalOnMissingBean(name = "u2fDeviceRepository")
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
         final MultifactorAuthenticationProperties.U2F u2f = casProperties.getAuthn().getMfa().getU2f();
 
-        final LoadingCache<String, Map<String, String>> userStorage =
-                CacheBuilder.newBuilder()
-                        .expireAfterWrite(u2f.getMemory().getExpireDevices(), u2f.getMemory().getExpireDevicesTimeUnit())
-                        .build(new CacheLoader<String, Map<String, String>>() {
-                            @Override
-                            public Map<String, String> load(final String key) throws Exception {
-                                return new HashMap<>();
-                            }
-                        });
-
         final LoadingCache<String, String> requestStorage =
                 CacheBuilder.newBuilder()
-                        .expireAfterWrite(u2f.getMemory().getExpireRegistrations(), u2f.getMemory().getExpireRegistrationsTimeUnit())
+                        .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                         .build(new CacheLoader<String, String>() {
                             @Override
                             public String load(final String key) throws Exception {
@@ -170,6 +183,39 @@ public class U2FConfiguration {
                             }
                         });
 
+        if (u2f.getJson().getConfig().getLocation() != null) {
+            return new U2FJsonResourceDeviceRepository(requestStorage,
+                    u2f.getJson().getConfig().getLocation(),
+                    u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
+        }
+
+        final LoadingCache<String, Map<String, String>> userStorage =
+                CacheBuilder.newBuilder()
+                        .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
+                        .build(new CacheLoader<String, Map<String, String>>() {
+                            @Override
+                            public Map<String, String> load(final String key) throws Exception {
+                                return new HashMap<>();
+                            }
+                        });
         return new U2FInMemoryDeviceRepository(userStorage, requestStorage);
+    }
+
+    /**
+     * The device cleaner scheduler.
+     */
+    public static class U2FDeviceRepositoryCleanerScheduler {
+        private final U2FDeviceRepository repository;
+
+        public U2FDeviceRepositoryCleanerScheduler(final U2FDeviceRepository repository) {
+            this.repository = repository;
+        }
+
+        @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.startDelay:PT20S}",
+                fixedDelayString = "${cas.authn.mfa.u2f.cleaner.repeatInterval:PT15M}")
+        public void run() {
+            LOGGER.debug("Starting to clean expired U2F devices from repository");
+            this.repository.clean();
+        }
     }
 }

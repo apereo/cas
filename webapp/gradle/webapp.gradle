@@ -121,5 +121,6 @@ dependencies {
     implementation libraries.cassecurityfilter
     implementation libraries.metrics
     implementation libraries.bouncycastle
+    runtime libraries.webjars
     compile libraries.springcloudconfigclient
 }

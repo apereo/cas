@@ -2573,15 +2573,73 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.u2f.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.u2f.bypass.credentialClassType=UsernamePassword.+
-```
 
-#### FIDO U2F Memory
-
-```properties
 # cas.authn.mfa.u2f.expireRegistrations=30
 # cas.authn.mfa.u2f.expireRegistrationsTimeUnit=SECONDS
 # cas.authn.mfa.u2f.expireDevices=30
 # cas.authn.mfa.u2f.expireDevicesTimeUnit=DAYS
+```
+
+### FIDO U2F JSON
+
+```properties
+# cas.authn.mfa.u2f.json.config.location=file:///etc/cas/config/u2fdevices.json
+```
+
+### FIDO U2F Cleaner
+
+```properties
+# cas.authn.mfa.u2f.cleaner.enabled=true
+# cas.authn.mfa.u2f.cleaner.startDelay=PT10S
+# cas.authn.mfa.u2f.cleaner.repeatInterval=PT60S
+```
+
+#### FIDO U2F JPA
+
+```properties
+# cas.authn.mfa.u2f.jpa.healthQuery=
+# cas.authn.mfa.u2f.jpa.isolateInternalQueries=false
+# cas.authn.mfa.u2f.jpa.url=jdbc:hsqldb:mem:cas-u2f
+# cas.authn.mfa.u2f.jpa.failFast=true
+# cas.authn.mfa.u2f.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.mfa.u2f.jpa.leakThreshold=10
+# cas.authn.mfa.u2f.jpa.batchSize=1
+# cas.authn.mfa.u2f.jpa.defaultCatalog=
+# cas.authn.mfa.u2f.jpa.defaultSchema=
+# cas.authn.mfa.u2f.jpa.user=sa
+# cas.authn.mfa.u2f.jpa.ddlAuto=create-drop
+# cas.authn.mfa.u2f.jpa.password=
+# cas.authn.mfa.u2f.jpa.autocommit=false
+# cas.authn.mfa.u2f.jpa.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.mfa.u2f.jpa.idleTimeout=5000
+# cas.authn.mfa.u2f.jpa.dataSourceName=
+# cas.authn.mfa.u2f.jpa.dataSourceProxy=false
+
+# cas.authn.mfa.u2f.jpa.pool.suspension=false
+# cas.authn.mfa.u2f.jpa.pool.minSize=6
+# cas.authn.mfa.u2f.jpa.pool.maxSize=18
+# cas.authn.mfa.u2f.jpa.pool.maxWait=2000
+```
+
+### Swivel Secure
+
+To learn more about this topic, [please review this guide](SwivelSecure-Authentication.html).
+
+```properties
+# cas.authn.mfa.swivel.swivelTuringImageUrl=https://turing.example.edu/TURingImage
+# cas.authn.mfa.swivel.swivelUrl=https://swivel.example.org/pinsafe
+# cas.authn.mfa.swivel.sharedSecret=Th3Sh@r3d$ecret
+# cas.authn.mfa.swivel.ignoreSslErrors=false
+# cas.authn.mfa.swivel.rank=0
+# cas.authn.mfa.swivel.name=
+
+# cas.authn.mfa.swivel.bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.swivel.bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.swivel.bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.swivel.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.swivel.bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.swivel.bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.swivel.bypass.credentialClassType=UsernamePassword.+
 ```
 
 ### Microsoft Azure
@@ -3133,6 +3191,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # Path/URL to delegated IdP metadata
 # cas.authn.pac4j.saml[0].identityProviderMetadataPath=
+
+# (Optional) Friendly name for IdP, e.g. "This Organization" or "That Organization"
+# cas.authn.pac4j.saml[0].clientName=
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  
@@ -3344,6 +3405,10 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 ## Message Bundles
 
 To learn more about this topic, [please review this guide](User-Interface-Customization-Localization.html).
+The baseNames are message bundle base names representing files that either end in .properties or _xx.properties where
+xx is a country locale code. 
+The commonNames are not actually message bundles but they are properties files that are merged together and contain
+keys that are only used if they are not found in the message bundles. Keys from the later files in the list will be preferred over keys from the earlier files. 
 
 ```properties
 # cas.messageBundle.encoding=UTF-8
@@ -3351,6 +3416,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.messageBundle.cacheSeconds=180
 # cas.messageBundle.useCodeMessage=true
 # cas.messageBundle.baseNames=classpath:custom_messages,classpath:messages
+# cas.messageBundle.commonNames=classpath:/common_messages.properties,file:/etc/cas/config/common_messages.properties
 ```
 
 ## Audits

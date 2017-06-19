@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
@@ -44,6 +43,9 @@ import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
+import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
@@ -89,16 +96,41 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     private Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap;
 
     @Autowired
-    @Qualifier("logoutManager")
-    private LogoutManager logoutManager;
-
-    @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
+
+    @Autowired
+    @Qualifier("hostnameVerifier")
+    private HostnameVerifier hostnameVerifier;
+
+    @Autowired
+    @Qualifier("sslContext")
+    private SSLContext sslContext;
+
+    @ConditionalOnMissingBean(name = "casClientTicketValidator")
+    @Bean
+    public AbstractUrlBasedTicketValidator casClientTicketValidator() {
+        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(casProperties.getServer().getPrefix());
+        final HttpURLConnectionFactory factory = new HttpURLConnectionFactory() {
+            private static final long serialVersionUID = 3692658214483917813L;
+
+            @Override
+            public HttpURLConnection buildHttpURLConnection(final URLConnection conn) {
+                if (conn instanceof HttpsURLConnection) {
+                    final HttpsURLConnection httpsConnection = (HttpsURLConnection) conn;
+                    httpsConnection.setSSLSocketFactory(sslContext.getSocketFactory());
+                    httpsConnection.setHostnameVerifier(hostnameVerifier);
+                }
+                return (HttpURLConnection) conn;
+            }
+        };
+        validator.setURLConnectionFactory(factory);
+        return validator;
+    }
 
     @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
     @Bean
@@ -213,7 +245,6 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @ConditionalOnMissingBean(name = "serviceTicketExpirationPolicy")
     @Bean
-    @RefreshScope
     public ExpirationPolicy serviceTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
                 casProperties.getTicket().getSt().getNumberOfUses(),
@@ -233,7 +264,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public LockingStrategy lockingStrategy() {
         return new NoOpLockingStrategy();
     }
-    
+
     @ConditionalOnMissingBean(name = "ticketTransactionManager")
     @Bean
     public PlatformTransactionManager ticketTransactionManager() {

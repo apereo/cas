@@ -23,16 +23,17 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
 
     public DefaultAuthenticationServiceSelectionPlan(final AuthenticationServiceSelectionStrategy... strategies) {
         this.strategies = Arrays.stream(strategies).collect(Collectors.toList());
+        OrderComparator.sort(this.strategies);
     }
 
     @Override
     public void registerStrategy(final AuthenticationServiceSelectionStrategy strategy) {
         strategies.add(strategy);
+        OrderComparator.sort(this.strategies);
     }
 
     @Override
     public Service resolveService(final Service service) {
-        OrderComparator.sort(this.strategies);
         return this.strategies.stream()
                 .filter(s -> s.supports(service))
                 .findFirst()

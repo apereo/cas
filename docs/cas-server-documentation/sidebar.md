@@ -81,6 +81,7 @@ layout: null
         *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
         *   [Microsoft Azure](/$version/installation/MicrosoftAzure-Authentication.html)
         *   [FIDO U2F](/$version/installation/FIDO-U2F-Authentication.html)
+        *   [Swivel Secure](/$version/installation/SwivelSecure-Authentication.html)
         *   [Custom](/$version/installation/Custom-MFA-Authentication.html)
     *   [Triggers](/$version/installation/Configuring-Multifactor-Authentication-Triggers.html)
     *   [Trusted Devices](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
@@ -97,6 +98,7 @@ layout: null
 
 * [Ticketing](#ticketingconfig)
     *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)
+    *   [JWT Service Tickets](/$version/installation/Configure-ServiceTicket-JWT.html) 
     *   [Expiration Policies](/$version/installation/Configuring-Ticket-Expiration-Policy.html)
     *   [Storage](#ticketingstorage)
         *   [Hazelcast](/$version/installation/Hazelcast-Ticket-Registry.html)

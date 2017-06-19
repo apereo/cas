@@ -40,6 +40,7 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SLORedirectProfileHandler
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileCallbackHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOPostProfileHandlerController;
 import org.apereo.cas.util.http.HttpClient;
+import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -59,8 +60,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
-import javax.net.ssl.HostnameVerifier;
-
 /**
  * The {@link SamlIdPConfiguration}.
  *
@@ -75,8 +74,8 @@ public class SamlIdPConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("hostnameVerifier")
-    private HostnameVerifier hostnameVerifier;
+    @Qualifier("casClientTicketValidator")
+    private AbstractUrlBasedTicketValidator casClientTicketValidator;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -390,7 +389,7 @@ public class SamlIdPConfiguration {
                 idp.getLogout().isForceSignedLogoutRequests(),
                 idp.getLogout().isSingleLogoutCallbacksDisabled(),
                 samlObjectSignatureValidator(),
-                this.hostnameVerifier);
+                this.casClientTicketValidator);
     }
 
     @Bean
