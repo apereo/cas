@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,10 +41,7 @@ class TriageConfiguration {
 				Arrays.asList(
 						new OpenedByCollaboratorTriageFilter(
 								gitHubProperties.getRepository().getCollaborators()),
-						new LabelledTriageFilter(), new MilestoneAppliedTriageFilter(),
-						new CommentedByCollaboratorTriageFilter(
-								gitHubProperties.getRepository().getCollaborators(),
-								gitHubOperations)),
+						new LabelledTriageFilter(), new MilestoneAppliedTriageFilter()),
 				new LabelApplyingTriageListener(gitHubOperations,
 						triageProperties.getLabel()));
 	}
