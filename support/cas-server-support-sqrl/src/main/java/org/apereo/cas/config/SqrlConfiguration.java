@@ -3,8 +3,13 @@ package org.apereo.cas.config;
 import com.github.dbadia.sqrl.server.SqrlConfig;
 import com.github.dbadia.sqrl.server.SqrlConfigOperations;
 import com.github.dbadia.sqrl.server.SqrlServerOperations;
+import com.github.dbadia.sqrl.server.data.SqrlCorrelator;
+import com.github.dbadia.sqrl.server.data.SqrlIdentity;
 import com.github.dbadia.sqrl.server.data.SqrlJpaPersistenceProvider;
+import com.github.dbadia.sqrl.server.data.SqrlUsedNutToken;
 import com.github.dbadia.sqrl.server.util.SqrlServiceExecutor;
+import com.zaxxer.hikari.hibernate.HikariConnectionProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.sqrl.SqrlAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -13,7 +18,10 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.SqrlGenerateQRAction;
 import org.apereo.cas.web.flow.SqrlWebflowConfigurer;
+import org.hibernate.cfg.Environment;
+import org.hibernate.hikaricp.internal.HikariCPConnectionProvider;
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.quartz.utils.HikariCpPoolingConnectionProvider;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +35,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor;
+import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -35,10 +44,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceUnitTransactionType;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Properties;
 
 /**
  * This is {@link SqrlConfiguration}.
@@ -121,6 +130,7 @@ public class SqrlConfiguration {
         bean.setPersistenceUnitName(SqrlJpaPersistenceProvider.PERSISTENCE_UNIT_NAME);
         bean.setPersistenceUnitPostProcessors(new SqrlPersistenceUnitPostProcessor());
         bean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+        bean.setJpaDialect(new HibernateJpaDialect());
         return bean;
     }
 
@@ -139,23 +149,43 @@ public class SqrlConfiguration {
     public class SqrlPersistenceUnitPostProcessor implements PersistenceUnitPostProcessor {
 
         @Override
-        public void postProcessPersistenceUnitInfo(final MutablePersistenceUnitInfo mutablePersistenceUnitInfo) {
-            final Properties props = new Properties();
+        public void postProcessPersistenceUnitInfo(final MutablePersistenceUnitInfo unit) {
             final SqrlAuthenticationProperties.Jpa jpa = casProperties.getAuthn().getSqrl().getJpa();
 
-            props.put("schema", jpa.getDefaultSchema());
-            props.put("catalog", jpa.getDefaultCatalog());
-            props.put("batch", jpa.getBatchSize());
-            props.put("pool", jpa.getPool().getMaxSize());
-            props.put("driver", jpa.getDriverClass());
-            props.put("user", jpa.getUser());
-            props.put("password", jpa.getPassword());
-            props.put("url", jpa.getUrl());
-            props.put("dialect", jpa.getDialect());
-            props.put("ddl", jpa.getDdlAuto());
-            props.put("showSql", casProperties.getJdbc().isShowSql());
-            
-            mutablePersistenceUnitInfo.setProperties(props);
+            unit.addProperty(Environment.SHOW_SQL, String.valueOf(casProperties.getJdbc().isShowSql()));
+            unit.addProperty(Environment.FORMAT_SQL, Boolean.TRUE.toString());
+            unit.addProperty(Environment.HBM2DDL_AUTO, jpa.getDdlAuto());
+            unit.addProperty(Environment.DEFAULT_BATCH_FETCH_SIZE, String.valueOf(jpa.getBatchSize()));
+            unit.addProperty(Environment.POOL_SIZE, String.valueOf(jpa.getPool().getMaxSize()));
+            unit.addProperty(Environment.URL, StringUtils.defaultIfBlank(jpa.getUrl(), StringUtils.EMPTY));
+            unit.addProperty(Environment.PASS, StringUtils.defaultIfBlank(jpa.getPassword(), StringUtils.EMPTY));
+            unit.addProperty(Environment.USER, StringUtils.defaultIfBlank(jpa.getUser(), StringUtils.EMPTY));
+            unit.addProperty(Environment.DRIVER, StringUtils.defaultIfBlank(jpa.getDriverClass(), StringUtils.EMPTY));
+            unit.addProperty(Environment.DIALECT, jpa.getDialect());
+
+            if (StringUtils.isNotBlank(jpa.getDataSourceName())) {
+                unit.addProperty(Environment.DATASOURCE, jpa.getDataSourceName());
+            }
+            if (StringUtils.isNotBlank(jpa.getDefaultSchema())) {
+                unit.addProperty(Environment.DEFAULT_SCHEMA, jpa.getDefaultSchema());
+            }
+            if (StringUtils.isNotBlank(jpa.getDefaultCatalog())) {
+                unit.addProperty(Environment.DEFAULT_CATALOG, jpa.getDefaultCatalog());
+            }
+
+            unit.addProperty(Environment.CONNECTION_PROVIDER, HikariCPConnectionProvider.class.getName());
+            unit.addProperty("hibernate.hikari.idleTimeout", String.valueOf(jpa.getIdleTimeout()));
+            unit.addProperty("hibernate.hikari.maximumPoolSize", String.valueOf(jpa.getPool().getMaxSize()));
+            unit.addProperty("hibernate.hikari.minimumIdle", String.valueOf(jpa.getPool().getMinSize()));
+
+            unit.setPersistenceProviderClassName(HibernatePersistenceProvider.class.getName());
+
+            unit.addManagedClassName(SqrlIdentity.class.getName());
+            unit.addManagedClassName(SqrlCorrelator.class.getName());
+            unit.addManagedClassName(SqrlUsedNutToken.class.getName());
+
+            unit.setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
+            unit.setPersistenceUnitName(SqrlJpaPersistenceProvider.PERSISTENCE_UNIT_NAME);
         }
     }
 
