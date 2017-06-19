@@ -57,9 +57,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      */
     protected Path serviceRegistryDirectory;
 
-    // PLEASE REVIEW: make sense to this publisher to live in a where ApplicationEventPublisher lives?? and just reference to it
+
     private Consumer<AbstractCasEvent> publish = this::publishEvent;
     private ComposableSupplier<AbstractCasEvent> createServiceRefreshEvent = () -> new CasRegisteredServicesRefreshEvent(this);
+
     /**
      * Map of service ID to registered service.
      */
