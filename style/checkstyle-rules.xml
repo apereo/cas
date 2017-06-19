@@ -318,7 +318,7 @@
             <property name="validateEnhancedForLoopVariable" value="true"/>
         </module>
         <module name="TodoComment">
-            <property name="severity" value="error"/>
+            <property name="severity" value="warning"/>
         </module>
         <module name="MutableException">
             <property name="severity" value="error"/>
