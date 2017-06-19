@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link HazelcastTicketRegistryTicketCatalogConfiguration}.
+ * This is {@link EhcacheTicketRegistryTicketCatalogConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0

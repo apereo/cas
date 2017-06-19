@@ -38,6 +38,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
      * Instantiates a new EhCache ticket registry.
      *
      * @param ticketCatalog the ticket catalog
+     * @param cacheManager  the cache manager
      * @param cipher        the cipher
      */
     public EhCacheTicketRegistry(final TicketCatalog ticketCatalog, final CacheManager cacheManager,
