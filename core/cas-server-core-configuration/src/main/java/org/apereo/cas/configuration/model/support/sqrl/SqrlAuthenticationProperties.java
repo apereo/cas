@@ -9,8 +9,18 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
  * @since 5.2.0
  */
 public class SqrlAuthenticationProperties {
+    private String aesKey;
+
     private Jpa jpa = new Jpa();
 
+    public String getAesKey() {
+        return aesKey;
+    }
+
+    public void setAesKey(final String aesKey) {
+        this.aesKey = aesKey;
+    }
+    
     public Jpa getJpa() {
         return jpa;
     }
