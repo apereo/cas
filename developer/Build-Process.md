@@ -66,6 +66,7 @@ The following commandline boolean flags are supported by the build:
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
 - Using the Gradle daemon also is a big help. [It should be enabled by default](https://docs.gradle.org/current/userguide/gradle_daemon.html).
+- Enabling [Gradle's build cache](https://docs.gradle.org/current/userguide/build_cache.html) via `--build-cache` can also significantly improve build times.
 
 ## Tasks
 
