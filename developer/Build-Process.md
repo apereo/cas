@@ -37,7 +37,7 @@ cd cas-server
 git checkout master
 ```
 
-For brand new clones, the following task should only be run once:
+For brand new clones, the following task should only be run once from the root directory:
 
 ```bash
 ./gradlew npmInstall gulpSetup
@@ -176,7 +176,7 @@ cd webapp/cas-server-webapp-tomcat
 # Or for the management-webapp:
 # cd webapp-mgmt/cas-management-webapp
 
-./gradlew build bootRun --parallel --offline
+../../gradlew build bootRun --parallel --offline
 ```
 
 The response will look something like this:
