@@ -52,8 +52,6 @@ $(document).ready(function () {
             subsocket.close();
             window.location.replace("sqrllogin");
         } else if (status == "COMMUNICATING") {
-            // The user scanned the QR code and sqrl auth is in progress
-            instruction.innerText = "Communicating with SQRL client";
             subsocket.push(atmosphere.util.stringifyJSON({state: "COMMUNICATING"}));
             sqrlInProgress();
         } else {
