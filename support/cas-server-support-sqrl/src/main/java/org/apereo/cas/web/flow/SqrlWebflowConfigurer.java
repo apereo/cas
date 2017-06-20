@@ -21,7 +21,7 @@ public class SqrlWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final Flow flow = getLoginFlow();
 
         if (flow != null) {
-            flow.getStartActionList().add(createEvaluateAction("sqrlGenerateQRAction"));
+
         }
     }
 }
