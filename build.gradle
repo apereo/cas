@@ -56,7 +56,7 @@ buildscript {
         classpath "org.ajoberstar:grgit:1.7.2"
         classpath "io.spring.gradle:dependency-management-plugin:1.0.2.RELEASE"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
+        classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.zeroturnaround:gradle-jrebel-plugin:1.1.5"
     }
 }
