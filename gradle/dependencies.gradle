@@ -958,6 +958,10 @@ ext.libraries = [
                 dependencies.create("com.github.sqrlserverjava:sqrl-server-atmosphere:1.0.0") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
+                },
+                dependencies.create("eu.infomas:annotation-detector:3.0.5") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
                 }
         ],
         jcifs                   : [
