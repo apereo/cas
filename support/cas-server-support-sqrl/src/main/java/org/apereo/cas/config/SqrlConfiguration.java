@@ -15,6 +15,8 @@ import org.apereo.cas.sqrl.SqrlGenerateQRController;
 import org.apereo.cas.sqrl.storage.SqrlJpaPersistenceFactory;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.SqrlCleanUpAction;
+import org.apereo.cas.web.flow.SqrlInitialAction;
 import org.apereo.cas.web.flow.SqrlWebflowConfigurer;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -131,6 +134,15 @@ public class SqrlConfiguration {
         return bean;
     }
 
+    @Bean
+    public Action sqrlCleanUpAction() {
+        return new SqrlCleanUpAction(sqrlConfig(), sqrlServerOperations());
+    }
+
+    @Bean
+    public Action sqrlInitialAction() {
+        return new SqrlInitialAction(sqrlConfig(), sqrlServerOperations());
+    }
 
     @Bean
     public String[] jpaSqrlPackagesToScan() {

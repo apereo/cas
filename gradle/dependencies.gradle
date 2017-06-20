@@ -2555,6 +2555,9 @@ ext.libraries = [
                 dependencies.create("org.webjars:zxcvbn:$zxcvbnVersion") {
                     force = true
                 },
+                dependencies.create("org.webjars.bower:atmosphere:$atmosphereVersion") {
+                    force = true
+                },
                 dependencies.create("org.webjars:bootstrap:$bootstrapVersion") {
                     force = true
                 },
