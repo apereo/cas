@@ -84,8 +84,8 @@ public class CasCoreTicketsSchedulingConfiguration {
             this.ticketRegistryCleaner = ticketRegistryCleaner;
         }
 
-        @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.startDelay:PT10S}",
-                fixedDelayString = "${cas.authn.mfa.u2f.cleaner.repeatInterval:PT10S}")
+        @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.startDelay:PT30S}",
+                fixedDelayString = "${cas.authn.mfa.u2f.cleaner.repeatInterval:PT120S}")
         public void run() {
             this.ticketRegistryCleaner.clean();
         }

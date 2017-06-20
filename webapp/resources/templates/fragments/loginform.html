@@ -25,10 +25,11 @@
             
             <img id="sqrlImg" th:src="@{/sqrl/qrgen}" onclick="sqrlInProgress(sqrlurl)" title="Click or scan the code"/>
 
-            <p id="cancelSqrl" style="visibility: hidden">
-                <br />
+            <div id="cancelSqrl" style="visibility: hidden">
+                <br/>
+                <div>Waiting for SQRL client to authenticate...</div>
                 <button type="button" class="btn btn-danger" onclick="location.reload()">Cancel</button>
-            </p>
+            </div>
             <!--
             <span th:text="${#servletContext.getAttribute('sqrlCorrelator')}" />
             <span th:text="${#servletContext.getAttribute('sqrlUrl')}" />
