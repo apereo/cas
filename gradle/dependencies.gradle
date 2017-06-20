@@ -63,6 +63,14 @@ ext.libraries = [
                     force = true
                 },
         ],
+        cassandra               : dependencies.create("com.datastax.cassandra:cassandra-driver-core:$cassandraDriverVersion") {
+            exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "io.netty", module: "netty-handler")
+            exclude(group: "com.google.guava", module: "guava")
+            exclude(group: "org.apache.commons", module: "commons-lang3")
+            exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+            force = true
+        },
         apachecxf               : [
                 dependencies.create("org.apache.cxf:cxf-rt-transports-http:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -992,6 +1000,7 @@ ext.libraries = [
         tests                   : [
                 dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
                     exclude(module: "commons-io")
+                    exclude(group: "com.google.guava", module: "guava")
                     force = true
                 },
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
@@ -1047,6 +1056,36 @@ ext.libraries = [
                 dependencies.create("org.spockframework:spock-core:$spockVersion"),
                 dependencies.create("org.spockframework:spock-spring:$spockVersion"),
                 dependencies.create("org.json:json:$jsonVersion") {
+                    force = true
+                },
+                dependencies.create("org.cassandraunit:cassandra-unit:$cassandraUnitVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.xerial.snappy", module: "snappy-java")
+                    exclude(group: "com.googlecode.json-simple", module: "json-simple")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.github.ben-manes.caffeine", module: "caffeine")
+                    exclude(group: "io.netty", module: "netty-codec")
+                    exclude(group: "io.netty", module: "netty-handler")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "org.yaml", module: "snakeyaml")
+                    exclude(group: "org.antlr", module: "antlr-runtime")
+                    exclude(group: "org.apache.ant", module: "ant")
+                    exclude(group: "org.apache.thrift", module: "libthrift")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")
+                    exclude(group: "org.codehaus.jackson", module: "jackson-core-asl")
+                    exclude(group: "com.lmax", module: "disruptor")
+                    exclude(group: "net.java.dev.jna", module: "jna")
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
+                    force = true
+                },
+                dependencies.create("org.apache.thrift:libthrift:0.9.2") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpcore")
                     force = true
                 }
         ],
