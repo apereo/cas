@@ -49,6 +49,7 @@ import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactor
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.engine.support.GenericSubflowAttributeMapper;
+import org.springframework.webflow.engine.support.TransitionCriteriaChain;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.expression.spel.ActionPropertyAccessor;
@@ -60,6 +61,7 @@ import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccesso
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -600,6 +602,29 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final Field field = ReflectionUtils.findField(state.getViewFactory().getClass(), "binderConfiguration");
         ReflectionUtils.makeAccessible(field);
         return (BinderConfiguration) ReflectionUtils.getField(field, state.getViewFactory());
+    }
+
+    /**
+     * Gets transition execution criteria chain for transition.
+     *
+     * @param def the def
+     * @return the transition execution criteria chain for transition
+     */
+    protected List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(final Transition def) {
+
+        if (def.getExecutionCriteria() instanceof TransitionCriteriaChain) {
+            final TransitionCriteriaChain chain = (TransitionCriteriaChain) def.getExecutionCriteria();
+            final Field field = ReflectionUtils.findField(chain.getClass(), "criteriaChain");
+            ReflectionUtils.makeAccessible(field);
+            return (List<TransitionCriteria>) ReflectionUtils.getField(field, chain);
+        }
+
+        if (def.getExecutionCriteria() != null) {
+            final List c = new ArrayList<>();
+            c.add(def.getExecutionCriteria());
+            return c;
+        }
+        return new ArrayList<>();
     }
 
     /**
