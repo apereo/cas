@@ -1,12 +1,20 @@
 <div class="box" id="login">
     <div class="login-header">
         <h2 th:text="#{cas.login.pagetitle}"></h2>
-        <span class="fa-stack fa-2x hidden-xs">
+        <span th:if="${#servletContext.getAttribute('sqrlUrl')}">
+            <img th:src="@{/sqrl/qrgen}"/>
+            <!--
+            <span th:text="${#servletContext.getAttribute('sqrlCorrelator')}" />
+            <span th:text="${#servletContext.getAttribute('sqrlUrl')}" />
+            <span th:text="${#servletContext.getAttribute('sqrlRefreshSeconds')}" />
+            -->
+        </span>
+        <span class="fa-stack fa-2x hidden-xs" th:unless="${#servletContext.getAttribute('sqrlUrl')}">
           <i class="fa fa-circle fa-stack-2x"></i>
           <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
         </span>
     </div>
-
+    
     <form method="post" id="fm1" th:object="${credential}">
 
         <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
