@@ -11,10 +11,10 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.sqrl.SqrlAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.sqrl.SqrlCallbabckController;
+import org.apereo.cas.sqrl.SqrlGenerateQRController;
 import org.apereo.cas.sqrl.storage.SqrlJpaPersistenceFactory;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.SqrlGenerateQRAction;
 import org.apereo.cas.web.flow.SqrlWebflowConfigurer;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -94,9 +93,9 @@ public class SqrlConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "sqrlGenerateQRAction")
-    public Action sqrlGenerateQRAction() {
-        return new SqrlGenerateQRAction(sqrlConfig(), sqrlServerOperations());
+    @ConditionalOnMissingBean(name = "sqrlGenerateQRController")
+    public SqrlGenerateQRController sqrlGenerateQRController() {
+        return new SqrlGenerateQRController(sqrlConfig(), sqrlServerOperations());
     }
 
     @ConditionalOnMissingBean(name = "sqrlServerOperations")
