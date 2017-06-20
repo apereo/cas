@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 /**
  * Represents a supplier of results that could be chained with a Consumer.
  *
- * TODO: PLEASE REMOVE THIS IF IT'S ADDED TO THE JDK
+ * TODO: Candidate for removal in case component is added to JDK.
  *
  * <p>There is no requirement that a new or distinct result be returned each
  * time the supplier is invoked.

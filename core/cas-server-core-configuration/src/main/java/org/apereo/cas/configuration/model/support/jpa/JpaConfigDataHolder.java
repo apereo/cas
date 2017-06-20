@@ -23,6 +23,12 @@ public class JpaConfigDataHolder {
 
     public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter,
                                final String persistenceUnitName,
+                               final String[] packagesToScan) {
+        this(jpaVendorAdapter, persistenceUnitName, packagesToScan, null);
+    }
+
+    public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter,
+                               final String persistenceUnitName,
                                final String[] packagesToScan,
                                final DataSource dataSource) {
         this.jpaVendorAdapter = jpaVendorAdapter;
