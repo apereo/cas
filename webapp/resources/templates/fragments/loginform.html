@@ -7,7 +7,8 @@
             <script th:inline="javascript">
                 /*<![CDATA[*/
 
-                var sqrlurl = /*[[${#servletContext.getAttribute('sqrlUrl')}]]*/
+                var sqrlurl =
+                /*[[${#servletContext.getAttribute('sqrlUrl')}]]*/
 
                 /*]]>*/
             </script>
@@ -22,8 +23,12 @@
                 }
             </script>
             
-            <img th:src="@{/sqrl/qrgen}" onclick="sqrlInProgress(sqrlurl)" title="Click or scan the code"/>
-            <a id="cancel" href="logout">Cancel SQRL authentication</a>
+            <img id="sqrlImg" th:src="@{/sqrl/qrgen}" onclick="sqrlInProgress(sqrlurl)" title="Click or scan the code"/>
+
+            <p id="cancelSqrl" style="visibility: hidden">
+                <br />
+                <button  type="button" class="btn btn-danger">Cancel</button>
+            </p>
             <!--
             <span th:text="${#servletContext.getAttribute('sqrlCorrelator')}" />
             <span th:text="${#servletContext.getAttribute('sqrlUrl')}" />

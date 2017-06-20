@@ -1,10 +1,16 @@
 function sqrlInProgress(sqrlurl) {
     var sqrlImgSrc = $("#sqrlImg").attr("src");
-    var showingSqrlQr = sqrlImgSrc != "spinner.gif";
+    var showingSqrlQr = sqrlImgSrc != "/cas/images/spinner.gif";
     if (!showingSqrlQr) {
         return;
     }
-    $("#cancel").hide();
+    $("#cancelSqrl").hide();
+
+    $("#sqrlImg").attr("src", "/cas/images/spinner.gif");
+    $("#cancelSqrl").show();
+    $("#cancelSqrl").css("visibility", "");
+    $("#fm1").hide();
+    
     window.location.replace(sqrlurl);
 }
 
@@ -14,7 +20,7 @@ function stopPolling(socket, subsocket, request) {
 }
 
 $(document).ready(function () {
-    $("#cancel").hide();
+    $("#cancelSqrl").hide();
     var socket = atmosphere;
     var subsocket;
     var atmosphereurl = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")) + "/sqrlauthpolling";
