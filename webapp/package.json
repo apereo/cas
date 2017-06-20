@@ -21,20 +21,26 @@
     "url": "https://github.com/apereo/cas/issues"
   },
   "dependencies": {
-    "gulp": "^3.9.1",
-    "gulp-sass": "^2.2.0",
+    "gulp": "3.9.1",
+    "gulp-sass": "2.2.0",
     "bootstrap-sass": "~> 3.3.6",
-    "yargs": "^4.7.0",
-    "gulp-autoprefixer": "^3.1.0"
+    "yargs": "4.7.0",
+    "gulp-autoprefixer": "3.1.0"
   },
   "devDependencies": {
-    "eslint": "^3.19.0",
-    "eslint-plugin-react": "^7.0.1",
-    "gulp": "^3.9.1",
-    "semistandard": "^11.0.0"
+    "babel-eslint": "7.2.3",
+    "eslint": "3.19.0",
+    "eslint-config-airbnb": "15.0.1",
+    "eslint-plugin-jsx-a11y": "5.0.3",
+    "eslint-plugin-import": "2.3.0",
+    "eslint-plugin-react": "7.0.1",
+    "eslint-config-prettier": "2.1.1",
+    "eslint-loader": "1.7.1",
+    "eslint-plugin-prettier": "2.1.1",
+    "prettier": "1.3.1"
   },
   "scripts": {
     "gulp": "gulp",
-    "lint": "eslint resources/static/**/*.js --quiet --color"
+    "lint": "eslint resources/static/**/*.jsx --quiet --color"
   }
 }

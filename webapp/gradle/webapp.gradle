@@ -18,13 +18,24 @@ javadoc {
 
 npm_install.dependsOn(npm_cache_clean)
 
-task npmLint(type: NpmTask, dependsOn: 'npmInstall', description: "Lint the JavaScript files") {
+// run npm install
+gulp_default.dependsOn 'npmInstall'
+
+// run gulp install
+gulp_default.dependsOn 'installGulp'
+
+
+task npmLint(group: 'UI', type: NpmTask, dependsOn: 'npmInstall', description: "Lint the JavaScript files") {
   args = ['run', 'lint', '--silent']
 }
 
+
 processResources.dependsOn 'npmLint'
+
 task gulpSetup(dependsOn: ["npmInstall", "installGulp"], description: "Install npm and Gulp") {}
+
 task gulpRun(dependsOn: gulp_default, description: "Runs Gulp default task") {}
+
 processResources.dependsOn gulpRun
 
 if (Boolean.getBoolean("enableJRebelAgent")) {
@@ -32,7 +43,10 @@ if (Boolean.getBoolean("enableJRebelAgent")) {
 }
 
 node {
+    version = '7.10.0'
+    npmVersion = '4.2.0'
     nodeModulesDir = project(":webapp").projectDir
+    download = true
 }
 
 gulp {
@@ -58,7 +72,7 @@ bootRun {
 
     addResources = true
     systemProperties = System.properties
-    
+
     def list = []
     if (Boolean.getBoolean("enableRemoteDebugging")) {
         list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
@@ -111,10 +125,10 @@ dependencies {
     compile project(":support:cas-server-support-themes")
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
-    
+
     compile project(":webapp:cas-server-webapp-config")
     compile project(":webapp:cas-server-webapp-init")
-    
+
     implementation libraries.pac4j
     implementation libraries.thymeleaf
     implementation libraries.groovy
@@ -124,3 +138,5 @@ dependencies {
     runtime libraries.webjars
     compile libraries.springcloudconfigclient
 }
+
+clean.delete << file("${project(":webapp").projectDir}/node_modules")
