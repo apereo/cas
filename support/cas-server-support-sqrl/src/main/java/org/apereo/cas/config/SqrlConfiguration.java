@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.github.dbadia.sqrl.atmosphere.AtmosphereClientAuthStateUpdater;
 import com.github.dbadia.sqrl.server.SqrlConfig;
 import com.github.dbadia.sqrl.server.SqrlConfigOperations;
 import com.github.dbadia.sqrl.server.SqrlServerOperations;
@@ -18,11 +19,14 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.SqrlCleanUpAction;
 import org.apereo.cas.web.flow.SqrlInitialAction;
 import org.apereo.cas.web.flow.SqrlWebflowConfigurer;
+import org.atmosphere.cpr.ApplicationConfig;
+import org.atmosphere.cpr.AtmosphereServlet;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +44,9 @@ import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link SqrlConfiguration}.
@@ -74,15 +81,18 @@ public class SqrlConfiguration {
     @RefreshScope
     public SqrlConfig sqrlConfig() {
         try {
+
+            final SqrlAuthenticationProperties sqrl = casProperties.getAuthn().getSqrl();
+
             final SqrlConfig c = new SqrlConfig();
-            final byte[] key = DigestUtils.sha("testing".getBytes(StandardCharsets.UTF_8));
+            final byte[] key = DigestUtils.sha(sqrl.getAesKey().getBytes(StandardCharsets.UTF_8));
             c.setAESKeyBytes(Arrays.copyOf(key, AES_KEY_SIZE));
             c.setBackchannelServletPath("/cas/sqrlcallback");
             c.setSecureRandom(new SecureRandom());
             c.setServerFriendlyName(casProperties.getServer().getPrefix());
             c.setCookieDomain(casProperties.getTgc().getDomain());
             c.setSqrlPersistenceFactoryClass(SqrlJpaPersistenceFactory.class.getName());
-
+            c.setClientAuthStateUpdaterClass(AtmosphereClientAuthStateUpdater.class.getName());
             return c;
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
@@ -155,5 +165,21 @@ public class SqrlConfiguration {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
+    }
+
+    @Bean
+    public ServletRegistrationBean atmosphereServlet() {
+        final ServletRegistrationBean bean = new ServletRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("AtmosphereServlet");
+        bean.setServlet(new AtmosphereServlet());
+        bean.setLoadOnStartup(0);
+        bean.setUrlMappings(Collections.singleton("/sqrlauthpolling/*"));
+        bean.setAsyncSupported(true);
+
+        final Map params = new HashMap<>();
+        params.put(ApplicationConfig.ANNOTATION_PACKAGE, AtmosphereClientAuthStateUpdater.class.getPackage().getName());
+        bean.setInitParameters(params);
+        return bean;
     }
 }
