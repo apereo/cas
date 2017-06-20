@@ -5,8 +5,6 @@ import com.github.dbadia.sqrl.server.SqrlConfig;
 import com.github.dbadia.sqrl.server.SqrlServerOperations;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,8 +21,6 @@ import java.net.InetAddress;
  * @since 5.2.0
  */
 public class SqrlGenerateQRAction extends AbstractAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SqrlGenerateQRAction.class);
-
     private static final int QR_CODE_SIZE_IN_PIXELS = 250;
 
     private final SqrlConfig sqrlConfig;
