@@ -15,3 +15,4 @@ The following protocols are supported and provided by CAS:
 *   [SAML1](SAML-Protocol.html)
 *   [SAML2](../installation/Configuring-SAML2-Authentication.html)
 *   [REST Protocol](protocol/REST-Protocol.html)
+*   [SQRL Protocol](protocol/SQRL-Protocol.html)
