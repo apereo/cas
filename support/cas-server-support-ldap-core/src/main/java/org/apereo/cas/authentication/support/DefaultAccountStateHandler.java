@@ -156,7 +156,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             return;
         }
 
-        if(warning.getExpiration()!=null){
+        if (warning.getExpiration()!=null){
             final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
             final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
             LOGGER.debug(
