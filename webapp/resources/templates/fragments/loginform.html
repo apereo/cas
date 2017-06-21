@@ -7,22 +7,20 @@
             <script th:inline="javascript">
                 /*<![CDATA[*/
 
-                var sqrlurl =
-                /*[[${#servletContext.getAttribute('sqrlUrl')}]]*/
+                var sqrlurl =  /*[[${#servletContext.getAttribute('sqrlUrl')}]]*/
 
                 /*]]>*/
             </script>
 
             <script type="text/javascript" th:inline="javascript">
                 function jqueryReady() {
-                    <!--
+
                     head.load(
                             /*[[@{/js/sqrl/sqrl.js}]]*/
                     );
-                    -->
                 }
             </script>
-            
+
             <img id="sqrlImg" th:src="@{/sqrl/qrgen}" onclick="sqrlInProgress(sqrlurl)" title="Click or scan the code"/>
 
             <div id="cancelSqrl" style="visibility: hidden">
