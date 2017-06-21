@@ -87,7 +87,7 @@ public class SqrlConfiguration {
             final SqrlConfig c = new SqrlConfig();
             final byte[] key = DigestUtils.sha(sqrl.getAesKey().getBytes(StandardCharsets.UTF_8));
             c.setAESKeyBytes(Arrays.copyOf(key, AES_KEY_SIZE));
-            c.setBackchannelServletPath("/cas/sqrlcallback");
+            c.setBackchannelServletPath("/cas/sqrlCallback");
             c.setSecureRandom(new SecureRandom());
             c.setServerFriendlyName(casProperties.getServer().getPrefix());
             c.setCookieDomain(casProperties.getTgc().getDomain());
