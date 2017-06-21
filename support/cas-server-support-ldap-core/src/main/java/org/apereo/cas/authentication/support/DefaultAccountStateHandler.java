@@ -156,14 +156,16 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             return;
         }
 
-        final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
-        final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
-        LOGGER.debug(
+        if(warning.getExpiration()!=null){
+            final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
+            final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
+            LOGGER.debug(
                 "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
                 ttl,
                 configuration.getPasswordWarningNumberOfDays());
-        if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {
-            messages.add(new PasswordExpiringWarningMessageDescriptor("Password expires in {0} days.", ttl));
+            if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {
+                messages.add(new PasswordExpiringWarningMessageDescriptor("Password expires in {0} days.", ttl));
+            }
         }
         if (warning.getLoginsRemaining() > 0) {
             messages.add(new DefaultMessageDescriptor(
