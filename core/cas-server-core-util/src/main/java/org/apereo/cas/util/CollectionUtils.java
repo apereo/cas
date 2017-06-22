@@ -66,6 +66,15 @@ public final class CollectionUtils {
         return new HashMap<>();
     }
 
+    /**
+     * Wrap map.
+     *
+     * @param <K>   the type parameter
+     * @param <V>   the type parameter
+     * @param key   the key
+     * @param value the value
+     * @return the map
+     */
     public static <K, V> Map<K, V> wrap(final String key, final Object value) {
         final Map map = new HashMap<>();
         if (StringUtils.isNotBlank(key)) {
@@ -113,6 +122,21 @@ public final class CollectionUtils {
         final Set<T> list = new LinkedHashSet<>();
         if (source != null) {
             list.addAll(source);
+        }
+        return list;
+    }
+
+    /**
+     * Wrap set set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> Set<T> wrapSet(final T source) {
+        final Set<T> list = new LinkedHashSet<>();
+        if (source != null) {
+            list.add(source);
         }
         return list;
     }

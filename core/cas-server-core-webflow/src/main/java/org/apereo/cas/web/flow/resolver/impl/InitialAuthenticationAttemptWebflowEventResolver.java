@@ -87,7 +87,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                     LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
                     if (finalResolvedEvent != null) {
-                        return CollectionUtils.wrap(finalResolvedEvent);
+                        return CollectionUtils.wrapSet(finalResolvedEvent);
                     }
                 }
             } else {
@@ -99,7 +99,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             if (builder == null) {
                 throw new IllegalArgumentException("No authentication result builder can be located in the context");
             }
-            return CollectionUtils.wrap(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
+            return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             Event event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
@@ -108,7 +108,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             }
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            return CollectionUtils.wrap(event);
+            return CollectionUtils.wrapSet(event);
         }
     }
 

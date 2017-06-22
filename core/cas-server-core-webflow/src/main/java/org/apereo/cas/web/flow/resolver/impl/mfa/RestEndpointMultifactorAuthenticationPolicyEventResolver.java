@@ -116,7 +116,7 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
 
         if (restProvider != null) {
             LOGGER.debug("Found multifactor authentication provider [{}]", restProvider.getId());
-            return CollectionUtils.wrap(new Event(this, restProvider.getId()));
+            return CollectionUtils.wrapSet(new Event(this, restProvider.getId()));
         }
         LOGGER.debug("No multifactor authentication provider could be matched against [{}]", results);
         return Collections.emptySet();

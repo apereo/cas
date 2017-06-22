@@ -373,7 +373,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                         final String id = provider.getId();
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
-                        return CollectionUtils.wrap(event);
+                        return CollectionUtils.wrapSet(event);
                     }
                     LOGGER.debug("Provider [{}] could not be verified", provider);
                 } else {
@@ -561,13 +561,13 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             builder = this.authenticationSystemSupport.handleAuthenticationTransaction(service, builder, credential);
 
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
-            return CollectionUtils.wrap(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
+            return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             final MessageContext messageContext = context.getMessageContext();
             messageContext.addMessage(new MessageBuilder().error()
                     .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName())).build());
-            return CollectionUtils.wrap(new EventFactorySupport().error(this));
+            return CollectionUtils.wrapSet(new EventFactorySupport().error(this));
         }
     }
 }

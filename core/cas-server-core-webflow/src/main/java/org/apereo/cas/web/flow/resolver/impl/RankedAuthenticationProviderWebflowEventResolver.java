@@ -93,7 +93,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
                 || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
             LOGGER.debug("Returning webflow event as [{}]", id);
-            return CollectionUtils.wrap(event);
+            return CollectionUtils.wrapSet(event);
         }
 
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = this.authenticationContextValidator.validate(authentication, id, service);
@@ -104,11 +104,11 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         if (result.getValue().isPresent()) {
-            return CollectionUtils.wrap(validateEventIdForMatchingTransitionInContext(id, context,
+            return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, result.getValue().get())));
         }
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
-        return CollectionUtils.wrap(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
+        return CollectionUtils.wrapSet(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
     }
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
@@ -119,6 +119,6 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
     }
 
     private Set<Event> resumeFlow() {
-        return CollectionUtils.wrap(new EventFactorySupport().success(this));
+        return CollectionUtils.wrapSet(new EventFactorySupport().success(this));
     }
 }

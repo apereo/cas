@@ -97,7 +97,7 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
                 LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
 
                 final Event event = validateEventIdForMatchingTransitionInContext(identifier, context, buildEventAttributeMap(principal, service, provider));
-                return CollectionUtils.wrap(event);
+                return CollectionUtils.wrapSet(event);
             }
 
             LOGGER.debug("No multifactor authentication providers could be located for [{}]", service);

@@ -101,7 +101,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
                         providerFound.get(), service.getName());
                 final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
                         buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
-                return CollectionUtils.wrap(event);
+                return CollectionUtils.wrapSet(event);
             }
             LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
             return null;
