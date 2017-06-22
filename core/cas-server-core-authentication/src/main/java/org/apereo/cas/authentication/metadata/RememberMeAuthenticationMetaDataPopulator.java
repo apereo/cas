@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-public class RememberMeAuthenticationMetaDataPopulator extends BaseAuthenticationMetadataPopulator {
+public class RememberMeAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeAuthenticationMetaDataPopulator.class);
 

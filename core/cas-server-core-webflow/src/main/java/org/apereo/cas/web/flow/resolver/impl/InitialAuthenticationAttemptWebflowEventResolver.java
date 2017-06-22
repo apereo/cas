@@ -13,6 +13,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -26,7 +27,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -87,7 +87,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                     LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
                     if (finalResolvedEvent != null) {
-                        return Collections.singleton(finalResolvedEvent);
+                        return CollectionUtils.wrapSet(finalResolvedEvent);
                     }
                 }
             } else {
@@ -99,7 +99,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             if (builder == null) {
                 throw new IllegalArgumentException("No authentication result builder can be located in the context");
             }
-            return Collections.singleton(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
+            return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             Event event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
@@ -108,7 +108,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             }
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            return Collections.singleton(event);
+            return CollectionUtils.wrapSet(event);
         }
     }
 

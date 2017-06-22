@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.client.validation.Assertion;
@@ -21,29 +22,61 @@ import java.util.List;
  */
 public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthnContextClassRefBuilder.class);
+    private final CasConfigurationProperties casProperties;
+
+    public DefaultAuthnContextClassRefBuilder(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
+    }
+
     @Override
-    public String build(final Assertion assertion, final AuthnRequest authnRequest,
+    public String build(final Assertion assertion,
+                        final AuthnRequest authnRequest,
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                         final SamlRegisteredService service) {
-        final RequestedAuthnContext requestedAuthnContext = authnRequest.getRequestedAuthnContext();
-        if (requestedAuthnContext == null) {
-            LOGGER.debug("No specific authN context is requested. Returning [{}]", AuthnContext.UNSPECIFIED_AUTHN_CTX);
-            return AuthnContext.UNSPECIFIED_AUTHN_CTX;
-        }
-        final List<AuthnContextClassRef> authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs();
-        if (authnContextClassRefs == null || authnContextClassRefs.isEmpty()) {
-            LOGGER.debug("Requested authN context class ref is unspecified. Returning [{}]", AuthnContext.UNSPECIFIED_AUTHN_CTX);
-            return AuthnContext.UNSPECIFIED_AUTHN_CTX;
-        }
-        LOGGER.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());
-        authnContextClassRefs.forEach(authnContextClassRef -> LOGGER.debug("Requested AuthN Context [{}]", authnContextClassRef.getAuthnContextClassRef()));
         if (StringUtils.isNotBlank(service.getRequiredAuthenticationContextClass())) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                     service.getRequiredAuthenticationContextClass(),
                     service.getName());
             return service.getRequiredAuthenticationContextClass();
         }
-        LOGGER.debug("Returning default AuthN Context [{}]", AuthnContext.PPT_AUTHN_CTX);
-        return AuthnContext.PPT_AUTHN_CTX;
+
+        final String defClass = StringUtils.defaultIfBlank(
+                casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
+                AuthnContext.PPT_AUTHN_CTX);
+
+        final RequestedAuthnContext requestedAuthnContext = authnRequest.getRequestedAuthnContext();
+        if (requestedAuthnContext == null) {
+            LOGGER.debug("No specific authN context is requested. Returning [{}]", defClass);
+            return defClass;
+        }
+        final List<AuthnContextClassRef> authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs();
+        if (authnContextClassRefs == null || authnContextClassRefs.isEmpty()) {
+            LOGGER.debug("Requested authN context class ref is unspecified. Returning [{}]", defClass);
+            return defClass;
+        }
+
+        final String finalCtx = StringUtils.defaultIfBlank(getAuthenticationContextByAssertion(assertion,
+                requestedAuthnContext, authnContextClassRefs), defClass);
+        LOGGER.debug("Returning authN context [{}]", finalCtx);
+        return finalCtx;
+    }
+
+    /**
+     * Gets authentication context by assertion.
+     * This is more of a template method for the time being,
+     * and may be enhanced later to support more advanced parsing of classes
+     * from the assertion.
+     *
+     * @param assertion             the assertion
+     * @param requestedAuthnContext the requested authn context
+     * @param authnContextClassRefs the authn context class refs
+     * @return the authentication context by assertion
+     */
+    protected String getAuthenticationContextByAssertion(final Assertion assertion,
+                                                         final RequestedAuthnContext requestedAuthnContext,
+                                                         final List<AuthnContextClassRef> authnContextClassRefs) {
+        LOGGER.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());
+        authnContextClassRefs.forEach(c -> LOGGER.debug("Requested AuthN Context [{}]", c.getAuthnContextClassRef()));
+        return null;
     }
 }

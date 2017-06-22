@@ -358,8 +358,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
 
         if (service != null) {
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+            final Service selectedService = resolveServiceFromAuthenticationRequest(service);
+            LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
+
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, authentication);
         }
 
         final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);

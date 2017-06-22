@@ -2,12 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.AuthenticationCredentialTypeMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
 import org.apereo.cas.authentication.metadata.CacheCredentialsMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulator;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -52,10 +53,18 @@ public class CasCoreAuthenticationMetadataConfiguration implements Authenticatio
         return NoOpCipherExecutor.getInstance();
     }
 
+    @ConditionalOnMissingBean(name = "authenticationCredentialTypeMetaDataPopulator")
+    @Bean
+    public AuthenticationMetaDataPopulator authenticationCredentialTypeMetaDataPopulator() {
+        return new AuthenticationCredentialTypeMetaDataPopulator();
+    }
+
+
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
         plan.registerMetadataPopulator(successfulHandlerMetaDataPopulator());
         plan.registerMetadataPopulator(rememberMeAuthenticationMetaDataPopulator());
+        plan.registerMetadataPopulator(authenticationCredentialTypeMetaDataPopulator());
 
         final ClearpassProperties cp = casProperties.getClearpass();
         if (cp.isCacheCredential()) {

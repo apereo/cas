@@ -69,7 +69,8 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         resolvedAttributes.putAll(attrs);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
-        getAllowedAttributes().stream()
+        getAllowedAttributes()
+                .stream()
                 .map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null)
                 .forEach(attribute -> {
                     LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);

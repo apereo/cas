@@ -36,6 +36,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 ## Sample Request
+
 ```xml
 POST /cas/samlValidate?ticket=
 Host: cas.example.com

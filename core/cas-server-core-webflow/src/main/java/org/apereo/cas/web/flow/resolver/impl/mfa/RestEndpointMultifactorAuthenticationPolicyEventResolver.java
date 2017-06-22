@@ -13,6 +13,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -115,7 +116,7 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
 
         if (restProvider != null) {
             LOGGER.debug("Found multifactor authentication provider [{}]", restProvider.getId());
-            return Collections.singleton(new Event(this, restProvider.getId()));
+            return CollectionUtils.wrapSet(new Event(this, restProvider.getId()));
         }
         LOGGER.debug("No multifactor authentication provider could be matched against [{}]", results);
         return Collections.emptySet();

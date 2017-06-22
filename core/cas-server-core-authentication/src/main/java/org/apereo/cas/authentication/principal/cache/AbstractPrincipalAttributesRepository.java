@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -173,7 +174,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             if (values instanceof List) {
                 convertedAttributes.put(key, (List) values);
             } else {
-                convertedAttributes.put(key, Collections.singletonList(values));
+                convertedAttributes.put(key, CollectionUtils.wrap(values));
             }
         });
         return convertedAttributes;

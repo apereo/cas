@@ -8,7 +8,7 @@ package org.apereo.cas.configuration.model.support.saml;
  */
 
 public class SamlCore {
-    private int skewAllowance;
+    private int skewAllowance = 5;
 
     private String attributeNamespace = "http://www.ja-sig.org/products/cas/";
 

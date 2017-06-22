@@ -4,7 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.metadata.BaseAuthenticationMetadataPopulator;
+import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.ClientCredential;
 
 /**
@@ -14,7 +14,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMetadataPopulator {
+public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     /***
      * The name of the client used to perform the authentication.

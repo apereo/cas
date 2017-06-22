@@ -778,7 +778,7 @@ if (array.length == 3) {
                     {name: 'Address', value: 'address'},
                     {name: 'Phone', value: 'phone'},
                     {name: 'Offline Access', value: 'offline_access'},
-                    {name: 'User Defined', value: 'user_defined'}
+                    {name: 'User Defined', value: 'user_defined'},
                     {name: 'OAuth2 Client', value: 'oauth'},
                     {name: 'SAML2 Service Provider', value: 'saml'},
                     {name: 'OpenID Connect Client', value: 'oidc'}

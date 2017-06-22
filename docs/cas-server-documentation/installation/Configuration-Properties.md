@@ -1618,6 +1618,7 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].principalAttributeId=uid
 # cas.authn.ldap[0].principalAttributePassword=password
 # cas.authn.ldap[0].principalAttributeList=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
+# cas.authn.ldap[0].collectDnAttribute=false
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
 # cas.authn.ldap[0].credentialCriteria=
@@ -2737,7 +2738,8 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.logout.forceSignedLogoutRequests=true
 # cas.authn.samlIdp.logout.singleLogoutCallbacksDisabled=false
 
-# cas.authn.samlIdp.response.skewAllowance=0
+# cas.authn.samlIdp.response.defaultAuthenticationContextClass=
+# cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
@@ -3026,6 +3028,15 @@ The signature location MUST BE the public key used to sign the metadata.
 # cas.samlSP.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
 # cas.samlSP.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
 # cas.samlSP.inCommon.entityIds[0]=sampleSPEntityId
+```
+
+## SQRL
+
+Allow CAS to authenticate accounts via SQRL. To learn more about this topic, [please review this guide](../protocol/SQRL-Protocol.html).
+
+```properties
+# 24-character AES Key
+# cas.authn.sqrl.aesKey=
 ```
 
 ## OpenID Connect

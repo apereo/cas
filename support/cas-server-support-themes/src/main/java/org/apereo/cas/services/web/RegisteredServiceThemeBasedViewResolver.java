@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,7 +59,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         final WebApplicationService service;
 
         final HttpServletResponse response;
-        final List<ArgumentExtractor> argumentExtractorList = Collections.singletonList(this.argumentExtractor);
+        final List<ArgumentExtractor> argumentExtractorList = CollectionUtils.wrap(this.argumentExtractor);
         
         if (requestContext != null) {
             response = WebUtils.getHttpServletResponse(requestContext);

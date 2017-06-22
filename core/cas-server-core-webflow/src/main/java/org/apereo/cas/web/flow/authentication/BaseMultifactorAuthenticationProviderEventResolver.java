@@ -12,12 +12,12 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -74,7 +74,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
      */
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final String requestMfaMethod) {
-        return resolveProvider(providers, Collections.singleton(requestMfaMethod));
+        return resolveProvider(providers, CollectionUtils.wrap(requestMfaMethod));
     }
 
     @Override

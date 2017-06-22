@@ -15,7 +15,6 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,15 +84,15 @@ public class Cas30ResponseView extends Cas20ResponseView {
         final Map<String, Object> filteredAuthenticationAttributes = new HashMap<>(getAuthenticationAttributes(model));
 
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
-                Collections.singleton(getAuthenticationDate(model)));
+                CollectionUtils.wrap(getAuthenticationDate(model)));
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
-                Collections.singleton(isAssertionBackedByNewLogin(model)));
+                CollectionUtils.wrap(isAssertionBackedByNewLogin(model)));
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
-                Collections.singleton(isRememberMeAuthentication(model)));
+                CollectionUtils.wrap(isRememberMeAuthentication(model)));
 
         final String contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
-            filteredAuthenticationAttributes.put(this.authenticationContextAttribute, Collections.singleton(contextProvider));
+            filteredAuthenticationAttributes.put(this.authenticationContextAttribute, CollectionUtils.wrap(contextProvider));
         }        
         return filteredAuthenticationAttributes;
     }

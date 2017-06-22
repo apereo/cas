@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.flow.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheck;
@@ -38,8 +39,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
-
-import java.util.Collections;
 
 /**
  * This is {@link CasSupportActionsConfiguration}.
@@ -156,7 +155,7 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "initialFlowSetupAction")
     public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
-        return new InitialFlowSetupAction(Collections.singletonList(argumentExtractor),
+        return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
                 servicesManager,
                 ticketGrantingTicketCookieGenerator,
                 warnCookieGenerator, casProperties);
