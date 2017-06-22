@@ -90,10 +90,11 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
         final Optional<MultifactorAuthenticationProvider> provider = flattenedProviders
                 .stream()
-                .filter(v -> values.contains(v.getId())).findAny();
+                .filter(v -> values.contains(v.getId()))
+                .findAny();
 
         if (provider.isPresent()) {
-            return CollectionUtils.wrap(new Event(this, provider.get().getId()));
+            return CollectionUtils.wrapSet(new Event(this, provider.get().getId()));
         }
         LOGGER.warn("The requested authentication class [{}] cannot be satisfied by any of the MFA providers available", values);
         throw new AuthenticationException();

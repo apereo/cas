@@ -99,7 +99,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
             final AuthenticationRiskContingencyResponse res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
             this.eventPublisher.publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
             
-            return CollectionUtils.wrap(res.getResult());
+            return CollectionUtils.wrapSet(res.getResult());
         }
 
         LOGGER.debug("Authentication request for [{}] is below the risk threshold", authentication.getPrincipal());

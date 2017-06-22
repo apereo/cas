@@ -48,7 +48,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
     public Set<Event> resolveInternal(final RequestContext context) {
         if (isRequestAskingForServiceTicket(context)) {
             LOGGER.debug("Authentication request is asking for service tickets");
-            return CollectionUtils.wrap(grantServiceTicket(context));
+            return CollectionUtils.wrapSet(grantServiceTicket(context));
         }
         return null;
     }
