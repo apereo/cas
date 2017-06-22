@@ -2208,24 +2208,24 @@ strategies when collecting principal attributes:
 | `BOTH`               | Combine both the above options, where CAS attribute repositories take precedence over WS-Fed.
 
 ```properties
-# cas.authn.wsfed.identityProviderUrl=https://adfs.example.org/adfs/ls/
-# cas.authn.wsfed.identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
-# cas.authn.wsfed.relyingPartyIdentifier=urn:cas:localhost
-# cas.authn.wsfed.attributesType=WSFED
-# cas.authn.wsfed.signingCertificateResources=classpath:adfs-signing.crt
-# cas.authn.wsfed.tolerance=10000
-# cas.authn.wsfed.identityAttribute=upn
-# cas.authn.wsfed.attributeResolverEnabled=true
-# cas.authn.wsfed.autoRedirect=true
-# cas.authn.wsfed.name=
+# cas.authn.wsfed[0].identityProviderUrl=https://adfs.example.org/adfs/ls/
+# cas.authn.wsfed[0].identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
+# cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:localhost
+# cas.authn.wsfed[0].attributesType=WSFED
+# cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.crt
+# cas.authn.wsfed[0].tolerance=10000
+# cas.authn.wsfed[0].identityAttribute=upn
+# cas.authn.wsfed[0].attributeResolverEnabled=true
+# cas.authn.wsfed[0].autoRedirect=true
+# cas.authn.wsfed[0].name=
 
-# cas.authn.wsfed.principal.principalAttribute=
-# cas.authn.wsfed.principal.returnNull=false
+# cas.authn.wsfed[0].principal.principalAttribute=
+# cas.authn.wsfed[0].principal.returnNull=false
 
 # Private/Public keypair used to decrypt assertions, if any.
-# cas.authn.wsfed.encryptionPrivateKey=classpath:private.key
-# cas.authn.wsfed.encryptionCertificate=classpath:certificate.crt
-# cas.authn.wsfed.encryptionPrivateKeyPassword=NONE
+# cas.authn.wsfed[0].encryptionPrivateKey=classpath:private.key
+# cas.authn.wsfed[0].encryptionCertificate=classpath:certificate.crt
+# cas.authn.wsfed[0].encryptionPrivateKeyPassword=NONE
 ```
 
 

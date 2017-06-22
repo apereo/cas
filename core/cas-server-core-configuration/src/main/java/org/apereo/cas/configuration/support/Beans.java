@@ -34,6 +34,7 @@ import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.hibernate.cfg.Environment;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.BindRequest;
@@ -196,7 +197,7 @@ public final class Beans {
             bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
             bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
-            bean.setInitializationFailTimeout(jpaProperties.isFailFast() ? 1 : 0);
+            bean.setInitializationFailFast(jpaProperties.isFailFast());
             bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
             bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
@@ -246,27 +247,31 @@ public final class Beans {
     public static LocalContainerEntityManagerFactoryBean newHibernateEntityManagerFactoryBean(final JpaConfigDataHolder config,
                                                                                               final AbstractJpaProperties jpaProperties) {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
-
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
 
         if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
         bean.setPackagesToScan(config.getPackagesToScan());
-        bean.setDataSource(config.getDataSource());
+
+        if (config.getDataSource() != null) {
+            bean.setDataSource(config.getDataSource());
+        }
 
         final Properties properties = new Properties();
-        properties.put("hibernate.dialect", jpaProperties.getDialect());
-        properties.put("hibernate.hbm2ddl.auto", jpaProperties.getDdlAuto());
-        properties.put("hibernate.jdbc.batch_size", jpaProperties.getBatchSize());
+        properties.put(Environment.DIALECT, jpaProperties.getDialect());
+        properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
+        properties.put(Environment.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
         if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
-            properties.put("hibernate.default_catalog", jpaProperties.getDefaultCatalog());
+            properties.put(Environment.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
         }
         if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
-            properties.put("hibernate.default_schema", jpaProperties.getDefaultSchema());
+            properties.put(Environment.DEFAULT_SCHEMA, jpaProperties.getDefaultSchema());
         }
+        properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
+        properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
         bean.setJpaProperties(properties);
-        bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
+        
         return bean;
     }
 
