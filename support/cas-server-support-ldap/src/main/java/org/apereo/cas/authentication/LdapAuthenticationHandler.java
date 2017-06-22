@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -200,7 +201,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 LOGGER.debug("Found principal attribute: [{}]", attr);
                 if (attr.size() > 1) {
                     LOGGER.debug("Principal attribute: [{}] is multivalued", attr);
-                    attributeMap.put(principalAttrName, attr.getStringValues());
+                    attributeMap.put(principalAttrName, CollectionUtils.wrap(attr.getStringValues()));
                 } else {
                     attributeMap.put(principalAttrName, attr.getStringValue());
                 }
