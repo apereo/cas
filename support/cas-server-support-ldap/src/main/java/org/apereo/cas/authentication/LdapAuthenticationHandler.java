@@ -22,6 +22,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -52,7 +53,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Mapping of LDAP attribute name to principal attribute name.
      */
     protected Map<String, String> principalAttributeMap = Collections.emptyMap();
-    
+
     /**
      * Performs LDAP authentication given username/password.
      **/
@@ -139,7 +140,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     public void setPrincipalAttributeList(final List<String> attributeList) {
         this.principalAttributeMap = attributeList.stream().collect(Collectors.toMap(Object::toString, Function.identity()));
     }
-    
+
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
                                                                  final String originalPassword) throws GeneralSecurityException, PreventedException {
@@ -200,7 +201,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 LOGGER.debug("Found principal attribute: [{}]", attr);
                 if (attr.size() > 1) {
                     LOGGER.debug("Principal attribute: [{}] is multivalued", attr);
-                    attributeMap.put(principalAttrName, attr.getStringValues());
+                    attributeMap.put(principalAttrName, new ArrayList<>(attr.getStringValues()));
                 } else {
                     attributeMap.put(principalAttrName, attr.getStringValue());
                 }
