@@ -42,7 +42,7 @@ public class CasSupportJdbcAuditConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public DelegatingAuditTrailManager auditTrailManager() {
+    public JdbcAuditTrailManager jdbcAuditTrailManager() {
         final AuditProperties.Jdbc jdbc = casProperties.getAudit().getJdbc();
         final JdbcAuditTrailManager t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
         t.setCleanupCriteria(auditCleanupCriteria());
@@ -55,7 +55,12 @@ public class CasSupportJdbcAuditConfiguration {
             tableName = jdbc.getDefaultCatalog() + '.' + tableName;
         }
         t.setTableName(tableName);
-        return new DefaultDelegatingAuditTrailManager(t);
+        return t;
+    }
+
+    @Bean
+    public DelegatingAuditTrailManager auditTrailManager() {
+        return new DefaultDelegatingAuditTrailManager(jdbcAuditTrailManager());
     }
 
     @Lazy
