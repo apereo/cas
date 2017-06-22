@@ -3,13 +3,17 @@ package org.apereo.cas.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CollectionUtils}.
@@ -52,8 +56,8 @@ public final class CollectionUtils {
     /**
      * Wraps a possibly null map in an immutable wrapper.
      *
-     * @param <K> the key type
-     * @param <V> the value type
+     * @param <K>    the key type
+     * @param <V>    the value type
      * @param source Nullable map to wrap.
      * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
      * {@link java.util.Collections#emptyMap()}.
@@ -62,7 +66,7 @@ public final class CollectionUtils {
         if (source != null) {
             return new HashMap<>(source);
         }
-        return Collections.emptyMap();
+        return new HashMap<>();
     }
 
     /**
@@ -73,9 +77,41 @@ public final class CollectionUtils {
      * @return {@link Collections#unmodifiableList(List)} if given list is not null, otherwise {@link java.util.Collections#EMPTY_LIST}.
      */
     public static <T> List<T> wrap(final List<T> source) {
+        final List<T> list = new ArrayList<>();
         if (source != null) {
-            return Collections.unmodifiableList(source);
+            list.addAll(source);
         }
-        return Collections.emptyList();
+        return list;
+    }
+
+    /**
+     * Wrap set.
+     *
+     * @param <T>    the type parameter
+     * @param values the values
+     * @return the set
+     */
+    public static <T> Set<T> wrap(final Object... values) {
+        final Set<T> list = new LinkedHashSet<>();
+        if (values != null && values.length > 0) {
+            final Set set = Arrays.stream(values).collect(Collectors.toSet());
+            list.addAll(set);
+        }
+        return list;
+    }
+
+    /**
+     * Wrap varargs.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> Set<T> wrap(final Set<T> source) {
+        final Set<T> list = new LinkedHashSet<>();
+        if (source != null) {
+            list.addAll(source);
+        }
+        return list;
     }
 }
