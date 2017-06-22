@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -60,7 +61,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
             LOGGER.debug("Updating [{}]", currentDn);
             return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,
                     Collections.singletonMap(this.aupAttributeName,
-                            Collections.singleton(Boolean.TRUE.toString())));
+                            CollectionUtils.wrap(Boolean.TRUE.toString())));
         }
         return false;
     }

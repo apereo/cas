@@ -16,6 +16,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -25,7 +26,6 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,7 +101,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
                         providerFound.get(), service.getName());
                 final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
                         buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
-                return Collections.singleton(event);
+                return CollectionUtils.wrap(event);
             }
             LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
             return null;

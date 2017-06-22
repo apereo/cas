@@ -14,6 +14,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -22,7 +23,6 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -48,7 +48,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
     public Set<Event> resolveInternal(final RequestContext context) {
         if (isRequestAskingForServiceTicket(context)) {
             LOGGER.debug("Authentication request is asking for service tickets");
-            return Collections.singleton(grantServiceTicket(context));
+            return CollectionUtils.wrap(grantServiceTicket(context));
         }
         return null;
     }

@@ -13,6 +13,7 @@ import org.apereo.cas.audit.spi.ThreadLocalPrincipalResolver;
 import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -82,7 +83,7 @@ public class CasCoreAuditConfiguration {
 
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ClientInfoThreadLocalFilter());
-        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("CAS Client Info Logging Filter");
         bean.setAsyncSupported(true);
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
