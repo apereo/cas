@@ -20,7 +20,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +63,7 @@ public class CasManagementAuditConfiguration {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
-                auditablePrincipalResolver(), Collections.singletonList(auditTrailManager()),
+                auditablePrincipalResolver(), CollectionUtils.wrap(auditTrailManager()),
                 auditActionResolverMap(),
                 auditResourceResolverMap());
     }

@@ -7,6 +7,7 @@ import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.persondir.support.ShibbolethPersonAttributeDao;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +72,7 @@ public class ShibbolethAttributeResolverConfiguration {
             final ApplicationContext tempApplicationContext = SpringSupport.newContext(
                     getClass().getName(),
                     casProperties.getShibAttributeResolver().getResources(),
-                    Collections.singletonList(cfg),
+                    CollectionUtils.wrap(cfg),
                     Collections.emptyList(),
                     Collections.emptyList(),
                     this.applicationContext

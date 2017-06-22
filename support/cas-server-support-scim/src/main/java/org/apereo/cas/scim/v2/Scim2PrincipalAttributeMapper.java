@@ -9,8 +9,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 
-import java.util.Collections;
-
 /**
  * This is {@link Scim2PrincipalAttributeMapper}.
  *
@@ -68,7 +66,7 @@ public class Scim2PrincipalAttributeMapper {
             attr = getPrincipalAttributeValue(p, "email");
         }
         email.setValue(attr);
-        user.setEmails(Collections.singletonList(email));
+        user.setEmails(CollectionUtils.wrap(email));
 
         final PhoneNumber phone = new PhoneNumber();
         phone.setPrimary(true);
@@ -77,6 +75,6 @@ public class Scim2PrincipalAttributeMapper {
             attr = getPrincipalAttributeValue(p, "phoneNumber");
         }
         phone.setValue(attr);
-        user.setPhoneNumbers(Collections.singletonList(phone));
+        user.setPhoneNumbers(CollectionUtils.wrap(phone));
     }
 }
