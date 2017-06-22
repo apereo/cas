@@ -101,7 +101,7 @@ public class EhcacheTicketRegistryConfiguration {
         bean.setCacheName(ticketDefinition.getProperties().getStorageName());
         LOGGER.debug("Constructing Ehcache cache [{}]", bean.getName());
 
-        bean.setCacheEventListeners(CollectionUtils.wrap(ticketRMISynchronousCacheReplicator()));
+        bean.setCacheEventListeners(CollectionUtils.wrapSet(ticketRMISynchronousCacheReplicator()));
 
         bean.setTimeToIdle((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setTimeToLive((int) ticketDefinition.getProperties().getStorageTimeout());

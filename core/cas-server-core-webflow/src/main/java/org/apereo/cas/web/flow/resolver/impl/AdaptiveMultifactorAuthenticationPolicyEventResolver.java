@@ -159,7 +159,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                     provider, service.getName());
             final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-            return CollectionUtils.wrap(event);
+            return CollectionUtils.wrapSet(event);
         }
         LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
         return null;
