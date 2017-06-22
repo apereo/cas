@@ -13,6 +13,8 @@ import java.io.Serializable;
  * @since 3.0.0
  */
 public interface Credential extends Serializable {
+    /** Credential type, collected as metadata for authentication. */
+    String CREDENTIAL_TYPE_ATTRIBUTE = "credentialType";
 
     /** An ID that may be used to indicate the credential identifier is unknown. */
     String UNKNOWN_ID = "unknown";

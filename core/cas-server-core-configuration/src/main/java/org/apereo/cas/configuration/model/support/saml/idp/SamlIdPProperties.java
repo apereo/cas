@@ -24,12 +24,21 @@ public class SamlIdPProperties {
 
     private String entityId = "https://cas.example.org/idp";
     private String scope = "example.org";
+    private String defaultAuthenticationContextClass = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
     private Set<String> authenticationContextClassMappings;
 
     private Response response = new Response();
     private Metadata metadata = new Metadata();
     private Logout logout = new Logout();
     private Algorithms algs = new Algorithms();
+
+    public String getDefaultAuthenticationContextClass() {
+        return defaultAuthenticationContextClass;
+    }
+
+    public void setDefaultAuthenticationContextClass(final String defaultAuthenticationContextClass) {
+        this.defaultAuthenticationContextClass = defaultAuthenticationContextClass;
+    }
 
     public Set<String> getAuthenticationContextClassMappings() {
         return authenticationContextClassMappings;
