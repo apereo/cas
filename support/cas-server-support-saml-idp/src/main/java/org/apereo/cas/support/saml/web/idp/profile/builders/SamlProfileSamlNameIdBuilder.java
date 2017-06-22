@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -87,14 +87,19 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                     final List<String> supportedNameFormats,
                                     final SamlRegisteredService service,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        
+
         if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
             nameid.setNameQualifier(service.getNameIdQualifier());
-        }
-        if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
-            nameid.setNameQualifier(service.getServiceProviderNameIdQualifier());
+        } else {
+            final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+            nameid.setNameQualifier(issuer);
         }
 
+        if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
+            nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier());
+        } else {
+            nameid.setSPNameQualifier(adaptor.getEntityId());
+        }
         return nameid;
     }
 
@@ -223,7 +228,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
         final IdPAttributeValue<String> value = new StringAttributeValue(assertion.getPrincipal().getName());
         LOGGER.debug("NameID attribute value is set to [{}]", assertion.getPrincipal().getName());
-        attribute.setValues(Collections.singletonList(value));
+        attribute.setValues(CollectionUtils.wrap(value));
         return attribute;
     }
 
