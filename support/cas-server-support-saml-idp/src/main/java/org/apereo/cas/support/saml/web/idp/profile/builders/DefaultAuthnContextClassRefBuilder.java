@@ -41,7 +41,8 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
         }
 
         final String defClass = StringUtils.defaultIfBlank(
-                casProperties.getAuthn().getSamlIdp().getDefaultAuthenticationContextClass(), AuthnContext.PPT_AUTHN_CTX);
+                casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
+                AuthnContext.PPT_AUTHN_CTX);
 
         final RequestedAuthnContext requestedAuthnContext = authnRequest.getRequestedAuthnContext();
         if (requestedAuthnContext == null) {
