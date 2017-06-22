@@ -111,7 +111,7 @@ public class SqrlJpaPersistenceFactory extends com.github.dbadia.sqrl.server.dat
             updateLastUsed(entityManager);
             final SqrlIdentity sqrlIdentity = fetchSqrlIdentity(sqrlIdk);
             if (sqrlIdentity == null) {
-                LOGGER.warn("Can't find idk " + sqrlIdk + " to delete");
+                LOGGER.warn("Can't find idk [{}] to delete", sqrlIdk);
             } else {
                 entityManager.remove(sqrlIdentity);
             }
@@ -326,7 +326,7 @@ public class SqrlJpaPersistenceFactory extends com.github.dbadia.sqrl.server.dat
         public void createAndEnableSqrlIdentity(final String sqrlIdk, final Map<String, String> identityDataTable) {
             updateLastUsed(entityManager);
             final SqrlIdentity sqrlIdentity = new SqrlIdentity(sqrlIdk);
-            sqrlIdentity.getFlagTable().put(SqrlFlag.SQRL_AUTH_ENABLED, true);
+            sqrlIdentity.getFlagTable().put(SqrlFlag.SQRL_AUTH_ENABLED, Boolean.TRUE);
             sqrlIdentity.getIdentityDataTable().putAll(identityDataTable);
             entityManager.persist(sqrlIdentity);
         }

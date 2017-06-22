@@ -91,12 +91,13 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
 
             final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, provider);
             if (providerFound.isPresent()) {
-                if (providerFound.get().isAvailable(registeredService)) {
-                    final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
-                            buildEventAttributeMap(authentication.getPrincipal(), registeredService, providerFound.get()));
+                final MultifactorAuthenticationProvider multifactorAuthenticationProvider = providerFound.get();
+                if (multifactorAuthenticationProvider.isAvailable(registeredService)) {
+                    final Event event = validateEventIdForMatchingTransitionInContext(multifactorAuthenticationProvider.getId(), context,
+                            buildEventAttributeMap(authentication.getPrincipal(), registeredService, multifactorAuthenticationProvider));
                     return CollectionUtils.wrapSet(event);
                 }
-                LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
+                LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", multifactorAuthenticationProvider);
                 return null;
             }
             LOGGER.warn("No multifactor provider could be found for [{}]", provider);

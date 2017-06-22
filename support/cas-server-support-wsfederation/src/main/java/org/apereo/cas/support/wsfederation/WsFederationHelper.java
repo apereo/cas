@@ -309,10 +309,11 @@ public class WsFederationHelper {
      */
     private static SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
         try {
+            final List<Credential> signingWallet = wsFederationConfiguration.getSigningWallet();
             final CredentialResolver resolver = new
-                    StaticCredentialResolver(wsFederationConfiguration.getSigningWallet());
+                    StaticCredentialResolver(signingWallet);
             final KeyInfoCredentialResolver keyResolver =
-                    new StaticKeyInfoCredentialResolver(wsFederationConfiguration.getSigningWallet());
+                    new StaticKeyInfoCredentialResolver(signingWallet);
 
             return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
         } catch (final Exception e) {
