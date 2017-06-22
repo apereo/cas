@@ -44,6 +44,9 @@ public class SqrlJpaPersistenceFactory extends com.github.dbadia.sqrl.server.dat
         return new SqrlAutoCloseablePersistence(new JpaSqrlPersistence());
     }
 
+    /**
+     * The Jpa sqrl persistence.
+     */
     public static class JpaSqrlPersistence implements SqrlPersistence {
         private static final Logger LOGGER = LoggerFactory.getLogger(JpaSqrlPersistence.class);
 
@@ -131,8 +134,6 @@ public class SqrlJpaPersistenceFactory extends com.github.dbadia.sqrl.server.dat
             sqrlIdentity.setNativeUserXref(nativeUserXref);
         }
 
-    /* ************************ Sqrl Correlator methods *****************************/
-
         @Override
         public SqrlCorrelator fetchSqrlCorrelator(final String sqrlCorrelatorString) {
             updateLastUsed(entityManager);
@@ -163,7 +164,7 @@ public class SqrlJpaPersistenceFactory extends com.github.dbadia.sqrl.server.dat
             for (int i = 0; i < correlatorStringSet.size(); i++) {
                 buf.append(" i.value = :correlator").append(i).append(" OR");
             }
-            buf.replace(buf.length() - 3, buf.length(), ""); // Remove OR
+            buf.replace(buf.length() - " OR".length(), buf.length(), ""); // Remove OR
             final TypedQuery<SqrlCorrelator> query = entityManager.createQuery(buf.toString(), SqrlCorrelator.class);
             int i = 0;
             for (final String correlatorString : correlatorStringSet) {
@@ -376,12 +377,10 @@ public class SqrlJpaPersistenceFactory extends com.github.dbadia.sqrl.server.dat
         }
 
         /**
-         * A task which periodically checks the state of various {@link EntityManager} instances to ensure they are being
-         * closed properly by the library
-         *
-         * @author Dave Badia
+         * A task which periodically checks the state of various {@link EntityManager}
+         * instances to ensure they are being closed properly by the library.
          */
-        public static final class SqrlJpaEntityManagerMonitorTask implements Runnable {
+        public static class SqrlJpaEntityManagerMonitorTask implements Runnable {
             private static final long ENTITY_MANAGER_IDLE_WARN_THRESHOLD_MINUTES = 5;
             private static final long ENTITY_MANAGER_IDLE_WARN_THRESHOLD_MS = TimeUnit.MINUTES
                     .toMillis(ENTITY_MANAGER_IDLE_WARN_THRESHOLD_MINUTES);
