@@ -576,11 +576,11 @@ public abstract class AbstractSamlProfileHandlerController {
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
 
         LOGGER.debug("Located SAML metadata for [{}]", registeredService);
-        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
-                getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
+        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor = getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
 
         if (!adaptor.isPresent()) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
+                    "Cannot find metadata linked to " + issuer);
         }
         LOGGER.debug("Preparing SAML response for [{}]", adaptor.get().getEntityId());
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
