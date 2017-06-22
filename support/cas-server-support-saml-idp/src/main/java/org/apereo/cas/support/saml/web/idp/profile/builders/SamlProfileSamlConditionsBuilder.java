@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile.builders;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -60,9 +59,9 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
         final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         int skewAllowance = casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
         if (skewAllowance <= 0) {
-           skewAllowance = casProperties.getSamlCore().getSkewAllowance();
+            skewAllowance = casProperties.getSamlCore().getSkewAllowance();
         }
-        
+
         final Conditions conditions = newConditions(currentDateTime,
                 currentDateTime.plusSeconds(skewAllowance),
                 adaptor.getEntityId());
