@@ -5,19 +5,19 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.springframework.core.Ordered;
 
 /**
- * This is {@link BaseAuthenticationMetadataPopulator}.
+ * This is {@link BaseAuthenticationMetaDataPopulator}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BaseAuthenticationMetadataPopulator implements AuthenticationMetaDataPopulator {
+public abstract class BaseAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
     private int order = Ordered.HIGHEST_PRECEDENCE;
 
-    public BaseAuthenticationMetadataPopulator() {
+    public BaseAuthenticationMetaDataPopulator() {
         this(Ordered.HIGHEST_PRECEDENCE);
     }
 
-    public BaseAuthenticationMetadataPopulator(final int order) {
+    public BaseAuthenticationMetaDataPopulator(final int order) {
         this.order = order;
     }
 

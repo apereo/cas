@@ -36,7 +36,7 @@ import java.util.Arrays;
  */
 public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(NtlmAuthenticationHandler.class);
-    
+
     private static final int NBT_ADDRESS_TYPE = 0x1C;
     private static final int NTLM_TOKEN_TYPE_FIELD_INDEX = 8;
     private static final int NTLM_TOKEN_TYPE_ONE = 1;
@@ -74,10 +74,13 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         boolean success = false;
         try {
             if (this.loadBalance) {
-                // find the first dc that matches the includepattern
                 if (StringUtils.isNotBlank(this.includePattern)) {
                     final NbtAddress[] dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
-                    dc = Arrays.stream(dcs).filter(dc2 -> dc2.getHostAddress().matches(this.includePattern)).findFirst().map(UniAddress::new).orElse(null);
+                    dc = Arrays.stream(dcs)
+                            .filter(dc2 -> dc2.getHostAddress().matches(this.includePattern))
+                            .findFirst()
+                            .map(UniAddress::new)
+                            .orElse(null);
                 } else {
                     dc = new UniAddress(NbtAddress.getByName(this.domainController, NBT_ADDRESS_TYPE, null));
                 }

@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.SurrogateAuthenticationMetadataPopulator;
+import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ public class SurrogateAuthenticationMetadataConfiguration implements Authenticat
     @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataPopulator")
     @Bean
     public AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator() {
-        return new SurrogateAuthenticationMetadataPopulator();
+        return new SurrogateAuthenticationMetaDataPopulator();
     }
 
     @Override
