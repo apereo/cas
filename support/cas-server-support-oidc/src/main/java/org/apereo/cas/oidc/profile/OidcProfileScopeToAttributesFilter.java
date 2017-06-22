@@ -154,7 +154,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                     break;
                 case OidcConstants.OFFLINE_ACCESS:
                     LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", s, service.getId());
-                    oidc.setGenerateRefreshToken(true);
+                    oidc.setGenerateRefreshToken(Boolean.TRUE);
                     break;
                 case OidcCustomScopeAttributeReleasePolicy.SCOPE_CUSTOM:
                     LOGGER.debug("Found custom scope [{}] for service [{}]", s, service.getId());
