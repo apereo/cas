@@ -96,11 +96,12 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
         final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, values);
 
         if (providerFound.isPresent()) {
-            if (providerFound.get().isAvailable(service)) {
+            final MultifactorAuthenticationProvider provider = providerFound.get();
+            if (provider.isAvailable(service)) {
                 LOGGER.debug("Attempting to build event based on the authentication provider [{}] and service [{}]",
-                        providerFound.get(), service.getName());
-                final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
-                        buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
+                        provider, service.getName());
+                final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+                        buildEventAttributeMap(authentication.getPrincipal(), service, provider));
                 return CollectionUtils.wrapSet(event);
             }
             LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());

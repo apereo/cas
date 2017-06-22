@@ -110,7 +110,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                     Collections.emptyMap(),
                     Collections.emptyMap());
         }
-        final String principalId = principal != null ? principal.getId() : principals.iterator().next().getId();
+        final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;

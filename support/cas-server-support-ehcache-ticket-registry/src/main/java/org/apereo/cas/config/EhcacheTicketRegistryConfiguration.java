@@ -71,7 +71,7 @@ public class EhcacheTicketRegistryConfiguration {
                 cache.isReplicateUpdates(),
                 cache.isReplicateUpdatesViaCopy(),
                 cache.isReplicateRemovals(),
-                Long.valueOf(cache.getReplicationInterval()).intValue(),
+                (int) cache.getReplicationInterval(),
                 cache.getMaximumBatchSize());
     }
 

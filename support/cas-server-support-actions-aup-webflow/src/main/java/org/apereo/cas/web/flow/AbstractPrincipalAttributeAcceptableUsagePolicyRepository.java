@@ -47,12 +47,12 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
             final Object value = attributes.get(this.aupAttributeName);
             LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, this.aupAttributeName);
             if (value.toString().equalsIgnoreCase(Boolean.TRUE.toString())) {
-                return Pair.of(true, principal);
+                return Pair.of(Boolean.TRUE, principal);
             }
         }
 
         LOGGER.warn("Usage policy has not been accepted by [{}]", principal.getId());
-        return Pair.of(false, principal);
+        return Pair.of(Boolean.FALSE, principal);
     }
 
     public void setAupAttributeName(final String aupAttributeName) {

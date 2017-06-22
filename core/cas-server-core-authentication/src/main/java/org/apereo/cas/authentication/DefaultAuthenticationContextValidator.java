@@ -145,7 +145,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
                                 + "Since provider [{}] is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
                                 + "of the present authentication context", service.getServiceId(),
                         mode, requestedProvider, requestedContext);
-                return Pair.of(true, requestedProvider);
+                return Pair.of(Boolean.TRUE, requestedProvider);
             }
         }
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.OPEN) {
@@ -154,11 +154,11 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
                                 + "since provider [{}] is unavailable at the moment, CAS will consider the authentication satisfied "
                                 + "without the presence of [{}]", service.getServiceId(),
                         mode, requestedProvider, requestedContext);
-                return Pair.of(true, satisfiedProviders.stream().findFirst());
+                return Pair.of(Boolean.TRUE, satisfiedProviders.stream().findFirst());
             }
         }
 
-        return Pair.of(false, requestedProvider);
+        return Pair.of(Boolean.FALSE, requestedProvider);
     }
 
     /**

@@ -68,20 +68,21 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            LOGGER.error("No multifactor authentication providers are available in the application context to handle " + globalProviderId);
+            LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", globalProviderId);
             throw new AuthenticationException();
         }
 
         final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, globalProviderId);
         if (providerFound.isPresent()) {
-            if (providerFound.get().isAvailable(service)) {
+            final MultifactorAuthenticationProvider provider = providerFound.get();
+            if (provider.isAvailable(service)) {
                 LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                        providerFound.get(), service.getName());
-                final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
-                        buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
+                        provider, service.getName());
+                final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+                        buildEventAttributeMap(authentication.getPrincipal(), service, provider));
                 return CollectionUtils.wrapSet(event);
             }
-            LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
+            LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
             return null;
         }
         LOGGER.warn("No multifactor provider could be found for [{}]", globalProviderId);
