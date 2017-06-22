@@ -24,6 +24,7 @@ import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistr
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.util.CollectionUtils;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -91,8 +91,7 @@ public class DynamoDbTicketRegistryFacilitator {
         if (metadata != null) {
             final DeleteItemRequest del = new DeleteItemRequest()
                     .withTableName(metadata.getProperties().getStorageName())
-                    .withKey(Collections.singletonMap(ColumnNames.ID.getName(), new AttributeValue(ticketId)));
-
+                    .withKey(CollectionUtils.wrap(ColumnNames.ID.getName(), new AttributeValue(ticketId)));
             LOGGER.debug("Submitting delete request [{}] for ticket [{}]", del, ticketId);
             final DeleteItemResult res = amazonDynamoDBClient.deleteItem(del);
             LOGGER.debug("Delete request came back with result [{}]", res);
