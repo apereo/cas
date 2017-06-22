@@ -65,4 +65,23 @@
         <transition on="error" to="initializeLoginForm"/>
         <transition on="gateway" to="gatewayServicesManagementCheck"/>
     </action-state>
+
+    <action-state id="handleAuthenticationFailure">
+        <evaluate expression="authenticationExceptionHandler.handle(currentEvent.attributes.error, messageContext)"/>
+        <transition on="AccountDisabledException" to="casAccountDisabledView"/>
+        <transition on="AccountLockedException" to="casAccountLockedView"/>
+        <transition on="CredentialExpiredException" to="casExpiredPassView"/>
+        <transition on="AccountPasswordMustChangeException" to="casMustChangePassView"/>
+        <transition on="InvalidLoginLocationException" to="casBadWorkstationView"/>
+        <transition on="InvalidLoginTimeException" to="casBadHoursView"/>
+        <transition on="FailedLoginException" to="initializeLoginForm"/>
+        <transition on="AccountNotFoundException" to="initializeLoginForm"/>
+        <transition on="UnauthorizedServiceForPrincipalException" to="initializeLoginForm" />
+        <transition on="UnsatisfiedAuthenticationPolicyException" to="initializeLoginForm"/>
+        <transition on="UnauthorizedAuthenticationException" to="casAuthenticationBlockedView"/>
+        <transition to="initializeLoginForm"/>
+    </action-state>
+
+    <end-state id="casMustChangePassView" view="casMustChangePassView"/>
+
 </flow>
