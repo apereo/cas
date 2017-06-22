@@ -23,7 +23,7 @@ and if you find anything that is unclear along the way, do not hesitate to ask q
 
 ## Code of conduct
 
-CAS is a sponsored Apereo project participating in the [Apereo Welcoming Policy][https://www.apereo.org/content/apereo-welcoming-policy].
+CAS is a sponsored Apereo project participating in the [Apereo Welcoming Policy](https://www.apereo.org/content/apereo-welcoming-policy).
 
 ## Getting Started
 
