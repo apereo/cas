@@ -14,6 +14,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.sqrl.SqrlCallbabckController;
 import org.apereo.cas.sqrl.SqrlGenerateQRController;
 import org.apereo.cas.sqrl.storage.SqrlJpaPersistenceFactory;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.SqrlCleanUpAction;
@@ -44,7 +45,6 @@ import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -174,7 +174,7 @@ public class SqrlConfiguration {
         bean.setName("AtmosphereServlet");
         bean.setServlet(new AtmosphereServlet());
         bean.setLoadOnStartup(0);
-        bean.setUrlMappings(Collections.singleton("/sqrlauthpolling/*"));
+        bean.setUrlMappings(CollectionUtils.wrap("/sqrlauthpolling/*"));
         bean.setAsyncSupported(true);
 
         final Map params = new HashMap<>();
