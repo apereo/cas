@@ -35,7 +35,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Event;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +60,7 @@ public class CasCoreAuditConfiguration {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
                 casProperties.getAudit().getAppCode(),
                 auditablePrincipalResolver(principalIdProvider()),
-                Collections.singletonList(auditTrailManager), auditActionResolverMap(),
+                CollectionUtils.wrap(auditTrailManager), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;

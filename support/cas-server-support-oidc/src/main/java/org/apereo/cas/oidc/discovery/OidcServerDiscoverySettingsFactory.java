@@ -4,10 +4,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * This is {@link OidcServerDiscoverySettingsFactory}.
@@ -36,7 +36,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
                         OAuth20ResponseTypes.IDTOKEN_TOKEN.getType()));
 
         discoveryProperties.setSubjectTypesSupported(oidc.getSubjectTypes());
-        discoveryProperties.setClaimTypesSupported(Collections.singletonList("normal"));
+        discoveryProperties.setClaimTypesSupported(CollectionUtils.wrap("normal"));
 
         discoveryProperties.setGrantTypesSupported(
                 Arrays.asList(OAuth20GrantTypes.AUTHORIZATION_CODE.getType(),
