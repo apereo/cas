@@ -3,6 +3,7 @@ package org.apereo.cas.mgmt.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
 import org.apereo.cas.mgmt.services.audit.ServiceManagementResourceResolver;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -94,7 +95,7 @@ public class CasManagementAuditConfiguration {
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ClientInfoThreadLocalFilter());
-        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("CAS Client Info Logging Filter");
         bean.setAsyncSupported(true);
         return bean;

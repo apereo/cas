@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceResponseBuilder;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link SamlGoogleAppsConfiguration}.
@@ -46,7 +46,7 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
 
     @Override
     public Collection<ServiceFactory<? extends WebApplicationService>> buildServiceFactories() {
-        return Collections.singleton(googleAccountsServiceFactory());
+        return CollectionUtils.wrap(googleAccountsServiceFactory());
     }
 
     @ConditionalOnMissingBean(name = "googleAccountsServiceFactory")

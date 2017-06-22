@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.AuthenticationCredentialsLocalBinderClearingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,7 +19,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.CorsFilter;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public class CasFiltersConfiguration {
         bean.setFilter(new CharacterEncodingFilter(
                 casProperties.getHttpWebRequest().getWeb().getEncoding(),
                 casProperties.getHttpWebRequest().getWeb().isForceEncoding()));
-        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("characterEncodingFilter");
         bean.setAsyncSupported(true);
         return bean;
@@ -82,7 +82,7 @@ public class CasFiltersConfiguration {
         initParams.put("enableXSSProtection", BooleanUtils.toStringTrueFalse(header.isXss()));
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ResponseHeadersEnforcementFilter());
-        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("responseHeadersSecurityFilter");
         bean.setAsyncSupported(true);
@@ -104,7 +104,7 @@ public class CasFiltersConfiguration {
 
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new RequestParameterPolicyEnforcementFilter());
-        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("requestParameterSecurityFilter");
         bean.setInitParameters(initParams);
         bean.setAsyncSupported(true);
@@ -115,7 +115,7 @@ public class CasFiltersConfiguration {
     public FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new AuthenticationCredentialsLocalBinderClearingFilter());
-        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("currentCredentialsAndAuthenticationClearingFilter");
         bean.setAsyncSupported(true);
         return bean;

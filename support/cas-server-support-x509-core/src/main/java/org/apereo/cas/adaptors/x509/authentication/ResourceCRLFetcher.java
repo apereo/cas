@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
 import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -14,7 +15,6 @@ import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -69,7 +69,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
      */
     @Override
     public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
-        final Collection<X509CRL> results = fetch(Collections.singleton(crl));
+        final Collection<X509CRL> results = fetch(CollectionUtils.wrap(crl));
         if (!results.isEmpty()) {
             return results.iterator().next();
         }

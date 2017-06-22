@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
@@ -16,7 +17,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -51,7 +51,7 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
         if (requestContext.getFlowScope().getBoolean(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, false)) {
             requestContext.getFlowScope().remove(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE);
             if (loadSurrogates(requestContext)) {
-                return Collections.singleton(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));
+                return CollectionUtils.wrap(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));
             }
         }
         return null;
