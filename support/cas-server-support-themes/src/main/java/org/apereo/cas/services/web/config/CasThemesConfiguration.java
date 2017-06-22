@@ -89,7 +89,7 @@ public class CasThemesConfiguration {
 
             @Override
             public Set<IPostProcessor> getPostProcessors() {
-                return CollectionUtils.wrap(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
+                return CollectionUtils.wrapSet(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
                         CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
             }
 
