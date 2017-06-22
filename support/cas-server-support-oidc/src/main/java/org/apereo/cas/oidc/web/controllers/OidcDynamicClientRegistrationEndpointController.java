@@ -17,6 +17,7 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -31,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -157,8 +157,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
         clientResponse.setClientName(registeredService.getName());
         clientResponse.setGrantTypes(Arrays.asList(OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(),
                 OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase()));
-        clientResponse.setRedirectUris(Collections.singletonList(registeredService.getServiceId()));
-        clientResponse.setResponseTypes(Collections.singletonList(OAuth20ResponseTypes.CODE.name().toLowerCase()));
+        clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
+        clientResponse.setResponseTypes(CollectionUtils.wrap(OAuth20ResponseTypes.CODE.name().toLowerCase()));
         return clientResponse;
     }
 }

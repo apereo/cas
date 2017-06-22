@@ -1,10 +1,10 @@
 package org.apereo.cas.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,7 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CollectionUtils}.
@@ -59,8 +58,6 @@ public final class CollectionUtils {
      * @param <K>    the key type
      * @param <V>    the value type
      * @param source Nullable map to wrap.
-     * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
-     * {@link java.util.Collections#emptyMap()}.
      */
     public static <K, V> Map<K, V> wrap(final Map<K, V> source) {
         if (source != null) {
@@ -69,33 +66,38 @@ public final class CollectionUtils {
         return new HashMap<>();
     }
 
+    public static <K, V> Map<K, V> wrap(final String key, final Object value) {
+        final Map map = new HashMap<>();
+        if (StringUtils.isNotBlank(key)) {
+            map.put(key, value);
+        }
+        return map;
+    }
+
     /**
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
      * @param source Nullable list to wrap.
-     * @return {@link Collections#unmodifiableList(List)} if given list is not null, otherwise {@link java.util.Collections#EMPTY_LIST}.
      */
-    public static <T> List<T> wrap(final List<T> source) {
+    public static <T> List<T> wrap(final T source) {
         final List<T> list = new ArrayList<>();
         if (source != null) {
-            list.addAll(source);
+            list.add(source);
         }
         return list;
     }
 
     /**
-     * Wrap set.
+     * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
-     * @param values the values
-     * @return the set
+     * @param source Nullable list to wrap.
      */
-    public static <T> Set<T> wrap(final Object... values) {
-        final Set<T> list = new LinkedHashSet<>();
-        if (values != null && values.length > 0) {
-            final Set set = Arrays.stream(values).collect(Collectors.toSet());
-            list.addAll(set);
+    public static <T> List<T> wrap(final List<T> source) {
+        final List<T> list = new ArrayList<>();
+        if (source != null) {
+            list.addAll(source);
         }
         return list;
     }
