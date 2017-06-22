@@ -18,7 +18,6 @@ import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
-import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
@@ -63,7 +62,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         Response samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
-        samlResponse.setConsent(RequestAbstractType.UNSPECIFIED_CONSENT);
+        //samlResponse.setConsent(RequestAbstractType.UNSPECIFIED_CONSENT);
 
         final SAMLObject finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
 
@@ -75,15 +74,15 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             samlResponse.getAssertions().add(Assertion.class.cast(finalAssertion));
         }
 
-        final Status status = newStatus(StatusCode.SUCCESS, StatusCode.SUCCESS);
+        final Status status = newStatus(StatusCode.SUCCESS, null);
         samlResponse.setStatus(status);
 
         SamlUtils.logSamlObject(this.configBean, samlResponse);
 
         if (service.isSignResponses()) {
             LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", adaptor.getEntityId());
-            samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, 
-                    response, request, binding);
+            samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request, binding);
+            SamlUtils.logSamlObject(configBean, samlResponse);
         }
 
         return samlResponse;
@@ -94,7 +93,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final Response samlResponse,
                               final HttpServletResponse httpResponse,
                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                              final String relayState, 
+                              final String relayState,
                               final String binding) throws SamlException {
         try {
             if (httpResponse != null) {
