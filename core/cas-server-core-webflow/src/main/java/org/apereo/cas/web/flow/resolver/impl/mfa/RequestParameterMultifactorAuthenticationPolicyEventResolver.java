@@ -85,7 +85,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
                     LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
                     final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                             buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-                    return CollectionUtils.wrap(event);
+                    return CollectionUtils.wrapSet(event);
                 }
                 LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
                 return null;
