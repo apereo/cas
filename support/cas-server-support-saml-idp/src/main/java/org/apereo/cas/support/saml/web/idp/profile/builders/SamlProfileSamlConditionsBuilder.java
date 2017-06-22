@@ -57,8 +57,13 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
                                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
         final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+        int skewAllowance = casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
+        if (skewAllowance <= 0) {
+            skewAllowance = casProperties.getSamlCore().getSkewAllowance();
+        }
+
         final Conditions conditions = newConditions(currentDateTime,
-                currentDateTime.plusSeconds(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()),
+                currentDateTime.plusSeconds(skewAllowance),
                 adaptor.getEntityId());
         return conditions;
     }

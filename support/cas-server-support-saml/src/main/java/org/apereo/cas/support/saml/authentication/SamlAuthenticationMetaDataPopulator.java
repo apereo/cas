@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.metadata.BaseAuthenticationMetadataPopulator;
+import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 3.1
  */
 
-public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetadataPopulator {
+public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     /** The Constant ATTRIBUTE_AUTHENTICATION_METHOD. */
     public static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
