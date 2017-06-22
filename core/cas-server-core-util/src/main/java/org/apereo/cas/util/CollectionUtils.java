@@ -57,7 +57,8 @@ public final class CollectionUtils {
      *
      * @param <K>    the key type
      * @param <V>    the value type
-     * @param source Nullable map to wrap.
+     * @param source map to wrap.
+     * @return the map
      */
     public static <K, V> Map<K, V> wrap(final Map<K, V> source) {
         if (source != null) {
@@ -88,6 +89,7 @@ public final class CollectionUtils {
      *
      * @param <T>    the type parameter
      * @param source Nullable list to wrap.
+     * @return the list
      */
     public static <T> List<T> wrap(final T source) {
         final List<T> list = new ArrayList<>();
@@ -102,6 +104,7 @@ public final class CollectionUtils {
      *
      * @param <T>    the type parameter
      * @param source Nullable list to wrap.
+     * @return the list
      */
     public static <T> List<T> wrap(final List<T> source) {
         final List<T> list = new ArrayList<>();
