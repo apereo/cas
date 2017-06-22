@@ -12,6 +12,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.util.URIBuilder;
@@ -23,7 +24,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -93,7 +93,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
                 .filter(v -> values.contains(v.getId())).findAny();
 
         if (provider.isPresent()) {
-            return Collections.singleton(new Event(this, provider.get().getId()));
+            return CollectionUtils.wrap(new Event(this, provider.get().getId()));
         }
         LOGGER.warn("The requested authentication class [{}] cannot be satisfied by any of the MFA providers available", values);
         throw new AuthenticationException();
