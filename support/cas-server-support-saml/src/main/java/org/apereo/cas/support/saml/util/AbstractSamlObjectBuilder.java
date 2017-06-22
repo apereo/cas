@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.util;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
@@ -50,7 +51,6 @@ import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -257,8 +257,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             final XMLSignatureFactory sigFactory = XMLSignatureFactory
                     .getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
 
-            final List<Transform> envelopedTransform = Collections.singletonList(sigFactory.newTransform(Transform.ENVELOPED,
-                    (TransformParameterSpec) null));
+            final List<Transform> envelopedTransform = CollectionUtils.wrap(sigFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null));
 
             final Reference ref = sigFactory.newReference(StringUtils.EMPTY, sigFactory
                     .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform, null, null);
@@ -283,15 +282,14 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                             (C14NMethodParameterSpec) null);
 
             // Create the SignedInfo
-            final SignedInfo signedInfo = sigFactory.newSignedInfo(
-                    canonicalizationMethod, signatureMethod, Collections.singletonList(ref));
+            final SignedInfo signedInfo = sigFactory.newSignedInfo(canonicalizationMethod, signatureMethod, CollectionUtils.wrap(ref));
 
             // Create a KeyValue containing the DSA or RSA PublicKey
             final KeyInfoFactory keyInfoFactory = sigFactory.getKeyInfoFactory();
             final KeyValue keyValuePair = keyInfoFactory.newKeyValue(pubKey);
 
             // Create a KeyInfo and add the KeyValue to it
-            final KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(keyValuePair));
+            final KeyInfo keyInfo = keyInfoFactory.newKeyInfo(CollectionUtils.wrap(keyValuePair));
             // Convert the JDOM document to w3c (Java XML signature API requires w3c representation)
             final Element w3cElement = toDom(element);
 
