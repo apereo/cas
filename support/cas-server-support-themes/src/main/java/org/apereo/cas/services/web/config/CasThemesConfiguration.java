@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.apereo.cas.services.web.ServiceThemeResolver;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,7 +26,6 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -89,7 +89,7 @@ public class CasThemesConfiguration {
 
             @Override
             public Set<IPostProcessor> getPostProcessors() {
-                return Collections.singleton(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
+                return CollectionUtils.wrap(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
                         CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
             }
 
