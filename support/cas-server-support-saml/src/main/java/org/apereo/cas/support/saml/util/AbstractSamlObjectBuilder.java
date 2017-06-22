@@ -12,8 +12,8 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.MarshallerFactory;
-import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.core.xml.schema.impl.XSStringBuilder;
+import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.core.xml.schema.impl.XSAnyBuilder;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -84,7 +84,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
     private static final long serialVersionUID = -6833230731146922780L;
-    private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSamlObjectBuilder.class);
 
@@ -155,14 +155,11 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param elementName the element name
      * @return the xS string
      */
-    protected XSString newAttributeValue(final Object value, final QName elementName) {
-        final XSStringBuilder attrValueBuilder = new XSStringBuilder();
-        final XSString stringValue = attrValueBuilder.buildObject(elementName, XSString.TYPE_NAME);
-        if (value instanceof String) {
-            stringValue.setValue((String) value);
-        } else {
-            stringValue.setValue(value.toString());
-        }
+    protected XMLObject newAttributeValue(final Object value, final QName elementName) {
+        //final XSStringBuilder attrValueBuilder = new XSStringBuilder();
+        final XSAnyBuilder attrValueBuilder = new XSAnyBuilder();
+        final XSAny stringValue = attrValueBuilder.buildObject(elementName);
+        stringValue.setTextContent(value.toString());
         return stringValue;
     }
 
@@ -176,7 +173,11 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             final SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
             final byte[] buf = new byte[RANDOM_ID_SIZE];
             random.nextBytes(buf);
-            return "_".concat(EncodingUtils.hexEncode(buf));
+            final String hex = EncodingUtils.hexEncode(buf);
+            if (StringUtils.isBlank(hex)) {
+                throw new IllegalArgumentException("Could not generate a secure random id based on " + random.getAlgorithm());
+            }
+            return "_".concat(hex);
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.", e);
         }
@@ -207,35 +208,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         } else {
             LOGGER.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
             attributeList.add(newAttributeValue(attributeValue, defaultElementName));
-        }
-    }
-
-    /**
-     * Marshal the saml xml object to raw xml.
-     *
-     * @param object the object
-     * @param writer the writer
-     * @return the xml string
-     */
-    public String marshalSamlXmlObject(final XMLObject object, final StringWriter writer) {
-        try {
-            final MarshallerFactory marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
-            final Marshaller marshaller = marshallerFactory.getMarshaller(object);
-            if (marshaller == null) {
-                throw new IllegalArgumentException("Cannot obtain marshaller for object " + object.getElementQName());
-            }
-            final Element element = marshaller.marshall(object);
-            element.setAttributeNS(NAMESPACE_URI, "xmlns", SAMLConstants.SAML20_NS);
-            element.setAttributeNS(NAMESPACE_URI, "xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#");
-
-            final TransformerFactory transFactory = TransformerFactory.newInstance();
-            final Transformer transformer = transFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.transform(new DOMSource(element), new StreamResult(writer));
-            return writer.toString();
-        } catch (final Exception e) {
-            throw new IllegalStateException("An error has occurred while marshalling SAML object to xml", e);
         }
     }
 
@@ -402,6 +374,10 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             LOGGER.trace(e.getMessage(), e);
             return null;
         }
+    }
+
+    public OpenSamlConfigBean getConfigBean() {
+        return configBean;
     }
 
     /**
