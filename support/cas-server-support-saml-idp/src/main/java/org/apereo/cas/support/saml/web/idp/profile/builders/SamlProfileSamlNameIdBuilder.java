@@ -116,9 +116,12 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                                      final List<String> supportedNameFormats,
                                                      final String requiredNameFormat) {
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
-            LOGGER.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
-                    requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest), adaptor.getEntityId());
-            throw new SamlException("Unsupported required NameID format cannot be provided");
+            LOGGER.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]. "
+                    + "The requested NameID format may not be honored. You should consult the metadata for this service "
+                    + "and ensure the requested NameID format is present in the collection of supported "
+                    + "metadata formats in the metadata, which are the following: [{}]",
+                    requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest),
+                    adaptor.getEntityId(), adaptor.getSupportedNameIdFormats());
         }
     }
 
