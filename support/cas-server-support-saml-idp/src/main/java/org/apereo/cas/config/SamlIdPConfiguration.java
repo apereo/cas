@@ -218,7 +218,7 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public AuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder() {
-        return new DefaultAuthnContextClassRefBuilder();
+        return new DefaultAuthnContextClassRefBuilder(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAssertionBuilder")
