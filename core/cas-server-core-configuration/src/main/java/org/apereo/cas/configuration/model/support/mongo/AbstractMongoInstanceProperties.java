@@ -3,13 +3,15 @@ package org.apereo.cas.configuration.model.support.mongo;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * This is {@link AbstractMongoInstanceProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class AbstractMongoInstanceProperties {
+public abstract class AbstractMongoInstanceProperties implements Serializable {
     private Conns conns = new Conns();
     
     private int port = 27017;

@@ -68,7 +68,7 @@ public class CasCoreHttpConfiguration {
     public FactoryBean<SimpleHttpClient> httpClient() {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout(Long.valueOf(casProperties.getHttpClient().getReadTimeout()).intValue());
+        c.setReadTimeout((int) casProperties.getHttpClient().getReadTimeout());
         return c;
     }
 
@@ -96,7 +96,7 @@ public class CasCoreHttpConfiguration {
     private HttpClient getHttpClient(final boolean redirectEnabled) throws Exception {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout(Long.valueOf(casProperties.getHttpClient().getReadTimeout()).intValue());
+        c.setReadTimeout((int) casProperties.getHttpClient().getReadTimeout());
         c.setRedirectsEnabled(redirectEnabled);
         c.setCircularRedirectsAllowed(redirectEnabled);
         c.setSslSocketFactory(trustStoreSslSocketFactory());

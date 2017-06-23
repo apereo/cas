@@ -542,9 +542,10 @@ public abstract class AbstractSamlProfileHandlerController {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
         }
 
-        verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, adaptor.get());
+        final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
+        verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, facade);
         SamlUtils.logSamlObject(this.configBean, authnRequest);
-        return Pair.of(registeredService, adaptor.get());
+        return Pair.of(registeredService, facade);
     }
 
     /**
@@ -600,12 +601,13 @@ public abstract class AbstractSamlProfileHandlerController {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                     "Cannot find metadata linked to " + issuer);
         }
-        LOGGER.debug("Preparing SAML response for [{}]", adaptor.get().getEntityId());
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
+        final String entityId = facade.getEntityId();
+        LOGGER.debug("Preparing SAML response for [{}]", entityId);
         final AuthnRequest authnRequest = authenticationContext.getKey();
         this.responseBuilder.build(authnRequest, request, response,
                 casAssertion, registeredService, facade, binding);
-        LOGGER.info("Built the SAML response for [{}]", facade.getEntityId());
+        LOGGER.info("Built the SAML response for [{}]", entityId);
     }
 
     /**

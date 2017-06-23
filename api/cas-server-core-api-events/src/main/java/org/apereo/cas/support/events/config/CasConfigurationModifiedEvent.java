@@ -18,8 +18,8 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = -5738763037210896455L;
     private static final Pattern CONFIG_FILE_PATTERN = Pattern.compile("\\.(properties|yml)", Pattern.CASE_INSENSITIVE);
 
-    private final Path file;
-    private boolean override;
+    private final transient Path file;
+    private final boolean override;
 
     /**
      * Instantiates a new Abstract cas sso event.

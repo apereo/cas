@@ -90,7 +90,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        final Map<String, Object> model = new HashMap<>();
+        final Map<String, Object> model = new HashMap<>(50);
         model.put("restartEndpointEnabled", restartEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("environmentEndpointEnabled", environmentEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());

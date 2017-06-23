@@ -37,7 +37,7 @@ public class U2FStartRegistrationAction extends AbstractAction {
         final RegisterRequestData registerRequestData = u2f.startRegistration(this.serverAddress, u2FDeviceRepository.getRegisteredDevices(p.getId()));
         u2FDeviceRepository.requestDeviceRegistration(registerRequestData.getRequestId(), p.getId(), registerRequestData.toJson());
         if (!registerRequestData.getRegisterRequests().isEmpty()) {
-            final RegisterRequest req = registerRequestData.getRegisterRequests().iterator().next();
+            final RegisterRequest req = registerRequestData.getRegisterRequests().get(0);
             requestContext.getFlowScope().put("u2fReg", new U2FRegistration(req.getChallenge(), req.getAppId()));
             return success();
         }

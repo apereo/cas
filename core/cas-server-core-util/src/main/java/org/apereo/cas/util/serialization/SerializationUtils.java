@@ -90,7 +90,7 @@ public final class SerializationUtils {
                 try {
                     in.close();
                 } catch (final IOException e) {
-                   LOGGER.error(e.getMessage(), e);
+                   LOGGER.error("Unable to serialize", e);
                 }
             }
         }

@@ -81,7 +81,7 @@ public class HttpClientMultithreadedDownloader {
                     break;
 
                 case RETRYING:
-                    LOGGER.debug(info.getState() + " retry: [{}], delay: [{}]", info.getRetry(), info.getDelay());
+                    LOGGER.debug("[{}] retry: [{}], delay: [{}]", info.getState(), info.getRetry(), info.getDelay());
                     break;
 
                 case DOWNLOADING:

@@ -9,8 +9,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +61,7 @@ public final class DateTimeUtils {
      * @return ZonedDateTime representing time
      */
 
-    public static ZonedDateTime zonedDateTimeOf(final ZonedDateTime time) {
+    public static ZonedDateTime zonedDateTimeOf(final TemporalAccessor time) {
         return ZonedDateTime.from(time);
     }
 
@@ -150,7 +152,7 @@ public final class DateTimeUtils {
      * @param time Time object to be converted.
      * @return DateTime representing time
      */
-    public static DateTime dateTimeOf(final ZonedDateTime time) {
+    public static DateTime dateTimeOf(final ChronoZonedDateTime time) {
         return dateTimeOf(time.toInstant());
     }
 
@@ -160,7 +162,7 @@ public final class DateTimeUtils {
      * @param time Time object to be converted.
      * @return Date representing time
      */
-    public static Date dateOf(final ZonedDateTime time) {
+    public static Date dateOf(final ChronoZonedDateTime time) {
         return dateOf(time.toInstant());
     }
 
@@ -181,7 +183,7 @@ public final class DateTimeUtils {
      * @param time Time object to be converted.
      * @return Timestamp representing time
      */
-    public static Timestamp timestampOf(final ZonedDateTime time) {
+    public static Timestamp timestampOf(final ChronoZonedDateTime time) {
         return timestampOf(time.toInstant());
     }
 

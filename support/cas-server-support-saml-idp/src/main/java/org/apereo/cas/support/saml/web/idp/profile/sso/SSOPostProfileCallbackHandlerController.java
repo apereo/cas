@@ -65,6 +65,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
      * @param forceSignedLogoutRequests                    the force signed logout requests
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
      * @param samlObjectSignatureValidator                 the saml object signature validator
+     * @param ticketValidator                              the ticket validator
      */
     public SSOPostProfileCallbackHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                                    final ParserPool parserPool,

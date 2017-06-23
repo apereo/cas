@@ -126,8 +126,10 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         // The URL of the response location at the SP (called the "Assertion Consumer Service")
         // but can be omitted in favor of the IdP picking the default endpoint location from metadata.
         String shire = CommonUtils.safeGetParameter(request, SamlIdPConstants.SHIRE);
+        final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor1 = facade;
         if (StringUtils.isBlank(shire)) {
-            final AssertionConsumerService acs = adaptor.get().getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
+            final AssertionConsumerService acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
             if (acs == null) {
                 throw new MessageDecodingException("Unable to resolve SP ACS URL");
             }
@@ -173,9 +175,9 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         final MessageContext ctx = new MessageContext();
         ctx.setAutoCreateSubcontexts(true);
 
-        if (adaptor.get().isAuthnRequestsSigned()) {
-            samlObjectSigner.encode(authnRequest, registeredService, 
-                    adaptor.get(), response, request, SAMLConstants.SAML2_POST_BINDING_URI);
+        if (facade.isAuthnRequestsSigned()) {
+            samlObjectSigner.encode(authnRequest, registeredService,
+                    facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI);
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);

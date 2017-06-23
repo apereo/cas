@@ -103,8 +103,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     @Override
     public String encode(final Serializable value) {
         final String encoded = encryptValue(value);
-        final String signed = new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
-        return signed;
+        return new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
     }
 
     @Override

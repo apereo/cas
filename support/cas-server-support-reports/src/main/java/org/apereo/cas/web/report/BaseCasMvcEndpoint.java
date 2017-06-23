@@ -89,7 +89,7 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
                 return s;
             }
             LOGGER.debug("Default capability for endpoint [{}] is undefined.", endpointName);
-            return Boolean.FALSE;
+            return false;
 
         }
         final boolean s = BooleanUtils.toBoolean(endpoint.isEnabled());

@@ -35,7 +35,7 @@ public class U2FStartAuthenticationAction extends AbstractAction {
         u2FDeviceRepository.requestDeviceAuthentication(requestData.getRequestId(), p.getId(), requestData.toJson());
 
         if (!requestData.getAuthenticateRequests().isEmpty()) {
-            final AuthenticateRequest req = requestData.getAuthenticateRequests().iterator().next();
+            final AuthenticateRequest req = requestData.getAuthenticateRequests().get(0);
             requestContext.getFlowScope().put("u2fAuth", new U2FAuthentication(req.getChallenge(), req.getAppId(), req.getKeyHandle()));
             return success();
         }
