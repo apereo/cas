@@ -1,8 +1,8 @@
 <FindBugsFilter>
     <Match>
-        <Confidence value="2"/>
-        <Rank value="15"/>
-        <Bug category="CORRECTNESS,MT_CORRECTNESS,SECURITY,PERFORMANCE,MALICIOUS_CODE,STYLE,BAD_PRACTICE"/>
+        <Confidence value="1"/>
+        <Rank value="20"/>
+        <Bug category="CORRECTNESS,MT_CORRECTNESS,SECURITY,PERFORMANCE,MALICIOUS_CODE,BAD_PRACTICE"/>
         <Package name="~.+" />
     </Match>
 </FindBugsFilter>

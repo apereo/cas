@@ -47,9 +47,10 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getDescription(), StringUtils.EMPTY));
         kryo.writeObject(output, service.getId());
         kryo.writeObject(output, service.getEvaluationOrder());
-        kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogo(), getEmptyUrl()));
+        final URL emptyUrl = getEmptyUrl();
+        kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogo(), emptyUrl));
         kryo.writeObject(output, service.getLogoutType());
-        kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogoutUrl(), getEmptyUrl()));
+        kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogoutUrl(), emptyUrl));
         kryo.writeObject(output, new HashSet<>(service.getRequiredHandlers()));
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getTheme(), StringUtils.EMPTY));
 

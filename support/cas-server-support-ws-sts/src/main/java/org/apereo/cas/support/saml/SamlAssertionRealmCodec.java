@@ -41,7 +41,7 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
     }
 
     private String parseCNValue(final String name) {
-        final int len = name.indexOf(",") > 0 ? name.indexOf(",") : name.length();
+        final int len = name.indexOf(',') > 0 ? name.indexOf(',') : name.length();
         String realm = name.substring(name.indexOf("CN=") + "CN=".length(), len);
 
         if (uppercase) {

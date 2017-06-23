@@ -48,7 +48,7 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
 
     @Override
     public Set<Event> resolveInternal(final RequestContext requestContext) {
-        if (requestContext.getFlowScope().getBoolean(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, false)) {
+        if (requestContext.getFlowScope().getBoolean(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, Boolean.FALSE)) {
             requestContext.getFlowScope().remove(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE);
             if (loadSurrogates(requestContext)) {
                 return CollectionUtils.wrapSet(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));

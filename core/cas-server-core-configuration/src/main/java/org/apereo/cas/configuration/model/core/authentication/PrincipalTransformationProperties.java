@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import java.io.Serializable;
+
 /**
  * This is {@link PrincipalTransformationProperties}.
  *
@@ -7,7 +9,7 @@ package org.apereo.cas.configuration.model.core.authentication;
  * @since 5.0.0
  */
 
-public class PrincipalTransformationProperties {
+public class PrincipalTransformationProperties implements Serializable {
 
     public enum CaseConversion {
         /** No conversion. */
