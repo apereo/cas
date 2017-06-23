@@ -191,17 +191,20 @@ public class CasCoreAuditConfiguration {
     public Map<String, AuditResourceResolver> auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
-        map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver());
-        map.put("CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver());
-        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
-        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
+        final AuditResourceResolver messageBundleAwareResourceResolver = messageBundleAwareResourceResolver();
+        map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", messageBundleAwareResourceResolver);
+        map.put("CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", messageBundleAwareResourceResolver);
+        final AuditResourceResolver ticketResourceResolver = ticketResourceResolver();
+        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
+        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
         map.put("GRANT_SERVICE_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
         map.put("GRANT_PROXY_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
-        map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
-        map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
-        map.put("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver());
-        map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
-        map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
+        final AuditResourceResolver returnValueResourceResolver = returnValueResourceResolver();
+        map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver);
+        map.put("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver);
+        map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
+        map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
         return map;
     }

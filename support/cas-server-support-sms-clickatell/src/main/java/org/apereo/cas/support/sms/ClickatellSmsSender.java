@@ -73,7 +73,7 @@ public class ClickatellSmsSender implements SmsSender {
                 }
 
                 final List<String> errors = messages.stream()
-                        .filter(m -> m.containsKey("accepted") && !Boolean.valueOf(m.get("accepted").toString()) && m.containsKey("error"))
+                        .filter(m -> m.containsKey("accepted") && !Boolean.parseBoolean(m.get("accepted").toString()) && m.containsKey("error"))
                         .map(m -> (String) m.get("error"))
                         .collect(Collectors.toList());
                 if (errors.isEmpty()) {

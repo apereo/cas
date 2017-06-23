@@ -34,8 +34,9 @@ public class DefaultUsernameAttributeProviderMapper implements UsernameAttribute
             if (generator instanceof ShibbolethCompatiblePersistentIdGenerator) {
                 final ShibbolethCompatiblePersistentIdGenerator sh = (ShibbolethCompatiblePersistentIdGenerator) generator;
 
-                if (sh.getSalt() != null) {
-                    final String salt = new String(sh.getSalt(), Charset.defaultCharset());
+                final byte[] salt1 = sh.getSalt();
+                if (salt1 != null) {
+                    final String salt = new String(salt1, Charset.defaultCharset());
                     uBean.setValue(salt);
                 } else {
                     throw new IllegalArgumentException("Salt cannot be null");
