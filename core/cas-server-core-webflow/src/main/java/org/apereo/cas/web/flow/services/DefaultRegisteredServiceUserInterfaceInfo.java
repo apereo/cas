@@ -24,7 +24,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceUserInterfaceInfo.class);
     
     /** the registered service. **/
-    protected final transient RegisteredService registeredService;
+    protected final RegisteredService registeredService;
 
     public DefaultRegisteredServiceUserInterfaceInfo(final RegisteredService registeredService) {
         this.registeredService = registeredService;
