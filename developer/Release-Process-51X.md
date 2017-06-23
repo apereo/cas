@@ -27,7 +27,7 @@ signing.secretKeyRingFile=/Users/example/.gnupg/secring.gpg
 org.gradle.daemon=false
 ```
 
-- Checkout the CAS project: `git clone git@github.com:apereo/cas.git cas-server`
+- Checkout the CAS project: `git clone --single-branch --branch 5.1.x --depth 1 git@github.com:apereo/cas.git cas-server`
 - Make sure you have the [latest version of JDK 8](http://www.oracle.com/technetwork/java/javase/downloads) installed via `java -version`. 
 
 ## Preparing the Release
