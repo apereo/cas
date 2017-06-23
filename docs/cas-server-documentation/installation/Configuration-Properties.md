@@ -102,7 +102,7 @@ Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
 Load settings from a MongoDb instance.
 
 ```properties
-# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/apereocas
+# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds135522.mlab.com:35522/jasigcas
 ```
 
 ### ZooKeeper
