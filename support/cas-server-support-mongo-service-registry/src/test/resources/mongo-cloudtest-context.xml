@@ -71,5 +71,5 @@
           c:uri-ref="clientUri"/>
 
     <bean id="clientUri" class="com.mongodb.MongoClientURI"
-          c:uri="mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas"/>
+          c:uri="mongodb://casuser:Mellon@ds135522.mongolab.com:35522/jasigcas" />
 </beans>
