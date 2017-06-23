@@ -30,10 +30,6 @@ public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfigurati
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("logoutManager")
-    private LogoutManager logoutManager;
-
     @RefreshScope
     @Bean
     public TicketRegistry ticketRegistry() throws Exception {

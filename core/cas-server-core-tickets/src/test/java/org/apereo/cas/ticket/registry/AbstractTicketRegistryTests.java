@@ -60,7 +60,7 @@ public abstract class AbstractTicketRegistryTests {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void setUpEncryption() {
-        final AbstractTicketRegistry registry = (AbstractTicketRegistry) AopTestUtils.getTargetObject(this.ticketRegistry);
+        final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
         if (this.useEncryption) {
             registry.setCipherExecutor(new DefaultTicketCipherExecutor(null, null, "AES", 512, 16));
         } else {
