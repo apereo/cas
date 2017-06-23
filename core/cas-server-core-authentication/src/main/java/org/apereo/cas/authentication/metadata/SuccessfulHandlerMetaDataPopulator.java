@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.util.CollectionUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,9 +28,9 @@ public class SuccessfulHandlerMetaDataPopulator extends BaseAuthenticationMetaDa
         if (successes.isEmpty()) {
             successes = new HashSet(successes);
         }
-        builder.mergeAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, successes);
+        builder.mergeAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, CollectionUtils.wrap(successes));
     }
-    
+
     @Override
     public boolean supports(final Credential credential) {
         return true;
