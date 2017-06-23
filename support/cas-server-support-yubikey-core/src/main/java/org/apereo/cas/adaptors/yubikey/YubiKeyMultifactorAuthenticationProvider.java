@@ -24,7 +24,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
 
     private final YubicoClient client;
 
-    private final HttpClient httpClient;
+    private final transient HttpClient httpClient;
 
     public YubiKeyMultifactorAuthenticationProvider(final YubicoClient client,
                                                     final HttpClient httpClient) {

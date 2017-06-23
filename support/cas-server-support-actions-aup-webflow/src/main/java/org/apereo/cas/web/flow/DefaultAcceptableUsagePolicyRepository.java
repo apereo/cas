@@ -33,7 +33,7 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         if (this.policyMap.containsKey(key)) {
             return Pair.of(this.policyMap.get(key), principal);
         }
-        return Pair.of(false, principal);
+        return Pair.of(Boolean.FALSE, principal);
     }
 
     @Override

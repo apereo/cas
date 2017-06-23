@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.support.couchbase.serviceregistry;
 
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
+
 /**
  * This is {@link CouchbaseServiceRegistryProperties}.
  *
@@ -9,7 +11,7 @@ import org.apereo.cas.configuration.support.Beans;
  * @since 5.0.0
  */
 
-public class CouchbaseServiceRegistryProperties {
+public class CouchbaseServiceRegistryProperties implements Serializable {
     private boolean queryEnabled = true;
 
     private String nodeSet = "localhost:8091";

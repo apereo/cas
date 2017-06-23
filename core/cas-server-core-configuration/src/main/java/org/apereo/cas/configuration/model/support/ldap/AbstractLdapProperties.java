@@ -6,6 +6,7 @@ import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractLdapProperties {
+public abstract class AbstractLdapProperties implements Serializable {
     /**
      * The ldap type used to handle specific ops.
      */

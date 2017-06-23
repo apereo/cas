@@ -602,11 +602,12 @@ public abstract class AbstractSamlProfileHandlerController {
                     "Cannot find metadata linked to " + issuer);
         }
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
-        LOGGER.debug("Preparing SAML response for [{}]", facade.getEntityId());
+        final String entityId = facade.getEntityId();
+        LOGGER.debug("Preparing SAML response for [{}]", entityId);
         final AuthnRequest authnRequest = authenticationContext.getKey();
         this.responseBuilder.build(authnRequest, request, response,
                 casAssertion, registeredService, facade, binding);
-        LOGGER.info("Built the SAML response for [{}]", facade.getEntityId());
+        LOGGER.info("Built the SAML response for [{}]", entityId);
     }
 
     /**

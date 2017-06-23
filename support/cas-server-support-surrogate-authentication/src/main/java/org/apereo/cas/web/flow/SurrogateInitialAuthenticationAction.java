@@ -59,7 +59,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
 
         if (StringUtils.isBlank(surrogateUsername)) {
             up.setUsername(realUsername);
-            context.getFlowScope().put(SurrogateWebflowEventResolver.CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, true);
+            context.getFlowScope().put(SurrogateWebflowEventResolver.CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, Boolean.TRUE);
             WebUtils.putCredential(context, up);
             return;
         }
@@ -70,7 +70,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
         if (up instanceof RememberMeCredential) {
             sc.setRememberMe(((RememberMeCredential) up).isRememberMe());
         }
-        context.getFlowScope().put(SurrogateWebflowEventResolver.CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, false);
+        context.getFlowScope().put(SurrogateWebflowEventResolver.CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, Boolean.FALSE);
         WebUtils.putCredential(context, sc);
     }
 
