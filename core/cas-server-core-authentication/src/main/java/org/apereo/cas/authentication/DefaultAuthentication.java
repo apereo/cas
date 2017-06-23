@@ -141,7 +141,7 @@ public class DefaultAuthentication implements Authentication {
 
     @Override
     public List<CredentialMetaData> getCredentials() {
-        return Collections.unmodifiableList(this.credentials);
+        return CollectionUtils.wrap(this.credentials);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class Scim1PrincipalAttributeMapper {
                     final UsernamePasswordCredential credential) {
         user.setUserName(p.getId());
         user.setPassword(credential.getPassword());
-        user.setActive(true);
+        user.setActive(Boolean.TRUE);
 
         user.setNickName(getPrincipalAttributeValue(p, "nickName"));
         user.setDisplayName(getPrincipalAttributeValue(p, "displayName"));

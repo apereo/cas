@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * This is {@link ScriptingUtils}.
@@ -55,9 +57,14 @@ public final class ScriptingUtils {
         }
 
         final ClassLoader parent = ScriptingUtils.class.getClassLoader();
+        return AccessController.doPrivileged((PrivilegedAction<T>) () -> getGroovyResult(groovyScript, methodName, args, clazz, parent));
+    }
+
+    private static <T> T getGroovyResult(final Resource groovyScript, final String methodName,
+                                         final Object[] args, final Class<T> clazz, final ClassLoader parent) {
         try (GroovyClassLoader loader = new GroovyClassLoader(parent)) {
             final File groovyFile = groovyScript.getFile();
-            if (groovyFile.exists()) {                  
+            if (groovyFile.exists()) {
                 final Class<?> groovyClass = loader.parseClass(groovyFile);
                 LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
 

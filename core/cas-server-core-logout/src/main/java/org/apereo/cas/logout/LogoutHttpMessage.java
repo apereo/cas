@@ -15,9 +15,10 @@ import java.net.URL;
 public class LogoutHttpMessage extends HttpMessage {
 
     private static final long serialVersionUID = 399581521957873727L;
+
     /** The parameter name that contains the logout request. */
-    private final String logoutParameterName = "logoutRequest";
-    
+    private static final String LOGOUT_REQUEST_PARAMETER = "logoutRequest";
+
     private boolean prefixLogoutParameterName = true;
 
     /**
@@ -38,15 +39,11 @@ public class LogoutHttpMessage extends HttpMessage {
      */
     @Override
     protected String formatOutputMessageInternal(final String message) {
-        return (this.prefixLogoutParameterName ? this.logoutParameterName + '=' : StringUtils.EMPTY)
+        return (this.prefixLogoutParameterName ? LOGOUT_REQUEST_PARAMETER + '=' : StringUtils.EMPTY)
                 + super.formatOutputMessageInternal(message);
     }
 
     public void setPrefixLogoutParameterName(final boolean prefixLogoutParameterName) {
         this.prefixLogoutParameterName = prefixLogoutParameterName;
-    }
-
-    public String getLogoutParameterName() {
-        return logoutParameterName;
     }
 }

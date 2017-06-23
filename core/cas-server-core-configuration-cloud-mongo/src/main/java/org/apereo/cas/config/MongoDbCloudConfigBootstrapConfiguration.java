@@ -54,12 +54,13 @@ public class MongoDbCloudConfigBootstrapConfiguration extends AbstractMongoConfi
 
     @Override
     public Mongo mongo() throws Exception {
+        final MongoClientURI mongoClientURI = mongoClientUri();
         final MongoCredential credential = MongoCredential.createCredential(
-                mongoClientUri().getUsername(),
+                mongoClientURI.getUsername(),
                 getDatabaseName(),
-                mongoClientUri().getPassword());
+                mongoClientURI.getPassword());
 
-        final String hostUri = mongoClientUri().getHosts().get(0);
+        final String hostUri = mongoClientURI.getHosts().get(0);
         final String[] host = hostUri.split(":");
         return new MongoClient(new ServerAddress(
                 host[0], host.length > 1 ? Integer.parseInt(host[1]) : DEFAULT_PORT),

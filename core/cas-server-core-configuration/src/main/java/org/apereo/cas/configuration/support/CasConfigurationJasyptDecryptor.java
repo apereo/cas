@@ -75,7 +75,7 @@ public class CasConfigurationJasyptDecryptor {
         final String iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         if (StringUtils.isNotBlank(iter) && NumberUtils.isCreatable(iter)) {
             LOGGER.debug("Configured decryptor iterations");
-            decryptor.setKeyObtentionIterations(Integer.valueOf(iter));
+            decryptor.setKeyObtentionIterations(Integer.parseInt(iter));
         }
     }
 

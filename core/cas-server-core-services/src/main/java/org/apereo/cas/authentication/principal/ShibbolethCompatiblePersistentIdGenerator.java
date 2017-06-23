@@ -81,15 +81,20 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     }
 
     @Override
-    public String generate(final Principal principal, final Service service) {
-        final String principalId = StringUtils.isNotBlank(this.attribute) && principal.getAttributes().containsKey(this.attribute)
-                ? principal.getAttributes().get(this.attribute).toString() : principal.getId();
-        final String data = String.join(CONST_SEPARATOR, service.getId(), principalId);
+    public String generate(final String principal, final String service) {
+        final String data = String.join(CONST_SEPARATOR, service, principal);
         final Charset charset = Charset.defaultCharset();
         String result = EncodingUtils.encodeBase64(DigestUtils.sha(data.getBytes(charset)));
         result = result.replaceAll(System.getProperty("line.separator"), StringUtils.EMPTY);
         LOGGER.debug("Generated persistent id is [{}]", result);
         return result;
+    }
+
+    @Override
+    public String generate(final Principal principal, final Service service) {
+        final String principalId = StringUtils.isNotBlank(this.attribute) && principal.getAttributes().containsKey(this.attribute)
+                ? principal.getAttributes().get(this.attribute).toString() : principal.getId();
+        return generate(principalId, service.getId());
     }
 
     @Override
