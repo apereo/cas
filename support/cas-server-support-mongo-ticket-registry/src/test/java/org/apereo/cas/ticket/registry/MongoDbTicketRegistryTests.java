@@ -71,8 +71,7 @@ public class MongoDbTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() throws Exception {
-        // FIXME Encryption in MongoDb registry is missing / broken
-        return Arrays.asList(false/*, true */);
+        return Arrays.asList(false);
     }
 
     @Before
