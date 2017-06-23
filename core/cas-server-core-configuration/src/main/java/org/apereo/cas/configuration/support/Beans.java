@@ -193,7 +193,7 @@ public final class Beans {
             bean.setJdbcUrl(jpaProperties.getUrl());
             bean.setUsername(jpaProperties.getUser());
             bean.setPassword(jpaProperties.getPassword());
-            bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
+            bean.setLoginTimeout((int) jpaProperties.getPool().getMaxWait());
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
             bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
@@ -234,7 +234,7 @@ public final class Beans {
         final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
         bean.setCorePoolSize(config.getMinSize());
         bean.setMaxPoolSize(config.getMaxSize());
-        bean.setKeepAliveSeconds(Long.valueOf(config.getMaxWait()).intValue());
+        bean.setKeepAliveSeconds((int) config.getMaxWait());
         return bean;
     }
 
@@ -774,7 +774,7 @@ public final class Beans {
     public static Duration newDuration(final String length) {
         try {
             if (NumberUtils.isCreatable(length)) {
-                return Duration.ofSeconds(Long.valueOf(length));
+                return Duration.ofSeconds(Long.parseLong(length));
             }
             return Duration.parse(length);
         } catch (final Exception e) {
@@ -965,14 +965,14 @@ public final class Beans {
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
             bean.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
-            bean.setHeartbeatConnectTimeout(Long.valueOf(mongo.getTimeout()).intValue());
-            bean.setHeartbeatSocketTimeout(Long.valueOf(mongo.getTimeout()).intValue());
+            bean.setHeartbeatConnectTimeout((int) mongo.getTimeout());
+            bean.setHeartbeatSocketTimeout((int) mongo.getTimeout());
             bean.setMaxConnectionLifeTime(mongo.getConns().getLifetime());
             bean.setSocketKeepAlive(mongo.isSocketKeepAlive());
-            bean.setMaxConnectionIdleTime(Long.valueOf(mongo.getIdleTimeout()).intValue());
+            bean.setMaxConnectionIdleTime((int) mongo.getIdleTimeout());
             bean.setConnectionsPerHost(mongo.getConns().getPerHost());
-            bean.setSocketTimeout(Long.valueOf(mongo.getTimeout()).intValue());
-            bean.setConnectTimeout(Long.valueOf(mongo.getTimeout()).intValue());
+            bean.setSocketTimeout((int) mongo.getTimeout());
+            bean.setConnectTimeout((int) mongo.getTimeout());
             bean.afterPropertiesSet();
             return bean;
         } catch (final Exception e) {

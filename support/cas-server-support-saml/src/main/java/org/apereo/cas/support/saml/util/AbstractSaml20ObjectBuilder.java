@@ -81,7 +81,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public org.opensaml.saml.saml2.ecp.Response newEcpResponse(final String assertionConsumerUrl) {
         final org.opensaml.saml.saml2.ecp.Response samlResponse = newSamlObject(org.opensaml.saml.saml2.ecp.Response.class);
-        samlResponse.setSOAP11MustUnderstand(true);
+        samlResponse.setSOAP11MustUnderstand(Boolean.TRUE);
         samlResponse.setSOAP11Actor(ActorBearing.SOAP11_ACTOR_NEXT);
         samlResponse.setAssertionConsumerServiceURL(assertionConsumerUrl);
         return samlResponse;
