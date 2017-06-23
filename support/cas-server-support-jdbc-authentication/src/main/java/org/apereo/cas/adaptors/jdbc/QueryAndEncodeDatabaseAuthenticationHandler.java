@@ -141,7 +141,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             }
             if (StringUtils.isNotBlank(this.disabledFieldName)){
                 final Object dbDisabled = values.get(this.disabledFieldName);
-                if (dbDisabled != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbDisabled.toString())) || dbDisabled.equals(Integer.valueOf(1)))){
+                if (dbDisabled != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbDisabled.toString())) || dbDisabled.equals(1))){
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }

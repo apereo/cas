@@ -84,7 +84,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             }
             if (StringUtils.isNotBlank(this.fieldExpired)) {
                 final Object dbExpired = dbFields.get(this.fieldExpired);
-                if (dbExpired != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))) {
+                if (dbExpired != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbExpired.toString())) || dbExpired.equals(1))) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }

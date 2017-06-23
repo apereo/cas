@@ -49,13 +49,14 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
 
     private PrivateKey readPemPrivateKey() throws Exception {
         LOGGER.debug("Attempting to read [{}] as PEM", this.location.getFile());
-        try (BufferedReader br = new BufferedReader(new FileReader(this.location.getFile()))) {
+        try (FileReader in = new FileReader(this.location.getFile());
+             BufferedReader br = new BufferedReader(in)) {
             final PEMParser pp = new PEMParser(br);
             final PEMKeyPair pemKeyPair = (PEMKeyPair) pp.readObject();
             final KeyPair kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
             return kp.getPrivate();
         } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.debug("Unable to read key", e);
             return null;
         }
     }
