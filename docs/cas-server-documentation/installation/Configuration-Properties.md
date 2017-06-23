@@ -639,12 +639,16 @@ spring.thymeleaf.cache=true
 # the cas web application.
 # spring.thymeleaf.prefix=classpath:/templates/
 
+# cas.view.cas2.v3ForwardCompatible=false
+
 # Indicate where core CAS-protocol related views should be found
 # in the view directory hierarchy.
 # cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
 # cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
 # cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
 # cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
+
+
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
 

@@ -244,8 +244,15 @@ public class CasValidationConfiguration {
                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
         final ServiceValidateController c = new ServiceValidateController();
         c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
-        c.setSuccessView(cas2ServiceSuccessView());
-        c.setFailureView(cas2ServiceFailureView);
+
+        if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
+            c.setSuccessView(cas3ServiceSuccessView());
+            c.setFailureView(cas3ServiceFailureView);
+        } else {
+            c.setSuccessView(cas2ServiceSuccessView());
+            c.setFailureView(cas2ServiceFailureView);
+        }
+
         c.setProxyHandler(proxy20Handler);
         c.setAuthenticationSystemSupport(authenticationSystemSupport);
         c.setServicesManager(servicesManager);
