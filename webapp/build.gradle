@@ -17,7 +17,7 @@ node {
 npm_install.dependsOn(npm_cache_clean)
 
 task npmLint(type: NpmTask) {
-  dependsOn npmInstall
+  dependsOn npm_install
   description "Lint the JavaScript files"
   group "UI"
   args = ['run', 'lint', '--silent']
@@ -25,7 +25,7 @@ task npmLint(type: NpmTask) {
 
 task compileSass(type: NpmTask) {
   group 'UI'
-  dependsOn npmInstall
+  dependsOn npm_install
   description "Compile Sass"
   args = ['run', 'gulp', '--silent']
 }
