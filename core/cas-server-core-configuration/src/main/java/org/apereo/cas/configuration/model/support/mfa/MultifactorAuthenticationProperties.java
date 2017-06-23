@@ -1259,7 +1259,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             }
         }
 
-        public static class Cleaner {
+        public static class Cleaner implements Serializable {
             private boolean enabled = true;
             private String startDelay = "PT1M";
             private String repeatInterval = "PT1M";

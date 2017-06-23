@@ -2,13 +2,15 @@ package org.apereo.cas.configuration.model.support.dynamodb;
 
 import org.springframework.core.io.Resource;
 
+import java.io.Serializable;
+
 /**
  * This is {@link AbstractDynamoDbProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class AbstractDynamoDbProperties {
+public abstract class AbstractDynamoDbProperties implements Serializable {
     private Resource credentialsPropertiesFile;
             
     private String credentialAccessKey;
