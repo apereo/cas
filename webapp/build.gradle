@@ -1,3 +1,5 @@
+apply plugin: "com.moowork.node"
+
 install {
     enabled = false
 }
@@ -6,3 +8,29 @@ uploadArchives {
     enabled = false
 }
 
+node {
+    version = '7.10.0'
+    nodeModulesDir = file("./")
+    download = true
+}
+
+npm_install.dependsOn(npm_cache_clean)
+
+task npmLint(type: NpmTask) {
+  dependsOn npm_install
+  description "Lint the JavaScript files"
+  group "UI"
+  args = ['run', 'lint', '--silent']
+}
+
+task compileSass(type: NpmTask) {
+  group 'UI'
+  dependsOn npm_install
+  description "Compile Sass"
+  args = ['run', 'gulp', '--silent']
+}
+
+processResources.dependsOn npmLint
+processResources.dependsOn compileSass
+
+clean.delete << file("./node_modules")
