@@ -231,7 +231,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final String event = handle(requestContext.getAttributes().get("error", Exception.class),
+        final String event = handle(requestContext.getCurrentEvent().getAttributes().get("error", Exception.class),
                 requestContext.getMessageContext());
         return new EventFactorySupport().event(this, event);
     }
