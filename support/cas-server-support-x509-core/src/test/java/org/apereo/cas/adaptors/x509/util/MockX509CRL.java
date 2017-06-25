@@ -27,13 +27,13 @@ import javax.security.auth.x500.X500Principal;
  */
 public class MockX509CRL extends X509CRL {
     /** Issuer name */
-    private X500Principal issuer;
+    private final X500Principal issuer;
 
     /** Instant CRL was issued. */
-    private Date thisUpdate;
+    private final Date thisUpdate;
 
     /** Instant on which next CRL update expected. */
-    private Date nextUpdate;
+    private final Date nextUpdate;
 
     /**
      * Creates a new instance with given parameters.

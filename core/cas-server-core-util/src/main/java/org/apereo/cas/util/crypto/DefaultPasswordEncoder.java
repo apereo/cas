@@ -20,8 +20,8 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordEncoder.class);
 
-    private String encodingAlgorithm;
-    private String characterEncoding;
+    private final String encodingAlgorithm;
+    private final String characterEncoding;
 
     /**
      * Instantiates a new default password encoder.

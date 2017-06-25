@@ -58,8 +58,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     protected Path serviceRegistryDirectory;
 
 
-    private Consumer<AbstractCasEvent> publish = this::publishEvent;
-    private ComposableSupplier<AbstractCasEvent> createServiceRefreshEvent = () -> new CasRegisteredServicesRefreshEvent(this);
+    private final Consumer<AbstractCasEvent> publish = this::publishEvent;
+    private final ComposableSupplier<AbstractCasEvent> createServiceRefreshEvent = () -> new CasRegisteredServicesRefreshEvent(this);
 
     /**
      * Map of service ID to registered service.

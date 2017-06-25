@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 public class DefaultAuthenticationRiskMitigator implements AuthenticationRiskMitigator {
-    private AuthenticationRiskContingencyPlan contingencyPlan;
+    private final AuthenticationRiskContingencyPlan contingencyPlan;
 
     public DefaultAuthenticationRiskMitigator(final AuthenticationRiskContingencyPlan contingencyPlan) {
         this.contingencyPlan = contingencyPlan;

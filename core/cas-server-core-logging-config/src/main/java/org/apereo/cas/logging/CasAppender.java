@@ -24,8 +24,8 @@ import org.springframework.util.Assert;
 public class CasAppender extends AbstractAppender {
     private static final long serialVersionUID = 3744758323628847477L;
 
-    private Configuration config;
-    private AppenderRef appenderRef;
+    private final Configuration config;
+    private final AppenderRef appenderRef;
 
     /**
      * Instantiates a new Cas appender.
