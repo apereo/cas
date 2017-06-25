@@ -14,9 +14,8 @@ import org.apereo.cas.validation.Assertion;
 public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1218257740549089556L;
-    private Assertion assertion;
-
-    private ServiceTicket serviceTicket;
+    private final transient Assertion assertion;
+    private final ServiceTicket serviceTicket;
 
     /**
      * Instantiates a new Cas service ticket validated event.

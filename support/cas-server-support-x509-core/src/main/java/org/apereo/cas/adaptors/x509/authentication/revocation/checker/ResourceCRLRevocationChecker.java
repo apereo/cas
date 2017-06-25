@@ -41,7 +41,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     /**
      * Executor responsible for refreshing CRL data.
      */
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /**
      * CRL refresh interval in seconds.
@@ -53,7 +53,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     /**
      * Map of CRL issuer to CRL.
      */
-    private Map<X500Principal, X509CRL> crlIssuerMap = Collections.synchronizedMap(new HashMap<>());
+    private final Map<X500Principal, X509CRL> crlIssuerMap = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Resource CRLs.

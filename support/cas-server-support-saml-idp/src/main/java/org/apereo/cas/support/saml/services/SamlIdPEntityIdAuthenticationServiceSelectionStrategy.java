@@ -22,7 +22,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPEntityIdAuthenticationServiceSelectionStrategy.class);
 
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
     private final String casServerPrefix;
 
