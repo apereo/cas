@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 public class OAuth20Validator {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20Validator.class);
 
-    private ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
     public OAuth20Validator(final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
         this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;

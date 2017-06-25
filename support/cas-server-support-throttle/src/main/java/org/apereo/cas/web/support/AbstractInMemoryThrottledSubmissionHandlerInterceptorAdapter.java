@@ -26,7 +26,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
-    private ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
 
     public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds,
                                                                         final String usernameParameter) {

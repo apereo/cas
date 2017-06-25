@@ -35,7 +35,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicyStrategyBea
         /** Allow type. */
         ALLOWED("allowed");
 
-        private String value;
+        private final String value;
 
         /**
          * Instantiates a new AlgorithmTypes.
