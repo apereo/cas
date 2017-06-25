@@ -20,10 +20,10 @@ import java.security.cert.X509Certificate;
 public abstract class AbstractCRLRevocationCheckerTests {
 
     /** Certificate to be tested. */
-    private X509Certificate[] certificates;
+    private final X509Certificate[] certificates;
 
     /** Expected result of check; null for success. */
-    private GeneralSecurityException expected;
+    private final GeneralSecurityException expected;
     
     /**
      * Creates a new test instance with given parameters.
