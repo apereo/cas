@@ -12,11 +12,11 @@ public class ServiceContext {
 
     /** Service principal. */
     
-    private Service service;
+    private final Service service;
 
     /** Registered service corresponding to service principal. */
     
-    private RegisteredService registeredService;
+    private final RegisteredService registeredService;
 
     /**
      * Creates a new instance with required parameters.
