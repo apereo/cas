@@ -331,6 +331,10 @@ task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module")
     from rootProject.file("src")
 }
 
+task gradleHome(description: "Display GRADLE_HOME environment variable") {
+    println "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
+}
+
 artifacts {
     archives aggregateJavadocsIntoJar
     archives rootSourcesJar

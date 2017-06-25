@@ -1,11 +1,14 @@
 task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies") {
     dependsOn configurations.runtime
     appendix = "pathing"
- 
+
     doFirst {
         manifest {
-            attributes "Class-Path": configurations.runtime.files.collect {
-                it.toURL().toString().replaceFirst("/file:/+/", "/")}.join(" ")
+            attributes "Class-Path":
+                    configurations.runtime.files.collect {
+                        it.toURL().toString().replaceFirst("/file:/+/", "/")
+                    }
+                    .join(" ")
         }
     }
 }
@@ -42,6 +45,5 @@ task findbugs(type: FindBugs, description: "Set up classpath for Findbugs") {
 gradle.buildFinished { buildResult ->
     cleanLogs
 }
-
 
 clean.dependsOn("cleanLogs")
