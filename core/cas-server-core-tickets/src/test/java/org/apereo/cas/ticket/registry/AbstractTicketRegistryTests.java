@@ -58,7 +58,7 @@ public abstract class AbstractTicketRegistryTests {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void setUpEncryption() {
         final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
         if (this.useEncryption) {
@@ -135,7 +135,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class);
+            assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class));
         } catch (final ClassCastException e) {
             return;
         }
