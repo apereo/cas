@@ -71,7 +71,7 @@ public class MongoDbTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() throws Exception {
-        return Arrays.asList(false);
+        return Arrays.asList(true, false);
     }
 
     @Before
