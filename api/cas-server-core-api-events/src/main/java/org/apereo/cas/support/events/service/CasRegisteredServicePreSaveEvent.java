@@ -14,7 +14,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 public class CasRegisteredServicePreSaveEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 290988299766263298L;
-    private RegisteredService registeredService;
+    private final RegisteredService registeredService;
 
     /**
      * Instantiates a new cas sso event.

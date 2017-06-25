@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class MockValidationSpecification implements ValidationSpecification {
 
-    private boolean test;
+    private final boolean test;
 
     public MockValidationSpecification(final boolean test) {
         this.test = test;

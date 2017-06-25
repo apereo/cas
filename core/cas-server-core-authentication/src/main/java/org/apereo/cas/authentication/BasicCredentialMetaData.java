@@ -18,7 +18,7 @@ public class BasicCredentialMetaData implements CredentialMetaData, Serializable
     private static final long serialVersionUID = 4929579849241505377L;
 
     /** Credential type unique identifier. */
-    private String id;
+    private final String id;
 
     /** Type of original credential. */
     private Class<? extends Credential> credentialClass;

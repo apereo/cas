@@ -33,7 +33,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     /**
      * Responsible for manging and verifying the cookie value.
      **/
-    private CookieValueManager casCookieValueManager;
+    private final CookieValueManager casCookieValueManager;
 
     /**
      * Instantiates a new cookie retrieving cookie generator

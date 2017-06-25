@@ -38,8 +38,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     private final String entityIdParameterName;
     private final MetadataResolverAdapter metadataAdapter;
 
-    private ServicesManager servicesManager;
-    private ServiceFactory<WebApplicationService> serviceFactory;
+    private final ServicesManager servicesManager;
+    private final ServiceFactory<WebApplicationService> serviceFactory;
 
     /**
      * Instantiates a new SAML MDUI parser action.

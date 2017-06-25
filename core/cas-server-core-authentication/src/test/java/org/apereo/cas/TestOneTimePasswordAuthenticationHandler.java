@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    private Map<String, String> credentialMap;
+    private final Map<String, String> credentialMap;
 
     /**
      * Creates a new instance with a map that defines the one-time passwords that can be authenticated.

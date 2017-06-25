@@ -24,16 +24,16 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     private Principal principal;
 
     /** Credential metadata. */
-    private List<CredentialMetaData> credentials = new ArrayList<>();
+    private final List<CredentialMetaData> credentials = new ArrayList<>();
 
     /** Authentication metadata attributes. */
-    private Map<String, Object> attributes = new LinkedHashMap<>();
+    private final Map<String, Object> attributes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication successes. */
-    private Map<String, HandlerResult> successes = new LinkedHashMap<>();
+    private final Map<String, HandlerResult> successes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication failures. */
-    private Map<String, Class<? extends Exception>> failures = new LinkedHashMap<>();
+    private final Map<String, Class<? extends Exception>> failures = new LinkedHashMap<>();
 
     /** Authentication date. */
     private ZonedDateTime authenticationDate;

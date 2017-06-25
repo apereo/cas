@@ -39,15 +39,15 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
+    private final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
 
-    private SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
+    private final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
 
-    private SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder;
+    private final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder;
 
-    private SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
+    private final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
 
-    private BaseSamlObjectSigner samlObjectSigner;
+    private final BaseSamlObjectSigner samlObjectSigner;
 
     public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean,
                                            final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,

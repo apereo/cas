@@ -30,7 +30,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
     private static final long serialVersionUID = 4782621942035583007L;
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlProfileSamlSubjectBuilder.class);
 
-    private SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
+    private final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
 
     private final int skewAllowance;
 

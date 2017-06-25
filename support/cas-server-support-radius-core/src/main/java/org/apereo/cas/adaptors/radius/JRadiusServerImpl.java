@@ -55,15 +55,15 @@ public class JRadiusServerImpl implements RadiusServer {
     
     private int retries = DEFAULT_RETRY_COUNT;
 
-    private String nasIpAddress;
+    private final String nasIpAddress;
     
-    private String nasIpv6Address;
+    private final String nasIpv6Address;
     
     private long nasPort = -1;
     
     private long nasPortId = -1;
     
-    private String nasIdentifier;
+    private final String nasIdentifier;
     
     private long nasRealPort = -1;
     

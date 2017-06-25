@@ -9,7 +9,7 @@ import java.security.Principal;
  */
 public class MockPrincipal implements Principal {
 
-    private String principal;
+    private final String principal;
 
     public MockPrincipal(final String principal) {
         super();

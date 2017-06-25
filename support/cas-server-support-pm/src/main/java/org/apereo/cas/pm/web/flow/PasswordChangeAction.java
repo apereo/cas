@@ -27,7 +27,7 @@ public class PasswordChangeAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordChangeAction.class);
     
-    private PasswordManagementService passwordManagementService;
+    private final PasswordManagementService passwordManagementService;
 
     public PasswordChangeAction(final PasswordManagementService passwordManagementService) {
         this.passwordManagementService = passwordManagementService;

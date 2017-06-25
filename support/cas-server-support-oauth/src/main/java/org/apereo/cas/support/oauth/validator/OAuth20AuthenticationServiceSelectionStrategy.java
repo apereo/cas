@@ -31,7 +31,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     private final String callbackUrl;
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    private final int order = Ordered.HIGHEST_PRECEDENCE;
 
     public OAuth20AuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,

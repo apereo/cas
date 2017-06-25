@@ -30,7 +30,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DigestAuthenticationAction.class);
 
-    private String nonce = DigestAuthenticationUtils.createNonce();
+    private final String nonce = DigestAuthenticationUtils.createNonce();
 
     private final DigestHashedCredentialRetriever credentialRetriever;
     private String realm = "CAS";

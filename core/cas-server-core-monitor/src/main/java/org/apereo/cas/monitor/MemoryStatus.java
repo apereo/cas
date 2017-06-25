@@ -14,12 +14,12 @@ public class MemoryStatus extends Status {
     /**
      * JVM free memory.
      */
-    private long freeMemory;
+    private final long freeMemory;
 
     /**
      * JVM total memory.
      */
-    private long totalMemory;
+    private final long totalMemory;
 
     /**
      * Creates a new status object with the given code.

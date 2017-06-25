@@ -19,7 +19,7 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlAssertionRealmCodec.class);
 
     private final String realm;
-    private boolean uppercase = true;
+    private final boolean uppercase = true;
 
     public SamlAssertionRealmCodec(final String realm) {
         this.realm = realm;

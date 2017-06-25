@@ -33,7 +33,7 @@ public class CouchbaseClientFactory {
 
     private Cluster cluster;
     private Bucket bucket;
-    private List<View> views;
+    private final List<View> views;
     private final Set<String> nodes;
 
     /* The name of the getBucket, will use the default getBucket unless otherwise specified. */

@@ -36,7 +36,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
     private final CentralAuthenticationService centralAuthenticationService;
 
-    private String openIdPrefixUrl;
+    private final String openIdPrefixUrl;
 
     /**
      * Instantiates a new Open id service response builder.
