@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, IgniteTicketRegistryConfiguration.class})
-@TestPropertySource(locations={"classpath:/igniteregistry.properties"})
+@TestPropertySource(locations = {"classpath:/igniteregistry.properties"})
 public class IgniteTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Autowired
@@ -34,8 +34,7 @@ public class IgniteTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() throws Exception {
-        // FIXME Encryption in Ignite registry is broken
-        return Arrays.asList(false/*, true */);
+        return Arrays.asList(true, false);
     }
 
     @Override
