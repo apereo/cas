@@ -31,7 +31,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private PasswordManagementService passwordManagementService;
+    private final PasswordManagementService passwordManagementService;
 
     public VerifyPasswordResetRequestAction(final PasswordManagementService passwordManagementService) {
         this.passwordManagementService = passwordManagementService;
