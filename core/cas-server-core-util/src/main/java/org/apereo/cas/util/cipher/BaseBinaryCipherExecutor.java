@@ -32,7 +32,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      */
     private String secretKeyAlgorithm = "AES";
 
-    private String encryptionSecretKey;
+    private final String encryptionSecretKey;
 
 
     /**

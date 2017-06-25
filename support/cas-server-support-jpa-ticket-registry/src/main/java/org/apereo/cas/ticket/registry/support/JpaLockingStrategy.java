@@ -36,13 +36,13 @@ public class JpaLockingStrategy implements LockingStrategy {
      * each one of which may be for a different application or usage within
      * a single application.
      */
-    private String applicationId;
+    private final String applicationId;
 
     /** Unique identifier that identifies the client using this lock instance. */
-    private String uniqueId;
+    private final String uniqueId;
 
     /** Amount of time in seconds lock may be held. */
-    private long lockTimeout;
+    private final long lockTimeout;
 
     /**
      *
@@ -180,7 +180,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
         @Version
         @Column(name = "lockVer", columnDefinition = "integer DEFAULT 0", nullable = false)
-        private Long version = 0L;
+        private final Long version = 0L;
         
         /**
          * @return the applicationId
