@@ -50,8 +50,6 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     private Ignite ignite;
 
-    private boolean supportRegistryState = true;
-
     /**
      * Instantiates a new Ignite ticket registry.
      *
@@ -106,7 +104,10 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         final QueryCursor<Cache.Entry<String, Ticket>> cursor = this.ticketIgniteCache.query(new ScanQuery<>());
         final List<Cache.Entry<String, Ticket>> entries = cursor.getAll();
         final List<Ticket> allTickets = entries.stream().map(Cache.Entry::getValue).collect(Collectors.toList());
-        return decodeTickets(allTickets).stream().filter(t -> !t.isExpired()).collect(Collectors.toList());
+        return decodeTickets(allTickets)
+                .stream()
+                .filter(t -> !t.isExpired())
+                .collect(Collectors.toList());
     }
     
     @Override
@@ -190,14 +191,18 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
                 .append("igniteConfiguration", properties)
-                .append("supportRegistryState", this.supportRegistryState)
                 .toString();
     }
 
     private static class IgniteInternalTicketExpiryPolicy implements ExpiryPolicy {
         private final Ticket ticket;
 
-        public IgniteInternalTicketExpiryPolicy(final Ticket ticket) {
+        /**
+         * Instantiates a new Ignite internal ticket expiry policy.
+         *
+         * @param ticket the ticket
+         */
+        IgniteInternalTicketExpiryPolicy(final Ticket ticket) {
             this.ticket = ticket;
         }
 
