@@ -61,7 +61,7 @@ public class DefaultCasEventListener {
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
         if (this.casEventRepository != null) {
             final CasEvent dto = prepareCasEvent(event);
-            dto.putCreationTime(event.getTicketGrantingTicket().getCreationTime());
+            dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime());
             dto.putId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
             dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
             this.casEventRepository.save(dto);
@@ -117,7 +117,7 @@ public class DefaultCasEventListener {
         final CasEvent dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
-        dto.putCreationTime(DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
+        dto.setCreationTime(DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
 
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         dto.putClientIpAddress(clientInfo.getClientIpAddress());
