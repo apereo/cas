@@ -1594,7 +1594,7 @@ The following LDAP validators can be used to test connection health status:
 
 ### Passivators
 
-The following options can be used to passivate bjects when they are checked back into the LDAP connection pool:
+The following options can be used to passivate objects when they are checked back into the LDAP connection pool:
 
 | Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
