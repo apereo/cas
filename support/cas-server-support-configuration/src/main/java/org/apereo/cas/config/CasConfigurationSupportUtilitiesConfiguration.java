@@ -40,9 +40,9 @@ public class CasConfigurationSupportUtilitiesConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
-    private ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
-    private ComposableFunction<File, AbstractCasEvent> createConfigurationDeletedEvent = file -> new CasConfigurationDeletedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationDeletedEvent = file -> new CasConfigurationDeletedEvent(this, file.toPath());
 
     /**
      * The watch configuration.
@@ -58,7 +58,7 @@ public class CasConfigurationSupportUtilitiesConfiguration {
         @Qualifier("configurationPropertiesEnvironmentManager")
         private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
-        private Consumer<AbstractCasEvent> publish = event -> eventPublisher.publishEvent(event);
+        private final Consumer<AbstractCasEvent> publish = event -> eventPublisher.publishEvent(event);
 
         @PostConstruct
         public void init() {

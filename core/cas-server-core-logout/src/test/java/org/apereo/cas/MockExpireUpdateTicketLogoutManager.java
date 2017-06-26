@@ -15,7 +15,7 @@ import org.apereo.cas.util.MockOnlyOneTicketRegistry;
  */
 public class MockExpireUpdateTicketLogoutManager implements LogoutManager {
 
-    private MockOnlyOneTicketRegistry registry;
+    private final MockOnlyOneTicketRegistry registry;
     
     public MockExpireUpdateTicketLogoutManager(final MockOnlyOneTicketRegistry ticketRegistry) {
         this.registry = ticketRegistry;

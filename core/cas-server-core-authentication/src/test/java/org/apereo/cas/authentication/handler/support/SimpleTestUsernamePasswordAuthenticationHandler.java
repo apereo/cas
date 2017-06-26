@@ -48,7 +48,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
     /**
      * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
      */
-    private Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
+    private final Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
 
     static {
         DEFAULT_USERNAME_ERROR_MAP.put("accountDisabled", new AccountDisabledException("Account disabled"));

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryMultifactorAuthenticationTrustStorage.class);
     
-    private LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;
+    private final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;
 
     public InMemoryMultifactorAuthenticationTrustStorage(final LoadingCache<String, MultifactorAuthenticationTrustRecord> st) {
         this.storage = st;

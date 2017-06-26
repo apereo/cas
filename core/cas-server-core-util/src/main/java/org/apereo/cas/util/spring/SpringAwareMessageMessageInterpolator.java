@@ -18,7 +18,7 @@ import java.util.Locale;
  */
 public class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
 
-    private MessageInterpolator defaultMessageInterpolator =
+    private final MessageInterpolator defaultMessageInterpolator =
             Validation.byDefaultProvider().configure().getDefaultMessageInterpolator();
 
     private MessageSource messageSource;
