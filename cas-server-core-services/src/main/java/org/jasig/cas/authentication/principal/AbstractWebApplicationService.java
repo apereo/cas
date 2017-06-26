@@ -24,7 +24,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
 
     /** Logger instance. **/
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(AbstractWebApplicationService.getClass());
 
     /** The id of the service. */
     private final String id;
