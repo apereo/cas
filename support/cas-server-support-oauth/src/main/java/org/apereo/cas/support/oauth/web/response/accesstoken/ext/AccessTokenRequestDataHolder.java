@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -24,15 +25,19 @@ public class AccessTokenRequestDataHolder {
     private final boolean generateRefreshToken;
     private final OAuthRegisteredService registeredService;
     private final TicketGrantingTicket ticketGrantingTicket;
+    private final OAuth20GrantTypes grantType;
 
     public AccessTokenRequestDataHolder(final OAuthToken token, final boolean generateRefreshToken,
-                                        final OAuthRegisteredService registeredService) {
-        this(token.getService(), token.getAuthentication(), token, generateRefreshToken, registeredService);
+                                        final OAuthRegisteredService registeredService,
+                                        final OAuth20GrantTypes grantType) {
+        this(token.getService(), token.getAuthentication(), token, generateRefreshToken, registeredService, grantType);
     }
 
     public AccessTokenRequestDataHolder(final Service service, final Authentication authentication, final OAuthToken token,
-                                        final boolean generateRefreshToken, final OAuthRegisteredService registeredService) {
+                                        final boolean generateRefreshToken, final OAuthRegisteredService registeredService,
+                                        final OAuth20GrantTypes grantType) {
         this.service = service;
+        this.grantType = grantType;
         this.authentication = authentication;
         this.token = token;
         this.generateRefreshToken = generateRefreshToken;
@@ -42,13 +47,19 @@ public class AccessTokenRequestDataHolder {
 
     public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
                                         final OAuthRegisteredService registeredService,
-                                        final TicketGrantingTicket ticketGrantingTicket) {
+                                        final TicketGrantingTicket ticketGrantingTicket,
+                                        final OAuth20GrantTypes grantType) {
         this.service = service;
         this.authentication = authentication;
         this.registeredService = registeredService;
         this.ticketGrantingTicket = ticketGrantingTicket;
         this.token = null;
         this.generateRefreshToken = false;
+        this.grantType = grantType;
+    }
+
+    public OAuth20GrantTypes getGrantType() {
+        return grantType;
     }
 
     public Service getService() {
@@ -84,6 +95,7 @@ public class AccessTokenRequestDataHolder {
                 .append("generateRefreshToken", generateRefreshToken)
                 .append("registeredService", registeredService)
                 .append("ticketGrantingTicket", ticketGrantingTicket)
+                .append("grantType", grantType)
                 .toString();
     }
 }
