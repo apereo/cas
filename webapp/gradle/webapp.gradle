@@ -96,6 +96,8 @@ dependencies {
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
 
+  compile project(":support:cas-server-support-oidc")
+
     compile project(":webapp:cas-server-webapp-config")
     compile project(":webapp:cas-server-webapp-init")
 
