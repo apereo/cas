@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Watchable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -225,7 +226,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     @Override
     public synchronized List<RegisteredService> load() {
-        this.serviceMap = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true).stream()
+        final Collection<File> files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
+        this.serviceMap = files.stream()
                 .map(this::load)
                 .filter(Objects::nonNull)
                 .sorted()
