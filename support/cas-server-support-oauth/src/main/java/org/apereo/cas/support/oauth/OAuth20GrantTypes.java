@@ -18,7 +18,12 @@ public enum OAuth20GrantTypes {
     /**
      * For the refresh token grant type.
      */
-    REFRESH_TOKEN("refresh_token");
+    REFRESH_TOKEN("refresh_token"),
+
+    /** The implicit flow does not have a grant_type associated with it.
+     * This is more an implementation detail that explicitly defines one for consistency.
+     */
+    IMPLICIT("implicit");
 
     private final String type;
 

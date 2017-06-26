@@ -128,6 +128,9 @@ public interface OidcConstants {
      */
     String REGISTRATION_URL = "register";
 
+    /** The introspection url. */
+    String INTROSPECTION_URL = "introspect";
+
     /**
      * Indicates authentication is required and could not be performed.
      */

@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,7 @@ public abstract class BaseAccessTokenGrantRequestExtractor {
      * OAuth settings.
      */
     protected final OAuthProperties oAuthProperties;
-    
+
     /**
      * The Services manager.
      */
@@ -72,4 +73,11 @@ public abstract class BaseAccessTokenGrantRequestExtractor {
      * @return true/false
      */
     public abstract boolean supports(HttpServletRequest context);
+
+    /**
+     * Gets grant type.
+     *
+     * @return the grant type
+     */
+    public abstract OAuth20GrantTypes getGrantType();
 }
