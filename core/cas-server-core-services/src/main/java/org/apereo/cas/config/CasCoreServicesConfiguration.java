@@ -124,7 +124,7 @@ public class CasCoreServicesConfiguration {
     public RegisteredServicesEventListener registeredServicesEventListener(@Qualifier("servicesManager") final ServicesManager servicesManager) {
         return new RegisteredServicesEventListener(servicesManager);
     }
-    
+
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
     @Bean
     @RefreshScope
@@ -153,7 +153,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ServiceRegistryDao embeddedJsonServiceRegistry() {
         try {
-            return new EmbeddedServiceRegistryDao();
+            return new EmbeddedServiceRegistryDao(eventPublisher);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -164,8 +164,8 @@ public class CasCoreServicesConfiguration {
      * on the classpath.
      */
     public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
-        EmbeddedServiceRegistryDao() throws Exception {
-            super(new ClassPathResource("services"), new RegisteredServiceJsonSerializer(), false);
+        EmbeddedServiceRegistryDao(final ApplicationEventPublisher publisher) throws Exception {
+            super(new ClassPathResource("services"), new RegisteredServiceJsonSerializer(), false, publisher);
         }
 
         @Override
