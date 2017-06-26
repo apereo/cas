@@ -56,7 +56,11 @@ public class ServiceRegistryInitializer {
             return;
         }
 
-        LOGGER.debug("Service registry will be auto-initialized from default JSON services");
+        LOGGER.warn("Service registry will be auto-initialized from service definitions that ship with CAS by default. "
+                + "This behavior is only useful for demo purposes and MAY NOT be appropriate for production. "
+                + "Consider turning off this behavior via the setting [cas.serviceRegistry.initFromJson=false] "
+                + "and explicitly register definitions in the services registry.");
+        
         final List<RegisteredService> servicesLoaded = this.jsonServiceRegistryDao.load();
         LOGGER.debug("Loading JSON services are [{}]", servicesLoaded);
 

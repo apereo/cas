@@ -17,7 +17,7 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLocalPrincipalResolver.class);
 
-    private PrincipalIdProvider principalIdProvider;
+    private final PrincipalIdProvider principalIdProvider;
 
     public ThreadLocalPrincipalResolver(final PrincipalIdProvider principalIdProvider) {
         this.principalIdProvider = principalIdProvider;

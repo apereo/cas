@@ -33,7 +33,8 @@ public class DefaultTicketCatalog implements TicketCatalog {
                 .findFirst()
                 .orElse(null);
         if (defn == null) {
-            LOGGER.error("Ticket definition for [{}] cannot be found in the ticket catalog which only contains [{}]",
+            LOGGER.error("Ticket definition for [{}] cannot be found in the ticket catalog "
+                    + "which only contains the following ticket types: [{}]",
                     ticketId, ticketMetadataMap.keySet());
         }
         return defn;

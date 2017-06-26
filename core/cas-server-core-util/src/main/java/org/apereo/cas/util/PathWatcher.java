@@ -40,7 +40,7 @@ public class PathWatcher implements Runnable, Closeable {
     private final Consumer<File> onCreate;
     private final Consumer<File> onModify;
     private final Consumer<File> onDelete;
-    private long interval;
+    private final long interval;
 
     /**
      * Instantiates a new Json service registry config watcher.

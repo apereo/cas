@@ -5,10 +5,15 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MongoDbTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.ticket.registry.support.LockingStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,19 +31,32 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 @Configuration("mongoTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbTicketRegistryConfiguration.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @RefreshScope
     @Bean
-    public TicketRegistry ticketRegistry() throws Exception {
+    @Autowired
+    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) throws Exception {
         final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
-        return new MongoDbTicketRegistry(mongo.getCollectionName(), mongo.isDropCollection(), mongoTemplate());
+        return new MongoDbTicketRegistry(ticketCatalog, mongo.isDropCollection(), mongoTemplate());
     }
 
+    @Autowired
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner() throws Exception {
+    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("lockingStrategy") final LockingStrategy lockingStrategy,
+                                                       @Qualifier("logoutManager") final LogoutManager logoutManager,
+                                                       @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) throws Exception {
+        final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().isEnabled();
+        if (isCleanerEnabled) {
+            LOGGER.debug("Ticket registry cleaner is enabled.");
+            return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
+        }
+        LOGGER.debug("Ticket registry cleaner is not enabled. "
+                + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
+                + "clean up tickets based on expiration and eviction policies.");
         return new NoOpTicketRegistryCleaner();
     }
 

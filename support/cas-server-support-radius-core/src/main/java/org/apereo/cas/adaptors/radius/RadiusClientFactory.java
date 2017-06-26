@@ -31,7 +31,7 @@ public class RadiusClientFactory {
     private InetAddress inetAddress;
 
     /** The shared secret to send to the RADIUS server. */
-    private String sharedSecret;
+    private final String sharedSecret;
 
     /**
      *
