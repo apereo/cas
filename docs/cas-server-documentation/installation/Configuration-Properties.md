@@ -1594,7 +1594,7 @@ The following LDAP validators can be used to test connection health status:
 
 ### Passivators
 
-The following options can be used to passivate bjects when they are checked back into the LDAP connection pool:
+The following options can be used to passivate objects when they are checked back into the LDAP connection pool:
 
 | Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
@@ -1618,7 +1618,6 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].baseDn=dc=example,dc=org
 # cas.authn.ldap[0].userFilter=cn={user}
 # cas.authn.ldap[0].subtreeSearch=true
-# cas.authn.ldap[0].usePasswordPolicy=true
 # cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.ldap[0].bindCredential=Password
 
