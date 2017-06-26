@@ -1,0 +1,10 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "https://mmoayyed.unicon.net:9443/simple-web-app/openid_connect_login",
+  "signIdToken": true,
+  "name": "OIDC",
+  "id": 1000,
+  "evaluationOrder": 100
+}
