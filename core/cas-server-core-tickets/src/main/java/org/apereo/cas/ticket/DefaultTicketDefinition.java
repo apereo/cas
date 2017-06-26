@@ -12,9 +12,9 @@ import org.springframework.core.Ordered;
  * @since 5.1.0
  */
 public class DefaultTicketDefinition implements TicketDefinition {
-    private Class<? extends Ticket> implementationClass;
-    private String prefix;
-    private TicketDefinitionProperties properties = new DefaultTicketDefinitionProperties();
+    private final Class<? extends Ticket> implementationClass;
+    private final String prefix;
+    private final TicketDefinitionProperties properties = new DefaultTicketDefinitionProperties();
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     /**

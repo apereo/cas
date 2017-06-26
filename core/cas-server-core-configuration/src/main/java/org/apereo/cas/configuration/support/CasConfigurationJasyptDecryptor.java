@@ -30,8 +30,8 @@ public class CasConfigurationJasyptDecryptor {
         ITERATIONS("cas.standalone.config.security.iteration", null),
         PASSWORD("cas.standalone.config.security.psw", null);
 
-        private String name;
-        private String defaultValue;
+        private final String name;
+        private final String defaultValue;
 
         JasyptEncryptionParameters(final String name, final String defaultValue) {
             this.name = name;

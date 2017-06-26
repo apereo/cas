@@ -41,7 +41,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Authenticated principal.
      */
-    private Principal principal;
+    private final Principal principal;
 
     /**
      * Authentication metadata attributes.
@@ -51,7 +51,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Map of handler name to handler authentication success event.
      */
-    private Map<String, HandlerResult> successes;
+    private final Map<String, HandlerResult> successes;
 
     /**
      * Map of handler name to handler authentication failure cause.

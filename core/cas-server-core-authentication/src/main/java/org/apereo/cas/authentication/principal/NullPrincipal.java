@@ -25,7 +25,7 @@ public class NullPrincipal implements Principal {
     /** The singleton instance. **/
     private static NullPrincipal INSTANCE;
 
-    private Map<String, Object> attributes;
+    private final Map<String, Object> attributes;
 
     /**
      * Instantiates a new Null principal.

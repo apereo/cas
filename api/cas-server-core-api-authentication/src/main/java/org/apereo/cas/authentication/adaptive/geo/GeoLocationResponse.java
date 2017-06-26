@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  */
 public class GeoLocationResponse {
 
-    private Set<String> addresses = new ConcurrentSkipListSet<>();
+    private final Set<String> addresses = new ConcurrentSkipListSet<>();
 
     private double latitude;
     private double longitude;

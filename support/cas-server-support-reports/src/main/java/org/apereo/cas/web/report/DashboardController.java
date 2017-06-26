@@ -71,7 +71,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     public DashboardController(final CasConfigurationProperties casProperties) {
         super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);

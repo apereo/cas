@@ -58,7 +58,7 @@ public abstract class AbstractTicketRegistryTests {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void setUpEncryption() {
         final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
         if (this.useEncryption) {
@@ -135,7 +135,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class);
+            assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class));
         } catch (final ClassCastException e) {
             return;
         }
@@ -280,7 +280,7 @@ public abstract class AbstractTicketRegistryTests {
 
 
             tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
-                    .forEach(ticket -> fail("Ticket was added to registry but was not found in retrieval of collection of all tickets."));
+                    .forEach(ticket -> fail("Ticket " + ticket + " was not found in retrieval of collection of all tickets."));
         } catch (final Exception e) {
             fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
