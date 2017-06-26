@@ -11,7 +11,7 @@ import org.springframework.webflow.execution.Event;
  * @since 5.1.0
  */
 public class AuthenticationRiskContingencyResponse {
-    private Event result;
+    private final Event result;
 
     public AuthenticationRiskContingencyResponse(final Event result) {
         this.result = result;

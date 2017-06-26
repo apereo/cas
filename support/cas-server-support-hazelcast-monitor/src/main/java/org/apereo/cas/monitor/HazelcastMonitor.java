@@ -45,8 +45,8 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
     public static class HazelcastStatistics implements CacheStatistics {
         private static final int PERCENTAGE_VALUE = 100;
 
-        private IMap map;
-        private int clusterSize;
+        private final IMap map;
+        private final int clusterSize;
 
         protected HazelcastStatistics(final IMap map, final int clusterSize) {
             this.map = map;

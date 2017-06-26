@@ -19,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class InitPasswordResetAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(InitPasswordResetAction.class);
     
-    private PasswordManagementService passwordManagementService;
+    private final PasswordManagementService passwordManagementService;
 
     public InitPasswordResetAction(final PasswordManagementService passwordManagementService) {
         this.passwordManagementService = passwordManagementService;

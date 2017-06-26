@@ -53,7 +53,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @Qualifier("configurationPropertiesEnvironmentManager")
     private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     public ConfigurationStateController(final CasConfigurationProperties casProperties) {
         super("configstate", "/config", casProperties.getMonitor().getEndpoints().getConfigurationState(), casProperties);

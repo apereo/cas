@@ -110,7 +110,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
         final int days = ThreadLocalRandom.current().nextInt(0, 30);
-        dto.putCreationTime(ZonedDateTime.now().minusDays(days).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        dto.setCreationTime(ZonedDateTime.now().minusDays(days).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         dto.putId(TicketIdSanitizationUtils.sanitize("TGT-" + i + "-" + RandomStringUtils.randomAlphanumeric(16)));
         dto.setPrincipalId("casuser");
         dto.putClientIpAddress(getMockClientIpAddress());

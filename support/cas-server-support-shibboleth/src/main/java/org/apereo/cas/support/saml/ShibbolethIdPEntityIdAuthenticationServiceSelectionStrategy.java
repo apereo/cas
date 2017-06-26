@@ -26,7 +26,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.class);
 
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
     private final String idpServerPrefix;
 

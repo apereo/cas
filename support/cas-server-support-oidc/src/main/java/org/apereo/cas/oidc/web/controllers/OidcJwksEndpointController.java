@@ -47,7 +47,7 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    private Resource jwksFile;
+    private final Resource jwksFile;
 
     public OidcJwksEndpointController(final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry,

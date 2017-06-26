@@ -87,7 +87,11 @@ public class WsFederationAction extends AbstractAction {
                 return handleWsFederationAuthenticationRequest(context);
             }
 
-            final WsFederationConfiguration cfg = this.configuration.stream().filter(c -> c.isAutoRedirect()).findFirst().orElse(null);
+            final WsFederationConfiguration cfg = this.configuration
+                    .stream()
+                    .filter(c -> c.isAutoRedirect())
+                    .findFirst()
+                    .orElse(null);
             if (cfg != null) {
                 return routeToLoginRequest(context, cfg);
             }

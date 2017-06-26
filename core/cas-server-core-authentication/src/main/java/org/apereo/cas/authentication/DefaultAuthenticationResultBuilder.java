@@ -27,9 +27,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     private Credential providedCredential;
 
-    private Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
+    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
 
-    private PrincipalElectionStrategy principalElectionStrategy;
+    private final PrincipalElectionStrategy principalElectionStrategy;
 
     /**
      * Instantiates a new default authentication result builder.

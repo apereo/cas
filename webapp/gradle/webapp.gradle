@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
 
@@ -30,9 +32,12 @@ bootRepackage {
 }
 
 bootRun {
-    dependsOn pathingJar
-    doFirst {
-        classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        dependsOn pathingJar
+        doFirst {
+          classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+        }
     }
 
     addResources = true

@@ -310,7 +310,7 @@
         </module>
         <module name="FinalParameters">
             <property name="severity" value="error"/>
-            <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH"/>
+            <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH, FOR_EACH_CLAUSE"/>
         </module>
         <module name="FinalLocalVariable">
             <property name="severity" value="error"/>

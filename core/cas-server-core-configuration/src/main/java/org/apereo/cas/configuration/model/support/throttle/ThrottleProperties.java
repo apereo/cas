@@ -25,6 +25,10 @@ public class ThrottleProperties {
     private String repeatInterval = "PT20S";
     private String startDelay = "PT10S";
 
+    public void setJdbc(final Jdbc jdbc) {
+        this.jdbc = jdbc;
+    }
+
     public Jdbc getJdbc() {
         return jdbc;
     }

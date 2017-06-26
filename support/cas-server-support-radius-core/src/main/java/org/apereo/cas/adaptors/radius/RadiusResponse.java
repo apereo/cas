@@ -15,13 +15,13 @@ import net.jradius.packet.attribute.RadiusAttribute;
 public class RadiusResponse {
     
     /** The code. */
-    private int code;
+    private final int code;
     
     /** The identifier. */
-    private int identifier;
+    private final int identifier;
     
     /** The attributes. */
-    private List<RadiusAttribute> attributes;
+    private final List<RadiusAttribute> attributes;
     
     /**
      * Instantiates a new radius response.

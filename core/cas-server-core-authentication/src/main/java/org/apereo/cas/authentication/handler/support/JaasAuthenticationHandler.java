@@ -190,12 +190,12 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         /**
          * The username of the principal we are trying to authenticate.
          */
-        private String userName;
+        private final String userName;
 
         /**
          * The password of the principal we are trying to authenticate.
          */
-        private String password;
+        private final String password;
 
         /**
          * Constructor accepts name and password to be used for authentication.

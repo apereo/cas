@@ -26,7 +26,7 @@ import java.util.Map;
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(FrontChannelLogoutAction.class);
     
-    private LogoutManager logoutManager;
+    private final LogoutManager logoutManager;
 
     /**
      * Build from the logout manager.

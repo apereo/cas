@@ -18,7 +18,7 @@ import java.util.Optional;
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20CasCallbackUrlResolver.class);
 
-    private String callbackUrl;
+    private final String callbackUrl;
 
     public OAuth20CasCallbackUrlResolver(final String callbackUrl) {
         this.callbackUrl = callbackUrl;

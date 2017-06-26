@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationEventExecutionPlan.class);
 
-    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
+    private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
+    private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
     @Override
     public void registerAuthenticationHandler(final AuthenticationHandler handler) {

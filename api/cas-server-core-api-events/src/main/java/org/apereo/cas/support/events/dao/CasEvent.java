@@ -41,6 +41,9 @@ public class CasEvent {
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principalId;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    private String creationTime;
+
     @ElementCollection
     @MapKeyColumn(name = "name")
     @Column(name = "value")
@@ -59,8 +62,34 @@ public class CasEvent {
         return this.type;
     }
 
+    /**
+     * Gets creation time. Attempts to parse the value
+     * as a {@link ZonedDateTime}. Otherwise, assumes a
+     * {@link LocalDateTime} and converts it based on system's
+     * default zone.
+     *
+     * @return the creation time
+     */
+    public ZonedDateTime getCreationTime() {
+        final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(this.creationTime);
+        if (dt != null) {
+            return dt;
+        }
+        final LocalDateTime lt = DateTimeUtils.localDateTimeOf(this.creationTime);
+        return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneId.systemDefault()));
+    }
+
     public Map<String, String> getProperties() {
         return this.properties;
+    }
+
+    /**
+     * Set creation time.
+     *
+     * @param time the time
+     */
+    public void setCreationTime(final Object time) {
+        this.creationTime = time.toString();
     }
 
     /**
@@ -70,15 +99,6 @@ public class CasEvent {
      */
     public void putTimestamp(final Long time) {
         put("timestamp", time.toString());
-    }
-
-    /**
-     * Put creation time.
-     *
-     * @param time the time
-     */
-    public void putCreationTime(final Object time) {
-        put("creationTime", time.toString());
     }
 
     /**
@@ -115,23 +135,6 @@ public class CasEvent {
      */
     public void putAgent(final String dev) {
         put("agent", dev);
-    }
-
-    /**
-     * Gets creation time. Attempts to parse the value
-     * as a {@link ZonedDateTime}. Otherwise, assumes a
-     * {@link LocalDateTime} and converts it based on system's
-     * default zone.
-     *
-     * @return the creation time
-     */
-    public ZonedDateTime getCreationTime() {
-        final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(get("creationTime"));
-        if (dt != null) {
-            return dt;
-        }
-        final LocalDateTime lt = DateTimeUtils.localDateTimeOf(get("creationTime"));
-        return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneId.systemDefault()));
     }
 
     public Long getTimestamp() {

@@ -18,9 +18,9 @@ public class DefaultAuthenticationResult implements AuthenticationResult {
 
     private boolean credentialProvided;
 
-    private Authentication authentication;
+    private final Authentication authentication;
 
-    private Service service;
+    private final Service service;
 
     /**
      * Instantiates a new Default authentication result.

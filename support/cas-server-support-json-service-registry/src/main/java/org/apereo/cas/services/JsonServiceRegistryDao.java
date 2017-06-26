@@ -50,7 +50,7 @@ import java.nio.file.Path;
  * @since 4.1.0
  */
 public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
-    
+
     /**
      * File extension of registered service JSON files.
      */

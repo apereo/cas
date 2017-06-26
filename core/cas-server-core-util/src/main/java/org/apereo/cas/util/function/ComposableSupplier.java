@@ -27,7 +27,7 @@ public interface ComposableSupplier<T> extends Supplier<T> {
      *
      * @return after consumer with the supplied result passed in
      */
-    default Consumer<T> andThen(Consumer<T> after) {
+    default Consumer<T> andThen(final Consumer<T> after) {
         Objects.requireNonNull(after);
         return (T t) -> after.accept(get());
     }

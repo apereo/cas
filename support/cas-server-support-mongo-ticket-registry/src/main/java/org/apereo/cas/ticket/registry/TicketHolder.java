@@ -24,9 +24,9 @@ public class TicketHolder implements Serializable {
     
     private final String json;
 
-    private String ticketId;
+    private final String ticketId;
 
-    private String type;
+    private final String type;
 
     @Indexed
     private final long expireAt;

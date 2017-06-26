@@ -44,8 +44,8 @@ import java.util.Set;
 public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileScopeToAttributesFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcProfileScopeToAttributesFilter.class);
 
-    private Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
-    private Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
+    private final Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
+    private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
 
     private final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper;
     private final PrincipalFactory principalFactory;

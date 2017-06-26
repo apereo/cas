@@ -32,9 +32,9 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
 
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private ConnectionFactory connectionFactory;
-    private String searchFilter;
-    private String baseDn;
+    private final ConnectionFactory connectionFactory;
+    private final String searchFilter;
+    private final String baseDn;
 
     public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final ConnectionFactory connectionFactory, final String searchFilter, final String baseDn) {

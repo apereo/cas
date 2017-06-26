@@ -7,6 +7,11 @@ ext.libraries = [
                     force = true
                 }
         ],
+        semver : [
+            dependencies.create("com.vdurmont:semver4j:2.0.2") {
+                force = true
+            }
+        ],
         bouncycastle            : [
                 dependencies.create("org.bouncycastle:bcpkix-jdk15on:$bouncyCastleVersion") {
                     force = true

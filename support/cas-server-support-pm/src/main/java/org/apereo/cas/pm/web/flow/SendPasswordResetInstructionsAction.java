@@ -34,7 +34,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
 
     private final CommunicationsManager communicationsManager;
 
-    private PasswordManagementService passwordManagementService;
+    private final PasswordManagementService passwordManagementService;
 
     public SendPasswordResetInstructionsAction(final CommunicationsManager communicationsManager, 
                                                final PasswordManagementService passwordManagementService) {

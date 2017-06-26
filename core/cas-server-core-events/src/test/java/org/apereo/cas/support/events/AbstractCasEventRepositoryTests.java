@@ -26,7 +26,7 @@ public abstract class AbstractCasEventRepositoryTests {
         final CasEvent dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
-        dto.putCreationTime(event.getTicketGrantingTicket().getCreationTime());
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime());
         dto.putId(event.getTicketGrantingTicket().getId());
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
 

@@ -24,7 +24,7 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
 
     private ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
 
-    private LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;
+    private final LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;
 
     public DefaultSamlRegisteredServiceCachingMetadataResolver(final long metadataCacheExpirationMinutes,
                                                                final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader) {

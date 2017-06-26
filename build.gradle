@@ -67,7 +67,7 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
-    
+
     if (project.name == "cas-server-support-bom") {
         logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
     } else {
@@ -80,7 +80,7 @@ allprojects {
         required = isArtifactSigningRequired
         sign configurations.archives
     }
-        
+
     idea {
         module {
             downloadSources = false
@@ -91,7 +91,7 @@ allprojects {
             }
         }
     }
-    
+
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
@@ -329,6 +329,13 @@ task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggre
 task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
     baseName = "${project.archivesBaseName}"
     from rootProject.file("src")
+}
+
+task gradleHome(description: "Display GRADLE_HOME environment variable") {
+    doFirst {
+        println "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
+    }
+
 }
 
 artifacts {
