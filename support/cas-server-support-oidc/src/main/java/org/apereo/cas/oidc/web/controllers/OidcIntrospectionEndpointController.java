@@ -70,6 +70,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
      *
      * @param request  the request
      * @param response the response
+     * @return the response entity
      * @throws Exception the exception
      */
     @GetMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -85,6 +86,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
      *
      * @param request  the request
      * @param response the response
+     * @return the response entity
      * @throws Exception the exception
      */
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
