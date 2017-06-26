@@ -12,7 +12,6 @@ import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
@@ -85,9 +84,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      */
     public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
-                                                   final boolean enableWatcher,
-                                                   final ApplicationEventPublisher eventPublisher) {
-        initializeRegistry(configDirectory, serializer, enableWatcher, eventPublisher);
+                                                   final boolean enableWatcher) {
+        initializeRegistry(configDirectory, serializer, enableWatcher);
     }
 
     /**
@@ -101,17 +99,15 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      */
     public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
-                                                   final boolean enableWatcher,
-                                                   final ApplicationEventPublisher eventPublisher) throws Exception {
+                                                   final boolean enableWatcher) throws Exception {
 
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
-        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer, enableWatcher, eventPublisher);
+        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer, enableWatcher);
     }
 
     private void initializeRegistry(final Path configDirectory,
                                     final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
-                                    final boolean enableWatcher,
-                                    final ApplicationEventPublisher eventPublisher) {
+                                    final boolean enableWatcher) {
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");

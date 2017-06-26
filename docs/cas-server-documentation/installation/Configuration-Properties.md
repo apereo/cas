@@ -4190,7 +4190,6 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.dropCollection=false
 # cas.ticket.registry.mongo.socketKeepAlive=false
 # cas.ticket.registry.mongo.password=
-# cas.ticket.registry.mongo.collectionName=cas-ticket-registry
 # cas.ticket.registry.mongo.databaseName=cas-database
 # cas.ticket.registry.mongo.timeout=5000
 # cas.ticket.registry.mongo.userId=

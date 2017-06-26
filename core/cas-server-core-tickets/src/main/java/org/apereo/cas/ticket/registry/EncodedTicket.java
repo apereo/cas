@@ -76,7 +76,7 @@ public class EncodedTicket implements Ticket {
     @JsonIgnore
     @Override
     public int getCountOfUses() {
-        LOGGER.warn("[Retrieving ticket usage count]");
+        LOGGER.trace("[Retrieving ticket usage count]");
         return 0;
     }
 
@@ -87,7 +87,7 @@ public class EncodedTicket implements Ticket {
     @JsonIgnore
     @Override
     public ExpirationPolicy getExpirationPolicy() {
-        LOGGER.warn(getOpNotSupportedMessage("[Retrieving expiration policy]"));
+        LOGGER.trace(getOpNotSupportedMessage("[Retrieving expiration policy]"));
         return null;
     }
 
@@ -98,13 +98,13 @@ public class EncodedTicket implements Ticket {
 
     @Override
     public ZonedDateTime getCreationTime() {
-        LOGGER.warn(getOpNotSupportedMessage("[Retrieving ticket creation time]"));
+        LOGGER.trace(getOpNotSupportedMessage("[Retrieving ticket creation time]"));
         return null;
     }
 
     @Override
     public TicketGrantingTicket getGrantingTicket() {
-        LOGGER.warn(getOpNotSupportedMessage("[Retrieving parent ticket-granting ticket]"));
+        LOGGER.trace(getOpNotSupportedMessage("[Retrieving parent ticket-granting ticket]"));
         return null;
     }
 
@@ -125,7 +125,7 @@ public class EncodedTicket implements Ticket {
     @JsonIgnore
     @Override
     public boolean isExpired() {
-        LOGGER.warn(getOpNotSupportedMessage("[Ticket expiry checking]"));
+        LOGGER.trace(getOpNotSupportedMessage("[Ticket expiry checking]"));
         return false;
     }
 
@@ -139,8 +139,7 @@ public class EncodedTicket implements Ticket {
     public int compareTo(final Ticket o) {
         return getId().compareTo(o.getId());
     }
-
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {

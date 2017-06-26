@@ -144,16 +144,16 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO) final ServiceRegistryDao serviceRegistryDao) {
-        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(eventPublisher), serviceRegistryDao, servicesManager(serviceRegistryDao),
+        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryDao,
+                servicesManager(serviceRegistryDao),
                 casProperties.getServiceRegistry().isInitFromJson());
     }
 
-    @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
-    public ServiceRegistryDao embeddedJsonServiceRegistry(final ApplicationEventPublisher publisher) {
+    public ServiceRegistryDao embeddedJsonServiceRegistry() {
         try {
-            return new EmbeddedServiceRegistryDao(publisher);
+            return new EmbeddedServiceRegistryDao();
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -164,8 +164,8 @@ public class CasCoreServicesConfiguration {
      * on the classpath.
      */
     public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
-        EmbeddedServiceRegistryDao(final ApplicationEventPublisher publisher) throws Exception {
-            super(new ClassPathResource("services"), new RegisteredServiceJsonSerializer(), false, publisher);
+        EmbeddedServiceRegistryDao() throws Exception {
+            super(new ClassPathResource("services"), new RegisteredServiceJsonSerializer(), false);
         }
 
         @Override
