@@ -26,7 +26,7 @@ public interface ComposableFunction<T, R> extends Function<T, R> {
      *
      * @return after consumer with the output of the function passed in
      */
-    default Consumer<T> andThen(Consumer<R> after) {
+    default Consumer<T> andThen(final Consumer<R> after) {
         Objects.requireNonNull(after);
         return (T t) -> after.accept(apply(t));
     }

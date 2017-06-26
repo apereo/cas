@@ -12,6 +12,7 @@ import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
@@ -43,9 +44,11 @@ import java.util.stream.Collectors;
 public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractServiceRegistryDao implements ResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
-    private static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE = service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-            + "This will overwrite previous service definitions and is likely a configuration problem. Make sure all services have a unique id and try again.",
-            service.getServiceId(), service.getId());
+    private static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE =
+            service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+                    + "This will overwrite previous service definitions and is likely a configuration problem. "
+                    + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
+    
     private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
         LOG_SERVICE_DUPLICATE.accept(s2);
         return s1;
@@ -56,8 +59,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      */
     protected Path serviceRegistryDirectory;
 
-
-    private final Consumer<AbstractCasEvent> publish = this::publishEvent;
     private final ComposableSupplier<AbstractCasEvent> createServiceRefreshEvent = () -> new CasRegisteredServicesRefreshEvent(this);
 
     /**
@@ -84,8 +85,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      */
     public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
-                                                   final boolean enableWatcher) {
-        initializeRegistry(configDirectory, serializer, enableWatcher);
+                                                   final boolean enableWatcher,
+                                                   final ApplicationEventPublisher eventPublisher) {
+        initializeRegistry(configDirectory, serializer, enableWatcher, eventPublisher);
     }
 
     /**
@@ -99,58 +101,73 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      */
     public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
-                                                   final boolean enableWatcher) throws Exception {
-
+                                                   final boolean enableWatcher,
+                                                   final ApplicationEventPublisher eventPublisher) throws Exception {
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
-        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer, enableWatcher);
+        if (servicesDirectory == null) {
+            throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
+        }
+        final File file = servicesDirectory.getFile();
+        initializeRegistry(Paths.get(file.getCanonicalPath()), serializer, enableWatcher, eventPublisher);
     }
 
     private void initializeRegistry(final Path configDirectory,
                                     final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
-                                    final boolean enableWatcher) {
+                                    final boolean enableWatcher,
+                                    final ApplicationEventPublisher eventPublisher) {
+        setEventPublisher(eventPublisher);
+
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
         this.registeredServiceSerializer = registeredServiceJsonSerializer;
 
         if (enableWatcher) {
-
-            LOGGER.info("Watching service registry directory at [{}]", configDirectory);
-
-            final Consumer<File> onCreate = file -> {
-                final RegisteredService service = load(file);
-                if (service != null) {
-                    if (findServiceById(service.getId()) != null) {
-                        LOG_SERVICE_DUPLICATE.accept(service);
-                    }
-                    update(service);
-                    createServiceRefreshEvent.andThen(publish);
-                }
-            };
-            final Consumer<File> onDelete = file -> {
-                load();
-                createServiceRefreshEvent.andThen(publish);
-            };
-            final Consumer<File> onModify = file -> {
-                final RegisteredService newService = load(file);
-                if (newService != null) {
-                    final RegisteredService oldService = findServiceById(newService.getId());
-
-                    if (!newService.equals(oldService)) {
-                        update(newService);
-                        createServiceRefreshEvent.andThen(publish);
-                    } else {
-                        LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
-                                + "in the event processing pipeline", newService.getId(), file.getName());
-                    }
-                }
-            };
-            this.serviceRegistryConfigWatcher = new PathWatcher(serviceRegistryDirectory, onCreate, onModify, onDelete);
-            this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
-            this.serviceRegistryWatcherThread.setName(this.getClass().getName());
-            this.serviceRegistryWatcherThread.start();
-            LOGGER.debug("Started service registry watcher thread");
+            enableServicesDirectoryPathWatcher(configDirectory);
         }
+    }
+
+    private void enableServicesDirectoryPathWatcher(final Path configDirectory) {
+        LOGGER.info("Setting up a watch for service registry directory at [{}]", configDirectory);
+
+        final Consumer<File> onCreate = file -> {
+            LOGGER.debug("New service definition [{}] was created. Locating service entry from cache...", file);
+            final RegisteredService service = load(file);
+            if (service != null) {
+                if (findServiceById(service.getId()) != null) {
+                    LOG_SERVICE_DUPLICATE.accept(service);
+                }
+                LOGGER.debug("Updating service definitions with [{}]", service);
+                update(service);
+                createServiceRefreshEvent.andThen(this.casEventConsumer);
+            }
+        };
+        final Consumer<File> onDelete = file -> {
+            LOGGER.debug("Service definition [{}] was deleted. Reloading cache...", file);
+            load();
+            createServiceRefreshEvent.andThen(this.casEventConsumer);
+        };
+        final Consumer<File> onModify = file -> {
+            LOGGER.debug("New service definition [{}] was modified. Locating service entry from cache...", file);
+            final RegisteredService newService = load(file);
+            if (newService != null) {
+                final RegisteredService oldService = findServiceById(newService.getId());
+
+                if (!newService.equals(oldService)) {
+                    LOGGER.debug("Updating service definitions with [{}]", newService);
+                    update(newService);
+                    createServiceRefreshEvent.andThen(this.casEventConsumer);
+                } else {
+                    LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
+                            + "in the event processing pipeline", newService.getId(), file.getName());
+                }
+            }
+        };
+        this.serviceRegistryConfigWatcher = new PathWatcher(serviceRegistryDirectory, onCreate, onModify, onDelete);
+        this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
+        this.serviceRegistryWatcherThread.setName(this.getClass().getName());
+        this.serviceRegistryWatcherThread.start();
+        LOGGER.debug("Started service registry watcher thread");
     }
 
     /**
