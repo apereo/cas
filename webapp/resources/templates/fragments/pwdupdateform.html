@@ -7,7 +7,12 @@
 </script>
 
 <div class="alert alert-info">
-    <h2 th:utext="#{screen.mustchangepass.heading}"/>
+    <div th:if="${execInfo.processedTemplateName} == 'casExpiredPassView'">
+        <h2 th:utext="#{screen.expiredpass.heading}"/>
+    </div>
+    <div th:if="${execInfo.processedTemplateName} == 'casMustChangePassView'">
+        <h2 th:utext="#{screen.mustchangepass.heading}"/>
+    </div>
     <p/>
     <br/>
 
@@ -59,5 +64,6 @@
                 type="button"
                 onclick="location.href = location.href;"/>
     </form>
-    <p th:unless="${passwordManagementEnabled}" th:utext="#{screen.mustchangepass.message}"/>
+        <p th:unless="${passwordManagementEnabled}" th:if="${execInfo.processedTemplateName} == 'casExpiredPassView'" th:utext="#{screen.expiredpass.message}"/>
+        <p th:unless="${passwordManagementEnabled}" th:if="${execInfo.processedTemplateName} == 'casMustChangePassView'" th:utext="#{screen.mustchangepass.message}"/>
 </div>
