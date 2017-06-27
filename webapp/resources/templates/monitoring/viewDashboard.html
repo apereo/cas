@@ -10,7 +10,7 @@
 
     <div class="viewDashboard">
 
-        <div class="app-launcher">
+        <div class="app-launcher clearfix">
             <h1 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h1>
 
             <div class="alert alert-warning" th:if="${!dashboardEndpointsEnabled}">
@@ -19,6 +19,7 @@
                     Revisit the CAS configuration/documentation and explicitly enable access for desired endpoints and knobs.
                 </p>
             </div>
+            <div id="app-launcher">React components will go here...</div>
 
             <ul>
                 <li th:if="${healthcheckEndpointEnabled}">
@@ -181,8 +182,22 @@
                 $(this).data('form').submit();
             });
         </script>
+        <script>
+            /*
+            var AppLauncher = React.createClass({
+              render: function () {
+                return (
+                  React.DOM.div(null,
+                    React.DOM.h1(null, 'Boom!')
+                  )
+                )
+              }
+            });
+            ReactDOM.render(React.createElement(AppLauncher), document.getElementById('app-launcher'));
+            */
+        </script>
     </div>
-
+    <script src="/cas/js/dashboard-bundle.js"></script>
 </div>
 </body>
 </html>
