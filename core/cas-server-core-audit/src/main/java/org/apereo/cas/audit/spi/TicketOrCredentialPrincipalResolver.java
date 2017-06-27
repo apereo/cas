@@ -32,7 +32,7 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
     /** Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
 
-    private CentralAuthenticationService centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
     
     private PrincipalIdProvider principalIdProvider = new PrincipalIdProvider() {};
 

@@ -140,7 +140,7 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
                 .append(this.policyNamespace, rhs.policyNamespace)
                 .append(this.wsdlService, rhs.wsdlService)
                 .append(this.wsdlEndpoint, rhs.wsdlEndpoint)
-                .append(getAppliesTo(), getAppliesTo())
+                .append(getAppliesTo(), rhs.getAppliesTo())
                 .isEquals();
     }
 

@@ -39,6 +39,7 @@ import org.apereo.cas.oidc.web.OidcSecurityInterceptor;
 import org.apereo.cas.oidc.web.controllers.OidcAccessTokenEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcDynamicClientRegistrationEndpointController;
+import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcJwksEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcProfileEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointController;
@@ -267,6 +268,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
         return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), servicesManager,
                 userDefinedScopeBasedAttributeReleasePolicies(), oidcAttributeToScopeClaimMapper());
+    }
+
+    @RefreshScope
+    @Bean
+    public OidcIntrospectionEndpointController oidcIntrospectionEndpointController() {
+        return new OidcIntrospectionEndpointController(
+                servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory,
+                profileScopeToAttributesFilter(), casProperties,
+                ticketGrantingTicketCookieGenerator, centralAuthenticationService);
     }
 
     @RefreshScope

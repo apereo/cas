@@ -31,7 +31,6 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
     public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy, 
                                         final LogoutManager logoutManager, 
                                         final TicketRegistry ticketRegistry) {
-
         this.lockingStrategy = lockingStrategy;
         this.logoutManager = logoutManager;
         this.ticketRegistry = ticketRegistry;

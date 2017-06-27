@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OAuth20CasAuthenticationBuilder}.
@@ -114,6 +116,7 @@ public class OAuth20CasAuthenticationBuilder {
         final String authenticator = profile.getClass().getCanonicalName();
         final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
         final HandlerResult handlerResult = new DefaultHandlerResult(authenticator, metadata, newPrincipal, new ArrayList<>());
+        final String[] scopes = context.getRequest().getParameterValues(OAuth20Constants.SCOPE);
 
         final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);
         final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
@@ -127,6 +130,7 @@ public class OAuth20CasAuthenticationBuilder {
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", new HashSet<>(profile.getPermissions()))
                 .addAttribute("roles", new HashSet<>(profile.getRoles()))
+                .addAttribute("scopes", Stream.of(scopes).collect(Collectors.toSet()))
                 .addAttribute(OAuth20Constants.STATE, state)
                 .addAttribute(OAuth20Constants.NONCE, nonce)
                 .addCredential(metadata)
@@ -138,7 +142,7 @@ public class OAuth20CasAuthenticationBuilder {
         return bldr.build();
     }
 
-    private Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
+    private static Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
         final Map<String, Object> profileAttributes = new HashMap<>(profile.getAttributes());
         profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
         profileAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);

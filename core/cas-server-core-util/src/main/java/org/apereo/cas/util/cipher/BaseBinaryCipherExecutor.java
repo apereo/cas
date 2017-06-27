@@ -32,7 +32,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      */
     private String secretKeyAlgorithm = "AES";
 
-    private String encryptionSecretKey;
+    private final String encryptionSecretKey;
 
 
     /**
@@ -93,8 +93,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(StandardCharsets.UTF_8),
                     this.secretKeyAlgorithm);
             final CipherService cipher = new AesCipherService();
-            final byte[] result = cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
-            return result;
+            return cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

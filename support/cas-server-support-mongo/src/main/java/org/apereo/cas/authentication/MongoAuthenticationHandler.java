@@ -22,11 +22,11 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoAuthenticationHandler.class);
     
-    private String collectionName;
-    private String mongoHostUri;
-    private String attributes;
-    private String usernameAttribute;
-    private String passwordAttribute;
+    private final String collectionName;
+    private final String mongoHostUri;
+    private final String attributes;
+    private final String usernameAttribute;
+    private final String passwordAttribute;
     
     private PasswordEncoder mongoPasswordEncoder = new NoOpPasswordEncoder();
 

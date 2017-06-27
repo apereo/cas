@@ -102,7 +102,7 @@ Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
 Load settings from a MongoDb instance.
 
 ```properties
-# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/apereocas
+# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds135522.mlab.com:35522/jasigcas
 ```
 
 ### ZooKeeper
@@ -377,6 +377,11 @@ If none is specified, one is automatically detected and used by CAS.
 On startup, CAS will display a banner along with some diagnostics info.
 In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
 
+### Update Check
+
+CAS may also be conditionally configured to report, as part of the banner, whether a newer CAS release is available for an upgrade.
+This check is off by default and may be enabled with a system property of `-DCAS_UPDATE_CHECK_ENABLED=true`.  
+
 ## Spring Boot Endpoints
 
 The following properties describe access controls and settings for the `/status`
@@ -639,12 +644,16 @@ spring.thymeleaf.cache=true
 # the cas web application.
 # spring.thymeleaf.prefix=classpath:/templates/
 
+# cas.view.cas2.v3ForwardCompatible=false
+
 # Indicate where core CAS-protocol related views should be found
 # in the view directory hierarchy.
 # cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
 # cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
 # cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
 # cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
+
+
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
 
@@ -1585,7 +1594,7 @@ The following LDAP validators can be used to test connection health status:
 
 ### Passivators
 
-The following options can be used to passivate bjects when they are checked back into the LDAP connection pool:
+The following options can be used to passivate objects when they are checked back into the LDAP connection pool:
 
 | Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
@@ -1609,7 +1618,6 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].baseDn=dc=example,dc=org
 # cas.authn.ldap[0].userFilter=cn={user}
 # cas.authn.ldap[0].subtreeSearch=true
-# cas.authn.ldap[0].usePasswordPolicy=true
 # cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.ldap[0].bindCredential=Password
 
@@ -1618,6 +1626,7 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].principalAttributeId=uid
 # cas.authn.ldap[0].principalAttributePassword=password
 # cas.authn.ldap[0].principalAttributeList=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
+# cas.authn.ldap[0].collectDnAttribute=false
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
 # cas.authn.ldap[0].credentialCriteria=
@@ -2208,24 +2217,24 @@ strategies when collecting principal attributes:
 | `BOTH`               | Combine both the above options, where CAS attribute repositories take precedence over WS-Fed.
 
 ```properties
-# cas.authn.wsfed.identityProviderUrl=https://adfs.example.org/adfs/ls/
-# cas.authn.wsfed.identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
-# cas.authn.wsfed.relyingPartyIdentifier=urn:cas:localhost
-# cas.authn.wsfed.attributesType=WSFED
-# cas.authn.wsfed.signingCertificateResources=classpath:adfs-signing.crt
-# cas.authn.wsfed.tolerance=10000
-# cas.authn.wsfed.identityAttribute=upn
-# cas.authn.wsfed.attributeResolverEnabled=true
-# cas.authn.wsfed.autoRedirect=true
-# cas.authn.wsfed.name=
+# cas.authn.wsfed[0].identityProviderUrl=https://adfs.example.org/adfs/ls/
+# cas.authn.wsfed[0].identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
+# cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:localhost
+# cas.authn.wsfed[0].attributesType=WSFED
+# cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.crt
+# cas.authn.wsfed[0].tolerance=10000
+# cas.authn.wsfed[0].identityAttribute=upn
+# cas.authn.wsfed[0].attributeResolverEnabled=true
+# cas.authn.wsfed[0].autoRedirect=true
+# cas.authn.wsfed[0].name=
 
-# cas.authn.wsfed.principal.principalAttribute=
-# cas.authn.wsfed.principal.returnNull=false
+# cas.authn.wsfed[0].principal.principalAttribute=
+# cas.authn.wsfed[0].principal.returnNull=false
 
 # Private/Public keypair used to decrypt assertions, if any.
-# cas.authn.wsfed.encryptionPrivateKey=classpath:private.key
-# cas.authn.wsfed.encryptionCertificate=classpath:certificate.crt
-# cas.authn.wsfed.encryptionPrivateKeyPassword=NONE
+# cas.authn.wsfed[0].encryptionPrivateKey=classpath:private.key
+# cas.authn.wsfed[0].encryptionCertificate=classpath:certificate.crt
+# cas.authn.wsfed[0].encryptionPrivateKeyPassword=NONE
 ```
 
 
@@ -2737,7 +2746,8 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.logout.forceSignedLogoutRequests=true
 # cas.authn.samlIdp.logout.singleLogoutCallbacksDisabled=false
 
-# cas.authn.samlIdp.response.skewAllowance=0
+# cas.authn.samlIdp.response.defaultAuthenticationContextClass=
+# cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
@@ -3026,6 +3036,15 @@ The signature location MUST BE the public key used to sign the metadata.
 # cas.samlSP.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
 # cas.samlSP.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
 # cas.samlSP.inCommon.entityIds[0]=sampleSPEntityId
+```
+
+## SQRL
+
+Allow CAS to authenticate accounts via SQRL. To learn more about this topic, [please review this guide](../protocol/SQRL-Protocol.html).
+
+```properties
+# 24-character AES Key
+# cas.authn.sqrl.aesKey=
 ```
 
 ## OpenID Connect
@@ -4175,7 +4194,6 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.dropCollection=false
 # cas.ticket.registry.mongo.socketKeepAlive=false
 # cas.ticket.registry.mongo.password=
-# cas.ticket.registry.mongo.collectionName=cas-ticket-registry
 # cas.ticket.registry.mongo.databaseName=cas-database
 # cas.ticket.registry.mongo.timeout=5000
 # cas.ticket.registry.mongo.userId=

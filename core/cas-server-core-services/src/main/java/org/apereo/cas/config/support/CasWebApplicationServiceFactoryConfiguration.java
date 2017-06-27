@@ -5,12 +5,12 @@ import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link CasWebApplicationServiceFactoryConfiguration}.
@@ -28,6 +28,6 @@ public class CasWebApplicationServiceFactoryConfiguration implements ServiceFact
 
     @Override
     public Collection<ServiceFactory<? extends WebApplicationService>> buildServiceFactories() {
-        return Collections.singleton(webApplicationServiceFactory());
+        return CollectionUtils.wrap(webApplicationServiceFactory());
     }
 }

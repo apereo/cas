@@ -96,19 +96,21 @@ public class SamlObjectEncrypter {
                                      final HttpServletResponse response,
                                      final HttpServletRequest request) throws SamlException {
         try {
-            LOGGER.debug("Attempting to encrypt [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
-            final Credential credential = getKeyEncryptionCredential(adaptor.getEntityId(), adaptor, service);
+            final String className = samlObject.getClass().getName();
+            final String entityId = adaptor.getEntityId();
+            LOGGER.debug("Attempting to encrypt [{}] for [{}]", className, entityId);
+            final Credential credential = getKeyEncryptionCredential(entityId, adaptor, service);
             LOGGER.info("Found encryption public key: [{}]", EncodingUtils.encodeBase64(credential.getPublicKey().getEncoded()));
 
             final KeyEncryptionParameters keyEncParams = getKeyEncryptionParameters(samlObject, service, adaptor, credential);
             LOGGER.debug("Key encryption algorithm for [{}] is [{}]", keyEncParams.getRecipient(), keyEncParams.getAlgorithm());
 
             final DataEncryptionParameters dataEncParams = getDataEncryptionParameters(samlObject, service, adaptor);
-            LOGGER.debug("Data encryption algorithm for [{}] is [{}]", adaptor.getEntityId(), dataEncParams.getAlgorithm());
+            LOGGER.debug("Data encryption algorithm for [{}] is [{}]", entityId, dataEncParams.getAlgorithm());
 
             final Encrypter encrypter = getEncrypter(samlObject, service, adaptor, keyEncParams, dataEncParams);
             LOGGER.debug("Attempting to encrypt [{}] for [{}] with key placement of [{}]",
-                    samlObject.getClass().getName(), adaptor.getEntityId(), encrypter.getKeyPlacement());
+                    className, entityId, encrypter.getKeyPlacement());
 
             return encrypter.encrypt(samlObject);
         } catch (final Exception e) {

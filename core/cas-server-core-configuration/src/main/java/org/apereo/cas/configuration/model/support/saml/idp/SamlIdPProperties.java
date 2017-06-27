@@ -213,10 +213,28 @@ public class SamlIdPProperties {
     }
 
     public static class Response {
-        private int skewAllowance;
+        private int skewAllowance = 5;
         private boolean signError;
+        private String defaultAuthenticationContextClass = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
+        private String defaultAttributeNameFormat = "uri";
         private boolean useAttributeFriendlyName = true;
         private List<String> attributeNameFormats = new ArrayList<>();
+
+        public String getDefaultAuthenticationContextClass() {
+            return defaultAuthenticationContextClass;
+        }
+
+        public void setDefaultAuthenticationContextClass(final String defaultAuthenticationContextClass) {
+            this.defaultAuthenticationContextClass = defaultAuthenticationContextClass;
+        }
+
+        public String getDefaultAttributeNameFormat() {
+            return defaultAttributeNameFormat;
+        }
+
+        public void setDefaultAttributeNameFormat(final String defaultAttributeNameFormat) {
+            this.defaultAttributeNameFormat = defaultAttributeNameFormat;
+        }
 
         public List<String> getAttributeNameFormats() {
             return attributeNameFormats;

@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.audit;
 
 import org.apereo.cas.audit.spi.PrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.SurrogateAuthenticationMetadataPopulator;
+import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulator;
 
 /**
  * This is {@link SurrogatePrincipalIdProvider}.
@@ -16,11 +16,11 @@ public class SurrogatePrincipalIdProvider implements PrincipalIdProvider {
         if (authentication == null) {
             return "unknown";
         }
-        if (authentication.getAttributes().containsKey(SurrogateAuthenticationMetadataPopulator.AUTHENTICATION_ATTR_SURROGATE_USER)) {
+        if (authentication.getAttributes().containsKey(SurrogateAuthenticationMetaDataPopulator.AUTHENTICATION_ATTR_SURROGATE_USER)) {
             final String surrogateUser = authentication.getAttributes()
-                    .get(SurrogateAuthenticationMetadataPopulator.AUTHENTICATION_ATTR_SURROGATE_USER).toString();
+                    .get(SurrogateAuthenticationMetaDataPopulator.AUTHENTICATION_ATTR_SURROGATE_USER).toString();
             final String principalId = authentication.getAttributes()
-                    .get(SurrogateAuthenticationMetadataPopulator.AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL).toString();
+                    .get(SurrogateAuthenticationMetaDataPopulator.AUTHENTICATION_ATTR_SURROGATE_CREDENTIAL).toString();
             return String.format("(Real user: [%s], Surrogate user: [%s])", principalId, surrogateUser);
         }
         return authentication.getPrincipal().getId();

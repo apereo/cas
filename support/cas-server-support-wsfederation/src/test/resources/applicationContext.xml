@@ -3,18 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="wsFedConfig" class="org.apereo.cas.support.wsfederation.WsFederationConfiguration">
-        <property name="identityProviderUrl" value="https://adfs.example.com/adfs/ls/"/>
-        <property name="identityProviderIdentifier" value="http://adfs.example.edu/adfs/services/trust"/>
-        <property name="relyingPartyIdentifier" value="urn:federation:cas"/>
-        <property name="identityAttribute" value="upn"/>
-        <property name="tolerance" value="2000"/>
-        <property name="signingCertificateResources">
-            <list>
-                <value>classpath:adfs-signing.crt</value>
-            </list>
-        </property>
-    </bean>
 
     <bean class="java.util.HashMap" id="testTokens">
         <constructor-arg index="0">

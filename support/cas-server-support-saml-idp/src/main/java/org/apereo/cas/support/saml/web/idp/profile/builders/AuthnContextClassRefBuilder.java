@@ -22,6 +22,7 @@ public interface AuthnContextClassRefBuilder {
      * @param service      the service
      * @return the authentication method from assertion
      */
-    String build(Assertion assertion, AuthnRequest authnRequest, SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+    String build(Assertion assertion, AuthnRequest authnRequest,
+                 SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                  SamlRegisteredService service);
 }
