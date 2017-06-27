@@ -22,6 +22,12 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Fortress authentication handler, this class will delegate the authentication to call fortress rest authentication.
+ *
+ * @author yudhi.k.surtan
+ * @since 5.2.0.
+ */
 public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final Logger LOG = LoggerFactory.getLogger(FortressAuthenticationHandler.class);
     private static final String FORTRESS_SESSION_KEY = "fortressSession";
@@ -45,6 +51,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
         } catch (final JAXBException e) {
             LOG.error(JAXB_EXCEPTION_MESSAGE, e);
         }
+        LOG.trace("Fortress authentication handler registered");
     }
 
     @Override

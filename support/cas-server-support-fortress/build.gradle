@@ -14,5 +14,8 @@ dependencies {
         exclude group: "org.openldap", module: "accelerator"
         exclude group: "org.openldap", module: "accelerator-impl"
         exclude group: "org.openldap", module: "accelerator-api"
+        exclude group: "commons-lang", module: "commons-lang"
     }
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }
