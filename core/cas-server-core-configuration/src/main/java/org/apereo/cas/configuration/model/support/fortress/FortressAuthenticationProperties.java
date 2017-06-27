@@ -9,7 +9,7 @@ package org.apereo.cas.configuration.model.support.fortress;
 
 public class FortressProperties {
 
-    private String rbacContextId = "HOME";
+    private String rbaccontext = "HOME";
     private String name = "fortressHandler";
 
     public String getName() {
@@ -20,12 +20,12 @@ public class FortressProperties {
         this.name = name;
     }
 
-    public String getRbacContextId() {
-        return rbacContextId;
+    public String getRbaccontext() {
+        return rbaccontext;
     }
 
-    public void setRbacContextId(final String rbacContextId) {
-        this.rbacContextId = rbacContextId;
+    public void setRbaccontext(final String rbaccontext) {
+        this.rbaccontext = rbaccontext;
     }
 
 }
