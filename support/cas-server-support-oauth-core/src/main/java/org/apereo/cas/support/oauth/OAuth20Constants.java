@@ -81,7 +81,7 @@ public interface OAuth20Constants {
 
     /** The callback authorize url definition. */
     String CALLBACK_AUTHORIZE_URL_DEFINITION = "callbackAuthorize.*";
-    
+
     /** The access token url. */
     String ACCESS_TOKEN_URL = "accessToken";
     

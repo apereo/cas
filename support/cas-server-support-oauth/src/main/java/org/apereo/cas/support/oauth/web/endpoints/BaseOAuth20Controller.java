@@ -1,10 +1,13 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
@@ -114,12 +117,19 @@ public abstract class BaseOAuth20Controller {
      */
     protected AccessToken generateAccessToken(final AccessTokenRequestDataHolder responseHolder) {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
+        final Authentication authn = DefaultAuthenticationBuilder
+                .newInstance(responseHolder.getAuthentication())
+                .addAttribute(OAuth20Constants.GRANT_TYPE, responseHolder.getGrantType().toString())
+                .build();
+
         final AccessToken accessToken = this.accessTokenFactory.create(responseHolder.getService(),
-                responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket());
+                authn, responseHolder.getTicketGrantingTicket());
+
+
         LOGGER.debug("Creating access token [{}]", accessToken);
         addTicketToRegistry(accessToken, responseHolder.getTicketGrantingTicket());
         LOGGER.debug("Added access token [{}] to registry", accessToken);
-        
+
         if (responseHolder.getToken() instanceof OAuthCode) {
             final TicketState codeState = TicketState.class.cast(responseHolder.getToken());
             codeState.update();

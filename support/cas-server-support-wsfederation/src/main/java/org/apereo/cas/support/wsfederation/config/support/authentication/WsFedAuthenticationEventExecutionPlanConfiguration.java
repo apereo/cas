@@ -37,7 +37,7 @@ import java.util.HashSet;
 public class WsFedAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier("mergingAttributeRepository")
     private IPersonAttributeDao attributeRepository;
 
     @Autowired(required = false)

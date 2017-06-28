@@ -4075,7 +4075,6 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 # cas.ticket.registry.ehcache.maxElementsOnDisk=0
 # cas.ticket.registry.ehcache.maxElementsInCache=0
 # cas.ticket.registry.ehcache.maxElementsInMemory=10000
-# cas.ticket.registry.ehcache.cacheName=org.apereo.cas.ticket.TicketCache
 # cas.ticket.registry.ehcache.eternal=false
 # cas.ticket.registry.ehcache.loaderAsync=true
 # cas.ticket.registry.ehcache.replicatePutsViaCopy=true
@@ -4115,7 +4114,6 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 
 # cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
 # cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL
-# cas.ticket.registry.ignite.ticketsCache.cacheName=TicketsCache
 # cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED
 
 # cas.ticket.registry.ignite.crypto.signing.key=

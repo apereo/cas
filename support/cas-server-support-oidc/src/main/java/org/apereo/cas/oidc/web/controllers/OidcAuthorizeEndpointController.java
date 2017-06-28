@@ -14,6 +14,7 @@ import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -113,7 +114,8 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         try {
             final OidcRegisteredService oidcService = (OidcRegisteredService)
                     OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
-            final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication, oidcService, ticketGrantingTicket);
+            final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication,
+                    oidcService, ticketGrantingTicket, OAuth20GrantTypes.IMPLICIT);
             final AccessToken accessToken = generateAccessToken(holder);
             LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
             final long timeout = casProperties.getTicket().getTgt().getTimeToKillInSeconds();

@@ -14,6 +14,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -188,7 +189,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri, ticketGrantingTicket);
         } else if (OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.TOKEN)) {
             final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication, 
-                    registeredService, ticketGrantingTicket);
+                    registeredService, ticketGrantingTicket, OAuth20GrantTypes.IMPLICIT);
             callbackUrl = buildCallbackUrlForImplicitTokenResponseType(holder, redirectUri);
         } else {
             callbackUrl = buildCallbackUrlForTokenResponseType(context, authentication, service, redirectUri, responseType, clientId);

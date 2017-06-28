@@ -63,8 +63,8 @@ public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCre
             LOGGER.debug("Created profile id [{}]", id);
 
             profile.setId(id);
-            final Map<String, Object> attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service,
-                    registeredService);
+            final Map<String, Object> attributes = registeredService.getAttributeReleasePolicy()
+                    .getAttributes(principal, service, registeredService);
             profile.addAttributes(attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
 

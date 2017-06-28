@@ -38,6 +38,7 @@ The current implementation provides support for:
 | `/cas/oidc/jwks`                              | A read-only endpoint that contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/cas/oidc/authorize`                         | Authorization requests are handled here.
 | `/cas/oidc/profile`                           | User profile requests are handled here.
+| `/cas/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).
 | `/cas/oidc/accessToken`, `/cas/oidc/token`    | Produces authorized access tokens.
 | `/cas/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
 
