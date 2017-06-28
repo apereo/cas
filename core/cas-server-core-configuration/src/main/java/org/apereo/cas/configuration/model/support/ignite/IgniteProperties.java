@@ -191,18 +191,9 @@ public class IgniteProperties {
     }
         
     public static class TicketsCache {
-        private String cacheName = "TicketsCache";
         private String cacheMode = "REPLICATED";
         private String atomicityMode = "TRANSACTIONAL";
         private String writeSynchronizationMode = "FULL_SYNC";
-
-        public String getCacheName() {
-            return cacheName;
-        }
-
-        public void setCacheName(final String cacheName) {
-            this.cacheName = cacheName;
-        }
 
         public String getCacheMode() {
             return cacheMode;
