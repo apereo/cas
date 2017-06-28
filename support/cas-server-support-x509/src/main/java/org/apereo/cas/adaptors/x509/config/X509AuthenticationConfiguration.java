@@ -62,7 +62,7 @@ public class X509AuthenticationConfiguration {
     private ResourceLoader resourceLoader;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier("mergingAttributeRepository")
     private IPersonAttributeDao attributeRepository;
 
     @Autowired

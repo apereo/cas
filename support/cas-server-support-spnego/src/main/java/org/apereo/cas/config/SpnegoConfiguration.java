@@ -40,7 +40,7 @@ public class SpnegoConfiguration {
     private ServicesManager servicesManager;
     
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier("mergingAttributeRepository")
     private IPersonAttributeDao attributeRepository;
 
     @Autowired

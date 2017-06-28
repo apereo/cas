@@ -91,10 +91,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final AcceptAuthenticationProperties acceptAuthenticationProperties = casProperties.getAuthn().getAccept();
-        final HashMap<String, String> users = new HashMap<>();
         final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(acceptAuthenticationProperties.getName(), servicesManager,
-                acceptUsersPrincipalFactory(), null, users);
-        h.setUsers(getParsedUsers());
+                acceptUsersPrincipalFactory(), null, getParsedUsers());
         h.setPasswordEncoder(Beans.newPasswordEncoder(acceptAuthenticationProperties.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
