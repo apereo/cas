@@ -27,7 +27,8 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
                                                         final HttpServletRequest request, final HttpServletResponse response,
                                                         final CentralAuthenticationService centralAuthenticationService,
                                                         final OAuthProperties oAuthProperties) {
-        super(servicesManager, ticketRegistry, request, response, centralAuthenticationService, oAuthProperties);
+        super(servicesManager, ticketRegistry, request, response,
+                centralAuthenticationService, oAuthProperties);
     }
 
     @Override
@@ -43,6 +44,11 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     @Override
     public boolean supports(final HttpServletRequest context) {
         final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN);
+        return OAuth20Utils.isGrantType(grantType, getGrantType());
+    }
+
+    @Override
+    public OAuth20GrantTypes getGrantType() {
+        return OAuth20GrantTypes.REFRESH_TOKEN;
     }
 }

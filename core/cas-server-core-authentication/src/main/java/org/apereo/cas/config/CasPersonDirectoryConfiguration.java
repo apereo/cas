@@ -76,10 +76,10 @@ public class CasPersonDirectoryConfiguration {
         return list;
     }
 
-    @ConditionalOnMissingBean(name = "attributeRepository")
+    @ConditionalOnMissingBean(name = "mergingAttributeRepository")
     @Bean
     @RefreshScope
-    public IPersonAttributeDao attributeRepository() {
+    public IPersonAttributeDao mergingAttributeRepository() {
         return composeMergedAndCachedAttributeRepositories(attributeRepositories());
     }
 
