@@ -33,7 +33,7 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration implements Auth
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier("mergingAttributeRepository")
     private IPersonAttributeDao attributeRepository;
     
     @Autowired
