@@ -226,3 +226,25 @@ Then run the following command at the root:
 ```
 
 Browse the report at the above link to see which dependencies might need attention. 
+
+# Continuous Integration
+
+CAS uses [Travis CI](https://travis-ci.org/apereo/cas/builds) as its main continuous integration tool. The build primaryly is
+controlled by the `.travis.yml` file, defined at the root of the project directory. 
+
+The following special commit messages are recognized by Travis CI to control aspects
+of build behavior:
+
+| Commit Message                    | Description
+|-----------------------------------+------------------------------------------------------------------+
+| `[skip ci]`                       | Skip running a build completely.
+| `[skip tests]`                    | Skip running tests.
+
+Travis CI is mainly responsible for the following tasks:
+
+- Running a full build, including tests and style checks.
+- Pushing project documentation artifacts into the `gh-pages` branch.
+- Uploading snapshots to relevant repositories.
+
+The build is triggered for automatically for all pull requests, direct commits, etc where different
+policies may apply for each change type.
