@@ -1,9 +1,22 @@
 package org.apereo.cas.ticket.registry;
 
-import java.util.Arrays;
-import java.util.Collection;
-
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
+import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +24,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Unit test for {@link IgniteTicketRegistry}.
@@ -20,7 +36,26 @@ import org.springframework.test.context.TestPropertySource;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, IgniteTicketRegistryConfiguration.class})
+@SpringBootTest(classes = {IgniteTicketRegistryConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        IgniteTicketRegistryTicketCatalogConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreLogoutConfiguration.class
+})
 @TestPropertySource(locations = {"classpath:/igniteregistry.properties"})
 public class IgniteTicketRegistryTests extends AbstractTicketRegistryTests {
 
