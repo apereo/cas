@@ -71,7 +71,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     public DashboardController(final CasConfigurationProperties casProperties) {
         super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
@@ -90,7 +90,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        final Map<String, Object> model = new HashMap<>();
+        final Map<String, Object> model = new HashMap<>(50);
         model.put("restartEndpointEnabled", restartEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("environmentEndpointEnabled", environmentEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());

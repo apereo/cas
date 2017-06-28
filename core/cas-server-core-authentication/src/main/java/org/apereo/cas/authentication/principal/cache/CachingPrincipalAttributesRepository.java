@@ -23,9 +23,10 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static final long DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachingPrincipalAttributesRepository.class);
+
     
-    private transient Cache<String, Map<String, Object>> cache;
-    private transient PrincipalAttributesCacheLoader cacheLoader =
+    private final transient Cache<String, Map<String, Object>> cache;
+    private final transient PrincipalAttributesCacheLoader cacheLoader =
             new PrincipalAttributesCacheLoader();
 
     private long maxCacheSize = DEFAULT_MAXIMUM_CACHE_SIZE;

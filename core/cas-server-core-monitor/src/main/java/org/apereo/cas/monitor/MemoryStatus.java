@@ -14,12 +14,12 @@ public class MemoryStatus extends Status {
     /**
      * JVM free memory.
      */
-    private long freeMemory;
+    private final long freeMemory;
 
     /**
      * JVM total memory.
      */
-    private long totalMemory;
+    private final long totalMemory;
 
     /**
      * Creates a new status object with the given code.
@@ -32,7 +32,7 @@ public class MemoryStatus extends Status {
      */
     public MemoryStatus(final StatusCode code, final long free, final long total, final long used) {
         super(code, String.format("%.2fMB free (%.2f%%), %.2fMB used, %.2fMB total.", free / BYTES_PER_MB,
-                free * PERCENTAGE / (double) total,
+                free * PERCENTAGE / total,
                 used / BYTES_PER_MB,
                 total / BYTES_PER_MB));
         this.freeMemory = free;

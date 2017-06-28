@@ -45,6 +45,7 @@ import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.opensaml.saml.saml2.core.NameID;
@@ -62,7 +63,6 @@ import org.springframework.context.annotation.ImportResource;
 import javax.xml.ws.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +100,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration implements Authenti
         bean.setEnabled(true);
         bean.setName("cxfServletSecurityTokenService");
         bean.setServlet(new CXFServlet());
-        bean.setUrlMappings(Collections.singleton(WSFederationConstants.ENDPOINT_STS.concat("*")));
+        bean.setUrlMappings(CollectionUtils.wrap(WSFederationConstants.ENDPOINT_STS.concat("*")));
         bean.setAsyncSupported(true);
         return bean;
     }

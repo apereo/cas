@@ -8,7 +8,7 @@ import java.util.function.Function;
  * Represents a function that accepts one argument and produces a result and
  * could be with a Consumer of the resulting type.
  *
- * TODO: REMOVE THIS IF IT'S ADDED TO THE JDK
+ * TODO: Candidate for removal in case component is added to JDK.
  *
  * @author David Rodriguez
  *
@@ -26,7 +26,7 @@ public interface ComposableFunction<T, R> extends Function<T, R> {
      *
      * @return after consumer with the output of the function passed in
      */
-    default Consumer<T> andThen(Consumer<R> after) {
+    default Consumer<T> andThen(final Consumer<R> after) {
         Objects.requireNonNull(after);
         return (T t) -> after.accept(apply(t));
     }

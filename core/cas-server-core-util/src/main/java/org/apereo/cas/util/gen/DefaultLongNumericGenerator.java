@@ -19,7 +19,7 @@ public class DefaultLongNumericGenerator implements LongNumericGenerator {
     /** The minimum length the String can be. */
     private static final int MIN_STRING_LENGTH = 1;
 
-    private AtomicLong count;
+    private final AtomicLong count;
 
     /**
      * Instantiates a new default long numeric generator.

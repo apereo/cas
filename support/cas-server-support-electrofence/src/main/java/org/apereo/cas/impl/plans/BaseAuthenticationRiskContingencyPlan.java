@@ -37,7 +37,7 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
     @Autowired
     protected ApplicationContext applicationContext;
 
-    private Set<AuthenticationRiskNotifier> notifiers = new LinkedHashSet<>();
+    private final Set<AuthenticationRiskNotifier> notifiers = new LinkedHashSet<>();
 
 
     @Override

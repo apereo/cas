@@ -54,6 +54,7 @@ import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -409,6 +410,23 @@ public abstract class AbstractSamlProfileHandlerController {
     }
 
     /**
+     * Gets authentication context mappings.
+     *
+     * @return the authentication context mappings
+     */
+    protected Map<String, String> getAuthenticationContextMappings() {
+        final Map<String, String> mappings = new TreeMap();
+        this.authenticationContextClassMappings
+                .stream()
+                .map(s -> {
+                    final String[] bits = s.split("->");
+                    return Pair.of(bits[0], bits[1]);
+                })
+                .forEach(p -> mappings.put(p.getKey(), p.getValue()));
+        return mappings;
+    }
+
+    /**
      * Build redirect url by requested authn context.
      *
      * @param initialUrl   the initial url
@@ -423,17 +441,16 @@ public abstract class AbstractSamlProfileHandlerController {
             return initialUrl;
         }
 
-        final TreeMap<String, String> mappings = new TreeMap();
-        this.authenticationContextClassMappings.stream().map(s -> {
-            final String[] bits = s.split("->");
-            return Pair.of(bits[0], bits[1]);
-        }).forEach(p -> mappings.put(p.getKey(), p.getValue()));
+        final Map<String, String> mappings = getAuthenticationContextMappings();
 
         final Optional<AuthnContextClassRef> p =
-                authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs().stream().filter(ref -> {
-                    final String clazz = ref.getAuthnContextClassRef();
-                    return mappings.containsKey(clazz);
-                }).findFirst();
+                authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
+                        .stream()
+                        .filter(ref -> {
+                            final String clazz = ref.getAuthnContextClassRef();
+                            return mappings.containsKey(clazz);
+                        })
+                        .findFirst();
 
         if (p.isPresent()) {
             final String mappedClazz = mappings.get(p.get().getAuthnContextClassRef());
@@ -525,9 +542,10 @@ public abstract class AbstractSamlProfileHandlerController {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
         }
 
-        verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, adaptor.get());
+        final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
+        verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, facade);
         SamlUtils.logSamlObject(this.configBean, authnRequest);
-        return Pair.of(registeredService, adaptor.get());
+        return Pair.of(registeredService, facade);
     }
 
     /**
@@ -580,14 +598,16 @@ public abstract class AbstractSamlProfileHandlerController {
                 getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
 
         if (!adaptor.isPresent()) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
+                    "Cannot find metadata linked to " + issuer);
         }
-        LOGGER.debug("Preparing SAML response for [{}]", adaptor.get().getEntityId());
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
+        final String entityId = facade.getEntityId();
+        LOGGER.debug("Preparing SAML response for [{}]", entityId);
         final AuthnRequest authnRequest = authenticationContext.getKey();
         this.responseBuilder.build(authnRequest, request, response,
                 casAssertion, registeredService, facade, binding);
-        LOGGER.info("Built the SAML response for [{}]", facade.getEntityId());
+        LOGGER.info("Built the SAML response for [{}]", entityId);
     }
 
     /**

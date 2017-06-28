@@ -26,6 +26,7 @@ import org.apereo.cas.configuration.model.support.rest.RestAuthenticationPropert
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
+import org.apereo.cas.configuration.model.support.sqrl.SqrlAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
@@ -46,6 +47,9 @@ import java.util.List;
  */
 public class AuthenticationProperties {
 
+    @NestedConfigurationProperty
+    private SqrlAuthenticationProperties sqrl = new SqrlAuthenticationProperties();
+    
     @NestedConfigurationProperty
     private CouchbaseAuthenticationProperties couchbase = new CouchbaseAuthenticationProperties();
 
@@ -146,7 +150,7 @@ public class AuthenticationProperties {
     private SpnegoProperties spnego = new SpnegoProperties();
     
     @NestedConfigurationProperty
-    private WsFederationDelegationProperties wsfed = new WsFederationDelegationProperties();
+    private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
 
     @NestedConfigurationProperty
     private WsFederationProperties wsfedIdP = new WsFederationProperties();
@@ -339,11 +343,11 @@ public class AuthenticationProperties {
         this.spnego = spnego;
     }
     
-    public WsFederationDelegationProperties getWsfed() {
+    public List<WsFederationDelegationProperties> getWsfed() {
         return wsfed;
     }
 
-    public void setWsfed(final WsFederationDelegationProperties wsfed) {
+    public void setWsfed(final List<WsFederationDelegationProperties> wsfed) {
         this.wsfed = wsfed;
     }
 
@@ -461,5 +465,13 @@ public class AuthenticationProperties {
 
     public void setCouchbase(final CouchbaseAuthenticationProperties couchbase) {
         this.couchbase = couchbase;
+    }
+
+    public SqrlAuthenticationProperties getSqrl() {
+        return sqrl;
+    }
+
+    public void setSqrl(final SqrlAuthenticationProperties sqrl) {
+        this.sqrl = sqrl;
     }
 }

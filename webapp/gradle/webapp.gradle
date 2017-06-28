@@ -1,6 +1,7 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
-apply plugin: "com.moowork.gulp"
 
 description = "Apereo CAS Web Application"
 
@@ -16,43 +17,9 @@ javadoc {
     enabled false
 }
 
-npm_install.dependsOn(npm_cache_clean)
-
-// run npm install
-gulp_default.dependsOn 'npmInstall'
-
-// run gulp install
-gulp_default.dependsOn 'installGulp'
-
-
-task npmLint(group: 'UI', type: NpmTask, dependsOn: 'npmInstall', description: "Lint the JavaScript files") {
-  args = ['run', 'lint', '--silent']
-}
-
-
-processResources.dependsOn 'npmLint'
-
-task gulpSetup(dependsOn: ["npmInstall", "installGulp"], description: "Install npm and Gulp") {}
-
-task gulpRun(dependsOn: gulp_default, description: "Runs Gulp default task") {}
-
-processResources.dependsOn gulpRun
 
 if (Boolean.getBoolean("enableJRebelAgent")) {
     war.dependsOn(generateRebel)
-}
-
-node {
-    version = '7.10.0'
-    npmVersion = '4.2.0'
-    nodeModulesDir = project(":webapp").projectDir
-    download = true
-}
-
-gulp {
-    workDir =  project(":webapp").projectDir
-    colors = true
-    bufferOutput = true
 }
 
 springBoot  {
@@ -65,9 +32,12 @@ bootRepackage {
 }
 
 bootRun {
-    dependsOn pathingJar
-    doFirst {
-        classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        dependsOn pathingJar
+        doFirst {
+          classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+        }
     }
 
     addResources = true
@@ -138,5 +108,3 @@ dependencies {
     runtime libraries.webjars
     compile libraries.springcloudconfigclient
 }
-
-clean.delete << file("${project(":webapp").projectDir}/node_modules")

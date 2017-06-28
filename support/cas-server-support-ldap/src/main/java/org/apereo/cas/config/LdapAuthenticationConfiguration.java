@@ -8,8 +8,6 @@ import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
@@ -17,7 +15,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
@@ -33,7 +30,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 
 import java.time.Period;
 import java.util.Arrays;
@@ -60,15 +56,8 @@ public class LdapAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
-
-    @Autowired
-    @Qualifier("attributeRepositories")
-    private List<IPersonAttributeDao> attributeRepositories;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -100,6 +89,7 @@ public class LdapAuthenticationConfiguration {
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler(l.getName(),
                             servicesManager, ldapPrincipalFactory(),
                             l.getOrder(), authenticator);
+                    handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
                     final List<String> additionalAttributes = l.getAdditionalAttributes();
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
@@ -231,27 +221,13 @@ public class LdapAuthenticationConfiguration {
     @Configuration("ldapAuthenticationEventExecutionPlanConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class LdapAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-
-        private boolean isAttributeRepositorySourceDefined() {
-            return !attributeRepositories.isEmpty();
-        }
-
         @Override
         public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
             ldapAuthenticationHandlers().forEach(handler -> {
-                final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-                if (isAttributeRepositorySourceDefined()) {
-                    LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain");
-                    resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
-                } else {
-                    LOGGER.debug("Attribute repository sources are not available for principal resolution so principal resolver will echo "
-                            + "back the principal resolved during LDAP authentication directly.");
-                    resolver.setChain(new EchoingPrincipalResolver());
-                }
-                LOGGER.info("Ldap authentication for [{}] is to chain principal resolvers via [{}] for attribute resolution",
-                        handler.getName(), resolver);
-                plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
+                LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(handler, personDirectoryPrincipalResolver);
             });
         }
+
     }
 }

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * This is {@link LdapAcceptableUsagePolicyRepository}.
@@ -29,15 +29,15 @@ import java.util.Collections;
  */
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapAcceptableUsagePolicyRepository.class);
-    
+
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private ConnectionFactory connectionFactory;
-    private String searchFilter;
-    private String baseDn;
+    private final ConnectionFactory connectionFactory;
+    private final String searchFilter;
+    private final String baseDn;
 
-    public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport, 
-            final ConnectionFactory connectionFactory, final String searchFilter, final String baseDn) {
+    public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
+                                               final ConnectionFactory connectionFactory, final String searchFilter, final String baseDn) {
         super(ticketRegistrySupport);
         this.connectionFactory = connectionFactory;
         this.searchFilter = searchFilter;
@@ -59,8 +59,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         if (StringUtils.isNotBlank(currentDn)) {
             LOGGER.debug("Updating [{}]", currentDn);
             return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,
-                    Collections.singletonMap(this.aupAttributeName,
-                            Collections.singleton(Boolean.TRUE.toString())));
+                    CollectionUtils.wrap(this.aupAttributeName, CollectionUtils.wrap(Boolean.TRUE.toString())));
         }
         return false;
     }

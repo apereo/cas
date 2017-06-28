@@ -26,6 +26,7 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
@@ -34,6 +35,7 @@ import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.hibernate.cfg.Environment;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.BindRequest;
@@ -191,12 +193,12 @@ public final class Beans {
             bean.setJdbcUrl(jpaProperties.getUrl());
             bean.setUsername(jpaProperties.getUser());
             bean.setPassword(jpaProperties.getPassword());
-            bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
+            bean.setLoginTimeout((int) jpaProperties.getPool().getMaxWait());
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
             bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
             bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
-            bean.setInitializationFailTimeout(jpaProperties.isFailFast() ? 1 : 0);
+            bean.setInitializationFailFast(jpaProperties.isFailFast());
             bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
             bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
@@ -232,7 +234,7 @@ public final class Beans {
         final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
         bean.setCorePoolSize(config.getMinSize());
         bean.setMaxPoolSize(config.getMaxSize());
-        bean.setKeepAliveSeconds(Long.valueOf(config.getMaxWait()).intValue());
+        bean.setKeepAliveSeconds((int) config.getMaxWait());
         return bean;
     }
 
@@ -246,27 +248,31 @@ public final class Beans {
     public static LocalContainerEntityManagerFactoryBean newHibernateEntityManagerFactoryBean(final JpaConfigDataHolder config,
                                                                                               final AbstractJpaProperties jpaProperties) {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
-
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
 
         if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
         bean.setPackagesToScan(config.getPackagesToScan());
-        bean.setDataSource(config.getDataSource());
+
+        if (config.getDataSource() != null) {
+            bean.setDataSource(config.getDataSource());
+        }
 
         final Properties properties = new Properties();
-        properties.put("hibernate.dialect", jpaProperties.getDialect());
-        properties.put("hibernate.hbm2ddl.auto", jpaProperties.getDdlAuto());
-        properties.put("hibernate.jdbc.batch_size", jpaProperties.getBatchSize());
+        properties.put(Environment.DIALECT, jpaProperties.getDialect());
+        properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
+        properties.put(Environment.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
         if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
-            properties.put("hibernate.default_catalog", jpaProperties.getDefaultCatalog());
+            properties.put(Environment.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
         }
         if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
-            properties.put("hibernate.default_schema", jpaProperties.getDefaultSchema());
+            properties.put(Environment.DEFAULT_SCHEMA, jpaProperties.getDefaultSchema());
         }
+        properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
+        properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
         bean.setJpaProperties(properties);
-        bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
+        
         return bean;
     }
 
@@ -768,7 +774,7 @@ public final class Beans {
     public static Duration newDuration(final String length) {
         try {
             if (NumberUtils.isCreatable(length)) {
-                return Duration.ofSeconds(Long.valueOf(length));
+                return Duration.ofSeconds(Long.parseLong(length));
             }
             return Duration.parse(length);
         } catch (final Exception e) {
@@ -959,14 +965,14 @@ public final class Beans {
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
             bean.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
-            bean.setHeartbeatConnectTimeout(Long.valueOf(mongo.getTimeout()).intValue());
-            bean.setHeartbeatSocketTimeout(Long.valueOf(mongo.getTimeout()).intValue());
+            bean.setHeartbeatConnectTimeout((int) mongo.getTimeout());
+            bean.setHeartbeatSocketTimeout((int) mongo.getTimeout());
             bean.setMaxConnectionLifeTime(mongo.getConns().getLifetime());
             bean.setSocketKeepAlive(mongo.isSocketKeepAlive());
-            bean.setMaxConnectionIdleTime(Long.valueOf(mongo.getIdleTimeout()).intValue());
+            bean.setMaxConnectionIdleTime((int) mongo.getIdleTimeout());
             bean.setConnectionsPerHost(mongo.getConns().getPerHost());
-            bean.setSocketTimeout(Long.valueOf(mongo.getTimeout()).intValue());
-            bean.setConnectTimeout(Long.valueOf(mongo.getTimeout()).intValue());
+            bean.setSocketTimeout((int) mongo.getTimeout());
+            bean.setConnectTimeout((int) mongo.getTimeout());
             bean.afterPropertiesSet();
             return bean;
         } catch (final Exception e) {
@@ -998,7 +1004,7 @@ public final class Beans {
         return new MongoClient(new ServerAddress(
                 mongo.getHost(),
                 mongo.getPort()),
-                Collections.singletonList(
+                CollectionUtils.wrap(
                         MongoCredential.createCredential(
                                 mongo.getUserId(),
                                 mongo.getDatabaseName(),
