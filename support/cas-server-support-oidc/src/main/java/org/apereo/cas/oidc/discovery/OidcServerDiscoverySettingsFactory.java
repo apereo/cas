@@ -7,7 +7,9 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.FactoryBean;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is {@link OidcServerDiscoverySettingsFactory}.
@@ -37,6 +39,10 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
         discoveryProperties.setSubjectTypesSupported(oidc.getSubjectTypes());
         discoveryProperties.setClaimTypesSupported(CollectionUtils.wrap("normal"));
+
+        final List<String> authnMethods = new ArrayList<>();
+        authnMethods.add("client_secret_basic");
+        discoveryProperties.setIntrospectionSupportedAuthenticationMethods(authnMethods);
 
         discoveryProperties.setGrantTypesSupported(
                 Arrays.asList(OAuth20GrantTypes.AUTHORIZATION_CODE.getType(),
