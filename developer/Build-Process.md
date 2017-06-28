@@ -227,7 +227,7 @@ Then run the following command at the root:
 
 Browse the report at the above link to see which dependencies might need attention. 
 
-# Continuous Integration
+## Continuous Integration
 
 CAS uses [Travis CI](https://travis-ci.org/apereo/cas/builds) as its main continuous integration tool. The build primaryly is
 controlled by the `.travis.yml` file, defined at the root of the project directory. 
