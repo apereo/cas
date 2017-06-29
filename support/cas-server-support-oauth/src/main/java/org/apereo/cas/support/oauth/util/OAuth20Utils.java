@@ -8,14 +8,15 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,6 +85,16 @@ public final class OAuth20Utils {
      */
     public static ModelAndView redirectTo(final String url) {
         return new ModelAndView(new RedirectView(url));
+    }
+
+    /**
+     * Redirect to model and view.
+     *
+     * @param view the view
+     * @return the model and view
+     */
+    public static ModelAndView redirectTo(final View view) {
+        return new ModelAndView(view);
     }
 
     /**
@@ -177,7 +188,7 @@ public final class OAuth20Utils {
     public static String casOAuthCallbackUrl(final String serverPrefixUrl) {
         return serverPrefixUrl.concat(BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL);
     }
-    
+
     /**
      * Jsonify string.
      *
@@ -190,6 +201,22 @@ public final class OAuth20Utils {
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Gets response type.
+     *
+     * @param context the context
+     * @return the response type
+     */
+    public static OAuth20ResponseTypes getResponseType(final J2EContext context) {
+        final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        final OAuth20ResponseTypes type = Arrays.stream(OAuth20ResponseTypes.values())
+                .filter(t -> t.getType().equalsIgnoreCase(responseType))
+                .findFirst()
+                .orElse(OAuth20ResponseTypes.CODE);
+        LOGGER.debug("OAuth response type is [{}]", type);
+        return type;
     }
 
     /**
