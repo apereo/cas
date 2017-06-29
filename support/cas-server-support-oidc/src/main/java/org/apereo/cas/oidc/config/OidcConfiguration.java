@@ -35,6 +35,7 @@ import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
+import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcSecurityInterceptor;
 import org.apereo.cas.oidc.web.controllers.OidcAccessTokenEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcAuthorizeEndpointController;
@@ -55,8 +56,11 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
@@ -92,6 +96,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -107,8 +112,24 @@ import java.util.stream.Stream;
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
+    @Qualifier("grantingTicketExpirationPolicy")
+    private ExpirationPolicy grantingTicketExpirationPolicy;
+
+    @Autowired
+    @Qualifier("oauthTokenGenerator")
+    private OAuth20TokenGenerator oauthTokenGenerator;
+
+    @Autowired
+    @Qualifier("oauthAuthorizationResponseBuilders")
+    private Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders;
+
+    @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
+    @Qualifier("accessTokenExpirationPolicy")
+    private ExpirationPolicy accessTokenExpirationPolicy;
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
@@ -285,9 +306,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
         return new OidcAccessTokenEndpointController(
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
-                oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory, oauthTokenGenerator,
                 oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
-                ticketGrantingTicketCookieGenerator, authenticationBuilder, centralAuthenticationService);
+                ticketGrantingTicketCookieGenerator, authenticationBuilder, centralAuthenticationService,
+                accessTokenExpirationPolicy);
     }
 
     @Bean
@@ -343,10 +365,12 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public OidcAuthorizeEndpointController oidcAuthorizeController() {
         return new OidcAuthorizeEndpointController(servicesManager,
                 ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
-                oidcPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory,
-                consentApprovalViewResolver(), oidcIdTokenGenerator(),
-                profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator,
-                authenticationBuilder);
+                oidcPrincipalFactory(), webApplicationServiceFactory,
+                defaultOAuthCodeFactory,
+                consentApprovalViewResolver(),
+                profileScopeToAttributesFilter(), casProperties,
+                ticketGrantingTicketCookieGenerator,
+                authenticationBuilder, oauthAuthorizationResponseBuilders);
     }
 
     @Autowired
@@ -451,5 +475,11 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public OidcRegisteredServicePreProcessorEventListener oidcRegisteredServicePreProcessorEventListener() {
         return new OidcRegisteredServicePreProcessorEventListener(profileScopeToAttributesFilter());
+    }
+
+    @Bean
+    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
+        return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator,
+                accessTokenExpirationPolicy, grantingTicketExpirationPolicy);
     }
 }

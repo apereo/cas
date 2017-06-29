@@ -76,6 +76,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
         final AuthenticationResult result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
+
         return new AccessTokenRequestDataHolder(service, authentication,
                 registeredService, ticketGrantingTicket, getGrantType());
     }
