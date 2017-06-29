@@ -20,7 +20,6 @@
                 </p>
             </div>
             <div id="app-launcher">React components will go here...</div>
-
             <ul>
                 <li th:if="${healthcheckEndpointEnabled}">
                     <a th:href="@{/status}" class="casTooltip">Status
@@ -131,7 +130,7 @@
                 </li>
             </ul>
         </div>
-        
+
         <div class="server-functions" th:if="${restartEndpointEnabled or shutdownEndpointEnabled}">
             <h2 th:inline="text"><i class="fa fa-server"></i>[[#{cas.dashboard.section.server.functions.title}]]</h2>
             <ul>

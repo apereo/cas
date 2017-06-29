@@ -1,4 +1,5 @@
 const path = require('path')
+// const webpack = require('webpack');
 
 module.exports = {
   context: __dirname,
@@ -24,6 +25,11 @@ module.exports = {
     reasons: true,
     chunks: true
   },
+  // plugins: [
+  //   // Ignore all locale files of moment.js
+  //   new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+  //   new BundleAnalyzerPlugin()
+  // ],
   module: {
     rules: [
       {

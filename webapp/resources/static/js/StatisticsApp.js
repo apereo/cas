@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import moment from 'moment'
-// import axios from 'axios'
+import axios from 'axios'
 import AuthnAttemptsGraph from './components/authnaudit/AuthnAttemptsGraph'
 const {string} = React.PropTypes
 
@@ -16,29 +15,18 @@ class StatisticsApp extends React.Component {
   }
 
   componentDidMount () {
-    // const startTime = moment().subtract(90, 'minutes').valueOf()
+    let d = new Date()
+    const startTime = d.setHours(d.getHours() - 8)
 
-    const data =
-      [
-        {'time': '2017-06-02T16:35:32.990', 'successes': 1, 'failures': 5},
-        {'time': '2017-06-02T16:45:32.990', 'successes': 4, 'failures': 7},
-        {'time': '2017-06-02T16:55:32.990', 'successes': 8, 'failures': 6},
-        {'time': '2017-06-02T17:05:32.990', 'successes': 20, 'failures': 5},
-        {'time': '2017-06-02T17:10:32.990', 'successes': 2, 'failures': 1},
-        {'time': '2017-06-02T17:15:32.990', 'successes': 9, 'failures': 0},
-        {'time': '2017-06-02T17:20:32.990', 'successes': 11, 'failures': 22}
-      ]
-
-    // axios.get(`/cas/status/stats/getAuthnAudit/summary?start=${startTime}&range=${this.props.range}&scale=${this.props.scale}`)
-    // .then(res => {
-    data.forEach(function (value) {
-      value.time = moment(value.time).format('h:mm')
+    axios.get(`/cas/status/stats/getAuthnAudit/summary?start=${startTime}&range=${this.props.range}&scale=${this.props.scale}`)
+    .then(res => {
+      res.data.forEach(function (value) {
+        let newDate = new Date(value.time)
+        value.time = (newDate.getHours() - (newDate.getHours() >= 12 ? 12 : 0)) + ':' + newDate.getMinutes()
+      })
+      const graphData = res.data
+      this.setState({graphData})
     })
-
-    const graphData = data
-
-    this.setState({graphData})
-    // })
   }
 
   render () {

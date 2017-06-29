@@ -24,7 +24,7 @@
     "gulp": "gulp",
     "lint": "eslint resources/static/**/*.jsx --quiet --color",
     "build": "webpack",
-    "prod": "NODE_ENV=production webpack",
+    "prod": "NODE_ENV=production webpack --optimize-minimize --optimize-dedupe --config webpack.config.js",
     "dev": "webpack-dev-server",
     "watch": "npm run build -- --watch",
     "test": "NODE_ENV=test jest",

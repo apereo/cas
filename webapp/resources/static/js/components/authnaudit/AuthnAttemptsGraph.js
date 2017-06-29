@@ -20,7 +20,7 @@ const AuthnAttemptsGraph = React.createClass({
           x='time'
           y='failures'
           style={{
-            data: {stroke: 'tomato', opacity: 0.7},
+            data: {stroke: 'tomato', opacity: 1.0},
             labels: {fontSize: 12},
             parent: {border: '1px solid #ccc'}
           }}
@@ -30,7 +30,7 @@ const AuthnAttemptsGraph = React.createClass({
           x='time'
           y='successes'
           style={{
-            data: {stroke: 'darkgreen', opacity: 0.7},
+            data: {stroke: 'darkgreen', opacity: 1.0},
             labels: {fontSize: 12},
             parent: {border: '1px solid #ccc'}
           }}
@@ -40,6 +40,4 @@ const AuthnAttemptsGraph = React.createClass({
   }
 })
 
-  // [{"time":"2017-06-02T17:35:32.990","successes":1,"failures":2}]
-// ReactDOM.render(React.createElement(AuthnAttemptsGraph), document.getElementById('authn-graph'))
 export default AuthnAttemptsGraph
