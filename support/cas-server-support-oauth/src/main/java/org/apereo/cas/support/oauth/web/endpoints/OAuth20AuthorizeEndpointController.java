@@ -13,11 +13,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20RequestValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * This controller is in charge of responding to the authorize call in OAuth v2 protocol.
@@ -71,9 +70,14 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     protected final OAuth20CasAuthenticationBuilder authenticationBuilder;
 
     /**
-     * Collection of callback builders.
+     * Collection of response builders.
      */
     protected final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders;
+
+    /**
+     * Collection of request validators.
+     */
+    protected final Set<OAuth20RequestValidator> oauthRequestValidators;
 
     public OAuth20AuthorizeEndpointController(final ServicesManager servicesManager,
                                               final TicketRegistry ticketRegistry,
@@ -87,7 +91,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                               final CasConfigurationProperties casProperties,
                                               final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                               final OAuth20CasAuthenticationBuilder authenticationBuilder,
-                                              final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders) {
+                                              final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
+                                              final Set<OAuth20RequestValidator> oauthRequestValidators) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
                 ticketGrantingTicketCookieGenerator);
@@ -95,6 +100,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         this.consentApprovalViewResolver = consentApprovalViewResolver;
         this.authenticationBuilder = authenticationBuilder;
         this.oauthAuthorizationResponseBuilders = oauthAuthorizationResponseBuilders;
+        this.oauthRequestValidators = oauthRequestValidators;
     }
 
     /**
@@ -110,8 +116,9 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
         final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
 
-        if (!verifyAuthorizeRequest(request) || !isRequestAuthenticated(manager, context)) {
-            LOGGER.error("Authorize request verification failed");
+        if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
+            LOGGER.error("Authorize request verification failed. Either the authorization request is misssing required parameters, "
+                    + "or the request is not authenticated and contains no authenticated profile/principal.");
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
@@ -222,55 +229,16 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     /**
      * Verify the authorize request.
      *
-     * @param request the HTTP request
+     * @param context the context
      * @return whether the authorize request is valid
      */
-    private boolean verifyAuthorizeRequest(final HttpServletRequest request) {
-
-        final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
-        if (StringUtils.equalsIgnoreCase(grantType, OAuth20GrantTypes.PASSWORD.getType())) {
-            final boolean checkParameterExist = this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID);
-            final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-
-            final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
-            return checkParameterExist && this.validator.checkServiceValid(registeredService)
-                    && this.validator.checkParameterExist(request, OAuth20Constants.SECRET)
-                    && this.validator.checkParameterExist(request, OAuth20Constants.USERNAME)
-                    && this.validator.checkParameterExist(request, OAuth20Constants.PASSWORD);
-        }
-
-
-        final boolean checkParameterExist = this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
-                && this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
-                && this.validator.checkParameterExist(request, OAuth20Constants.RESPONSE_TYPE);
-
-        final String responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
-        final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-        final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
-
-        return checkParameterExist
-                && checkResponseTypes(responseType, OAuth20ResponseTypes.values())
-                && this.validator.checkServiceValid(registeredService)
-                && this.validator.checkCallbackValid(registeredService, redirectUri);
-
-
-    }
-
-    /**
-     * Check the response type against expected response types.
-     *
-     * @param type          the current response type
-     * @param expectedTypes the expected response types
-     * @return whether the response type is supported
-     */
-    private static boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
-        LOGGER.debug("Response type: [{}]", type);
-        final boolean checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
-        if (!checked) {
-            LOGGER.error("Unsupported response type: [{}]", type);
-        }
-        return checked;
+    private boolean verifyAuthorizeRequest(final J2EContext context) {
+        final OAuth20RequestValidator validator = this.oauthRequestValidators
+                .stream()
+                .filter(b -> b.supports(context))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Could not validate the request given it's unsupported"));
+        return validator.validate(context);
     }
 }
 

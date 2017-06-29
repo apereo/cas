@@ -187,8 +187,8 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                                 if (summary.containsKey(bucketToUse)) {
                                     values = summary.get(bucketToUse);
                                 } else {
-                                    values = new AuthenticationAuditSummary(bucketToUse.toString());
-
+                                    final long l = bucketToUse.toInstant(ZoneOffset.UTC).toEpochMilli();
+                                    values = new AuthenticationAuditSummary(l);
                                 }
                                 if (event.getActionPerformed().contains("SUCCESS")) {
                                     values.incrementSuccess();
@@ -208,14 +208,13 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                 }
             }
             final Collection<AuthenticationAuditSummary> values = summary.values();
-            //values.removeIf(a -> a.isEmpty());
             return values;
         };
         return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
     }
 
     private static class AuthenticationAuditSummary {
-        private final String time;
+        private final long time;
         private long successes;
         private long failures;
 
@@ -224,11 +223,11 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
          *
          * @param time the time
          */
-        AuthenticationAuditSummary(final String time) {
+        AuthenticationAuditSummary(final long time) {
             this.time = time;
         }
 
-        public String getTime() {
+        public long getTime() {
             return time;
         }
 
