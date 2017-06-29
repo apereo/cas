@@ -53,6 +53,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.validator.OAuth20RequestValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
@@ -110,6 +111,10 @@ import java.util.stream.Stream;
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    @Qualifier("oauthRequestValidators")
+    private Set<OAuth20RequestValidator> oauthRequestValidators;
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
@@ -341,8 +346,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory")
-                                                                   final OidcServerDiscoverySettings discoverySettings) {
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") final OidcServerDiscoverySettings discoverySettings) {
         return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
                 oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory,
@@ -370,14 +374,13 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 consentApprovalViewResolver(),
                 profileScopeToAttributesFilter(), casProperties,
                 ticketGrantingTicketCookieGenerator,
-                authenticationBuilder, oauthAuthorizationResponseBuilders);
+                authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators);
     }
 
     @Autowired
     @RefreshScope
     @Bean
-    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
-                                                                                 final AuthenticationSystemSupport authenticationSystemSupport) {
+    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
         final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
