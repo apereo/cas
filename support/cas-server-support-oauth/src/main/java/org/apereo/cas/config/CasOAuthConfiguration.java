@@ -41,6 +41,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultToken
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -387,7 +388,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20RequestValidator oauthAuthorizationCodeResponseTypeRequestValidator() {
         return new OAuth20AuthorizationCodeResponseTypeRequestValidator(servicesManager, oAuthValidator());
     }
-    
+
     @Bean
     @RefreshScope
     public OAuth20RequestValidator oauthTokenResponseTypeRequestValidator() {
@@ -418,6 +419,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder() {
         return new OAuth20ResourceOwnerCredentialsResponseBuilder(accessTokenResponseGenerator(), oauthTokenGenerator(),
                 accessTokenExpirationPolicy());
+    }
+    
+    @Bean
+    @RefreshScope
+    public OAuth20AuthorizationResponseBuilder oauthClientCredentialsResponseBuilder() {
+        return new OAuth20ClientCredentialsResponseBuilder(accessTokenResponseGenerator(),
+                oauthTokenGenerator(), accessTokenExpirationPolicy());
     }
 
     @Bean
