@@ -400,7 +400,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             if (refreshToken) {
                 assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
             }
-            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":7"));
+            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
             accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals(MediaType.TEXT_PLAIN_VALUE, mockResponse.getContentType());
