@@ -15,7 +15,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20CallbackUrlBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,11 +55,11 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                            final CasConfigurationProperties casProperties,
                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                            final OAuth20CasAuthenticationBuilder authenticationBuilder,
-                                           final Set<OAuth20CallbackUrlBuilder> calbackUrlBuilders) {
+                                           final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
                 scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator,
-                authenticationBuilder, calbackUrlBuilders);
+                authenticationBuilder, oauthAuthorizationResponseBuilders);
     }
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
@@ -75,8 +76,8 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
     }
 
     @Override
-    protected String buildCallbackUrlForRequest(final OAuthRegisteredService registeredService, final J2EContext context,
+    protected View buildAuthorizationForRequest(final OAuthRegisteredService registeredService, final J2EContext context,
                                                 final String clientId, final Service service, final Authentication authentication) {
-        return super.buildCallbackUrlForRequest(registeredService, context, clientId, service, authentication);
+        return super.buildAuthorizationForRequest(registeredService, context, clientId, service, authentication);
     }
 }
