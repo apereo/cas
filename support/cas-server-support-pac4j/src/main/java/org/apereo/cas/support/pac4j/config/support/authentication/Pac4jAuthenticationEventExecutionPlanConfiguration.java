@@ -358,11 +358,13 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         return new DefaultPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean(name = "clientAuthenticationMetaDataPopulator")
     @Bean
     public AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator() {
         return new ClientAuthenticationMetaDataPopulator();
     }
 
+    @ConditionalOnMissingBean(name = "saml2ClientLogoutAction")
     @Bean
     public Action saml2ClientLogoutAction() {
         return new SAML2ClientLogoutAction(builtClients());
@@ -370,10 +372,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
     public AuthenticationHandler clientAuthenticationHandler() {
-        final ClientAuthenticationHandler h = new ClientAuthenticationHandler(casProperties.getAuthn().getPac4j().getName(), servicesManager,
+        final Pac4jProperties pac4j = casProperties.getAuthn().getPac4j();
+        final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
                 clientPrincipalFactory(), builtClients());
-        h.setTypedIdUsed(casProperties.getAuthn().getPac4j().isTypedIdUsed());
+        h.setTypedIdUsed(pac4j.isTypedIdUsed());
         return h;
     }
 
