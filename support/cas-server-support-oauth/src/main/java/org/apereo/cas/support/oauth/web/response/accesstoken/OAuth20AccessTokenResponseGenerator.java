@@ -16,7 +16,6 @@ import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,12 +32,6 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
     private static final JsonFactory JSON_FACTORY = new JsonFactory(new ObjectMapper().findAndRegisterModules());
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenResponseGenerator.class);
-
-    /**
-     * The Resource loader.
-     */
-    @Autowired
-    protected ResourceLoader resourceLoader;
 
     /**
      * CAS settings.

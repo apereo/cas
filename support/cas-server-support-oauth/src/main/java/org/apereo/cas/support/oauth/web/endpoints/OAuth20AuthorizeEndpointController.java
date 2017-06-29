@@ -1,8 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -22,14 +20,12 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20CallbackUrlBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -37,7 +33,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.pac4j.core.util.CommonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,9 +40,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -69,10 +63,16 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * The Consent approval view resolver.
      */
     protected final ConsentApprovalViewResolver consentApprovalViewResolver;
+
     /**
      * The Authentication builder.
      */
     protected final OAuth20CasAuthenticationBuilder authenticationBuilder;
+
+    /**
+     * Collection of callback builders.
+     */
+    protected final Set<OAuth20CallbackUrlBuilder> calbackUrlBuilders;
 
     public OAuth20AuthorizeEndpointController(final ServicesManager servicesManager,
                                               final TicketRegistry ticketRegistry,
@@ -85,13 +85,15 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                               final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                               final CasConfigurationProperties casProperties,
                                               final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                              final OAuth20CasAuthenticationBuilder authenticationBuilder) {
+                                              final OAuth20CasAuthenticationBuilder authenticationBuilder,
+                                              final Set<OAuth20CallbackUrlBuilder> calbackUrlBuilders) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
                 ticketGrantingTicketCookieGenerator);
         this.oAuthCodeFactory = oAuthCodeFactory;
         this.consentApprovalViewResolver = consentApprovalViewResolver;
         this.authenticationBuilder = authenticationBuilder;
+        this.calbackUrlBuilders = calbackUrlBuilders;
     }
 
     /**
@@ -177,23 +179,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final String redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
-        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
-
-        final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
-
-        final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-                ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
-        final String callbackUrl;
-        if (OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.CODE)) {
-            callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri, ticketGrantingTicket);
-        } else if (OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.TOKEN)) {
-            final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication, 
-                    registeredService, ticketGrantingTicket, OAuth20GrantTypes.IMPLICIT);
-            callbackUrl = buildCallbackUrlForImplicitTokenResponseType(holder, redirectUri);
-        } else {
-            callbackUrl = buildCallbackUrlForTokenResponseType(context, authentication, service, redirectUri, responseType, clientId);
-        }
+        final String callbackUrl = buildCallbackUrlForRequest(registeredService, context, clientId, service, authentication);
 
         LOGGER.debug("Callback URL to redirect: [{}]", callbackUrl);
         if (StringUtils.isBlank(callbackUrl)) {
@@ -203,109 +189,31 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     }
 
     /**
-     * Build callback url for token response type string.
+     * Build callback url for request string.
      *
-     * @param context        the context
-     * @param authentication the authentication
-     * @param service        the service
-     * @param redirectUri    the redirect uri
-     * @param responseType   the response type
-     * @param clientId       the client id
-     * @return the callback url
-     */
-    protected String buildCallbackUrlForTokenResponseType(final J2EContext context, final Authentication authentication,
-                                                          final Service service,
-                                                          final String redirectUri,
-                                                          final String responseType,
-                                                          final String clientId) {
-        return null;
-    }
-
-    private String buildCallbackUrlForImplicitTokenResponseType(final AccessTokenRequestDataHolder holder,
-                                                                final String redirectUri) throws Exception {
-        final AccessToken accessToken = generateAccessToken(holder);
-        LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
-        return buildCallbackUrlResponseType(holder.getAuthentication(),
-                holder.getService(), redirectUri, accessToken, Collections.emptyList());
-    }
-
-    /**
-     * Build callback url response type string.
-     *
-     * @param authentication the authentication
-     * @param service        the service
-     * @param redirectUri    the redirect uri
-     * @param accessToken    the access token
-     * @param params         the params
+     * @param registeredService the registered service
+     * @param context           the context
+     * @param clientId          the client id
+     * @param service           the service
+     * @param authentication    the authentication
      * @return the string
-     * @throws Exception the exception
      */
-    protected String buildCallbackUrlResponseType(final Authentication authentication,
-                                                  final Service service,
-                                                  final String redirectUri,
-                                                  final AccessToken accessToken,
-                                                  final List<NameValuePair> params) throws Exception {
-        final String state = authentication.getAttributes().get(OAuth20Constants.STATE).toString();
-        final String nonce = authentication.getAttributes().get(OAuth20Constants.NONCE).toString();
+    protected String buildCallbackUrlForRequest(final OAuthRegisteredService registeredService, final J2EContext context,
+                                              final String clientId, final Service service,
+                                              final Authentication authentication) {
+        final OAuth20CallbackUrlBuilder builder = this.calbackUrlBuilders
+                .stream()
+                .filter(b -> b.supports(context))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
-        final URIBuilder builder = new URIBuilder(redirectUri);
-        final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
-                .append('=')
-                .append(accessToken.getId())
-                .append('&')
-                .append(OAuth20Constants.TOKEN_TYPE)
-                .append('=')
-                .append(OAuth20Constants.TOKEN_TYPE_BEARER)
-                .append('&')
-                .append(OAuth20Constants.EXPIRES_IN)
-                .append('=')
-                .append(casProperties.getTicket().getTgt().getTimeToKillInSeconds());
+        final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+                ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
+        final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication,
+                registeredService, ticketGrantingTicket, OAuth20GrantTypes.IMPLICIT);
 
-        params.forEach(p -> stringBuilder.append('&')
-                .append(p.getName())
-                .append('=')
-                .append(p.getValue()));
-
-        if (StringUtils.isNotBlank(state)) {
-            stringBuilder.append('&')
-                    .append(OAuth20Constants.STATE)
-                    .append('=')
-                    .append(EncodingUtils.urlEncode(state));
-        }
-        if (StringUtils.isNotBlank(nonce)) {
-            stringBuilder.append('&')
-                    .append(OAuth20Constants.NONCE)
-                    .append('=')
-                    .append(EncodingUtils.urlEncode(nonce));
-        }
-        builder.setFragment(stringBuilder.toString());
-        final String url = builder.toString();
-        return url;
+        return builder.build(context, clientId, holder);
     }
-
-    private String buildCallbackUrlForAuthorizationCodeResponseType(final Authentication authentication,
-                                                                    final Service service, final String redirectUri,
-                                                                    final TicketGrantingTicket ticketGrantingTicket) {
-
-        final OAuthCode code = this.oAuthCodeFactory.create(service, authentication, ticketGrantingTicket);
-        LOGGER.debug("Generated OAuth code: [{}]", code);
-        this.ticketRegistry.addTicket(code);
-
-        final String state = authentication.getAttributes().get(OAuth20Constants.STATE).toString();
-        final String nonce = authentication.getAttributes().get(OAuth20Constants.NONCE).toString();
-
-        String callbackUrl = redirectUri;
-        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.CODE, code.getId());
-        if (StringUtils.isNotBlank(state)) {
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.STATE, state);
-        }
-        if (StringUtils.isNotBlank(nonce)) {
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.NONCE, nonce);
-        }
-        return callbackUrl;
-    }
-
 
     /**
      * Verify the authorize request.
