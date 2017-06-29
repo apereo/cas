@@ -21,6 +21,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
@@ -31,8 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
 
 /**
  * This is {@link OAuth20CasAuthenticationBuilder}.
@@ -116,7 +116,7 @@ public class OAuth20CasAuthenticationBuilder {
         final String authenticator = profile.getClass().getCanonicalName();
         final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
         final HandlerResult handlerResult = new DefaultHandlerResult(authenticator, metadata, newPrincipal, new ArrayList<>());
-        final String[] scopes = context.getRequest().getParameterValues(OAuth20Constants.SCOPE);
+        final Set<Object> scopes = CollectionUtils.toCollection(context.getRequest().getParameterValues(OAuth20Constants.SCOPE));
 
         final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);
         final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
@@ -130,7 +130,7 @@ public class OAuth20CasAuthenticationBuilder {
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", new HashSet<>(profile.getPermissions()))
                 .addAttribute("roles", new HashSet<>(profile.getRoles()))
-                .addAttribute("scopes", Stream.of(scopes).collect(Collectors.toSet()))
+                .addAttribute("scopes", scopes)
                 .addAttribute(OAuth20Constants.STATE, state)
                 .addAttribute(OAuth20Constants.NONCE, nonce)
                 .addCredential(metadata)

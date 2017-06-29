@@ -39,7 +39,7 @@ public class OAuth20Validator {
         final String parameter = request.getParameter(name);
         LOGGER.debug("[{}]: [{}]", name, parameter);
         if (StringUtils.isBlank(parameter)) {
-            LOGGER.error("Missing: [{}]", name);
+            LOGGER.error("Missing request parameter: [{}]", name);
             return false;
         }
         return true;

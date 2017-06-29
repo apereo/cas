@@ -48,23 +48,11 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        // we generate a refresh token if requested by the service but not from a refresh token
-        final boolean generateRefreshToken = isAllowedToGenerateRefreshToken(registeredService);
         final OAuthToken token = getOAuthTokenFromRequest();
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter());
         }
-        return new AccessTokenRequestDataHolder(token, generateRefreshToken, registeredService, getGrantType());
-    }
-
-    /**
-     * Is allowed to generate refresh token ?
-     *
-     * @param registeredService the registered service
-     * @return the boolean
-     */
-    protected boolean isAllowedToGenerateRefreshToken(final OAuthRegisteredService registeredService) {
-        return registeredService != null && registeredService.isGenerateRefreshToken();
+        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType());
     }
 
     protected String getOAuthParameterName() {

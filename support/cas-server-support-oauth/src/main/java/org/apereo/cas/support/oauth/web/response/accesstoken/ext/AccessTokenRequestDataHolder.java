@@ -27,34 +27,37 @@ public class AccessTokenRequestDataHolder {
     private final TicketGrantingTicket ticketGrantingTicket;
     private final OAuth20GrantTypes grantType;
 
-    public AccessTokenRequestDataHolder(final OAuthToken token, final boolean generateRefreshToken,
+    public AccessTokenRequestDataHolder(final OAuthToken token,
                                         final OAuthRegisteredService registeredService,
                                         final OAuth20GrantTypes grantType) {
-        this(token.getService(), token.getAuthentication(), token, generateRefreshToken, registeredService, grantType);
+        this(token.getService(), token.getAuthentication(), token, registeredService, grantType);
     }
 
-    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication, final OAuthToken token,
-                                        final boolean generateRefreshToken, final OAuthRegisteredService registeredService,
+    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
+                                        final OAuthToken token,
+                                        final OAuthRegisteredService registeredService,
                                         final OAuth20GrantTypes grantType) {
-        this.service = service;
-        this.grantType = grantType;
-        this.authentication = authentication;
-        this.token = token;
-        this.generateRefreshToken = generateRefreshToken;
-        this.registeredService = registeredService;
-        this.ticketGrantingTicket = token != null ? token.getGrantingTicket() : null;
+        this(service, authentication, registeredService, token, null, grantType);
     }
 
     public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
                                         final OAuthRegisteredService registeredService,
                                         final TicketGrantingTicket ticketGrantingTicket,
                                         final OAuth20GrantTypes grantType) {
+        this(service, authentication, registeredService, null, ticketGrantingTicket, grantType);
+    }
+
+    private AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
+                                        final OAuthRegisteredService registeredService,
+                                        final OAuthToken token,
+                                        final TicketGrantingTicket ticketGrantingTicket,
+                                        final OAuth20GrantTypes grantType) {
         this.service = service;
         this.authentication = authentication;
         this.registeredService = registeredService;
-        this.ticketGrantingTicket = ticketGrantingTicket;
-        this.token = null;
-        this.generateRefreshToken = false;
+        this.ticketGrantingTicket = token != null ? token.getGrantingTicket() : ticketGrantingTicket;
+        this.token = token;
+        this.generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
         this.grantType = grantType;
     }
 
