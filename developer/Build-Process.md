@@ -7,6 +7,12 @@ title: CAS - Build Process
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
+## Development
+
+CAS development is powered by: <br/>
+
+<a href="http://www.jetbrains.com/idea/" target="_blank"><img src="../images/intellijidea.gif" width="100" height="100" valign="middle" style="vertical-align:middle"></a>
+
 ## Source Checkout
 
 The following shell commands may be used to grab the source from the repository:
@@ -29,24 +35,38 @@ The following shell commands may be used to build the source:
 ```bash
 cd cas-server
 git checkout master
-./gradlew build install --parallel -x test -x javadoc -DskipCheckstyle=true -DskipFindbugs=true
+```
+
+For brand new clones, the following task should only be run once from the root directory:
+
+```bash
+./gradlew npmInstall gulpSetup
+```
+
+When done, you may build the codebase via the following command:
+
+```bash
+./gradlew build install --parallel -x test -x javadoc -x check
 ```
 
 The following commandline boolean flags are supported by the build:
 
 | Flag                              | Description
-|-----------------------------------+----------------------------------------------------+
+|-----------------------------------+------------------------------------------------------------------+
 | `skipCheckstyle`                  | Skip running checkstyle checks.
-| `enableRemoteDebugging`           | Allows for remote debugging via a pre-definedd port.
+| `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
 | `skipFindbugs`                    | Skip running findbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `genConfigMetadata`               | Generate CAS configuration metadata for `@ConfigurationProperties` classes.
 | `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
 | `enableIncremental`               | Enable Gradle's incremental compilation feature.
 | `enableKotlin`                    | Enable compilation of Kotlin's `.kt` files, if any. 
+| `enableJRebelAgent`               | Enable [JRebel support](https://zeroturnaround.com/software/jrebel/). Requires the environment variable `JREBEL_LIB_PATH` to point to the appropriate JRebel library path (DLL, etc).
 
-
-Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`). Also, if you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster. Using the Gradle daemon also is a big help.
+- You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
+- If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
+- Using the Gradle daemon also is a big help. [It should be enabled by default](https://docs.gradle.org/current/userguide/gradle_daemon.html).
+- Enabling [Gradle's build cache](https://docs.gradle.org/current/userguide/build_cache.html) via `--build-cache` can also significantly improve build times.
 
 ## Tasks
 
@@ -55,7 +75,8 @@ Available build tasks can be found using the command `./gradlew tasks`.
 ### Sass Compilation
 
 The build is automatically wired to compile `.scss` files into `.css` via a [Gulp](http://gulpjs.com/).
-To initialize the plugin once, you may need to invoke `sudo ./gradlew gulpSetup` once at the root directory. 
+To let this step successfully pass, you may need to install `gulp` and `npm`, which the build should automatically do.
+See the **Build** section for more info.
 
 ## IDE Setup
 
@@ -109,19 +130,21 @@ compile project(":support:cas-server-support-modulename")
 
 - Prepare the embedded container, as described below, to run and deploy the web application
 
-## Embedded Container
+## Embedded Containers
 
-The CAS project is pre-configured with an embedded Tomcat instance for both the server web application as well as the management web application.
+The CAS project comes with a number of built-in modules that are pre-configured with embedded servlet containers such as Apache Tomcat, Jetty, etc 
+for the server web application, the management web application and others.
 
 ### Configure SSL
 
-The `thekeystore` file must include the SSL private/public keys that are issued for your CAS server domain. You will need to use the `keytool` command of the JDK to create the keystore and the certificate. The following commands may serve as an example:
+The `thekeystore` file must include the SSL private/public keys that are issued for your CAS server domain. You will need to use the `keytool` command of the JDK to create the keystore and the certificate. 
+The following commands may serve as an example:
 
 ```bash
 keytool -genkey -alias cas -keyalg RSA -validity 999 -keystore /etc/cas/thekeystore
 ```
 
-Note that the validity parameter allows you to specify, in the number of days, how long the certificate should be valid for. The longer the time period, the less likely you are to need to recreate it. To recreate it, you'd need to delete the old one and then follow these instructions again.
+Note that the validity parameter allows you to specify, in the number of days, how long the certificate should be valid for. The longer the time period, the less likely you are to need to recreate it. To recreate it, you'd need to delete the old one and then follow these instructions again. You may also need to provide the *Subject Alternative Name* field, which can be done with `keytool` via `-ext san=dns:$REPLACE_WITH_FULL_MACHINE_NAME`.
 
 The response will look something like this:
 
@@ -152,26 +175,36 @@ Execute the following command:
 cd webapp/cas-server-webapp-tomcat
 
 # Or for the management-webapp:
-# cd webapp-mgmt/cas-management-webapp;
+# cd webapp-mgmt/cas-management-webapp
 
-./gradlew build bootRun --parallel --offline
+../../gradlew build bootRun --parallel --offline
 ```
 
 The response will look something like this:
 
 ```bash
-INFO [org.apache.catalina.core.StandardService] - <Starting service Tomcat>
-INFO [org.apache.catalina.core.StandardEngine] - <Starting Servlet Engine: Apache Tomcat/x.y.z>
-INFO [org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/cas]] - <Initializing Spring embedded WebApplicationContext>
-INFO [org.apereo.cas.web.CasWebApplication] - <Started CasWebApplication in 21.485 seconds (JVM running for 22.895)>
+...
+2017-05-26 19:10:46,470 INFO [org.apereo.cas.web.CasWebApplication] - <Started CasWebApplication in 21.893 seconds (JVM running for 36.888)>
+...
 ```
 
 By default CAS will be available at `https://mymachine.domain.edu:8443/cas`
 
 ### Remote Debugging
 
-The Tomcat instance is pre-configured to listen to debugger requests on port `5000`. Create a remote debugger 
-configuration in your IDE that connects to this port and you will be able to step into the code.
+The embedded container instance is pre-configured to listen to debugger requests on port `5000` provided you specify the `enableRemoteDebugging` parameter. 
+For external container deployments, [such as Apache Tomcat](https://wiki.apache.org/tomcat/FAQ/Developing#Q1), 
+the following example shows what needs configuring in the `bin/startup.sh|bat` file:
+
+```bash
+export JPDA_ADDRESS=5000
+export JPDA_TRANSPORT=dt_socket
+bin/catalina.sh jpda start
+```
+
+When you're done, create a remote debugger configuration in your IDE that connects to this port and you will be able to step into the code.
+
+![image](https://cloud.githubusercontent.com/assets/1205228/26517058/d09a8288-4245-11e7-962e-004bfe174a0a.png)
 
 ### Dependency Updates
 
@@ -193,3 +226,25 @@ Then run the following command at the root:
 ```
 
 Browse the report at the above link to see which dependencies might need attention. 
+
+## Continuous Integration
+
+CAS uses [Travis CI](https://travis-ci.org/apereo/cas/builds) as its main continuous integration tool. The build primaryly is
+controlled by the `.travis.yml` file, defined at the root of the project directory. 
+
+The following special commit messages are recognized by Travis CI to control aspects
+of build behavior:
+
+| Commit Message                    | Description
+|-----------------------------------+------------------------------------------------------------------+
+| `[skip ci]`                       | Skip running a build completely.
+| `[skip tests]`                    | Skip running tests.
+
+Travis CI is mainly responsible for the following tasks:
+
+- Running a full build, including tests and style checks.
+- Pushing project documentation artifacts into the `gh-pages` branch.
+- Uploading snapshots to relevant repositories.
+
+The build is triggered for automatically for all pull requests, direct commits, etc where different
+policies may apply for each change type.

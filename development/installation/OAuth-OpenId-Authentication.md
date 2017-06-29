@@ -5,6 +5,8 @@ title: CAS - OAuth Authentication
 
 # OAuth/OpenID Authentication
 
+Allow CAS to act as an OAuth/OpenID authentication provider. Please [review the specification](https://oauth.net/2/) to learn more.
+
 <div class="alert alert-info"><strong>CAS as OAuth Server</strong><p>This page specifically describes how to enable
 OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with
 other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
@@ -57,7 +59,7 @@ The `password` grant type allows the OAuth client to directly send the user's cr
 
 - `/cas/oauth2.0/accessToken?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token.
 
-You must also need to pass along a `service` or `X-service` header value that identifies the target application url. The header value
+You may also pass along a `service` or `X-service` header value that identifies the target application url. The header value
 must match the OAuth service definition in the registry that is linked to the client id.
 
 ### Refresh Token

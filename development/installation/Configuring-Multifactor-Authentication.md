@@ -30,6 +30,7 @@ The following multifactor providers are supported by CAS.
 | Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
 | Microsoft Azure       | `mfa-azure`     | [See this guide](MicrosoftAzure-Authentication.html).
 | FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
+| Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
 | Custom                | Custom          | [See this guide](Custom-MFA-Authentication.html).
 
 
@@ -120,7 +121,7 @@ The following failure modes are supported:
 A default failure mode can also be specified globally via CAS properties and may be overriden individually by CAS registered services.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
-## Multiple Providers
+## Multiple Provider Selection
 
 In the event that multiple multifactor authentication providers are determined for a multifactor authentication transaction, by default CAS will attempt to sort the collection of providers based on their rank and will pick one with the highest priority. This use case may arise if multiple triggers are defined where each decides on a different multifactor authentication provider, or the same provider instance is configured multiple times with many instances.
 

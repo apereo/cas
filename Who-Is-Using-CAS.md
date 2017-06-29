@@ -26,7 +26,3 @@ is also **NOT** held responsibible for use of promotional material on this page,
 links, logos, etc. 
 
 Think carefully before listing your deployment.
-
-## Current Deployments
-
--

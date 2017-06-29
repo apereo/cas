@@ -5,10 +5,11 @@ title: CAS - Contributor Guidelines
 
 # Contributor Guidelines
 
+
 ## First
 
-We want to start off by saying thank you for using CAS. This project is a labor of love, and we appreciate all of the users 
-that catch bugs, make performance improvements, and help with documentation. Every contribution is meaningful, so thank you 
+We want to start off by saying thank you for using CAS. This project is a labor of love, and we appreciate the work done by all 
+who catch bugs, make performance improvements and help with documentation. Every contribution is meaningful, so thank you 
 for participating. That being said, here are a few guidelines that we ask you to follow so we can successfully address your patch.
 
 ## Be Not Afraid
@@ -20,9 +21,13 @@ we are all here to help you as much as we can so you can ultimately become an in
 to make mistakes and it does take some time, effort and energy to get better at it. So do not be discouraged, keep at it
 and if you find anything that is unclear along the way, do not hesitate to ask questions. 
 
+## Code of conduct
+
+CAS is a sponsored Apereo project participating in the [Apereo Welcoming Policy](https://www.apereo.org/content/apereo-welcoming-policy).
+
 ## Getting Started
 
-All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
+All CAS contributions SHOULD be made via GitHub pull requests, which requires that contributions are offered from
 a fork of the [apereo CAS repository](https://github.com/apereo/CAS):
 
 Refer to the GitHub [Fork a Repo](http://help.github.com/fork-a-repo/) page for help with forking.
