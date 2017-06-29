@@ -11,15 +11,17 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.util.CommonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
- * This is {@link OAuth20AuthorizationCodeCallbackUrlBuilder}.
+ * This is {@link OAuth20AuthorizationCodeAuthorizationResponseBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class OAuth20AuthorizationCodeCallbackUrlBuilder implements OAuth20CallbackUrlBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizationCodeCallbackUrlBuilder.class);
+public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizationCodeAuthorizationResponseBuilder.class);
 
     /**
      * The Ticket registry.
@@ -28,14 +30,14 @@ public class OAuth20AuthorizationCodeCallbackUrlBuilder implements OAuth20Callba
 
     private final OAuthCodeFactory oAuthCodeFactory;
 
-    public OAuth20AuthorizationCodeCallbackUrlBuilder(final TicketRegistry ticketRegistry, final OAuthCodeFactory oAuthCodeFactory) {
+    public OAuth20AuthorizationCodeAuthorizationResponseBuilder(final TicketRegistry ticketRegistry, final OAuthCodeFactory oAuthCodeFactory) {
         this.ticketRegistry = ticketRegistry;
         this.oAuthCodeFactory = oAuthCodeFactory;
     }
 
     @Override
-    public String build(final J2EContext context, final String clientId,
-                        final AccessTokenRequestDataHolder holder) {
+    public View build(final J2EContext context, final String clientId,
+                      final AccessTokenRequestDataHolder holder) {
         final OAuthCode code = oAuthCodeFactory.create(holder.getService(), holder.getAuthentication(), holder.getTicketGrantingTicket());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
@@ -54,7 +56,8 @@ public class OAuth20AuthorizationCodeCallbackUrlBuilder implements OAuth20Callba
         if (StringUtils.isNotBlank(nonce)) {
             callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.NONCE, nonce);
         }
-        return callbackUrl;
+        LOGGER.debug("Redirecting to URL [{}]", callbackUrl);
+        return new RedirectView(callbackUrl);
     }
 
     @Override
