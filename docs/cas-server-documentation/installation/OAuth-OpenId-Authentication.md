@@ -78,13 +78,23 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "clientid",
   "clientSecret": "clientSecret",
-  "bypassApprovalPrompt": false,
-  "generateRefreshToken": false,
-  "serviceId" : "^(https|imaps)://hello.*",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
   "name" : "My OAuth service ",
+  "description" : "This is the description for this OAuth service.",
   "id" : 100
 }
 ```
+
+The following fields are supported:
+
+| Field                             | Description
+|-----------------------------------|---------------------------------------------------------------------------------
+| `clientId`                        | The client identifer for the application/service.
+| `clientSecret`                    | The client secret for the application/service.
+| `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
+| `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
+| `jsonFormat`                      | Whether oauth responses for access tokens, etc should be produced as JSON. Default is `false`.
+| `serviceId`                       | The pattern that registered the redirect URI, or same as `clientId` in case `redirect_uri` is not required by the grant.
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
 
