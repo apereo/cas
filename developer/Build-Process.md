@@ -37,12 +37,6 @@ cd cas-server
 git checkout master
 ```
 
-For brand new clones, the following task should only be run once from the root directory:
-
-```bash
-./gradlew npmInstall gulpSetup
-```
-
 When done, you may build the codebase via the following command:
 
 ```bash
