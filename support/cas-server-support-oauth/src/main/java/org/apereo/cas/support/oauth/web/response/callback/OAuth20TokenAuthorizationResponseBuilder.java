@@ -16,29 +16,31 @@ import org.apereo.cas.util.EncodingUtils;
 import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is {@link OAuth20TokenCallbackUrlBuilder}.
+ * This is {@link OAuth20TokenAuthorizationResponseBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class OAuth20TokenCallbackUrlBuilder implements OAuth20CallbackUrlBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20TokenCallbackUrlBuilder.class);
+public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20TokenAuthorizationResponseBuilder.class);
     private final OAuth20TokenGenerator accessTokenGenerator;
     private final ExpirationPolicy accessTokenExpirationPolicy;
 
-    public OAuth20TokenCallbackUrlBuilder(final OAuth20TokenGenerator accessTokenGenerator,
-                                          final ExpirationPolicy accessTokenExpirationPolicy) {
+    public OAuth20TokenAuthorizationResponseBuilder(final OAuth20TokenGenerator accessTokenGenerator,
+                                                    final ExpirationPolicy accessTokenExpirationPolicy) {
         this.accessTokenGenerator = accessTokenGenerator;
         this.accessTokenExpirationPolicy = accessTokenExpirationPolicy;
     }
 
     @Override
-    public String build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
+    public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
         try {
             final String redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
             LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
@@ -63,12 +65,12 @@ public class OAuth20TokenCallbackUrlBuilder implements OAuth20CallbackUrlBuilder
      * @return the string
      * @throws Exception the exception
      */
-    protected String buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
-                                                  final String redirectUri,
-                                                  final AccessToken accessToken,
-                                                  final List<NameValuePair> params,
-                                                  final RefreshToken refreshToken,
-                                                  final J2EContext context) throws Exception {
+    protected View buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
+                                                final String redirectUri,
+                                                final AccessToken accessToken,
+                                                final List<NameValuePair> params,
+                                                final RefreshToken refreshToken,
+                                                final J2EContext context) throws Exception {
         final String state = holder.getAuthentication().getAttributes().get(OAuth20Constants.STATE).toString();
         final String nonce = holder.getAuthentication().getAttributes().get(OAuth20Constants.NONCE).toString();
 
@@ -112,7 +114,9 @@ public class OAuth20TokenCallbackUrlBuilder implements OAuth20CallbackUrlBuilder
         }
         builder.setFragment(stringBuilder.toString());
         final String url = builder.toString();
-        return url;
+
+        LOGGER.debug("Redirecting to URL [{}]", url);
+        return new RedirectView(url);
     }
 
     @Override

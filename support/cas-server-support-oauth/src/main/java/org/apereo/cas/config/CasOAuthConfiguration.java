@@ -32,9 +32,10 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponse
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeCallbackUrlBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20CallbackUrlBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenCallbackUrlBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
@@ -302,7 +303,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController() {
         return new OAuth20CallbackAuthorizeEndpointController(servicesManager, ticketRegistry,
-                oAuthValidator(), defaultAccessTokenFactory(), oauthPrincipalFactory(), webApplicationServiceFactory,
+                oAuthValidator(), defaultAccessTokenFactory(), oauthPrincipalFactory(),
+                webApplicationServiceFactory,
                 oauthSecConfig(), callbackController(), callbackAuthorizeViewResolver(),
                 profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator);
     }
@@ -332,7 +334,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 casProperties,
                 ticketGrantingTicketCookieGenerator,
                 oauthCasAuthenticationBuilder(),
-                centralAuthenticationService
+                centralAuthenticationService,
+                accessTokenExpirationPolicy()
         );
     }
 
@@ -343,28 +346,36 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20UserProfileControllerController(servicesManager,
                 ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
                 oauthPrincipalFactory(), webApplicationServiceFactory,
-                profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator);
+                profileScopeToAttributesFilter(), casProperties,
+                ticketGrantingTicketCookieGenerator);
     }
 
-    @ConditionalOnMissingBean(name = "oauthCallbackUrlBuilders")
+    @ConditionalOnMissingBean(name = "oauthAuthorizationResponseBuilders")
     @Bean
     @RefreshScope
-    public Set<OAuth20CallbackUrlBuilder> oauthCallbackUrlBuilders() {
-        final Map<String, OAuth20CallbackUrlBuilder> builders =
-                this.applicationContext.getBeansOfType(OAuth20CallbackUrlBuilder.class, false, true);
+    public Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders() {
+        final Map<String, OAuth20AuthorizationResponseBuilder> builders =
+                this.applicationContext.getBeansOfType(OAuth20AuthorizationResponseBuilder.class, false, true);
         return new HashSet<>(builders.values());
     }
 
+
     @Bean
     @RefreshScope
-    public OAuth20CallbackUrlBuilder oauthTokenCallbackUrlBuilder() {
-        return new OAuth20TokenCallbackUrlBuilder(oauthTokenGenerator(), accessTokenExpirationPolicy());
+    public OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder() {
+        return new OAuth20ResourceOwnerCredentialsResponseBuilder(accessTokenResponseGenerator(), oauthTokenGenerator(),
+                accessTokenExpirationPolicy());
+    }
+    @Bean
+    @RefreshScope
+    public OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder() {
+        return new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator(), accessTokenExpirationPolicy());
     }
 
     @Bean
     @RefreshScope
-    public OAuth20CallbackUrlBuilder oauthAuthorizationCodeCallbackUrlBuilder() {
-        return new OAuth20AuthorizationCodeCallbackUrlBuilder(ticketRegistry, defaultOAuthCodeFactory());
+    public OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder() {
+        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(ticketRegistry, defaultOAuthCodeFactory());
     }
 
     @ConditionalOnMissingBean(name = "authorizeController")
@@ -376,7 +387,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 oauthPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory(),
                 consentApprovalViewResolver(), profileScopeToAttributesFilter(), casProperties,
                 ticketGrantingTicketCookieGenerator, oauthCasAuthenticationBuilder(),
-                oauthCallbackUrlBuilders()
+                oauthAuthorizationResponseBuilders()
         );
     }
 

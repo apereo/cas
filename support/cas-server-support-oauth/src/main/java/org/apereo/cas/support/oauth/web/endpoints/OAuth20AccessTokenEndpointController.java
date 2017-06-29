@@ -26,6 +26,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPass
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
@@ -67,6 +68,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     private final AccessTokenResponseGenerator accessTokenResponseGenerator;
     private final OAuth20CasAuthenticationBuilder authenticationBuilder;
     private final CentralAuthenticationService centralAuthenticationService;
+    private final ExpirationPolicy accessTokenExpirationPolicy;
 
     public OAuth20AccessTokenEndpointController(final ServicesManager servicesManager,
                                                 final TicketRegistry ticketRegistry,
@@ -80,7 +82,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                                 final CasConfigurationProperties casProperties,
                                                 final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                 final OAuth20CasAuthenticationBuilder authenticationBuilder,
-                                                final CentralAuthenticationService centralAuthenticationService) {
+                                                final CentralAuthenticationService centralAuthenticationService,
+                                                final ExpirationPolicy accessTokenExpirationPolicy) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
                 principalFactory, webApplicationServiceServiceFactory,
                 scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
@@ -88,6 +91,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
         this.authenticationBuilder = authenticationBuilder;
         this.centralAuthenticationService = centralAuthenticationService;
+        this.accessTokenExpirationPolicy = accessTokenExpirationPolicy;
     }
 
     /**
@@ -121,7 +125,6 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             final Pair<AccessToken, RefreshToken> accessToken = accessTokenGenerator.generate(responseHolder);
             LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
             generateAccessTokenResponse(request, response, responseHolder, context, accessToken.getKey(), accessToken.getValue());
-
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -136,25 +139,17 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                              final RefreshToken refreshToken) {
         LOGGER.debug("Generating access token response for [{}]", accessToken);
 
-        final OAuth20ResponseTypes type = getOAuth20ResponseType(context);
+        final OAuth20ResponseTypes type = OAuth20Utils.getResponseType(context);
         LOGGER.debug("Located response type as [{}]", type);
 
         this.accessTokenResponseGenerator.generate(request, response,
                 responseHolder.getRegisteredService(),
                 responseHolder.getService(),
                 accessToken, refreshToken,
-                casProperties.getTicket().getTgt().getTimeToKillInSeconds(), type);
+                accessTokenExpirationPolicy.getTimeToLive(), type);
     }
 
-    private static OAuth20ResponseTypes getOAuth20ResponseType(final J2EContext context) {
-        final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
-        final OAuth20ResponseTypes type = Arrays.stream(OAuth20ResponseTypes.values())
-                .filter(t -> t.getType().equalsIgnoreCase(responseType))
-                .findFirst()
-                .orElse(OAuth20ResponseTypes.CODE);
-        LOGGER.debug("OAuth response type is [{}]", type);
-        return type;
-    }
+    
 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
                                                                                   final HttpServletResponse response) {

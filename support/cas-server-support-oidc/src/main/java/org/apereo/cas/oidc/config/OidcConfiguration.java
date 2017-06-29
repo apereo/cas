@@ -35,7 +35,7 @@ import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
-import org.apereo.cas.oidc.web.OidcImplicitIdTokenCallbackUrlBuilder;
+import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcSecurityInterceptor;
 import org.apereo.cas.oidc.web.controllers.OidcAccessTokenEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcAuthorizeEndpointController;
@@ -57,7 +57,7 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20CallbackUrlBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -120,8 +120,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private OAuth20TokenGenerator oauthTokenGenerator;
 
     @Autowired
-    @Qualifier("oauthCallbackUrlBuilders")
-    private Set<OAuth20CallbackUrlBuilder> oauthCallbackUrlBuilders;
+    @Qualifier("oauthAuthorizationResponseBuilders")
+    private Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -308,7 +308,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
                 oidcPrincipalFactory(), webApplicationServiceFactory, oauthTokenGenerator,
                 oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
-                ticketGrantingTicketCookieGenerator, authenticationBuilder, centralAuthenticationService);
+                ticketGrantingTicketCookieGenerator, authenticationBuilder, centralAuthenticationService,
+                accessTokenExpirationPolicy);
     }
 
     @Bean
@@ -364,10 +365,12 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public OidcAuthorizeEndpointController oidcAuthorizeController() {
         return new OidcAuthorizeEndpointController(servicesManager,
                 ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
-                oidcPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory,
+                defaultOAuthCodeFactory,
                 consentApprovalViewResolver(),
-                profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator,
-                authenticationBuilder, oauthCallbackUrlBuilders);
+                profileScopeToAttributesFilter(), casProperties,
+                ticketGrantingTicketCookieGenerator,
+                authenticationBuilder, oauthAuthorizationResponseBuilders);
     }
 
     @Autowired
@@ -475,8 +478,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public OAuth20CallbackUrlBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
-        return new OidcImplicitIdTokenCallbackUrlBuilder(oidcIdTokenGenerator(), oauthTokenGenerator,
+    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
+        return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator,
                 accessTokenExpirationPolicy, grantingTicketExpirationPolicy);
     }
 }

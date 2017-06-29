@@ -20,7 +20,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20CallbackUrlBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -72,7 +73,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     /**
      * Collection of callback builders.
      */
-    protected final Set<OAuth20CallbackUrlBuilder> calbackUrlBuilders;
+    protected final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders;
 
     public OAuth20AuthorizeEndpointController(final ServicesManager servicesManager,
                                               final TicketRegistry ticketRegistry,
@@ -86,14 +87,14 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                               final CasConfigurationProperties casProperties,
                                               final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                               final OAuth20CasAuthenticationBuilder authenticationBuilder,
-                                              final Set<OAuth20CallbackUrlBuilder> calbackUrlBuilders) {
+                                              final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
                 ticketGrantingTicketCookieGenerator);
         this.oAuthCodeFactory = oAuthCodeFactory;
         this.consentApprovalViewResolver = consentApprovalViewResolver;
         this.authenticationBuilder = authenticationBuilder;
-        this.calbackUrlBuilders = calbackUrlBuilders;
+        this.oauthAuthorizationResponseBuilders = oauthAuthorizationResponseBuilders;
     }
 
     /**
@@ -179,13 +180,12 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final String callbackUrl = buildCallbackUrlForRequest(registeredService, context, clientId, service, authentication);
-
-        LOGGER.debug("Callback URL to redirect: [{}]", callbackUrl);
-        if (StringUtils.isBlank(callbackUrl)) {
-            return OAuth20Utils.produceUnauthorizedErrorView();
+        final View view = buildAuthorizationForRequest(registeredService, context, clientId, service, authentication);
+        if (view != null) {
+            return OAuth20Utils.redirectTo(view);
         }
-        return OAuth20Utils.redirectTo(callbackUrl);
+        LOGGER.debug("No explicit view was defined as part of the authorization response");
+        return null;
     }
 
     /**
@@ -198,10 +198,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param authentication    the authentication
      * @return the string
      */
-    protected String buildCallbackUrlForRequest(final OAuthRegisteredService registeredService, final J2EContext context,
-                                              final String clientId, final Service service,
-                                              final Authentication authentication) {
-        final OAuth20CallbackUrlBuilder builder = this.calbackUrlBuilders
+    protected View buildAuthorizationForRequest(final OAuthRegisteredService registeredService,
+                                                final J2EContext context,
+                                                final String clientId, final Service service,
+                                                final Authentication authentication) {
+        final OAuth20AuthorizationResponseBuilder builder = this.oauthAuthorizationResponseBuilders
                 .stream()
                 .filter(b -> b.supports(context))
                 .findFirst()
@@ -209,8 +210,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
                 ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
+
+        final String grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
+                OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
         final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication,
-                registeredService, ticketGrantingTicket, OAuth20GrantTypes.IMPLICIT);
+                registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType));
 
         return builder.build(context, clientId, holder);
     }
@@ -222,6 +226,19 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return whether the authorize request is valid
      */
     private boolean verifyAuthorizeRequest(final HttpServletRequest request) {
+
+        final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
+        if (StringUtils.equalsIgnoreCase(grantType, OAuth20GrantTypes.PASSWORD.getType())) {
+            final boolean checkParameterExist = this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID);
+            final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+
+            final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
+            return checkParameterExist && this.validator.checkServiceValid(registeredService)
+                    && this.validator.checkParameterExist(request, OAuth20Constants.SECRET)
+                    && this.validator.checkParameterExist(request, OAuth20Constants.USERNAME)
+                    && this.validator.checkParameterExist(request, OAuth20Constants.PASSWORD);
+        }
+
 
         final boolean checkParameterExist = this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
                 && this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
@@ -236,6 +253,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                 && checkResponseTypes(responseType, OAuth20ResponseTypes.values())
                 && this.validator.checkServiceValid(registeredService)
                 && this.validator.checkCallbackValid(registeredService, redirectUri);
+
+
     }
 
     /**
