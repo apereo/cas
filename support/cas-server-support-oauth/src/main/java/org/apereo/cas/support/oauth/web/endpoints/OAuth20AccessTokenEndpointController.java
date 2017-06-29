@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -19,6 +20,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenAuthorizationCodeGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPasswordGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractor;
@@ -27,7 +29,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessToken
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
@@ -62,18 +63,18 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private final RefreshTokenFactory refreshTokenFactory;
+    private final OAuth20TokenGenerator accessTokenGenerator;
     private final AccessTokenResponseGenerator accessTokenResponseGenerator;
     private final OAuth20CasAuthenticationBuilder authenticationBuilder;
     private final CentralAuthenticationService centralAuthenticationService;
-    
+
     public OAuth20AccessTokenEndpointController(final ServicesManager servicesManager,
                                                 final TicketRegistry ticketRegistry,
                                                 final OAuth20Validator validator,
                                                 final AccessTokenFactory accessTokenFactory,
                                                 final PrincipalFactory principalFactory,
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                final RefreshTokenFactory refreshTokenFactory,
+                                                final OAuth20TokenGenerator accessTokenGenerator,
                                                 final AccessTokenResponseGenerator accessTokenResponseGenerator,
                                                 final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                 final CasConfigurationProperties casProperties,
@@ -83,7 +84,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
                 principalFactory, webApplicationServiceServiceFactory,
                 scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
-        this.refreshTokenFactory = refreshTokenFactory;
+        this.accessTokenGenerator = accessTokenGenerator;
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
         this.authenticationBuilder = authenticationBuilder;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -117,17 +118,9 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             }
 
             final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
-            final AccessToken accessToken = generateAccessToken(responseHolder);
-            LOGGER.debug("Access token generated is: [{}]", accessToken);
-
-            RefreshToken refreshToken = null;
-            if (responseHolder.isGenerateRefreshToken()) {
-                refreshToken = generateRefreshToken(responseHolder);
-                LOGGER.debug("Refresh Token: [{}]", refreshToken);
-            } else {
-                LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", responseHolder.getService());
-            }
-            generateAccessTokenResponse(request, response, responseHolder, context, accessToken, refreshToken);
+            final Pair<AccessToken, RefreshToken> accessToken = accessTokenGenerator.generate(responseHolder);
+            LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
+            generateAccessTokenResponse(request, response, responseHolder, context, accessToken.getKey(), accessToken.getValue());
 
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (final Exception e) {
@@ -136,14 +129,6 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         }
     }
 
-    private RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
-        LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
-        final RefreshToken refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
-                responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket());
-        LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
-        addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
-        return refreshToken;
-    }
 
     private void generateAccessTokenResponse(final HttpServletRequest request, final HttpServletResponse response,
                                              final AccessTokenRequestDataHolder responseHolder,

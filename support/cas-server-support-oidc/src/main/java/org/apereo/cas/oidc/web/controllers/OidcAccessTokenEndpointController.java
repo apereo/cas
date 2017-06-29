@@ -13,8 +13,8 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +36,7 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
                                              final AccessTokenFactory accessTokenFactory,
                                              final PrincipalFactory principalFactory,
                                              final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                             final RefreshTokenFactory refreshTokenFactory,
+                                             final OAuth20TokenGenerator accessTokenGenerator,
                                              final AccessTokenResponseGenerator accessTokenResponseGenerator,
                                              final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                              final CasConfigurationProperties casProperties,
@@ -44,13 +44,13 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
                                              final OAuth20CasAuthenticationBuilder authenticationBuilder,
                                              final CentralAuthenticationService centralAuthenticationService) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, refreshTokenFactory, accessTokenResponseGenerator,
+                webApplicationServiceServiceFactory, accessTokenGenerator, accessTokenResponseGenerator,
                 scopeToAttributesFilter, casProperties, cookieGenerator, authenticationBuilder,
                 centralAuthenticationService);
     }
 
     @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
-                          '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL})
+            '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL})
     @Override
     public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         super.handleRequest(request, response);
