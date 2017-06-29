@@ -29,6 +29,15 @@ public interface OAuth20Constants {
     String CLIENT_ID = "client_id";
 
     /** The client secret. */
+    String SECRET = "secret";
+
+    /** The client username. */
+    String USERNAME = "username";
+
+    /** The client password. */
+    String PASSWORD = "password";
+
+    /** The client secret. */
     String CLIENT_SECRET = "client_secret";
 
     /** The approval prompt. */
