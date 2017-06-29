@@ -33,7 +33,9 @@ public class CasProtocolView extends ThymeleafView {
         setTemplateEngine(templateEngine);
         setCharacterEncoding(properties.getEncoding().displayName());
         setLocale(Locale.getDefault());
-        setContentType(StringUtils.defaultIfBlank(contentType, properties.getContentType().getType()));
+        if (StringUtils.isNotBlank(contentType)) {
+            setContentType(contentType);
+        }
     }
 
     /**
