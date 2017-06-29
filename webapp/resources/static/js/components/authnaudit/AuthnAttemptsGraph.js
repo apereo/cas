@@ -7,6 +7,11 @@ const AuthnAttemptsGraph = React.createClass({
     graphData: array
   },
   render: function () {
+    if (this.props.graphData.length === 0) {
+      return (
+        <div>No data found</div>
+      )
+    }
     return (
       <VictoryChart
         width={950} height={300}

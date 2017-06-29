@@ -1,7 +1,9 @@
 const path = require('path')
 // const webpack = require('webpack');
 
-module.exports = {
+console.log(process.env.NODE_ENV)
+
+const config = {
   context: __dirname,
   entry:
     {
@@ -18,7 +20,11 @@ module.exports = {
     historyApiFallback: true
   },
   resolve: {
-    extensions: ['.js', '.json']
+    extensions: ['.js', '.json'],
+    alias: {
+      react: 'preact-compat',
+      'react-dom': 'preact-compat'
+    }
   },
   stats: {
     colors: true,
@@ -43,9 +49,15 @@ module.exports = {
         loader: 'json-loader'
       },
       {
-        include: path.resolve(__dirname, './resources/static/js'),
+        include: [
+          path.resolve(__dirname, './resources/static/js'),
+          path.resolve(__dirname, './node_modules/preact-compat/src')
+        ],
         test: /\.js$/,
         loader: 'babel-loader'
+        // include: [
+        //   path.resolve('js'),
+        // ]
       },
       {
         test: /\.css$/,
@@ -62,3 +74,14 @@ module.exports = {
     ]
   }
 }
+
+if (process.env.NODE_ENV === 'production') {
+  config.entry = {
+    dashboard: './resources/static/js/components/dashboard/Dashboard',
+    statistics: './resources/static/js/StatisticsApp'
+  }
+  config.devtool = false;
+  config.plugins = []
+
+}
+module.exports = config

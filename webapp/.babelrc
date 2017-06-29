@@ -3,6 +3,9 @@
     "react",
     ["es2015", {"modules": false, "loose": true}]
   ],
+  "plugins": [
+
+  ],
   "env": {
     "test": {
       "plugins": ["transform-es2015-modules-commonjs"]
