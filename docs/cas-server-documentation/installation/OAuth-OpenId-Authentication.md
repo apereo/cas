@@ -36,7 +36,7 @@ After enabling OAuth support, the following endpoints will be available:
 | `/cas/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
 
 
-## Response Types
+## Response/Grant Types
 
 The following types are supported; they allow you to get an access token representing the current user and OAuth client application. With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
 
