@@ -3,7 +3,6 @@ package org.apereo.cas.support.pac4j.config.support.authentication;
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -45,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,10 +60,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * This is {@link Pac4jAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("pac4jAuthenticationEventExecutionPlanConfiguration")
-public class Pac4jAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jAuthenticationEventExecutionPlanConfiguration.class);
 
     @Autowired
@@ -381,12 +383,15 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Authe
         return h;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        if (!builtClients().findAllClients().isEmpty()) {
-            LOGGER.info("Registering delegated authentication clients...");
-            plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver);
-            plan.registerMetadataPopulator(clientAuthenticationMetaDataPopulator());
-        }
+    @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            if (!builtClients().findAllClients().isEmpty()) {
+                LOGGER.info("Registering delegated authentication clients...");
+                plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver);
+                plan.registerMetadataPopulator(clientAuthenticationMetaDataPopulator());
+            }
+        };
     }
 }
