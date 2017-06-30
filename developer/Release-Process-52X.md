@@ -93,7 +93,7 @@ If you did create a new release branch, you should also switch back to `master` 
 <div class="alert alert-info"><strong>Remember</strong><p>When updating the release description, try to be keep consistent and follow the same layout as previous releases.</p></div>
 
 - Mark the release as pre-release, when releasing RC versions of the project. 
-- Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists, linking to the new release page.
+- Send an announcement message to [@cas-announce, @cas-user and @cas-dev](/cas/Mailing-Lists.html) mailing lists, linking to the new release page.
 
 ## Update Overlays
 
