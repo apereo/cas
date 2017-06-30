@@ -36,7 +36,7 @@ After enabling OAuth support, the following endpoints will be available:
 | `/cas/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
 
 
-## Response Types
+## Response/Grant Types
 
 The following types are supported; they allow you to get an access token representing the current user and OAuth client application. With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
 
@@ -102,7 +102,7 @@ The following fields are supported:
 | `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
 | `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
 | `jsonFormat`                      | Whether oauth responses for access tokens, etc should be produced as JSON. Default is `false`.
-| `serviceId`                       | The pattern that registered the redirect URI, or same as `clientId` in case `redirect_uri` is not required by the grant.
+| `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type.
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
 
