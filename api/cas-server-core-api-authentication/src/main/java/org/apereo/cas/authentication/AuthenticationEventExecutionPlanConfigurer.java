@@ -25,5 +25,5 @@ public interface AuthenticationEventExecutionPlanConfigurer {
      *
      * @param plan the plan
      */
-    void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan);
+    void configureAuthenticationExecutionPlan(AuthenticationEventExecutionPlan plan);
 }

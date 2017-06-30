@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.config;
 
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MongoAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;

@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.spi.PrincipalIdProvider;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.SurrogateAuthenticationAspect;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;

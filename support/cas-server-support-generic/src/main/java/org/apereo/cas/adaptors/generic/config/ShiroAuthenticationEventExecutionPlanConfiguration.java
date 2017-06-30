@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.generic.config;
 
 import org.apereo.cas.adaptors.generic.ShiroAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;

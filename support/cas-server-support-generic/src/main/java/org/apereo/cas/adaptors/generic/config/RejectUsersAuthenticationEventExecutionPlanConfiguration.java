@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.generic.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.generic.RejectUsersAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
