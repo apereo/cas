@@ -36,6 +36,7 @@ import java.util.Arrays;
  * This is {@link TrustedAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("trustedAuthenticationConfiguration")
@@ -118,15 +119,9 @@ public class TrustedAuthenticationConfiguration {
                 trustedPrincipalFactory(), remoteRequestPrincipalAttributesExtractor());
     }
 
-    /**
-     * The type Trusted authentication event execution plan configuration.
-     */
-    @Configuration("trustedAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class TrustedAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(principalBearingCredentialsAuthenticationHandler(), trustedPrincipalResolver());
-        }
+    @ConditionalOnMissingBean(name = "trustedAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer trustedAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(principalBearingCredentialsAuthenticationHandler(), trustedPrincipalResolver());
     }
 }

@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link TokenAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
 @Configuration("tokenAuthenticationConfiguration")
@@ -33,6 +34,10 @@ public class TokenAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
 
 
     @ConditionalOnMissingBean(name = "tokenPrincipalFactory")
@@ -48,19 +53,9 @@ public class TokenAuthenticationConfiguration {
                 Beans.newPrincipalNameTransformer(token.getPrincipalTransformation()));
     }
 
-    /**
-     * The type Token authentication event execution plan configuration.
-     */
-    @Configuration("tokenAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class TokenAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Autowired
-        @Qualifier("personDirectoryPrincipalResolver")
-        private PrincipalResolver personDirectoryPrincipalResolver;
-
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(tokenAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
+    @ConditionalOnMissingBean(name = "tokenAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer tokenAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(tokenAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

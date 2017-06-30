@@ -36,6 +36,7 @@ import java.util.stream.Stream;
  * This is {@link CasCoreAuthenticationHandlersConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("casCoreAuthenticationHandlersConfiguration")
@@ -119,24 +120,18 @@ public class CasCoreAuthenticationHandlersConfiguration {
         return Collections.emptyMap();
     }
 
-    /**
-     * The type Proxy authentication event execution plan configuration.
-     */
-    @Configuration("proxyAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class ProxyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler(), proxyPrincipalResolver());
-        }
+    @ConditionalOnMissingBean(name = "proxyAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer proxyAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler(), proxyPrincipalResolver());
     }
 
     /**
-     * The type Jaas authentication event execution plan configuration.
+     * The Jaas authentication configuration.
      */
-    @Configuration("jaasAuthenticationEventExecutionPlanConfiguration")
+    @Configuration("jaasAuthenticationConfiguration")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class JaasAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+    public class JaasAuthenticationConfiguration {
         @Autowired
         @Qualifier("personDirectoryPrincipalResolver")
         private PrincipalResolver personDirectoryPrincipalResolver;
@@ -167,9 +162,10 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     .collect(Collectors.toList());
         }
 
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers(), personDirectoryPrincipalResolver);
+        @ConditionalOnMissingBean(name = "jaasAuthenticationEventExecutionPlanConfigurer")
+        @Bean
+        public AuthenticationEventExecutionPlanConfigurer jaasAuthenticationEventExecutionPlanConfigurer() {
+            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers(), personDirectoryPrincipalResolver);
         }
     }
 }

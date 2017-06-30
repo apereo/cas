@@ -44,11 +44,13 @@ import java.util.List;
  * This is {@link DuoSecurityAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("duoSecurityAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DuoSecurityAuthenticationEventExecutionPlanConfiguration.class);
 
     @Autowired
@@ -144,9 +146,12 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
                 duoMultifactorAuthenticationProvider());
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandler(duoAuthenticationHandler());
-        plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator());
+    @ConditionalOnMissingBean(name = "duoSecurityAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer duoSecurityAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandler(duoAuthenticationHandler());
+            plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator());
+        };
     }
 }

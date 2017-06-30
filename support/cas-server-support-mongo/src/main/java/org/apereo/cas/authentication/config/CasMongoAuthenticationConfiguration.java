@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link CasMongoAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("casMongoAuthenticationConfiguration")
@@ -36,6 +37,10 @@ public class CasMongoAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
     
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
@@ -56,19 +61,9 @@ public class CasMongoAuthenticationConfiguration {
         return handler;
     }
 
-    /**
-     * The type Mongo authentication event execution plan configuration.
-     */
-    @Configuration("mongoAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class MongoAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Autowired
-        @Qualifier("personDirectoryPrincipalResolver")
-        private PrincipalResolver personDirectoryPrincipalResolver;
-
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
+    @ConditionalOnMissingBean(name = "mongoAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer mongoAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

@@ -31,6 +31,7 @@ import org.springframework.webflow.execution.Action;
  * This is {@link CasRemoteAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("casRemoteAuthenticationConfiguration")
@@ -63,6 +64,10 @@ public class CasRemoteAuthenticationConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+
     @ConditionalOnMissingBean(name = "remoteAddressWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer remoteAddressWebflowConfigurer() {
@@ -92,19 +97,10 @@ public class CasRemoteAuthenticationConfiguration {
         return new DefaultPrincipalFactory();
     }
 
-    /**
-     * The type Remote address authentication event execution plan configuration.
-     */
-    @Configuration("remoteAddressAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class RemoteAddressAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Autowired
-        @Qualifier("personDirectoryPrincipalResolver")
-        private PrincipalResolver personDirectoryPrincipalResolver;
 
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
+    @ConditionalOnMissingBean(name = "remoteAddressAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer remoteAddressAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

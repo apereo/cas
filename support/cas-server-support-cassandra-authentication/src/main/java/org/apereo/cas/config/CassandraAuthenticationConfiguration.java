@@ -16,6 +16,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +26,12 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link CassandraAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
 @Configuration("cassandraAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CassandraAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class CassandraAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("cassandraSessionFactory")
@@ -71,8 +73,9 @@ public class CassandraAuthenticationConfiguration implements AuthenticationEvent
         return handler;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler(), personDirectoryPrincipalResolver);
+    @ConditionalOnMissingBean(name = "cassandraAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer cassandraAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

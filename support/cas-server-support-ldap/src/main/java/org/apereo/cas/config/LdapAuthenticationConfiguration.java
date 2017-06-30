@@ -45,6 +45,7 @@ import java.util.function.Predicate;
  * relevant authentication handlers for LDAP.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("ldapAuthenticationConfiguration")
@@ -214,20 +215,14 @@ public class LdapAuthenticationConfiguration {
         return cfg;
     }
 
-
-    /**
-     * The type Ldap authentication event execution plan configuration.
-     */
-    @Configuration("ldapAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class LdapAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+    @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
             ldapAuthenticationHandlers().forEach(handler -> {
                 LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(handler, personDirectoryPrincipalResolver);
             });
-        }
-
+        };
     }
 }

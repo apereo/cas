@@ -33,6 +33,7 @@ import java.util.List;
  * This this {@link RadiusConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("radiusConfiguration")
@@ -105,19 +106,15 @@ public class RadiusConfiguration {
         return h;
     }
 
-    /**
-     * The type Radius authentication event execution plan configuration.
-     */
-    @Configuration("radiusAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class RadiusAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+    @ConditionalOnMissingBean(name = "radiusAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer radiusAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getRadius().getClient().getInetAddress())) {
                 plan.registerAuthenticationHandler(radiusAuthenticationHandler());
             } else {
                 LOGGER.warn("No RADIUS address is defined. RADIUS support will be disabled.");
             }
-        }
+        };
     }
 }

@@ -29,11 +29,12 @@ import java.util.Set;
  * This is {@link RejectUsersAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("rejectUsersAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RejectUsersAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(RejectUsersAuthenticationEventExecutionPlanConfiguration.class);
 
     @Autowired(required = false)
@@ -72,12 +73,16 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration implements
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(rejectProperties.getPrincipalTransformation()));
         return h;
     }
-    
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers())) {
-            LOGGER.debug("Added rejecting authentication handler");
-            plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
+
+    @ConditionalOnMissingBean(name = "rejectUsersAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer rejectUsersAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            final String users = casProperties.getAuthn().getReject().getUsers();
+            if (StringUtils.isNotBlank(users)) {
+                plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), personDirectoryPrincipalResolver);
+                LOGGER.debug("Added rejecting authentication handler with the following users [{}]", users);
+            }
+        };
     }
 }

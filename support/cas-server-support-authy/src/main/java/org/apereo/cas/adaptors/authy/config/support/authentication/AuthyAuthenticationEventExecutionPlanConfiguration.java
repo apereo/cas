@@ -32,11 +32,12 @@ import org.springframework.webflow.execution.Action;
  * This is {@link AuthyAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("authyAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AuthyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -108,9 +109,12 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration implements Authe
         return new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance());
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandler(authyAuthenticationHandler());
-        plan.registerMetadataPopulator(authyAuthenticationMetaDataPopulator());
+    @ConditionalOnMissingBean(name = "authyAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer authyAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandler(authyAuthenticationHandler());
+            plan.registerMetadataPopulator(authyAuthenticationMetaDataPopulator());
+        };
     }
 }

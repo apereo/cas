@@ -18,6 +18,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +28,12 @@ import org.springframework.context.annotation.Lazy;
  * This is {@link U2FAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("u2fAuthenticationEventExecutionPlanConfiguration")
-public class U2FAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -82,9 +85,12 @@ public class U2FAuthenticationEventExecutionPlanConfiguration implements Authent
         return p;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandler(u2fAuthenticationHandler());
-        plan.registerMetadataPopulator(u2fAuthenticationMetaDataPopulator());
+    @ConditionalOnMissingBean(name = "u2fAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer u2fAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandler(u2fAuthenticationHandler());
+            plan.registerMetadataPopulator(u2fAuthenticationMetaDataPopulator());
+        };
     }
 }

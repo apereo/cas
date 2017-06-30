@@ -49,12 +49,13 @@ import java.util.Set;
  *
  * @author Misagh Moayyed
  * @author John Gasper
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("surrogateAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy
-public class SurrogateAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class SurrogateAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationConfiguration.class);
 
     @Autowired

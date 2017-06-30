@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,10 +41,12 @@ import org.springframework.webflow.execution.Action;
  * This is {@link YubiKeyAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("yubikeyAuthenticationEventExecutionPlanConfiguration")
-public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(YubiKeyAuthenticationEventExecutionPlanConfiguration.class);
 
     @Autowired
@@ -164,12 +167,15 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration implements Aut
         return p;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
-        if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
-            plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
-            plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
-        }
+    @ConditionalOnMissingBean(name = "yubikeyAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer yubikeyAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
+            if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
+                plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
+                plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
+            }
+        };
     }
 }

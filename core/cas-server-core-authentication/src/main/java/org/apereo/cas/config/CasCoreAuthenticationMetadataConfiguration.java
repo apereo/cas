@@ -22,11 +22,12 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link CasCoreAuthenticationMetadataConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("casCoreAuthenticationMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasCoreAuthenticationMetadataConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class CasCoreAuthenticationMetadataConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,15 +61,18 @@ public class CasCoreAuthenticationMetadataConfiguration implements Authenticatio
     }
 
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerMetadataPopulator(successfulHandlerMetaDataPopulator());
-        plan.registerMetadataPopulator(rememberMeAuthenticationMetaDataPopulator());
-        plan.registerMetadataPopulator(authenticationCredentialTypeMetaDataPopulator());
+    @ConditionalOnMissingBean(name = "casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerMetadataPopulator(successfulHandlerMetaDataPopulator());
+            plan.registerMetadataPopulator(rememberMeAuthenticationMetaDataPopulator());
+            plan.registerMetadataPopulator(authenticationCredentialTypeMetaDataPopulator());
 
-        final ClearpassProperties cp = casProperties.getClearpass();
-        if (cp.isCacheCredential()) {
-            plan.registerMetadataPopulator(new CacheCredentialsMetaDataPopulator(cacheCredentialsCipherExecutor()));
-        }
+            final ClearpassProperties cp = casProperties.getClearpass();
+            if (cp.isCacheCredential()) {
+                plan.registerMetadataPopulator(new CacheCredentialsMetaDataPopulator(cacheCredentialsCipherExecutor()));
+            }
+        };
     }
 }

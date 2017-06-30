@@ -22,11 +22,12 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link DigestAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("digestAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DigestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class DigestAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -50,9 +51,10 @@ public class DigestAuthenticationEventExecutionPlanConfiguration implements Auth
         final DigestProperties digest = casProperties.getAuthn().getDigest();
         return new DigestAuthenticationHandler(digest.getName(), servicesManager, digestAuthenticationPrincipalFactory());
     }
-    
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandlerWithPrincipalResolver(digestAuthenticationHandler(), personDirectoryPrincipalResolver);
+
+    @ConditionalOnMissingBean(name = "digestAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer digestAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(digestAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

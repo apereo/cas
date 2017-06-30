@@ -11,20 +11,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * This is {@link AcceptUsersAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("acceptUsersAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AcceptUsersAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(AcceptUsersAuthenticationEventExecutionPlanConfiguration.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -36,16 +39,19 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration implements
     @Qualifier("acceptUsersAuthenticationHandler")
     private AuthenticationHandler acceptUsersAuthenticationHandler;
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+    @ConditionalOnMissingBean(name = "acceptUsersAuthenticationEventExecutionPlanConfigurer")
+    @Bean()
+    public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer() {
+      return plan -> {
         if (StringUtils.isNotBlank(this.casProperties.getAuthn().getAccept().getUsers())) {
-            final String header =
-                    "\nCAS is configured to accept a static list of credentials for authentication. "
-                            + "While this is generally useful for demo purposes, it is STRONGLY recommended "
-                            + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
-                            + "to a blank value) and switch to a mode that is more suitable for production.";
-            AsciiArtUtils.printAsciiArtWarning(LOGGER, "STOP!", header);
-            plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
+          final String header =
+            "\nCAS is configured to accept a static list of credentials for authentication. "
+              + "While this is generally useful for demo purposes, it is STRONGLY recommended "
+              + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
+              + "to a blank value) and switch to a mode that is more suitable for production.";
+          AsciiArtUtils.printAsciiArtWarning(LOGGER, "STOP!", header);
+          plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
         }
+      };
     }
 }
