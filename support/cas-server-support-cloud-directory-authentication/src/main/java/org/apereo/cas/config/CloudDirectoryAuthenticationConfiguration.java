@@ -9,7 +9,6 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CloudDirectoryAuthenticationHandler;
@@ -42,7 +41,7 @@ import java.io.File;
  */
 @Configuration("cloudDirectoryAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CloudDirectoryAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class CloudDirectoryAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -115,8 +114,9 @@ public class CloudDirectoryAuthenticationConfiguration implements Authentication
 
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandlerWithPrincipalResolver(cloudDirectoryAuthenticationHandler(), personDirectoryPrincipalResolver);
+    @ConditionalOnMissingBean(name = "cloudDirectoryAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer cloudDirectoryAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cloudDirectoryAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

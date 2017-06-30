@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
@@ -28,7 +27,7 @@ import org.springframework.web.util.CookieGenerator;
  */
 @Configuration("SurrogateWebflowEventResolutionConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SurrogateWebflowEventResolutionConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class SurrogateWebflowEventResolutionConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")

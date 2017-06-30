@@ -6,7 +6,6 @@ import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationRequestBuilder;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.azure.web.flow.AzureAuthenticatorGenerateTokenAction;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -36,11 +35,12 @@ import java.io.FileNotFoundException;
  * This is {@link AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("azureAuthenticatorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -125,11 +125,14 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration imp
         return new DefaultPrincipalFactory();
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getAzure().getConfigDir())) {
-            plan.registerAuthenticationHandler(azureAuthenticatorAuthenticationHandler());
-            plan.registerMetadataPopulator(azureAuthenticatorAuthenticationMetaDataPopulator());
-        }
+    @ConditionalOnMissingBean(name = "azureAuthenticatorAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer azureAuthenticatorAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getAzure().getConfigDir())) {
+                plan.registerAuthenticationHandler(azureAuthenticatorAuthenticationHandler());
+                plan.registerMetadataPopulator(azureAuthenticatorAuthenticationMetaDataPopulator());
+            }
+        };
     }
 }

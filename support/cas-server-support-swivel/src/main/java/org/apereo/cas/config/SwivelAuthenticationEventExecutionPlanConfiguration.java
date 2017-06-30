@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.swivel.SwivelAuthenticationHandler;
 import org.apereo.cas.adaptors.swivel.SwivelMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -17,6 +16,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +25,12 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link SwivelAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
 @Configuration("swivelAuthenticationEventExecutionPlanConfiguration")
-public class SwivelAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -76,10 +78,12 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration implements Auth
         return p;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandler(swivelAuthenticationHandler());
-        plan.registerMetadataPopulator(swivelAuthenticationMetaDataPopulator());
+    @ConditionalOnMissingBean(name = "swivelAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer swivelAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandler(swivelAuthenticationHandler());
+            plan.registerMetadataPopulator(swivelAuthenticationMetaDataPopulator());
+        };
     }
-
 }

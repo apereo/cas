@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CouchbaseAuthenticationHandler;
@@ -27,11 +26,12 @@ import java.util.Set;
  * This is {@link CouchbaseAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
 @Configuration("couchbaseAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CouchbaseAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class CouchbaseAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -72,8 +72,9 @@ public class CouchbaseAuthenticationConfiguration implements AuthenticationEvent
         return handler;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), personDirectoryPrincipalResolver);
+    @ConditionalOnMissingBean(name = "couchbaseAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer couchbaseAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

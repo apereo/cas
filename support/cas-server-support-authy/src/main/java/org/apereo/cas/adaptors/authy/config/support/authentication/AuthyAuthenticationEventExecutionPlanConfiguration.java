@@ -7,7 +7,6 @@ import org.apereo.cas.adaptors.authy.AuthyClientInstance;
 import org.apereo.cas.adaptors.authy.AuthyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWebflowAction;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -32,11 +31,12 @@ import org.springframework.webflow.execution.Action;
  * This is {@link AuthyAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("authyAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AuthyAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -108,9 +108,12 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration implements Authe
         return new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance());
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandler(authyAuthenticationHandler());
-        plan.registerMetadataPopulator(authyAuthenticationMetaDataPopulator());
+    @ConditionalOnMissingBean(name = "authyAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer authyAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandler(authyAuthenticationHandler());
+            plan.registerMetadataPopulator(authyAuthenticationMetaDataPopulator());
+        };
     }
 }

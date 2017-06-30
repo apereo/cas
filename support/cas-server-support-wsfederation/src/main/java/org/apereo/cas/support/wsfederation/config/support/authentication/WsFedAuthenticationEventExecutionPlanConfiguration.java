@@ -1,7 +1,6 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -30,11 +29,12 @@ import java.util.HashSet;
  * This is {@link WsFedAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("wsfedAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class WsFedAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("mergingAttributeRepository")
@@ -100,27 +100,30 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration implements Authe
         return new DefaultPrincipalFactory();
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        casProperties.getAuthn().getWsfed()
-                .stream()
-                .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
-                        && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
-                .forEach(wsfed -> {
-                    final AuthenticationHandler handler =
-                            new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, adfsPrincipalFactory());
-                    if (!wsfed.isAttributeResolverEnabled()) {
-                        plan.registerAuthenticationHandler(handler);
-                    } else {
-                        final WsFederationCredentialsToPrincipalResolver r = new WsFederationCredentialsToPrincipalResolver();
-                        r.setConfiguration(getWsFederationConfiguration(wsfed));
-                        r.setAttributeRepository(attributeRepository);
-                        r.setPrincipalAttributeName(wsfed.getPrincipal().getPrincipalAttribute());
-                        r.setReturnNullIfNoAttributes(wsfed.getPrincipal().isReturnNull());
-                        r.setPrincipalFactory(adfsPrincipalFactory());
+    @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            casProperties.getAuthn().getWsfed()
+                    .stream()
+                    .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
+                            && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
+                    .forEach(wsfed -> {
+                        final AuthenticationHandler handler =
+                                new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, adfsPrincipalFactory());
+                        if (!wsfed.isAttributeResolverEnabled()) {
+                            plan.registerAuthenticationHandler(handler);
+                        } else {
+                            final WsFederationCredentialsToPrincipalResolver r = new WsFederationCredentialsToPrincipalResolver();
+                            r.setConfiguration(getWsFederationConfiguration(wsfed));
+                            r.setAttributeRepository(attributeRepository);
+                            r.setPrincipalAttributeName(wsfed.getPrincipal().getPrincipalAttribute());
+                            r.setReturnNullIfNoAttributes(wsfed.getPrincipal().isReturnNull());
+                            r.setPrincipalFactory(adfsPrincipalFactory());
 
-                        plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
-                    }
-                });
+                            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
+                        }
+                    });
+        };
     }
 }
