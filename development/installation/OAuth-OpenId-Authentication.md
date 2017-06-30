@@ -53,14 +53,22 @@ The `token` type is also made for UI interactions as well as indirect non-intera
 
 - `/cas/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK` returns the access token as an anchor parameter of the `CALLBACK` url.
 
-### Resource Owner
+### Resource Owner Credentials
 
 The `password` grant type allows the OAuth client to directly send the user's credentials to the OAuth server.
+This grant is a great user experience for trusted first party clients both on the web and in native device applications.
 
-- `/cas/oauth2.0/accessToken?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token.
+- `/cas/oauth2.0/authorize?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token.
 
 You may also pass along a `service` or `X-service` header value that identifies the target application url. The header value
 must match the OAuth service definition in the registry that is linked to the client id.
+
+### Client Credentials
+
+The simplest of all of the OAuth grants, this grant is suitable for machine-to-machine authentication 
+where a specific user’s permission to access data is not required.
+
+- `/cas/oauth2.0/authorize?grant_type=client_credentials&client_id=client&secret=secret`
 
 ### Refresh Token
 
@@ -78,13 +86,23 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "clientid",
   "clientSecret": "clientSecret",
-  "bypassApprovalPrompt": false,
-  "generateRefreshToken": false,
-  "serviceId" : "^(https|imaps)://hello.*",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
   "name" : "My OAuth service ",
+  "description" : "This is the description for this OAuth service.",
   "id" : 100
 }
 ```
+
+The following fields are supported:
+
+| Field                             | Description
+|-----------------------------------|---------------------------------------------------------------------------------
+| `clientId`                        | The client identifer for the application/service.
+| `clientSecret`                    | The client secret for the application/service.
+| `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
+| `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
+| `jsonFormat`                      | Whether oauth responses for access tokens, etc should be produced as JSON. Default is `false`.
+| `serviceId`                       | The pattern that registered the redirect URI, or same as `clientId` in case `redirect_uri` is not required by the grant.
 
 Service definitions are typically managed by the [service management](Service-Management.html) facility.
 
