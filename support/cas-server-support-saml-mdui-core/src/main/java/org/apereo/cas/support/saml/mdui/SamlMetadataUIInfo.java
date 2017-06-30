@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.opensaml.core.xml.schema.XSString;
@@ -113,5 +114,15 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
 
     public void setUIInfo(final UIInfo uiInfo) {
         this.uiInfo = uiInfo;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("displayName", getDisplayName())
+                .append("description", getDescription())
+                .toString();
     }
 }
