@@ -29,7 +29,7 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     /** Maximum time this token is valid.  */
     private long maxTimeToLiveInSeconds;
 
-    /** Time to kill in milliseconds. */
+    /** Time to kill in seconds. */
     private long timeToKillInSeconds;
 
     public OAuthAccessTokenExpirationPolicy() {}
@@ -60,9 +60,9 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         }
 
         // token is within hard window, check timeToKill (sliding window)
-        expirationTime = creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        if (ticketState.getLastTimeUsed().isAfter(expirationTime)) {
-            LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInMilliseconds");
+        expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        if (currentSystemTime.isAfter(expirationTime)) {
+            LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInSeconds");
             return true;
         }
 
