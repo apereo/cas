@@ -50,6 +50,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
      * @param name             the name
      * @param servicesManager  the services manager
      * @param principalFactory the principal factory
+     * @param client           the client
      * @param registry         the account registry which holds registrations.
      */
     public YubiKeyAuthenticationHandler(final String name, final ServicesManager servicesManager,
