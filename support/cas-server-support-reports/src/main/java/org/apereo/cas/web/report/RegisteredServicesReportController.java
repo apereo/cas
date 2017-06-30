@@ -28,7 +28,8 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
      * Instantiates a new mvc endpoint.
      * Endpoints are by default sensitive.
      *
-     * @param casProperties the cas properties
+     * @param casProperties   the cas properties
+     * @param servicesManager the services manager
      */
     public RegisteredServicesReportController(final CasConfigurationProperties casProperties,
                                               final ServicesManager servicesManager) {
