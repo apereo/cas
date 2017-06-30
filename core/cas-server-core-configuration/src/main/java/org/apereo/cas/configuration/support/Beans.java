@@ -265,6 +265,7 @@ public final class Beans {
         if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
             properties.put("hibernate.default_schema", jpaProperties.getDefaultSchema());
         }
+        properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
         bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
