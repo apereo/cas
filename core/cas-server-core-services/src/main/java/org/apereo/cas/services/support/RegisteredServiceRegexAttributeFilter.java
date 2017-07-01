@@ -149,16 +149,6 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     }
 
     /**
-     * Determine whether pattern matches attribute value.
-     *
-     * @param value the value
-     * @return true, if successful
-     */
-    private boolean patternMatchesAttributeValue(final String value) {
-        return this.pattern.matcher(value).matches();
-    }
-
-    /**
      * Filter array attributes.
      *
      * @param valuesToFilter the values to filter
@@ -171,7 +161,17 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             return attributeValue;
         }).collect(Collectors.toList());
     }
-
+    
+    /**
+     * Determine whether pattern matches attribute value.
+     *
+     * @param value the value
+     * @return true, if successful
+     */
+    private boolean patternMatchesAttributeValue(final String value) {
+        return this.pattern.matcher(value).matches();
+    }
+    
     /**
      * Logs the released attribute entry.
      *
