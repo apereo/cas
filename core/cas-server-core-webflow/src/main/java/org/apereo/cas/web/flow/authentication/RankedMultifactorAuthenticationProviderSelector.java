@@ -28,7 +28,7 @@ public class RankedMultifactorAuthenticationProviderSelector implements Multifac
                                                      final RegisteredService service, final Principal principal) {
         final List<MultifactorAuthenticationProvider> sorted = new ArrayList<>(providers);
         if (sorted.isEmpty()) {
-            throw new RuntimeException("List of candidate multifactor authentication providers is empty");
+            throw new IllegalArgumentException("List of candidate multifactor authentication providers is empty");
         }
         OrderComparator.sort(sorted);
         final MultifactorAuthenticationProvider provider = sorted.get(sorted.size() - 1);

@@ -49,7 +49,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
         try {
             this.checker.init();
         } catch (final Exception e) {
-            throw new RuntimeException("ResourceCRLRevocationChecker initialization failed", e);
+            throw new IllegalArgumentException("ResourceCRLRevocationChecker initialization failed", e);
         }
     }
 
