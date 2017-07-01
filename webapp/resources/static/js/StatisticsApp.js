@@ -45,5 +45,5 @@ StatisticsApp.propTypes = {
 
 ReactDOM.render(
   <StatisticsApp range='PT03H' scale='PT05M' />,
-  document.getElementById('authn-graph')
+  document.getElementById('statistics-app')
 )
