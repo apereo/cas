@@ -20,7 +20,7 @@ The current members of the PMC are:
 - [Dmitriy Kopylenko](https://github.com/dima767)
 - [Marvin Addison](https://github.com/serac)
 - [Jérôme Leleu](https://github.com/leleuj)
-- [Misagh Moayyed](https://github.com/mmoayyed)
+- [Misagh Moayyed](https://github.com/mmoayyed) [Chairman]
 - Ian Dolphin
 
 ## Structure
