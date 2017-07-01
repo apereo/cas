@@ -130,6 +130,18 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         LOGGER.debug("Located service definition [{}]", registeredService);
         return registeredService;
     }
+    
+    /**
+     * Gets registered service from request.
+     *
+     * @param requestContext the request context
+     * @return the registered service from request
+     */
+    protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext) {
+        final Service currentService = WebUtils.getService(requestContext);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(currentService);
+        return registeredService;
+    }
 
     /**
      * Gets entity id from request.
@@ -142,15 +154,4 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         return request.getParameter(this.entityIdParameterName);
     }
 
-    /**
-     * Gets registered service from request.
-     *
-     * @param requestContext the request context
-     * @return the registered service from request
-     */
-    protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext) {
-        final Service currentService = WebUtils.getService(requestContext);
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(currentService);
-        return registeredService;
-    }
 }
