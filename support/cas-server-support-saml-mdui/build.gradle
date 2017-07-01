@@ -1,8 +1,6 @@
 description = "Apereo CAS SAML Server MDUI Support"
 dependencies {
     
-    
-    
     implementation libraries.quartz
     compile project(":support:cas-server-support-saml")
     compile project(":core:cas-server-core-configuration")
@@ -14,6 +12,7 @@ dependencies {
     testCompileOnly libraries.metrics
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":support:cas-server-support-cookie")

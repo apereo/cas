@@ -10,7 +10,6 @@ import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticatio
 import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.RestGoogleAuthenticatorTokenCredentialRepository;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -47,11 +46,12 @@ import java.util.concurrent.TimeUnit;
  * This is {@link GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("googleAuthenticatorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Lazy
     @Autowired
@@ -162,13 +162,15 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration im
         return new DefaultPrincipalFactory();
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
-            plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
-            plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
-        }
-
+    @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer googleAuthenticatorAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
+                plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
+                plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
+            }
+        };
     }
 
     /**

@@ -8,7 +8,6 @@ import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthentica
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -33,11 +32,12 @@ import java.util.List;
  * This is {@link RadiusTokenAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("radiusTokenAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -104,9 +104,12 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration implements
         return new AuthenticationContextAttributeMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandler(radiusTokenAuthenticationHandler());
-        plan.registerMetadataPopulator(radiusAuthenticationMetaDataPopulator());
+    @ConditionalOnMissingBean(name = "radiusTokenAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer radiusTokenAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandler(radiusTokenAuthenticationHandler());
+            plan.registerMetadataPopulator(radiusAuthenticationMetaDataPopulator());
+        };
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -22,6 +23,7 @@ import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
@@ -123,6 +125,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockServletContext sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
+        ctx.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
         samlMetadataUIParserAction.execute(ctx);
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));
     }

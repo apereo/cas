@@ -2525,22 +2525,6 @@ ext.libraries = [
                     force = true
                 }
         ],
-        duojavaauth             : [
-                dependencies.create("com.github.duosecurity:duo_client_java:-SNAPSHOT") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-cli", module: "commons-cli")
-                    exclude(group: "com.squareup.okhttp", module: "okhttp-urlconnection")
-                    exclude(group: "com.squareup.okhttp", module: "okhttp")
-                    force = true
-                },
-                dependencies.create("com.squareup.okhttp:okhttp-urlconnection:$okioHttpVersion") {
-                    exclude(group: "com.squareup.okio", module: "okio")
-                    force = true
-                },
-                dependencies.create("com.squareup.okio:okio:$okioVersion") {
-                    force = true
-                }
-        ],
         authyjava               : [
                 dependencies.create("com.authy:authy-java:$authyVersion") {
                     exclude(module: "slf4j-api")

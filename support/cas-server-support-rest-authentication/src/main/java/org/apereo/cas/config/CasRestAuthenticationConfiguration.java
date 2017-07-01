@@ -11,7 +11,6 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apereo.cas.adaptors.rest.RestAuthenticationApi;
 import org.apereo.cas.adaptors.rest.RestAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -36,11 +35,12 @@ import java.net.URI;
  * This is {@link CasRestAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("casRestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasRestAuthenticationConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class CasRestAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
@@ -78,11 +78,14 @@ public class CasRestAuthenticationConfiguration implements AuthenticationEventEx
         return r;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
+    @ConditionalOnMissingBean(name = "casRestAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
+                plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver);
+            }
+        };
     }
 
     private static class HttpComponentsClientHttpRequestFactoryBasicAuth extends HttpComponentsClientHttpRequestFactory {

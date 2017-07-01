@@ -5,7 +5,6 @@ import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -34,6 +33,7 @@ import java.util.Map;
  * This is {@link CasJdbcAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("CasJdbcAuthenticationConfiguration")
@@ -63,6 +63,10 @@ public class CasJdbcAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
 
 
     @ConditionalOnMissingBean(name = "jdbcAuthenticationHandlers")
@@ -174,19 +178,11 @@ public class CasJdbcAuthenticationConfiguration {
         return new DefaultPrincipalFactory();
     }
 
-    /**
-     * The type Jdbc authentication event execution plan configuration.
-     */
-    @Configuration("jdbcAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class JdbcAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Autowired
-        @Qualifier("personDirectoryPrincipalResolver")
-        private PrincipalResolver personDirectoryPrincipalResolver;
-
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
+    @ConditionalOnMissingBean(name = "jdbcAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer jdbcAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
             jdbcAuthenticationHandlers().forEach(h -> plan.registerAuthenticationHandlerWithPrincipalResolver(h, personDirectoryPrincipalResolver));
-        }
+        };
     }
 }

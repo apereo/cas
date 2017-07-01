@@ -53,6 +53,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.validator.OAuth20RequestValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
@@ -110,6 +111,10 @@ import java.util.stream.Stream;
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    @Qualifier("oauthRequestValidators")
+    private Set<OAuth20RequestValidator> oauthRequestValidators;
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
@@ -370,7 +375,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 consentApprovalViewResolver(),
                 profileScopeToAttributesFilter(), casProperties,
                 ticketGrantingTicketCookieGenerator,
-                authenticationBuilder, oauthAuthorizationResponseBuilders);
+                authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators);
     }
 
     @Autowired
