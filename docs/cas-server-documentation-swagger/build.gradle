@@ -1,0 +1,4 @@
+description = "Apereo CAS Swagger API Documentation"
+dependencies {
+    implementation libraries.swagger
+}

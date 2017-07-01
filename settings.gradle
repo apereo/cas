@@ -40,6 +40,7 @@ include "core:cas-server-core-authentication"
 include "core:cas-server-core"
 
 include "docs:cas-server-documentation"
+include "docs:cas-server-documentation-swagger"
 
 include "support:cas-server-support-bom"
 include "support:cas-server-support-bootadmin-client"
