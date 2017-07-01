@@ -179,10 +179,12 @@ layout: null
     *   [SCIM Provisioning](/$version/integration/SCIM-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
+    *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [Shibboleth Identity Provider](/$version/integration/Shibboleth.html)
 
 * [Developer](#developer)
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
+    *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [Issue Tracker](https://github.com/apereo/cas/issues)
     *   [Security Vulnerability Response](/cas/developer/Sec-Vuln-Response.html)
     *   [PMC](/cas/developer/Project-Commitee.html)
