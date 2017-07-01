@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
@@ -83,5 +84,29 @@ public final class RegexUtils {
             LOGGER.debug("Pattern [{}] is not a valid regex.", pattern);
             return MATCH_NOTHING_PATTERN;
         }
+    }
+
+    /**
+     * Matches the entire region for the string.
+     *
+     * @param pattern the pattern
+     * @param string  the string
+     * @return true/false
+     * @see Matcher#matches()
+     */
+    public static boolean matches(final Pattern pattern, final String string) {
+        return pattern.matcher(string).matches();
+    }
+
+    /**
+     * Attempts to find the next subsequence of the input sequence that matches the pattern.
+     *
+     * @param pattern the pattern
+     * @param string  the string
+     * @return true/false
+     * @see Matcher#find()
+     */
+    public static boolean find(final Pattern pattern, final String string) {
+        return pattern.matcher(string).find();
     }
 }

@@ -100,7 +100,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     public RegisteredService findServiceBy(final String serviceId) {
         return orderedServices.stream().filter(r -> r.matches(serviceId)).findFirst().orElse(null);
     }
-    
+
     @Override
     public RegisteredService findServiceBy(final long id) {
         final RegisteredService r = this.services.get(id);
@@ -149,7 +149,8 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     @PostConstruct
     public void load() {
         LOGGER.debug("Loading services from [{}]", this.serviceRegistryDao);
-        this.services = this.serviceRegistryDao.load().stream()
+        this.services = this.serviceRegistryDao.load()
+                .stream()
                 .collect(Collectors.toConcurrentMap(r -> {
                     LOGGER.debug("Adding registered service [{}]", r.getServiceId());
                     return r.getId();
@@ -158,7 +159,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         publishEvent(new CasRegisteredServicesLoadedEvent(this, this.orderedServices));
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
     }
-    
+
     @Override
     public int count() {
         return services.size();
