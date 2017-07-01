@@ -1,16 +1,15 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
-import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
-import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
-import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
-import org.apereo.cas.adaptors.x509.util.MockWebServer;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.apache.commons.io.IOUtils;
+import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
+import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
+import org.apereo.cas.adaptors.x509.util.MockWebServer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,7 +41,7 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(CRLDistributionPointRevocationCheckerTests.class);
-    
+
     /**
      * Instance under test.
      */
@@ -101,22 +100,22 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         cache = new Cache("crlCache-0", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(new Object[]{
-                new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),
-                new String[]{"uservalid-encoded-crl.crt"},
-                "test ca.crl",
-                null,
+            new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),
+            new String[]{"uservalid-encoded-crl.crt"},
+            "test ca.crl",
+            null,
         });
 
         // Test case #1
         // Valid certificate on valid CRL data
         cache = new Cache("crlCache-1", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
-        params.add(new Object[]{
+        params.add(new Object[] {
                 new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null, true),
-                new String[]{"user-valid-distcrl.crt"},
-                "userCA-valid.crl",
-                null,
-        });
+            new String[]{"user-valid-distcrl.crt"},
+            "userCA-valid.crl",
+            null,
+    });
 
 
         // Test case #2
@@ -124,10 +123,10 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         cache = new Cache("crlCache-2", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(new Object[]{
-                new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),
-                new String[]{"user-revoked-distcrl.crt"},
-                "userCA-valid.crl",
-                new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
+            new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),
+            new String[]{"user-revoked-distcrl.crt"},
+            "userCA-valid.crl",
+            new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
         });
 
         // Test case #3
@@ -136,10 +135,10 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         CacheManager.getInstance().addCache(cache);
         params.add(new Object[]{
                 new CRLDistributionPointRevocationChecker(cache, zeroThresholdPolicy, null),
-                new String[]{"user-valid-distcrl.crt"},
-                "userCA-expired.crl",
-                new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
-        });
+            new String[]{"user-valid-distcrl.crt"},
+            "userCA-expired.crl",
+            new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
+    });
 
         // Test case #4
         // Valid certificate on expired CRL data with custom expiration
@@ -147,12 +146,11 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         cache = new Cache("crlCache-4", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         params.add(new Object[]{
-                new CRLDistributionPointRevocationChecker(cache, crl -> {
-                }, null),
-                new String[]{"user-valid-distcrl.crt"},
-                "userCA-expired.crl",
-                null,
-        });
+                new CRLDistributionPointRevocationChecker(cache, crl -> {}, null),
+            new String[]{"user-valid-distcrl.crt"},
+            "userCA-expired.crl",
+            null,
+    });
 
         // Test case #5
         // Valid certificate with no CRL distribution points defined but with
@@ -161,12 +159,11 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         CacheManager.getInstance().addCache(cache);
         final CRLDistributionPointRevocationChecker checker5 =
                 new CRLDistributionPointRevocationChecker(cache, defaultPolicy, new AllowRevocationPolicy());
-        params.add(new Object[]{
-                checker5,
-                new String[]{"user-valid.crt"},
-                "userCA-expired.crl",
-                null,
-        });
+        params.add(new Object[]{checker5,
+            new String[]{"user-valid.crt"},
+            "userCA-expired.crl",
+            null,
+    });
 
         // Test case #6
         // EJBCA test case
@@ -178,10 +175,10 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         CacheManager.getInstance().addCache(cache);
         params.add(new Object[]{
                 new CRLDistributionPointRevocationChecker(cache, defaultPolicy, null),
-                new String[]{"user-revoked-distcrl2.crt"},
-                "userCA-valid.crl",
-                new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
-        });
+            new String[]{"user-revoked-distcrl2.crt"},
+            "userCA-valid.crl",
+            new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
+    });
 
         return params;
     }

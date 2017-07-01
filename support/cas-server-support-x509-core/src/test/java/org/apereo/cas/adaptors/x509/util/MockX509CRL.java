@@ -180,9 +180,8 @@ public class MockX509CRL extends X509CRL {
      * @see java.security.cert.X509CRL#verify(java.security.PublicKey)
      */
     @Override
-    public void verify(final PublicKey key) throws CRLException,
-    NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException,
-    SignatureException {
+    public void verify(final PublicKey key) throws CRLException, NoSuchAlgorithmException,
+            InvalidKeyException, NoSuchProviderException, SignatureException {
         // Do nothing to indicate valid signature
     }
 

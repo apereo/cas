@@ -35,7 +35,7 @@ public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthent
         }
     }
 
-    
+
     @Override
     public boolean supports(final Credential credential) {
         return this.authenticationHandler.supports(credential);

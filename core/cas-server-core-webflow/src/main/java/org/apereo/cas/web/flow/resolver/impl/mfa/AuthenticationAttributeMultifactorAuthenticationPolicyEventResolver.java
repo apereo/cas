@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import static org.springframework.util.StringUtils.*;
+import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 /**
  * This is {@link AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver}
@@ -38,7 +38,7 @@ import static org.springframework.util.StringUtils.*;
  */
 public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver.class);
-    
+
     private final String globalAuthenticationAttributeValueRegex;
     private final Set<String> attributeNames;
 
