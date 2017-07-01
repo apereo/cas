@@ -47,6 +47,15 @@ public class AuthenticationCredentialsLocalBinder {
     }
 
     /**
+     * Bind Authentication to ThreadLocal.
+     *
+     * @param authentication the authentication
+     */
+    public static void bindCurrent(final Authentication authentication) {
+        CURRENT_AUTHENTICATION.set(authentication);
+    }
+    
+    /**
      * Get credential ids from ThreadLocal.
      *
      * @return credential ids
@@ -64,14 +73,7 @@ public class AuthenticationCredentialsLocalBinder {
         return getCurrentCredentialIds() != null ? Arrays.stream(getCurrentCredentialIds()).collect(joining(", ")) : null;
     }
 
-    /**
-     * Bind Authentication to ThreadLocal.
-     *
-     * @param authentication the authentication
-     */
-    public static void bindCurrent(final Authentication authentication) {
-        CURRENT_AUTHENTICATION.set(authentication);
-    }
+
 
     /**
      * Get Authentication from ThreadLocal.
