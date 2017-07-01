@@ -333,6 +333,10 @@
             <property name="severity" value="error"/>
         </module>
         <module name="UpperEll"/>
+
+        <module name="OverloadMethodsDeclarationOrder">
+            <property name="severity" value="error"/>
+        </module>
         <module name="MissingOverride">
             <property name="severity" value="error"/>
         </module>

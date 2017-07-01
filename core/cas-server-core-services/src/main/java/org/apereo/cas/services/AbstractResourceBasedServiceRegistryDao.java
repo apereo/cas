@@ -46,9 +46,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
     private static final Consumer<RegisteredService> LOG_SERVICE_DUPLICATE =
-            service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                    + "This will overwrite previous service definitions and is likely a configuration problem. "
-                    + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
+        service -> LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+                + "This will overwrite previous service definitions and is likely a configuration problem. "
+                + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
     
     private static final BinaryOperator<RegisteredService> LOG_DUPLICATE_AND_RETURN_FIRST_ONE = (s1, s2) -> {
         LOG_SERVICE_DUPLICATE.accept(s2);

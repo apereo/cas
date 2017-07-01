@@ -84,13 +84,13 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
             final MultifactorAuthenticationProvider provider = providers.iterator().next();
             LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
             return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
-                    input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));
+                input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));
         }
 
         return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
-                input -> providers.stream()
-                        .filter(provider -> input != null && provider.matches(input))
-                        .count() > 0);
+            input -> providers.stream()
+                    .filter(provider -> input != null && provider.matches(input))
+                    .count() > 0);
     }
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",

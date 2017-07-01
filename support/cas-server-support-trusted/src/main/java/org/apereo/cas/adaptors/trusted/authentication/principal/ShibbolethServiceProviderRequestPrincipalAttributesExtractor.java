@@ -28,6 +28,6 @@ public class ShibbolethServiceProviderRequestPrincipalAttributesExtractor implem
                 .filter(t -> StringUtils.isNotBlank(request.getHeader(t)))
                 .map(t -> StringUtils.removeAll(t, PREFIX))
                 .collect(Collectors.toMap(Function.identity(),
-                        t -> Arrays.asList(request.getHeader(PREFIX + t).split("(?<!\\\\);"))));
+                    t -> Arrays.asList(request.getHeader(PREFIX + t).split("(?<!\\\\);"))));
     }
 }

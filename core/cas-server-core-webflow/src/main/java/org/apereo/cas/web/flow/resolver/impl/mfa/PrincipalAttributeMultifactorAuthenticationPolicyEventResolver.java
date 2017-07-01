@@ -138,7 +138,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
         final MultifactorAuthenticationProvider provider = providers.iterator().next();
         LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
         return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-                input -> input != null && input.matches(globalPrincipalAttributeValueRegex));
+            input -> input != null && input.matches(globalPrincipalAttributeValueRegex));
     }
 
     @Audit(action = "AUTHENTICATION_EVENT",
