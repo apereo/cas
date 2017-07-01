@@ -43,7 +43,7 @@ public class MockWebServer {
         try {
             this.worker = new Worker(new ServerSocket(port), resource, contentType);
         } catch (final IOException e) {
-            throw new RuntimeException("Cannot create Web server", e);
+            throw new IllegalArgumentException("Cannot create Web server", e);
         }
     }
 

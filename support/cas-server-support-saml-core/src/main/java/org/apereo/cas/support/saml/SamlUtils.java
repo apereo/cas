@@ -60,7 +60,7 @@ public final class SamlUtils {
         try (InputStream in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
         } catch (final Exception e) {
-            throw new RuntimeException("Error reading certificate " + resource, e);
+            throw new IllegalArgumentException("Error reading certificate " + resource, e);
         }
     }
 

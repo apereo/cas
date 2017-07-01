@@ -155,7 +155,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.debug("Encrypting via [{}]", this.contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
-            throw new RuntimeException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
+            throw new IllegalArgumentException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
                     + e.getMessage(), e);
         }
     }

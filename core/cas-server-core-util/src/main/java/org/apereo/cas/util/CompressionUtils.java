@@ -58,7 +58,7 @@ public final class CompressionUtils {
             inflater.end();
 
             if (!inflater.finished()) {
-                throw new RuntimeException("buffer not large enough.");
+                throw new IllegalArgumentException("buffer not large enough.");
             }
 
             inflater.end();

@@ -253,7 +253,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             try {
                 certs[i++] = CertUtil.readCertificate(new ClassPathResource(file).getInputStream());
             } catch (final Exception e) {
-                throw new RuntimeException("Error creating certificate at " + file, e);
+                throw new IllegalArgumentException("Error creating certificate at " + file, e);
             }
         }
         return certs;

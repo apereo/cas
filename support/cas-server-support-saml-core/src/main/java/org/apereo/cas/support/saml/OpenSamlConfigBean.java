@@ -72,7 +72,7 @@ public class OpenSamlConfigBean {
         try {
             InitializationService.initialize();
         } catch (final InitializationException e) {
-            throw new RuntimeException("Exception initializing OpenSAML", e);
+            throw new IllegalArgumentException("Exception initializing OpenSAML", e);
         }
 
         XMLObjectProviderRegistry registry;

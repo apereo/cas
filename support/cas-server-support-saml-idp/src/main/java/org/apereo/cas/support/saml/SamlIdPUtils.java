@@ -107,7 +107,7 @@ public final class SamlIdPUtils {
             chainingMetadataResolver.initialize();
             return chainingMetadataResolver;
         } catch (final Exception e) {
-            throw new RuntimeException(new SamlException(e.getMessage(), e));
+            throw new IllegalArgumentException(new SamlException(e.getMessage(), e));
         }
     }
 
@@ -137,11 +137,11 @@ public final class SamlIdPUtils {
                     final SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
                     final List<AssertionConsumerService> acsEndpoints = spssoDescriptor.getAssertionConsumerServices();
                     if (acsEndpoints.isEmpty()) {
-                        throw new RuntimeException("Metadata resolved for entity id " + issuer + " has no defined ACS endpoints");
+                        throw new IllegalArgumentException("Metadata resolved for entity id " + issuer + " has no defined ACS endpoints");
                     }
                     final int acsIndex = authnRequest.getAssertionConsumerServiceIndex();
                     if (acsIndex + 1 > acsEndpoints.size()) {
-                        throw new RuntimeException("AssertionConsumerService index specified in the request " + acsIndex + " is invalid "
+                        throw new IllegalArgumentException("AssertionConsumerService index specified in the request " + acsIndex + " is invalid "
                                 + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());
                     }
                     final AssertionConsumerService foundAcs = acsEndpoints.get(acsIndex);
@@ -167,7 +167,7 @@ public final class SamlIdPUtils {
             }
             return acs;
         } catch (final Exception e) {
-            throw new RuntimeException(new SamlException(e.getMessage(), e));
+            throw new IllegalArgumentException(new SamlException(e.getMessage(), e));
         }
     }
 

@@ -292,7 +292,7 @@ public class JpaLockingStrategyTests {
                     return result;
                     // Force result of transaction to database
                 } catch (final Exception e) {
-                    throw new RuntimeException("Transactional method invocation failed.", e);
+                    throw new IllegalArgumentException("Transactional method invocation failed.", e);
                 }
             });
         }
