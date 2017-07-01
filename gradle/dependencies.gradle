@@ -44,7 +44,7 @@ ext.libraries = [
                 force = true
             }
         ],
-        swaggerui : [
+        swaggerfox : [
                 dependencies.create("io.springfox:springfox-swagger2:$swaggerSpringFoxVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml", module: "classmate")
@@ -56,7 +56,9 @@ ext.libraries = [
                     exclude(group: "io.swagger", module: "swagger-models")
                     exclude(group: "io.swagger", module: "swagger-jaxrs")
                     force = true
-                },
+                }
+        ],
+        swaggerui : [
                 dependencies.create("io.springfox:springfox-swagger-ui:$swaggerSpringFoxVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml", module: "classmate")
