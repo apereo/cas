@@ -51,12 +51,13 @@ which is the most important aspect.
 ## PMC Chair Nomination
 
 The nomination of a PMC chair requires a vote: a majority of +1 is required and no -1. The vote **MUST** happen **PRIVATELY** on the cas-pmc mailing list.
+Members who abstain from a vote are simply considered in support of the vote via lazy consensus.
 
 ## Committer Nomination
 
 The nomination of a committer requires a vote: a majority of +1 is required and no -1. The vote **MUST** happen **PRIVATELY** on the cas-pmc mailing list.
 The vote is proposed by one of the current committers. All members of the community have the right to become a committer, solely and exclusively
-on the grounds of the meritocracy. 
+on the grounds of the meritocracy. Members who abstain from a vote are simply considered in support of the vote via lazy consensus.
 
 ## Communication
 
