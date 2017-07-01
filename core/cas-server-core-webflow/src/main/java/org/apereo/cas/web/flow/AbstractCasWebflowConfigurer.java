@@ -301,6 +301,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
+    public Transition createTransition(final String targetState) {
+        final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
+        return new Transition(resolver);
+    }
+    
+    @Override
     public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
         final TransitionCriteria criteria;
 
@@ -353,12 +359,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return parser;
 
     }
-
-    @Override
-    public Transition createTransition(final String targetState) {
-        final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
-        return new Transition(resolver);
-    }
+    
 
     @Override
     public EndState createEndState(final Flow flow, final String id) {

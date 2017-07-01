@@ -97,6 +97,11 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     }
 
     @Override
+    public RegisteredService findServiceBy(final String serviceId) {
+        return orderedServices.stream().filter(r -> r.matches(serviceId)).findFirst().orElse(null);
+    }
+    
+    @Override
     public RegisteredService findServiceBy(final long id) {
         final RegisteredService r = this.services.get(id);
 
@@ -148,11 +153,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         publishEvent(new CasRegisteredServicesLoadedEvent(this, this.orderedServices));
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
     }
-
-    @Override
-    public RegisteredService findServiceBy(final String serviceId) {
-        return orderedServices.stream().filter(r -> r.matches(serviceId)).findFirst().orElse(null);
-    }
+    
 
     @Override
     public boolean matchesExistingService(final String service) {

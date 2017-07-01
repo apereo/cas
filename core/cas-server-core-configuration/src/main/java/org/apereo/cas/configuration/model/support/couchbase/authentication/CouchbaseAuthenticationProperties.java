@@ -93,8 +93,5 @@ public class CouchbaseAuthenticationProperties {
     public Integer getOrder() {
         return order;
     }
-
-    public void setOrder(final Integer order) {
-        this.order = order;
-    }
+    
 }

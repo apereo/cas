@@ -41,6 +41,16 @@ public final class DateTimeUtils {
     }
 
     /**
+     * Local date time of local date time.
+     *
+     * @param time the time
+     * @return the local date time
+     */
+    public static LocalDateTime localDateTimeOf(final long time) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.systemDefault());
+    }
+
+    /**
      * Parse the given value as a zoned datetime.
      *
      * @param value the value
@@ -85,16 +95,7 @@ public final class DateTimeUtils {
     public static ZonedDateTime zonedDateTimeOf(final long time, final ZoneId zoneId) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(time), zoneId);
     }
-
-    /**
-     * Local date time of local date time.
-     *
-     * @param time the time
-     * @return the local date time
-     */
-    public static LocalDateTime localDateTimeOf(final long time) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.systemDefault());
-    }
+    
 
     /**
      * Local date time of local date time.
