@@ -30,7 +30,7 @@ public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthent
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
-                obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
+            obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
             builder.mergeAttribute(this.authenticationContextAttribute, this.provider.getId());
         }
     }
