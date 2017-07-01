@@ -79,8 +79,8 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
                 }
                 addProfileRolesFromAttributes(profile, groupAttribute, this.groupPrefix);
             }
-        } catch (final LdapException e) {
-            throw new RuntimeException("LDAP error fetching roles for user.", e);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("LDAP error fetching roles for user.", e);
         }
         return profile;
     }

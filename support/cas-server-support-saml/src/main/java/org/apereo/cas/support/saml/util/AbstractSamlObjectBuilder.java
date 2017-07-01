@@ -221,7 +221,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             doc.setRootElement((org.jdom.Element) signedElement.detach());
             return new XMLOutputter().outputString(doc);
         }
-        throw new RuntimeException("Error signing SAML Response: Null document");
+        throw new IllegalArgumentException("Error signing SAML Response: Null document");
     }
 
     /**
@@ -273,7 +273,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                     signatureMethod = sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null);
                     break;
                 default:
-                    throw new RuntimeException("Error signing SAML element: Unsupported type of key");
+                    throw new IllegalArgumentException("Error signing SAML element: Unsupported type of key");
             }
 
             final CanonicalizationMethod canonicalizationMethod = sigFactory
@@ -307,7 +307,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             return toJdom(w3cElement);
 
         } catch (final Exception e) {
-            throw new RuntimeException("Error signing SAML element: " + e.getMessage(), e);
+            throw new IllegalArgumentException("Error signing SAML element: " + e.getMessage(), e);
         }
     }
 

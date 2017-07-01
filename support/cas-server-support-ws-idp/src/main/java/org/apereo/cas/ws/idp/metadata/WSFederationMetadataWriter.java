@@ -89,9 +89,9 @@ public class WSFederationMetadataWriter {
             if (result != null) {
                 return result;
             }
-            throw new RuntimeException("Failed to sign the metadata document");
+            throw new IllegalArgumentException("Failed to sign the metadata document");
         } catch (final Exception e) {
-            throw new RuntimeException("Error creating service metadata information: " + e.getMessage(), e);
+            throw new IllegalArgumentException("Error creating service metadata information: " + e.getMessage(), e);
         }
     }
 
