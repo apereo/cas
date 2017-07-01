@@ -64,9 +64,21 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             LOGGER.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
             return success();
         }
-        final RegisteredService registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
-        verifyRegisteredService(requestContext, registeredService);
-        loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);
+
+        if (!MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
+            LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
+            final RegisteredService registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
+            LOGGER.debug("Registered service definition linked to [{}] is found as [{}]", entityId, registeredService);
+            verifyRegisteredService(requestContext, registeredService);
+            loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);
+        } else {
+            LOGGER.debug("Metadata is found for entity [{}]", entityId);
+            final RegisteredService registeredService = getRegisteredServiceFromRequest(requestContext);
+            LOGGER.debug("Registered service definition linked to [{}] is found as [{}]", entityId, registeredService);
+            verifyRegisteredService(requestContext, registeredService);
+            loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);
+        }
+
         return success();
     }
 
@@ -78,7 +90,9 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @param registeredService the registered service
      */
     protected void loadSamlMetadataIntoRequestContext(final RequestContext requestContext, final String entityId, final RegisteredService registeredService) {
+        LOGGER.debug("Locating SAML MDUI for entity [{}]", entityId);
         final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(this.metadataAdapter, entityId, registeredService);
+        LOGGER.debug("Located SAML MDUI for entity [{}] as [{}]", entityId, mdui);
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
     }
 
@@ -126,5 +140,17 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     protected String getEntityIdFromRequest(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
         return request.getParameter(this.entityIdParameterName);
+    }
+
+    /**
+     * Gets registered service from request.
+     *
+     * @param requestContext the request context
+     * @return the registered service from request
+     */
+    protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext) {
+        final Service currentService = WebUtils.getService(requestContext);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(currentService);
+        return registeredService;
     }
 }
