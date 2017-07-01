@@ -41,16 +41,16 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "acceptUsersAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer() {
-      return plan -> {
-        if (StringUtils.isNotBlank(this.casProperties.getAuthn().getAccept().getUsers())) {
-          final String header =
-            "\nCAS is configured to accept a static list of credentials for authentication. "
-              + "While this is generally useful for demo purposes, it is STRONGLY recommended "
-              + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
-              + "to a blank value) and switch to a mode that is more suitable for production.";
-          AsciiArtUtils.printAsciiArtWarning(LOGGER, "STOP!", header);
-          plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
-        }
-      };
+        return plan -> {
+            if (StringUtils.isNotBlank(this.casProperties.getAuthn().getAccept().getUsers())) {
+                final String header =
+                        "\nCAS is configured to accept a static list of credentials for authentication. "
+                                + "While this is generally useful for demo purposes, it is STRONGLY recommended "
+                                + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
+                                + "to a blank value) and switch to a mode that is more suitable for production.";
+                AsciiArtUtils.printAsciiArtWarning(LOGGER, "STOP!", header);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
+            }
+        };
     }
 }
