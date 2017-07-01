@@ -14,7 +14,9 @@ import java.util.Formatter;
  */
 public class CasTomcatBanner extends AbstractCasBanner {
     @Override
-    protected void injectEnvironmentInfoIntoBanner(final Formatter formatter, final Environment environment, final Class<?> sourceClass) {formatter.format("Apache Tomcat Version: %s%n", ServerInfo.getServerInfo());
+    protected void injectEnvironmentInfoIntoBanner(final Formatter formatter, final Environment environment,
+                                                   final Class<?> sourceClass) {
+        formatter.format("Apache Tomcat Version: %s%n", ServerInfo.getServerInfo());
         formatter.format("%s%n", LINE_SEPARATOR);
     }
 }

@@ -365,9 +365,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     public String generateSecureRandomId() {
         final SecureRandom generator = new SecureRandom();
         final char[] charMappings = {
-                'a', 'b', 'c', 'd', 'e', 'f', 'g',
-                'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-                'p'};
+            'a', 'b', 'c', 'd', 'e', 'f', 'g',
+            'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+            'p'};
 
         final int charsLength = 40;
         final int generatorBytesLength = 20;
