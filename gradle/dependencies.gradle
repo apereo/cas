@@ -42,29 +42,30 @@ ext.libraries = [
                 exclude(group: "org.apache.commons", module: "commons-lang3")
                 exclude(group: "com.google.guava", module: "guava")
                 force = true
-            },
-            dependencies.create("io.springfox:springfox-swagger2:$swaggerSpringFoxVersion") {
-                exclude(group: "org.slf4j", module: "slf4j-api")
-                exclude(group: "com.fasterxml", module: "classmate")
-                exclude(group: "org.apache.commons", module: "commons-lang3")
-                exclude(group: "com.google.guava", module: "guava")
-                exclude(group: "net.bytebuddy", module: "byte-buddy")
-                exclude(group: "io.swagger", module: "swagger-annotations")
-                exclude(group: "io.swagger", module: "swagger-core")
-                exclude(group: "io.swagger", module: "swagger-models")
-                exclude(group: "io.swagger", module: "swagger-jaxrs")
-                force = true
-            },
-            dependencies.create("io.springfox:springfox-swagger-ui:$swaggerSpringFoxVersion") {
-                exclude(group: "org.slf4j", module: "slf4j-api")
-                exclude(group: "com.fasterxml", module: "classmate")
-                exclude(group: "org.apache.commons", module: "commons-lang3")
-                exclude(group: "com.google.guava", module: "guava")
-                exclude(group: "net.bytebuddy", module: "byte-buddy")
-                force = true
             }
         ],
-
+        swaggerui : [
+                dependencies.create("io.springfox:springfox-swagger2:$swaggerSpringFoxVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "net.bytebuddy", module: "byte-buddy")
+                    exclude(group: "io.swagger", module: "swagger-annotations")
+                    exclude(group: "io.swagger", module: "swagger-core")
+                    exclude(group: "io.swagger", module: "swagger-models")
+                    exclude(group: "io.swagger", module: "swagger-jaxrs")
+                    force = true
+                },
+                dependencies.create("io.springfox:springfox-swagger-ui:$swaggerSpringFoxVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "net.bytebuddy", module: "byte-buddy")
+                    force = true
+                }
+        ],
         bouncycastle            : [
                 dependencies.create("org.bouncycastle:bcpkix-jdk15on:$bouncyCastleVersion") {
                     force = true
