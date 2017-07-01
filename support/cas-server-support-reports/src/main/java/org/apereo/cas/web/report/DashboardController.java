@@ -103,7 +103,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
         model.put("dumpEndpointEnabled", dumpEndpoint.isEnabled());
         model.put("infoEndpointEnabled", infoEndpoint.isEnabled());
         model.put("healthEndpointEnabled", healthEndpoint.isEnabled());
-        model.put("traceEndpointEnabled", healthEndpoint.isEnabled());
+        model.put("traceEndpointEnabled", traceEndpoint.isEnabled());
 
         model.put("trustedDevicesEnabled", this.applicationContext.containsBean("trustedDevicesController")
                 && isEndpointCapable(casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties));
