@@ -11,6 +11,7 @@ import java.security.GeneralSecurityException;
  * @since 3.4.6
  *
  */
+@FunctionalInterface
 public interface RevocationPolicy<T> {
     /**
      * Applies the policy.

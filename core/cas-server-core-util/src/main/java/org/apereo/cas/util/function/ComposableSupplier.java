@@ -18,6 +18,7 @@ import java.util.function.Supplier;
  *
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface ComposableSupplier<T> extends Supplier<T> {
 
     /**

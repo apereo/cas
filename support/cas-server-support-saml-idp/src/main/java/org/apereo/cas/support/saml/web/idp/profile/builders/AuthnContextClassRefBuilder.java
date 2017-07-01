@@ -11,6 +11,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface AuthnContextClassRefBuilder {
 
     /**

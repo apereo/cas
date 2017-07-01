@@ -6,6 +6,7 @@ package org.apereo.cas.support.openid.web.support;
  * @author Scott Battaglia
  * @since 3.1
  */
+@FunctionalInterface
 public interface OpenIdUserNameExtractor {
 
     /**

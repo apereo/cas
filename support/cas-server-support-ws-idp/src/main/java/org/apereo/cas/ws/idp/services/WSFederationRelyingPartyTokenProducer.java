@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface WSFederationRelyingPartyTokenProducer {
 
     /**

@@ -17,6 +17,7 @@ import java.util.function.Function;
  *
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface ComposableFunction<T, R> extends Function<T, R> {
 
     /**

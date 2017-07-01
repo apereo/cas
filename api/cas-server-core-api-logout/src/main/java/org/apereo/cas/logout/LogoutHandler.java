@@ -10,6 +10,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface LogoutHandler extends Ordered {
 
     @Override

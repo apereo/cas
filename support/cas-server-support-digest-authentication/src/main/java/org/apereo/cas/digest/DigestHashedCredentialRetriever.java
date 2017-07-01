@@ -8,6 +8,7 @@ import javax.security.auth.login.AccountNotFoundException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface DigestHashedCredentialRetriever {
 
     /**

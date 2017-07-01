@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface ConsentApprovalViewResolver {
 
     /**
