@@ -56,6 +56,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     /**
      * Instantiates a new Ignite ticket registry.
      *
+     * @param ticketCatalog       the ticket catalog
      * @param igniteConfiguration the ignite configuration
      * @param properties          the properties
      */

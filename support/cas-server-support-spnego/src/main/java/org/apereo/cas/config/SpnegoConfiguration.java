@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import jcifs.spnego.Authentication;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -29,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link SpnegoConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("spnegoConfiguration")
@@ -121,15 +121,9 @@ public class SpnegoConfiguration {
         return new DefaultPrincipalFactory();
     }
 
-    /**
-     * The type Spnego authentication event execution plan configuration.
-     */
-    @Configuration("spnegoAuthenticationEventExecutionPlanConfiguration")
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class SpnegoAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(spnegoHandler(), spnegoPrincipalResolver());
-        }
+    @ConditionalOnMissingBean(name = "spnegoAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer spnegoAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(spnegoHandler(), spnegoPrincipalResolver());
     }
 }
