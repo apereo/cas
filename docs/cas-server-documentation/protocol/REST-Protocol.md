@@ -222,3 +222,7 @@ To understand how to throttling works in CAS,
 please review [the available options](../installation/Configuring-Authentication-Throttling.html).
 
 By default, throttling REST requests is turned off.
+
+## Swagger API
+
+CAS REST API may be automatically integrated with Swagger. [See this guide](../integration/Swagger-Integration.html) for more info.
