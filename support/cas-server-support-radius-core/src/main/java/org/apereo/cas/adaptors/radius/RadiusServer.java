@@ -7,6 +7,7 @@ package org.apereo.cas.adaptors.radius;
  * @author Misagh Moayyed
  * @since 3.1
  */
+@FunctionalInterface
 public interface RadiusServer {
     
     /** The default port for accounting.

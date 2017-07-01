@@ -10,6 +10,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface UniqueTicketIdGeneratorConfigurer {
 
     /**
