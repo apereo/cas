@@ -13,7 +13,7 @@
   dependencies match that of CAS. 
  */
 ext["hibernateVersion"] = "5.2.10.Final"
-ext["springBootTomcatVersion"] = "8.5.15"
+ext["springBootTomcatVersion"] = "8.5.16"
 ext["hazelcastVersion"] = "3.8.2"
 ext["infinispanVersion"] = "9.0.0.Final"
 ext["springVersion"] = "4.3.9.RELEASE"
