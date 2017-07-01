@@ -1,5 +1,5 @@
 import React from 'react'
-import { VictoryChart, VictoryVoronoiContainer, VictoryLine, VictoryTheme } from 'victory'
+import { VictoryChart, VictoryVoronoiContainer, VictoryLine } from 'victory'
 const { array } = React.PropTypes
 
 const AuthnAttemptsGraph = React.createClass({
@@ -7,9 +7,12 @@ const AuthnAttemptsGraph = React.createClass({
     graphData: array
   },
   render: function () {
-    if (this.props.graphData.length === 0) {
+    if (this.props.graphData.length < 2) {
       return (
-        <div>No data found</div>
+        <div>
+          <h4>No data found</h4>
+          <button onClick='refreshHandler' className='btn btn-primary'>Refresh</button>
+        </div>
       )
     }
     return (
@@ -18,7 +21,6 @@ const AuthnAttemptsGraph = React.createClass({
         padding={50}
         containerComponent={<VictoryVoronoiContainer />}
         domainPadding={{y: 10}}
-        theme={VictoryTheme.material}
       >
         <VictoryLine
           data={this.props.graphData}

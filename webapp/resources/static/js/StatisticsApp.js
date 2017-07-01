@@ -16,8 +16,7 @@ class StatisticsApp extends React.Component {
 
   componentDidMount () {
     let d = new Date()
-    const startTime = d.setHours(d.getHours() - 8)
-
+    const startTime = d.setHours(d.getHours() - 2)
     axios.get(`/cas/status/stats/getAuthnAudit/summary?start=${startTime}&range=${this.props.range}&scale=${this.props.scale}`)
     .then(res => {
       res.data.forEach(function (value) {
@@ -45,6 +44,6 @@ StatisticsApp.propTypes = {
 }
 
 ReactDOM.render(
-  <StatisticsApp range='PT20H' scale='PT05M' />,
+  <StatisticsApp range='PT03H' scale='PT05M' />,
   document.getElementById('authn-graph')
 )
