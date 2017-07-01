@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.generic.config;
 
 import org.apereo.cas.adaptors.generic.ShiroAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -21,16 +20,18 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 
 /**
  * This is {@link ShiroAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("shiroAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class ShiroAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class ShiroAuthenticationEventExecutionPlanConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShiroAuthenticationEventExecutionPlanConfiguration.class);
 
     @Autowired(required = false)
@@ -71,11 +72,15 @@ public class ShiroAuthenticationEventExecutionPlanConfiguration implements Authe
         return h;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        if (casProperties.getAuthn().getShiro().getConfig().getLocation() != null) {
-            LOGGER.debug("Injecting shiro authentication handler");
-            plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);
-        }
+    @ConditionalOnMissingBean(name = "shiroAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer shiroAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> {
+            final Resource shiroConfigFile = casProperties.getAuthn().getShiro().getConfig().getLocation();
+            if (shiroConfigFile != null) {
+                LOGGER.debug("Injecting shiro authentication handler configured at [{}]", shiroConfigFile.getDescription());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);
+            }
+        };
     }
 }

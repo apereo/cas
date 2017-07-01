@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20RequestValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
@@ -55,11 +56,12 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                            final CasConfigurationProperties casProperties,
                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                            final OAuth20CasAuthenticationBuilder authenticationBuilder,
-                                           final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders) {
+                                           final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
+                                           final Set<OAuth20RequestValidator> oauthRequestValidators) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
                 scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator,
-                authenticationBuilder, oauthAuthorizationResponseBuilders);
+                authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators);
     }
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
