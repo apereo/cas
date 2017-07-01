@@ -59,10 +59,10 @@ public class DefaultCasSslContext {
             final X509TrustManager jvmTrustManager = getTrustManager(defaultAlgorithm, null);
 
             final KeyManager[] keyManagers = {
-                    new CompositeX509KeyManager(Arrays.asList(jvmKeyManager, customKeyManager))
+                new CompositeX509KeyManager(Arrays.asList(jvmKeyManager, customKeyManager))
             };
             final TrustManager[] trustManagers = {
-                    new CompositeX509TrustManager(Arrays.asList(jvmTrustManager, customTrustManager))
+                new CompositeX509TrustManager(Arrays.asList(jvmTrustManager, customTrustManager))
             };
 
             this.sslContext = SSLContexts.custom().useProtocol("SSL").build();

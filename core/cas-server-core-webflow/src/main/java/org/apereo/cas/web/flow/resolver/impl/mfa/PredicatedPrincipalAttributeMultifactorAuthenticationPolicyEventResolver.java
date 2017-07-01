@@ -71,15 +71,15 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             final Class<Predicate> predicateClass = classLoader.parseClass(script);
 
             final Object[] args = {service, principal, providers, LOGGER};
-            
+
             final Constructor<Predicate> ctor = predicateClass.getDeclaredConstructor(PREDICATE_CTOR_PARAMETERS);
             final Predicate<MultifactorAuthenticationProvider> predicate = ctor.newInstance(args);
 
             return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-                    input -> providers.stream()
-                            .filter(predicate)
-                            .findFirst()
-                            .isPresent());
+                input -> providers.stream()
+                        .filter(predicate)
+                        .findFirst()
+                        .isPresent());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

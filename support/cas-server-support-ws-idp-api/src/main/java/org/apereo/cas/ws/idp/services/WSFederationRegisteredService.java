@@ -23,7 +23,7 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
 
     private String realm = WSFederationConstants.REALM_DEFAULT_URI;
     private String protocol = WSFederationConstants.WST_NS_05_12;
-        private String tokenType = WSFederationConstants.WSS_SAML2_TOKEN_TYPE;
+    private String tokenType = WSFederationConstants.WSS_SAML2_TOKEN_TYPE;
     private String wsdlLocation;
     private String namespace = WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512;
     private String addressingNamespace = WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING;
