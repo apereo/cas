@@ -47,12 +47,6 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
     
     @Override
-    public Collection<CasEvent> getEventsForPrincipal(final String id) {
-        return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principalId = :principalId"),
-                CasEvent.class).setParameter(PRINCIPAL_ID_PARAM, id).getResultList();
-    }
-
-    @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
         return this.entityManager.createQuery(
                 SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime and r.principalId = :principalId"),
@@ -63,12 +57,31 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
                 .getResultList();
     }
 
+
+    @Override
+    public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
+        return this.entityManager.createQuery(
+                SELECT_QUERY.concat("where r.type = :type and r.principalId = :principalId"),
+                CasEvent.class)
+                .setParameter(TYPE_PARAM, type)
+                .setParameter(PRINCIPAL_ID_PARAM, principal)
+                .getResultList();
+    }
+    
     @Override
     public Collection<CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         return this.entityManager.createQuery(
                 SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime"), CasEvent.class)
                 .setParameter(TYPE_PARAM, type)
                 .setParameter(CREATION_TIME_PARAM, dateTime.toString())
+                .getResultList();
+    }
+    
+    @Override
+    public Collection<CasEvent> getEventsOfType(final String type) {
+        return this.entityManager.createQuery(
+                SELECT_QUERY.concat("where r.type = :type"), CasEvent.class)
+                .setParameter(TYPE_PARAM, type)
                 .getResultList();
     }
 
@@ -82,20 +95,9 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public Collection<CasEvent> getEventsOfType(final String type) {
-        return this.entityManager.createQuery(
-                SELECT_QUERY.concat("where r.type = :type"), CasEvent.class)
-                .setParameter(TYPE_PARAM, type)
-                .getResultList();
+    public Collection<CasEvent> getEventsForPrincipal(final String id) {
+        return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principalId = :principalId"),
+                CasEvent.class).setParameter(PRINCIPAL_ID_PARAM, id).getResultList();
     }
 
-    @Override
-    public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
-        return this.entityManager.createQuery(
-                SELECT_QUERY.concat("where r.type = :type and r.principalId = :principalId"),
-                CasEvent.class)
-                .setParameter(TYPE_PARAM, type)
-                .setParameter(PRINCIPAL_ID_PARAM, principal)
-                .getResultList();
-    }
 }
