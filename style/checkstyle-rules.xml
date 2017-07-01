@@ -240,7 +240,9 @@
         <module name="StringLiteralEquality">
             <property name="severity" value="error"/>
         </module>
-
+        <module name="Indentation">
+            <property name="severity" value="error"/>
+        </module>
         <!--
         <module name="MissingCtor">
             <property name="severity" value="error" />
