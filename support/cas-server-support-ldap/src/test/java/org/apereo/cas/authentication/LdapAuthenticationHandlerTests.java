@@ -97,7 +97,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     }
 
     @Test
-    public void verifyAuthenticateFailure() throws Throwable {
+    public void verifyAuthenticateFailure() throws Exception {
         assertNotEquals(handler.size(), 0);
         this.thrown.expect(FailedLoginException.class);
         try {
@@ -112,7 +112,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     }
 
     @Test
-    public void verifyAuthenticateNotFound() throws Throwable {
+    public void verifyAuthenticateNotFound() throws Exception {
         try {
             this.thrown.expect(AccountNotFoundException.class);
             this.handler.forEach(Unchecked.consumer(h -> {
