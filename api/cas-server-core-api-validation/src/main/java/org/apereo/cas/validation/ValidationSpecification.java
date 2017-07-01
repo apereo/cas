@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author William G. Thompson, Jr.
  * @since 3.0.0
  */
+@FunctionalInterface
 public interface ValidationSpecification {
 
     /**

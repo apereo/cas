@@ -11,6 +11,7 @@ import java.util.Map;
  * @author John Gasper
  * @since 4.2.0
  */
+@FunctionalInterface
 public interface WsFederationAttributeMutator extends Serializable {
     /**
      * modifyAttributes manipulates the attributes before they

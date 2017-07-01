@@ -16,6 +16,7 @@ import java.util.Map;
  * @see PrincipalFactory
  * @since 4.1
  */
+@FunctionalInterface
 @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface PrincipalAttributesRepository extends Serializable {
 
