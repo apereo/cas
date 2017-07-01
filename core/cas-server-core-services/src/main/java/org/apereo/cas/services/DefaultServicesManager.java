@@ -122,6 +122,11 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         return findServiceBy(service) != null;
     }
 
+    @Override
+    public boolean matchesExistingService(final String service) {
+        return findServiceBy(service) != null;
+    }
+
     @Audit(action = "SAVE_SERVICE",
             actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
@@ -154,12 +159,6 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
     }
     
-
-    @Override
-    public boolean matchesExistingService(final String service) {
-        return findServiceBy(service) != null;
-    }
-
     @Override
     public int count() {
         return services.size();
