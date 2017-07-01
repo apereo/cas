@@ -125,7 +125,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             return sts.requestSecurityTokenResponse(service.getAppliesTo());
         } catch (final SoapFault ex) {
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
-                throw new RuntimeException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
+                throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
             }
             throw ex;
         } catch (final Exception ex) {
