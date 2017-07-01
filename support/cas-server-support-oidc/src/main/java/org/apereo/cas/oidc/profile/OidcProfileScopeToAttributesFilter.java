@@ -108,7 +108,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                          final RegisteredService registeredService) {
         stream.stream()
                 .distinct()
-                .filter(s -> this.filters.containsKey(s))
+                .filter(this.filters::containsKey)
                 .forEach(s -> {
                     final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
                     attributes.putAll(policy.getAttributes(principal, service, registeredService));
