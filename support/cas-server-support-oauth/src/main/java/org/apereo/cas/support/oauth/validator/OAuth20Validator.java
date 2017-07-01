@@ -7,11 +7,14 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Stream;
 
 /**
  * Validate OAuth inputs.
@@ -39,7 +42,7 @@ public class OAuth20Validator {
         final String parameter = request.getParameter(name);
         LOGGER.debug("[{}]: [{}]", name, parameter);
         if (StringUtils.isBlank(parameter)) {
-            LOGGER.error("Missing: [{}]", name);
+            LOGGER.error("Missing request parameter: [{}]", name);
             return false;
         }
         return true;
@@ -100,5 +103,21 @@ public class OAuth20Validator {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Check the response type against expected response types.
+     *
+     * @param type          the current response type
+     * @param expectedTypes the expected response types
+     * @return whether the response type is supported
+     */
+    public static boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
+        LOGGER.debug("Response type: [{}]", type);
+        final boolean checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
+        if (!checked) {
+            LOGGER.error("Unsupported response type: [{}]", type);
+        }
+        return checked;
     }
 }

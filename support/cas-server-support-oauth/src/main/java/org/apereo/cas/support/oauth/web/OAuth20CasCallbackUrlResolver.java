@@ -45,6 +45,12 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
             parameter = getQueryParameter(context, OAuth20Constants.ACR_VALUES);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
 
+            parameter = getQueryParameter(context, OAuth20Constants.RESPONSE_TYPE);
+            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+
+            parameter = getQueryParameter(context, OAuth20Constants.GRANT_TYPE);
+            parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+
             final String callbackResolved = builder.build().toString();
 
             LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
