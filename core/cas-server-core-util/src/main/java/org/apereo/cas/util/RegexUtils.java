@@ -42,18 +42,6 @@ public final class RegexUtils {
     }
 
     /**
-     * Creates the pattern. Matching is by default
-     * case insensitive.
-     *
-     * @param pattern the pattern, may not be null.
-     * @return the pattern or or {@link RegexUtils#MATCH_NOTHING_PATTERN}
-     * if pattern is null or invalid.
-     */
-    public static Pattern createPattern(final String pattern) {
-        return createPattern(pattern, Pattern.CASE_INSENSITIVE);
-    }
-    
-    /**
      * Concatenate all elements in the given collection to form a regex pattern.
      *
      * @param requiredValues  the required values
@@ -63,6 +51,18 @@ public final class RegexUtils {
     public static Pattern concatenate(final Collection<String> requiredValues, final boolean caseInsensitive) {
         final String pattern = requiredValues.stream().collect(Collectors.joining("|", "(", ")"));
         return createPattern(pattern, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+    }
+
+    /**
+     * Creates the pattern. Matching is by default
+     * case insensitive.
+     *
+     * @param pattern the pattern, may not be null.
+     * @return the pattern or or {@link RegexUtils#MATCH_NOTHING_PATTERN}
+     * if pattern is null or invalid.
+     */
+    public static Pattern createPattern(final String pattern) {
+        return createPattern(pattern, Pattern.CASE_INSENSITIVE);
     }
 
     /**
