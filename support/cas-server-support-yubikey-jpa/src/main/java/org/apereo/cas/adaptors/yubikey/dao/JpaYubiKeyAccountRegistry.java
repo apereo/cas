@@ -47,20 +47,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         }
         return false;
     }
-
-    @Override
-    public boolean registerAccountFor(final String uid, final String token) {
-
-        if (accountValidator.isValid(uid, token)) {
-            final String yubikeyPublicId = YubicoClient.getPublicId(token);
-            final YubiKeyAccount account = new YubiKeyAccount();
-            account.setPublicId(yubikeyPublicId);
-            account.setUsername(uid);
-            return this.entityManager.merge(account) != null;
-        }
-        return false;
-    }
-
+    
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         try {
@@ -76,4 +63,18 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         }
         return false;
     }
+
+    @Override
+    public boolean registerAccountFor(final String uid, final String token) {
+
+        if (accountValidator.isValid(uid, token)) {
+            final String yubikeyPublicId = YubicoClient.getPublicId(token);
+            final YubiKeyAccount account = new YubiKeyAccount();
+            account.setPublicId(yubikeyPublicId);
+            account.setUsername(uid);
+            return this.entityManager.merge(account) != null;
+        }
+        return false;
+    }
+
 }

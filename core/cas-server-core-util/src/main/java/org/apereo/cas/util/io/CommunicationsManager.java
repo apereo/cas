@@ -62,25 +62,6 @@ public class CommunicationsManager {
     }
 
     /**
-     * Sms.
-     *
-     * @param principal the principal
-     * @param attribute the attribute
-     * @param text      the text
-     * @param from      the from
-     * @return the boolean
-     */
-    public boolean sms(final Principal principal,
-                       final String attribute,
-                       final String text, final String from) {
-        if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
-            final String to = CollectionUtils.toCollection(principal.getAttributes().get(attribute)).iterator().next().toString();
-            return sms(from, to, text);
-        }
-        return false;
-    }
-
-    /**
      * Email.
      *
      * @param text    the text
@@ -123,7 +104,26 @@ public class CommunicationsManager {
         }
         return false;
     }
-
+    
+    /**
+     * Sms.
+     *
+     * @param principal the principal
+     * @param attribute the attribute
+     * @param text      the text
+     * @param from      the from
+     * @return the boolean
+     */
+    public boolean sms(final Principal principal,
+                       final String attribute,
+                       final String text, final String from) {
+        if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
+            final String to = CollectionUtils.toCollection(principal.getAttributes().get(attribute)).iterator().next().toString();
+            return sms(from, to, text);
+        }
+        return false;
+    }
+    
     /**
      * Sms.
      *

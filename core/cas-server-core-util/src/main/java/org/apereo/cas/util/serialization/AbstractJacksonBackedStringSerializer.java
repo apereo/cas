@@ -118,6 +118,11 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
+    public T from(final Writer writer) {
+        return from(writer.toString());
+    }
+    
+    @Override
     public T from(final InputStream json) {
         try {
             final String jsonString = isJsonFormat()
@@ -159,10 +164,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         }
     }
 
-    @Override
-    public T from(final Writer writer) {
-        return from(writer.toString());
-    }
 
     @Override
     public void to(final File out, final T object) {

@@ -19,15 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebApplicationServiceFactory.class);
 
-    @Override
-    public WebApplicationService createService(final HttpServletRequest request) {
-        final String serviceToUse = getRequestedService(request);
-        if (StringUtils.isBlank(serviceToUse)) {
-            LOGGER.debug("No service is specified in the request. Skipping service creation");
-            return null;
-        }
-        return newWebApplicationService(request, serviceToUse);
-    }
 
     /**
      * Determine web application format boolean.
@@ -95,6 +86,16 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             return null;
         }
         return serviceToUse;
+    }
+
+    @Override
+    public WebApplicationService createService(final HttpServletRequest request) {
+        final String serviceToUse = getRequestedService(request);
+        if (StringUtils.isBlank(serviceToUse)) {
+            LOGGER.debug("No service is specified in the request. Skipping service creation");
+            return null;
+        }
+        return newWebApplicationService(request, serviceToUse);
     }
 
     @Override

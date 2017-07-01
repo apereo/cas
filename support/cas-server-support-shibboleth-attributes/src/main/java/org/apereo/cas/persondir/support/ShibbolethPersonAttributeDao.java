@@ -42,8 +42,8 @@ public class ShibbolethPersonAttributeDao extends BasePersonAttributeDao {
                     .entrySet()
                     .stream()
                     .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            p -> p.getValue().getValues().stream().map(IdPAttributeValue::getValue).collect(Collectors.toList()))
+                        Map.Entry::getKey,
+                        p -> p.getValue().getValues().stream().map(IdPAttributeValue::getValue).collect(Collectors.toList()))
                     );
 
             return new NamedPersonImpl(uid, attributes);

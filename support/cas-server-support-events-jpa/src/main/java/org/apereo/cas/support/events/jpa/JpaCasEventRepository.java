@@ -41,15 +41,15 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public Collection<CasEvent> getEventsForPrincipal(final String id) {
-        return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principalId = :principalId"),
-                CasEvent.class).setParameter(PRINCIPAL_ID_PARAM, id).getResultList();
-    }
-
-    @Override
     public Collection<CasEvent> load(final ZonedDateTime dateTime) {
         return this.entityManager.createQuery(SELECT_QUERY.concat("where r.creationTime >= :creationTime"),
                 CasEvent.class).setParameter(CREATION_TIME_PARAM, dateTime.toString()).getResultList();
+    }
+    
+    @Override
+    public Collection<CasEvent> getEventsForPrincipal(final String id) {
+        return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principalId = :principalId"),
+                CasEvent.class).setParameter(PRINCIPAL_ID_PARAM, id).getResultList();
     }
 
     @Override
