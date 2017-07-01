@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;

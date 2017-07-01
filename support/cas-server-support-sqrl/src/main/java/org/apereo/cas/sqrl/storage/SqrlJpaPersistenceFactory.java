@@ -415,7 +415,7 @@ public class SqrlJpaPersistenceFactory extends com.github.dbadia.sqrl.server.dat
                             }
                         }
                     }
-                } catch (final RuntimeException e) {
+                } catch (final Exception e) {
                     LOGGER.error("Error running entity manager monitor check", e);
                 }
             }

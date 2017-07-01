@@ -75,7 +75,7 @@ public class ServiceTicketResourceTests {
     }
 
     @Test
-    public void normalCreationOfST() throws Throwable {
+    public void normalCreationOfST() throws Exception {
         configureCasMockToCreateValidST();
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -86,7 +86,7 @@ public class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithInvalidTicketException() throws Throwable {
+    public void creationOfSTWithInvalidTicketException() throws Exception {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -96,7 +96,7 @@ public class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithGeneralException() throws Throwable {
+    public void creationOfSTWithGeneralException() throws Exception {
         configureCasMockSTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -105,11 +105,11 @@ public class ServiceTicketResourceTests {
                 .andExpect(content().string(OTHER_EXCEPTION));
     }
 
-    private void configureCasMockSTCreationToThrow(final Throwable e) throws Throwable {
+    private void configureCasMockSTCreationToThrow(final Throwable e) throws Exception {
         when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenThrow(e);
     }
 
-    private void configureCasMockToCreateValidST() throws Throwable {
+    private void configureCasMockToCreateValidST() throws Exception {
         final ServiceTicket st = mock(ServiceTicket.class);
         when(st.getId()).thenReturn("ST-1");
         when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
