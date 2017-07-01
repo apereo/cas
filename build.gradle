@@ -298,7 +298,6 @@ subprojects {
         }
 
         testImplementation libraries.tests
-        runtimeOnly libraries.javaximpl
     }
 
     if (Boolean.getBoolean("genConfigMetadata")) {

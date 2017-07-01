@@ -66,7 +66,7 @@ public class SurrogateAuthenticationAspect {
             }
             LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", result.getPrincipal(), targetUserId);
             throw new FailedLoginException();
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             throw Throwables.propagate(e);
         }
     }

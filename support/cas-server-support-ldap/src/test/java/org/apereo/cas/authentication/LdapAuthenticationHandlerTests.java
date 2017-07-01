@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -107,7 +108,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
                         h.authenticate(new UsernamePasswordCredential(username, "badpassword"));
                     })));
         } catch (final Exception e) {
-            throw e.getCause();
+            throw Throwables.propagate(e.getCause());
         }
     }
 
@@ -119,7 +120,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
                 h.authenticate(new UsernamePasswordCredential("notfound", "badpassword"));
             }));
         } catch (final Exception e) {
-            throw e.getCause();
+            throw Throwables.propagate(e.getCause());
         }
     }
 }
