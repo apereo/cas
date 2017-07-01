@@ -155,8 +155,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(
             final Map<String, List<Object>> attributes) {
         return attributes.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                        entry -> entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
     }
 
     /***
