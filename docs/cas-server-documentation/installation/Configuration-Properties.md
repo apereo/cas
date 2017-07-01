@@ -4198,8 +4198,14 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.writeConcern=NORMAL
 # cas.ticket.registry.mongo.host=localhost
 
-# cas.ticket.mongo.conns.lifetime=60000
-# cas.ticket.mongo.conns.perHost=10
+# cas.ticket.registry.mongo.conns.lifetime=60000
+# cas.ticket.registry.mongo.conns.perHost=10
+
+# cas.ticket.registry.mongo.crypto.signing.key=
+# cas.ticket.registry.mongo.crypto.signing.keySize=512
+# cas.ticket.registry.mongo.crypto.encryption.key=
+# cas.ticket.registry.mongo.crypto.encryption.keySize=16
+# cas.ticket.registry.mongo.crypto.alg=AES
 ```
 
 ### Redis Ticket Registry
