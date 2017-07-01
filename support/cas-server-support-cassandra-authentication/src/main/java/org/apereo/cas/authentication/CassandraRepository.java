@@ -8,6 +8,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface CassandraRepository {
 
     /**

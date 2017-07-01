@@ -6,6 +6,7 @@ package org.apereo.cas.logout;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface LogoutMessageCreator {
     /**
      * Builds the logout message to be sent.

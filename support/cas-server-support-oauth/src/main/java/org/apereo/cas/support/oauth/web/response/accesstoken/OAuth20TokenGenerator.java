@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.refreshtoken.RefreshToken;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@FunctionalInterface
 public interface OAuth20TokenGenerator {
 
     /**

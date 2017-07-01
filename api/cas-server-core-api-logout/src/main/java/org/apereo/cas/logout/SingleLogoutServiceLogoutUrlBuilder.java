@@ -12,6 +12,7 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface SingleLogoutServiceLogoutUrlBuilder {
 
     /**

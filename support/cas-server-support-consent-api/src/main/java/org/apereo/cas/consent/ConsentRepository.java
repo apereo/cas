@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface ConsentRepository extends Serializable {
     /**
      * Gets consent decision.

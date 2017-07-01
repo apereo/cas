@@ -12,6 +12,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface MultifactorAuthenticationProviderSelector {
 
     /**
