@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.QRUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.jsqrl.config.SqrlConfig;
@@ -50,7 +51,7 @@ public class SqrlInitialAction extends AbstractAction {
         
 
         final String prefix = casProperties.getServer().getPrefix();
-        final String url = prefix.replaceAll("https?://", "qrl://")
+        final String url = prefix.replaceAll("https?://", "sqrl://")
                 + "/sqrl?nut=" + sqrlNut + "&sfn=" + sfn;
 
         LOGGER.debug("Generating SQRL QR code based on URL [{}]", url);
@@ -61,6 +62,7 @@ public class SqrlInitialAction extends AbstractAction {
         final String result = new String(out.toByteArray());
 
         requestContext.getFlowScope().put("sqrlUrl", url);
+        requestContext.getFlowScope().put("sqrlUrlEncoded", EncodingUtils.encodeBase64(url.getBytes()));
         requestContext.getFlowScope().put("nut", sqrlNut);
         requestContext.getFlowScope().put("sfn", sfn);
         requestContext.getFlowScope().put("sqrlImage", result);
