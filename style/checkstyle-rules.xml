@@ -135,10 +135,11 @@
             <property name="severity" value="warning"/>
         </module>
         <module name="IllegalThrows">
+            <property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
             <property name="severity" value="error"/>
         </module>
         <module name="IllegalCatch">
-            <property name="illegalClassNames" value="java.lang.Error,java.lang.Throwable,java.lang.RuntimeException"/>
+            <property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
             <property name="severity" value="error"/>
         </module>
         <module name="IllegalImport">
