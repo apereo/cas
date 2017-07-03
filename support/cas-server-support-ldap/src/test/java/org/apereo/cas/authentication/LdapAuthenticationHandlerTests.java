@@ -98,7 +98,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     }
 
     @Test
-    public void verifyAuthenticateFailure() throws Exception {
+    public void verifyAuthenticateFailure() throws Throwable {
         assertNotEquals(handler.size(), 0);
         this.thrown.expect(FailedLoginException.class);
         try {
@@ -108,7 +108,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
                         h.authenticate(new UsernamePasswordCredential(username, "badpassword"));
                     })));
         } catch (final Exception e) {
-            throw Throwables.propagate(e.getCause());
+            throw e.getCause();
         }
     }
 
