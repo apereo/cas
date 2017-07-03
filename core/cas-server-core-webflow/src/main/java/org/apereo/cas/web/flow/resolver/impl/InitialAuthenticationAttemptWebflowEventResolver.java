@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -76,7 +77,12 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             if (service != null) {
                 LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+
+                LOGGER.debug("Locating authentication event in the request context...");
+                final Authentication authn = WebUtils.getAuthentication(context);
+                LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]",
+                        registeredService, authn.getPrincipal());
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn);
 
                 LOGGER.debug("Attempting to resolve candidate authentication events for [{}]", service);
                 final Set<Event> resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
