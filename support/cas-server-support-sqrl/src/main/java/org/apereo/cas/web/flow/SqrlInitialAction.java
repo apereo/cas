@@ -48,7 +48,6 @@ public class SqrlInitialAction extends AbstractAction {
 
         final String sqrlNut = jSqrlServer.createAuthenticationRequest(request.getRemoteAddr(), true);
         final String sfn = SqrlUtil.unpaddedBase64UrlEncoded(config.getSfn());
-        
 
         final String prefix = casProperties.getServer().getPrefix();
         final String url = prefix.replaceAll("https?://", "sqrl://")
@@ -58,7 +57,7 @@ public class SqrlInitialAction extends AbstractAction {
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final Base64OutputStream os = new Base64OutputStream(out);
-        QRUtils.generateQRCode(os, url);
+        QRUtils.generateQRCode(os, url, 120, 120);
         final String result = new String(out.toByteArray());
 
         requestContext.getFlowScope().put("sqrlUrl", url);
