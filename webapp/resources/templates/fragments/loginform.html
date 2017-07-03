@@ -2,12 +2,11 @@
     <div class="login-header">
         <h2 th:text="#{cas.login.pagetitle}"></h2>
         <span th:if="${sqrlEnabled}">
-
-            <script type="text/javascript" th:src="@{#{webjars.atmosphere.js}}"></script>
+            
             <script th:inline="javascript">
                 /*<![CDATA[*/
 
-                var sqrlurl =  /*[[${#servletContext.getAttribute('sqrlUrl')}]]*/
+                var sqrlurl =  /*[[${sqrlUrl}]]*/
 
                 /*]]>*/
             </script>
@@ -21,7 +20,8 @@
                 }
             </script>
 
-            <img id="sqrlImg" th:src="@{/sqrl/qrgen}" onclick="sqrlInProgress(sqrlurl)" title="Click or scan the code"/>
+            <img id="sqrlImg" th:title="${sqrlurl}" th:src="@{'data:image/jpeg;base64,'+${sqrlImage}}"
+                 onclick="sqrlInProgress(sqrlurl)"/>
 
             <div id="cancelSqrl" style="visibility: hidden">
                 <br/>

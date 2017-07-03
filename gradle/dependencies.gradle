@@ -1011,16 +1011,7 @@ ext.libraries = [
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
         sqrlserver : [
-                dependencies.create("com.github.sqrlserverjava:sqrl-server-base:$sqrlVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.google.zxing", module: "core")
-                    force = true
-                },
-                dependencies.create("com.github.sqrlserverjava:sqrl-server-atmosphere:1.0.0") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                },
-                dependencies.create("eu.infomas:annotation-detector:3.0.5") {
+                dependencies.create("com.github.banichols:jsqrl-server:-SNAPSHOT") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
@@ -2602,9 +2593,6 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.webjars:zxcvbn:$zxcvbnVersion") {
-                    force = true
-                },
-                dependencies.create("org.webjars.bower:atmosphere:$atmosphereVersion") {
                     force = true
                 },
                 dependencies.create("org.webjars:bootstrap:$bootstrapVersion") {

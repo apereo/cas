@@ -4,6 +4,7 @@ dependencies {
     compile project(":api:cas-server-core-api-ticket")
     compile project(":api:cas-server-core-api-util")
     implementation libraries.shiro
+    implementation libraries.zxingbarcode
     api libraries.quartz
     api libraries.jose4j
     api libraries.httpclient
