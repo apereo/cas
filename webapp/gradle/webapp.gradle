@@ -95,10 +95,6 @@ dependencies {
     compile project(":support:cas-server-support-themes")
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
-
-    compile project(":support:cas-server-support-sqrl")
-
-    compile project(":support:cas-server-support-sqrl")
     
     compile project(":webapp:cas-server-webapp-config")
     compile project(":webapp:cas-server-webapp-init")
