@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
