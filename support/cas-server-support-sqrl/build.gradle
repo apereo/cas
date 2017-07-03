@@ -7,5 +7,4 @@ dependencies {
     provided project(":core:cas-server-core-util")
     provided project(":core:cas-server-core-services")
     provided project(":core:cas-server-core-web")
-    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }
