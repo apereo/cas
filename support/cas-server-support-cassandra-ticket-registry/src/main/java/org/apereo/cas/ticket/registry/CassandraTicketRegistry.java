@@ -219,7 +219,8 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry implement
     private Stream<Ticket> getExpiredTGTsIn(final long lastRunBucket) {
         final ResultSet resultSet = session.execute(this.selectExStmt.bind(lastRunBucket));
         return StreamSupport.stream(resultSet.spliterator(), false)
-                .map(row -> serializer.deserialize(row.get(FIRST_COLUMN_INDEX, typeToWriteToCassandra), ticketCatalog.find(row.getString(1)).getImplementationClass()))
+                .map(row -> serializer.deserialize(row.get(FIRST_COLUMN_INDEX, typeToWriteToCassandra),
+                        ticketCatalog.find(row.getString(1)).getImplementationClass()))
                 .filter(ticket -> Objects.nonNull(ticket) && ticket.isExpired());
     }
 
