@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -29,12 +30,14 @@ import java.util.Map;
  * @since 5.2.0.
  */
 public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(FortressAuthenticationHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FortressAuthenticationHandler.class);
     private static final String FORTRESS_SESSION_KEY = "fortressSession";
-    private static final String JAXB_EXCEPTION_MESSAGE = "failed initializa jaxb context";
+    private static final String JAXB_EXCEPTION_MESSAGE = "failed initialize jaxb context";
     private static final String TRACE_ATTEMPT_MESSAGE_TO_FORTRESS = "trying to delegate authentication for {} to fortress";
     private static final String TRACE_FORTRESS_SESSION_RESPONSE = "fortress session result : {}";
-    private static final String TRACE_FORTRESS_AUTH_SUCCESS = "returning default handler";
+
+    private static final String ERROR_MESSAGE_FOR_FORTRESS_AUTHENTICATION_FAILURE = "Fortress authentication failed for [%s]";
+    private static final String ERROR_MESSAGE_FOR_JAXB_EXCEPTION = "Cannot marshalling fortress session with value : %s";
 
     @Autowired
     @Qualifier("fortressAccessManager")
@@ -49,9 +52,9 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
             final JAXBContext jaxbContext = JAXBContext.newInstance(Session.class);
             marshaller = jaxbContext.createMarshaller();
         } catch (final JAXBException e) {
-            LOG.error(JAXB_EXCEPTION_MESSAGE, e);
+            LOGGER.error(JAXB_EXCEPTION_MESSAGE, e);
         }
-        LOG.trace("Fortress authentication handler registered");
+        LOGGER.trace("Fortress authentication handler registered");
     }
 
     @Override
@@ -61,30 +64,28 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
         final String password = usernamePasswordCredential.getPassword();
         Session fortressSession = null;
         try {
-            LOG.trace(TRACE_ATTEMPT_MESSAGE_TO_FORTRESS, new Object[]{username});
+            LOGGER.trace(TRACE_ATTEMPT_MESSAGE_TO_FORTRESS, new Object[]{username});
             fortressSession = accessManager.createSession(new User(username, password.toCharArray()), false);
-            if (fortressSession != null) {
+            if (fortressSession != null && fortressSession.isAuthenticated()) {
                 final StringWriter writer = new StringWriter();
                 marshaller.marshal(fortressSession, writer);
                 final String fortressXmlSession = writer.toString();
-                LOG.trace(TRACE_FORTRESS_SESSION_RESPONSE, fortressXmlSession);
+                LOGGER.trace(TRACE_FORTRESS_SESSION_RESPONSE, fortressXmlSession);
                 final Map<String, Object> attributes = new HashMap<>();
                 attributes.put(FORTRESS_SESSION_KEY, fortressXmlSession);
                 return createHandlerResult(usernamePasswordCredential,
                         principalFactory.createPrincipal(username, attributes), null);
             }
         } catch (final org.apache.directory.fortress.core.SecurityException e) {
-            final String errorMessage = "Fortress authentication failed for [" + username + "]";
-            LOG.trace(errorMessage, e);
-            throw new GeneralSecurityException(errorMessage);
+            final String errorMessage = String.format(ERROR_MESSAGE_FOR_FORTRESS_AUTHENTICATION_FAILURE, username);
+            LOGGER.trace(errorMessage, e);
+            throw new FailedLoginException(errorMessage);
         } catch (final JAXBException e) {
-            final String errorMessage = "cannot marshalling session with value : " + fortressSession == null ? "null"
-                    : fortressSession.toString();
-            LOG.warn(errorMessage);
-            throw new GeneralSecurityException(e);
+            final String errorMessage = String.format(ERROR_MESSAGE_FOR_JAXB_EXCEPTION, fortressSession.toString());
+            LOGGER.warn(errorMessage);
+            throw new PreventedException(e);
         }
-        LOG.trace(TRACE_FORTRESS_AUTH_SUCCESS);
-        return createHandlerResult(usernamePasswordCredential, principalFactory.createPrincipal(username), null);
+        throw new FailedLoginException(String.format("[%s] could not authenticate with fortress", username));
     }
 
     public AccessMgr getAccessManager() {
