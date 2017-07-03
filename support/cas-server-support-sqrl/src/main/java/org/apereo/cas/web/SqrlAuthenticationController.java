@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,22 +43,7 @@ public class SqrlAuthenticationController {
                                @RequestParam("nut") final String nut,
                                final HttpServletRequest httpRequest) {
         final SqrlAuthResponse sqrlAuthResponse = server.handleClientRequest(request, nut, httpRequest.getRemoteAddr());
+        LOGGER.info("SQRL authentication response [{}] with nut [{}]", sqrlAuthResponse, nut);
         return new ResponseEntity(sqrlAuthResponse.toEncodedString(), HttpStatus.OK);
-    }
-
-    /**
-     * Check authentication response entity.
-     *
-     * @param nut         the nut
-     * @param httpRequest the http request
-     * @return the response entity
-     */
-    @GetMapping(path = "/authcheck")
-    public ResponseEntity checkAuthentication(@RequestParam("nut") final String nut,
-                                              final HttpServletRequest httpRequest) {
-        if (server.checkAuthenticationStatus(nut, httpRequest.getRemoteAddr())) {
-            return new ResponseEntity(HttpStatus.RESET_CONTENT);
-        }
-        return new ResponseEntity(HttpStatus.OK);
     }
 }

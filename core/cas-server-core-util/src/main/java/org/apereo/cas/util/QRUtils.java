@@ -26,6 +26,12 @@ import java.util.stream.IntStream;
  */
 public final class QRUtils {
 
+    /** Large width size. */
+    public static final int WIDTH_LARGE = 250;
+
+    /** Medium width size. */
+    public static final int WIDTH_MEDIUM = 125;
+    
     private QRUtils() {
     }
 
