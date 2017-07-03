@@ -27,7 +27,7 @@ public class OneTimeTokenQRGeneratorController {
     public void generate(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         response.setContentType("image/png");
         final String key = request.getParameter("key");
-        QRUtils.generateQRCode(response.getOutputStream(), key);
+        QRUtils.generateQRCode(response.getOutputStream(), key, 250, 250);
     }
 
 }
