@@ -44,8 +44,8 @@ import java.util.Set;
 public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileScopeToAttributesFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcProfileScopeToAttributesFilter.class);
 
-    private Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
-    private Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
+    private final Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
+    private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
 
     private final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper;
     private final PrincipalFactory principalFactory;
@@ -108,7 +108,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                          final RegisteredService registeredService) {
         stream.stream()
                 .distinct()
-                .filter(s -> this.filters.containsKey(s))
+                .filter(this.filters::containsKey)
                 .forEach(s -> {
                     final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
                     attributes.putAll(policy.getAttributes(principal, service, registeredService));
@@ -154,7 +154,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                     break;
                 case OidcConstants.OFFLINE_ACCESS:
                     LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", s, service.getId());
-                    oidc.setGenerateRefreshToken(true);
+                    oidc.setGenerateRefreshToken(Boolean.TRUE);
                     break;
                 case OidcCustomScopeAttributeReleasePolicy.SCOPE_CUSTOM:
                     LOGGER.debug("Found custom scope [{}] for service [{}]", s, service.getId());

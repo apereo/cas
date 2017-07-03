@@ -81,6 +81,7 @@ layout: null
         *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
         *   [Microsoft Azure](/$version/installation/MicrosoftAzure-Authentication.html)
         *   [FIDO U2F](/$version/installation/FIDO-U2F-Authentication.html)
+        *   [Swivel Secure](/$version/installation/SwivelSecure-Authentication.html)
         *   [Custom](/$version/installation/Custom-MFA-Authentication.html)
     *   [Triggers](/$version/installation/Configuring-Multifactor-Authentication-Triggers.html)
     *   [Trusted Devices](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
@@ -97,6 +98,7 @@ layout: null
 
 * [Ticketing](#ticketingconfig)
     *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)
+    *   [JWT Service Tickets](/$version/installation/Configure-ServiceTicket-JWT.html) 
     *   [Expiration Policies](/$version/installation/Configuring-Ticket-Expiration-Policy.html)
     *   [Storage](#ticketingstorage)
         *   [Hazelcast](/$version/installation/Hazelcast-Ticket-Registry.html)
@@ -167,6 +169,7 @@ layout: null
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
     *   [REST](/$version/protocol/REST-Protocol.html)
+    *   [SQRL](/$version/protocol/SQRL-Protocol.html)
 
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)
@@ -176,10 +179,12 @@ layout: null
     *   [SCIM Provisioning](/$version/integration/SCIM-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
+    *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [Shibboleth Identity Provider](/$version/integration/Shibboleth.html)
 
 * [Developer](#developer)
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
+    *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [Issue Tracker](https://github.com/apereo/cas/issues)
     *   [Security Vulnerability Response](/cas/developer/Sec-Vuln-Response.html)
     *   [PMC](/cas/developer/Project-Commitee.html)

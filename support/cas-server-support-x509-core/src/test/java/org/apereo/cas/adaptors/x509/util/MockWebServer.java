@@ -25,7 +25,7 @@ public class MockWebServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(MockWebServer.class);
     
     /** Request handler. */
-    private Worker worker;
+    private final Worker worker;
 
     /** Controls the worker thread. */
     private Thread workerThread;
@@ -43,7 +43,7 @@ public class MockWebServer {
         try {
             this.worker = new Worker(new ServerSocket(port), resource, contentType);
         } catch (final IOException e) {
-            throw new RuntimeException("Cannot create Web server", e);
+            throw new IllegalArgumentException("Cannot create Web server", e);
         }
     }
 
@@ -95,13 +95,13 @@ public class MockWebServer {
         private boolean running;
 
         /** Server socket. */
-        private ServerSocket serverSocket;
+        private final ServerSocket serverSocket;
 
         /** Resource to serve. */
-        private Resource resource;
+        private final Resource resource;
 
         /** MIME content type of resource to serve. */
-        private String contentType;
+        private final String contentType;
 
 
         /**

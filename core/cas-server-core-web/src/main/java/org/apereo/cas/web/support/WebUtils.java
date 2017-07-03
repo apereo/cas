@@ -341,7 +341,7 @@ public final class WebUtils {
      */
     public static boolean getWarningCookie(final RequestContext context) {
         final String val = ObjectUtils.defaultIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
-        return Boolean.valueOf(val);
+        return Boolean.parseBoolean(val);
     }
 
     /**

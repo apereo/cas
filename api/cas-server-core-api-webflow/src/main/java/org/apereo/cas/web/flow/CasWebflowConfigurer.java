@@ -87,6 +87,14 @@ public interface CasWebflowConfigurer {
     Transition createTransition(Expression criteriaOutcomeExpression, String targetState);
 
     /**
+     * Create transition transition.
+     *
+     * @param targetState the target state
+     * @return the transition
+     */
+    Transition createTransition(String targetState);
+    
+    /**
      * Create evaluate action evaluate action.
      *
      * @param expression the expression
@@ -134,14 +142,7 @@ public interface CasWebflowConfigurer {
      * @param state the state
      */
     void setStartState(Flow flow, TransitionableState state);
-
-    /**
-     * Create transition transition.
-     *
-     * @param targetState the target state
-     * @return the transition
-     */
-    Transition createTransition(String targetState);
+    
 
     /**
      * Create end state.

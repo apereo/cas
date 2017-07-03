@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import static org.springframework.util.StringUtils.*;
+import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 /**
  * This is {@link AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver}
@@ -38,7 +38,7 @@ import static org.springframework.util.StringUtils.*;
  */
 public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver.class);
-    
+
     private final String globalAuthenticationAttributeValueRegex;
     private final Set<String> attributeNames;
 
@@ -84,13 +84,13 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
             final MultifactorAuthenticationProvider provider = providers.iterator().next();
             LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
             return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
-                    input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));
+                input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));
         }
 
         return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
-                input -> providers.stream()
-                        .filter(provider -> input != null && provider.matches(input))
-                        .count() > 0);
+            input -> providers.stream()
+                    .filter(provider -> input != null && provider.matches(input))
+                    .count() > 0);
     }
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",

@@ -2,6 +2,8 @@ package org.apereo.cas.web.report;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.AutoConfigurationReportEndpoint;
 import org.springframework.boot.actuate.endpoint.BeansEndpoint;
@@ -31,7 +33,8 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class DashboardController extends BaseCasMvcEndpoint {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
+    
     @Autowired
     private RestartEndpoint restartEndpoint;
 
@@ -71,7 +74,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     public DashboardController(final CasConfigurationProperties casProperties) {
         super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
@@ -90,7 +93,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        final Map<String, Object> model = new HashMap<>();
+        final Map<String, Object> model = new HashMap<>(50);
         model.put("restartEndpointEnabled", restartEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("environmentEndpointEnabled", environmentEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());
@@ -103,7 +106,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
         model.put("dumpEndpointEnabled", dumpEndpoint.isEnabled());
         model.put("infoEndpointEnabled", infoEndpoint.isEnabled());
         model.put("healthEndpointEnabled", healthEndpoint.isEnabled());
-        model.put("traceEndpointEnabled", healthEndpoint.isEnabled());
+        model.put("traceEndpointEnabled", traceEndpoint.isEnabled());
 
         model.put("trustedDevicesEnabled", this.applicationContext.containsBean("trustedDevicesController")
                 && isEndpointCapable(casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties));

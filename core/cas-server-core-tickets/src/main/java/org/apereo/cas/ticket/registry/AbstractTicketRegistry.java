@@ -32,7 +32,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTicketRegistry.class);
-    
+
     /**
      * The cipher executor for ticket objects.
      */
@@ -76,7 +76,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     public long sessionCount() {
         try {
             return getTickets().stream().filter(TicketGrantingTicket.class::isInstance).count();
-        } catch (final Throwable t) {
+        } catch (final Exception t) {
             LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
                             + "Message is: [{}] Returning unknown as [{}]",
                     this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
@@ -88,7 +88,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     public long serviceTicketCount() {
         try {
             return getTickets().stream().filter(ServiceTicket.class::isInstance).count();
-        } catch (final Throwable t) {
+        } catch (final Exception t) {
             LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
                             + "Message is: [{}] Returning unknown as [{}]",
                     this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
@@ -162,16 +162,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @param ticketId the ticket id
      * @return true/false
      */
-    public boolean deleteSingleTicket(final Ticket ticketId) {
-        return deleteSingleTicket(ticketId.getId());
-    }
-
-    /**
-     * Delete a single ticket instance from the store.
-     *
-     * @param ticketId the ticket id
-     * @return true/false
-     */
     public abstract boolean deleteSingleTicket(String ticketId);
 
     public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
@@ -236,10 +226,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             }
 
             if (result == null) {
-                LOGGER.debug("Ticket passed is null and cannot be decoded");
+                LOGGER.warn("Ticket passed is null and cannot be decoded");
                 return null;
             }
-
+            if (!result.getClass().isAssignableFrom(EncodedTicket.class)) {
+                LOGGER.warn("Ticket passed is not an encoded ticket type; rather it's a [{}], no decoding is necessary.",
+                        result.getClass().getSimpleName());
+                return result;
+            }
+            
             LOGGER.debug("Attempting to decode [{}]", result);
             final EncodedTicket encodedTicket = (EncodedTicket) result;
 
@@ -264,7 +259,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return items;
         }
 
-        return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
+        return items
+                .stream()
+                .map(this::decodeTicket)
+                .collect(Collectors.toSet());
     }
 
     protected boolean isCipherExecutorEnabled() {

@@ -13,6 +13,7 @@ import org.apereo.cas.audit.spi.ThreadLocalPrincipalResolver;
 import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -34,7 +35,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Event;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +60,7 @@ public class CasCoreAuditConfiguration {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
                 casProperties.getAudit().getAppCode(),
                 auditablePrincipalResolver(principalIdProvider()),
-                Collections.singletonList(auditTrailManager), auditActionResolverMap(),
+                CollectionUtils.wrap(auditTrailManager), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
@@ -82,7 +82,7 @@ public class CasCoreAuditConfiguration {
 
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ClientInfoThreadLocalFilter());
-        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("CAS Client Info Logging Filter");
         bean.setAsyncSupported(true);
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
@@ -191,17 +191,20 @@ public class CasCoreAuditConfiguration {
     public Map<String, AuditResourceResolver> auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
-        map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver());
-        map.put("CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver());
-        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
-        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
+        final AuditResourceResolver messageBundleAwareResourceResolver = messageBundleAwareResourceResolver();
+        map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", messageBundleAwareResourceResolver);
+        map.put("CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", messageBundleAwareResourceResolver);
+        final AuditResourceResolver ticketResourceResolver = ticketResourceResolver();
+        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
+        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
         map.put("GRANT_SERVICE_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
         map.put("GRANT_PROXY_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
-        map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
-        map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
-        map.put("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver());
-        map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
-        map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
+        final AuditResourceResolver returnValueResourceResolver = returnValueResourceResolver();
+        map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver);
+        map.put("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver);
+        map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
+        map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
         return map;
     }

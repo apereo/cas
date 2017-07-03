@@ -17,6 +17,7 @@ import org.apereo.cas.support.events.authentication.adaptive.CasRiskBasedAuthent
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationMitigatedEvent;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -26,7 +27,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -99,7 +99,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
             final AuthenticationRiskContingencyResponse res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
             this.eventPublisher.publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
             
-            return Collections.singleton(res.getResult());
+            return CollectionUtils.wrapSet(res.getResult());
         }
 
         LOGGER.debug("Authentication request for [{}] is below the risk threshold", authentication.getPrincipal());

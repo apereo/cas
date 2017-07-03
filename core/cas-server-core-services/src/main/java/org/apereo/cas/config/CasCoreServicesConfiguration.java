@@ -82,7 +82,7 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
-        return new DefaultWebApplicationResponseBuilderLocator();
+        return new DefaultWebApplicationResponseBuilderLocator(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
@@ -124,7 +124,7 @@ public class CasCoreServicesConfiguration {
     public RegisteredServicesEventListener registeredServicesEventListener(@Qualifier("servicesManager") final ServicesManager servicesManager) {
         return new RegisteredServicesEventListener(servicesManager);
     }
-    
+
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
     @Bean
     @RefreshScope
@@ -144,16 +144,16 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO) final ServiceRegistryDao serviceRegistryDao) {
-        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(eventPublisher), serviceRegistryDao, servicesManager(serviceRegistryDao),
+        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryDao,
+                servicesManager(serviceRegistryDao),
                 casProperties.getServiceRegistry().isInitFromJson());
     }
 
-    @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
-    public ServiceRegistryDao embeddedJsonServiceRegistry(final ApplicationEventPublisher publisher) {
+    public ServiceRegistryDao embeddedJsonServiceRegistry() {
         try {
-            return new EmbeddedServiceRegistryDao(publisher);
+            return new EmbeddedServiceRegistryDao(eventPublisher);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

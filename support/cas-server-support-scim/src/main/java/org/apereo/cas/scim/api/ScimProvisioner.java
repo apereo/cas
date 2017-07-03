@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Principal;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface ScimProvisioner {
 
     /**

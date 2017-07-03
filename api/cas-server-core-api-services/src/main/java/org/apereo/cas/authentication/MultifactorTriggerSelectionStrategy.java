@@ -15,6 +15,7 @@ import java.util.Optional;
  * @author Daniel Frett
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface MultifactorTriggerSelectionStrategy {
     /**
      * Resolve the multifactor authentication provider id for the specified HttpServletRequest, RegisteredService and

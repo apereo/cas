@@ -30,7 +30,7 @@ import java.util.Map;
 public class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(FlowExecutionExceptionResolver.class);
         
-    private String modelKey = "exception.message";
+    private final String modelKey = "exception.message";
 
     @Override
     public ModelAndView resolveException(final HttpServletRequest request,

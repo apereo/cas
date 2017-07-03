@@ -5,13 +5,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.UniqueTicketIdGeneratorConfigurer;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link OpenIdUniqueTicketIdGeneratorConfiguration}.
@@ -27,7 +27,7 @@ public class OpenIdUniqueTicketIdGeneratorConfiguration implements UniqueTicketI
 
     @Override
     public Collection<Pair<String, UniqueTicketIdGenerator>> buildUniqueTicketIdGenerators() {
-        return Collections.singleton(Pair.of(OpenIdService.class.getCanonicalName(),
+        return CollectionUtils.wrap(Pair.of(OpenIdService.class.getCanonicalName(),
                 new HostNameBasedUniqueTicketIdGenerator.ServiceTicketIdGenerator(
                         casProperties.getTicket().getSt().getMaxLength(),
                         casProperties.getHost().getName())));

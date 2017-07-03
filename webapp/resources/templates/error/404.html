@@ -14,12 +14,12 @@
 <body id="cas">
 <div layout:fragment="content">
     <div class="alert alert-info">
-        <h2 class="prompt">Page Not Found</h2>
+        <h2 class="prompt" th:utext="#{screen.error.page.notfound}" />
         <div class="prompt">
             <p/>
-            <p>The page you are attempting to access does not exist at the moment.</p>
+            <p th:utext="#{screen.error.page.doesnotexist}" />
             <br/>
-            <p><a th:href="@{/login}">Login again</a>. </p>
+            <p><a th:href="@{/login}" th:utext="#{screen.error.page.loginagain}" /></p>
         </div>
     </div>
 </div>

@@ -1,6 +1,5 @@
 package org.apereo.cas.config.support.authentication;
 
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -23,17 +22,18 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link OpenIdAuthenticationEventExecutionPlanConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
 @Configuration("openIdAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class OpenIdAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier("mergingAttributeRepository")
     private IPersonAttributeDao attributeRepository;
     
     @Autowired
@@ -65,8 +65,9 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration implements Auth
         return new DefaultPrincipalFactory();
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        plan.registerAuthenticationHandlerWithPrincipalResolver(openIdCredentialsAuthenticationHandler(), openIdPrincipalResolver());
+    @ConditionalOnMissingBean(name = "openIdAuthenticationEventExecutionPlanConfigurer")
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer openIdAuthenticationEventExecutionPlanConfigurer() {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(openIdCredentialsAuthenticationHandler(), openIdPrincipalResolver());
     }
 }

@@ -6,6 +6,7 @@ package org.apereo.cas.ticket;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@FunctionalInterface
 public interface UniqueTicketIdGenerator {
     /**
      * Return a new unique ticket id beginning with the prefix.

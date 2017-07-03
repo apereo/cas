@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -8,11 +9,20 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import org.springframework.test.util.AopTestUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -22,17 +32,39 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractTicketRegistryTests {
 
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final int TICKETS_IN_REGISTRY = 10;
     private static final String EXCEPTION_CAUGHT_NONE_EXPECTED = "Exception caught.  None expected.";
     private static final String CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED = "Caught an exception. But no exception should have been thrown: ";
 
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    private final boolean useEncryption;
     private TicketRegistry ticketRegistry;
+
+    public AbstractTicketRegistryTests(final boolean useEncryption) {
+        this.useEncryption = useEncryption;
+    }
 
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
         if (ticketRegistry != null) {
             this.ticketRegistry.deleteAll();
+            setUpEncryption();
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void setUpEncryption() {
+        final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
+        if (this.useEncryption) {
+            registry.setCipherExecutor(new DefaultTicketCipherExecutor(null, null, "AES", 512, 16));
+        } else {
+            registry.setCipherExecutor((CipherExecutor) NoOpCipherExecutor.getInstance());
         }
     }
 
@@ -44,6 +76,13 @@ public abstract class AbstractTicketRegistryTests {
      * @throws Exception the exception
      */
     public abstract TicketRegistry getNewTicketRegistry() throws Exception;
+
+    /**
+     * Determine whether the tested registry is able to iterate its tickets.
+     */
+    protected boolean isIterableRegistry() {
+        return true;
+    }
 
     /**
      * Method to add a TicketGrantingTicket to the ticket cache. This should add
@@ -96,7 +135,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class);
+            assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class));
         } catch (final ClassCastException e) {
             return;
         }
@@ -134,7 +173,31 @@ public abstract class AbstractTicketRegistryTests {
     }
 
     @Test
+    public void verifyAddAndUpdateTicket() {
+        try {
+            TicketGrantingTicket tgt = new TicketGrantingTicketImpl(
+                    TicketGrantingTicket.PREFIX,
+                    CoreAuthenticationTestUtils.getAuthentication(),
+                    new NeverExpiresExpirationPolicy());
+            this.ticketRegistry.addTicket(tgt);
+
+            tgt = this.ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
+            assertTrue(tgt.getServices().isEmpty());
+
+            tgt.grantServiceTicket("ST1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
+                    new NeverExpiresExpirationPolicy(), false, false);
+            this.ticketRegistry.updateTicket(tgt);
+
+            tgt = this.ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
+            assertEquals(Collections.singleton("ST1"), tgt.getServices().keySet());
+        } catch (final Exception e) {
+            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
+        }
+    }
+
+    @Test
     public void verifyDeleteAllExistingTickets() {
+        Assume.assumeTrue(isIterableRegistry());
         try {
             for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
                 this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
@@ -154,6 +217,7 @@ public abstract class AbstractTicketRegistryTests {
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertSame(1, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX));
+            assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX));
         } catch (final Exception e) {
             fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
         }
@@ -165,7 +229,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertSame(0, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX + "1"));
+            assertSame(0, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX + "NON-EXISTING-SUFFIX"));
         } catch (final Exception e) {
             fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }
@@ -194,6 +258,7 @@ public abstract class AbstractTicketRegistryTests {
 
     @Test
     public void verifyGetTicketsFromRegistryEqualToTicketsAdded() {
+        Assume.assumeTrue(isIterableRegistry());
         final Collection<Ticket> tickets = new ArrayList<>();
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
@@ -215,7 +280,7 @@ public abstract class AbstractTicketRegistryTests {
 
 
             tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
-                    .forEach(ticket -> fail("Ticket was added to registry but was not found in retrieval of collection of all tickets."));
+                    .forEach(ticket -> fail("Ticket " + ticket + " was not found in retrieval of collection of all tickets."));
         } catch (final Exception e) {
             fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
         }

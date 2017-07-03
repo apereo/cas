@@ -41,7 +41,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      */
     @PostConstruct
     public void afterPropertiesSet() {
-        this.thresholdRate = (double) this.failureThreshold / (double) this.failureRangeInSeconds;
+        this.thresholdRate = this.failureThreshold / (double) this.failureRangeInSeconds;
         LOGGER.debug("Calculated threshold rate as [{}]", this.thresholdRate);
     }
 
@@ -72,7 +72,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         }
 
         final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED
-                                 && response.getStatus() != HttpStatus.SC_OK;
+                                 && response.getStatus() != HttpStatus.SC_OK
+                                 && response.getStatus() != HttpStatus.SC_MOVED_TEMPORARILY;
 
         if (recordEvent) {
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());

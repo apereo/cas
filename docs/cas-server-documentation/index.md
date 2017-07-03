@@ -40,19 +40,19 @@ We recommend reading the following documentation in order to plan and execute a 
 
 ## Demos
 
-The following demos are provided by the Apereo CAS project:
-
-| Demo                    | Source Branch            | Location
-|-------------------------|--------------------------|----------------------------------------------------
-| [CAS Overlay Project Initializr](installation/Maven-Overlay-Installation.html)     | `heroku-casinitializr`       | [![](https://heroku-badge.herokuapp.com/?app=casinitializr)](https://casinitializr.herokuapp.com)
-| [CAS Web Application Server](index.html)     | `heroku-caswebapp`       | [![](https://heroku-badge.herokuapp.com/?app=jasigcas&root=/cas/login)](https://jasigcas.herokuapp.com/cas)
-| [CAS Services Management Server](installation/Installing-ServicesMgmt-Webapp.html) | `heroku-mgmtwebapp`      | [![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt&root=/cas-management/login)](https://jasigcasmgmt.herokuapp.com/cas-management) 
-| [CAS Boot Administration Server](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [![](https://heroku-badge.herokuapp.com/?app=casbootadminserver&)](https://casbootadminserver.herokuapp.com/)
-| [CAS Zipkin Server](installation/Monitoring-Statistics.html#distributed-tracing) | `heroku-zipkinserver`    | [![](https://heroku-badge.herokuapp.com/?app=caszipkinserver)](https://caszipkinserver.herokuapp.com/)
-| [CAS Service Discovery Server](installation/Service-Discovery-Guide.html) | `heroku-discoveryserver`    | [![](https://heroku-badge.herokuapp.com/?app=caseureka)](https://caseureka.herokuapp.com/)
-| [CAS Configuration Server](installation/Configuration-Server-Management.html) | `heroku-casconfigserver`    | [![](https://heroku-badge.herokuapp.com/?app=casconfigserver&root=/casconfigserver)](https://casconfigserver.herokuapp.com/casconfigserver)
-
-Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.
-
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>It is important to note that these are public demo sites, used by the project for basic showcases 
 and integration tests. They are <strong>NOT</strong> set up for internal demos as they may go up and down as the project needs without notice. </p></div>
+
+The following demos are provided by the Apereo CAS project:
+
+| Demo                                                                                      | Source Branch            | Location
+|-------------------------------------------------------------------------------------------|--------------------------|---------------------------------------------------------------------
+| [CAS Overlay Project Initializr](installation/Maven-Overlay-Installation.html)            | `heroku-casinitializr`   | [Link](https://casinitializr.herokuapp.com)
+| [CAS Web Application Server](index.html)                                                  | `heroku-caswebapp`       | [Link](https://jasigcas.herokuapp.com/cas)
+| [CAS Services Management Server](installation/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp`      | [Link](https://jasigcasmgmt.herokuapp.com/cas-management) 
+| [CAS Boot Administration Server](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [Link](https://casbootadminserver.herokuapp.com/)
+| [CAS Zipkin Server](installation/Monitoring-Statistics.html#distributed-tracing)          | `heroku-zipkinserver`    | [Link](https://caszipkinserver.herokuapp.com/)
+| [CAS Service Discovery Server](installation/Service-Discovery-Guide.html)                 | `heroku-discoveryserver` | [Link](https://caseureka.herokuapp.com/)
+| [CAS Configuration Server](installation/Configuration-Server-Management.html)             | `heroku-casconfigserver` | [Link](https://casconfigserver.herokuapp.com/casconfigserver)
+
+Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.

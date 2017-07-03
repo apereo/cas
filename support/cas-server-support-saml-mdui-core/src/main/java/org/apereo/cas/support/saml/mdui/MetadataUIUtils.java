@@ -47,6 +47,18 @@ public class MetadataUIUtils {
     }
 
     /**
+     * Is metadata found for entity id ?
+     *
+     * @param metadataAdapter the metadata adapter
+     * @param entityId        the entity id
+     * @return true/false
+     */
+    public static boolean isMetadataFoundForEntityId(final MetadataResolverAdapter metadataAdapter,
+                                                     final String entityId) {
+        return metadataAdapter.getEntityDescriptorForEntityId(entityId) != null;
+    }
+    
+    /**
      * Locate MDUI for entity id simple metadata ui info.
      *
      * @param metadataAdapter   the metadata adapter

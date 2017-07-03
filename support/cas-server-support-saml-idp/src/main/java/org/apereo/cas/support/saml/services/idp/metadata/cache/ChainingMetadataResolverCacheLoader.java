@@ -151,7 +151,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
                     }
                     return null;
                 } catch (final Exception e) {
-                    throw new RuntimeException(e.getMessage(), e);
+                    throw new IllegalArgumentException(e.getMessage(), e);
                 }
             }
         });
@@ -214,7 +214,8 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         LOGGER.debug("Metadata backup directory is designated to be [{}]", backupDirectory.getCanonicalPath());
         FileUtils.forceMkdir(backupDirectory);
 
-        LOGGER.debug("Metadata backup file will be at [{}]", backupFile.getCanonicalPath());
+        final String canonicalPath = backupFile.getCanonicalPath();
+        LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
         FileUtils.forceMkdirParent(backupFile);
 
         final HttpClientMultithreadedDownloader downloader =
@@ -222,7 +223,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
 
         final FileBackedHTTPMetadataResolver metadataProvider = new FileBackedHTTPMetadataResolver(
                 this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
-                backupFile.getCanonicalPath());
+                canonicalPath);
         buildSingleMetadataResolver(metadataProvider, service);
         metadataResolvers.add(metadataProvider);
     }
